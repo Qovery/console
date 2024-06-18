@@ -3,16 +3,16 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseHelmChartsProps {
   organizationId: string
-  environmentId: string
-  chartName: string
+  helmRepositoryId: string
+  chartName?: string
   enabled?: boolean
 }
 
-export function useHelmCharts({ organizationId, environmentId, chartName, enabled }: UseHelmChartsProps) {
+export function useHelmCharts({ organizationId, helmRepositoryId, chartName, enabled }: UseHelmChartsProps) {
   return useQuery({
     ...queries.serviceHelm.helmCharts({
       organizationId,
-      environmentId,
+      helmRepositoryId,
       chartName,
     }),
     select(data) {

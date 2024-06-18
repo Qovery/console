@@ -20,16 +20,16 @@ export const serviceHelm = createQueryKeys('serviceHelm', {
   }),
   helmCharts: ({
     organizationId,
-    environmentId,
+    helmRepositoryId,
     chartName,
   }: {
     organizationId: string
-    environmentId: string
-    chartName: string
+    helmRepositoryId: string
+    chartName?: string
   }) => ({
-    queryKey: [organizationId, environmentId, chartName],
+    queryKey: [organizationId, helmRepositoryId, chartName],
     async queryFn() {
-      const response = await helmRepositoriesApi.getHelmCharts(organizationId, environmentId, chartName)
+      const response = await helmRepositoriesApi.getHelmCharts(organizationId, helmRepositoryId, chartName)
       return response.data.results
     },
   }),

@@ -1,14 +1,87 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
-import { Icon, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { Icon, InputSelect, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { useHelmCharts } from '../hooks/use-helm-charts/use-helm-charts'
 import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
+
+function HelmChartsSetting({ organizationId, helmRepositoryId }: { organizationId: string; helmRepositoryId: string }) {
+  const { control, watch } = useFormContext()
+  const {
+    data: helmCharts,
+    isLoading: isLoadingHelmCharts,
+    isFetched: isFetchedHelmCharts,
+  } = useHelmCharts({ organizationId, helmRepositoryId })
+  const watchChartName = watch('chart_name')
+
+  return (
+    <>
+      {!isFetchedHelmCharts || isLoadingHelmCharts ? (
+        <div className="flex justify-center">
+          <LoaderSpinner />
+        </div>
+      ) : (
+        <>
+          <Controller
+            name="chart_name"
+            control={control}
+            rules={{
+              required: 'Please enter a chart name.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputSelect
+                label="Chart name"
+                options={
+                  helmCharts?.map((helmChart) => ({
+                    label: helmChart.chart_name ?? '',
+                    value: helmChart.chart_name ?? '',
+                  })) ?? []
+                }
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                isSearchable
+              />
+            )}
+          />
+          {watchChartName && (
+            <Controller
+              name="chart_version"
+              control={control}
+              rules={{
+                required: 'Please enter a version.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  label="Version"
+                  options={
+                    helmCharts
+                      ?.find((helmChart) => helmChart.chart_name === watchChartName)
+                      ?.versions?.map((version) => ({
+                        label: version,
+                        value: version,
+                      })) ?? []
+                  }
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  isSearchable
+                />
+              )}
+            />
+          )}
+        </>
+      )}
+    </>
+  )
+}
 
 export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { control, watch } = useFormContext()
   const watchFieldProvider = watch('source_provider')
+  const watchRepository = watch('repository')
 
   const {
     data: helmRepositories = [],
@@ -93,38 +166,9 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                   />
                 )}
               />
-              <Controller
-                name="chart_name"
-                control={control}
-                rules={{
-                  required: 'Please enter a chart name.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    label="Chart name"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="chart_version"
-                control={control}
-                rules={{
-                  required: 'Please enter a version.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    label="Version"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                  />
-                )}
-              />
+              {watchRepository && (
+                <HelmChartsSetting organizationId={organizationId} helmRepositoryId={watchRepository} />
+              )}
             </>
           )}
         </div>
