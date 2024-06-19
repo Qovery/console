@@ -162,14 +162,19 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 required: 'Please select a disk size',
               }}
               render={({ field, fieldState: { error } }) => (
-                <InputText
-                  label="Storage (GB)"
-                  type="number"
-                  name={field.name}
-                  error={error?.message}
-                  onChange={field.onChange}
-                  value={field.value}
-                />
+                <div className="flex flex-col gap-1">
+                  <InputText
+                    label="Disk size (GB)"
+                    type="number"
+                    name={field.name}
+                    error={error?.message}
+                    onChange={field.onChange}
+                    value={field.value}
+                  />
+                  <p className="ml-4 text-xs text-neutral-350">
+                    Storage allocated to your Kubernetes nodes to store files, application images etc..
+                  </p>
+                </div>
               )}
             />
 
