@@ -122,7 +122,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               />
               <ExternalLink
                 className="ml-11"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#features"
+                href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
               >
                 Documentation link
               </ExternalLink>
