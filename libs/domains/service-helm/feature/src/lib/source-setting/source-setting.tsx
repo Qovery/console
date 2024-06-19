@@ -15,25 +15,15 @@ export function HelmChartsSetting({
   helmRepositoryId: string
   kind?: HelmRepositoryKindEnum
 }) {
-  const { control, watch } = useFormContext()
+  const { control, watch, setValue } = useFormContext()
 
-  const isOci =
-    kind &&
-    [
-      'OCI_ECR',
-      'OCI_SCALEWAY_CR',
-      'OCI_DOCKER_HUB',
-      'OCI_PUBLIC_ECR',
-      'OCI_GENERIC_CR',
-      'OCI_GITHUB_CR',
-      'OCI_GITLAB_CR',
-    ].includes(kind)
+  const isOci = kind?.startsWith('OCI')
 
-  const {
-    data: helmCharts,
-    isLoading: isLoadingHelmCharts,
-    isFetched: isFetchedHelmCharts,
-  } = useHelmCharts({ organizationId, helmRepositoryId, enabled: !isOci })
+  const { data: helmCharts, isFetching: isFetchingHelmCharts } = useHelmCharts({
+    organizationId,
+    helmRepositoryId,
+    enabled: !isOci,
+  })
   const watchChartName = watch('chart_name')
 
   const helmsChartsOptions =
@@ -52,7 +42,7 @@ export function HelmChartsSetting({
 
   return (
     <>
-      {!isOci && (!isFetchedHelmCharts || isLoadingHelmCharts) ? (
+      {!isOci && isFetchingHelmCharts ? (
         <div className="flex justify-center">
           <LoaderSpinner />
         </div>
@@ -69,7 +59,10 @@ export function HelmChartsSetting({
                 <InputSelect
                   label="Chart name"
                   options={helmsChartsOptions}
-                  onChange={field.onChange}
+                  onChange={(event) => {
+                    setValue('chart_version', undefined)
+                    field.onChange(event)
+                  }}
                   value={field.value}
                   error={
                     helmsChartsOptions.length === 0
