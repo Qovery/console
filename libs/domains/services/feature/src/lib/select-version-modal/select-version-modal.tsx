@@ -1,14 +1,77 @@
-import { type HelmSourceRepositoryResponse } from 'qovery-typescript-axios'
+import { type ContainerSource, type HelmSourceRepositoryResponse } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, useState } from 'react'
-import { Button, InputSelect, InputText } from '@qovery/shared/ui'
+import { useContainerVersions } from '@qovery/domains/organizations/feature'
+import { type Value } from '@qovery/shared/interfaces'
+import { Button, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { useHelmChartsVersions } from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
+
+function SelectChartVersion({
+  repository,
+  organizationId,
+  ...props
+}: {
+  repository: HelmSourceRepositoryResponse
+  organizationId: string
+} & Pick<ComponentPropsWithoutRef<typeof InputSelect>, 'onChange' | 'value'>) {
+  const { data: chartsVersions = [], isFetching } = useHelmChartsVersions({
+    organizationId,
+    helmRepositoryId: repository.repository.id,
+    chartName: repository.chart_name,
+  })
+  const options =
+    chartsVersions
+      .find(({ chart_name }) => chart_name === repository.chart_name)
+      ?.versions?.map<Value>((v) => ({
+        label: v,
+        value: v,
+      })) ?? []
+
+  return isFetching ? (
+    <div className="flex justify-center">
+      <LoaderSpinner />
+    </div>
+  ) : (
+    <InputSelect label="Version" options={options} isSearchable portal {...props} />
+  )
+}
+
+function SelectImageVersion({
+  organizationId,
+  containerSource,
+  ...props
+}: {
+  organizationId: string
+  containerSource: ContainerSource
+} & Pick<ComponentPropsWithoutRef<typeof InputSelect>, 'onChange' | 'value'>) {
+  const { data: containerVersions = [], isFetching } = useContainerVersions({
+    organizationId,
+    containerRegistryId: containerSource.registry.id,
+    imageName: containerSource.image_name,
+  })
+
+  const options =
+    containerVersions
+      .find(({ image_name }) => image_name === containerSource.image_name)
+      ?.versions?.map<Value>((version) => ({
+        value: version,
+        label: version,
+        isDisabled: version === 'latest',
+      })) ?? []
+
+  return isFetching ? (
+    <div className="flex justify-center">
+      <LoaderSpinner />
+    </div>
+  ) : (
+    <InputSelect label="Version" options={options} isSearchable portal {...props} />
+  )
+}
 
 export interface SelectVersionModalProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onSubmit'> {
   title?: string
   description?: string
   submitLabel: string
   currentVersion?: string
-  repository?: HelmSourceRepositoryResponse
   organizationId: string
   onCancel: () => void
   onSubmit: (targetVersion: string) => void
@@ -20,17 +83,20 @@ export function SelectVersionModal({
   submitLabel,
   children,
   currentVersion,
-  repository,
   organizationId,
   onCancel,
   onSubmit,
-}: SelectVersionModalProps) {
+  ...props
+}: SelectVersionModalProps &
+  (
+    | {
+        repository: HelmSourceRepositoryResponse
+      }
+    | {
+        containerSource: ContainerSource
+      }
+  )) {
   const [targetVersion, setTargetVersion] = useState<string | undefined>(currentVersion)
-  const { data: chartsVersions } = useHelmChartsVersions({
-    organizationId,
-    helmRepositoryId: repository?.repository.id,
-    chartName: repository?.chart_name,
-  })
 
   return (
     <div className="flex flex-col gap-6 p-5">
@@ -39,27 +105,19 @@ export function SelectVersionModal({
         <p className="text-neutral-350">{description}</p>
         {children}
       </div>
-      {chartsVersions && chartsVersions.length > 0 ? (
-        <InputSelect
-          label="Version"
-          options={
-            chartsVersions?.[0].versions?.map((v) => ({
-              label: v,
-              value: v,
-            })) ?? []
-          }
+      {'repository' in props ? (
+        <SelectChartVersion
+          organizationId={organizationId}
+          repository={props.repository}
           onChange={(value) => setTargetVersion(value as string)}
           value={targetVersion}
-          isSearchable
-          portal
         />
       ) : (
-        <InputText
-          name="version"
-          onChange={(e) => setTargetVersion(e.target.value)}
+        <SelectImageVersion
+          organizationId={organizationId}
+          containerSource={props.containerSource}
+          onChange={(value) => setTargetVersion(value as string)}
           value={targetVersion}
-          label="Version"
-          type="text"
         />
       )}
 

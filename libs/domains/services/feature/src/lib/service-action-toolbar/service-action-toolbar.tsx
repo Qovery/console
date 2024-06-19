@@ -1,5 +1,6 @@
 import {
   type ApplicationGitRepository,
+  type ContainerSource,
   type Environment,
   type HelmSourceRepositoryResponse,
   ServiceDeploymentStatusEnum,
@@ -165,7 +166,7 @@ function MenuManageDeployment({
     })
   }
 
-  const deployTagVersion = (service: Container | Job, version: string) => {
+  const deployTagVersion = (service: Container | Job, containerSource: ContainerSource) => {
     openModal({
       content: (
         <SelectVersionModal
@@ -173,7 +174,8 @@ function MenuManageDeployment({
           description="Select the version you want to deploy."
           submitLabel="Deploy"
           organizationId={environment.organization.id}
-          currentVersion={version}
+          currentVersion={containerSource.tag}
+          containerSource={containerSource}
           onCancel={closeModal}
           onSubmit={(image_tag) => {
             deployService({
@@ -359,17 +361,18 @@ function MenuManageDeployment({
             { service: { serviceType: 'CONTAINER' } },
             { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobContainerSource) }) },
             ({ service }) => {
-              const version = match(service)
-                .with({ serviceType: 'CONTAINER' }, ({ tag }) => tag)
-                .with({ serviceType: 'JOB' }, ({ source: { image } }) => image?.tag)
+              const containerSource = match(service)
+                .returnType<ContainerSource>()
+                .with({ serviceType: 'CONTAINER' }, (source) => source)
+                .with({ serviceType: 'JOB' }, ({ source: { image } }) => image)
                 .exhaustive()
               return (
-                version && (
+                containerSource.tag && (
                   <>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
                       icon={<Icon iconName="clock-rotate-left" />}
-                      onSelect={() => deployTagVersion(service, version)}
+                      onSelect={() => deployTagVersion(service, containerSource)}
                     >
                       Deploy another version
                     </DropdownMenu.Item>
