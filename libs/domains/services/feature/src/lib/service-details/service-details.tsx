@@ -348,10 +348,21 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               <>
                 <Dt>Registry:</Dt>
                 <Dd>
-                  <a href={containerImage.registry.url} target="_blank" rel="noopener noreferrer">
-                    <Badge variant="surface" size="xs" className="items-center gap-1 capitalize">
+                  <a
+                    href={containerImage.registry.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="max-w-full"
+                  >
+                    <Badge
+                      variant="surface"
+                      size="xs"
+                      className="max-w-full items-center gap-1 whitespace-nowrap capitalize"
+                    >
                       <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
-                      <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
+                      <span className="truncate">
+                        <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
+                      </span>
                     </Badge>
                   </a>
                 </Dd>
