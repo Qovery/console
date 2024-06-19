@@ -1,14 +1,132 @@
+import { type HelmRepositoryKindEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
 import { Icon, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { useHelmCharts } from '../hooks/use-helm-charts/use-helm-charts'
 import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
+
+export function HelmChartsSetting({
+  organizationId,
+  helmRepositoryId,
+  kind,
+}: {
+  organizationId: string
+  helmRepositoryId: string
+  kind?: HelmRepositoryKindEnum
+}) {
+  const { control, watch, setValue } = useFormContext()
+
+  const isOci = kind?.startsWith('OCI_')
+
+  const { data: helmCharts, isFetching: isFetchingHelmCharts } = useHelmCharts({
+    organizationId,
+    helmRepositoryId,
+    enabled: !isOci,
+  })
+  const watchChartName = watch('chart_name')
+
+  const helmsChartsOptions =
+    helmCharts?.map((helmChart) => ({
+      label: helmChart.chart_name ?? '',
+      value: helmChart.chart_name ?? '',
+    })) ?? []
+
+  const helmsChartsVersionsOptions =
+    helmCharts
+      ?.find((helmChart) => helmChart.chart_name === watchChartName)
+      ?.versions?.map((version) => ({
+        label: version,
+        value: version,
+      })) ?? []
+
+  return (
+    <>
+      {!isOci && isFetchingHelmCharts ? (
+        <div className="flex justify-center">
+          <LoaderSpinner />
+        </div>
+      ) : (
+        <>
+          <Controller
+            name="chart_name"
+            control={control}
+            rules={{
+              required: 'Please enter a chart name.',
+            }}
+            render={({ field, fieldState: { error } }) =>
+              !isOci ? (
+                <InputSelect
+                  label="Chart name"
+                  options={helmsChartsOptions}
+                  onChange={(event) => {
+                    setValue('chart_version', undefined)
+                    field.onChange(event)
+                  }}
+                  value={field.value}
+                  error={
+                    helmsChartsOptions.length === 0
+                      ? 'No chart name found. Please verify that the helm repository is correct.'
+                      : undefined
+                  }
+                  isSearchable
+                />
+              ) : (
+                <InputText
+                  label="Chart name"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )
+            }
+          />
+          {watchChartName && (
+            <Controller
+              name="chart_version"
+              control={control}
+              rules={{
+                required: 'Please enter a version.',
+              }}
+              render={({ field, fieldState: { error } }) =>
+                !isOci ? (
+                  <InputSelect
+                    label="Version"
+                    options={helmsChartsVersionsOptions}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={
+                      helmsChartsVersionsOptions.length === 0
+                        ? 'No version found. Please verify that the chart name or helm repository is correct.'
+                        : undefined
+                    }
+                    isSearchable
+                  />
+                ) : (
+                  <InputText
+                    label="Version"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                  />
+                )
+              }
+            />
+          )}
+        </>
+      )}
+    </>
+  )
+}
 
 export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { control, watch } = useFormContext()
   const watchFieldProvider = watch('source_provider')
+  const watchRepository = watch('repository')
 
   const {
     data: helmRepositories = [],
@@ -93,38 +211,13 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                   />
                 )}
               />
-              <Controller
-                name="chart_name"
-                control={control}
-                rules={{
-                  required: 'Please enter a chart name.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    label="Chart name"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="chart_version"
-                control={control}
-                rules={{
-                  required: 'Please enter a version.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    label="Version"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    error={error?.message}
-                  />
-                )}
-              />
+              {watchRepository && (
+                <HelmChartsSetting
+                  organizationId={organizationId}
+                  helmRepositoryId={watchRepository}
+                  kind={helmRepositories.find((r) => r.id === watchRepository)?.kind}
+                />
+              )}
             </>
           )}
         </div>

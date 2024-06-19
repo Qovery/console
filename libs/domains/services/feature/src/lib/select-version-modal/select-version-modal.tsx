@@ -1,11 +1,15 @@
+import { type HelmSourceRepositoryResponse } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, useState } from 'react'
-import { Button, InputText } from '@qovery/shared/ui'
+import { Button, InputSelect, InputText } from '@qovery/shared/ui'
+import { useHelmChartsVersions } from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
 
 export interface SelectVersionModalProps extends Omit<ComponentPropsWithoutRef<'div'>, 'onSubmit'> {
   title?: string
   description?: string
   submitLabel: string
   currentVersion?: string
+  repository?: HelmSourceRepositoryResponse
+  organizationId: string
   onCancel: () => void
   onSubmit: (targetVersion: string) => void
 }
@@ -16,10 +20,17 @@ export function SelectVersionModal({
   submitLabel,
   children,
   currentVersion,
+  repository,
+  organizationId,
   onCancel,
   onSubmit,
 }: SelectVersionModalProps) {
-  const [targetVersion, setTargetVersion] = useState<string | undefined>()
+  const [targetVersion, setTargetVersion] = useState<string | undefined>(currentVersion)
+  const { data: chartsVersions } = useHelmChartsVersions({
+    organizationId,
+    helmRepositoryId: repository?.repository.id,
+    chartName: repository?.chart_name,
+  })
 
   return (
     <div className="flex flex-col gap-6 p-5">
@@ -28,13 +39,30 @@ export function SelectVersionModal({
         <p className="text-neutral-350">{description}</p>
         {children}
       </div>
-      <InputText
-        name="version"
-        onChange={(e) => setTargetVersion(e.target.value)}
-        value={currentVersion}
-        label="Version"
-        type="text"
-      />
+      {chartsVersions && chartsVersions.length > 0 ? (
+        <InputSelect
+          label="Version"
+          options={
+            chartsVersions?.[0].versions?.map((v) => ({
+              label: v,
+              value: v,
+            })) ?? []
+          }
+          onChange={(value) => setTargetVersion(value as string)}
+          value={targetVersion}
+          isSearchable
+          portal
+        />
+      ) : (
+        <InputText
+          name="version"
+          onChange={(e) => setTargetVersion(e.target.value)}
+          value={targetVersion}
+          label="Version"
+          type="text"
+        />
+      )}
+
       <div className="flex justify-end gap-3">
         <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
           Cancel
