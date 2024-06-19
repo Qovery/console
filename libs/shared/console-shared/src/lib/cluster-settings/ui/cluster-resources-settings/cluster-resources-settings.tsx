@@ -163,12 +163,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
-                  label="Storage (GB)"
+                  label="Disk size (GB)"
                   type="number"
                   name={field.name}
                   error={error?.message}
                   onChange={field.onChange}
                   value={field.value}
+                  hint="Storage allocated to your Kubernetes nodes to store files, application images etc.."
                 />
               )}
             />
@@ -263,23 +264,19 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 required: 'Please select a disk size',
               }}
               render={({ field }) => (
-                <div className="flex flex-col gap-1">
-                  <InputText
-                    type="number"
-                    name={field.name}
-                    onChange={(event) => {
-                      field.onChange(event)
-                      if (props.fromDetail) {
-                        setWarningClusterNodes(true)
-                      }
-                    }}
-                    value={field.value}
-                    label="Disk size (GB)"
-                  />
-                  <p className="ml-4 text-xs text-neutral-350">
-                    Storage allocated to your Kubernetes nodes to store files, application images etc..
-                  </p>
-                </div>
+                <InputText
+                  type="number"
+                  name={field.name}
+                  onChange={(event) => {
+                    field.onChange(event)
+                    if (props.fromDetail) {
+                      setWarningClusterNodes(true)
+                    }
+                  }}
+                  value={field.value}
+                  label="Disk size (GB)"
+                  hint="Storage allocated to your Kubernetes nodes to store files, application images etc.."
+                />
               )}
             />
             {warningClusterNodes && (

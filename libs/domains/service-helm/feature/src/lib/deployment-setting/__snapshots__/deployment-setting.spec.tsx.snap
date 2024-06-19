@@ -105,10 +105,10 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           </div>
         </div>
         <div
-          class="relative -top-1 ml-3 cursor-pointer"
+          class="relative -top-1 ml-3 cursor-pointer flex flex-col gap-1"
         >
           <p
-            class="mb-1 font-medium text-neutral-400"
+            class="font-medium text-neutral-400"
           >
             Allow cluster-wide resources
           </p>

@@ -150,7 +150,7 @@ describe('PageSettingsResourcesFeature', () => {
     const { userEvent } = renderWithProviders(<PageSettingsResourcesFeature />)
     const button = screen.getByTestId('submit-button')
 
-    const input = screen.getByLabelText('Storage (GB)')
+    const input = screen.getByLabelText('Disk size (GB)')
     await userEvent.clear(input)
     await userEvent.type(input, '30')
 
