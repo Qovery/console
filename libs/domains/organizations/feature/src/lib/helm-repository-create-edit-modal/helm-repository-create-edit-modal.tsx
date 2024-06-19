@@ -1,8 +1,14 @@
-import { type HelmRepositoryRequest, type HelmRepositoryResponse } from 'qovery-typescript-axios'
+import {
+  type HelmRepositoryKindEnum,
+  type HelmRepositoryRequest,
+  type HelmRepositoryResponse,
+} from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { IconEnum } from '@qovery/shared/enums'
 import {
   ExternalLink,
+  Icon,
   InputSelect,
   InputText,
   InputTextArea,
@@ -19,6 +25,18 @@ export interface HelmRepositoryCreateEditModalProps {
   organizationId: string
   isEdit?: boolean
   repository?: HelmRepositoryResponse
+}
+
+function helmKindToIcon(kind: keyof typeof HelmRepositoryKindEnum) {
+  return match(kind)
+    .with('OCI_DOCKER_HUB', () => IconEnum.DOCKER)
+    .with('OCI_SCALEWAY_CR', () => IconEnum.SCW)
+    .with('OCI_GITHUB_CR', () => IconEnum.GITHUB)
+    .with('OCI_GITLAB_CR', () => IconEnum.GITLAB)
+    .with('OCI_GENERIC_CR', () => IconEnum.GENERIC_REGISTRY)
+    .with('OCI_ECR', 'OCI_PUBLIC_ECR', () => IconEnum.AWS)
+    .with('HTTPS', () => IconEnum.HELM_OFFICIAL)
+    .exhaustive()
 }
 
 export function HelmRepositoryCreateEditModal({
@@ -162,6 +180,7 @@ export function HelmRepositoryCreateEditModal({
                 options={availableHelmRepositories.map(({ kind }) => ({
                   label: kind,
                   value: kind,
+                  icon: <Icon name={helmKindToIcon(kind)} width="16px" height="16px" />,
                 }))}
                 portal
               />
@@ -373,6 +392,7 @@ export function HelmRepositoryCreateEditModal({
               value={field.value}
               title="Skip TLS verification"
               description="skip tls certificate checks for the repository (--insecure-skip-tls-verify)"
+              forceAlignTop
             />
           )}
         />
