@@ -17,7 +17,7 @@ export function HelmChartsSetting({
 }) {
   const { control, watch, setValue } = useFormContext()
 
-  const isOci = kind?.startsWith('OCI')
+  const isOci = kind?.startsWith('OCI_')
 
   const { data: helmCharts, isFetching: isFetchingHelmCharts } = useHelmCharts({
     organizationId,
