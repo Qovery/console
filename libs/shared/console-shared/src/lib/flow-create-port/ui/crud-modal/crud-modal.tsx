@@ -148,10 +148,15 @@ export function CrudModal({
               field.onChange(!field.value)
               field.value && setValue('external_port', null)
             }}
-            className="mb-5 mr-4 flex items-center"
+            className="mb-5 mr-4 flex"
           >
-            <InputToggle onChange={field.onChange} value={field.value} title={field.value} small />
-            <span className="cursor-pointer text-ssm font-medium text-neutral-400">Publicly exposed</span>
+            <InputToggle
+              className="items-center"
+              onChange={field.onChange}
+              value={field.value}
+              title="Publicly exposed"
+              small
+            />
           </div>
         )}
       />

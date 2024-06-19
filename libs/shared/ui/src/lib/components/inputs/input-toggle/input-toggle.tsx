@@ -91,9 +91,9 @@ export function InputToggle(props: InputToggleProps) {
       {title && (
         <div
           onClick={changeToggle}
-          className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''}`}
+          className={`${description && forceAlignTop ? 'relative -top-1' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
         >
-          {title && <p className="mb-1 font-medium text-neutral-400">{title}</p>}
+          {title && <p className="font-medium text-neutral-400">{title}</p>}
           {description && <div className="text-neutral-350">{description}</div>}
         </div>
       )}
