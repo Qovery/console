@@ -67,7 +67,7 @@ interface ModalProviderProps {
 export const ModalProvider = (props: ModalProviderProps) => {
   const [openModal, setOpenModal] = useState(false)
   const [contentModal, setContentModal] = useState(<></>)
-  const [optionsModal, setOptionsModal] = useState({})
+  const [optionsModal, setOptionsModal] = useState<ModalOptions>({})
   const [alertClickOutside, enableAlertClickOutside] = useState(false)
   const [modalAlertOpen, setModalAlertOpen] = useState(false)
   const [alertModalChoice, setAlertModalChoice] = useState<boolean | undefined>(undefined)
