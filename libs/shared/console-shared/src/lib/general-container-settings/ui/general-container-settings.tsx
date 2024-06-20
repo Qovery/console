@@ -64,6 +64,7 @@ function ImageTag({
           hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
           dataTestId="input-text-image-tag"
           isSearchable
+          filterOption="startsWith"
         />
       )}
     />

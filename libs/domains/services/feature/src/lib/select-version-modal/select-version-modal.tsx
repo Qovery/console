@@ -3,7 +3,6 @@ import { type ComponentPropsWithoutRef, useState } from 'react'
 import { useContainerVersions } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
-import { strictFilterVersion } from '@qovery/shared/util-js'
 import { useHelmChartsVersions } from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
 
 function SelectChartVersion({
@@ -32,7 +31,7 @@ function SelectChartVersion({
       <LoaderSpinner className="h-5 w-5" />
     </div>
   ) : (
-    <InputSelect label="Version" options={options} filterOption={strictFilterVersion} isSearchable portal {...props} />
+    <InputSelect label="Version" options={options} filterOption="startsWith" isSearchable portal {...props} />
   )
 }
 
@@ -64,7 +63,7 @@ function SelectImageVersion({
       <LoaderSpinner className="h-5 w-5" />
     </div>
   ) : (
-    <InputSelect label="Version" options={options} isSearchable portal {...props} />
+    <InputSelect label="Version" options={options} filterOption="startsWith" isSearchable portal {...props} />
   )
 }
 
