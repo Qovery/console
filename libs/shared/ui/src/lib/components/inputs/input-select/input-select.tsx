@@ -38,6 +38,7 @@ export interface InputSelectProps {
   autoFocus?: boolean
   placeholder?: string
   menuPlacement?: MenuPlacement
+  filterOption?: ((option: Value, inputValue: string) => boolean) | null
 }
 
 export function InputSelect({
@@ -59,6 +60,7 @@ export function InputSelect({
   placeholder,
   menuListButton,
   menuPlacement = 'auto',
+  filterOption,
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -259,6 +261,7 @@ export function InputSelect({
             }),
           }}
           menuIsOpen={isFilter ? true : undefined}
+          filterOption={filterOption}
         />
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (

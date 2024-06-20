@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { HelmRepositoryCreateEditModal } from '@qovery/domains/organizations/feature'
 import { Icon, InputSelect, InputText, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { strictFilterVersion } from '@qovery/shared/util-js'
 import { useHelmCharts } from '../hooks/use-helm-charts/use-helm-charts'
 import { useHelmRepositories } from '../hooks/use-helm-repositories/use-helm-repositories'
 
@@ -102,6 +103,7 @@ export function HelmChartsSetting({
                         : undefined
                     }
                     isSearchable
+                    filterOption={strictFilterVersion}
                   />
                 ) : (
                   <InputText
