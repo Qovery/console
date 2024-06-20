@@ -30,7 +30,18 @@ export function useModal() {
 
   useEffect(() => {
     if (modal) {
-      setOpenModal(true)
+      if (modal.options?.fakeModal) {
+        // XXX: prevent conflict between dropdown menu click event and modal opening.
+        // We suppose that dropdownmenu and dialog share the same internal radix state,
+        // this result in conflict when trigger a modal opening action from a dropdown menu item.
+        // Modal is closed directly after item click probably because radix consider
+        // goblal dialog state already opened (due to dropdown menu still present)
+        setTimeout(() => {
+          setOpenModal(true)
+        }, 0)
+      } else {
+        setOpenModal(true)
+      }
       if (modal.options) {
         setOptionsModal({
           ...defaultContext.optionsModal,

@@ -193,6 +193,9 @@ function MenuManageDeployment({
           </p>
         </SelectVersionModal>
       ),
+      options: {
+        fakeModal: true,
+      },
     })
   }
   const deployHelmChartVersion = (service: Helm, repository: HelmSourceRepositoryResponse, version: string) => {
@@ -222,6 +225,9 @@ function MenuManageDeployment({
           </p>
         </SelectVersionModal>
       ),
+      options: {
+        fakeModal: true,
+      },
     })
   }
   const deployHelmOverrideVersion = (service: Helm, gitRepository: ApplicationGitRepository) => {
