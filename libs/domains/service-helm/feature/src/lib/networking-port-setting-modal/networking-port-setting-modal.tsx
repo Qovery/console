@@ -37,11 +37,11 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
     pattern: {
       value: /^[a-z][-a-z0-9]{1,37}$/,
       message:
-        'Service name format is invalid. It should start with a lowercase letter and contain only lowercase letters, numbers, or hyphens (length: 1-37).',
+        'Name format is invalid. It should start with a lowercase letter and contain only lowercase letters, numbers, or hyphens (length: 1-37).',
     },
     maxLength: {
       value: 38, // Adjusted to 38 because regex allows up to 37 characters, and the first character is mandatory.
-      message: 'Service name cannot exceed 37 characters.',
+      message: 'Name cannot exceed 37 characters.',
     },
   }
 
