@@ -7,7 +7,7 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { InputSelect, InputText, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
+import { Icon, InputSelect, InputText, Link, LoaderSpinner, Tooltip, useModal } from '@qovery/shared/ui'
 
 export interface GeneralContainerSettingsProps {
   organization?: Organization
@@ -35,7 +35,19 @@ function ImageTag({
       .find(({ image_name }) => image_name === imageName)
       ?.versions?.map<Value>((version) => ({
         value: version,
-        label: version,
+        label:
+          version === 'latest' ? (
+            <span className="flex items-center gap-3">
+              <span>{version}</span>
+              <Tooltip classNameContent="z-10" content="Image tag cannot be latest to ensure consistent deployment">
+                <span>
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-base text-neutral-400" />
+                </span>
+              </Tooltip>
+            </span>
+          ) : (
+            version
+          ),
         isDisabled: version === 'latest',
       })) ?? []
 

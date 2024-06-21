@@ -2,7 +2,7 @@ import { type ContainerSource, type HelmSourceRepositoryResponse } from 'qovery-
 import { type ComponentPropsWithoutRef, useState } from 'react'
 import { useContainerVersions } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
+import { Button, Icon, InputSelect, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useHelmChartsVersions } from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
 
 function SelectChartVersion({
@@ -54,7 +54,19 @@ function SelectImageVersion({
       .find(({ image_name }) => image_name === containerSource.image_name)
       ?.versions?.map<Value>((version) => ({
         value: version,
-        label: version,
+        label:
+          version === 'latest' ? (
+            <span className="flex items-center gap-3">
+              <span>{version}</span>
+              <Tooltip classNameContent="z-10" content="Image tag cannot be latest to ensure consistent deployment">
+                <span>
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-base text-neutral-400" />
+                </span>
+              </Tooltip>
+            </span>
+          ) : (
+            version
+          ),
         isDisabled: version === 'latest',
       })) ?? []
 
