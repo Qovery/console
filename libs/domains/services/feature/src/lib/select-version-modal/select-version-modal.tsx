@@ -2,17 +2,20 @@ import { type ContainerSource, type HelmSourceRepositoryResponse } from 'qovery-
 import { type ComponentPropsWithoutRef, useState } from 'react'
 import { useContainerVersions } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button, Icon, InputSelect, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, InputSelect, InputText, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useHelmChartsVersions } from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
 
 function SelectChartVersion({
   repository,
   organizationId,
-  ...props
+  onChange,
+  value,
 }: {
   repository: HelmSourceRepositoryResponse
   organizationId: string
-} & Pick<ComponentPropsWithoutRef<typeof InputSelect>, 'onChange' | 'value'>) {
+  onChange: (value: string) => void
+  value?: string
+}) {
   const { data: chartsVersions = [], isFetching } = useHelmChartsVersions({
     organizationId,
     helmRepositoryId: repository.repository.id,
@@ -30,19 +33,44 @@ function SelectChartVersion({
     <div className="flex h-14 justify-center">
       <LoaderSpinner className="h-5 w-5" />
     </div>
+  ) : options.length > 0 ? (
+    <InputSelect
+      label="Version"
+      options={options}
+      filterOption="startsWith"
+      isSearchable
+      portal
+      onChange={(value) => onChange(value as string)}
+      value={value}
+    />
   ) : (
-    <InputSelect label="Version" options={options} filterOption="startsWith" isSearchable portal {...props} />
+    <InputText
+      name="version"
+      label="Version"
+      type="text"
+      onChange={(e) => onChange(e.target.value)}
+      value={value}
+      hint={
+        <span className="text-orange-500">
+          No version found. Please verify that the chart name or helm repository is correct. You can still enter your
+          version manually.
+        </span>
+      }
+    />
   )
 }
 
 function SelectImageVersion({
   organizationId,
   containerSource,
-  ...props
+  onChange,
+  value,
 }: {
   organizationId: string
   containerSource: ContainerSource
-} & Pick<ComponentPropsWithoutRef<typeof InputSelect>, 'onChange' | 'value'>) {
+  onChange: (value: string) => void
+  value?: string
+}) {
   const { data: containerVersions = [], isFetching } = useContainerVersions({
     organizationId,
     containerRegistryId: containerSource.registry.id,
@@ -74,8 +102,35 @@ function SelectImageVersion({
     <div className="flex h-14 justify-center">
       <LoaderSpinner className="h-5 w-5" />
     </div>
+  ) : options.length > 0 ? (
+    <InputSelect
+      label="Version"
+      options={options}
+      filterOption="startsWith"
+      isSearchable
+      portal
+      onChange={(value) => onChange(value as any)}
+      value={value}
+      hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
+    />
   ) : (
-    <InputSelect label="Version" options={options} filterOption="startsWith" isSearchable portal {...props} />
+    <InputText
+      name="version"
+      label="Version"
+      type="text"
+      onChange={(e) => onChange(e.target.value)}
+      value={value}
+      hint={
+        <>
+          <span className="text-orange-500">
+            No tag found. Please verify that the container registry and the image name is correct. You can still enter
+            your image tag manually.
+          </span>
+          <br />
+          Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)
+        </>
+      }
+    />
   )
 }
 
@@ -121,14 +176,14 @@ export function SelectVersionModal({
         <SelectChartVersion
           organizationId={organizationId}
           repository={props.repository}
-          onChange={(value) => setTargetVersion(value as string)}
+          onChange={setTargetVersion}
           value={targetVersion}
         />
       ) : (
         <SelectImageVersion
           organizationId={organizationId}
           containerSource={props.containerSource}
-          onChange={(value) => setTargetVersion(value as string)}
+          onChange={setTargetVersion}
           value={targetVersion}
         />
       )}

@@ -67,7 +67,7 @@ export function HelmChartsSetting({
                   error={
                     helmsChartsOptions.length === 0
                       ? 'No chart name found. Please verify that the helm repository is correct.'
-                      : undefined
+                      : error?.message
                   }
                   isSearchable
                 />
@@ -90,17 +90,13 @@ export function HelmChartsSetting({
                 required: 'Please enter a version.',
               }}
               render={({ field, fieldState: { error } }) =>
-                !isOci ? (
+                !isOci || helmsChartsVersionsOptions.length === 0 ? (
                   <InputSelect
                     label="Version"
                     options={helmsChartsVersionsOptions}
                     onChange={field.onChange}
                     value={field.value}
-                    error={
-                      helmsChartsVersionsOptions.length === 0
-                        ? 'No version found. Please verify that the chart name or helm repository is correct.'
-                        : undefined
-                    }
+                    error={error?.message}
                     isSearchable
                     filterOption="startsWith"
                   />
@@ -111,6 +107,14 @@ export function HelmChartsSetting({
                     onChange={field.onChange}
                     value={field.value}
                     error={error?.message}
+                    hint={
+                      helmsChartsVersionsOptions.length === 0 ? (
+                        <span className="text-orange-500">
+                          No version found. Please verify that the chart name or helm repository is correct. You can
+                          still enter your version manually.
+                        </span>
+                      ) : undefined
+                    }
                   />
                 )
               }

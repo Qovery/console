@@ -55,6 +55,27 @@ function ImageTag({
     <div className="flex justify-center">
       <LoaderSpinner />
     </div>
+  ) : options.length > 0 ? (
+    <Controller
+      name="image_tag"
+      control={control}
+      rules={{
+        required: 'Please select a value.',
+      }}
+      render={({ field, fieldState: { error } }) => (
+        <InputSelect
+          onChange={field.onChange}
+          value={field.value}
+          options={options}
+          error={error?.message}
+          label="Image tag"
+          hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
+          dataTestId="input-text-image-tag"
+          isSearchable
+          filterOption="startsWith"
+        />
+      )}
+    />
   ) : (
     <Controller
       name="image_tag"
@@ -62,21 +83,24 @@ function ImageTag({
       rules={{
         required: 'Please type a value.',
       }}
-      render={({ field }) => (
-        <InputSelect
+      render={({ field, fieldState: { error } }) => (
+        <InputText
+          dataTestId="input-text-image-tag"
+          name="image_tag"
           onChange={field.onChange}
           value={field.value}
-          options={options}
-          error={
-            options.length === 0
-              ? 'No tag found. Please verify that the container registry and the image name is correct.'
-              : undefined
-          }
+          error={error?.message}
           label="Image tag"
-          hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
-          dataTestId="input-text-image-tag"
-          isSearchable
-          filterOption="startsWith"
+          hint={
+            <>
+              <span className="text-orange-500">
+                No tag found. Please verify that the container registry and the image name is correct. You can still
+                enter your image tag manually.
+              </span>
+              <br />
+              Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)
+            </>
+          }
         />
       )}
     />
