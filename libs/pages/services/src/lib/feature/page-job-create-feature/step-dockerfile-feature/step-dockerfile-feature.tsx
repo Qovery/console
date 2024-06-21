@@ -14,7 +14,7 @@ import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepDockerfileFeature() {
-  useDocumentTitle('Configure - Create Job')
+  useDocumentTitle('Dockerfile - Create Job')
   const { dockerfileForm, setCurrentStep, generalData, jobURL } = useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()

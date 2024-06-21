@@ -192,6 +192,5 @@
         "@semantic-release/github"
       ]
     ]
-  },
-  "packageManager": "yarn@3.6.1+sha256.811210abb5fb5751da12ead8a9cbc0c150b07e43ac9cbedec6752d22abfd2bd6"
+  }
 }

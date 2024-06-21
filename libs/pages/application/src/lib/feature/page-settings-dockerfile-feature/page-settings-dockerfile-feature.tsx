@@ -92,7 +92,7 @@ export function PageSettingsDockerfileFeature() {
             title="Dockerfile"
             description="The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw)."
           />
-          <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit}>
+          <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit} directSubmit>
             <div className="flex justify-end">
               <Button type="submit" size="lg" disabled={isLoadingCheckDockerfile} loading={isLoadingEditService}>
                 Save

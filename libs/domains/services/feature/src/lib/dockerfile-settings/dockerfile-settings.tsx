@@ -22,11 +22,12 @@ export interface DockerfileSettingsData {
 export interface DockerfileSettingsProps extends PropsWithChildren {
   methods: UseFormReturn<DockerfileSettingsData>
   onSubmit: () => void
+  directSubmit?: boolean
 }
 
 type FileSource = 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
 
-export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSettingsProps) {
+export function DockerfileSettings({ children, methods, onSubmit, directSubmit = false }: DockerfileSettingsProps) {
   const { openModal, closeModal } = useModal()
   const { setValue, control, watch } = methods
 
@@ -40,6 +41,15 @@ export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSe
 
   const watchDockerfileRaw = watch('dockerfile_raw')
 
+  const handleSubmit = () => {
+    if (fileSource === 'GIT_REPOSITORY') {
+      setValue('dockerfile_raw', null)
+    } else {
+      setValue('dockerfile_path', null)
+    }
+    onSubmit()
+  }
+
   const openModalDockerfileRaw = () => {
     openModal({
       content: (
@@ -48,6 +58,9 @@ export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSe
           onClose={closeModal}
           onSubmit={(dockerfile_raw) => {
             setValue('dockerfile_raw', dockerfile_raw)
+            if (directSubmit) {
+              handleSubmit()
+            }
           }}
         />
       ),
@@ -62,12 +75,7 @@ export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSe
       className="w-full space-y-10"
       onSubmit={(e) => {
         e.preventDefault()
-        if (fileSource === 'GIT_REPOSITORY') {
-          setValue('dockerfile_raw', null)
-        } else {
-          setValue('dockerfile_path', null)
-        }
-        onSubmit()
+        handleSubmit()
       }}
     >
       <InputSelect
@@ -108,7 +116,7 @@ export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSe
               }
             >
               {watchDockerfileRaw ? (
-                <CodeEditor value={watchDockerfileRaw} readOnly height="300px" />
+                <CodeEditor value={watchDockerfileRaw} language="dockerfile" readOnly height="300px" />
               ) : (
                 <div className="my-4 px-10 py-5 text-center">
                   <Icon iconName="wave-pulse" className="text-neutral-350" />
@@ -150,7 +158,7 @@ export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSe
                     <>
                       <span>Specify the location of your dockerfile. Expected format: myapp/Dockerfile</span>
                       <br />
-                      <ExternalLink>Create one with Docker init</ExternalLink>
+                      <ExternalLink size="xs">Create one with Docker init</ExternalLink>
                     </>
                   }
                 />
@@ -159,7 +167,7 @@ export function DockerfileSettings({ children, methods, onSubmit }: DockerfileSe
           </>
         )}
       </Section>
-      {children}
+      {directSubmit && fileSource === 'DOCKERFILE_RAW' ? null : children}
     </form>
   )
 }

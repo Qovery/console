@@ -160,7 +160,7 @@ export function StepSummary(props: StepSummaryProps) {
                 {props.dockerfileData.dockerfile_raw && (
                   <li>
                     <strong className="font-medium">From raw Dockerfile:</strong> {}
-                    {truncateText(props.dockerfileData.dockerfile_raw, 50)}
+                    {truncateText(props.dockerfileData.dockerfile_raw, 50)}...
                   </li>
                 )}
               </ul>

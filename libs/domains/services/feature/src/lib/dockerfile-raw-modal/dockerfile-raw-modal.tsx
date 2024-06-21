@@ -37,7 +37,13 @@ ENTRYPOINT [ "/bin/sh" ]`
               name="content"
               control={methods.control}
               render={({ field }) => (
-                <CodeEditor width="100%" height="calc(100vh  - 254px)" value={field.value} onChange={field.onChange} />
+                <CodeEditor
+                  width="100%"
+                  height="calc(100vh  - 254px)"
+                  value={field.value}
+                  onChange={field.onChange}
+                  language="dockerfile"
+                />
               )}
             />
           </BlockContent>
@@ -49,7 +55,13 @@ ENTRYPOINT [ "/bin/sh" ]`
               <CopyToClipboardButtonIcon className="text-xs hover:text-neutral-400" content={defaultContent} />
             }
           >
-            <CodeEditor width="100%" height="calc(100vh  - 254px)" defaultValue={defaultContent} readOnly />
+            <CodeEditor
+              width="100%"
+              height="calc(100vh  - 254px)"
+              defaultValue={defaultContent}
+              readOnly
+              language="dockerfile"
+            />
           </BlockContent>
         </div>
       </ModalCrud>
