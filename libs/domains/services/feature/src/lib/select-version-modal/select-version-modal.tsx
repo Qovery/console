@@ -27,11 +27,11 @@ function SelectChartVersion({
       })) ?? []
 
   return isFetching ? (
-    <div className="flex justify-center">
-      <LoaderSpinner />
+    <div className="flex h-14 justify-center">
+      <LoaderSpinner className="h-5 w-5" />
     </div>
   ) : (
-    <InputSelect label="Version" options={options} isSearchable portal {...props} />
+    <InputSelect label="Version" options={options} filterOption="startsWith" isSearchable portal {...props} />
   )
 }
 
@@ -59,11 +59,11 @@ function SelectImageVersion({
       })) ?? []
 
   return isFetching ? (
-    <div className="flex justify-center">
-      <LoaderSpinner />
+    <div className="flex h-14 justify-center">
+      <LoaderSpinner className="h-5 w-5" />
     </div>
   ) : (
-    <InputSelect label="Version" options={options} isSearchable portal {...props} />
+    <InputSelect label="Version" options={options} filterOption="startsWith" isSearchable portal {...props} />
   )
 }
 

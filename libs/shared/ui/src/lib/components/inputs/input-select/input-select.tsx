@@ -11,6 +11,7 @@ import Select, {
   type SingleValueProps,
   components,
 } from 'react-select'
+import { match } from 'ts-pattern'
 import { type Value } from '@qovery/shared/interfaces'
 import { Icon } from '../../icon/icon'
 
@@ -38,6 +39,7 @@ export interface InputSelectProps {
   autoFocus?: boolean
   placeholder?: string
   menuPlacement?: MenuPlacement
+  filterOption?: 'fuzzy' | 'startsWith'
 }
 
 export function InputSelect({
@@ -59,6 +61,7 @@ export function InputSelect({
   placeholder,
   menuListButton,
   menuPlacement = 'auto',
+  filterOption = 'fuzzy',
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -259,6 +262,15 @@ export function InputSelect({
             }),
           }}
           menuIsOpen={isFilter ? true : undefined}
+          filterOption={match(filterOption)
+            .with('fuzzy', () => undefined)
+            .with(
+              'startsWith',
+              () =>
+                ({ value }: Value, inputValue: string) =>
+                  value?.startsWith(inputValue) ?? false
+            )
+            .exhaustive()}
         />
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (

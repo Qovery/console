@@ -102,6 +102,7 @@ export function HelmChartsSetting({
                         : undefined
                     }
                     isSearchable
+                    filterOption="startsWith"
                   />
                 ) : (
                   <InputText
