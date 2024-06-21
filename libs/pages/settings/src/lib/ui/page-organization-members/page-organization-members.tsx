@@ -5,6 +5,7 @@ import {
   type OrganizationAvailableRole,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { Button, Heading, Icon, Section, Table, type TableFilterProps } from '@qovery/shared/ui'
 import RowMember from './row-member/row-member'
@@ -114,12 +115,13 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     <div className="flex w-full flex-col justify-between">
       <Section className="p-8">
         <div className="mb-8 flex justify-between">
-          <div>
-            <Heading className="h5 mb-2 text-neutral-400">Manage your team</Heading>
+          <div className="space-y-3">
+            <Heading className="text-neutral-400">Manage your team</Heading>
             <p className="max-w-content-with-navigation-left text-xs text-neutral-400">
               This section allows you to manage the members of your organization (add / remove) and as well assign a
               role to each of them. You can invite someone to join your organization via email.
             </p>
+            <NeedHelp />
           </div>
           <Button onClick={() => onAddMember && onAddMember()} size="lg" className="gap-2">
             Add member

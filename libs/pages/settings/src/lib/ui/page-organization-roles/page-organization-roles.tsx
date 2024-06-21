@@ -1,5 +1,6 @@
 import { type OrganizationAvailableRole, type OrganizationCustomRole } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_EDIT_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
@@ -50,9 +51,10 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
     <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between">
       <Section className="p-8">
         <div className="mb-8 flex justify-between">
-          <div>
-            <Heading className="mb-2">Manage your roles</Heading>
+          <div className="space-y-3">
+            <Heading>Manage your roles</Heading>
             <p className="text-xs text-neutral-400">Manage the existing custom roles or create a new one.</p>
+            <NeedHelp />
           </div>
           <Button onClick={onAddRole} className="gap-2" size="lg">
             Add new role

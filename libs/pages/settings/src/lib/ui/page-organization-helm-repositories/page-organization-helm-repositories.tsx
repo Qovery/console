@@ -1,4 +1,5 @@
 import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
 
@@ -21,11 +22,12 @@ export function PageOrganizationHelmRepositories({
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <div className="mb-8 flex justify-between">
-          <div>
-            <Heading className="mb-2">Helm repositories</Heading>
+          <div className="space-y-3">
+            <Heading>Helm repositories</Heading>
             <p className="text-xs text-neutral-400">
               Define and manage the helm repository to be used within your organization to deploy applications.
             </p>
+            <NeedHelp />
           </div>
           <Button className="gap-2" size="lg" onClick={() => onAddRepository()}>
             Add repository

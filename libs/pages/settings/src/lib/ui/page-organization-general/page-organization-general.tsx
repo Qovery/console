@@ -1,6 +1,16 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { BlockContent, Button, InputFile, InputTags, InputText, InputTextArea } from '@qovery/shared/ui'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
+import {
+  BlockContent,
+  Button,
+  Heading,
+  InputFile,
+  InputTags,
+  InputText,
+  InputTextArea,
+  Section,
+} from '@qovery/shared/ui'
 import { dateMediumLocalFormat } from '@qovery/shared/util-dates'
 
 export interface PageOrganizationGeneralProps {
@@ -15,8 +25,11 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <div className="max-w-content-with-navigation-left p-8">
-        <h1 className="h5 mb-10 text-neutral-400">General</h1>
+      <Section className="max-w-content-with-navigation-left gap-10 p-8">
+        <div className="space-y-3">
+          <Heading className="text-neutral-400">General</Heading>
+          <NeedHelp />
+        </div>
         <form onSubmit={onSubmit}>
           <BlockContent title="Organization profile">
             <div className="flex items-center">
@@ -111,7 +124,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
             </Button>
           </div>
         </form>
-      </div>
+      </Section>
     </div>
   )
 }
