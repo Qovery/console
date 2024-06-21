@@ -68,8 +68,6 @@ export function ServiceTerminal({
     [setOpen]
   )
 
-  const onKeyUpHandler = useCallback((event: KeyboardEvent) => event.key === 'Escape' && setOpen(false), [setOpen])
-
   // Necesssary to calculate the number of rows and columns (tty) for the terminal
   // https://github.com/xtermjs/xterm.js/issues/1412#issuecomment-724421101
   // 16 is the font height
@@ -180,7 +178,7 @@ export function ServiceTerminal({
             <LoaderSpinner />
           </div>
         ) : (
-          <MemoizedXTerm className="h-full" onKeyUp={onKeyUpHandler} addons={addons} />
+          <MemoizedXTerm className="h-full" addons={addons} />
         )}
       </div>
     </div>,
