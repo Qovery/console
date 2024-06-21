@@ -89,7 +89,7 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
                 name={field.name}
                 onChange={(e: FormEvent<HTMLInputElement>) => {
                   const name = `${e.currentTarget.value}-p${watchInternalPort}`
-                  if (name.length < 38) {
+                  if (name.length < namePatternRules.maxLength.value) {
                     setValue('name', name)
                   }
                   field.onChange(e)
@@ -131,7 +131,7 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
                 name={field.name}
                 onChange={(e: FormEvent<HTMLInputElement>) => {
                   const name = `${watchServiceName}-p${e.currentTarget.value}`
-                  if (name.length < 38) {
+                  if (name.length < namePatternRules.maxLength.value) {
                     setValue('name', name)
                   }
                   field.onChange(e)
