@@ -1,18 +1,5 @@
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
-import {
-  BlockContent,
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  LoaderSpinner,
-  Section,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 

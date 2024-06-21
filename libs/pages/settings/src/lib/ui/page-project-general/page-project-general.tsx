@@ -1,16 +1,6 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import {
-  BlockContent,
-  Button,
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  Heading,
-  InputText,
-  InputTextArea,
-  Section,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, InputText, InputTextArea, Section } from '@qovery/shared/ui'
 
 export interface PageProjectGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
