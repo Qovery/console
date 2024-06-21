@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { useQueryParams } from 'use-query-params'
 import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useFetchEventTargets } from '@qovery/domains/event'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
@@ -26,6 +27,7 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
 
   const { data: projects = [] } = useProjects({ organizationId })
   const { data: environments } = useEnvironments({ projectId: projectId ?? '' })
+  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
 
   // NOTE: - ENVIRONMENT: we don't display target input if no project selected
   const displayEventTargets = Boolean(
@@ -103,6 +105,7 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
       isLoadingEventsTargetsData={isLoadingEventsTargetsData}
       projectId={projectId}
       environmentId={environmentId}
+      organization={organization}
       targetType={targetType}
       targetId={targetId}
       displayEventTargets={displayEventTargets}

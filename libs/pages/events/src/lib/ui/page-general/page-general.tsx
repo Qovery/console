@@ -1,4 +1,9 @@
-import { OrganizationEventOrigin, type OrganizationEventResponse, OrganizationEventType } from 'qovery-typescript-axios'
+import {
+  type Organization,
+  OrganizationEventOrigin,
+  type OrganizationEventResponse,
+  OrganizationEventType,
+} from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import { Icon, Pagination, Section, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
 import CustomFilterFeature from '../../feature/custom-filter-feature/custom-filter-feature'
@@ -17,6 +22,7 @@ export interface PageGeneralProps {
   pageSize?: string
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
+  organization?: Organization
 }
 
 export function PageGeneral({
@@ -32,6 +38,7 @@ export function PageGeneral({
   setFilter,
   filter,
   handleClearFilter,
+  organization,
 }: PageGeneralProps) {
   const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
     {
@@ -101,7 +108,9 @@ export function PageGeneral({
               <div>
                 <Icon iconName="wave-pulse" className="text-neutral-350" />
                 <p className="mt-1 text-xs font-medium text-neutral-350" data-testid="empty-result">
-                  No events found, we retain logs for a maximum of 30 days <br /> Try to change your filters.
+                  No events found, we retain logs for a maximum of{' '}
+                  {organization?.organization_plan?.audit_logs_retention_in_days ?? 30} days <br /> Try to change your
+                  filters.
                 </p>
               </div>
             </div>
