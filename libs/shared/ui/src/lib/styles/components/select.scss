@@ -89,6 +89,12 @@
   }
 }
 
+.input-select__option--is-disabled {
+  label {
+    @apply text-neutral-300;
+  }
+}
+
 .input-select__option--is-selected {
   background: theme('colors.white');
 
