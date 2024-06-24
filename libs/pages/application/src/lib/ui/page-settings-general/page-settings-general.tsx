@@ -43,24 +43,28 @@ export function PageSettingsGeneral({
   const { control, formState, watch } = useFormContext()
   const watchBuildMode = watch('build_mode')
   const watchFieldProvider = watch('source_provider')
+  const isLifecycleJob = service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'
 
   const blockContentBuildDeploy = (
     <>
-      <Controller
-        name="build_mode"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <InputSelect
-            dataTestId="input-select-mode"
-            label="Mode"
-            options={buildModeItems}
-            onChange={field.onChange}
-            value={field.value}
-            error={error?.message}
-            disabled={service?.serviceType === 'JOB'}
-          />
-        )}
-      />
+      {!isLifecycleJob && (
+        <Controller
+          name="build_mode"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              dataTestId="input-select-mode"
+              label="Mode"
+              options={buildModeItems}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+              disabled={service?.serviceType === 'JOB'}
+            />
+          )}
+        />
+      )}
+
       {watchBuildMode === BuildModeEnum.BUILDPACKS ? (
         <Controller
           name="buildpack_language"
@@ -80,20 +84,22 @@ export function PageSettingsGeneral({
           )}
         />
       ) : (
-        <Controller
-          name="dockerfile_path"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-text-dockerfile"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Dockerfile path"
-              error={error?.message}
-            />
-          )}
-        />
+        !isLifecycleJob && (
+          <Controller
+            name="dockerfile_path"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-text-dockerfile"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Dockerfile path"
+                error={error?.message}
+              />
+            )}
+          />
+        )
       )}
     </>
   )

@@ -3,6 +3,7 @@ import {
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
+import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -10,13 +11,14 @@ import {
   type JobGeneralData,
   type JobResourcesData,
 } from '@qovery/shared/interfaces'
-import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface StepSummaryProps {
   onSubmit: (withDeploy: boolean) => void
   onPrevious: () => void
   generalData: JobGeneralData
+  dockerfileData?: DockerfileSettingsData
   resourcesData: JobResourcesData
   configureData: JobConfigureData
   variableData: FlowVariableData
@@ -24,6 +26,7 @@ export interface StepSummaryProps {
   gotoResources: () => void
   gotoVariables: () => void
   gotoConfigureJob: () => void
+  gotoDockerfileJob: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
@@ -76,7 +79,7 @@ export function StepSummary(props: StepSummaryProps) {
                   <li>
                     <strong className="font-medium">Root path:</strong> {props.generalData.root_path}
                   </li>
-                  {props.generalData.build_mode === BuildModeEnum.DOCKER && (
+                  {props.generalData.dockerfile_path && (
                     <li>
                       <strong className="font-medium">Dockerfile path:</strong> {props.generalData.dockerfile_path}
                     </li>
@@ -139,6 +142,30 @@ export function StepSummary(props: StepSummaryProps) {
                 )}
             </ul>
           </Section>
+
+          {(props.dockerfileData?.dockerfile_path || props.dockerfileData?.dockerfile_raw) && (
+            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+              <div className="flex justify-between">
+                <Heading>Dockerfile</Heading>
+                <Button type="button" variant="plain" size="md" onClick={props.gotoDockerfileJob}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </div>
+              <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+                {props.dockerfileData.dockerfile_path && (
+                  <li>
+                    <strong className="font-medium">Dockerfile path:</strong> {props.dockerfileData.dockerfile_path}
+                  </li>
+                )}
+                {props.dockerfileData.dockerfile_raw && (
+                  <li>
+                    <strong className="font-medium">From raw Dockerfile:</strong> {}
+                    {truncateText(props.dockerfileData.dockerfile_raw, 50)}...
+                  </li>
+                )}
+              </ul>
+            </Section>
+          )}
 
           <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
             <div className="flex justify-between">

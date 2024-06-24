@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
 import {
+  SERVICES_JOB_CREATION_DOCKERFILE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_URL,
@@ -15,7 +16,7 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepConfigureFeature() {
   useDocumentTitle('Configure - Create Job')
-  const { configureData, setConfigureData, setCurrentStep, generalData, jobURL, jobType } =
+  const { configureData, setConfigureData, setCurrentStep, generalData, dockerfileForm, jobURL, jobType } =
     useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
@@ -84,7 +85,11 @@ export function StepConfigureFeature() {
 
   const onBack = () => {
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-    navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
+    if (dockerfileForm.getValues('dockerfile_path') || dockerfileForm.getValues('dockerfile_raw')) {
+      navigate(pathCreate + SERVICES_JOB_CREATION_DOCKERFILE_URL)
+    } else {
+      navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
+    }
   }
 
   return (

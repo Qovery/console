@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
-import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { type DockerfileSettingsData, useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -20,6 +20,7 @@ import {
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
+  SERVICES_JOB_CREATION_DOCKERFILE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
@@ -37,7 +38,8 @@ function prepareJobRequest(
   resourcesData: JobResourcesData,
   jobType: JobType,
   labelsGroup: OrganizationLabelsGroupEnrichedResponse[],
-  annotationsGroup: OrganizationAnnotationsGroupResponse[]
+  annotationsGroup: OrganizationAnnotationsGroupResponse[],
+  dockerfileData?: DockerfileSettingsData
 ): JobRequest {
   const memory = Number(resourcesData['memory'])
   const cpu = resourcesData['cpu']
@@ -106,7 +108,8 @@ function prepareJobRequest(
   } else {
     jobRequest.source = {
       docker: {
-        dockerfile_path: generalData.dockerfile_path,
+        dockerfile_raw: dockerfileData?.dockerfile_raw,
+        dockerfile_path: generalData.dockerfile_path ?? dockerfileData?.dockerfile_path,
         git_repository: {
           url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository || ''),
           root_path: generalData.root_path,
@@ -138,8 +141,11 @@ function prepareVariableRequest(variablesData: FlowVariableData): VariableImport
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Application')
-  const { generalData, resourcesData, configureData, setCurrentStep, jobURL, variableData, jobType } =
+  const { generalData, dockerfileForm, resourcesData, configureData, setCurrentStep, jobURL, variableData, jobType } =
     useJobContainerCreateContext()
+
+  const dockerfileData = dockerfileForm.getValues()
+
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
@@ -167,6 +173,10 @@ export function StepSummaryFeature() {
     navigate(pathCreate + SERVICES_JOB_CREATION_CONFIGURE_URL)
   }
 
+  const gotoDockerfileJob = () => {
+    navigate(pathCreate + SERVICES_JOB_CREATION_DOCKERFILE_URL)
+  }
+
   const gotoVariable = () => {
     navigate(pathCreate + SERVICES_JOB_CREATION_VARIABLE_URL)
   }
@@ -189,7 +199,8 @@ export function StepSummaryFeature() {
         resourcesData,
         jobType,
         labelsGroup,
-        annotationsGroup
+        annotationsGroup,
+        dockerfileData
       )
       const variableImportRequest = prepareVariableRequest(variableData)
 
@@ -253,6 +264,7 @@ export function StepSummaryFeature() {
           onSubmit={onSubmit}
           onPrevious={gotoVariable}
           generalData={generalData}
+          dockerfileData={dockerfileData}
           resourcesData={resourcesData}
           gotoResources={gotoResources}
           configureData={configureData}
@@ -262,6 +274,7 @@ export function StepSummaryFeature() {
           selectedRegistryName={containerRegistry?.name}
           jobType={jobType}
           gotoConfigureJob={gotoConfigureJob}
+          gotoDockerfileJob={gotoDockerfileJob}
           labelsGroup={labelsGroup}
           annotationsGroup={annotationsGroup}
         />

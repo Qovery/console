@@ -15,6 +15,9 @@ describe('PostFeature', () => {
             serviceType: ServiceTypeEnum.APPLICATION,
             description: 'Application Description',
           },
+          dockerfileForm: {
+            getValues: jest.fn(),
+          },
           setGeneralData: jest.fn(),
           resourcesData: undefined,
           setResourcesData: jest.fn(),

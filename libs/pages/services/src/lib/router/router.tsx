@@ -15,6 +15,7 @@ import {
   SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
   SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
   SERVICES_JOB_CREATION_CONFIGURE_URL,
+  SERVICES_JOB_CREATION_DOCKERFILE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
@@ -42,7 +43,8 @@ import { StepGeneralFeature as HelmStepGeneralFeature } from '../feature/page-he
 import { StepSummaryFeature as HelmStepSummaryFeature } from '../feature/page-helm-create-feature/step-summary-feature/step-summary-feature'
 import { StepValuesOverrideArgumentsFeature as HelmStepValuesOverrideArgumentsFeature } from '../feature/page-helm-create-feature/step-values-override-arguments-feature/step-values-override-arguments-feature'
 import { StepValuesOverrideFilesFeature as HelmStepValuesOverrideFilesFeature } from '../feature/page-helm-create-feature/step-values-override-files-feature/step-values-override-files-feature'
-import StepConfigureFeature from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
+import { StepConfigureFeature } from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
+import { StepDockerfileFeature } from '../feature/page-job-create-feature/step-dockerfile-feature/step-dockerfile-feature'
 import { StepGeneralFeature } from '../feature/page-job-create-feature/step-general-feature/step-general-feature'
 import { StepResourcesFeature } from '../feature/page-job-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature } from '../feature/page-job-create-feature/step-summary-feature/step-summary-feature'
@@ -161,6 +163,10 @@ export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
   {
     path: SERVICES_JOB_CREATION_GENERAL_URL,
     component: <StepGeneralFeature />,
+  },
+  {
+    path: SERVICES_JOB_CREATION_DOCKERFILE_URL,
+    component: <StepDockerfileFeature />,
   },
   {
     path: SERVICES_JOB_CREATION_CONFIGURE_URL,

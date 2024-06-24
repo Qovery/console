@@ -267,7 +267,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@awesome.me/kit-c4457d1be4@npm:^1.0.6":
+"@awesome.me/kit-c4457d1be4@npm:^1.0.24":
   version: 1.0.24
   resolution: "@awesome.me/kit-c4457d1be4@npm:1.0.24::__archiveUrl=https%3A%2F%2Fnpm-registry.qovery.com%2F%40awesome.me%2Fkit-c4457d1be4%2F-%2Fkit-c4457d1be4.tgz"
   dependencies:
@@ -2366,19 +2366,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-common-types@npm:6.5.1, @fortawesome/fontawesome-common-types@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/fontawesome-common-types@npm:6.5.1"
-  checksum: c597062de8903aae591b652aa03b9b7aaa66e8c71e5950dc34a8b2812851a7f4ad743fba7396bab87d787c5359bb121496769a165bd3399d039dc214434f6f0c
+"@fortawesome/fontawesome-common-types@npm:6.5.2, @fortawesome/fontawesome-common-types@npm:^6.5.1":
+  version: 6.5.2
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.5.2"
+  checksum: 8164f3e16683db5125634a4fbf3db83a5a7366bb830111ffe8538e1b8f98f8fe6dc35609cf2c595a7d6840e27d3fb45b57faf7340e40e98f0d76207fe8f94e79
   languageName: node
   linkType: hard
 
-"@fortawesome/fontawesome-svg-core@npm:^6.5.1":
-  version: 6.5.1
-  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.1"
+"@fortawesome/fontawesome-svg-core@npm:^6.5.2":
+  version: 6.5.2
+  resolution: "@fortawesome/fontawesome-svg-core@npm:6.5.2"
   dependencies:
-    "@fortawesome/fontawesome-common-types": 6.5.1
-  checksum: e17f995abe215d288163b2cd009f935c7f96bc896ab4ea7a75de72789d52a1275bd112eeb60cadd63bb20017a05ed765232157079bfb7efda7347a5614e04ce1
+    "@fortawesome/fontawesome-common-types": 6.5.2
+  checksum: f0c2a0800074c5bbc143631b9f3f818b94bd14b8590153058eecc9f548ae0ac78cfca61196880f9b3b79b5d5b5afdb140d05da75542da2087701614c9c043905
   languageName: node
   linkType: hard
 
@@ -3769,12 +3769,12 @@ __metadata:
   resolution: "@qovery/console@workspace:."
   dependencies:
     "@auth0/auth0-react": ^2.2.4
-    "@awesome.me/kit-c4457d1be4": ^1.0.6
+    "@awesome.me/kit-c4457d1be4": ^1.0.24
     "@babel/core": ^7.18.13
     "@babel/preset-react": ^7.14.5
     "@docsearch/react": ^3.6.0
     "@elgorditosalsero/react-gtm-hook": ^2.6.0
-    "@fortawesome/fontawesome-svg-core": ^6.5.1
+    "@fortawesome/fontawesome-svg-core": ^6.5.2
     "@juggle/resize-observer": ^3.4.0
     "@lukemorales/query-key-factory": ^1.3.2
     "@monaco-editor/react": ^4.6.0
@@ -3894,7 +3894,7 @@ __metadata:
     react-dropzone: ^14.2.2
     react-error-boundary: ^4.0.13
     react-flat-providers: ^2.2.0
-    react-hook-form: ^7.43.2
+    react-hook-form: ^7.52.0
     react-hot-toast: ^2.4.0
     react-instantsearch: ^7.7.1
     react-payment-inputs: ^1.1.9
@@ -19478,12 +19478,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.43.2":
-  version: 7.43.2
-  resolution: "react-hook-form@npm:7.43.2"
+"react-hook-form@npm:^7.52.0":
+  version: 7.52.0
+  resolution: "react-hook-form@npm:7.52.0"
   peerDependencies:
-    react: ^16.8.0 || ^17 || ^18
-  checksum: 68d4fb73fec052801d5e7840c3d0afba887676acfdefa33aef342ead0db419cb1a14a0891ed567cea58a78d544d9245445c593e25bc0564a797201cb32c91a01
+    react: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: f6c710dbac4462bf0d5aa25dd7d494815395819fbdf594f9bd736c99f77d63e699b4a41663a32486f7b05a75526d6cceae5eeb502189ffd93d12081c84603a38
   languageName: node
   linkType: hard
 

@@ -1,6 +1,8 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -28,6 +30,8 @@ export interface JobContainerCreateContextInterface {
   setCurrentStep: (step: number) => void
   generalData: JobGeneralData | undefined
   setGeneralData: (data: JobGeneralData) => void
+
+  dockerfileForm: UseFormReturn<DockerfileSettingsData>
 
   configureData: JobConfigureData | undefined
   setConfigureData: (data: JobConfigureData) => void
@@ -83,6 +87,11 @@ export function PageJobCreateFeature() {
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
   const [jobType, setJobType] = useState<JobType>(ServiceTypeEnum.CRON_JOB)
   const [jobURL, setJobURL] = useState<string | undefined>()
+
+  const dockerfileForm = useForm<DockerfileSettingsData>({
+    mode: 'onChange',
+  })
+
   const [configureData, setConfigureData] = useState<JobConfigureData | undefined>()
   const [resourcesData, setResourcesData] = useState<JobResourcesData | undefined>({
     memory: 512,
@@ -128,6 +137,7 @@ export function PageJobCreateFeature() {
         setVariableData,
         configureData,
         setConfigureData,
+        dockerfileForm,
       }}
     >
       <FunnelFlow
