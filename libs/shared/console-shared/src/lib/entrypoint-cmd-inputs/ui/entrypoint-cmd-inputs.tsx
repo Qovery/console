@@ -7,21 +7,31 @@ export interface EntrypointCmdInputsProps {
   imageEntryPointFieldName?: string
   cmdArgumentsFieldName?: string
 }
+export const validateCmdArguments = (value?: string) => {
+  if (!value) return true
+  const errorMessage = 'Please enter a valid command.'
 
-export const formattedCmdArguments = (stringArray?: string) => {
-  if (!stringArray) {
-    return null
+  const validateArgument = (arg: string) => {
+    const invalidChars = /[|&;<>*?()\[\]{}$#\\`"!~]/
+    return !invalidChars.test(arg)
   }
 
-  stringArray = stringArray?.trim()
+  try {
+    const args = value.split(/\s+/) // Split by any whitespace including multiple spaces
 
-  if (stringArray.startsWith('[') && stringArray.endsWith(']')) {
-    stringArray = stringArray.slice(1, -1)
-    const arrayElements = stringArray.split(',').map((element) => element.trim().replace(/"/g, ' '))
-    return arrayElements
+    for (const arg of args) {
+      if (arg.trim() === '') {
+        return errorMessage + ' Detected extra space.'
+      }
+      if (!validateArgument(arg)) {
+        return errorMessage + ` Invalid argument: ${arg}`
+      }
+    }
+
+    return true
+  } catch (e) {
+    return errorMessage
   }
-
-  return null
 }
 
 export function EntrypointCmdInputs({
@@ -56,7 +66,8 @@ export function EntrypointCmdInputs({
         name={cmdArgumentsFieldName}
         control={control}
         rules={{
-          required: cmdRequired && 'Please enter an command.',
+          required: cmdRequired && 'Please enter a command.',
+          validate: validateCmdArguments,
         }}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
@@ -67,12 +78,13 @@ export function EntrypointCmdInputs({
             label="CMD Arguments"
             hint={
               <>
-                Expected format: ["-h", "0.0.0.0", "-p", "8080", "string"]
-                {watch(imageEntryPointFieldName) && (
+                Expected format: -h 0.0.0.0 -p 8080 string{' '}
+                {!error?.message && (watch(imageEntryPointFieldName) || watch(cmdArgumentsFieldName)) && (
                   <>
                     <br />
-                    i.e: docker run --entrypoint {watch(imageEntryPointFieldName)} {watch('image_name')}{' '}
-                    {formattedCmdArguments(watch(cmdArgumentsFieldName))}
+                    i.e: docker run{' '}
+                    {watch(imageEntryPointFieldName) ? '--entrypoint ' + watch(imageEntryPointFieldName) : ''}{' '}
+                    {watch('image_name')} {watch(cmdArgumentsFieldName)}
                   </>
                 )}
               </>

@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { toastError } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
@@ -23,23 +22,24 @@ export function PageSettingsConfigureJobFeature() {
     })
     .with({ job_type: 'LIFECYCLE' }, (s) => {
       const { on_start, on_delete, on_stop } = s.schedule
+
       return {
         on_start: {
           enabled: !!on_start,
           arguments_string:
-            on_start?.arguments && on_start?.arguments?.length > 0 ? JSON.stringify(on_start?.arguments) : undefined,
+            on_start?.arguments && on_start?.arguments?.length > 0 ? on_start?.arguments?.join(' ') : undefined,
           entrypoint: on_start?.entrypoint,
         },
         on_stop: {
           enabled: !!on_stop,
           arguments_string:
-            on_stop?.arguments && on_stop?.arguments.length > 0 ? JSON.stringify(on_stop?.arguments) : undefined,
+            on_stop?.arguments && on_stop?.arguments.length > 0 ? on_stop?.arguments?.join(' ') : undefined,
           entrypoint: on_stop?.entrypoint,
         },
         on_delete: {
           enabled: !!on_delete,
           arguments_string:
-            on_delete?.arguments && on_delete?.arguments.length > 0 ? JSON.stringify(on_delete?.arguments) : undefined,
+            on_delete?.arguments && on_delete?.arguments.length > 0 ? on_delete?.arguments?.join(' ') : undefined,
           entrypoint: on_delete?.entrypoint,
         },
       }
@@ -59,63 +59,55 @@ export function PageSettingsConfigureJobFeature() {
   const onSubmit = methods.handleSubmit((data) => {
     if (!service) return
 
-    try {
-      const schedule = match(service)
-        .with({ job_type: 'CRON' }, (s) => {
-          return {
-            cronjob: {
-              scheduled_at: data.schedule || '',
-              timezone: data.timezone,
-              entrypoint: s.schedule.cronjob?.entrypoint,
-              arguments: s.schedule.cronjob?.arguments,
-            },
-          }
-        })
-        .with({ job_type: 'LIFECYCLE' }, () => {
-          return {
-            on_start: data.on_start?.enabled
-              ? {
-                  entrypoint: data.on_start.entrypoint,
-                  // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
-                  arguments: data.on_start.arguments_string ? eval(data.on_start.arguments_string) : undefined,
-                }
-              : undefined,
-            on_stop: data.on_stop?.enabled
-              ? {
-                  entrypoint: data.on_stop.entrypoint,
-                  // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
-                  arguments: data.on_stop.arguments_string ? eval(data.on_stop.arguments_string) : undefined,
-                }
-              : undefined,
-            on_delete: data.on_delete?.enabled
-              ? {
-                  entrypoint: data.on_delete.entrypoint,
-                  // thread `eval`: https://qovery.slack.com/archives/C02NPSG2HBL/p1664352927296669
-                  arguments: data.on_delete.arguments_string ? eval(data.on_delete.arguments_string) : undefined,
-                }
-              : undefined,
-          }
-        })
-        .otherwise(() => undefined)
-
-      if (!schedule) return
-
-      editService({
-        serviceId: service.id,
-        payload: buildEditServicePayload({
-          service,
-          request: {
-            max_duration_seconds: data.max_duration,
-            max_nb_restart: data.nb_restarts,
-            port: data.port,
-            schedule,
+    const schedule = match(service)
+      .with({ job_type: 'CRON' }, (s) => {
+        return {
+          cronjob: {
+            scheduled_at: data.schedule || '',
+            timezone: data.timezone,
+            entrypoint: s.schedule.cronjob?.entrypoint,
+            arguments: s.schedule.cronjob?.arguments,
           },
-        }),
+        }
       })
-    } catch (e: unknown) {
-      toastError(e as Error, 'Invalid CMD array')
-      return
-    }
+      .with({ job_type: 'LIFECYCLE' }, () => {
+        return {
+          on_start: data.on_start?.enabled
+            ? {
+                entrypoint: data.on_start.entrypoint,
+                arguments: data.on_start.arguments_string ? data.on_start.arguments_string.split(' ') : undefined,
+              }
+            : undefined,
+          on_stop: data.on_stop?.enabled
+            ? {
+                entrypoint: data.on_stop.entrypoint,
+                arguments: data.on_stop.arguments_string ? data.on_stop.arguments_string.split(' ') : undefined,
+              }
+            : undefined,
+          on_delete: data.on_delete?.enabled
+            ? {
+                entrypoint: data.on_delete.entrypoint,
+                arguments: data.on_delete.arguments_string ? data.on_delete.arguments_string.split(' ') : undefined,
+              }
+            : undefined,
+        }
+      })
+      .otherwise(() => undefined)
+
+    if (!schedule) return
+
+    editService({
+      serviceId: service.id,
+      payload: buildEditServicePayload({
+        service,
+        request: {
+          max_duration_seconds: data.max_duration,
+          max_nb_restart: data.nb_restarts,
+          port: data.port,
+          schedule,
+        },
+      }),
+    })
   })
 
   if (!service) return

@@ -6,7 +6,7 @@ import { useOrganization } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_CREATION_RESOURCES_URL } from '@qovery/shared/routes'
-import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
@@ -47,13 +47,9 @@ export function StepGeneralFeature() {
       }
 
       if (data.cmd_arguments) {
-        try {
-          cloneData.cmd = eval(data.cmd_arguments)
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid CMD array')
-          return
-        }
+        cloneData.cmd = data.cmd_arguments.split(' ')
       }
+
       setGeneralData(cloneData)
       navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
     }

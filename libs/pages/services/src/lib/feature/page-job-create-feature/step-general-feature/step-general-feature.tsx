@@ -9,7 +9,7 @@ import {
   SERVICES_JOB_CREATION_DOCKERFILE_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlowBody, toastError } from '@qovery/shared/ui'
+import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
 import { findTemplateData, useJobContainerCreateContext } from '../page-job-create-feature'
@@ -42,17 +42,7 @@ export function StepGeneralFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = {
       ...data,
-    }
-
-    if (jobType === ServiceTypeEnum.CRON_JOB) {
-      if (data.cmd_arguments) {
-        try {
-          cloneData.cmd = eval(data.cmd_arguments)
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid CMD array')
-          return
-        }
-      }
+      cmd: data.cmd_arguments?.split(' '),
     }
 
     if (data.serviceType === 'CONTAINER') {
