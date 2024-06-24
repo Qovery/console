@@ -20,7 +20,7 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
       protocol: port ? port.protocol : PortProtocolEnum.HTTP,
       name: port ? port.name : '',
     },
-    mode: 'onChange',
+    mode: 'all',
   })
 
   const { control, watch, setValue } = methods
@@ -32,6 +32,18 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
     label: protocol,
     value: protocol,
   }))
+
+  const namePatternRules = {
+    pattern: {
+      value: /^[a-z][-a-z0-9]{1,37}$/,
+      message:
+        'Name format is invalid. It should start with a lowercase letter and contain only lowercase letters, numbers, or hyphens (length: 1-37).',
+    },
+    maxLength: {
+      value: 38, // Adjusted to 38 because regex allows up to 37 characters, and the first character is mandatory.
+      message: 'Name cannot exceed 37 characters.',
+    },
+  }
 
   return (
     <FormProvider {...methods}>
@@ -70,12 +82,16 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
             control={control}
             rules={{
               required: 'Please enter service name.',
+              ...namePatternRules,
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 name={field.name}
                 onChange={(e: FormEvent<HTMLInputElement>) => {
-                  setValue('name', `${e.currentTarget.value}-p${watchInternalPort}`)
+                  const name = `${e.currentTarget.value}-p${watchInternalPort}`
+                  if (name.length < namePatternRules.maxLength.value) {
+                    setValue('name', name)
+                  }
                   field.onChange(e)
                 }}
                 value={field.value}
@@ -114,7 +130,10 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
                 type="number"
                 name={field.name}
                 onChange={(e: FormEvent<HTMLInputElement>) => {
-                  setValue('name', `${watchServiceName}-p${e.currentTarget.value}`)
+                  const name = `${watchServiceName}-p${e.currentTarget.value}`
+                  if (name.length < namePatternRules.maxLength.value) {
+                    setValue('name', name)
+                  }
                   field.onChange(e)
                 }}
                 value={field.value}
@@ -158,6 +177,7 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
               control={control}
               rules={{
                 required: 'Please enter a port name.',
+                ...namePatternRules,
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
