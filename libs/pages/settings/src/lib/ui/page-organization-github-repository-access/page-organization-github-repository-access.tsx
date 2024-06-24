@@ -1,6 +1,7 @@
 import { type GitAuthProvider, type GitRepository } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { GitTokenCreateEditModal, GitTokenList } from '@qovery/domains/organizations/feature'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
@@ -34,13 +35,14 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
       <div className="max-w-content-with-navigation-left p-8">
         <Section>
           <div className="mb-8 flex justify-between">
-            <div className="mr-5">
-              <Heading className="mb-2">Git Repository Access</Heading>
+            <div className="mr-5 space-y-3">
+              <Heading>Git Repository Access</Heading>
               <p className="text-xs text-neutral-400">
                 By default Qovery has access to all the repositories linked to your git account. If you want to give
                 Qovery access to additional repositories and manage the access from one place, you can configure a git
                 token.
               </p>
+              <NeedHelp />
             </div>
             <Button
               size="lg"

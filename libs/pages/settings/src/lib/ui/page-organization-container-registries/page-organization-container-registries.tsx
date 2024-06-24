@@ -1,4 +1,5 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
@@ -19,11 +20,12 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <div className="mb-8 flex justify-between">
-          <div>
-            <Heading className="h5 mb-2 text-neutral-400">Container registries</Heading>
+          <div className="space-y-3">
+            <Heading className="text-neutral-400">Container registries</Heading>
             <p className="text-xs text-neutral-400">
               Define and manage the container registry to be used within your organization to deploy applications.
             </p>
+            <NeedHelp />
           </div>
           <Button className="gap-2" size="lg" onClick={() => onAddRegistry()}>
             Add registry

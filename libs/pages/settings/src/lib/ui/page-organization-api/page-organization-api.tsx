@@ -1,18 +1,6 @@
 import { type OrganizationApiToken } from 'qovery-typescript-axios'
-import {
-  BlockContent,
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
-  Heading,
-  Icon,
-  IconAwesomeEnum,
-  LoaderSpinner,
-  Section,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
+import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -30,12 +18,13 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <div className="mb-8 flex justify-between">
-          <div>
-            <Heading className="h5 mb-2 text-neutral-400">API Token</Heading>
+          <div className="space-y-3">
+            <Heading className="text-neutral-400">API Token</Heading>
             <p className="text-xs text-neutral-400">
               API token allows third-party applications or script to access your organization via the Qovery API (CI/CD,
               Terraform script, Pulumi etc..). A role can be assigned to limit the Token permission.
             </p>
+            <NeedHelp />
           </div>
           <Button className="shrink-0 gap-2" size="lg" onClick={() => onAddToken()}>
             Add new

@@ -8,6 +8,7 @@ import {
   useDeleteLabelsGroup,
   useLabelsGroups,
 } from '@qovery/domains/organizations/feature'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import {
   BlockContent,
   Button,
@@ -39,11 +40,12 @@ export function PageOrganizationLabelsAnnotationsFeature() {
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <div className="mb-8 flex justify-between gap-3">
-          <div>
-            <Heading className="mb-2">Labels & Annotations</Heading>
+          <div className="space-y-3">
+            <Heading>Labels & Annotations</Heading>
             <p className="text-xs text-neutral-400">
               Define and manage the labels & annotations to be used within your organization.
             </p>
+            <NeedHelp />
           </div>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>

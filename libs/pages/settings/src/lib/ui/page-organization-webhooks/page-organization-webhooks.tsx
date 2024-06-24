@@ -1,4 +1,5 @@
 import { OrganizationWebhookKindEnum, type OrganizationWebhookResponse } from 'qovery-typescript-axios'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   BlockContent,
@@ -28,12 +29,13 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <div className="mb-8 flex justify-between gap-3">
-          <div>
-            <Heading className="mb-2">Webhook</Heading>
+          <div className="space-y-3">
+            <Heading>Webhook</Heading>
             <p className="text-xs text-neutral-400">
               Qovery allows you to create webhooks at organization-level so that, when an event happens on an
               environment within your organization, you can get notified on external applications (for instance, Slack).
             </p>
+            <NeedHelp />
           </div>
           <Button data-testid="add-new" onClick={props.openAddNew} size="lg" className="shrink-0 gap-2">
             Add new
