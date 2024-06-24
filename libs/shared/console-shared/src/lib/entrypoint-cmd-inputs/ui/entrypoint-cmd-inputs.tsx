@@ -12,6 +12,7 @@ export const validateCmdArguments = (value?: string) => {
   const errorMessage = 'Please enter a valid command.'
 
   const validateArgument = (arg: string) => {
+    // eslint-disable-next-line
     const invalidChars = /[|&;<>*?()\[\]{}$#\\`"!~]/
     return !invalidChars.test(arg)
   }
