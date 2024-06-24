@@ -7,13 +7,27 @@ export interface EntrypointCmdInputsProps {
   imageEntryPointFieldName?: string
   cmdArgumentsFieldName?: string
 }
-export const validateCmdArguments = (value?: string) => {
+
+const isValidJsonArray = (input: string): boolean => {
+  try {
+    const parsed = JSON.parse(input)
+    return Array.isArray(parsed)
+  } catch {
+    return false
+  }
+}
+
+export const validateCmdArguments = (value?: string): string | boolean => {
   if (!value) return true
+
   const errorMessage = 'Please enter a valid command.'
+
+  // Allow to keep JSON array format
+  if (isValidJsonArray(value)) return true
 
   const validateArgument = (arg: string) => {
     // eslint-disable-next-line
-    const invalidChars = /[|&;<>*?()\[\]{}$#\\`"!~]/
+    const invalidChars = /[|&;<>*?()\[\]{}$#\\`!~]/
     return !invalidChars.test(arg)
   }
 
@@ -42,6 +56,10 @@ export function EntrypointCmdInputs({
   cmdArgumentsFieldName = 'cmd_arguments',
 }: EntrypointCmdInputsProps) {
   const { control, watch } = useFormContext()
+
+  const watchCmdArguments = watch(cmdArgumentsFieldName)
+  const watchEntryPoint = watch(imageEntryPointFieldName)
+  const watchImageName = watch('image_name')
 
   return (
     <>
@@ -74,18 +92,24 @@ export function EntrypointCmdInputs({
           <InputTextArea
             dataTestId="input-textarea-cmd-arguments"
             name="cmd_arguments"
-            onChange={field.onChange}
+            onChange={(e) => {
+              if (isValidJsonArray(e.currentTarget.value)) {
+                const value = JSON.parse(e.currentTarget.value)
+                field.onChange(value.join(' '))
+              } else {
+                field.onChange(e)
+              }
+            }}
             value={field.value}
             label="CMD Arguments"
             hint={
               <>
                 Expected format: -h 0.0.0.0 -p 8080 string{' '}
-                {!error?.message && (watch(imageEntryPointFieldName) || watch(cmdArgumentsFieldName)) && (
+                {!error?.message && (watchEntryPoint || watchCmdArguments) && (
                   <>
                     <br />
-                    i.e: docker run{' '}
-                    {watch(imageEntryPointFieldName) ? '--entrypoint ' + watch(imageEntryPointFieldName) : ''}{' '}
-                    {watch('image_name')} {watch(cmdArgumentsFieldName)}
+                    i.e: docker run {watchEntryPoint ? '--entrypoint ' + watchEntryPoint : ''} {watchImageName}{' '}
+                    {watchCmdArguments}
                   </>
                 )}
               </>

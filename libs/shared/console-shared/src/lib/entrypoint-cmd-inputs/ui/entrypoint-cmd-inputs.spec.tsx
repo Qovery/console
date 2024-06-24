@@ -23,6 +23,7 @@ describe('EntrypointCmdInputs', () => {
         '--rm -v /host/path:/container/path -e ENV_VAR=value --name my_container -p 8080:80 --network my_network nginx:latest',
         '-d --name=my-container -h 192.168.1.1 -p 8080:80 nginx_image',
         '--rm -v -e --name my_container -p 8080:80 --network my_network nginx:latest',
+        '["test", "test2"]',
       ]
 
       validCommands.forEach((command) => {
@@ -54,6 +55,11 @@ describe('EntrypointCmdInputs', () => {
       it('with invalid command table character', () => {
         const invalidCommand = '--name my_container "]'
         expect(validateCmdArguments(invalidCommand)).toBe('Please enter a valid command. Invalid argument: "]')
+      })
+
+      it('with invalid JSON format', () => {
+        const invalidCommand = '["test", "test2'
+        expect(validateCmdArguments(invalidCommand)).toBe('Please enter a valid command. Invalid argument: ["test",')
       })
     })
   })
