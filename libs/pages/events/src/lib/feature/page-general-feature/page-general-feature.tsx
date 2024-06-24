@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom'
 import { createEnumParam } from 'serialize-query-params'
 import { NumberParam, StringParam, useQueryParams, withDefault } from 'use-query-params'
 import { type EventQueryParams, useFetchEvents } from '@qovery/domains/event'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -46,6 +47,7 @@ export function PageGeneralFeature() {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
+  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
 
   // Sync queryParams -> table filters
   useEffect(() => {
@@ -133,6 +135,7 @@ export function PageGeneralFeature() {
       handleClearFilter={handleClearFilter}
       filter={filter}
       setFilter={setFilter}
+      organization={organization}
     />
   )
 }

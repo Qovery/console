@@ -1,7 +1,8 @@
-import { addMonths } from 'date-fns'
+import { subDays } from 'date-fns'
 import {
   type ClusterCloudProviderInfoCredentials,
   type Environment,
+  type Organization,
   OrganizationEventTargetType,
   type Project,
 } from 'qovery-typescript-axios'
@@ -27,6 +28,7 @@ export interface CustomFilterProps {
   targetType?: string | null
   projectId?: string | null
   environmentId?: string | null
+  organization?: Organization
   targetId?: string | null
 }
 
@@ -46,6 +48,7 @@ export function CustomFilter({
   targetType,
   projectId,
   environmentId,
+  organization,
   targetId,
 }: CustomFilterProps) {
   const [searchParams] = useSearchParams()
@@ -59,7 +62,7 @@ export function CustomFilter({
           onChange={onChangeTimestamp}
           isOpen={isOpenTimestamp}
           maxDate={new Date()}
-          minDate={addMonths(new Date(), -1)}
+          minDate={subDays(new Date(), organization?.organization_plan?.audit_logs_retention_in_days ?? 30)}
           defaultDates={timestamps}
           showTimeInput
         >
