@@ -1,5 +1,5 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import { type RefObject } from 'react'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ButtonsActionsLogs, { type ButtonsActionsLogsProps } from './buttons-actions-logs'
 
 window.HTMLElement.prototype.scroll = jest.fn()
@@ -26,24 +26,20 @@ describe('ButtonsActionsLogs', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<ButtonsActionsLogs {...props} />)
+    const { baseElement } = renderWithProviders(<ButtonsActionsLogs {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should triggers forcedScroll on click', async () => {
-    const { getByTestId } = render(<ButtonsActionsLogs {...props} />)
+    const { userEvent } = renderWithProviders(<ButtonsActionsLogs {...props} />)
 
-    const scrollUpButton = getByTestId('scroll-up-button')
-    const scrollDownButton = getByTestId('scroll-down-button')
+    const scrollUpButton = screen.getByTestId('scroll-up-button')
+    const scrollDownButton = screen.getByTestId('scroll-down-button')
 
-    scrollUpButton.click()
-    await act(async () => {
-      expect(refScrollSection?.current?.scrollTop).toBe(0)
-    })
+    await userEvent.click(scrollUpButton)
+    expect(refScrollSection?.current?.scrollTop).toBe(0)
 
-    scrollDownButton.click()
-    await act(async () => {
-      expect(refScrollSection?.current?.scrollTop).toBe(refScrollSection?.current?.scrollHeight)
-    })
+    await userEvent.click(scrollDownButton)
+    expect(refScrollSection?.current?.scrollTop).toBe(refScrollSection?.current?.scrollHeight)
   })
 })

@@ -1,7 +1,7 @@
-import { act, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { defaultLivenessProbe, defaultReadinessProbe } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StepHealthchecks, { type StepHealthchecksProps } from './step-healthchecks'
 
 const props: StepHealthchecksProps = {
@@ -25,7 +25,7 @@ const props: StepHealthchecksProps = {
 
 describe('StepHealthchecks', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<StepHealthchecks {...props} />, {
         defaultValues: {
           ports: [
@@ -47,7 +47,7 @@ describe('StepHealthchecks', () => {
   })
 
   it('should submit the form on click', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<StepHealthchecks {...props} />, {
         defaultValues: {
           readiness_probe: {
@@ -86,16 +86,12 @@ describe('StepHealthchecks', () => {
       })
     )
 
-    const button = getByTestId('button-submit')
-    // wait one cycle that the button becomes enabled
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await act(() => {})
-
-    await act(() => {
-      button.click()
-    })
-
+    const button = await screen.findByTestId('button-submit')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
     expect(button).toBeEnabled()
+    await userEvent.click(button)
+
     expect(props.onSubmit).toHaveBeenCalled()
   })
 })

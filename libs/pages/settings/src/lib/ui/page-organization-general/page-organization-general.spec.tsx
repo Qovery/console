@@ -1,5 +1,5 @@
-import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageOrganizationGeneral, { type PageOrganizationGeneralProps } from './page-organization-general'
 
 describe('PageOrganizationGeneral', () => {
@@ -18,7 +18,7 @@ describe('PageOrganizationGeneral', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<PageOrganizationGeneral {...props} />, {
         defaultValues: defaultValues,
       })
@@ -27,41 +27,39 @@ describe('PageOrganizationGeneral', () => {
   })
 
   it('should render inputs', async () => {
-    const { getByTestId } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<PageOrganizationGeneral {...props} />, {
         defaultValues: defaultValues,
       })
     )
-    await act(() => {
-      expect(getByTestId('input-file')).toBeInTheDocument()
-      expect(getByTestId('input-name')).toBeInTheDocument()
-      expect(getByTestId('input-area')).toBeInTheDocument()
-      expect(getByTestId('input-website')).toBeInTheDocument()
-      expect(getByTestId('input-emails')).toBeInTheDocument()
-    })
+    expect(screen.getByTestId('input-file')).toBeInTheDocument()
+    expect(screen.getByTestId('input-name')).toBeInTheDocument()
+    expect(screen.getByTestId('input-area')).toBeInTheDocument()
+    expect(screen.getByTestId('input-website')).toBeInTheDocument()
+    expect(screen.getByTestId('input-emails')).toBeInTheDocument()
   })
 
   it('should submit the form', async () => {
     defaultValues.name = ''
 
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageOrganizationGeneral {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    const button = getByTestId('submit-button')
-    const inputName = getByTestId('input-name')
+    const button = await screen.findByTestId('submit-button')
+    const inputName = screen.getByTestId('input-name')
 
-    await act(() => {
-      expect(button).toBeDisabled()
-      fireEvent.input(inputName, { target: { value: 'hello world' } })
-    })
+    expect(button).toBeDisabled()
+    await userEvent.clear(inputName)
+    await userEvent.type(inputName, 'hello world')
 
-    await waitFor(() => {
-      button.click()
-      expect(button).toBeEnabled()
-      expect(props.onSubmit).toHaveBeenCalled()
-    })
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
+    await userEvent.click(button)
+
+    expect(props.onSubmit).toHaveBeenCalled()
   })
 })

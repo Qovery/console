@@ -1,6 +1,6 @@
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterGeneralSettings, { type ClusterGeneralSettingsProps } from './cluster-general-settings'
 
 describe('ClusterGeneralSettings', () => {
@@ -8,12 +8,12 @@ describe('ClusterGeneralSettings', () => {
     fromDetail: false,
   }
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<ClusterGeneralSettings {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ClusterGeneralSettings {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should init well the inputs with the form default values', async () => {
-    const { getByTestId } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterGeneralData>(<ClusterGeneralSettings {...props} />, {
         defaultValues: {
           name: 'test',
@@ -23,9 +23,9 @@ describe('ClusterGeneralSettings', () => {
       })
     )
 
-    const name = getByTestId('input-name')
-    const description = getByTestId('input-description')
-    const toggle = getByTestId('input-production-toggle')
+    const name = screen.getByTestId('input-name')
+    const description = screen.getByTestId('input-description')
+    const toggle = screen.getByTestId('input-production-toggle')
 
     expect((name as HTMLInputElement).value).toBe('test')
     expect((description.querySelector('textarea') as HTMLTextAreaElement).value).toBe('test')

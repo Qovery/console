@@ -1,4 +1,4 @@
-import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
+import { act, fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import InputFile, { type InputFileProps } from './input-file'
 
 describe('InputFile', () => {
@@ -7,20 +7,20 @@ describe('InputFile', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<InputFile {...props} />)
+    const { baseElement } = renderWithProviders(<InputFile {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render a file input field', () => {
-    const { getByTestId } = render(<InputFile {...props} />)
+    renderWithProviders(<InputFile {...props} />)
 
-    getByTestId('input-file-field')
+    screen.getByTestId('input-file-field')
   })
 
   it('should not show preview if no image has been selected', () => {
     props.value = undefined
 
-    const { baseElement } = render(<InputFile {...props} />)
+    const { baseElement } = renderWithProviders(<InputFile {...props} />)
 
     expect(baseElement.querySelector('img')).not.toBeInTheDocument()
   })
@@ -29,9 +29,9 @@ describe('InputFile', () => {
     const prop = {
       value: undefined,
     }
-    const { getByTestId } = render(<InputFile {...prop} />)
+    renderWithProviders(<InputFile {...prop} />)
     await act(() => {
-      const input = getByTestId('input-file-field')
+      const input = screen.getByTestId('input-file-field')
       const contentType = 'image/png'
       const b64Data =
         'iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=='
@@ -41,7 +41,7 @@ describe('InputFile', () => {
     })
 
     await waitFor(() => {
-      const img = getByTestId('input-file-image')
+      const img = screen.getByTestId('input-file-image')
       expect(img.getAttribute('src')).toBeTruthy()
     })
   })

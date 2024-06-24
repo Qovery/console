@@ -1,9 +1,9 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import React from 'react'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
+import { act, fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 
@@ -50,7 +50,7 @@ describe('PageSettingsAdvancedFeature', () => {
   })
 
   it('should render successfully', async () => {
-    const { baseElement } = render(<PageSettingsAdvancedFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsAdvancedFeature />)
     expect(baseElement).toBeTruthy()
 
     await act(async () => {
@@ -60,7 +60,7 @@ describe('PageSettingsAdvancedFeature', () => {
 
   it('should fetch ClusterAdvancedSettings if advanced_settings does not exist', async () => {
     useClusterAdvancedSettingsMockSpy.mockReturnValueOnce({ data: undefined, isLoading: false })
-    render(<PageSettingsAdvancedFeature />)
+    renderWithProviders(<PageSettingsAdvancedFeature />)
     expect(useClusterAdvancedSettingsMockSpy).toHaveBeenCalled()
 
     await act(async () => {
@@ -71,7 +71,7 @@ describe('PageSettingsAdvancedFeature', () => {
   // I think the useForm hook also use useState, this is why the first 4th call are to ignored. https://gist.github.com/mauricedb/eb2bae5592e3ddc64fa965cde4afe7bc
   it('should set the keys if application and advanced_settings are defined', async () => {
     jest.spyOn(React, 'useState').mockImplementation(useStateMock)
-    render(<PageSettingsAdvancedFeature />)
+    renderWithProviders(<PageSettingsAdvancedFeature />)
     expect(setState).toHaveBeenNthCalledWith(9, Object.keys(mockAdvancedSettings || {}).sort())
     await act(async () => {
       await promise
@@ -79,22 +79,20 @@ describe('PageSettingsAdvancedFeature', () => {
   })
 
   it('should edit ClusterAdvancedSettings if form is submitted', async () => {
-    const { getByLabelText, getByTestId } = render(<PageSettingsAdvancedFeature />)
+    const { userEvent } = renderWithProviders(<PageSettingsAdvancedFeature />)
 
-    await act(() => {
-      fireEvent.input(getByLabelText('loki.log_retention_in_week'), { target: { value: '2' } })
-      fireEvent.input(getByLabelText('aws.vpc.enable_s3_flow_logs'), { target: { value: 'true' } })
-      fireEvent.input(getByLabelText('load_balancer.size'), { target: { value: '/' } })
-      fireEvent.input(getByLabelText('cloud_provider.container_registry.tags'), {
-        target: { value: '{"test":"test"}' },
-      })
+    fireEvent.input(screen.getByLabelText('loki.log_retention_in_week'), { target: { value: '2' } })
+    fireEvent.input(screen.getByLabelText('aws.vpc.enable_s3_flow_logs'), { target: { value: 'true' } })
+    fireEvent.input(screen.getByLabelText('load_balancer.size'), { target: { value: '/' } })
+    fireEvent.input(screen.getByLabelText('cloud_provider.container_registry.tags'), {
+      target: { value: '{"test":"test"}' },
     })
 
-    expect(getByTestId('submit-button')).toBeEnabled()
-
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    const button = await screen.findByTestId('submit-button')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
+    await userEvent.click(screen.getByTestId('submit-button'))
 
     expect(editClusterAdvancedSettingsSpy).toHaveBeenCalledWith({
       clusterId: mockCluster.id,
@@ -114,7 +112,7 @@ describe('PageSettingsAdvancedFeature', () => {
 
   it('should init the form', async () => {
     const spy = jest.spyOn(InitFormValues, 'initFormValues')
-    render(<PageSettingsAdvancedFeature />)
+    renderWithProviders(<PageSettingsAdvancedFeature />)
     expect(spy).toHaveBeenCalled()
 
     await act(async () => {

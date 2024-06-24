@@ -1,5 +1,5 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import SettingsResourcesInstanceTypes, {
   type SettingsResourcesInstanceTypesProps,
 } from './setting-resources-instance-types'
@@ -14,7 +14,7 @@ const props: SettingsResourcesInstanceTypesProps = {
 
 describe('SettingsResourcesInstanceTypes', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<SettingsResourcesInstanceTypes {...props} />, {
         defaultValues: {
           instance_type: 'db.t3.medium',
@@ -25,7 +25,7 @@ describe('SettingsResourcesInstanceTypes', () => {
   })
 
   it('renders instance type label', () => {
-    render(
+    renderWithProviders(
       wrapWithReactHookForm(<SettingsResourcesInstanceTypes {...props} />, {
         defaultValues: {
           instance_type: 'db.t3.medium',
@@ -38,14 +38,14 @@ describe('SettingsResourcesInstanceTypes', () => {
   })
 
   it('renders warning banner when displayWarning is true', () => {
-    const { getByTestId } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<SettingsResourcesInstanceTypes {...props} />, {
         defaultValues: {
           instance_type: 'db.t3.medium',
         },
       })
     )
-    const warningBanner = getByTestId('settings-resources-instance-types-warning')
+    const warningBanner = screen.getByTestId('settings-resources-instance-types-warning')
     expect(warningBanner).toBeInTheDocument()
   })
 })

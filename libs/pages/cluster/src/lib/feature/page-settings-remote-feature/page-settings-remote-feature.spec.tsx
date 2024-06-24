@@ -1,6 +1,6 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
+import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsRemoteFeature, { handleSubmit } from './page-settings-remote-feature'
 
 const mockCluster = clusterFactoryMock(1)[0]
@@ -26,7 +26,7 @@ describe('PageSettingsRemoteFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsRemoteFeature />)
+    const { baseElement } = renderWithProviders(<PageSettingsRemoteFeature />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -41,18 +41,16 @@ describe('PageSettingsRemoteFeature', () => {
   })
 
   it('should edit Cluster if form is submitted', async () => {
-    const { getByLabelText, getByTestId } = render(<PageSettingsRemoteFeature />)
+    const { userEvent } = renderWithProviders(<PageSettingsRemoteFeature />)
 
-    await act(() => {
-      const input = getByLabelText('SSH Key')
-      fireEvent.input(input, { target: { value: 'hello' } })
-    })
+    const input = screen.getByLabelText('SSH Key')
+    fireEvent.input(input, { target: { value: 'hello' } })
 
-    expect(getByTestId('submit-button')).toBeEnabled()
-
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    const button = await screen.findByTestId('submit-button')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
+    await userEvent.click(button)
 
     const cloneCluster = handleSubmit({ ssh_key: 'hello' }, mockCluster)
 

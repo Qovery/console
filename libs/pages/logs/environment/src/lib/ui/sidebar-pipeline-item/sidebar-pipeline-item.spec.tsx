@@ -1,6 +1,6 @@
-import { render, waitFor } from '__tests__/utils/setup-jest'
 import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import SidebarPipelineItem, { type SidebarPipelineItemProps } from './sidebar-pipeline-item'
 
 const applications = applicationFactoryMock(2)
@@ -30,12 +30,12 @@ describe('SidebarPipelineItem', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement, getByText } = render(<SidebarPipelineItem {...props} />)
+    const { baseElement, getByText } = renderWithProviders(<SidebarPipelineItem {...props} />)
     expect(baseElement).toBeTruthy()
     expect(getByText('Stage 1')).toBeInTheDocument()
   })
 
-  it('should have message when no services', () => {
+  it('should have message when no services', async () => {
     props.services = []
     props.currentStage = {
       stage: {
@@ -48,12 +48,12 @@ describe('SidebarPipelineItem', () => {
       jobs: [],
     }
 
-    const { getByText, getByTestId } = render(<SidebarPipelineItem {...props} />)
+    const { userEvent } = renderWithProviders(<SidebarPipelineItem {...props} />)
 
-    getByTestId('toggle-stage').click()
+    await userEvent.click(screen.getByTestId('toggle-stage'))
 
     waitFor(() => {
-      expect(getByText('No service for this stage')).toBeInTheDocument()
+      expect(screen.getByText('No service for this stage')).toBeInTheDocument()
     })
   })
 })

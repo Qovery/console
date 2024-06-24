@@ -1,7 +1,7 @@
 import { StateEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { getStatusClusterMessage } from '@qovery/shared/util-js'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CardCluster, { type CardClusterProps, getColorForStatus } from './card-cluster'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
@@ -35,11 +35,13 @@ describe('CardCluster', () => {
 
     const { getByTestId } = renderWithProviders(<CardCluster {...props} />)
 
-    expect(getByTestId('tag-prod')).toBeInTheDocument()
-    expect(getByTestId('tag-default')).toBeInTheDocument()
-    expect(getByTestId('tag-region')).toHaveTextContent(props.cluster.region)
-    expect(getByTestId('tag-version')).toHaveTextContent(props.cluster.version)
-    expect(getByTestId('tag-instance')).toHaveTextContent(props.cluster.instance_type?.toLowerCase().replace('_', '.'))
+    expect(screen.getByTestId('tag-prod')).toBeInTheDocument()
+    expect(screen.getByTestId('tag-default')).toBeInTheDocument()
+    expect(screen.getByTestId('tag-region')).toHaveTextContent(props.cluster.region)
+    expect(screen.getByTestId('tag-version')).toHaveTextContent(props.cluster.version)
+    expect(screen.getByTestId('tag-instance')).toHaveTextContent(
+      props.cluster.instance_type?.toLowerCase().replace('_', '.')
+    )
   })
 
   it('should have a name', () => {
@@ -50,7 +52,7 @@ describe('CardCluster', () => {
 
   it('should have a status message', async () => {
     const { getByTestId } = renderWithProviders(<CardCluster {...props} />)
-    expect(getByTestId('status-message')).toHaveTextContent(new RegExp(getStatusClusterMessage(StateEnum.READY)))
+    expect(screen.getByTestId('status-message')).toHaveTextContent(new RegExp(getStatusClusterMessage(StateEnum.READY)))
   })
 
   it('should have a function to display color by status', () => {

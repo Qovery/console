@@ -1,4 +1,3 @@
-import { act, getAllByTestId, getByTestId, getByText, queryByTestId, render } from '__tests__/utils/setup-jest'
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -22,36 +21,34 @@ const props: RowEventProps = {
 
 describe('RowEvent', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<RowEvent {...props} />)
+    const { baseElement } = renderWithProviders(<RowEvent {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render 7 skeletons while loading', () => {
-    const { baseElement } = render(<RowEvent {...props} isPlaceholder />)
-    expect(getAllByTestId(baseElement, 'skeleton')).toHaveLength(7)
+    renderWithProviders(<RowEvent {...props} isPlaceholder />)
+    expect(screen.getAllByTestId('skeleton')).toHaveLength(7)
   })
 
   it('should render 7 cells with good content', () => {
-    const { baseElement } = render(<RowEvent {...props} />)
+    renderWithProviders(<RowEvent {...props} />)
 
-    getByText(baseElement, dateFullFormat(mockEvent.timestamp!))
-    getByTestId(baseElement, 'tag')
-    getByText(baseElement, upperCaseFirstLetter(mockEvent.target_type)!)
-    getByText(baseElement, mockEvent.target_name)
-    getByText(baseElement, upperCaseFirstLetter(mockEvent.sub_target_type)?.replace('_', ' '))
-    getByText(baseElement, mockEvent.triggered_by!)
-    getByText(baseElement, upperCaseFirstLetter(mockEvent.origin)!)
+    screen.getByText(dateFullFormat(mockEvent.timestamp!))
+    screen.getByTestId('tag')
+    screen.getByText(upperCaseFirstLetter(mockEvent.target_type))
+    screen.getByText(mockEvent.target_name!)
+    screen.getByText(upperCaseFirstLetter(mockEvent.sub_target_type!)?.replace('_', ' '))
+    screen.getByText(mockEvent.triggered_by!)
+    screen.getByText(upperCaseFirstLetter(mockEvent.origin)!)
   })
 
   it('should show expanded panel on click', async () => {
-    const { baseElement } = render(<RowEvent {...props} />)
+    const { userEvent } = renderWithProviders(<RowEvent {...props} />)
 
-    expect(queryByTestId(baseElement, 'expanded-panel')).not.toBeInTheDocument()
-    const button = getByTestId(baseElement, 'row-event')
+    expect(screen.queryByTestId('expanded-panel')).not.toBeInTheDocument()
+    const button = screen.getByTestId('row-event')
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
     expect(props.setExpanded).toHaveBeenCalledWith(true)
   })
 

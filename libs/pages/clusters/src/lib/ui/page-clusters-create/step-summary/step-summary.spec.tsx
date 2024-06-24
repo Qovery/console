@@ -1,6 +1,6 @@
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StepSummary, { type StepSummaryProps } from './step-summary'
 
 const STATIC_IP = 'STATIC_IP'
@@ -46,13 +46,11 @@ const props: StepSummaryProps = {
 
 describe('StepSummary', () => {
   it('should render successfully', () => {
-    const { baseElement, getByTestId } = render(wrapWithReactHookForm(<StepSummary {...props} />))
+    renderWithProviders(wrapWithReactHookForm(<StepSummary {...props} />))
 
-    getByTestId('summary-general')
-    getByTestId('summary-resources')
-    getByTestId('summary-features')
-    getByTestId('summary-remote')
-
-    expect(baseElement).toBeTruthy()
+    screen.getByTestId('summary-general')
+    screen.getByTestId('summary-resources')
+    screen.getByTestId('summary-features')
+    screen.getByTestId('summary-remote')
   })
 })

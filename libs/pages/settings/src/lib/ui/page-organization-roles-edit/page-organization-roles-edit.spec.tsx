@@ -1,4 +1,3 @@
-import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {
   EnvironmentModeEnum,
@@ -6,6 +5,7 @@ import {
   OrganizationCustomRoleProjectPermission,
 } from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { resetForm } from '../../feature/page-organization-roles-edit-feature/page-organization-roles-edit-feature'
 import PageOrganizationRolesEdit, { type PageOrganizationRolesEditProps } from './page-organization-roles-edit'
 
@@ -50,7 +50,7 @@ describe('PageOrganizationRolesEdit', () => {
     loadingForm: false,
   }
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
         defaultValues: defaultValues,
       })
@@ -62,13 +62,13 @@ describe('PageOrganizationRolesEdit', () => {
     props.currentRole = undefined
     props.loading = true
 
-    const { getByTestId } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    getByTestId('custom-roles-loader')
+    screen.getByTestId('custom-roles-loader')
   })
 
   it('should submit the form', async () => {
@@ -77,18 +77,18 @@ describe('PageOrganizationRolesEdit', () => {
     props.onSubmit = spy
     props.loading = false
 
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageOrganizationRolesEdit {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    const button = getByTestId('submit-save-button')
-    getByTestId('delete-button')
+    const button = await screen.findByTestId('submit-save-button')
+    screen.getByTestId('delete-button')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    await userEvent.click(button)
 
-    await waitFor(() => {
-      button.click()
-      expect(props.onSubmit).toHaveBeenCalled()
-    })
+    expect(props.onSubmit).toHaveBeenCalled()
   })
 })

@@ -1,4 +1,3 @@
-import { act, fireEvent, getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {
   EnvironmentModeEnum,
@@ -6,6 +5,7 @@ import {
   OrganizationWebhookEventEnum,
   OrganizationWebhookKindEnum,
 } from 'qovery-typescript-axios'
+import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import WebhookCrudModal, { type WebhookCrudModalProps } from './webhook-crud-modal'
 
 const props: WebhookCrudModalProps = {
@@ -25,7 +25,7 @@ describe('WebhookCrudModal', () => {
     environment_types_filter: [EnvironmentModeEnum.PRODUCTION],
   }
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm<OrganizationWebhookCreateRequest>(<WebhookCrudModal {...props} />, {
         defaultValues,
       })
@@ -34,41 +34,37 @@ describe('WebhookCrudModal', () => {
   })
 
   it('should display create', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<OrganizationWebhookCreateRequest>(<WebhookCrudModal {...props} isEdition={false} />, {
         defaultValues,
       })
     )
-    getByText(baseElement, 'Create')
+    screen.getByText('Create')
   })
 
   it('should display update', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<OrganizationWebhookCreateRequest>(<WebhookCrudModal {...props} isEdition={true} />, {
         defaultValues,
       })
     )
-    getByText(baseElement, 'Update')
+    screen.getByText('Update')
   })
 
   it('should call onSubmit', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
-    const { baseElement } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm<OrganizationWebhookCreateRequest>(<WebhookCrudModal {...props} />, {
         defaultValues,
       })
     )
-    const url = getByLabelText(baseElement, 'URL')
-    await act(() => {
-      fireEvent.change(url, { target: { value: 'https://test.com' } })
-    })
+    const url = screen.getByLabelText('URL')
+    fireEvent.change(url, { target: { value: 'https://test.com' } })
 
-    const button = getByText(baseElement, 'Create')
+    const button = screen.getByText('Create')
 
-    await act(() => {
-      button.click()
-    })
+    await userEvent.click(button)
 
     expect(props.onSubmit).toHaveBeenCalled()
   })

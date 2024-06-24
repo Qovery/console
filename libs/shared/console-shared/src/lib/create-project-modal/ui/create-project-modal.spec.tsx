@@ -1,5 +1,5 @@
-import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateProjectModal, { type CreateProjectModalProps } from './create-project-modal'
 
 describe('CreateProjectModal', () => {
@@ -10,7 +10,7 @@ describe('CreateProjectModal', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<CreateProjectModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<CreateProjectModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
@@ -18,23 +18,23 @@ describe('CreateProjectModal', () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
 
-    const { getByTestId } = render(wrapWithReactHookForm(<CreateProjectModal {...props} />))
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<CreateProjectModal {...props} />))
 
-    const inputName = getByTestId('input-name')
-    const inputDescription = getByTestId('input-description')
-    const button = getByTestId('submit-button')
+    const inputName = screen.getByTestId('input-name')
+    const inputDescription = screen.getByTestId('input-description')
+    const button = await screen.findByTestId('submit-button')
 
     expect(button).toBeDisabled()
 
-    await act(() => {
-      fireEvent.input(inputName, { target: { value: 'hello world' } })
-      fireEvent.input(inputDescription, { target: { value: 'hello' } })
-    })
+    await userEvent.clear(inputName)
+    await userEvent.type(inputName, 'hello world')
+    await userEvent.clear(inputDescription)
+    await userEvent.type(inputDescription, 'hello')
 
-    await waitFor(() => {
-      button.click()
-      expect(button).toBeEnabled()
-      expect(spy).toHaveBeenCalled()
-    })
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
+    await userEvent.click(button)
+    expect(spy).toHaveBeenCalled()
   })
 })

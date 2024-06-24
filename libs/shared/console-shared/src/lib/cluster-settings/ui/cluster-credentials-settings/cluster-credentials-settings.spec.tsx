@@ -21,8 +21,8 @@ describe('ClusterCredentialsSettings', () => {
   })
 
   it('should have loader', () => {
-    const { getByTestId } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
-    getByTestId('spinner')
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsSettings {...props} />))
+    screen.getByTestId('spinner')
   })
 
   it('should submit the form on click', async () => {
