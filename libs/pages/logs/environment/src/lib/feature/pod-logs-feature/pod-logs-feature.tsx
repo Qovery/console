@@ -66,6 +66,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const debouncedInfraMessages = useDebounce(infraMessages, debounceTime)
   const logCounter = useRef(0)
   const now = useMemo(() => Date.now(), [])
+  const OFFSET = 20
   const logs = useMemo(() => {
     const podFilter = filter.find(({ key }) => key === POD_NAME_KEY)
     return debouncedServiceMessages
@@ -75,7 +76,9 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
           ? debouncedInfraMessages.map((message) => ({ version: '', pod_name: '', container_name: '', ...message }))
           : []
       )
-      .filter((log, index, array) => (showPreviousLogs || array.length - 1 === index ? true : log.created_at > now))
+      .filter((log, index, array) =>
+        showPreviousLogs || array.length - 1 - OFFSET <= index ? true : log.created_at > now
+      )
       .sort((a, b) => (a.created_at && b.created_at ? a.created_at - b.created_at : 0))
   }, [debouncedServiceMessages, debouncedInfraMessages, enabledNginx, showPreviousLogs, now, filter])
   const debouncedLogs = useDebounce(logs, debounceTime)
