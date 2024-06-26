@@ -11,7 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { parseCmdDocker } from '@qovery/shared/util-js'
+import { parseCmd } from '@qovery/shared/util-js'
 import StepConfigure from '../../../ui/page-job-create/step-configure/step-configure'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
@@ -52,15 +52,15 @@ export function StepConfigureFeature() {
 
     if (jobType === ServiceTypeEnum.LIFECYCLE_JOB) {
       if (cloneData.on_start?.enabled && cloneData.on_start?.arguments_string) {
-        cloneData.on_start.arguments = parseCmdDocker(cloneData.on_start.arguments_string)
+        cloneData.on_start.arguments = parseCmd(cloneData.on_start.arguments_string)
       }
 
       if (cloneData.on_stop?.enabled && cloneData.on_stop?.arguments_string) {
-        cloneData.on_stop.arguments = parseCmdDocker(cloneData.on_stop.arguments_string)
+        cloneData.on_stop.arguments = parseCmd(cloneData.on_stop.arguments_string)
       }
 
       if (cloneData.on_delete?.enabled && cloneData.on_delete?.arguments_string) {
-        cloneData.on_delete.arguments = parseCmdDocker(cloneData.on_delete.arguments_string)
+        cloneData.on_delete.arguments = parseCmd(cloneData.on_delete.arguments_string)
       }
     }
 

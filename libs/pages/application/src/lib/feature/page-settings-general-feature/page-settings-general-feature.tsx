@@ -19,7 +19,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { buildGitRepoUrl, parseCmdDocker } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
@@ -61,7 +61,7 @@ export const handleGitApplicationSubmit = (
 
   cloneApplication = {
     ...cloneApplication,
-    arguments: data.cmd_arguments?.length ? parseCmdDocker(data.cmd_arguments) : [],
+    arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
     entrypoint: data.image_entry_point || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
@@ -83,7 +83,7 @@ export const handleContainerSubmit = (
     auto_deploy: data.auto_deploy,
     tag: data.image_tag || '',
     image_name: data.image_name || '',
-    arguments: data.cmd_arguments?.length ? parseCmdDocker(data.cmd_arguments) : [],
+    arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
     entrypoint: data.image_entry_point || '',
     registry_id: data.registry || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
@@ -104,7 +104,7 @@ export const handleJobSubmit = (
         cronjob: {
           ...cronjob,
           entrypoint: data.image_entry_point,
-          arguments: data.cmd_arguments?.length ? parseCmdDocker(data.cmd_arguments) : [],
+          arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
         },
       }
     })

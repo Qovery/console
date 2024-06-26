@@ -1,6 +1,14 @@
 import { parse } from 'shell-quote'
 
-export const parseCmdDocker = (cmd: string): string[] => {
+/*
+  Parse a command string into an array of arguments
+  Back-end expects an array of arguments that's why we flatten the array
+  Operator and comment are objects, we extract the 'op' and 'comment' properties
+
+  `shell-quote` library for more information:
+  https://www.npmjs.com/package/shell-quote
+*/
+export const parseCmd = (cmd: string): string[] => {
   const args = parse(cmd)
   return args.flatMap((arg) => {
     if (typeof arg === 'string') {
