@@ -25,6 +25,12 @@ describe('parseCmd function', () => {
     expect(result).toEqual(['docker', 'run', 'nginx', '#', ' start nginx container'])
   })
 
+  it('should handle env variables', () => {
+    const cmd = 'docker $ENV_VAR run nginx'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['docker', '$ENV_VAR', 'run', 'nginx'])
+  })
+
   it('should handle complex arguments and operations together', () => {
     const cmd = 'docker run -v "/data:/mnt/data" -p 8080:80 nginx "arg arg" # start nginx container'
     const result = parseCmd(cmd)

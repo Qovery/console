@@ -29,8 +29,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
         )}
         {scheduleEvent.arguments && scheduleEvent.arguments && scheduleEvent.arguments.length > 0 && (
           <p>
-            CMD Arguments:{' '}
-            <strong className="font-normal text-neutral-400">{scheduleEvent.arguments.toString()}</strong>
+            CMD Arguments: <strong className="font-normal text-neutral-400">{scheduleEvent.arguments.join(' ')}</strong>
           </p>
         )}
       </>
