@@ -11,6 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { parseCmd } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
 import { findTemplateData, useJobContainerCreateContext } from '../page-job-create-feature'
 
@@ -42,6 +43,10 @@ export function StepGeneralFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = {
       ...data,
+    }
+
+    if (data.cmd_arguments) {
+      cloneData.cmd = parseCmd(data.cmd_arguments)
     }
 
     if (data.serviceType === 'CONTAINER') {
