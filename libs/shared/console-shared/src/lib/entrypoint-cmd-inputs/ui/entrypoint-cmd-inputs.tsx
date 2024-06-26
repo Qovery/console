@@ -1,5 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputText, InputTextArea } from '@qovery/shared/ui'
+import { InputText } from '@qovery/shared/ui'
+import { parseCmdDocker } from '@qovery/shared/util-js'
 
 export interface EntrypointCmdInputsProps {
   entrypointRequired?: boolean
@@ -8,45 +9,9 @@ export interface EntrypointCmdInputsProps {
   cmdArgumentsFieldName?: string
 }
 
-const isValidJsonArray = (input: string): boolean => {
-  try {
-    const parsed = JSON.parse(input)
-    return Array.isArray(parsed)
-  } catch {
-    return false
-  }
-}
-
-export const validateCmdArguments = (value?: string): string | boolean => {
-  if (!value) return true
-
-  const errorMessage = 'Please enter a valid command.'
-
-  // Allow to keep JSON array format
-  if (isValidJsonArray(value)) return true
-
-  const validateArgument = (arg: string) => {
-    // eslint-disable-next-line
-    const invalidChars = /[|&;<>*?()\[\]{}$#\\`!~]/
-    return !invalidChars.test(arg)
-  }
-
-  try {
-    const args = value.split(/\s+/) // Split by any whitespace including multiple spaces
-
-    for (const arg of args) {
-      if (arg.trim() === '') {
-        return errorMessage + ' Detected extra space.'
-      }
-      if (!validateArgument(arg)) {
-        return errorMessage + ` Invalid argument: ${arg}`
-      }
-    }
-
-    return true
-  } catch (e) {
-    return errorMessage
-  }
+export const displayParsedCmd = (cmd: string) => {
+  const parsedArgs = parseCmdDocker(cmd)
+  return parsedArgs.join(' ')
 }
 
 export function EntrypointCmdInputs({
@@ -72,7 +37,7 @@ export function EntrypointCmdInputs({
         render={({ field, fieldState: { error } }) => (
           <InputText
             dataTestId="input-text-image-entry-point"
-            name="image_entry_point"
+            name={field.name}
             onChange={field.onChange}
             value={field.value}
             label="Image Entrypoint"
@@ -86,38 +51,27 @@ export function EntrypointCmdInputs({
         control={control}
         rules={{
           required: cmdRequired && 'Please enter a command.',
-          validate: validateCmdArguments,
         }}
-        render={({ field, fieldState: { error } }) => (
-          <InputTextArea
+        render={({ field }) => (
+          <InputText
             dataTestId="input-textarea-cmd-arguments"
-            name="cmd_arguments"
-            onChange={(e) => {
-              if (isValidJsonArray(e.currentTarget.value)) {
-                const value = JSON.parse(e.currentTarget.value)
-                field.onChange(value.join(' '))
-              } else {
-                field.onChange(e)
-              }
-            }}
+            name={field.name}
+            onChange={field.onChange}
             value={field.value}
             label="CMD Arguments"
-            hint={
-              <>
-                Expected format: -h 0.0.0.0 -p 8080 string{' '}
-                {!error?.message && (watchEntryPoint || watchCmdArguments) && (
-                  <>
-                    <br />
-                    i.e: docker run {watchEntryPoint ? '--entrypoint ' + watchEntryPoint : ''} {watchImageName}{' '}
-                    {watchCmdArguments}
-                  </>
-                )}
-              </>
-            }
-            error={error?.message}
+            hint={`Expected format: arg1 arg2 "complex arg3"`}
           />
         )}
       />
+      {(watchEntryPoint || watchCmdArguments) && (
+        <div className="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350">
+          <span className="select-none text-xs">Docker run format:</span>
+          <span className="text-sm ">
+            docker run {watchEntryPoint ? '--entrypoint ' + watchEntryPoint : ''}
+            {watchImageName ?? ''} {displayParsedCmd(watchCmdArguments ?? '')}
+          </span>
+        </div>
+      )}
     </>
   )
 }

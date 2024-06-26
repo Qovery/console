@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
+import { parseCmdDocker } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
@@ -75,19 +76,21 @@ export function PageSettingsConfigureJobFeature() {
           on_start: data.on_start?.enabled
             ? {
                 entrypoint: data.on_start.entrypoint,
-                arguments: data.on_start.arguments_string ? data.on_start.arguments_string.split(' ') : undefined,
+                arguments: data.on_start.arguments_string ? parseCmdDocker(data.on_start.arguments_string) : undefined,
               }
             : undefined,
           on_stop: data.on_stop?.enabled
             ? {
                 entrypoint: data.on_stop.entrypoint,
-                arguments: data.on_stop.arguments_string ? data.on_stop.arguments_string.split(' ') : undefined,
+                arguments: data.on_stop.arguments_string ? parseCmdDocker(data.on_stop.arguments_string) : undefined,
               }
             : undefined,
           on_delete: data.on_delete?.enabled
             ? {
                 entrypoint: data.on_delete.entrypoint,
-                arguments: data.on_delete.arguments_string ? data.on_delete.arguments_string.split(' ') : undefined,
+                arguments: data.on_delete.arguments_string
+                  ? parseCmdDocker(data.on_delete.arguments_string)
+                  : undefined,
               }
             : undefined,
         }

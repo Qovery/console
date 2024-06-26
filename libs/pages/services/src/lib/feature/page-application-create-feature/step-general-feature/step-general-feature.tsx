@@ -8,7 +8,7 @@ import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_CREATION_RESOURCES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, parseCmdDocker } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { findTemplateData } from '../../page-job-create-feature/page-job-create-feature'
 import { serviceTemplates } from '../../page-new-feature/service-templates'
@@ -47,7 +47,7 @@ export function StepGeneralFeature() {
       }
 
       if (data.cmd_arguments) {
-        cloneData.cmd = data.cmd_arguments.split(' ')
+        cloneData.cmd = parseCmdDocker(data.cmd_arguments)
       }
 
       setGeneralData(cloneData)

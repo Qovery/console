@@ -42,7 +42,6 @@ export function StepGeneralFeature() {
   const onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = {
       ...data,
-      cmd: data.cmd_arguments?.split(' '),
     }
 
     if (data.serviceType === 'CONTAINER') {
