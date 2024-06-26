@@ -29,12 +29,24 @@ export function AWSExistingVPC({ feature }: AWSExistingVPCProps) {
         <li className="text-neutral-400">
           <span className="mb-1 flex items-center text-xs font-medium">
             <Icon name={IconEnum.EKS} width="16" className="mr-2" />
-            EKS subnet IDs
+            EKS public subnet IDs
           </span>
           <ul className="grid grid-cols-3 gap-4">
             <Subnets title="Zone A:" value={feature.eks_subnets_zone_a_ids} />
             <Subnets title="Zone B:" value={feature.eks_subnets_zone_b_ids} />
             <Subnets title="Zone C:" value={feature.eks_subnets_zone_c_ids} />
+          </ul>
+        </li>
+
+        <li className="text-neutral-400">
+          <span className="mb-1 flex items-center text-xs font-medium">
+            <Icon name={IconEnum.EKS} width="16" className="mr-2" />
+            EKS private subnet IDs
+          </span>
+          <ul className="grid grid-cols-3 gap-4">
+            <Subnets title="Zone A:" value={feature.eks_karpenter_fargate_subnets_zone_a_ids} />
+            <Subnets title="Zone B:" value={feature.eks_karpenter_fargate_subnets_zone_b_ids} />
+            <Subnets title="Zone C:" value={feature.eks_karpenter_fargate_subnets_zone_c_ids} />
           </ul>
         </li>
 

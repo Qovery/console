@@ -10,7 +10,6 @@ export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
   features?: ClusterFeatureResponse[]
-  isKarpenter?: boolean
   goToBack?: () => void
 }
 
@@ -53,15 +52,10 @@ export function StepFeatures(props: StepFeaturesProps) {
                     label: 'Default (managed by Qovery)',
                     value: 'DEFAULT',
                   },
-                  ...(!props.isKarpenter
-                    ? [
-                        {
-                          label: 'Deploy on my existing VPC',
-                          value: 'EXISTING_VPC',
-                          isDisabled: props.isKarpenter,
-                        },
-                      ]
-                    : []),
+                  {
+                    label: 'Deploy on my existing VPC',
+                    value: 'EXISTING_VPC',
+                  },
                 ]}
                 onChange={field.onChange}
                 value={field.value}

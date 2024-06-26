@@ -10,7 +10,6 @@ export function useCloudProviderFeatures({ cloudProvider }: UseCloudProviderFeat
   return useQuery({
     ...queries.cloudProviders.features({ cloudProvider }),
     select(features) {
-      // TODO: hide existing VPC and Karpenter features for now
       return features?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
     },
   })

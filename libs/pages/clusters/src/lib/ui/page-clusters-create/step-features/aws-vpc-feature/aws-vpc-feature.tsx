@@ -15,8 +15,10 @@ function TooltipContentSubnets({ children, subnets }: PropsWithChildren & { subn
   if (!subnets || subnets.length === 0 || areSubnetsEmpty(subnets)) return null
 
   return (
-    <div className="flex items-start">
-      <div className="flex flex-col">{children}</div>
+    <div className="flex flex-col items-start gap-1">
+      <span className="inline-flex items-center gap-1">
+        {children} <Icon iconName="check" className="text-green-500" />
+      </span>
       <div>
         {subnets.map((item, index) => (
           <p key={index}>
@@ -36,28 +38,27 @@ function TooltipContent({
   values: {
     aws_vpc_eks_id: string
     eks_subnets?: Subnets[]
+    eks_karpenter_fargate_subnets?: Subnets[]
     mongodb_subnets?: Subnets[]
     rds_subnets?: Subnets[]
     redis_subnets?: Subnets[]
   }
 }) {
-  const { eks_subnets, mongodb_subnets, rds_subnets, redis_subnets } = values
+  const { eks_subnets, eks_karpenter_fargate_subnets, mongodb_subnets, rds_subnets, redis_subnets } = values
 
   return (
-    <div className="grid gap-2 p-2">
-      <TooltipContentSubnets subnets={eks_subnets}>
-        <Icon name={IconEnum.EKS} width="16" className="mr-2" />
-      </TooltipContentSubnets>
+    <div className="grid gap-4 p-2">
+      <TooltipContentSubnets subnets={eks_subnets}>EKS public subnet IDs</TooltipContentSubnets>
+      <TooltipContentSubnets subnets={eks_karpenter_fargate_subnets}>EKS private subnet IDs</TooltipContentSubnets>
       <TooltipContentSubnets subnets={mongodb_subnets}>
         <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
+        MongoDB subnet IDs
       </TooltipContentSubnets>
       <TooltipContentSubnets subnets={redis_subnets}>
         <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
+        Redis subnet IDs
       </TooltipContentSubnets>
-      <TooltipContentSubnets subnets={rds_subnets}>
-        <Icon name={IconEnum.MYSQL} width="16" className="mr-2" />
-        <Icon name={IconEnum.POSTGRESQL} width="16" className="mr-2" />
-      </TooltipContentSubnets>
+      <TooltipContentSubnets subnets={rds_subnets}>PostgreSQL/MySQL subnet IDs</TooltipContentSubnets>
     </div>
   )
 }
@@ -107,42 +108,83 @@ export function AWSVpcFeature() {
           </>
         )}
       />
-      <h4 className="mb-3 text-sm font-medium text-neutral-400">EKS subnet IDs</h4>
+      <h4 className="mb-3 text-sm font-medium text-neutral-400">Mandatory subnet IDs</h4>
       <ButtonPopoverSubnets
-        title="EKS subnets IDs"
-        name="aws_existing_vpc.eks_subnets"
+        sections={[
+          {
+            title: 'EKS public subnet IDs',
+            name: 'aws_existing_vpc.eks_subnets',
+            callout: (
+              <Callout.Root color="yellow">
+                <Callout.Icon>
+                  <Icon className="text-xs" iconName="exclamation-circle" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text className="text-xs">
+                  <Callout.TextHeading>
+                    You must enable auto-assign public IPv4 address in the subnets settings for EKS
+                  </Callout.TextHeading>
+                </Callout.Text>
+              </Callout.Root>
+            ),
+          },
+          {
+            title: 'EKS private subnet IDs',
+            name: 'aws_existing_vpc.eks_karpenter_fargate_subnets',
+            callout: (
+              <Callout.Root color="yellow">
+                <Callout.Icon>
+                  <Icon className="text-xs" iconName="exclamation-circle" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text className="text-xs">
+                  <Callout.TextHeading>
+                    These subnets have to be private and connected to internet through a NAT Gateway
+                  </Callout.TextHeading>
+                </Callout.Text>
+              </Callout.Root>
+            ),
+          },
+        ]}
         required
-        callout={
-          <Callout.Root className="mb-4" color="sky">
-            <Callout.Icon>
-              <Icon className="text-xs" iconName="triangle-exclamation" />
-            </Callout.Icon>
-            <Callout.Text className="text-xs">
-              <Callout.TextHeading>
-                You must enable auto-assign public IPv4 address in the subnets settings for EKS
-              </Callout.TextHeading>
-            </Callout.Text>
-          </Callout.Root>
-        }
       >
         <Icon name={IconEnum.EKS} width="16" className="mr-2" />
         EKS
       </ButtonPopoverSubnets>
       <hr className="my-3" />
-      <h4 className="mb-3 text-sm font-medium text-neutral-400">Subnets IDs for managed databases (optional)</h4>
+      <h4 className="mb-3 text-sm font-medium text-neutral-400">Subnet IDs for managed databases (optional)</h4>
       <div className="flex gap-3">
-        <ButtonPopoverSubnets title="MongoDB subnets IDs" name="aws_existing_vpc.mongodb_subnets">
+        <ButtonPopoverSubnets
+          sections={[
+            {
+              title: 'MongoDB subnet IDs',
+              name: 'aws_existing_vpc.mongodb_subnets',
+            },
+          ]}
+        >
           <Icon name={IconEnum.MONGODB} width="16" className="mr-2" />
           MongoDB
         </ButtonPopoverSubnets>
-        <ButtonPopoverSubnets title="MySQL/PostreSQL subnets IDs" name="aws_existing_vpc.rds_subnets">
+        <ButtonPopoverSubnets
+          sections={[
+            {
+              title: 'MySQL/PostreSQL subnet IDs',
+              name: 'aws_existing_vpc.rds_subnets',
+            },
+          ]}
+        >
           <Icon name={IconEnum.MYSQL} width="16" className="mr-2" />
           MySQL
           <span className="px-2">|</span>
           <Icon name={IconEnum.POSTGRESQL} width="16" className="mr-2" />
           PostgreSQL
         </ButtonPopoverSubnets>
-        <ButtonPopoverSubnets title="Redis subnets IDs" name="aws_existing_vpc.redis_subnets">
+        <ButtonPopoverSubnets
+          sections={[
+            {
+              title: 'Redis subnet IDs',
+              name: 'aws_existing_vpc.redis_subnets',
+            },
+          ]}
+        >
           <Icon name={IconEnum.REDIS} width="16" className="mr-2" />
           Redis
         </ButtonPopoverSubnets>

@@ -6,7 +6,14 @@ describe('ButtonPopoverSubnets', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(
-        <ButtonPopoverSubnets title="EKS subnets" name="eks_subnets">
+        <ButtonPopoverSubnets
+          sections={[
+            {
+              title: 'EKS subnets',
+              name: 'eks_subnets',
+            },
+          ]}
+        >
           EKS
         </ButtonPopoverSubnets>
       )
@@ -17,7 +24,14 @@ describe('ButtonPopoverSubnets', () => {
   it('should match snapshot', async () => {
     const { container, userEvent } = renderWithProviders(
       wrapWithReactHookForm(
-        <ButtonPopoverSubnets title="EKS subnets" name="eks_subnets">
+        <ButtonPopoverSubnets
+          sections={[
+            {
+              title: 'EKS subnets',
+              name: 'eks_subnets',
+            },
+          ]}
+        >
           EKS
         </ButtonPopoverSubnets>,
         {
@@ -39,7 +53,14 @@ describe('ButtonPopoverSubnets', () => {
   it('should match snapshot with invalid state', async () => {
     const { container, userEvent } = renderWithProviders(
       wrapWithReactHookForm(
-        <ButtonPopoverSubnets title="EKS subnets" name="eks_subnets">
+        <ButtonPopoverSubnets
+          sections={[
+            {
+              title: 'EKS subnets',
+              name: 'eks_subnets',
+            },
+          ]}
+        >
           EKS
         </ButtonPopoverSubnets>,
         {

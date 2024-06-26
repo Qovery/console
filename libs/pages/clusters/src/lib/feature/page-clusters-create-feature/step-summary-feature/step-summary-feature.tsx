@@ -171,6 +171,18 @@ export function StepSummaryFeature() {
                   eks_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.eks_subnets)!,
                   eks_subnets_zone_b_ids: getValueByKey('B', featuresData?.aws_existing_vpc?.eks_subnets)!,
                   eks_subnets_zone_c_ids: getValueByKey('C', featuresData?.aws_existing_vpc?.eks_subnets)!,
+                  eks_karpenter_fargate_subnets_zone_a_ids: getValueByKey(
+                    'A',
+                    featuresData?.aws_existing_vpc?.eks_karpenter_fargate_subnets
+                  )!,
+                  eks_karpenter_fargate_subnets_zone_b_ids: getValueByKey(
+                    'B',
+                    featuresData?.aws_existing_vpc?.eks_karpenter_fargate_subnets
+                  )!,
+                  eks_karpenter_fargate_subnets_zone_c_ids: getValueByKey(
+                    'C',
+                    featuresData?.aws_existing_vpc?.eks_karpenter_fargate_subnets
+                  )!,
                   // Those are the name that AWS give them
                   // MongoDB => documentdb
                   documentdb_subnets_zone_a_ids: getValueByKey('A', featuresData?.aws_existing_vpc?.mongodb_subnets)!,
