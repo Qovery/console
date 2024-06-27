@@ -67,6 +67,13 @@ export function PageGeneral({
     },
     {
       title: 'User',
+      filter: [
+        {
+          title: 'Filter by user',
+          key: 'triggered_by',
+          hideFilterNumber: true,
+        },
+      ],
     },
     {
       title: 'Source',
