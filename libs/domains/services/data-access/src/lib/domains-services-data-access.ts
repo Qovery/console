@@ -11,6 +11,7 @@ import {
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
+  type CleanFailedJobsRequest,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
   ContainerConfigurationApi,
@@ -957,6 +958,10 @@ export const mutations = {
       }))
       .exhaustive()
     const response = await mutation(serviceId, customDomainId)
+    return response.data
+  },
+  async cleanFailedJobs({ environmentId, payload }: { environmentId: string; payload: CleanFailedJobsRequest }) {
+    const response = await environmentActionApi.cleanFailedJobs(environmentId, payload)
     return response.data
   },
 }

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { Button, Callout, type CalloutRootProps, Icon, IconAwesomeEnum } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useCleanFailedJobs } from '../hooks/use-clean-failed-jobs/use-clean-failed-jobs'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useServiceType } from '../hooks/use-service-type/use-service-type'
 
@@ -16,6 +17,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
   const { organizationId = '', projectId = '' } = useParams()
   const { data: runningStatuses, isLoading: isRunningStatusesLoading } = useRunningStatus({ environmentId, serviceId })
   const { data: serviceType, isLoading: isServiceTypeLoading } = useServiceType({ environmentId, serviceId })
+  const { mutate: cleanFailedJobs } = useCleanFailedJobs()
   const [activeIndex, setActiveIndex] = useState(0)
 
   if (isRunningStatusesLoading || !runningStatuses || isServiceTypeLoading) {
@@ -27,7 +29,8 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     icon: IconAwesomeEnum
     color: CalloutRootProps['color']
     title: string
-    content?: ReactNode
+    description?: ReactNode
+    children?: ReactNode
   }[] = []
 
   if (runningStatuses.state === 'ERROR') {
@@ -36,10 +39,24 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
       icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
       color: 'red',
       title: serviceType === 'JOB' ? 'Job execution failure' : 'Application pods are in error',
-      content:
+      description:
         serviceType === 'JOB'
           ? 'One of the job executions have failed. Have a look at the table below for investigation.'
           : 'Some pods are experiencing issues. Have a look at the table below for investigation.',
+      children:
+        serviceType === 'JOB' && environmentId && serviceId ? (
+          <div className="flex flex-row items-center">
+            <Button
+              type="button"
+              color="neutral"
+              variant="outline"
+              size="md"
+              onClick={() => cleanFailedJobs({ environmentId, payload: { job_ids: [serviceId] } })}
+            >
+              Clear status
+            </Button>
+          </div>
+        ) : undefined,
     })
   }
 
@@ -49,7 +66,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
       icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
       color: 'yellow',
       title: 'Application pods have experienced issues in the past',
-      content: 'Some pods experienced issues in the past. Have a look at the table below for investigation.',
+      description: 'Some pods experienced issues in the past. Have a look at the table below for investigation.',
     })
   }
 
@@ -61,7 +78,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
         icon: IconAwesomeEnum.CHECK,
         color: 'red',
         title: 'Certificate Issues',
-        content: (
+        description: (
           <>
             Couldn’t issue certificates for:
             <ul>
@@ -109,7 +126,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     <>
       {callouts
         .filter((_, index) => index === activeIndex)
-        .map(({ id, icon, color, title, content }, index) => (
+        .map(({ id, icon, color, children, title, description: description }, index) => (
           <Callout.Root color={color} key={id}>
             <Callout.Icon>
               <Icon name={icon} />
@@ -119,15 +136,17 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
                 {callouts.length > 1 ? `${index + 1}/${callouts.length}` : undefined}
                 {title}
               </Callout.TextHeading>
-              <Callout.TextDescription>{content}</Callout.TextDescription>
+              <Callout.TextDescription>{description}</Callout.TextDescription>
             </Callout.Text>
-            <div className="flex flex-row gap-1.5">
+            {children}
+            <div className="flex flex-row items-center gap-1.5">
               {callouts.length > 1 && (
                 <>
                   <Button
                     type="button"
                     color="neutral"
                     variant="outline"
+                    size="md"
                     disabled={activeIndex === 0}
                     onClick={() => setActiveIndex((index) => index - 1)}
                   >
@@ -137,6 +156,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
                     type="button"
                     color="neutral"
                     variant="outline"
+                    size="md"
                     disabled={activeIndex === callouts.length - 1}
                     onClick={() => setActiveIndex((index) => index + 1)}
                   >
