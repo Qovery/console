@@ -1,6 +1,6 @@
-import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import selectEvent from 'react-select-event'
+import { act, fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CreateModal, { type CreateModalProps } from './create-modal'
 
 const props: CreateModalProps = {
@@ -21,12 +21,12 @@ const props: CreateModalProps = {
 
 describe('CreateModal', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<CreateModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<CreateModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the form', async () => {
-    const { getByDisplayValue, getAllByDisplayValue } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<CreateModal {...props} />, {
         defaultValues: {
           email: 'test@qovery.com',
@@ -35,16 +35,14 @@ describe('CreateModal', () => {
       })
     )
 
-    await act(() => {
-      getByDisplayValue('test@qovery.com')
-      getAllByDisplayValue('1111-1111-1111-1111')
-    })
+    screen.getByDisplayValue('test@qovery.com')
+    screen.getAllByDisplayValue('1111-1111-1111-1111')
   })
 
   it('should submit the form', async () => {
     const spy = jest.fn().mockImplementation((e) => e.preventDefault())
     props.onSubmit = spy
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<CreateModal {...props} />, {
         defaultValues: {
           email: 'test@qovery.com',
@@ -54,17 +52,17 @@ describe('CreateModal', () => {
     )
 
     await act(() => {
-      const inputEmail = getByTestId('input-email')
+      const inputEmail = screen.getByTestId('input-email')
       fireEvent.input(inputEmail, { target: { value: 'test-2@qovery.com' } })
-      selectEvent.select(getByTestId('input-role'), '2222-2222-2222-2222', { container: document.body })
+      selectEvent.select(screen.getByTestId('input-role'), '2222-2222-2222-2222', { container: document.body })
     })
 
-    const button = getByTestId('submit-button')
+    const button = await screen.findByTestId('submit-button')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
+    await userEvent.click(button)
 
-    await waitFor(() => {
-      button.click()
-      expect(button).toBeEnabled()
-      expect(spy).toHaveBeenCalled()
-    })
+    expect(spy).toHaveBeenCalled()
   })
 })

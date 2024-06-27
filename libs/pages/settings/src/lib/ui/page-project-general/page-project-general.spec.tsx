@@ -1,5 +1,5 @@
-import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageProjectGeneral, { type PageProjectGeneralProps } from './page-project-general'
 
 describe('PageProjectGeneral', () => {
@@ -14,7 +14,7 @@ describe('PageProjectGeneral', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<PageProjectGeneral {...props} />, {
         defaultValues: defaultValues,
       })
@@ -23,37 +23,31 @@ describe('PageProjectGeneral', () => {
   })
 
   it('should render inputs', async () => {
-    const { getByTestId } = render(
+    renderWithProviders(
       wrapWithReactHookForm(<PageProjectGeneral {...props} />, {
         defaultValues: defaultValues,
       })
     )
-    await act(() => {
-      expect(getByTestId('input-name')).toBeInTheDocument()
-    })
+    expect(screen.getByTestId('input-name')).toBeInTheDocument()
   })
 
   it('should submit the form', async () => {
     defaultValues.name = ''
 
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageProjectGeneral {...props} />, {
         defaultValues: defaultValues,
       })
     )
 
-    const button = getByTestId('submit-button')
-    const inputName = getByTestId('input-name')
+    const button = screen.getByTestId('submit-button')
+    const inputName = screen.getByTestId('input-name')
 
-    await act(() => {
-      expect(button).toBeDisabled()
-      fireEvent.input(inputName, { target: { value: 'hello world' } })
-    })
+    expect(button).toBeDisabled()
+    await userEvent.type(inputName, 'hello world')
 
-    await waitFor(() => {
-      button.click()
-      expect(button).toBeEnabled()
-      expect(props.onSubmit).toHaveBeenCalled()
-    })
+    await userEvent.click(button)
+    expect(button).toBeEnabled()
+    expect(props.onSubmit).toHaveBeenCalled()
   })
 })

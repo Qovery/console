@@ -1,9 +1,9 @@
-import { act, render, waitFor } from '__tests__/utils/setup-jest'
 import { useContext } from 'react'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceStageIdsContext, ServiceStageIdsProvider } from './service-stage-ids-context'
 
 describe('ServiceStageIdsContext', () => {
-  it('should provide the initial stage state', () => {
+  it('should provide the initial stage state', async () => {
     const TestComponent = () => {
       const { stageId, updateStageId } = useContext(ServiceStageIdsContext)
       return (
@@ -16,18 +16,16 @@ describe('ServiceStageIdsContext', () => {
       )
     }
 
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       <ServiceStageIdsProvider>
         <TestComponent />
       </ServiceStageIdsProvider>
     )
 
-    const stage = getByTestId('stage')
-    const setStageButton = getByTestId('set-stage')
+    const stage = screen.getByTestId('stage')
+    const setStageButton = screen.getByTestId('set-stage')
 
-    act(() => {
-      setStageButton.click()
-    })
+    await userEvent.click(setStageButton)
 
     waitFor(() => {
       expect(stage).toHaveTextContent('id')

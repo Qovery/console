@@ -1,6 +1,6 @@
-import { render, screen } from '__tests__/utils/setup-jest'
 import selectEvent from 'react-select-event'
 import { IconEnum } from '@qovery/shared/enums'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Icon from '../../icon/icon'
 import InputSelect, { type InputSelectProps } from './input-select'
 
@@ -18,25 +18,25 @@ beforeEach(() => {
 
 describe('InputSelect', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<InputSelect {...props} />)
+    const { baseElement } = renderWithProviders(<InputSelect {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should have a label', () => {
-    render(<InputSelect {...props} />)
+    renderWithProviders(<InputSelect {...props} />)
     const label = screen.getByTestId('select').querySelector('label')
     expect(label).toBeTruthy()
   })
 
   it('should display an error', () => {
     props.error = 'Error'
-    render(<InputSelect {...props} />)
+    renderWithProviders(<InputSelect {...props} />)
     const select = screen.getByTestId('select')
     expect(select).toHaveClass('input--error')
   })
 
   it('should select second item in a single select', async () => {
-    render(<InputSelect {...props} />)
+    renderWithProviders(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
     await selectEvent.select(realSelect, 'Test 2')
@@ -45,7 +45,7 @@ describe('InputSelect', () => {
   })
 
   it('should display the icon for the selected option on single only', async () => {
-    render(<InputSelect {...props} />)
+    renderWithProviders(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
     await selectEvent.select(realSelect, 'Test 2')
@@ -54,7 +54,7 @@ describe('InputSelect', () => {
   })
 
   it('should not display the icon for the selected option in a multi', async () => {
-    render(<InputSelect {...props} isMulti />)
+    renderWithProviders(<InputSelect {...props} isMulti />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
     await selectEvent.select(realSelect, 'Test 2')
@@ -63,7 +63,7 @@ describe('InputSelect', () => {
   })
 
   it('should select second item and first item in a multiple select', async () => {
-    render(<InputSelect isMulti={true} {...props} />)
+    renderWithProviders(<InputSelect isMulti={true} {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
     await selectEvent.select(realSelect, ['Test 2', 'Test 1'])
@@ -73,7 +73,7 @@ describe('InputSelect', () => {
 
   it('should be disabled', () => {
     props.disabled = true
-    render(<InputSelect {...props} />)
+    renderWithProviders(<InputSelect {...props} />)
     const select = screen.getByTestId('select')
     expect(select).toHaveClass('!bg-neutral-100')
   })
@@ -95,13 +95,13 @@ describe('InputSelect', () => {
         onClickEditable: mockAction,
       },
     ]
-    const { getByTestId } = render(<InputSelect {...props} />)
+    const { userEvent } = renderWithProviders(<InputSelect {...props} />)
     const realSelect = screen.getByLabelText('Select Multiple')
 
     await selectEvent.select(realSelect, ['Test 2', 'Test 1'])
 
-    const editIcon = getByTestId('selected-edit-icon')
-    editIcon.click()
+    const editIcon = screen.getByTestId('selected-edit-icon')
+    await userEvent.click(editIcon)
 
     expect(mockAction).toHaveBeenCalledTimes(1)
   })
@@ -111,12 +111,12 @@ describe('InputSelect', () => {
       label: 'New element',
       onClick: jest.fn(),
     }
-    const { getByTestId } = render(<InputSelect {...props} />)
+    renderWithProviders(<InputSelect {...props} />)
 
     const realSelect = screen.getByLabelText('Select Multiple')
     selectEvent.openMenu(realSelect)
 
-    const input = getByTestId('input-menu-list-button')
+    const input = screen.getByTestId('input-menu-list-button')
     input.click()
 
     expect(props.menuListButton.onClick).toHaveBeenCalledTimes(1)
@@ -130,7 +130,7 @@ describe('InputSelect', () => {
     ]
     const onChangeMock = jest.fn()
 
-    render(<InputSelect placeholder="Filter" isFilter={true} options={options} onChange={onChangeMock} />)
+    renderWithProviders(<InputSelect placeholder="Filter" isFilter={true} options={options} onChange={onChangeMock} />)
     const realSelect = screen.getByText('Filter')
 
     await selectEvent.select(realSelect, 'Option 2')

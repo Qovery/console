@@ -1,5 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { applicationFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import Sidebar, { type SidebarProps } from './sidebar'
 
 describe('Sidebar', () => {
@@ -10,14 +10,14 @@ describe('Sidebar', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Sidebar {...props} />)
+    const { baseElement } = renderWithProviders(<Sidebar {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should toggles sidebar visibility when the button is clicked', () => {
-    const { getByTestId } = render(<Sidebar {...props} />)
-    const sidebar = getByTestId('sidebar')
-    const toggleButton = getByTestId('sidebar-resize-button')
+  it('should toggles sidebar visibility when the button is clicked', async () => {
+    renderWithProviders(<Sidebar {...props} />)
+    const sidebar = screen.getByTestId('sidebar')
+    const toggleButton = screen.getByTestId('sidebar-resize-button')
 
     toggleButton.click()
 

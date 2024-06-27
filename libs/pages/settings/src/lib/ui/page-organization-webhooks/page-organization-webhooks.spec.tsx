@@ -1,13 +1,5 @@
-import {
-  act,
-  fireEvent,
-  getAllByTestId,
-  getByLabelText,
-  getByTestId,
-  getByText,
-  render,
-} from '__tests__/utils/setup-jest'
 import { webhookFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import PageOrganizationWebhooks, { type PageOrganizationWebhooksProps } from './page-organization-webhooks'
 
 const mockWebhooks = webhookFactoryMock(3)
@@ -22,69 +14,61 @@ const props: PageOrganizationWebhooksProps = {
 
 describe('PageOrganizationWebhooks', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOrganizationWebhooks {...props} />)
+    const { baseElement } = renderWithProviders(<PageOrganizationWebhooks {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should open create modal on click on add new', async () => {
-    const { baseElement } = render(<PageOrganizationWebhooks {...props} />)
-    const button = getByTestId(baseElement, 'add-new')
+    const { userEvent } = renderWithProviders(<PageOrganizationWebhooks {...props} />)
+    const button = screen.getByTestId('add-new')
 
-    await act(() => {
-      fireEvent.click(button)
-    })
+    await userEvent.click(button)
 
     expect(props.openAddNew).toHaveBeenCalled()
   })
 
   it('should open edit modal on click on cog', async () => {
-    const { baseElement } = render(<PageOrganizationWebhooks {...props} />)
-    const button = getAllByTestId(baseElement, 'edit-webhook')[0]
+    const { userEvent } = renderWithProviders(<PageOrganizationWebhooks {...props} />)
+    const button = screen.getAllByTestId('edit-webhook')[0]
 
-    await act(() => {
-      fireEvent.click(button)
-    })
+    await userEvent.click(button)
 
     expect(props.openEdit).toHaveBeenCalledWith(mockWebhooks[0])
   })
 
   it('should display three rows with good values inside', async () => {
-    const { baseElement } = render(<PageOrganizationWebhooks {...props} />)
-    const rows = getAllByTestId(baseElement, 'webhook-row')
+    renderWithProviders(<PageOrganizationWebhooks {...props} />)
+    const rows = screen.getAllByTestId('webhook-row')
     expect(rows).toHaveLength(3)
 
-    if (mockWebhooks[0].target_url) getByText(rows[0], mockWebhooks[0].target_url)
-    getByTestId(rows[0], 'edit-webhook')
-    getByTestId(rows[0], 'input-toggle')
-    getByTestId(rows[0], 'delete-webhook')
+    if (mockWebhooks[0].target_url) within(rows[0]).getByText(mockWebhooks[0].target_url)
+    within(rows[0]).getByTestId('edit-webhook')
+    within(rows[0]).getByTestId('input-toggle')
+    within(rows[0]).getByTestId('delete-webhook')
   })
 
   it('should call onToggle', async () => {
-    const { baseElement } = render(<PageOrganizationWebhooks {...props} />)
-    const toggles = getAllByTestId(baseElement, 'input-toggle')
+    const { userEvent } = renderWithProviders(<PageOrganizationWebhooks {...props} />)
+    const toggles = screen.getAllByTestId('input-toggle')
 
-    await act(() => {
-      const input = getByLabelText(toggles[0], 'toggle-btn')
-      fireEvent.click(input)
-    })
+    const input = within(toggles[0]).getByLabelText('toggle-btn')
+    await userEvent.click(input)
 
     expect(props.onToggle).toHaveBeenCalledWith(mockWebhooks[0].id, !mockWebhooks[0].enabled)
   })
 
   it('should display empty placeholder', async () => {
-    const { baseElement } = render(<PageOrganizationWebhooks {...props} webhooks={[]} />)
+    renderWithProviders(<PageOrganizationWebhooks {...props} webhooks={[]} />)
 
-    getByTestId(baseElement, 'empty-webhook')
+    screen.getByTestId('empty-webhook')
   })
 
   it('should call onDelete', async () => {
-    const { baseElement } = render(<PageOrganizationWebhooks {...props} />)
-    const rows = getAllByTestId(baseElement, 'webhook-row')
+    const { userEvent } = renderWithProviders(<PageOrganizationWebhooks {...props} />)
+    const rows = screen.getAllByTestId('webhook-row')
 
-    const toggle = getByTestId(rows[0], 'delete-webhook')
-    await act(() => {
-      toggle.click()
-    })
+    const toggle = within(rows[0]).getByTestId('delete-webhook')
+    await userEvent.click(toggle)
 
     expect(props.onDelete).toHaveBeenCalledWith(mockWebhooks[0])
   })

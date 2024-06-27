@@ -1,7 +1,7 @@
 import { Wrapper } from '__tests__/utils/providers'
-import { act, renderHook } from '__tests__/utils/setup-jest'
 import { useLocation } from 'react-router-dom'
 import { ACCEPT_INVITATION_URL, LOGIN_URL } from '@qovery/shared/routes'
+import { act, renderHook } from '@qovery/shared/util-tests'
 import { useInviteMember } from './use-invite-member'
 
 // mock useNavigate
@@ -26,9 +26,9 @@ describe('useInviteMember Hook', () => {
       pathname: 'login',
     })
 
-    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+    const { result } = renderHook(() => useInviteMember(), { wrapper: Wrapper })
 
-    const { onSearchUpdate } = renderedHook.result.current
+    const { onSearchUpdate } = result.current
     await act(() => {
       onSearchUpdate()
     })
@@ -46,14 +46,14 @@ describe('useInviteMember Hook', () => {
       pathname: '/organization',
     })
 
-    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+    const { result } = renderHook(() => useInviteMember(), { wrapper: Wrapper })
 
-    const { checkTokenInStorage } = renderedHook.result.current
+    const { checkTokenInStorage } = result.current
     await act(() => {
       checkTokenInStorage()
     })
 
-    const { redirectToAcceptPageGuard } = renderedHook.result.current
+    const { redirectToAcceptPageGuard } = result.current
     await act(() => {
       redirectToAcceptPageGuard()
     })
@@ -67,14 +67,14 @@ describe('useInviteMember Hook', () => {
       pathname: LOGIN_URL,
     })
 
-    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+    const { result } = renderHook(() => useInviteMember(), { wrapper: Wrapper })
 
-    const { checkTokenInStorage } = renderedHook.result.current
+    const { checkTokenInStorage } = result.current
     await act(() => {
       checkTokenInStorage()
     })
 
-    const { redirectToAcceptPageGuard } = renderedHook.result.current
+    const { redirectToAcceptPageGuard } = result.current
     await act(() => {
       redirectToAcceptPageGuard()
     })
@@ -88,14 +88,14 @@ describe('useInviteMember Hook', () => {
       pathname: ACCEPT_INVITATION_URL,
     })
 
-    const renderedHook = renderHook(() => useInviteMember(), { wrapper: Wrapper })
+    const { result } = renderHook(() => useInviteMember(), { wrapper: Wrapper })
 
-    const { checkTokenInStorage } = renderedHook.result.current
+    const { checkTokenInStorage } = result.current
     await act(() => {
       checkTokenInStorage()
     })
 
-    const { redirectToAcceptPageGuard } = renderedHook.result.current
+    const { redirectToAcceptPageGuard } = result.current
     await act(() => {
       redirectToAcceptPageGuard()
     })

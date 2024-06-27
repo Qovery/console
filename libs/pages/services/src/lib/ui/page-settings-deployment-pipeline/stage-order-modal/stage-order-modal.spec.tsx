@@ -1,5 +1,5 @@
-import { render } from '__tests__/utils/setup-jest'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StageOrderModal, { type StageOrderModalProps } from './stage-order-modal'
 
 const stages = deploymentStagesFactoryMock(3)
@@ -13,26 +13,26 @@ const props: StageOrderModalProps = {
 
 describe('StageOrderModal', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<StageOrderModal {...props} />)
+    const { baseElement } = renderWithProviders(<StageOrderModal {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   test('should renders the stages in the correct order', () => {
-    const { getByText } = render(<StageOrderModal {...props} />)
+    renderWithProviders(<StageOrderModal {...props} />)
 
-    const stage1 = getByText(stages[0].name || '')
-    const stage2 = getByText(stages[1].name || '')
-    const stage3 = getByText(stages[2].name || '')
+    const stage1 = screen.getByText(stages[0].name || '')
+    const stage2 = screen.getByText(stages[1].name || '')
+    const stage3 = screen.getByText(stages[2].name || '')
     expect(stage1).toBeInTheDocument()
     expect(stage2).toBeInTheDocument()
     expect(stage3).toBeInTheDocument()
   })
 
-  test('should calls onClose when cancel button is clicked', () => {
-    const { getByTestId } = render(<StageOrderModal {...props} />)
+  test('should calls onClose when cancel button is clicked', async () => {
+    const { userEvent } = renderWithProviders(<StageOrderModal {...props} />)
 
-    const cancelButton = getByTestId('cancel-button')
-    cancelButton.click()
+    const cancelButton = screen.getByTestId('cancel-button')
+    await userEvent.click(cancelButton)
     expect(props.onClose).toHaveBeenCalled()
   })
 })

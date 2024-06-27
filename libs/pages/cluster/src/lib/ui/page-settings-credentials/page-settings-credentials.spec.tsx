@@ -1,7 +1,7 @@
-import { render, waitFor } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { credentialsMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsGeneral, { type PageSettingsCredentialsProps } from './page-settings-credentials'
 
 const mockCredentials = credentialsMock(2)
@@ -18,22 +18,19 @@ describe('PageSettingsGeneral', () => {
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = render(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should submit the form', async () => {
-    const { getByTestId } = render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
         defaultValues,
       })
     )
 
-    const button = getByTestId('submit-button')
-
-    await waitFor(() => {
-      button.click()
-      expect(props.onSubmit).toHaveBeenCalled()
-    })
+    const button = screen.getByTestId('submit-button')
+    await userEvent.click(button)
+    expect(props.onSubmit).toHaveBeenCalled()
   })
 })

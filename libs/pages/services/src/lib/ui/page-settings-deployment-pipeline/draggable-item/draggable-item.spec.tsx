@@ -1,7 +1,7 @@
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock, databaseFactoryMock } from '@qovery/shared/factories'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import DraggableItem, { type DraggableItemProps } from './draggable-item'
 
 const applications = applicationFactoryMock(1)
@@ -28,10 +28,10 @@ describe('DraggableItem', () => {
   it('should render a database content', () => {
     props.services = databases
     props.serviceId = databases[0].id
-    const { getByText, getByTestId } = renderWithProviders(<DraggableItem {...props} />)
+    renderWithProviders(<DraggableItem {...props} />)
 
-    expect(getByText(databases[0].name)).toBeInTheDocument()
-    expect(getByTestId('draggable-item-subtitle')).toHaveTextContent(
+    expect(screen.getByText(databases[0].name)).toBeInTheDocument()
+    expect(screen.getByTestId('draggable-item-subtitle')).toHaveTextContent(
       `${upperCaseFirstLetter(databases[0].type)} - ${upperCaseFirstLetter(databases[0].mode)}`
     )
   })

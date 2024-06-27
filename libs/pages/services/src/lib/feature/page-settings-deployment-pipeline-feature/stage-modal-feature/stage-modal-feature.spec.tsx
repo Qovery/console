@@ -1,7 +1,7 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import * as environmentDomains from '@qovery/domains/environments/feature'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { StageModalFeature, type StageModalFeatureProps } from './stage-modal-feature'
 
 const useCreateEnvironmentDeploymentStageMockSpy = jest.spyOn(
@@ -25,10 +25,10 @@ describe('StageModalFeature', () => {
   })
 
   it('should renders the StageModal with stage values when editing', () => {
-    const { getByLabelText, getByText } = render(<StageModalFeature {...props} />)
-    expect(getByLabelText(/name/i)).toHaveValue(stage.name)
-    expect(getByLabelText(/description/i)).toHaveValue(stage.description)
-    expect(getByText(/confirm/i)).toBeInTheDocument()
+    renderWithProviders(<StageModalFeature {...props} />)
+    expect(screen.getByLabelText(/name/i)).toHaveValue(stage.name)
+    expect(screen.getByLabelText(/description/i)).toHaveValue(stage.description)
+    expect(screen.getByText(/confirm/i)).toBeInTheDocument()
   })
 
   it('should submits the form with createEnvironmentDeploymentStage when no stage is provided', async () => {
@@ -37,24 +37,20 @@ describe('StageModalFeature', () => {
       mutateAsync,
     })
 
-    const { getByTestId, getByLabelText } = render(
-      <StageModalFeature onClose={onClose} environmentId={environmentId} />
-    )
+    const { userEvent } = renderWithProviders(<StageModalFeature onClose={onClose} environmentId={environmentId} />)
 
-    const inputName = getByTestId('input-name')
-    const inputDescription = getByLabelText(/description/i)
-    const submitButton = getByTestId('submit-button')
+    const inputName = screen.getByTestId('input-name')
+    const inputDescription = screen.getByLabelText(/description/i)
+    const submitButton = screen.getByTestId('submit-button')
 
-    await act(async () => {
-      fireEvent.change(inputName, { target: { value: 'New Stage' } })
-      fireEvent.change(inputDescription, { target: { value: 'New Stage Description' } })
-    })
+    await userEvent.clear(inputName)
+    await userEvent.type(inputName, 'New Stage')
+    await userEvent.clear(inputDescription)
+    await userEvent.type(inputDescription, 'New Stage Description')
 
     expect(submitButton).toBeEnabled()
 
-    await act(() => {
-      submitButton.click()
-    })
+    await userEvent.click(submitButton)
 
     expect(mutateAsync).toHaveBeenCalledWith({
       environmentId,
@@ -68,22 +64,20 @@ describe('StageModalFeature', () => {
       mutateAsync,
     })
 
-    const { getByLabelText, getByTestId } = render(<StageModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<StageModalFeature {...props} />)
 
-    const inputName = getByTestId('input-name')
-    const inputDescription = getByLabelText(/description/i)
-    const submitButton = getByTestId('submit-button')
+    const inputName = screen.getByTestId('input-name')
+    const inputDescription = screen.getByLabelText(/description/i)
+    const submitButton = screen.getByTestId('submit-button')
 
-    await act(async () => {
-      fireEvent.change(inputName, { target: { value: 'Updated Stage' } })
-      fireEvent.change(inputDescription, { target: { value: 'Updated Stage Description' } })
-    })
+    await userEvent.clear(inputName)
+    await userEvent.type(inputName, 'Updated Stage')
+    await userEvent.clear(inputDescription)
+    await userEvent.type(inputDescription, 'Updated Stage Description')
 
     expect(submitButton).toBeEnabled()
 
-    await act(() => {
-      submitButton.click()
-    })
+    await userEvent.click(submitButton)
 
     expect(mutateAsync).toHaveBeenCalledWith({
       stageId: stage.id,

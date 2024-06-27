@@ -1,9 +1,9 @@
-import { getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import DarkModeEnabler from './dark-mode-enabler'
 
 describe('DarkModeEnabler', () => {
   it('should render without dark mode', async () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <DarkModeEnabler isDarkMode={false}>
         <p data-testid="root">Hey</p>
       </DarkModeEnabler>
@@ -15,7 +15,7 @@ describe('DarkModeEnabler', () => {
   })
 
   it('should add dark class on root element', async () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <DarkModeEnabler isDarkMode={true}>
         <p data-testid="root">Hey</p>
       </DarkModeEnabler>
@@ -26,12 +26,12 @@ describe('DarkModeEnabler', () => {
   })
 
   it('should render its children', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       <DarkModeEnabler isDarkMode={false}>
         <p data-testid="root">Hey</p>
       </DarkModeEnabler>
     )
 
-    getByTestId(baseElement, 'root')
+    screen.getByTestId('root')
   })
 })

@@ -114,8 +114,10 @@ describe('PageDatabaseCreateResourcesFeature', () => {
     expect(screen.getByText('db.t3.medium')).toBeInTheDocument()
 
     const button = screen.getByTestId('button-submit')
-
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
     await userEvent.click(button)
+
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/services/create/database/post')
   })
 })

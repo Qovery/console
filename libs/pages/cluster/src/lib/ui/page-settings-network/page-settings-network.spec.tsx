@@ -1,4 +1,4 @@
-import { act, fireEvent, render, waitFor } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsNetwork, { type PageSettingsNetworkProps } from './page-settings-network'
 
 let props: PageSettingsNetworkProps
@@ -20,7 +20,7 @@ describe('PageSettingsNetwork', () => {
     }
   })
   it('should render successfully', () => {
-    const { baseElement } = render(<PageSettingsNetwork {...props} />)
+    const { baseElement } = renderWithProviders(<PageSettingsNetwork {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -38,31 +38,27 @@ describe('PageSettingsNetwork', () => {
       },
     ]
 
-    const { findAllByTestId } = render(<PageSettingsNetwork {...props} />)
+    renderWithProviders(<PageSettingsNetwork {...props} />)
 
-    await waitFor(async () => {
-      const formRows = await findAllByTestId('form-row')
-      expect(formRows).toHaveLength(2)
-    })
+    const formRows = await screen.findAllByTestId('form-row')
+    expect(formRows).toHaveLength(2)
   })
 
   it('should have a row should have two information, 1 delete button and 1 edit', async () => {
-    const { findAllByTestId } = render(<PageSettingsNetwork {...props} />)
+    renderWithProviders(<PageSettingsNetwork {...props} />)
 
-    await waitFor(async () => {
-      const formRows = await findAllByTestId('form-row')
-      expect(formRows[0].querySelectorAll('[data-testid="form-row-target"]')).toHaveLength(1)
-      expect(formRows[0].querySelectorAll('[data-testid="form-row-destination"]')).toHaveLength(1)
-      expect(formRows[0].querySelectorAll('[data-testid="delete-button"]')).toHaveLength(1)
-      expect(formRows[0].querySelectorAll('[data-testid="edit-button"]')).toHaveLength(1)
-    })
+    const formRows = await screen.findAllByTestId('form-row')
+    expect(formRows[0].querySelectorAll('[data-testid="form-row-target"]')).toHaveLength(1)
+    expect(formRows[0].querySelectorAll('[data-testid="form-row-destination"]')).toHaveLength(1)
+    expect(formRows[0].querySelectorAll('[data-testid="delete-button"]')).toHaveLength(1)
+    expect(formRows[0].querySelectorAll('[data-testid="edit-button"]')).toHaveLength(1)
   })
 
   it('should have a row that initialize with good values', async () => {
-    const { getByTestId } = render(<PageSettingsNetwork {...props} />)
+    renderWithProviders(<PageSettingsNetwork {...props} />)
 
-    expect(getByTestId('form-row-target')).toHaveTextContent(`Target: ${props.routes && props.routes[0].target}`)
-    expect(getByTestId('form-row-destination')).toHaveTextContent(
+    expect(screen.getByTestId('form-row-target')).toHaveTextContent(`Target: ${props.routes && props.routes[0].target}`)
+    expect(screen.getByTestId('form-row-destination')).toHaveTextContent(
       `Destination: ${props.routes && props.routes[0].destination}`
     )
   })
@@ -70,13 +66,11 @@ describe('PageSettingsNetwork', () => {
   it('should have an add button and a click handler', async () => {
     const spy = jest.fn()
     props.onAddRoute = spy
-    const { findByTestId } = render(<PageSettingsNetwork {...props} />)
+    const { userEvent } = renderWithProviders(<PageSettingsNetwork {...props} />)
 
-    const button = await findByTestId('add-button')
+    const button = await screen.findByTestId('add-button')
 
-    await act(() => {
-      fireEvent.click(button)
-    })
+    await userEvent.click(button)
 
     expect(spy).toHaveBeenCalled()
   })
@@ -84,13 +78,11 @@ describe('PageSettingsNetwork', () => {
   it('should have an edit button and a click handler', async () => {
     const spy = jest.fn()
     props.onEdit = spy
-    const { findByTestId } = render(<PageSettingsNetwork {...props} />)
+    const { userEvent } = renderWithProviders(<PageSettingsNetwork {...props} />)
 
-    const button = await findByTestId('edit-button')
+    const button = await screen.findByTestId('edit-button')
 
-    await act(() => {
-      fireEvent.click(button)
-    })
+    await userEvent.click(button)
 
     expect(spy).toHaveBeenCalled()
   })
@@ -98,20 +90,18 @@ describe('PageSettingsNetwork', () => {
   it('should call remove handler on click on remove', async () => {
     const spy = jest.fn()
     props.onDelete = spy
-    const { findByTestId } = render(<PageSettingsNetwork {...props} />)
+    const { userEvent } = renderWithProviders(<PageSettingsNetwork {...props} />)
 
-    const deleteButton = await findByTestId('delete-button')
+    const deleteButton = await screen.findByTestId('delete-button')
 
-    await act(() => {
-      fireEvent.click(deleteButton)
-    })
+    await userEvent.click(deleteButton)
 
     expect(spy).toHaveBeenCalled()
   })
 
   it('should have a placeholder if no route yet', async () => {
     props.routes = []
-    const { getByText } = render(<PageSettingsNetwork {...props} />)
-    getByText('No network are set')
+    renderWithProviders(<PageSettingsNetwork {...props} />)
+    screen.getByText('No network are set')
   })
 })

@@ -1,5 +1,5 @@
-import { act, fireEvent, render } from '__tests__/utils/setup-jest'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
+import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CrudModalFeature, { type CrudModalFeatureProps, handleSubmit } from './crud-modal-feature'
 
 const route = {
@@ -26,10 +26,8 @@ describe('CrudModalFeature', () => {
   })
 
   it('should render successfully', async () => {
-    const { baseElement } = render(<CrudModalFeature {...props} />)
-    await act(() => {
-      expect(baseElement).toBeTruthy()
-    })
+    const { baseElement } = renderWithProviders(<CrudModalFeature {...props} />)
+    expect(baseElement).toBeTruthy()
   })
 
   it('should submit a new route', () => {
@@ -66,20 +64,18 @@ describe('CrudModalFeature', () => {
   })
 
   it('should edit ClusterRoutingTable if form is submitted', async () => {
-    const { getByTestId } = render(<CrudModalFeature {...props} />)
+    const { userEvent } = renderWithProviders(<CrudModalFeature {...props} />)
 
-    await act(() => {
-      const inputDestination = getByTestId('input-destination')
-      const inputTarget = getByTestId('input-target')
-      fireEvent.input(inputDestination, { target: { value: '10.0.0.0/20' } })
-      fireEvent.input(inputTarget, { target: { value: 'test' } })
-    })
+    const inputDestination = screen.getByTestId('input-destination')
+    const inputTarget = screen.getByTestId('input-target')
+    fireEvent.input(inputDestination, { target: { value: '10.0.0.0/20' } })
+    fireEvent.input(inputTarget, { target: { value: 'test' } })
 
-    expect(getByTestId('submit-button')).toBeEnabled()
-
-    await act(() => {
-      getByTestId('submit-button').click()
-    })
+    const button = await screen.findByTestId('submit-button')
+    // https://react-hook-form.com/advanced-usage#TransformandParse
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
+    await userEvent.click(button)
 
     const routes = handleSubmit(
       { destination: '10.0.0.0/20', target: 'test', description: 'my description' },
