@@ -19,8 +19,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { toastError } from '@qovery/shared/ui'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
@@ -62,7 +61,7 @@ export const handleGitApplicationSubmit = (
 
   cloneApplication = {
     ...cloneApplication,
-    arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
+    arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
     entrypoint: data.image_entry_point || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
     labels_groups: labelsGroups.filter((group) => data.labels_groups?.includes(group.id)),
@@ -84,7 +83,7 @@ export const handleContainerSubmit = (
     auto_deploy: data.auto_deploy,
     tag: data.image_tag || '',
     image_name: data.image_name || '',
-    arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
+    arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
     entrypoint: data.image_entry_point || '',
     registry_id: data.registry || '',
     annotations_groups: annotationsGroups.filter((group) => data.annotations_groups?.includes(group.id)),
@@ -105,7 +104,7 @@ export const handleJobSubmit = (
         cronjob: {
           ...cronjob,
           entrypoint: data.image_entry_point,
-          arguments: (data.cmd_arguments && data.cmd_arguments.length && eval(data.cmd_arguments)) || [],
+          arguments: data.cmd_arguments?.length ? parseCmd(data.cmd_arguments) : [],
         },
       }
     })
@@ -223,7 +222,7 @@ export function PageSettingsGeneralFeature() {
       dockerfile_path: service.dockerfile_path ?? 'Dockerfile',
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
-      cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      cmd_arguments: service.arguments?.length ? service.arguments.join(' ') : '',
       labels_groups: service.labels_groups?.map((group) => group.id),
       annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
@@ -233,7 +232,7 @@ export function PageSettingsGeneralFeature() {
       image_tag: service.tag,
       image_entry_point: service.entrypoint,
       auto_deploy: service.auto_deploy,
-      cmd_arguments: (service.arguments && service.arguments.length && JSON.stringify(service.arguments)) || '',
+      cmd_arguments: service.arguments?.length ? service.arguments.join(' ') : '',
       labels_groups: service.labels_groups?.map((group) => group.id),
       annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
@@ -290,47 +289,27 @@ export function PageSettingsGeneralFeature() {
 
     const payload = match(service)
       .with({ serviceType: 'APPLICATION' }, (s) => {
-        try {
-          return {
-            ...handleGitApplicationSubmit(data as ApplicationGeneralData, s, labelsGroups, annotationsGroups),
-            serviceType: s.serviceType,
-          }
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid CMD array')
-          return
+        return {
+          ...handleGitApplicationSubmit(data as ApplicationGeneralData, s, labelsGroups, annotationsGroups),
+          serviceType: s.serviceType,
         }
       })
       .with({ serviceType: 'JOB' }, (s) => {
-        try {
-          return {
-            ...handleJobSubmit(data as JobGeneralData, s, labelsGroups, annotationsGroups),
-            serviceType: s.serviceType,
-          }
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid CMD array')
-          return
+        return {
+          ...handleJobSubmit(data as JobGeneralData, s, labelsGroups, annotationsGroups),
+          serviceType: s.serviceType,
         }
       })
       .with({ serviceType: 'CONTAINER' }, (s) => {
-        try {
-          return {
-            ...handleContainerSubmit(data as ApplicationGeneralData, s, labelsGroups, annotationsGroups),
-            serviceType: s.serviceType,
-          }
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid CMD array')
-          return
+        return {
+          ...handleContainerSubmit(data as ApplicationGeneralData, s, labelsGroups, annotationsGroups),
+          serviceType: s.serviceType,
         }
       })
       .with({ serviceType: 'HELM' }, (s) => {
-        try {
-          return {
-            ...handleHelmSubmit(data as HelmGeneralData, s),
-            serviceType: s.serviceType,
-          }
-        } catch (e: unknown) {
-          toastError(e as Error, 'Invalid Helm arguments')
-          return
+        return {
+          ...handleHelmSubmit(data as HelmGeneralData, s),
+          serviceType: s.serviceType,
         }
       })
       .otherwise(() => undefined)
