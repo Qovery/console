@@ -4,6 +4,7 @@ export const SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL = (slug = ':slug', option 
   `/create/lifecyle-job/${slug}/${option}`
 
 // subrouter for job steps /create/general /create/settings etc...
+export const SERVICES_JOB_CREATION_INTRODUCTION_URL = '/introduction'
 export const SERVICES_JOB_CREATION_GENERAL_URL = '/general'
 export const SERVICES_JOB_CREATION_CONFIGURE_URL = '/configure'
 export const SERVICES_JOB_CREATION_DOCKERFILE_URL = '/dockerfile'

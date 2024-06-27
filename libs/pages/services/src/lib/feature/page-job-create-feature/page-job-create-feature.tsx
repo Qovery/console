@@ -15,6 +15,7 @@ import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_GENERAL_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
+  SERVICES_JOB_CREATION_INTRODUCTION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_NEW_URL,
@@ -161,7 +162,15 @@ export function PageJobCreateFeature() {
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
           {jobURL && (
-            <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_JOB_CREATION_GENERAL_URL} />} />
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  replace
+                  to={`${pathCreate}${jobType === ServiceTypeEnum.LIFECYCLE_JOB ? SERVICES_JOB_CREATION_INTRODUCTION_URL : SERVICES_JOB_CREATION_GENERAL_URL}`}
+                />
+              }
+            />
           )}
         </Routes>
         <AssistantTrigger defaultOpen />
