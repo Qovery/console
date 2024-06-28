@@ -5,6 +5,7 @@ import { Button, Checkbox, ExternalLink, FunnelFlowBody, Heading, Section } from
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 import imageLifecycleIntroduction from './lifecycle-introduction.png'
+import { setLocalStorageStepIntroduction } from './util-localstorage-step'
 
 export function StepIntroductionFeature() {
   useDocumentTitle('Introduction - Create Job')
@@ -27,7 +28,7 @@ export function StepIntroductionFeature() {
   return (
     <FunnelFlowBody customContentWidth="max-w-[1280px]">
       <div className="flex items-center gap-16">
-        <Section className="flex max-w-[480px] flex-col gap-8">
+        <Section className="mt-10 flex max-w-[480px] flex-col gap-8">
           <Heading className="text-[32px]">Lifecycle Jobs</Heading>
           <div className="flex flex-col gap-4 text-neutral-350">
             <p>
@@ -50,11 +51,11 @@ export function StepIntroductionFeature() {
               </li>
               <li>Any other service within the same environment can then access these environment variables.</li>
             </ul>
+          </div>
+          <div className="flex flex-col items-center gap-5">
             <ExternalLink className="ml-4" href="https://hub.qovery.com/docs/using-qovery/configuration/lifecycle-job/">
               Learn more
             </ExternalLink>
-          </div>
-          <div className="flex flex-col items-center gap-5">
             <Button size="lg" onClick={onSubmit} className="w-full justify-center">
               Get started
             </Button>
@@ -63,7 +64,10 @@ export function StepIntroductionFeature() {
                 id="dont-show-again"
                 className="mr-3 h-4 w-4"
                 checked={dontShowAgain}
-                onCheckedChange={(checked: boolean) => setDontShowAgain(checked)}
+                onCheckedChange={(checked: boolean) => {
+                  setDontShowAgain(checked)
+                  setLocalStorageStepIntroduction(checked)
+                }}
               />
               <label className="text-sm font-medium text-neutral-400" htmlFor="dont-show-again">
                 Don’t show it again
