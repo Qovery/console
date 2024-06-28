@@ -7,22 +7,12 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
     tabindex="0"
   />
-  <button
-    aria-controls="radix-:rd:"
-    aria-expanded="true"
-    aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-green-500 bg-white"
-    data-state="open"
-    type="button"
-  >
-    EKS
-  </button>
   <div
     data-radix-popper-content-wrapper=""
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350"
+      class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -64,7 +54,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow  input--focused "
+                class="input input--small flex-grow   "
                 data-testid="input"
               >
                 <label
@@ -161,6 +151,16 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
       </div>
     </div>
   </div>
+  <button
+    aria-controls="radix-:rd:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-green-500 bg-white"
+    data-state="open"
+    type="button"
+  >
+    EKS
+  </button>
   <span
     data-radix-focus-guard=""
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
@@ -176,22 +176,12 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
     tabindex="0"
   />
-  <button
-    aria-controls="radix-:rk:"
-    aria-expanded="true"
-    aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-red-500 bg-white"
-    data-state="open"
-    type="button"
-  >
-    EKS
-  </button>
   <div
     data-radix-popper-content-wrapper=""
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350"
+      class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -233,7 +223,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow  input--focused "
+                class="input input--small flex-grow   "
                 data-testid="input"
               >
                 <label
@@ -330,6 +320,16 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       </div>
     </div>
   </div>
+  <button
+    aria-controls="radix-:rk:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-red-500 bg-white"
+    data-state="open"
+    type="button"
+  >
+    EKS
+  </button>
   <span
     data-radix-focus-guard=""
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
