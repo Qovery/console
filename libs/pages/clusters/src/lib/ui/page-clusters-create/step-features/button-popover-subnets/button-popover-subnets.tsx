@@ -102,18 +102,8 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
     rules: {
       validate: (data) => isFieldValid({ subnets: removeEmptySubnet(data as Subnets[]), required }),
     },
+    shouldUnregister: true,
   })
-
-  useEffect(() => {
-    if (fields.length === 0) {
-      append({
-        A: '',
-        B: '',
-        C: '',
-      })
-    }
-    return () => remove(0)
-  }, [append, remove])
 
   return (
     <div className="flex flex-col gap-3 p-4">
@@ -147,7 +137,7 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
 }
 
 export function ButtonPopoverSubnets({ children, sections, required = false }: ButtonPopoverSubnetsProps) {
-  const { control, watch } = useFormContext()
+  const { control, watch, setValue, getValues } = useFormContext()
 
   const watchSubnetsFields = sections.map(({ name }) => removeEmptySubnet(watch(name)))
   // XXX: We cannot rely on `useFormContext` `formState.errors` because `errors` aren't reset when modifying back to a valid state.
@@ -172,11 +162,29 @@ export function ButtonPopoverSubnets({ children, sections, required = false }: B
               'border-green-500 bg-white',
             !isValid && 'border-red-500 bg-white'
           )}
+          onClick={() => {
+            for (const { name } of sections) {
+              if (getValues(name)?.length === 0) {
+                setValue(name, [
+                  {
+                    A: '',
+                    B: '',
+                    C: '',
+                  },
+                ])
+              }
+            }
+          }}
         >
           {children}
         </Button>
       </Popover.Trigger>
-      <Popover.Content side="bottom" className="relative divide-y p-0 text-sm text-neutral-350" style={{ width: 648 }}>
+      <Popover.Content
+        side="bottom"
+        className="relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
+        style={{ width: 648 }}
+        forceMount
+      >
         {sections.map(({ title, name, callout }) => (
           <SubnetsForm key={name} control={control} title={title} name={name} callout={callout} required={required} />
         ))}
