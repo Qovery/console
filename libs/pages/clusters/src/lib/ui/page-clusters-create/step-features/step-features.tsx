@@ -11,10 +11,11 @@ export interface StepFeaturesProps {
   cloudProvider?: CloudProviderEnum
   features?: ClusterFeatureResponse[]
   goToBack?: () => void
+  isKarpenter?: boolean
 }
 
 export function StepFeatures(props: StepFeaturesProps) {
-  const { onSubmit, features, cloudProvider, goToBack } = props
+  const { onSubmit, features, cloudProvider, goToBack, isKarpenter } = props
   const { formState, setValue, control, watch } = useFormContext()
 
   const watchVpcMode = watch('vpc_mode')
@@ -108,7 +109,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                   )}
                 </div>
               ) : (
-                <AWSVpcFeature />
+                <AWSVpcFeature isKarpenter={isKarpenter} />
               )}
             </div>
           )}

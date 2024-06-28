@@ -146,6 +146,7 @@ export function StepFeaturesFeature() {
           features={features}
           cloudProvider={generalData?.cloud_provider}
           goToBack={goToBack}
+          isKarpenter={resourcesData?.karpenter?.enabled}
         />
       </FormProvider>
     </FunnelFlowBody>

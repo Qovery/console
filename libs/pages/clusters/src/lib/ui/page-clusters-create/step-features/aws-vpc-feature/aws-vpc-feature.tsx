@@ -63,7 +63,11 @@ function TooltipContent({
   )
 }
 
-export function AWSVpcFeature() {
+interface AWSVpcFeatureProps {
+  isKarpenter?: boolean
+}
+
+export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
   const { control, getValues } = useFormContext()
 
   const isTooltipAvailable = () => {
@@ -127,22 +131,26 @@ export function AWSVpcFeature() {
               </Callout.Root>
             ),
           },
-          {
-            title: 'EKS private subnet IDs',
-            name: 'aws_existing_vpc.eks_karpenter_fargate_subnets',
-            callout: (
-              <Callout.Root color="yellow">
-                <Callout.Icon>
-                  <Icon className="text-xs" iconName="exclamation-circle" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text className="text-xs">
-                  <Callout.TextHeading>
-                    These subnets have to be private and connected to internet through a NAT Gateway
-                  </Callout.TextHeading>
-                </Callout.Text>
-              </Callout.Root>
-            ),
-          },
+          ...(isKarpenter
+            ? [
+                {
+                  title: 'EKS private subnet IDs',
+                  name: 'aws_existing_vpc.eks_karpenter_fargate_subnets',
+                  callout: (
+                    <Callout.Root color="yellow">
+                      <Callout.Icon>
+                        <Icon className="text-xs" iconName="exclamation-circle" iconStyle="regular" />
+                      </Callout.Icon>
+                      <Callout.Text className="text-xs">
+                        <Callout.TextHeading>
+                          These subnets have to be private and connected to internet through a NAT Gateway
+                        </Callout.TextHeading>
+                      </Callout.Text>
+                    </Callout.Root>
+                  ),
+                },
+              ]
+            : []),
         ]}
         required
       >
