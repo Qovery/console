@@ -1,11 +1,11 @@
-import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import { JobContainerCreateContext } from '../page-job-create-feature'
-import StepGeneralFeature from './step-general-feature'
+import StepIntroductionFeature from './step-introduction-feature'
 
-describe('GeneralFeature', () => {
+describe('StepIntroductionFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <JobContainerCreateContext.Provider
         value={{
           currentStep: 1,
@@ -24,7 +24,7 @@ describe('GeneralFeature', () => {
           setVariableData: jest.fn(),
         }}
       >
-        <StepGeneralFeature />
+        <StepIntroductionFeature />
       </JobContainerCreateContext.Provider>
     )
     expect(baseElement).toBeTruthy()
