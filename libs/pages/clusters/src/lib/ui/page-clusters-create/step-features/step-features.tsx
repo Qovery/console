@@ -10,12 +10,12 @@ export interface StepFeaturesProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   cloudProvider?: CloudProviderEnum
   features?: ClusterFeatureResponse[]
-  isKarpenter?: boolean
   goToBack?: () => void
+  isKarpenter?: boolean
 }
 
 export function StepFeatures(props: StepFeaturesProps) {
-  const { onSubmit, features, cloudProvider, goToBack } = props
+  const { onSubmit, features, cloudProvider, goToBack, isKarpenter } = props
   const { formState, setValue, control, watch } = useFormContext()
 
   const watchVpcMode = watch('vpc_mode')
@@ -53,15 +53,10 @@ export function StepFeatures(props: StepFeaturesProps) {
                     label: 'Default (managed by Qovery)',
                     value: 'DEFAULT',
                   },
-                  ...(!props.isKarpenter
-                    ? [
-                        {
-                          label: 'Deploy on my existing VPC',
-                          value: 'EXISTING_VPC',
-                          isDisabled: props.isKarpenter,
-                        },
-                      ]
-                    : []),
+                  {
+                    label: 'Deploy on my existing VPC',
+                    value: 'EXISTING_VPC',
+                  },
                 ]}
                 onChange={field.onChange}
                 value={field.value}
@@ -114,7 +109,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                   )}
                 </div>
               ) : (
-                <AWSVpcFeature />
+                <AWSVpcFeature isKarpenter={isKarpenter} />
               )}
             </div>
           )}

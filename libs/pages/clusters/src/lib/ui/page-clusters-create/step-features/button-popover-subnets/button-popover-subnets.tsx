@@ -1,11 +1,28 @@
 import { clsx } from 'clsx'
-import { type FormEvent, type PropsWithChildren, type ReactNode } from 'react'
-import { Controller, type UseFieldArrayRemove, useFieldArray, useFormContext } from 'react-hook-form'
+import { type FormEvent, type PropsWithChildren, type ReactNode, useEffect } from 'react'
+import {
+  type Control,
+  Controller,
+  type FieldValues,
+  type UseFieldArrayRemove,
+  useFieldArray,
+  useFormContext,
+} from 'react-hook-form'
 import { type Subnets } from '@qovery/shared/interfaces'
 import { Button, Icon, InputTextSmall, Popover } from '@qovery/shared/ui'
 import { removeEmptySubnet } from '../../../../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
+  sections: {
+    title: string
+    name: string
+    callout?: ReactNode
+  }[]
+  required?: boolean
+}
+
+export interface SubnetsProps extends PropsWithChildren {
+  control: Control<FieldValues, any>
   title: string
   name: string
   callout?: ReactNode
@@ -78,8 +95,7 @@ function isFieldValid({ subnets = [], required }: { subnets?: Subnets[]; require
     : !!subnets.find(({ A, B, C }) => Boolean(A) && Boolean(B) && Boolean(C))
 }
 
-export function ButtonPopoverSubnets({ name, children, title, callout, required = false }: ButtonPopoverSubnetsProps) {
-  const { control, watch } = useFormContext()
+export function SubnetsForm({ control, name, title, callout, required = false }: SubnetsProps) {
   const { fields, append, remove } = useFieldArray({
     control,
     name,
@@ -89,10 +105,47 @@ export function ButtonPopoverSubnets({ name, children, title, callout, required 
     shouldUnregister: true,
   })
 
-  const watchSubnets = removeEmptySubnet(watch(name))
+  return (
+    <div className="flex flex-col gap-3 p-4">
+      <h6 className="font-medium text-neutral-400">{title}</h6>
+      {callout}
+      {fields.length > 0 && (
+        <ul className="flex flex-col gap-3">
+          <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350">
+            <span>IDs zone A</span>
+            <span>IDs zone B</span>
+            <span>IDs zone C</span>
+            <span></span>
+          </li>
+          {fields.map((field, index) => (
+            <Row key={field.id} index={index} remove={remove} name={name} />
+          ))}
+        </ul>
+      )}
+      <Button
+        className="self-end"
+        type="button"
+        size="md"
+        variant="plain"
+        onClick={() => append({ A: '', B: '', C: '' })}
+      >
+        Add subnets
+        <Icon iconName="plus" className="ml-2 text-base" />
+      </Button>
+    </div>
+  )
+}
+
+export function ButtonPopoverSubnets({ children, sections, required = false }: ButtonPopoverSubnetsProps) {
+  const { control, watch, setValue, getValues } = useFormContext()
+
+  const watchSubnetsFields = sections.map(({ name }) => removeEmptySubnet(watch(name)))
   // XXX: We cannot rely on `useFormContext` `formState.errors` because `errors` aren't reset when modifying back to a valid state.
   // Probably due to a bug in react-hook-form with nested fields
-  const isValid = isFieldValid({ subnets: watchSubnets, required })
+  const isValid = watchSubnetsFields.reduce(
+    (acc, watchSubnets) => acc && isFieldValid({ subnets: watchSubnets, required }),
+    true
+  )
 
   return (
     <Popover.Root>
@@ -104,59 +157,43 @@ export function ButtonPopoverSubnets({ name, children, title, callout, required 
           variant="outline"
           className={clsx(
             'self-start',
-            watchSubnets && watchSubnets.length > 0 && isValid && 'border-green-500 bg-white',
+            watchSubnetsFields.reduce((acc, watchSubnets) => !!watchSubnets && watchSubnets.length > 0 && acc, true) &&
+              isValid &&
+              'border-green-500 bg-white',
             !isValid && 'border-red-500 bg-white'
           )}
-          onClick={() =>
-            fields.length === 0 &&
-            append({
-              A: '',
-              B: '',
-              C: '',
-            })
-          }
+          onClick={() => {
+            for (const { name } of sections) {
+              if (getValues(name)?.length === 0) {
+                setValue(name, [
+                  {
+                    A: '',
+                    B: '',
+                    C: '',
+                  },
+                ])
+              }
+            }
+          }}
         >
           {children}
         </Button>
       </Popover.Trigger>
-      <Popover.Content side="bottom" className="relative text-sm text-neutral-350" style={{ width: 648 }}>
-        <h6 className="mb-4 font-medium text-neutral-400">{title}</h6>
-        {callout && <div className="mb-4">{callout}</div>}
-        {fields.length > 0 && (
-          <ul className="mb-3 flex flex-col gap-3">
-            <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2">
-              <span className="text-sm font-medium text-neutral-350">IDs zone A</span>
-              <span className="text-sm font-medium text-neutral-350">IDs zone B</span>
-              <span className="text-sm font-medium text-neutral-350">IDs zone C</span>
-              <span></span>
-            </li>
-            {fields.map((field, index) => (
-              <Row key={field.id} index={index} remove={remove} name={name} />
-            ))}
-          </ul>
-        )}
+      <Popover.Content
+        side="bottom"
+        className="relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
+        style={{ width: 648 }}
+        forceMount
+      >
+        {sections.map(({ title, name, callout }) => (
+          <SubnetsForm key={name} control={control} title={title} name={name} callout={callout} required={required} />
+        ))}
 
-        <div className="flex flex-col gap-4 text-right text-base">
-          <Button
-            className="self-end"
-            type="button"
-            size="md"
-            variant="plain"
-            onClick={() => append({ A: '', B: '', C: '' })}
-          >
-            Add subnets
-            <Icon iconName="plus" className="ml-2 text-base" />
-          </Button>
+        <div className="flex flex-col gap-4 p-4 text-right text-base">
           <div>
             <Popover.Close>
-              <Button
-                type="button"
-                size="md"
-                variant="plain"
-                className="mr-1"
-                onClick={() => remove(Array.from({ length: fields.length }, (_, index) => index))}
-              >
-                Clear
+              <Button type="button" size="md" variant="plain" className="mr-1">
+                Cancel
               </Button>
             </Popover.Close>
             <Popover.Close>

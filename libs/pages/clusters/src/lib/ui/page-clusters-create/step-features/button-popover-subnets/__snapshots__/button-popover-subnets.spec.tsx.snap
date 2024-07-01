@@ -7,22 +7,12 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
     tabindex="0"
   />
-  <button
-    aria-controls="radix-:rd:"
-    aria-expanded="true"
-    aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-green-500 bg-white"
-    data-state="open"
-    type="button"
-  >
-    EKS
-  </button>
   <div
     data-radix-popper-content-wrapper=""
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="rounded border border-neutral-200 bg-white p-4 shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative text-sm text-neutral-350"
+      class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -31,111 +21,105 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
       style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
       tabindex="-1"
     >
-      <h6
-        class="mb-4 font-medium text-neutral-400"
-      >
-        EKS subnets
-      </h6>
-      <ul
-        class="mb-3 flex flex-col gap-3"
-      >
-        <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
-        >
-          <span
-            class="text-sm font-medium text-neutral-350"
-          >
-            IDs zone A
-          </span>
-          <span
-            class="text-sm font-medium text-neutral-350"
-          >
-            IDs zone B
-          </span>
-          <span
-            class="text-sm font-medium text-neutral-350"
-          >
-            IDs zone C
-          </span>
-          <span />
-        </li>
-        <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
-        >
-          <div
-            class="w-full "
-            data-testid="input-small-wrapper"
-          >
-            <div
-              class="input input--small flex-grow  input--focused "
-              data-testid="input"
-            >
-              <label
-                class="hidden"
-              />
-              <input
-                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
-                data-testid="input-value"
-                name="eks_subnets.0.A"
-                type="text"
-                value="test"
-              />
-            </div>
-          </div>
-          <div
-            class="w-full "
-            data-testid="input-small-wrapper"
-          >
-            <div
-              class="input input--small flex-grow   "
-              data-testid="input"
-            >
-              <label
-                class="hidden"
-              />
-              <input
-                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
-                data-testid="input-value"
-                name="eks_subnets.0.B"
-                type="text"
-                value="test"
-              />
-            </div>
-          </div>
-          <div
-            class="w-full "
-            data-testid="input-small-wrapper"
-          >
-            <div
-              class="input input--small flex-grow   "
-              data-testid="input"
-            >
-              <label
-                class="hidden"
-              />
-              <input
-                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
-                data-testid="input-value"
-                name="eks_subnets.0.C"
-                type="text"
-                value="test"
-              />
-            </div>
-          </div>
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none w-full"
-            type="button"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-trash-can text-base"
-            />
-          </button>
-        </li>
-      </ul>
       <div
-        class="flex flex-col gap-4 text-right text-base"
+        class="flex flex-col gap-3 p-4"
       >
+        <h6
+          class="font-medium text-neutral-400"
+        >
+          EKS subnets
+        </h6>
+        <ul
+          class="flex flex-col gap-3"
+        >
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350"
+          >
+            <span>
+              IDs zone A
+            </span>
+            <span>
+              IDs zone B
+            </span>
+            <span>
+              IDs zone C
+            </span>
+            <span />
+          </li>
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
+          >
+            <div
+              class="w-full "
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow   "
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  data-testid="input-value"
+                  name="eks_subnets.0.A"
+                  type="text"
+                  value="test"
+                />
+              </div>
+            </div>
+            <div
+              class="w-full "
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow   "
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  data-testid="input-value"
+                  name="eks_subnets.0.B"
+                  type="text"
+                  value="test"
+                />
+              </div>
+            </div>
+            <div
+              class="w-full "
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow   "
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  data-testid="input-value"
+                  name="eks_subnets.0.C"
+                  type="text"
+                  value="test"
+                />
+              </div>
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none w-full"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-trash-can text-base"
+              />
+            </button>
+          </li>
+        </ul>
         <button
           class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none self-end"
           type="button"
@@ -146,12 +130,16 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
             class="fa-solid fa-plus ml-2 text-base"
           />
         </button>
+      </div>
+      <div
+        class="flex flex-col gap-4 p-4 text-right text-base"
+      >
         <div>
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none mr-1"
             type="button"
           >
-            Clear
+            Cancel
           </button>
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
@@ -163,6 +151,16 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
       </div>
     </div>
   </div>
+  <button
+    aria-controls="radix-:rd:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-green-500 bg-white"
+    data-state="open"
+    type="button"
+  >
+    EKS
+  </button>
   <span
     data-radix-focus-guard=""
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
@@ -178,22 +176,12 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
     tabindex="0"
   />
-  <button
-    aria-controls="radix-:rk:"
-    aria-expanded="true"
-    aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-red-500 bg-white"
-    data-state="open"
-    type="button"
-  >
-    EKS
-  </button>
   <div
     data-radix-popper-content-wrapper=""
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      class="rounded border border-neutral-200 bg-white p-4 shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative text-sm text-neutral-350"
+      class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded relative divide-y p-0 text-sm text-neutral-350 data-[state=open]:block data-[state=closed]:hidden"
       data-align="start"
       data-side="bottom"
       data-state="open"
@@ -202,111 +190,105 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
       tabindex="-1"
     >
-      <h6
-        class="mb-4 font-medium text-neutral-400"
-      >
-        EKS subnets
-      </h6>
-      <ul
-        class="mb-3 flex flex-col gap-3"
-      >
-        <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
-        >
-          <span
-            class="text-sm font-medium text-neutral-350"
-          >
-            IDs zone A
-          </span>
-          <span
-            class="text-sm font-medium text-neutral-350"
-          >
-            IDs zone B
-          </span>
-          <span
-            class="text-sm font-medium text-neutral-350"
-          >
-            IDs zone C
-          </span>
-          <span />
-        </li>
-        <li
-          class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
-        >
-          <div
-            class="w-full "
-            data-testid="input-small-wrapper"
-          >
-            <div
-              class="input input--small flex-grow  input--focused "
-              data-testid="input"
-            >
-              <label
-                class="hidden"
-              />
-              <input
-                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
-                data-testid="input-value"
-                name="eks_subnets.0.A"
-                type="text"
-                value="test"
-              />
-            </div>
-          </div>
-          <div
-            class="w-full "
-            data-testid="input-small-wrapper"
-          >
-            <div
-              class="input input--small flex-grow   "
-              data-testid="input"
-            >
-              <label
-                class="hidden"
-              />
-              <input
-                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
-                data-testid="input-value"
-                name="eks_subnets.0.B"
-                type="text"
-                value="test"
-              />
-            </div>
-          </div>
-          <div
-            class="w-full "
-            data-testid="input-small-wrapper"
-          >
-            <div
-              class="input input--small flex-grow   "
-              data-testid="input"
-            >
-              <label
-                class="hidden"
-              />
-              <input
-                class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
-                data-testid="input-value"
-                name="eks_subnets.0.C"
-                type="text"
-                value=""
-              />
-            </div>
-          </div>
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none w-full"
-            type="button"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-trash-can text-base"
-            />
-          </button>
-        </li>
-      </ul>
       <div
-        class="flex flex-col gap-4 text-right text-base"
+        class="flex flex-col gap-3 p-4"
       >
+        <h6
+          class="font-medium text-neutral-400"
+        >
+          EKS subnets
+        </h6>
+        <ul
+          class="flex flex-col gap-3"
+        >
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350"
+          >
+            <span>
+              IDs zone A
+            </span>
+            <span>
+              IDs zone B
+            </span>
+            <span>
+              IDs zone C
+            </span>
+            <span />
+          </li>
+          <li
+            class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
+          >
+            <div
+              class="w-full "
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow   "
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  data-testid="input-value"
+                  name="eks_subnets.0.A"
+                  type="text"
+                  value="test"
+                />
+              </div>
+            </div>
+            <div
+              class="w-full "
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow   "
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  data-testid="input-value"
+                  name="eks_subnets.0.B"
+                  type="text"
+                  value="test"
+                />
+              </div>
+            </div>
+            <div
+              class="w-full "
+              data-testid="input-small-wrapper"
+            >
+              <div
+                class="input input--small flex-grow   "
+                data-testid="input"
+              >
+                <label
+                  class="hidden"
+                />
+                <input
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  data-testid="input-value"
+                  name="eks_subnets.0.C"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none w-full"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-trash-can text-base"
+              />
+            </button>
+          </li>
+        </ul>
         <button
           class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none self-end"
           type="button"
@@ -317,12 +299,16 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
             class="fa-solid fa-plus ml-2 text-base"
           />
         </button>
+      </div>
+      <div
+        class="flex flex-col gap-4 p-4 text-right text-base"
+      >
         <div>
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none mr-1"
             type="button"
           >
-            Clear
+            Cancel
           </button>
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
@@ -334,6 +320,16 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       </div>
     </div>
   </div>
+  <button
+    aria-controls="radix-:rk:"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-red-500 bg-white"
+    data-state="open"
+    type="button"
+  >
+    EKS
+  </button>
   <span
     data-radix-focus-guard=""
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"

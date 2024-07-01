@@ -31,7 +31,7 @@ describe('AWSExistingVPC', () => {
     renderWithProviders(<AWSExistingVPC {...props} />)
 
     expect(screen.getByText('Deploy on an existing VPC')).toBeInTheDocument()
-    expect(screen.getByText('EKS subnet IDs')).toBeInTheDocument()
+    expect(screen.getByText('EKS public subnet IDs')).toBeInTheDocument()
     expect(screen.getByText('MongoDB subnet IDs')).toBeInTheDocument()
     expect(screen.getByText('Redis subnet IDs')).toBeInTheDocument()
     expect(screen.getByText('MySQL/PostgreSQL subnet IDs')).toBeInTheDocument()
