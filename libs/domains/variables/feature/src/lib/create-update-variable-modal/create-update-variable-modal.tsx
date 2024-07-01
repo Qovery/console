@@ -17,6 +17,7 @@ import {
   environmentVariableFile,
   generateScopeLabel,
   getEnvironmentVariableFileMountPath,
+  targetToScope,
 } from '@qovery/shared/util-js'
 import { useCreateVariableAlias } from '../hooks/use-create-variable-alias/use-create-variable-alias'
 import { useCreateVariableOverride } from '../hooks/use-create-variable-override/use-create-variable-override'
@@ -61,7 +62,17 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
   const { mutateAsync: editVariable } = useEditVariable()
 
-  const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
+  const baseScope = match(variable)
+    .returnType<APIVariableScopeEnum | undefined>()
+    .with(undefined, () => undefined)
+    .with({ scope: 'BUILT_IN' }, ({ service_id, service_type, scope }) => {
+      if (service_id && service_type) {
+        return targetToScope(service_type)
+      }
+      return scope
+    })
+    .otherwise(({ scope }) => scope)
+  const availableScopes = computeAvailableScope(baseScope, false, scope, type === 'OVERRIDE') as Scope[]
 
   const defaultScope =
     variable?.scope === 'BUILT_IN'
