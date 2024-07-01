@@ -365,7 +365,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                               id="Helm arguments"
                               name="arguments"
                               type="text"
-                              value="['--wait']"
+                              value="--wait"
                             />
                           </div>
                         </div>
@@ -389,6 +389,20 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                         />
                       </a>
                     </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm install undefined {{RELEASE_NAME}}  --wait
+                    </span>
                   </div>
                   <div
                     class=""
@@ -780,7 +794,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                               id="Helm arguments"
                               name="arguments"
                               type="text"
-                              value="['--wait']"
+                              value="--wait"
                             />
                           </div>
                         </div>
@@ -816,12 +830,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                     <span
                       class="break-words text-sm"
                     >
-                      helm install 
-                      name
-                       
-                      --version 10
-                       
-                      [--wait]
+                      helm upgrade --install -n {{KUBERNETES_NAMESPACE}} {{RELEASE_NAME}} . --wait
                     </span>
                   </div>
                   <div
@@ -1425,7 +1434,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                               id="Helm arguments"
                               name="arguments"
                               type="text"
-                              value="['--wait']"
+                              value="--wait"
                             />
                           </div>
                         </div>
@@ -1449,6 +1458,20 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                         />
                       </a>
                     </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm install undefined {{RELEASE_NAME}}  --wait
+                    </span>
                   </div>
                   <div
                     class=""

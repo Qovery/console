@@ -14,7 +14,6 @@ export const parseCmd = (cmd: string): string[] => {
   const args = parse(cmd, extractEnvVariables(cmd))
 
   return args.flatMap((arg) => {
-    console.log(args)
     if (typeof arg === 'string') {
       const words = arg.split(' ').length
       if (words > 1) {

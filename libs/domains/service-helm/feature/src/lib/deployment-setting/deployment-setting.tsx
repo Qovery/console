@@ -9,9 +9,12 @@ export const displayParsedCmd = (cmd: string) => {
 
 export function DeploymentSetting() {
   const { control, watch } = useFormContext()
-  const watchChartname = watch('chart_name')
+  const watchChartName = watch('chart_name')
   const watchVersion = watch('chart_version')
   const watchCmdArguments = watch('arguments')
+
+  const watchRepository = watch('repository')
+  const watchBranch = watch('branch')
 
   return (
     <div className="flex flex-col gap-3">
@@ -41,13 +44,18 @@ export function DeploymentSetting() {
           </ExternalLink>
         </p>
       </div>
-      {watchCmdArguments && watchChartname && watchVersion && (
+      {((watchCmdArguments && watchChartName && watchVersion) || watchBranch) && (
         <div className="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350">
           <span className="select-none text-xs">Helm install format:</span>
-          <span className="break-words text-sm">
-            helm install {watchChartname} {watchVersion ? `--version ${watchVersion}` : ''}{' '}
-            {displayParsedCmd(watchCmdArguments ?? '')}
-          </span>
+          {!watchBranch ? (
+            <span className="break-words text-sm">
+              {`helm upgrade --install -n {{KUBERNETES_NAMESPACE}} {{RELEASE_NAME}} . ${displayParsedCmd(watchCmdArguments ?? '')}`}
+            </span>
+          ) : (
+            <span className="break-words text-sm">
+              {`helm install ${watchChartName} {{RELEASE_NAME}} ${watchVersion ? `--version ${watchVersion}` : ''} ${displayParsedCmd(watchCmdArguments ?? '')}`}
+            </span>
+          )}
         </div>
       )}
       <Controller
