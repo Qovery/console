@@ -549,6 +549,31 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
+    tag: 'OTHER',
+    slug: 'docker',
+    title: 'Docker',
+    description: 'Docker is a platform designed to help developers build, share, and run container applications.',
+    icon: Docker,
+    options: [
+      {
+        slug: 'dockerfile',
+        title: 'Dockerfile',
+        description:
+          'Dockerfiles are text files containing a series of instructions that the Docker daemon follows to build a container image.',
+        icon: Docker,
+        type: 'APPLICATION',
+      },
+      {
+        slug: 'docker-container',
+        title: 'Docker container',
+        description:
+          'A Docker container image is a lightweight, standalone, executable package of software that includes everything needed to run an application: code, runtime, system tools, system libraries and settings.',
+        icon: Docker,
+        type: 'CONTAINER',
+      },
+    ],
+  },
+  {
     tag: 'BACK_END',
     slug: 'rails',
     title: 'Rails',
