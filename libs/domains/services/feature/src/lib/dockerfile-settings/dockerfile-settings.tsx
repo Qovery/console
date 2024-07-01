@@ -84,7 +84,7 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
         render={({ field }) => (
           <InputSelect
             label="File source"
-            value={field.value as string}
+            value={field.value}
             onChange={field.onChange}
             options={availableFileSources}
           />

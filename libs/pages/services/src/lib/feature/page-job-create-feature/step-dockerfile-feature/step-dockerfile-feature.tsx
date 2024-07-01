@@ -89,7 +89,7 @@ export function StepDockerfileFeature() {
                 Back
               </Button>
               <div className="flex gap-3">
-                <Button type="submit" size="lg" disabled={isLoadingCheckDockerfile || !isValid}>
+                <Button type="submit" size="lg" disabled={!isValid} loading={isLoadingCheckDockerfile}>
                   Continue
                 </Button>
               </div>
