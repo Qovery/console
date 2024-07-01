@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepSummaryFeature() {
@@ -104,7 +104,7 @@ export function StepSummaryFeature() {
           description: generalData.description,
           source,
           allow_cluster_wide_resources: generalData.allow_cluster_wide_resources,
-          arguments: JSON.parse(generalData.arguments),
+          arguments: parseCmd(generalData.arguments),
           timeout_sec: parseInt(generalData.timeout_sec, 10),
           auto_deploy: generalData.auto_deploy || (valuesOverrideFileData.auto_deploy ?? false),
           values_override: {

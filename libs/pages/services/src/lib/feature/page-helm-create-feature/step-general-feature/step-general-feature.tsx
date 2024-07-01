@@ -27,16 +27,7 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const onSubmit = generalForm.handleSubmit((data) => {
-    if (data.arguments) {
-      try {
-        eval(data.arguments)
-      } catch (e: unknown) {
-        toastError(e as Error, 'Invalid Helm arguments')
-        return
-      }
-    }
-
+  const onSubmit = generalForm.handleSubmit(() => {
     navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
   })
 

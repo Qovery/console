@@ -1,8 +1,17 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { ExternalLink, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { ExternalLink, InputText, InputToggle } from '@qovery/shared/ui'
+import { parseCmd } from '@qovery/shared/util-js'
+
+export const displayParsedCmd = (cmd: string) => {
+  const parsedArgs = parseCmd(cmd)
+  return parsedArgs.join(' ')
+}
 
 export function DeploymentSetting() {
-  const { control } = useFormContext()
+  const { control, watch } = useFormContext()
+  const watchChartname = watch('chart_name')
+  const watchVersion = watch('chart_version')
+  const watchCmdArguments = watch('arguments')
 
   return (
     <div className="flex flex-col gap-3">
@@ -10,12 +19,12 @@ export function DeploymentSetting() {
         <Controller
           name="arguments"
           control={control}
-          defaultValue={`["--wait", "--atomic", "--debug"]`}
+          defaultValue="--wait --atomic --debug"
           rules={{
             required: 'Please enter an command.',
           }}
           render={({ field, fieldState: { error } }) => (
-            <InputTextArea
+            <InputText
               label="Helm arguments"
               name={field.name}
               onChange={field.onChange}
@@ -25,13 +34,22 @@ export function DeploymentSetting() {
           )}
         />
         <p className="ml-4 mt-1 text-xs text-neutral-350">
-          Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
+          Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
           <br />
           <ExternalLink size="xs" href="https://helm.sh/docs/helm/helm_install/" className="mt-0.5">
             See documentation
           </ExternalLink>
         </p>
       </div>
+      {watchCmdArguments && watchChartname && watchVersion && (
+        <div className="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350">
+          <span className="select-none text-xs">Helm install format:</span>
+          <span className="break-words text-sm">
+            helm install {watchChartname} {watchVersion ? `--version ${watchVersion}` : ''}{' '}
+            {displayParsedCmd(watchCmdArguments ?? '')}
+          </span>
+        </div>
+      )}
       <Controller
         name="timeout_sec"
         control={control}
