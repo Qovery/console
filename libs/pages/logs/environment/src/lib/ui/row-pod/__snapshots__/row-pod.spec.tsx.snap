@@ -19,6 +19,7 @@ exports[`RowPod should match snapshot 1`] = `
     >
       <span
         class="flex h-5 items-center justify-center gap-1 rounded-[40px] bg-neutral-500 px-2"
+        title="app-z9d11ee4f-7d754477b6-k9sl7"
       >
         app-z9d11e...77b6-k9sl7
         <span

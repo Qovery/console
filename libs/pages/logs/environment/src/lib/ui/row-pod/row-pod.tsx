@@ -47,7 +47,10 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
           style={{ color: podNameToColor.get(data.pod_name) }}
         >
           {data.pod_name && data.pod_name && (
-            <span className="flex h-5 items-center justify-center gap-1 rounded-[40px] bg-neutral-500 px-2">
+            <span
+              className="flex h-5 items-center justify-center gap-1 rounded-[40px] bg-neutral-500 px-2"
+              title={data.pod_name}
+            >
               {data.pod_name && data.pod_name.length > 23
                 ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
                 : data.pod_name}

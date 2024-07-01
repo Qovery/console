@@ -103,7 +103,11 @@ export function PodLogs({
                 <div className="mr-2.5 w-4">
                   <StatusChip status={currentPod?.state} />
                 </div>
-                <p className="mr-5 truncate text-xs font-medium text-neutral-100">{data.pod_name}</p>
+                <p className="mr-5 truncate text-xs font-medium text-neutral-100" title={data.pod_name}>
+                  {data.pod_name && data.pod_name.length > 23
+                    ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
+                    : data.pod_name}
+                </p>
                 <span className="mr-2 block text-2xs text-neutral-350">
                   {data.version && (
                     <>
