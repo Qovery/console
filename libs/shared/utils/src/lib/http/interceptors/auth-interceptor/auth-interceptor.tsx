@@ -41,7 +41,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
         if (NODE_ENV !== 'production') {
           console.error(
             error.response?.data?.error || error.code || 'Error',
-            error.response?.data?.message || error.message
+            error.response?.data?.detail || error.detail
           )
         }
 
@@ -49,7 +49,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
         // without this we should add a catch in every asyncThunk api call
         // see: https://stackoverflow.com/questions/63439021/handling-errors-with-redux-toolkit
         const err: SerializedError = {
-          message: error.response?.data?.message,
+          message: error.response?.data?.detail,
           name: error.response?.data?.error,
           code: error.response?.data?.status?.toString(),
         }
