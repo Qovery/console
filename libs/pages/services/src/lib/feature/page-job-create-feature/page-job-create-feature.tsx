@@ -90,6 +90,9 @@ export function PageJobCreateFeature() {
 
   const dockerfileForm = useForm<DockerfileSettingsData>({
     mode: 'onChange',
+    defaultValues: {
+      dockerfile_source: 'GIT_REPOSITORY',
+    },
   })
 
   const [configureData, setConfigureData] = useState<JobConfigureData | undefined>()

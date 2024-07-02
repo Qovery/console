@@ -1,5 +1,5 @@
-import { type PropsWithChildren, useState } from 'react'
-import { Controller, type UseFormReturn } from 'react-hook-form'
+import { type PropsWithChildren } from 'react'
+import { Controller, type ControllerRenderProps, type UseFormReturn } from 'react-hook-form'
 import {
   BlockContent,
   Button,
@@ -14,7 +14,10 @@ import {
 } from '@qovery/shared/ui'
 import { DockerfileRawModal } from '../dockerfile-raw-modal/dockerfile-raw-modal'
 
+type FileSource = 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
+
 export interface DockerfileSettingsData {
+  dockerfile_source: FileSource
   dockerfile_path?: string | null
   dockerfile_raw?: string | null
 }
@@ -25,24 +28,20 @@ export interface DockerfileSettingsProps extends PropsWithChildren {
   directSubmit?: boolean
 }
 
-type FileSource = 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
-
 export function DockerfileSettings({ children, methods, onSubmit, directSubmit = false }: DockerfileSettingsProps) {
   const { openModal, closeModal } = useModal()
   const { setValue, control, watch } = methods
 
-  const [fileSource, setFileSource] = useState<FileSource>(
-    watch('dockerfile_raw') ? 'DOCKERFILE_RAW' : 'GIT_REPOSITORY'
-  )
   const availableFileSources: { label: string; value: FileSource }[] = [
     { label: 'Git repository', value: 'GIT_REPOSITORY' },
     { label: 'Raw Dockerfile', value: 'DOCKERFILE_RAW' },
   ]
 
   const watchDockerfileRaw = watch('dockerfile_raw')
+  const watchDockerfileSource = watch('dockerfile_source')
 
   const handleSubmit = () => {
-    if (fileSource === 'GIT_REPOSITORY') {
+    if (watchDockerfileSource === 'GIT_REPOSITORY') {
       setValue('dockerfile_raw', null)
     } else {
       setValue('dockerfile_path', null)
@@ -50,14 +49,14 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
     onSubmit()
   }
 
-  const openModalDockerfileRaw = () => {
+  const openModalDockerfileRaw = (field: ControllerRenderProps<DockerfileSettingsData, 'dockerfile_raw'>) => {
     openModal({
       content: (
         <DockerfileRawModal
-          content={watchDockerfileRaw ?? ''}
+          content={field.value ?? ''}
           onClose={closeModal}
           onSubmit={(dockerfile_raw) => {
-            setValue('dockerfile_raw', dockerfile_raw)
+            field.onChange(dockerfile_raw)
             if (directSubmit) {
               handleSubmit()
             }
@@ -78,16 +77,22 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
         handleSubmit()
       }}
     >
-      <InputSelect
-        label="File source"
-        options={availableFileSources}
-        value={fileSource}
-        onChange={(value) => {
-          setFileSource(value as FileSource)
-        }}
+      <Controller
+        name="dockerfile_source"
+        control={methods.control}
+        defaultValue="GIT_REPOSITORY"
+        render={({ field }) => (
+          <InputSelect
+            label="File source"
+            value={field.value}
+            onChange={field.onChange}
+            options={availableFileSources}
+          />
+        )}
       />
+
       <Section className="gap-6">
-        {fileSource === 'DOCKERFILE_RAW' ? (
+        {watchDockerfileSource === 'DOCKERFILE_RAW' ? (
           <>
             <div>
               <Heading className="mb-2">Dockerfile as raw file</Heading>
@@ -97,36 +102,45 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
               </p>
             </div>
 
-            <BlockContent
-              title="Raw Dockerfile"
-              classNameContent="p-0"
-              headRight={
-                watchDockerfileRaw && (
-                  <Button
-                    aria-label="Edit"
-                    type="button"
-                    size="xs"
-                    variant="outline"
-                    onClick={openModalDockerfileRaw}
-                    className="hover:text-neutral-400"
-                  >
-                    <Icon iconName="pen" />
-                  </Button>
-                )
-              }
-            >
-              {watchDockerfileRaw ? (
-                <CodeEditor value={watchDockerfileRaw} language="dockerfile" readOnly height="300px" />
-              ) : (
-                <div className="my-4 px-10 py-5 text-center">
-                  <Icon iconName="wave-pulse" className="text-neutral-350" />
-                  <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No Dockerfile defined</p>
-                  <Button type="button" size="md" onClick={openModalDockerfileRaw}>
-                    Create Dockerfile <Icon iconName="pen" className="ml-2" />
-                  </Button>
-                </div>
+            <Controller
+              name="dockerfile_raw"
+              control={control}
+              rules={{
+                required: 'Value required',
+              }}
+              render={({ field }) => (
+                <BlockContent
+                  title="Raw Dockerfile"
+                  classNameContent="p-0"
+                  headRight={
+                    watchDockerfileRaw && (
+                      <Button
+                        aria-label="Edit"
+                        type="button"
+                        size="xs"
+                        variant="outline"
+                        onClick={() => openModalDockerfileRaw(field)}
+                        className="hover:text-neutral-400"
+                      >
+                        <Icon iconName="pen" />
+                      </Button>
+                    )
+                  }
+                >
+                  {watchDockerfileRaw ? (
+                    <CodeEditor value={watchDockerfileRaw} language="dockerfile" readOnly height="300px" />
+                  ) : (
+                    <div className="my-4 px-10 py-5 text-center">
+                      <Icon iconName="wave-pulse" className="text-neutral-350" />
+                      <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No Dockerfile defined</p>
+                      <Button type="button" size="md" onClick={() => openModalDockerfileRaw(field)}>
+                        Create Dockerfile <Icon iconName="pen" className="ml-2" />
+                      </Button>
+                    </div>
+                  )}
+                </BlockContent>
               )}
-            </BlockContent>
+            />
           </>
         ) : (
           <>
@@ -167,7 +181,7 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
           </>
         )}
       </Section>
-      {directSubmit && fileSource === 'DOCKERFILE_RAW' ? null : children}
+      {directSubmit && watchDockerfileSource === 'DOCKERFILE_RAW' ? null : children}
     </form>
   )
 }

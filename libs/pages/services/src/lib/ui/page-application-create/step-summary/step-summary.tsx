@@ -3,6 +3,7 @@ import {
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
+import { Fragment } from 'react'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import {
   type ApplicationGeneralData,
@@ -182,7 +183,7 @@ export function StepSummary({
               {portsData.ports && portsData.ports.length > 0 ? (
                 <>
                   {portsData.ports?.map((port, index) => (
-                    <>
+                    <Fragment key={`${port.name}-${port.protocol}-${port.application_port}-${port.external_port}`}>
                       {!!index && <hr className="border-t border-dashed border-neutral-250" />}
                       <li key={index} className="my-2 grid grid-flow-col grid-cols-2 gap-2">
                         <div>
@@ -202,7 +203,7 @@ export function StepSummary({
                           </p>
                         </div>
                       </li>
-                    </>
+                    </Fragment>
                   ))}
                 </>
               ) : (
