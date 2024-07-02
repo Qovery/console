@@ -93,7 +93,11 @@ export function Container({ children }: PropsWithChildren) {
     <VariablesProvider>
       <ErrorBoundary>
         <Section className="flex-1">
-          <Header title={project?.name} icon={IconEnum.ENVIRONMENT} iconClassName="w-16" />
+          <Header title={project?.name}>
+            <div className="flex h-16 w-16 items-center justify-center">
+              <Icon name="ENVIRONMENT" className="w-16" />
+            </div>
+          </Header>
           <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
             <ErrorBoundary>{children}</ErrorBoundary>

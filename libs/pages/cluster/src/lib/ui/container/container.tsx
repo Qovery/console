@@ -100,7 +100,11 @@ export function Container({ children }: PropsWithChildren) {
   return (
     <ErrorBoundary>
       <Section className="flex-1">
-        <Header title={cluster?.name} icon={icon} actions={headerActions} />
+        <Header title={cluster?.name} actions={headerActions}>
+          <div className="flex h-16 w-16 items-center justify-center">
+            <Icon name={icon} className="w-10" />
+          </div>
+        </Header>
         <Tabs items={tabsItems} />
         {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (
           <NeedRedeployFlag
