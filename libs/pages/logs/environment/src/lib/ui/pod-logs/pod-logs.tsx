@@ -5,6 +5,7 @@ import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { Icon, IconAwesomeEnum, StatusChip, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
+import { trimId } from '@qovery/shared/util-js'
 import RowPod from '../row-pod/row-pod'
 
 export interface PodLogsProps {
@@ -105,7 +106,7 @@ export function PodLogs({
                 </div>
                 <p className="mr-5 truncate text-xs font-medium text-neutral-100" title={data.pod_name}>
                   {data.pod_name && data.pod_name.length > 23
-                    ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
+                    ? trimId(data.pod_name, 'both', { startOffset: 10, endOffset: 10 })
                     : data.pod_name}
                 </p>
                 <span className="mr-2 block text-2xs text-neutral-350">

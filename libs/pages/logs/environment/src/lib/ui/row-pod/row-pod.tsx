@@ -4,6 +4,7 @@ import { UpdateTimeContext } from '@qovery/shared/console-shared'
 import { Ansi } from '@qovery/shared/ui'
 import { CopyToClipboardButtonIcon, Icon, type TableFilterProps, TableRowFilter, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { trimId } from '@qovery/shared/util-js'
 
 export const formatVersion = (version: string) => {
   if (version.length < 6) {
@@ -52,7 +53,7 @@ export function RowPod({ data, filter, index, podNameToColor }: RowPodProps) {
               title={data.pod_name}
             >
               {data.pod_name && data.pod_name.length > 23
-                ? `${data.pod_name?.substring(0, 10)}...${data.pod_name?.slice(-10)}`
+                ? trimId(data.pod_name, 'both', { startOffset: 10, endOffset: 10 })
                 : data.pod_name}
               <CopyToClipboardButtonIcon className="opacity-50" content={data.pod_name} />
             </span>
