@@ -1,10 +1,11 @@
-import { type GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
+import { type GitProviderEnum, type GitTokenResponse, type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
 export interface JobGeneralData {
   name: string
   description: string
+  lifecycle_type: keyof typeof JobLifecycleTypeEnum
   serviceType: keyof typeof ServiceTypeEnum
   auto_deploy: boolean
   labels_groups?: string[]
