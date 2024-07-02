@@ -1,3 +1,4 @@
+import { JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -14,6 +15,18 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { parseCmd } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
 import { findTemplateData, useJobContainerCreateContext } from '../page-job-create-feature'
+
+function getLifycleType(option?: string): JobLifecycleTypeEnum {
+  if (option?.includes('terraform')) {
+    return 'TERRAFORM'
+  }
+
+  if (option?.includes('cloudformation')) {
+    return 'CLOUDFORMATION'
+  }
+
+  return 'GENERIC'
+}
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Job')
@@ -35,6 +48,7 @@ export function StepGeneralFeature() {
       name: templateData ? templateData.slug : '',
       serviceType: templateData?.slug === 'container' ? 'CONTAINER' : 'APPLICATION',
       auto_deploy: true,
+      lifecycle_type: getLifycleType(option),
       ...generalData,
     },
     mode: 'onChange',

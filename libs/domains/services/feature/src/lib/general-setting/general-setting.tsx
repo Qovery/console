@@ -1,11 +1,13 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputText, InputTextArea } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface GeneralSettingProps {
   label?: string
+  type?: string
 }
 
-export function GeneralSetting({ label = 'Name' }: GeneralSettingProps) {
+export function GeneralSetting({ label = 'Name', type = 'lifecycle_type' }: GeneralSettingProps) {
   const { control } = useFormContext()
 
   return (
@@ -38,6 +40,21 @@ export function GeneralSetting({ label = 'Name' }: GeneralSettingProps) {
           />
         )}
       />
+      {type && (
+        <Controller
+          name={type}
+          control={control}
+          render={({ field }) => (
+            <InputText
+              name={field.name}
+              onChange={field.onChange}
+              value={upperCaseFirstLetter(field.value)}
+              label="Type"
+              disabled
+            />
+          )}
+        />
+      )}
     </>
   )
 }

@@ -63,6 +63,12 @@ export function StepSummary(props: StepSummaryProps) {
                   {props.generalData.description}
                 </li>
               )}
+              {props.generalData.lifecycle_type && props.jobType === 'LIFECYCLE_JOB' && (
+                <li>
+                  <strong className="font-medium">Type:</strong>{' '}
+                  {upperCaseFirstLetter(props.generalData.lifecycle_type)}
+                </li>
+              )}
               <div className="py-2">
                 <hr className="border-t border-dashed border-neutral-250" />
               </div>
