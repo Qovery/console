@@ -7,7 +7,7 @@ export interface GeneralSettingProps {
   type?: string
 }
 
-export function GeneralSetting({ label = 'Name', type = 'lifecycle_type' }: GeneralSettingProps) {
+export function GeneralSetting({ label = 'Name', type }: GeneralSettingProps) {
   const { control } = useFormContext()
 
   return (
