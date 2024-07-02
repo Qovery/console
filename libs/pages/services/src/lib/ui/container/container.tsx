@@ -248,7 +248,11 @@ export function Container({ children }: PropsWithChildren) {
     <VariablesProvider>
       <ErrorBoundary>
         <Section className="flex-1">
-          <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
+          <Header title={environment?.name} actions={headerActions}>
+            <div className="flex h-16 w-16 items-center justify-center">
+              <Icon name="SERVICES" className="w-16" />
+            </div>
+          </Header>
           <Tabs items={tabsItems} contentRight={contentTabs} />
           {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">

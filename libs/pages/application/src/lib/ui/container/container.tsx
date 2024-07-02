@@ -8,6 +8,7 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   NeedRedeployFlag,
   ServiceActionToolbar,
+  ServiceBadge,
   ServiceTerminalContext,
   useService,
 } from '@qovery/domains/services/feature'
@@ -79,16 +80,39 @@ export function Container({ children }: ContainerProps) {
     </div>
   )
 
-  const headerIcon = match(service)
-    .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
-    .with({ serviceType: 'JOB' }, (s) => (s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB))
-    .otherwise(() => IconEnum.APPLICATION)
+  const serviceIcon = match(service)
+    .with({ serviceType: 'HELM' }, () => (
+      <div className="flex h-16 w-16 items-center justify-center">
+        <Icon name="HELM" className="w-10" />
+      </div>
+    ))
+    .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, (s) =>
+      s.schedule.lifecycle_type !== 'GENERIC' ? (
+        <ServiceBadge size="md" icon="LIFECYCLE_JOB" type={s.schedule.lifecycle_type} />
+      ) : (
+        <div className="flex h-16 w-16 items-center justify-center">
+          <Icon name="LIFECYCLE_JOB" className="w-10" />
+        </div>
+      )
+    )
+    .with({ serviceType: 'JOB', job_type: 'CRON' }, () => (
+      <div className="flex h-16 w-16 items-center justify-center">
+        <Icon name={IconEnum.CRON_JOB} className="w-10" />
+      </div>
+    ))
+    .otherwise(() => (
+      <div className="flex h-16 w-16 items-center justify-center">
+        <Icon name={IconEnum.APPLICATION} className="w-10" />
+      </div>
+    ))
 
   return (
     <VariablesProvider>
       <ErrorBoundary>
         <Section className="flex-1">
-          <Header title={service?.name} icon={headerIcon} actions={headerActions} />
+          <Header title={service?.name} actions={headerActions}>
+            {serviceIcon}
+          </Header>
           <TabsFeature />
           <NeedRedeployFlag />
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
