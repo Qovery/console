@@ -156,15 +156,16 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
-              </span>
+              <div>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -272,24 +273,32 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-arrow-turn-down-right ml-1 mr-2 text-2xs text-neutral-300"
-              />
-              <span
-                class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+              <div>
+                <span
+                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+                >
+                  ALIAS
+                </span>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  DB_USERNAME
+                </span>
+              </div>
+              <div
+                class="flex flex-row gap-1 text-2xs text-neutral-350"
               >
-                ALIAS
-              </span>
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                DB_USERNAME
-              </span>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-300"
+                />
+                <span>
+                  QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -367,24 +376,32 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-arrow-turn-down-right ml-1 mr-2 text-2xs text-neutral-300"
-              />
-              <span
-                class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+              <div>
+                <span
+                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+                >
+                  ALIAS
+                </span>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  DB_HOST
+                </span>
+              </div>
+              <div
+                class="flex flex-row gap-1 text-2xs text-neutral-350"
               >
-                ALIAS
-              </span>
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                DB_HOST
-              </span>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-300"
+                />
+                <span>
+                  QOVERY_OUTPUT_JOB_ZEDE360F7_DB_HOST
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -462,20 +479,21 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <span
-                class="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50"
-              >
-                FILE
-              </span>
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                grafana_config
-              </span>
+              <div>
+                <span
+                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50"
+                >
+                  FILE
+                </span>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  grafana_config
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -661,15 +679,16 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                myvar_project
-              </span>
+              <div>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  myvar_project
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -770,15 +789,16 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                variable_name
-              </span>
+              <div>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  variable_name
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -970,65 +990,66 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-              <span
-                class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
-                data-testid="doppler-tag"
-              >
-                DOPPLER
-              </span>
-               
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                DOPPLER_PROJECT
-              </span>
-              <span
-                class="ml-2"
-                data-state="closed"
-              >
-                <svg
-                  class="shrink-0 "
-                  fill="none"
-                  height="11px"
-                  name="DOPPLER"
-                  viewBox="0 0 11 12"
-                  width="11px"
-                  xmlns="http://www.w3.org/2000/svg"
+              <div>
+                <span
+                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
+                  data-testid="doppler-tag"
                 >
-                  <path
-                    clip-rule="evenodd"
-                    d="M.202.5a.11.11 0 00-.093.171l1.972 3.087c.164.255.445.41.748.41h2.667c.978 0 1.589.864 1.585 1.832-.003.968-.655 1.824-1.585 1.824H2.648a.295.295 0 00-.295.296v3.084c0 .164.132.296.295.296h3.638C9.433 11.5 10.998 8.514 11 6 11.002 3.486 9.455.5 6.286.5H.202zm1.294 7.332H.788c-.435 0-.788.41-.788.917v2.67c0 .044.036.08.08.08h.708c.435 0 .787-.41.787-.917v-2.67a.08.08 0 00-.08-.08z"
-                    fill="url(#paint0_linear_13638_482988)"
-                    fill-rule="evenodd"
-                  />
-                  <defs>
-                    <lineargradient
-                      gradientUnits="userSpaceOnUse"
-                      id="paint0_linear_13638_482988"
-                      x1="8.78"
-                      x2="1.006"
-                      y1="0.134"
-                      y2="10.56"
-                    >
-                      <stop
-                        offset="0.036"
-                        stop-color="#409FF8"
-                      />
-                      <stop
-                        offset="0.5"
-                        stop-color="#1673FF"
-                      />
-                      <stop
-                        offset="1"
-                        stop-color="#516FF7"
-                      />
-                    </lineargradient>
-                  </defs>
-                </svg>
-              </span>
+                  DOPPLER
+                </span>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  DOPPLER_PROJECT
+                </span>
+                <span
+                  class="ml-2"
+                  data-state="closed"
+                >
+                  <svg
+                    class="shrink-0 "
+                    fill="none"
+                    height="11px"
+                    name="DOPPLER"
+                    viewBox="0 0 11 12"
+                    width="11px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      clip-rule="evenodd"
+                      d="M.202.5a.11.11 0 00-.093.171l1.972 3.087c.164.255.445.41.748.41h2.667c.978 0 1.589.864 1.585 1.832-.003.968-.655 1.824-1.585 1.824H2.648a.295.295 0 00-.295.296v3.084c0 .164.132.296.295.296h3.638C9.433 11.5 10.998 8.514 11 6 11.002 3.486 9.455.5 6.286.5H.202zm1.294 7.332H.788c-.435 0-.788.41-.788.917v2.67c0 .044.036.08.08.08h.708c.435 0 .787-.41.787-.917v-2.67a.08.08 0 00-.08-.08z"
+                      fill="url(#paint0_linear_13638_482988)"
+                      fill-rule="evenodd"
+                    />
+                    <defs>
+                      <lineargradient
+                        gradientUnits="userSpaceOnUse"
+                        id="paint0_linear_13638_482988"
+                        x1="8.78"
+                        x2="1.006"
+                        y1="0.134"
+                        y2="10.56"
+                      >
+                        <stop
+                          offset="0.036"
+                          stop-color="#409FF8"
+                        />
+                        <stop
+                          offset="0.5"
+                          stop-color="#1673FF"
+                        />
+                        <stop
+                          offset="1"
+                          stop-color="#516FF7"
+                        />
+                      </lineargradient>
+                    </defs>
+                  </svg>
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -1220,15 +1241,16 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                FOO
-              </span>
+              <div>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  FOO
+                </span>
+              </div>
             </div>
           </td>
           <td
@@ -1329,24 +1351,32 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 40%;"
           >
             <div
-              class="flex items-center"
+              class="flex flex-col justify-center gap-1"
             >
-               
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-arrow-turn-down-right ml-1 mr-2 text-2xs text-neutral-300"
-              />
-              <span
-                class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+              <div>
+                <span
+                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+                >
+                  ALIAS
+                </span>
+                <span
+                  class="truncate text-sm font-medium"
+                  data-state="closed"
+                >
+                  BAR
+                </span>
+              </div>
+              <div
+                class="flex flex-row gap-1 text-2xs text-neutral-350"
               >
-                ALIAS
-              </span>
-              <span
-                class="truncate text-sm font-medium"
-                data-state="closed"
-              >
-                BAR
-              </span>
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-300"
+                />
+                <span>
+                  FOO
+                </span>
+              </div>
             </div>
           </td>
           <td
