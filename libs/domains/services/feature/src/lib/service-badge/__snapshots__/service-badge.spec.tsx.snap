@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ServiceBadge should match snapshot 1`] = `
+exports[`ServiceBadge should match snapshot with medium size 1`] = `
 <body>
   <div>
     <div
@@ -190,6 +190,227 @@ exports[`ServiceBadge should match snapshot 1`] = `
           <path
             d="M7.28 4.01v3.786l3.28-1.892v-3.79L7.28 4.01zM3.64 2.114L6.92 4.01v3.786L3.64 5.902V2.114zM0 0v3.788l3.28 1.894V1.894L0 0zm3.64 10.106L6.92 12V8.212L3.64 6.318v3.788z"
             fill="#7B42BC"
+          />
+        </svg>
+      </span>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`ServiceBadge should match snapshot with small size 1`] = `
+<body>
+  <div>
+    <div
+      class="relative flex items-center justify-center rounded-full border border-neutral-200 h-8 w-8"
+    >
+      <svg
+        class="shrink-0 h-6 w-6"
+        fill="none"
+        name="LIFECYCLE_JOB"
+        viewBox="0 0 22 22"
+        width="1.5rem"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g
+          opacity="0.7"
+        >
+          <circle
+            cx="10.875"
+            cy="11"
+            r="10.15"
+            stroke="#42E8E0"
+            stroke-width="0.3"
+          />
+          <ellipse
+            cx="10.876"
+            cy="11.077"
+            fill="#EAEAFE"
+            rx="7.669"
+            ry="7.669"
+          />
+          <path
+            clip-rule="evenodd"
+            d="M1.762 11.076a9.114 9.114 0 019.036-9.113v2.72a6.394 6.394 0 00-6.316 6.393h-2.72z"
+            fill="url(#paint0_linear_10128_95071)"
+            fill-rule="evenodd"
+          />
+          <path
+            clip-rule="evenodd"
+            d="M10.688 1.963a9.218 9.218 0 019.218 9.14h-2.751a6.467 6.467 0 00-6.467-6.389V1.963z"
+            fill="url(#paint1_linear_10128_95071)"
+            fill-rule="evenodd"
+          />
+          <path
+            clip-rule="evenodd"
+            d="M19.906 11a9.231 9.231 0 01-9.036 9.112v-2.756A6.476 6.476 0 0017.15 11h2.756z"
+            fill="url(#paint2_linear_10128_95071)"
+            fill-rule="evenodd"
+          />
+          <path
+            clip-rule="evenodd"
+            d="M10.875 20.113a9.114 9.114 0 01-9.113-9.037h2.72a6.394 6.394 0 006.393 6.317v2.72z"
+            fill="url(#paint3_linear_10128_95071)"
+            fill-rule="evenodd"
+          />
+          <path
+            d="M11.514 3.326L10.15 1.963v2.726l1.364-1.363zM18.543 11.72l1.363-1.364H17.18l1.363 1.364zM10.15 18.75l1.364 1.363v-2.726L10.15 18.75zM3.152 10.357L1.79 11.72h2.726l-1.363-1.363z"
+            fill="#fff"
+          />
+          <rect
+            fill="#fff"
+            height="1.252"
+            rx="0.626"
+            width="5.803"
+            x="7.975"
+            y="8.274"
+          />
+          <rect
+            fill="#fff"
+            height="1.252"
+            rx="0.626"
+            width="5.803"
+            x="7.975"
+            y="10.45"
+          />
+          <rect
+            fill="#fff"
+            height="1.252"
+            rx="0.626"
+            width="5.803"
+            x="7.975"
+            y="12.627"
+          />
+          <rect
+            fill="#8987C9"
+            height="1.252"
+            rx="0.626"
+            width="5.803"
+            x="7.975"
+            y="8.198"
+          />
+          <rect
+            fill="#8987C9"
+            height="1.252"
+            rx="0.626"
+            width="5.803"
+            x="7.975"
+            y="10.374"
+          />
+          <rect
+            fill="#8987C9"
+            height="1.252"
+            rx="0.626"
+            width="5.803"
+            x="7.975"
+            y="12.55"
+          />
+        </g>
+        <defs>
+          <lineargradient
+            gradientUnits="userSpaceOnUse"
+            id="paint0_linear_10128_95071"
+            x1="11.349"
+            x2="7.509"
+            y1="17.65"
+            y2="6.193"
+          >
+            <stop
+              stop-color="#8987C9"
+            />
+            <stop
+              offset="1"
+              stop-color="#BDBFFF"
+            />
+          </lineargradient>
+          <lineargradient
+            gradientUnits="userSpaceOnUse"
+            id="paint1_linear_10128_95071"
+            x1="16.627"
+            x2="13.808"
+            y1="11.103"
+            y2="4.453"
+          >
+            <stop
+              stop-color="#8987C9"
+            />
+            <stop
+              offset="1"
+              stop-color="#BDBFFF"
+            />
+          </lineargradient>
+          <lineargradient
+            gradientUnits="userSpaceOnUse"
+            id="paint2_linear_10128_95071"
+            x1="16.527"
+            x2="17.628"
+            y1="17.334"
+            y2="18.595"
+          >
+            <stop
+              stop-color="#8987C9"
+            />
+            <stop
+              offset="1"
+              stop-color="#BDBFFF"
+            />
+          </lineargradient>
+          <lineargradient
+            gradientUnits="userSpaceOnUse"
+            id="paint3_linear_10128_95071"
+            x1="6.85"
+            x2="1.762"
+            y1="18.01"
+            y2="18.19"
+          >
+            <stop
+              stop-color="#8987C9"
+            />
+            <stop
+              offset="1"
+              stop-color="#BDBFFF"
+            />
+          </lineargradient>
+        </defs>
+      </svg>
+      <span
+        class="absolute p-0.5 h-4 w-4 -top-1 -right-1.5"
+      >
+        <svg
+          class="shrink-0 h-full w-full"
+          name="CLOUDFORMATION"
+          preserveAspectRatio="xMidYMid"
+          viewBox="0 0 256 312"
+          width="1.5rem"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16.491 215.53l2.176 2.47 109.915 31.157.498-19.313-76.98-19.318-3.767-1.359z"
+            fill="#b7ca9d"
+          />
+          <path
+            d="M239.505 215.53L127.25 253l-.334-23.156 76.979-19.318 3.355-3.776z"
+            fill="#b7ca9d"
+          />
+          <path
+            d="M126.916 83.165l76.979 17.941L237.75 99.5l1.755-3.393L132.25 57.5z"
+            fill="#3c4929"
+          />
+          <path
+            d="M52.1 210.526l-35.609 5.004-.991-3.697V100l.991-3.893L48.667 98.5l3.433 2.61z"
+            fill="#759c3e"
+          />
+          <path
+            d="M129.08 83.165L52.1 101.106l-35.609-4.999L17.833 94l110.749-31.52z"
+            fill="#3c4929"
+          />
+          <path
+            d="M127.846 0L0 64.531l.061 182.613 127.785 64.497 1.904-2.891v-305zM90.462 237.73l-73.971-22.2V96.107l73.971-22.192zM203.895 210.526l35.61 5.004L241.5 212V99.5l-1.995-3.393-35.61 5.003z"
+            fill="#4b612c"
+          />
+          <path
+            d="M127.846 311.641l128.093-64.493L256 64.536 127.846 0zm37.687-237.726l73.972 22.192V215.53l-73.972 22.2z"
+            fill="#759c3e"
           />
         </svg>
       </span>

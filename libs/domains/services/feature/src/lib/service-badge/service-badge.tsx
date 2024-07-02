@@ -30,7 +30,7 @@ const typeVariants = cva(['absolute', '-right-0.5', '-top-0.5', 'p-0.5'], {
   variants: {
     size: {
       md: ['h-6', 'w-6'],
-      xs: ['h-5', 'w-5', 'p-1', '-top-1.5', '-right-1.5'],
+      xs: ['h-4', 'w-4', '-top-1', '-right-1.5'],
     },
   },
 })
