@@ -112,13 +112,22 @@ export function PageSettingsGeneral({
           description="These general settings allow you to set up the service name, its source and deployment parameters."
         />
         <form onSubmit={onSubmit} className="space-y-10">
-          <Section className="gap-4">
-            <Heading>General</Heading>
-            <GeneralSetting label="Service name" />
-          </Section>
+          {service?.serviceType !== 'JOB' && (
+            <Section className="gap-4">
+              <Heading>General</Heading>
+              <GeneralSetting label="Service name" />
+            </Section>
+          )}
           {match(service)
             .with({ serviceType: 'JOB' }, (job) => (
               <>
+                <Section className="gap-4">
+                  <Heading>General</Heading>
+                  <GeneralSetting
+                    label="Service name"
+                    type={job.job_type === 'LIFECYCLE' ? 'schedule.lifecycle_type' : undefined}
+                  />
+                </Section>
                 <JobGeneralSettings
                   isEdition={true}
                   jobType={job.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
