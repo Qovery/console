@@ -1,8 +1,5 @@
-import { PropsWithChildren, type ReactNode } from 'react'
-import { type IconEnum } from '@qovery/shared/enums'
-import { twMerge } from '@qovery/shared/util-js'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { Heading } from '../heading/heading'
-import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'
 import Truncate from '../truncate/truncate'
 
