@@ -340,31 +340,41 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 >
                   <div>
                     <div
-                      data-testid="input-textarea"
+                      class=""
+                      data-testid="input-text-wrapper"
                     >
                       <div
-                        aria-label="textarea-container"
-                        class="input pb-0 pr-2    input--label-up"
+                        class="relative"
                       >
-                        <label
-                          class="translate-y-2 text-sm"
-                          for="Helm arguments"
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
                         >
-                          Helm arguments
-                        </label>
-                        <textarea
-                          class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
-                          id="Helm arguments"
-                          name="arguments"
-                        >
-                          ['--wait']
-                        </textarea>
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Helm arguments"
+                            >
+                              Helm arguments
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Helm arguments"
+                              name="arguments"
+                              type="text"
+                              value="--wait"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <p
                       class="ml-4 mt-1 text-xs text-neutral-350"
                     >
-                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
+                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
                       <br />
                       <a
                         class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
@@ -379,6 +389,20 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                         />
                       </a>
                     </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm install undefined {{RELEASE_NAME}}  --wait
+                    </span>
                   </div>
                   <div
                     class=""
@@ -745,31 +769,41 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 >
                   <div>
                     <div
-                      data-testid="input-textarea"
+                      class=""
+                      data-testid="input-text-wrapper"
                     >
                       <div
-                        aria-label="textarea-container"
-                        class="input pb-0 pr-2    input--label-up"
+                        class="relative"
                       >
-                        <label
-                          class="translate-y-2 text-sm"
-                          for="Helm arguments"
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
                         >
-                          Helm arguments
-                        </label>
-                        <textarea
-                          class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
-                          id="Helm arguments"
-                          name="arguments"
-                        >
-                          ['--wait']
-                        </textarea>
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Helm arguments"
+                            >
+                              Helm arguments
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Helm arguments"
+                              name="arguments"
+                              type="text"
+                              value="--wait"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <p
                       class="ml-4 mt-1 text-xs text-neutral-350"
                     >
-                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
+                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
                       <br />
                       <a
                         class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
@@ -784,6 +818,20 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                         />
                       </a>
                     </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm upgrade --install -n {{KUBERNETES_NAMESPACE}} {{RELEASE_NAME}} . --wait
+                    </span>
                   </div>
                   <div
                     class=""
@@ -1361,31 +1409,41 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                 >
                   <div>
                     <div
-                      data-testid="input-textarea"
+                      class=""
+                      data-testid="input-text-wrapper"
                     >
                       <div
-                        aria-label="textarea-container"
-                        class="input pb-0 pr-2    input--label-up"
+                        class="relative"
                       >
-                        <label
-                          class="translate-y-2 text-sm"
-                          for="Helm arguments"
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
                         >
-                          Helm arguments
-                        </label>
-                        <textarea
-                          class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
-                          id="Helm arguments"
-                          name="arguments"
-                        >
-                          ['--wait']
-                        </textarea>
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Helm arguments"
+                            >
+                              Helm arguments
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Helm arguments"
+                              name="arguments"
+                              type="text"
+                              value="--wait"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <p
                       class="ml-4 mt-1 text-xs text-neutral-350"
                     >
-                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: ["-h", "0.0.0.0"]
+                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
                       <br />
                       <a
                         class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
@@ -1400,6 +1458,20 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                         />
                       </a>
                     </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm install undefined {{RELEASE_NAME}}  --wait
+                    </span>
                   </div>
                   <div
                     class=""

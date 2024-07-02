@@ -193,7 +193,7 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
     description: data.description,
     source,
     allow_cluster_wide_resources: data.allow_cluster_wide_resources,
-    arguments: JSON.parse(data.arguments),
+    arguments: parseCmd(data.arguments),
     timeout_sec: parseInt(data.timeout_sec, 10),
     auto_deploy: data.auto_deploy ?? false,
   }
@@ -271,7 +271,7 @@ export function PageSettingsGeneralFeature() {
       auto_preview: service.auto_preview,
       allow_cluster_wide_resources: service.allow_cluster_wide_resources,
       timeout_sec: service.timeout_sec,
-      arguments: JSON.stringify(service.arguments),
+      arguments: service.arguments.join(' '),
     }))
     .otherwise(() => undefined)
 
