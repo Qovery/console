@@ -1,6 +1,6 @@
 import { type VariantProps, cva } from 'class-variance-authority'
-import { JobLifecycleTypeEnum } from 'qovery-typescript-axios'
-import { ComponentPropsWithoutRef, ElementRef, forwardRef } from 'react'
+import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
+import { ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { type IconEnum } from '@qovery/shared/enums'
 import { Icon, Tooltip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
