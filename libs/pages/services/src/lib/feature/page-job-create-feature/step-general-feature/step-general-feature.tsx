@@ -1,4 +1,4 @@
-import { JobLifecycleTypeEnum } from 'qovery-typescript-axios'
+import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
