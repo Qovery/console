@@ -20,6 +20,7 @@ export function PageVariablesFeature() {
     <VariableList
       className="border-b border-b-neutral-200"
       scope="ENVIRONMENT"
+      organizationId={organizationId}
       projectId={projectId}
       environmentId={environmentId}
       onCreateVariable={() => {

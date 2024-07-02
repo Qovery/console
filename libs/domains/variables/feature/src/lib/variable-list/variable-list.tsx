@@ -62,6 +62,7 @@ export type VariableListProps = {
     }
   | {
       scope: Extract<Scope, 'ENVIRONMENT'>
+      organizationId: string
       projectId: string
       environmentId: string
     }
@@ -142,8 +143,7 @@ export function VariableList({
       },
     })
   }
-
-  const isServiceScope = 'serviceId' in props
+  const showServiceLinkColumn = 'organizationId' in props
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(
@@ -196,7 +196,7 @@ export function VariableList({
             : `${variables.length} ${pluralize(variables.length, 'variable')}`
         },
         enableColumnFilter: false,
-        size: isServiceScope ? 40 : 45,
+        size: showServiceLinkColumn ? 40 : 45,
         cell: (info) => {
           const variable = info.row.original
           return (
@@ -327,7 +327,7 @@ export function VariableList({
       }),
       columnHelper.accessor('variable_kind', {
         header: 'Value',
-        size: isServiceScope ? 20 : 25,
+        size: showServiceLinkColumn ? 20 : 25,
         enableColumnFilter: true,
         filterFn: 'arrIncludesSome',
         cell: (info) => {
@@ -362,7 +362,7 @@ export function VariableList({
         },
       }),
       ...match(props)
-        .with({ scope: 'ENVIRONMENT' }, { scope: 'PROJECT' }, () => [])
+        .with({ scope: 'PROJECT' }, () => [])
         .otherwise(({ organizationId, projectId, environmentId }) => [
           columnHelper.accessor('service_name', {
             header: 'Service link',
@@ -405,7 +405,7 @@ export function VariableList({
         header: 'Scope',
         enableColumnFilter: true,
         filterFn: 'arrIncludesSome',
-        size: isServiceScope ? 10 : 15,
+        size: showServiceLinkColumn ? 10 : 15,
         meta: {
           customFilterValue({ filterValue }) {
             return <Truncate text={filterValue.map(upperCaseFirstLetter).join(', ')} truncateLimit={18} />
