@@ -63,10 +63,9 @@ export function StepSummary(props: StepSummaryProps) {
                   {props.generalData.description}
                 </li>
               )}
-              {props.generalData.lifecycle_type && props.jobType === 'LIFECYCLE_JOB' && (
+              {props.generalData.template_type && props.jobType === 'LIFECYCLE_JOB' && (
                 <li>
-                  <strong className="font-medium">Type:</strong>{' '}
-                  {upperCaseFirstLetter(props.generalData.lifecycle_type)}
+                  <strong className="font-medium">Type:</strong> {upperCaseFirstLetter(props.generalData.template_type)}
                 </li>
               )}
               <div className="py-2">

@@ -123,10 +123,7 @@ export function PageSettingsGeneral({
               <>
                 <Section className="gap-4">
                   <Heading>General</Heading>
-                  <GeneralSetting
-                    label="Service name"
-                    type={job.job_type === 'LIFECYCLE' ? 'schedule.lifecycle_type' : undefined}
-                  />
+                  <GeneralSetting label="Service name" templateType={job.job_type === 'LIFECYCLE' && true} />
                 </Section>
                 <JobGeneralSettings
                   isEdition={true}
