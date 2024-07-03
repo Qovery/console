@@ -1,5 +1,5 @@
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
-import { VariantProps, cva } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { twMerge } from '@qovery/shared/util-js'
@@ -22,13 +22,13 @@ export interface ResourceAvatarProps
     VariantProps<typeof resourceAvatarVariants> {}
 
 export const ResourceAvatar = forwardRef<ElementRef<typeof AvatarPrimitive.Root>, ResourceAvatarProps>(function Avatar(
-  { className, ...props },
+  { className, size, ...props },
   forwardedRef
 ) {
   return (
     <AvatarPrimitive.Root
       ref={forwardedRef}
-      className={twMerge('relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full', className)}
+      className={twMerge(resourceAvatarVariants({ size }), className)}
       {...props}
     />
   )

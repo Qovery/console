@@ -1,5 +1,5 @@
 import { type VariantProps, cva } from 'class-variance-authority'
-import { ComponentPropsWithoutRef, type ElementRef, ReactNode, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, type ReactNode, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
 const indicatorVariants = cva('absolute', {
