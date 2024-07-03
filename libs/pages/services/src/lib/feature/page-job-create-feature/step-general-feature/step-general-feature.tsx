@@ -48,7 +48,7 @@ export function StepGeneralFeature() {
       name: templateData ? templateData.slug : '',
       serviceType: templateData?.slug === 'container' ? 'CONTAINER' : 'APPLICATION',
       auto_deploy: true,
-      lifecycle_type: getLifycleType(option),
+      template_type: getLifycleType(option),
       ...generalData,
     },
     mode: 'onChange',

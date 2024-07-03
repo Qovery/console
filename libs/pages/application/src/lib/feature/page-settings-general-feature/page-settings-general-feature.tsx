@@ -249,9 +249,7 @@ export function PageSettingsGeneralFeature() {
           }
         })
         .with({ job_type: 'LIFECYCLE' }, (s) => ({
-          schedule: {
-            lifecycle_type: s.schedule.lifecycle_type,
-          },
+          template_type: s.schedule.lifecycle_type,
         }))
         .exhaustive()
 
