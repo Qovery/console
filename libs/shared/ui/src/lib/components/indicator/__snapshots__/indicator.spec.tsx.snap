@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Indicator should match snapshot bottom end 1`] = `
+<body>
+  <div>
+    <span
+      class="relative inline-block"
+    >
+      <span
+        class="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2"
+      >
+        <div
+          class="h-3 w-3 rounded-full bg-red-500"
+        />
+      </span>
+      <button>
+        Button
+      </button>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`Indicator should match snapshot top end 1`] = `
+<body>
+  <div>
+    <span
+      class="relative inline-block"
+    >
+      <span
+        class="absolute top-0 - right-0 -translate-y-1/2 translate-x-1/2"
+      >
+        <div
+          class="h-3 w-3 rounded-full bg-red-500"
+        />
+      </span>
+      <button>
+        Button
+      </button>
+    </span>
+  </div>
+</body>
+`;
