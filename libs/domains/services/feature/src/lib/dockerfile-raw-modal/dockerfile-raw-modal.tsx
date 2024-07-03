@@ -30,7 +30,7 @@ ENTRYPOINT [ "/bin/sh" ]`
 
   return (
     <FormProvider {...methods}>
-      <ModalCrud title="Raw Dockerfile" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">
+      <ModalCrud title="Dockerfile" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">
         <div className="flex h-full">
           <BlockContent title="Override" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
             <Controller
@@ -48,7 +48,7 @@ ENTRYPOINT [ "/bin/sh" ]`
             />
           </BlockContent>
           <BlockContent
-            title="Default Dockerfile"
+            title="Example"
             className="mb-0 rounded-l-none"
             classNameContent="p-0"
             headRight={

@@ -18,7 +18,11 @@ jest.mock('@monaco-editor/react', () => {
   return { Editor: FakeEditor }
 })
 
-type FormValues = { dockerfile_path: string | null; dockerfile_raw: string | null }
+type FormValues = {
+  dockerfile_source: 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
+  dockerfile_path: string | null
+  dockerfile_raw: string | null
+}
 
 function DockerfileSettingsWithForm({
   onSubmit,
@@ -28,6 +32,9 @@ function DockerfileSettingsWithForm({
 }) {
   const form = useForm({
     mode: 'onChange',
+    defaultValues: {
+      dockerfile_source: 'GIT_REPOSITORY',
+    },
   })
   const _onSubmit = form.handleSubmit((data) => {
     onSubmit(data as FormValues)
@@ -62,7 +69,11 @@ describe('DockerfileSettings', () => {
     await userEvent.clear(screen.getByRole('textbox'))
     await userEvent.type(screen.getByRole('textbox'), 'CustomDockerfile')
     await userEvent.click(screen.getByRole('button', { name: /Submit/i }))
-    expect(onSubmit).toHaveBeenCalledWith({ dockerfile_raw: null, dockerfile_path: 'CustomDockerfile' })
+    expect(onSubmit).toHaveBeenCalledWith({
+      dockerfile_source: 'GIT_REPOSITORY',
+      dockerfile_raw: null,
+      dockerfile_path: 'CustomDockerfile',
+    })
   })
 
   it('should submit dockerfile raw', async () => {
@@ -78,6 +89,10 @@ describe('DockerfileSettings', () => {
     await userEvent.type(screen.getAllByRole('textbox')[0], 'my dockerfile content')
     await userEvent.click(screen.getByRole('button', { name: /Save/i }))
     await userEvent.click(screen.getByRole('button', { name: /Submit/i }))
-    expect(onSubmit).toHaveBeenCalledWith({ dockerfile_path: null, dockerfile_raw: 'my dockerfile content' })
+    expect(onSubmit).toHaveBeenCalledWith({
+      dockerfile_source: 'DOCKERFILE_RAW',
+      dockerfile_path: null,
+      dockerfile_raw: 'my dockerfile content',
+    })
   })
 })

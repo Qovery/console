@@ -11,6 +11,7 @@ describe('DockerfileSettings', () => {
       useForm<DockerfileSettingsData>({
         mode: 'onChange',
         defaultValues: {
+          dockerfile_source: 'DOCKERFILE_RAW',
           dockerfile_path: null,
           dockerfile_raw: 'my custom content',
         },

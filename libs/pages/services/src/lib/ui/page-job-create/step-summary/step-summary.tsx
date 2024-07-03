@@ -1,5 +1,4 @@
 import {
-  BuildModeEnum,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'

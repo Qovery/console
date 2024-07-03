@@ -1,5 +1,10 @@
 import { Chance } from 'chance'
-import { ContainerRegistryKindEnum, GitProviderEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import {
+  type BaseJobResponseAllOfSource,
+  ContainerRegistryKindEnum,
+  GitProviderEnum,
+  StorageTypeEnum,
+} from 'qovery-typescript-axios'
 import { type Job } from '@qovery/domains/services/data-access'
 
 const chance = new Chance('123')
@@ -88,7 +93,7 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): Job[
 
 export const lifecycleJobFactoryMock = (howMany: number, withContainer = false): Job[] =>
   Array.from({ length: howMany }).map((_, index) => {
-    let source
+    let source: BaseJobResponseAllOfSource
     if (!withContainer) {
       source = {
         docker: {
@@ -111,7 +116,6 @@ export const lifecycleJobFactoryMock = (howMany: number, withContainer = false):
     } else {
       source = {
         image: {
-          name: 'nginx',
           image_name: 'nginx/nginx',
           registry_id: chance.guid(),
           tag: '1.0.0',
