@@ -134,11 +134,8 @@ export function PageSettingsGeneral({
                 </Section>
                 <Section className="gap-4">
                   <Heading>{isJobGitSource(job.source) ? 'Build and deploy' : 'Deploy'}</Heading>
-                  {isJobGitSource(job.source) ? (
-                    blockContentBuildDeploy
-                  ) : job.job_type === 'CRON' ? (
-                    <EntrypointCmdInputs />
-                  ) : null}
+                  {isJobGitSource(job.source) && blockContentBuildDeploy}
+                  {job.job_type === 'CRON' && <EntrypointCmdInputs />}
                   <AutoDeploySetting source={isJobGitSource(job.source) ? 'GIT' : 'CONTAINER_REGISTRY'} />
                 </Section>
                 <Section className="gap-4">
