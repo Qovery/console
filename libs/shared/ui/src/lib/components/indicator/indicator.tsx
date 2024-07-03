@@ -46,10 +46,8 @@ export const Indicator = forwardRef<ElementRef<'span'>, IndicatorProps>(function
   forwardedRef
 ) {
   return (
-    <span ref={forwardedRef} className={twMerge('relative inline-block', className)}>
-      <span {...indicatorProps} className={twMerge(indicatorVariants({ side, align }))}>
-        {content}
-      </span>
+    <span ref={forwardedRef} {...indicatorProps} className={twMerge('relative inline-block', className)}>
+      <span className={twMerge(indicatorVariants({ side, align }))}>{content}</span>
       {children}
     </span>
   )
