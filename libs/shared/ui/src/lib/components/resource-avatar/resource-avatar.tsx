@@ -1,7 +1,7 @@
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
-import { IconEnum } from '@qovery/shared/enums'
+import { type IconEnum } from '@qovery/shared/enums'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 
