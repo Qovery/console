@@ -33,9 +33,7 @@ function scopeHierarchy(targetScope: APIVariableScopeEnum) {
     .exhaustive()
 }
 
-export function targetToScope(
-  target: keyof typeof APIVariableScopeEnum | keyof typeof ServiceTypeEnum
-): APIVariableScopeEnum {
+function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof ServiceTypeEnum): APIVariableScopeEnum {
   return match(target)
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
     .with('DATABASE', () => APIVariableScopeEnum.APPLICATION)
