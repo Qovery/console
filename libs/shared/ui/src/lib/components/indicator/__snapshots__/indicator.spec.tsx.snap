@@ -13,6 +13,9 @@ exports[`Indicator should match snapshot bottom end 1`] = `
           class="h-3 w-3 rounded-full bg-red-500"
         />
       </span>
+      <button>
+        Button
+      </button>
     </span>
   </div>
 </body>
@@ -31,6 +34,9 @@ exports[`Indicator should match snapshot top end 1`] = `
           class="h-3 w-3 rounded-full bg-red-500"
         />
       </span>
+      <button>
+        Button
+      </button>
     </span>
   </div>
 </body>

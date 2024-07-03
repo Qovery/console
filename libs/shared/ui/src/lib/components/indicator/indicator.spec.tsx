@@ -7,11 +7,19 @@ const props: IndicatorProps = {
 
 describe('Indicator', () => {
   it('should match snapshot top end', () => {
-    const { baseElement } = renderWithProviders(<Indicator side="top" align="end" {...props} />)
+    const { baseElement } = renderWithProviders(
+      <Indicator side="top" align="end" {...props}>
+        <button>Button</button>
+      </Indicator>
+    )
     expect(baseElement).toMatchSnapshot()
   })
   it('should match snapshot bottom end', () => {
-    const { baseElement } = renderWithProviders(<Indicator side="bottom" align="end" {...props} />)
+    const { baseElement } = renderWithProviders(
+      <Indicator side="bottom" align="end" {...props}>
+        <button>Button</button>
+      </Indicator>
+    )
     expect(baseElement).toMatchSnapshot()
   })
 })
