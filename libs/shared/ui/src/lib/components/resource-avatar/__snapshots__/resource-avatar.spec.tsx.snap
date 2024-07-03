@@ -4,7 +4,7 @@ exports[`ResourceAvatar should match snapshot 1`] = `
 <body>
   <div>
     <span
-      class="relative flex items-center justify-center rounded-full border border-neutral-200 h-16 w-16"
+      class="flex items-center justify-center rounded-full border border-neutral-200 h-16 w-16"
     >
       <span
         class="h-10 w-10"

@@ -8,7 +8,7 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   NeedRedeployFlag,
   ServiceActionToolbar,
-  ServiceBadge,
+  ServiceResourceAvatar,
   ServiceTerminalContext,
   useService,
 } from '@qovery/domains/services/feature'
@@ -88,7 +88,7 @@ export function Container({ children }: ContainerProps) {
     ))
     .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, (s) =>
       s.schedule.lifecycle_type !== 'GENERIC' ? (
-        <ServiceBadge size="md" icon="LIFECYCLE_JOB" type={s.schedule.lifecycle_type} />
+        <ServiceResourceAvatar size="md" icon="LIFECYCLE_JOB" type={s.schedule.lifecycle_type} />
       ) : (
         <div className="flex h-16 w-16 items-center justify-center">
           <Icon name="LIFECYCLE_JOB" className="w-10" />
