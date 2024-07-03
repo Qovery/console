@@ -66,12 +66,12 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon, formatCronExpression, twMerge } from '@qovery/shared/util-js'
-import { ServiceBadge } from '../..'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
+import { ServiceResourceAvatar } from '../service-resource-avatar/service-resource-avatar'
 import { ServiceListActionBar } from './service-list-action-bar'
 import { ServiceListSkeleton } from './service-list-skeleton'
 
@@ -89,12 +89,12 @@ function ServiceIcon({ service }: { service: AnyService }) {
   return match(service)
     .with({ serviceType: 'JOB' }, (s) =>
       s.job_type === 'LIFECYCLE' ? (
-        <ServiceBadge size="xs" icon="LIFECYCLE_JOB" type={s.schedule.lifecycle_type} />
+        <ServiceResourceAvatar size="xs" icon="LIFECYCLE_JOB" type={s.schedule.lifecycle_type} />
       ) : (
-        <ServiceBadge size="xs" icon="CRON_JOB" />
+        <ServiceResourceAvatar size="xs" icon="CRON_JOB" />
       )
     )
-    .otherwise((s) => <ServiceBadge size="xs" icon={s.serviceType} />)
+    .otherwise((s) => <ServiceResourceAvatar size="xs" icon={s.serviceType} />)
 }
 
 function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {

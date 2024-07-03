@@ -6,7 +6,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 
 const resourceAvatarVariants = cva(
-  ['relative', 'flex', 'items-center', 'justify-center', 'rounded-full', 'border', 'border-neutral-200'],
+  ['flex', 'items-center', 'justify-center', 'rounded-full', 'border', 'border-neutral-200'],
   {
     variants: {
       size: {

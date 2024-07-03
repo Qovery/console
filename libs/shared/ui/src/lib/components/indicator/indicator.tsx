@@ -19,7 +19,7 @@ const indicatorVariants = cva('absolute', {
   compoundVariants: [
     { side: 'top', align: 'center', className: 'left-1/2 -translate-x-1/2 -translate-y-1/2' },
     { side: 'top', align: 'start', className: 'left-0 -translate-x-1/2 -translate-y-1/2' },
-    { side: 'top', align: 'end', className: '- right-0 -translate-y-1/2 translate-x-1/2' },
+    { side: 'top', align: 'end', className: 'right-0 -translate-y-1/2 translate-x-1/2' },
 
     { side: 'right', align: 'center', className: 'left-auto top-2/4 -translate-y-1/2 translate-x-1/2' },
     { side: 'right', align: 'start', className: 'left-auto top-0 -translate-y-1/2 translate-x-1/2' },
@@ -46,8 +46,8 @@ export const Indicator = forwardRef<ElementRef<'span'>, IndicatorProps>(function
   forwardedRef
 ) {
   return (
-    <span ref={forwardedRef} {...indicatorProps} className={twMerge('relative inline-block', className)}>
-      <span className={twMerge(indicatorVariants({ side, align }))}>{content}</span>
+    <span ref={forwardedRef} {...indicatorProps} className="relative inline-block">
+      <span className={twMerge(indicatorVariants({ side, align }), className)}>{content}</span>
       {children}
     </span>
   )
