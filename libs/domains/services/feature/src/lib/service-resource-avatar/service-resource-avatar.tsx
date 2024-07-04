@@ -27,8 +27,7 @@ export function ServiceResourceAvatar({ className = '', size = 'md', icon, type 
       className={twMerge(typeVariants({ size }))}
       content={
         type && (
-          // TODO: Fix double typeVariant
-          <Tooltip content={`Deployed with ${upperCaseFirstLetter(type)}`} disabled={size === 'xs'}>
+          <Tooltip content={`via ${upperCaseFirstLetter(type)}`} disabled={size === 'xs'}>
             <span>
               <Icon className="h-full w-full" name={type} />
             </span>
