@@ -846,8 +846,8 @@ export const mutations = {
     const response = await mutation(serviceId)
     return response.data
   },
-  async cancelDeploymentService({ environmentId }: { environmentId: string }) {
-    const result = await environmentActionApi.cancelEnvironmentDeployment(environmentId, { force_cancel: false })
+  async cancelDeploymentService({ environmentId, force = false }: { environmentId: string; force?: boolean }) {
+    const result = await environmentActionApi.cancelEnvironmentDeployment(environmentId, { force_cancel: force })
     return result.data
   },
   async editAdvancedSettings({ serviceId, payload }: EditAdvancedSettingsRequest) {
