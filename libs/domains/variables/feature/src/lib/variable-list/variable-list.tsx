@@ -62,6 +62,7 @@ export type VariableListProps = {
     }
   | {
       scope: Extract<Scope, 'ENVIRONMENT'>
+      organizationId: string
       projectId: string
       environmentId: string
     }
@@ -142,8 +143,7 @@ export function VariableList({
       },
     })
   }
-
-  const isServiceScope = 'serviceId' in props
+  const showServiceLinkColumn = 'organizationId' in props
 
   const columnHelper = createColumnHelper<(typeof variables)[number]>()
   const columns = useMemo(
@@ -196,60 +196,52 @@ export function VariableList({
             : `${variables.length} ${pluralize(variables.length, 'variable')}`
         },
         enableColumnFilter: false,
-        size: isServiceScope ? 40 : 45,
+        size: showServiceLinkColumn ? 40 : 45,
         cell: (info) => {
           const variable = info.row.original
           return (
-            <div className="flex items-center">
-              {variable.owned_by === ExternalServiceEnum.DOPPLER && (
-                <span
-                  data-testid="doppler-tag"
-                  className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
-                >
-                  {variable.owned_by}
-                </span>
-              )}{' '}
-              {variable.aliased_variable ? (
-                <>
-                  <Icon
-                    iconName="arrow-turn-down-right"
-                    iconStyle="regular"
-                    className="ml-1 mr-2 text-2xs text-neutral-300"
-                  />
+            <div className="flex flex-col justify-center gap-1">
+              <div>
+                {variable.owned_by === ExternalServiceEnum.DOPPLER && (
+                  <span
+                    data-testid="doppler-tag"
+                    className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
+                  >
+                    {variable.owned_by}
+                  </span>
+                )}
+                {variable.aliased_variable && (
                   <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
                     ALIAS
                   </span>
-                </>
-              ) : variable.overridden_variable ? (
-                <>
-                  <Icon
-                    iconName="arrow-turn-down-right"
-                    iconStyle="regular"
-                    className="ml-1 mr-2 text-2xs text-neutral-300"
-                  />
+                )}
+                {variable.overridden_variable && (
                   <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
                     OVERRIDE
                   </span>
-                </>
-              ) : (
-                ''
-              )}
-              {variable.mount_path ? (
-                <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50">
-                  FILE
-                </span>
-              ) : (
-                ''
-              )}
-              <Tooltip align="start" content={variable.key || ''}>
-                <span className="truncate text-sm font-medium">{variable.key}</span>
-              </Tooltip>
-              {variable.owned_by === ExternalServiceEnum.DOPPLER && (
-                <Tooltip content="Sync with Doppler">
-                  <span className="ml-2">
-                    <Icon name={IconEnum.DOPPLER} width="11px" height="11px" />
+                )}
+                {variable.mount_path && (
+                  <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50">
+                    FILE
                   </span>
+                )}
+                <Tooltip align="start" content={variable.key || ''}>
+                  <span className="truncate text-sm font-medium">{variable.key}</span>
                 </Tooltip>
+                {variable.owned_by === ExternalServiceEnum.DOPPLER && (
+                  <Tooltip content="Sync with Doppler">
+                    <span className="ml-2">
+                      <Icon name={IconEnum.DOPPLER} width="11px" height="11px" />
+                    </span>
+                  </Tooltip>
+                )}
+              </div>
+              {(variable.aliased_variable || variable.overridden_variable) && (
+                <div className="flex flex-row gap-1 text-2xs text-neutral-350">
+                  <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="text-2xs text-neutral-300" />
+                  {variable.aliased_variable && <span>{variable.aliased_variable.key}</span>}
+                  {variable.overridden_variable && <span>{variable.overridden_variable.key}</span>}
+                </div>
               )}
             </div>
           )
@@ -335,7 +327,7 @@ export function VariableList({
       }),
       columnHelper.accessor('variable_kind', {
         header: 'Value',
-        size: isServiceScope ? 20 : 25,
+        size: showServiceLinkColumn ? 20 : 25,
         enableColumnFilter: true,
         filterFn: 'arrIncludesSome',
         cell: (info) => {
@@ -370,7 +362,7 @@ export function VariableList({
         },
       }),
       ...match(props)
-        .with({ scope: 'ENVIRONMENT' }, { scope: 'PROJECT' }, () => [])
+        .with({ scope: 'PROJECT' }, () => [])
         .otherwise(({ organizationId, projectId, environmentId }) => [
           columnHelper.accessor('service_name', {
             header: 'Service link',
@@ -413,7 +405,7 @@ export function VariableList({
         header: 'Scope',
         enableColumnFilter: true,
         filterFn: 'arrIncludesSome',
-        size: isServiceScope ? 10 : 15,
+        size: showServiceLinkColumn ? 10 : 15,
         meta: {
           customFilterValue({ filterValue }) {
             return <Truncate text={filterValue.map(upperCaseFirstLetter).join(', ')} truncateLimit={18} />

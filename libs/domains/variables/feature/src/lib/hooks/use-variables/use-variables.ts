@@ -31,9 +31,6 @@ export function useVariables({ parentId, scope, isSecret }: UseVariablesProps) {
           if (scope === 'PROJECT' && v.scope === 'BUILT_IN') {
             return v.key === 'QOVERY_PROJECT_ID'
           }
-          if (scope === 'ENVIRONMENT' && v.scope === 'BUILT_IN') {
-            return !v.service_id
-          }
           return true
         })
     },
