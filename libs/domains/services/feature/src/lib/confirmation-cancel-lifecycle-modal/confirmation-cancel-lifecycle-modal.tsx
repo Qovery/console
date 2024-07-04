@@ -1,12 +1,13 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Checkbox, ModalCrud, useModal } from '@qovery/shared/ui'
-import { useCloneService } from '../hooks/use-clone-service/use-clone-service'
-import { useService } from '../hooks/use-service/use-service'
+import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 
 export interface ConfirmationCancelLifecycleModalProps {
   onClose: () => void
   organizationId: string
   projectId: string
+  environmentId: string
   serviceId: string
 }
 
@@ -14,11 +15,17 @@ export function ConfirmationCancelLifecycleModal({
   onClose,
   organizationId,
   projectId,
+  environmentId,
   serviceId,
 }: ConfirmationCancelLifecycleModalProps) {
   const { enableAlertClickOutside } = useModal()
-  const { data: service } = useService({ serviceId })
-  const { mutateAsync: cloneService, isLoading: isCloneServiceLoading } = useCloneService()
+
+  const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
+
+  const { mutate: cancelDeployment, isLoading: isCancelDeploymentLoading } = useCancelDeploymentService({
+    projectId,
+    logsLink: environmentLogsLink + DEPLOYMENT_LOGS_URL(serviceId),
+  })
 
   const methods = useForm({
     mode: 'onChange',
@@ -29,20 +36,8 @@ export function ConfirmationCancelLifecycleModal({
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
-  const onSubmit = methods.handleSubmit(async ({ force }) => {
-    if (!service) return null
-
-    // const cloneRequest = {
-    //   name,
-    //   environment_id: environmentId,
-    // }
-
-    // const result = await cloneService({
-    //   serviceId: service.id,
-    //   serviceType: service.serviceType,
-    //   payload: cloneRequest,
-    // })
-
+  const onSubmit = methods.handleSubmit(({ force }) => {
+    cancelDeployment({ environmentId, force: force })
     return onClose()
   })
 
@@ -53,28 +48,28 @@ export function ConfirmationCancelLifecycleModal({
         description="Cancelling the deployment will rollback the application to the previous version. Managed database deployments cannot be cancelled."
         onClose={onClose}
         onSubmit={onSubmit}
-        loading={isCloneServiceLoading}
+        loading={isCancelDeploymentLoading}
         submitLabel="Confirm"
       >
         <Controller
           name="force"
           control={methods.control}
           render={({ field }) => (
-            <div className="mb-2 flex items-center last:mb-0">
+            <label className="flex">
               <Checkbox
-                className="mr-3 h-4 w-4"
+                className="relative top-0.5 mr-3 h-4 min-w-4"
                 name={field.name}
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
-              <label className="text-sm font-medium text-neutral-400" htmlFor="Force Lifecycle job stop">
-                Force Lifecycle job stop
-              </label>
-              <p>
-                Cancel the deployment and stop the execution of any lifecycle job. Make sure that interrupting its
-                execution is safe.
-              </p>
-            </div>
+              <div className="mb-2 flex flex-col gap-1">
+                <span className="text-sm font-medium text-neutral-400">Force Lifecycle job stop</span>
+                <p className="text-sm text-neutral-350">
+                  Cancel the deployment and stop the execution of any lifecycle job. Make sure that interrupting its
+                  execution is safe.
+                </p>
+              </div>
+            </label>
           )}
         />
       </ModalCrud>

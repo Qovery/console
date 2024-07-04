@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmationCancelLifecycleModal should match snapshot 1`] = `
+<div>
+  <div
+    class="p-5"
+  >
+    <h2
+      class="h4 max-w-sm truncate text-neutral-400"
+    >
+      Cancel deployment
+    </h2>
+    <p
+      class="mt-2 text-sm text-neutral-350"
+    >
+      Cancelling the deployment will rollback the application to the previous version. Managed database deployments cannot be cancelled.
+    </p>
+    <form
+      class="mt-6"
+    >
+      <label
+        class="flex"
+      >
+        <button
+          aria-checked="false"
+          class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 relative top-0.5 mr-3 h-4 min-w-4"
+          data-state="unchecked"
+          role="checkbox"
+          type="button"
+          value="on"
+        />
+        <input
+          aria-hidden="true"
+          name="force"
+          style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+          tabindex="-1"
+          type="checkbox"
+          value="on"
+        />
+        <div
+          class="mb-2 flex flex-col gap-1"
+        >
+          <span
+            class="text-sm font-medium text-neutral-400"
+          >
+            Force Lifecycle job stop
+          </span>
+          <p
+            class="text-sm text-neutral-350"
+          >
+            Cancel the deployment and stop the execution of any lifecycle job. Make sure that interrupting its execution is safe.
+          </p>
+        </div>
+      </label>
+      <div
+        class="mt-6 flex justify-end gap-3"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 focus-visible:text-neutral-400 active:bg-neutral-150 active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+          data-testid="cancel-button"
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+          data-testid="submit-button"
+          disabled=""
+          type="submit"
+        >
+          Confirm
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;
