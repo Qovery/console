@@ -1,21 +1,20 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import {
   NeedRedeployFlag,
   ServiceActionToolbar,
-  ServiceResourceAvatar,
+  ServiceTemplateIndicator,
   ServiceTerminalContext,
   useService,
 } from '@qovery/domains/services/feature'
 import { VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, ErrorBoundary, Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Header, Icon, Link, ResourceAvatar, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export interface ContainerProps extends PropsWithChildren {
@@ -80,38 +79,16 @@ export function Container({ children }: ContainerProps) {
     </div>
   )
 
-  const serviceIcon = match(service)
-    .with({ serviceType: 'HELM' }, () => (
-      <div className="flex h-16 w-16 items-center justify-center">
-        <Icon name="HELM" className="w-10" />
-      </div>
-    ))
-    .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, (s) =>
-      s.schedule.lifecycle_type !== 'GENERIC' ? (
-        <ServiceResourceAvatar size="md" icon="LIFECYCLE_JOB" type={s.schedule.lifecycle_type} />
-      ) : (
-        <div className="flex h-16 w-16 items-center justify-center">
-          <Icon name="LIFECYCLE_JOB" className="w-10" />
-        </div>
-      )
-    )
-    .with({ serviceType: 'JOB', job_type: 'CRON' }, () => (
-      <div className="flex h-16 w-16 items-center justify-center">
-        <Icon name={IconEnum.CRON_JOB} className="w-10" />
-      </div>
-    ))
-    .otherwise(() => (
-      <div className="flex h-16 w-16 items-center justify-center">
-        <Icon name={IconEnum.APPLICATION} className="w-10" />
-      </div>
-    ))
-
   return (
     <VariablesProvider>
       <ErrorBoundary>
         <Section className="flex-1">
           <Header title={service?.name} actions={headerActions}>
-            {serviceIcon}
+            {service && (
+              <ServiceTemplateIndicator service={service} size="md">
+                <ResourceAvatar service={service} size="md" border />
+              </ServiceTemplateIndicator>
+            )}
           </Header>
           <TabsFeature />
           <NeedRedeployFlag />

@@ -1,61 +1,122 @@
-import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import { type VariantProps, cva } from 'class-variance-authority'
+import {
+  type Cluster,
+  type Environment,
+  type Project,
+  type Application as _Application,
+  type ContainerResponse as _Container,
+  type Database as _Database,
+  type HelmResponse as _Helm,
+  type JobResponse as _Job,
+} from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
-import { type IconEnum } from '@qovery/shared/enums'
+import { P, match } from 'ts-pattern'
+import { IconEnum } from '@qovery/shared/enums'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
 import { twMerge } from '@qovery/shared/util-js'
-import Icon from '../icon/icon'
+import { Icon } from '../icon/icon'
 
-const resourceAvatarVariants = cva(
-  ['flex', 'items-center', 'justify-center', 'rounded-full', 'border', 'border-neutral-200'],
-  {
-    variants: {
-      size: {
-        md: ['h-16', 'w-16'],
-        xs: ['h-8', 'w-8'],
-      },
+type ServiceType = keyof typeof ServiceTypeEnum
+
+type ApplicationType = Extract<ServiceType, 'APPLICATION'>
+type ContainerType = Extract<ServiceType, 'CONTAINER'>
+type DatabaseType = Extract<ServiceType, 'DATABASE'>
+type JobType = Extract<ServiceType, 'JOB'>
+type HelmType = Extract<ServiceType, 'HELM'>
+
+type Application = _Application & { serviceType: ApplicationType }
+type Database = _Database & { serviceType: DatabaseType }
+type Container = _Container & { serviceType: ContainerType }
+type Job = _Job & { serviceType: JobType }
+type Helm = _Helm & { serviceType: HelmType }
+
+type AnyService = Application | Database | Container | Job | Helm
+
+const resourceAvatarVariants = cva(['flex', 'items-center', 'justify-center'], {
+  variants: {
+    size: {
+      md: ['h-16', 'w-16'],
+      xs: ['h-8', 'w-8'],
     },
-  }
-)
-
-export interface ResourceAvatarProps
-  extends Omit<ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>, 'size'>,
-    VariantProps<typeof resourceAvatarVariants> {}
-
-export const ResourceAvatar = forwardRef<ElementRef<typeof AvatarPrimitive.Root>, ResourceAvatarProps>(function Avatar(
-  { className, size, ...props },
-  forwardedRef
-) {
-  return (
-    <AvatarPrimitive.Root
-      ref={forwardedRef}
-      className={twMerge(resourceAvatarVariants({ size }), className)}
-      {...props}
-    />
-  )
+    border: {
+      true: ['rounded-full', 'border', 'border-neutral-200'],
+      false: [],
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+    border: false,
+  },
 })
 
 const resourceAvatarIconVariants = cva('', {
   variants: {
     size: {
-      md: ['h-10', 'w-10'],
-      xs: ['h-6', 'w-6'],
+      md: [],
+      xs: [],
     },
+    border: {
+      true: [],
+      false: [],
+    },
+  },
+  compoundVariants: [
+    { border: true, size: 'md', className: ['h-10', 'w-10'] },
+    { border: true, size: 'xs', className: ['h-6', 'w-6'] },
+    { border: false, size: 'md', className: ['h-16', 'w-16'] },
+    { border: false, size: 'xs', className: ['h-8', 'w-8'] },
+  ],
+  defaultVariants: {
+    size: 'md',
+    border: false,
   },
 })
 
-export interface ResourceAvatarIconProps
-  extends Omit<ComponentPropsWithoutRef<'span'>, 'size'>,
-    VariantProps<typeof resourceAvatarIconVariants> {
-  icon: keyof typeof IconEnum
-}
+export type ResourceAvatarProps = Omit<ComponentPropsWithoutRef<'span'>, 'children'> &
+  VariantProps<typeof resourceAvatarVariants> &
+  (
+    | {
+        service: AnyService
+      }
+    | { environment: Environment }
+    | { cluster: Cluster }
+    | { project: Project }
+  )
 
-export const ResourceAvatarIcon = forwardRef<ElementRef<'span'>, ResourceAvatarIconProps>(function AvatarIcon(
-  { className, size, icon, ...props },
+export const ResourceAvatar = forwardRef<ElementRef<'span'>, ResourceAvatarProps>(function ResourceAvatar(
+  { className, size, border, ..._props },
   forwardedRef
 ) {
+  const { icon, props } = match(_props)
+    .returnType<{
+      icon: string | undefined
+      props: Omit<ComponentPropsWithoutRef<'span'>, 'children'>
+    }>()
+    .with({ cluster: P.not(P.nullish) }, ({ cluster, ...props }) => ({
+      icon: match(cluster.cloud_provider)
+        .with('ON_PREMISE', () => IconEnum.KUBERNETES)
+        .otherwise((cloud_provider) => cloud_provider),
+      props,
+    }))
+    .with({ project: P.not(P.nullish) }, ({ project, ...props }) => ({ icon: 'ENVIRONMENT', props }))
+    .with({ environment: P.not(P.nullish) }, ({ environment, ...props }) => ({ icon: 'SERVICES', props }))
+    .with({ service: P.not(P.nullish) }, ({ service, ...props }) => ({
+      icon: match(service)
+        .with({ serviceType: 'HELM' }, () => 'HELM')
+        .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, () => IconEnum.LIFECYCLE_JOB)
+        .with({ serviceType: 'JOB', job_type: 'CRON' }, () => IconEnum.CRON_JOB)
+        .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, () => IconEnum.APPLICATION)
+        .with({ serviceType: 'DATABASE' }, () => 'DATABASE')
+        .exhaustive(),
+      props,
+    }))
+    .exhaustive()
+
   return (
-    <span ref={forwardedRef} {...props} className={twMerge(resourceAvatarIconVariants({ size }))}>
-      <Icon className={twMerge(resourceAvatarIconVariants({ size }))} name={icon} />
-    </span>
+    icon && (
+      <span ref={forwardedRef} {...props} className={twMerge(resourceAvatarVariants({ size, border }), className)}>
+        <Icon className={twMerge(resourceAvatarIconVariants({ size, border }))} name={icon} />
+      </span>
+    )
   )
 })

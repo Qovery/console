@@ -11,7 +11,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, ErrorBoundary, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Header, Icon, ResourceAvatar, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export function Container({ children }: PropsWithChildren) {
@@ -93,17 +93,11 @@ export function Container({ children }: PropsWithChildren) {
     },
   ]
 
-  const icon = match(cluster?.cloud_provider)
-    .with('ON_PREMISE', () => IconEnum.KUBERNETES)
-    .otherwise(() => cluster?.cloud_provider)
-
   return (
     <ErrorBoundary>
       <Section className="flex-1">
         <Header title={cluster?.name} actions={headerActions}>
-          <div className="flex h-16 w-16 items-center justify-center">
-            <Icon name={icon} className="w-10" />
-          </div>
+          {cluster && <ResourceAvatar cluster={cluster} />}
         </Header>
         <Tabs items={tabsItems} />
         {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (

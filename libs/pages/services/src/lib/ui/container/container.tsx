@@ -37,6 +37,7 @@ import {
   Menu,
   MenuAlign,
   type MenuData,
+  ResourceAvatar,
   Section,
   Skeleton,
   Tabs,
@@ -249,9 +250,7 @@ export function Container({ children }: PropsWithChildren) {
       <ErrorBoundary>
         <Section className="flex-1">
           <Header title={environment?.name} actions={headerActions}>
-            <div className="flex h-16 w-16 items-center justify-center">
-              <Icon name="SERVICES" className="w-16" />
-            </div>
+            {environment && <ResourceAvatar environment={environment} />}
           </Header>
           <Tabs items={tabsItems} contentRight={contentTabs} />
           {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
