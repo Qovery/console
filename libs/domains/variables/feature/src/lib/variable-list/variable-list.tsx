@@ -199,39 +199,49 @@ export function VariableList({
         size: showServiceLinkColumn ? 40 : 45,
         cell: (info) => {
           const variable = info.row.original
+
           return (
             <div className="flex flex-col justify-center gap-1">
-              <div>
-                {variable.owned_by === ExternalServiceEnum.DOPPLER && (
-                  <span
-                    data-testid="doppler-tag"
-                    className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
-                  >
-                    {variable.owned_by}
-                  </span>
-                )}
-                {variable.aliased_variable && (
-                  <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
-                    ALIAS
-                  </span>
-                )}
-                {variable.overridden_variable && (
-                  <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
-                    OVERRIDE
-                  </span>
-                )}
-                {variable.mount_path && (
-                  <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50">
-                    FILE
-                  </span>
-                )}
-                <Tooltip align="start" content={variable.key || ''}>
-                  <span className="truncate text-sm font-medium">{variable.key}</span>
-                </Tooltip>
-                {variable.owned_by === ExternalServiceEnum.DOPPLER && (
-                  <Tooltip content="Sync with Doppler">
-                    <span className="ml-2">
-                      <Icon name={IconEnum.DOPPLER} width="11px" height="11px" />
+              <div className="flex items-center gap-2">
+                <div className="truncate">
+                  {variable.owned_by === ExternalServiceEnum.DOPPLER && (
+                    <span
+                      data-testid="doppler-tag"
+                      className="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
+                    >
+                      {variable.owned_by}
+                    </span>
+                  )}
+                  {variable.aliased_variable && (
+                    <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+                      ALIAS
+                    </span>
+                  )}
+                  {variable.overridden_variable && (
+                    <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
+                      OVERRIDE
+                    </span>
+                  )}
+                  {variable.mount_path && (
+                    <span className="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50">
+                      FILE
+                    </span>
+                  )}
+                  <Tooltip align="start" content={variable.key || ''}>
+                    <span className="truncate text-sm font-medium">{variable.key}</span>
+                  </Tooltip>
+                  {variable.owned_by === ExternalServiceEnum.DOPPLER && (
+                    <Tooltip content="Sync with Doppler">
+                      <span className="ml-2">
+                        <Icon name={IconEnum.DOPPLER} width="11px" height="11px" />
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
+                {variable.description && (
+                  <Tooltip content={variable.description}>
+                    <span>
+                      <Icon iconName="circle-info" iconStyle="solid" className=" text-neutral-350" />
                     </span>
                   </Tooltip>
                 )}
