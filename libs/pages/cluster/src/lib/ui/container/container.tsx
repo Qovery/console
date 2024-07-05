@@ -4,6 +4,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   ClusterActionToolbar,
+  ClusterAvatar,
   ClusterType,
   useCluster,
   useClusterStatus,
@@ -11,7 +12,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, ErrorBoundary, Header, Icon, ResourceAvatar, Section, Skeleton, Tabs } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export function Container({ children }: PropsWithChildren) {
@@ -97,7 +98,7 @@ export function Container({ children }: PropsWithChildren) {
     <ErrorBoundary>
       <Section className="flex-1">
         <Header title={cluster?.name} actions={headerActions}>
-          {cluster && <ResourceAvatar cluster={cluster} />}
+          {cluster && <ClusterAvatar cluster={cluster} />}
         </Header>
         <Tabs items={tabsItems} />
         {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (

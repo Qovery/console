@@ -57,7 +57,6 @@ import {
   Menu,
   MenuAlign,
   type MenuData,
-  ResourceAvatar,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -71,6 +70,7 @@ import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
+import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
 import { ServiceTemplateIndicator } from '../service-template-indicator/service-template-indicator'
 import { ServiceListActionBar } from './service-list-action-bar'
@@ -93,7 +93,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
     <div className="flex items-center justify-between">
       <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
         <ServiceTemplateIndicator service={service} size="xs">
-          <ResourceAvatar service={service} size="xs" border />
+          <ServiceAvatar service={service} size="xs" border="solid" />
         </ServiceTemplateIndicator>
         {match(service)
           .with({ serviceType: 'DATABASE' }, (db) => {

@@ -15,7 +15,7 @@ beforeEach(() => {
   document.body.appendChild(container)
 })
 
-describe('Avatar', () => {
+describe('LegacyAvatar', () => {
   it('should render successfully', () => {
     const { baseElement } = render(<LegacyAvatar {...props} />)
     expect(baseElement).toBeTruthy()

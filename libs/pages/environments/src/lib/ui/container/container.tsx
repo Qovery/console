@@ -2,27 +2,15 @@ import { type PropsWithChildren } from 'react'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal } from '@qovery/domains/environments/feature'
-import { useProject } from '@qovery/domains/projects/feature'
+import { ProjectAvatar, useProject } from '@qovery/domains/projects/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
-import { IconEnum } from '@qovery/shared/enums'
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENTS_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  ErrorBoundary,
-  Header,
-  Icon,
-  ResourceAvatar,
-  Section,
-  Tabs,
-  Tooltip,
-  toast,
-  useModal,
-} from '@qovery/shared/ui'
+import { Button, ErrorBoundary, Header, Icon, Section, Tabs, Tooltip, toast, useModal } from '@qovery/shared/ui'
 
 export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '' } = useParams()
@@ -104,7 +92,7 @@ export function Container({ children }: PropsWithChildren) {
     <VariablesProvider>
       <ErrorBoundary>
         <Section className="flex-1">
-          <Header title={project?.name}>{project && <ResourceAvatar project={project} />}</Header>
+          <Header title={project?.name}>{project && <ProjectAvatar project={project} />}</Header>
           <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
             <ErrorBoundary>{children}</ErrorBoundary>

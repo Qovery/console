@@ -7,6 +7,7 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   NeedRedeployFlag,
   ServiceActionToolbar,
+  ServiceAvatar,
   ServiceTemplateIndicator,
   ServiceTerminalContext,
   useService,
@@ -14,7 +15,7 @@ import {
 import { VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_URL } from '@qovery/shared/routes'
-import { Badge, ErrorBoundary, Header, Icon, Link, ResourceAvatar, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, ErrorBoundary, Header, Icon, Link, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export interface ContainerProps extends PropsWithChildren {
@@ -86,7 +87,7 @@ export function Container({ children }: ContainerProps) {
           <Header title={service?.name} actions={headerActions}>
             {service && (
               <ServiceTemplateIndicator service={service} size="md">
-                <ResourceAvatar service={service} size="md" border />
+                <ServiceAvatar service={service} size="md" border="solid" />
               </ServiceTemplateIndicator>
             )}
           </Header>
