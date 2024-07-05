@@ -149,6 +149,7 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         updated_at: '2023-11-20T14:02:45.128223Z',
         key: 'FOO',
         value: 'fdgsdfg',
+        description: 'foo',
         mount_path: null,
         scope: 'PROJECT',
         overridden_variable: null,

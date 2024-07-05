@@ -76,6 +76,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   const methods = useForm<{
     key: string
     value: string
+    description?: string
     scope: Scope
     isSecret: boolean
     mountPath?: string
@@ -85,6 +86,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
       scope: defaultScope,
       value: variable?.value ?? '',
       isSecret: variable?.is_secret,
+      description: variable?.description,
       mountPath,
     },
     mode: 'onChange',
@@ -131,6 +133,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               is_secret: data.isSecret,
               key: data.key,
               value: data.value,
+              description: data.description,
               mount_path: data.mountPath || null,
               variable_parent_id: parentId,
               variable_scope: data.scope,
@@ -147,6 +150,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               alias_scope: data.scope,
               alias_parent_id: parentId,
               key: data.key,
+              description: data.description,
             },
           })
         })
@@ -160,6 +164,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               override_scope: data.scope,
               override_parent_id: parentId,
               value: data.value,
+              description: data.description,
             },
           })
         })
@@ -176,6 +181,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             variableEditRequest: {
               key: data.key,
               value: variable.aliased_variable?.key || data.value || '',
+              description: data.description,
             },
           })
         })
@@ -384,6 +390,27 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             />
           </div>
         )}
+
+        <Controller
+          name="description"
+          control={methods.control}
+          rules={{
+            maxLength: {
+              value: 255,
+              message: 'Description must be less than 255 characters.',
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputTextArea
+              className="mb-3"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Description (optional)"
+              error={error?.message}
+            />
+          )}
+        />
       </ModalCrud>
     </FormProvider>
   )

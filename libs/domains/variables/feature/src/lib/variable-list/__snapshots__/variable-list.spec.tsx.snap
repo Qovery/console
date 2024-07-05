@@ -67,7 +67,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r25:"
+                aria-controls="radix-:r26:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -90,7 +90,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r28:"
+                aria-controls="radix-:r29:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -113,7 +113,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r2b:"
+                aria-controls="radix-:r2c:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-transparent gap-1 whitespace-nowrap text-xs"
@@ -158,13 +158,19 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
-                </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
+                  </span>
+                </div>
               </div>
             </div>
           </td>
@@ -178,7 +184,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2d:"
+              id="radix-:r2e:"
               type="button"
             >
               <i
@@ -275,18 +281,24 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  ALIAS
-                </span>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
-                >
-                  DB_USERNAME
-                </span>
+                  <span
+                    class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+                  >
+                    ALIAS
+                  </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    DB_USERNAME
+                  </span>
+                </div>
               </div>
               <div
                 class="flex flex-row gap-1 text-2xs text-neutral-350"
@@ -311,7 +323,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2j:"
+              id="radix-:r2k:"
               type="button"
             >
               <i
@@ -378,18 +390,24 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  ALIAS
-                </span>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
-                >
-                  DB_HOST
-                </span>
+                  <span
+                    class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+                  >
+                    ALIAS
+                  </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    DB_HOST
+                  </span>
+                </div>
               </div>
               <div
                 class="flex flex-row gap-1 text-2xs text-neutral-350"
@@ -414,7 +432,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2n:"
+              id="radix-:r2o:"
               type="button"
             >
               <i
@@ -481,18 +499,24 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  FILE
-                </span>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
-                >
-                  grafana_config
-                </span>
+                  <span
+                    class="mr-2 inline-flex h-4 items-center rounded-sm bg-purple-500 px-1 text-2xs font-bold text-neutral-50"
+                  >
+                    FILE
+                  </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    grafana_config
+                  </span>
+                </div>
               </div>
             </div>
           </td>
@@ -506,7 +530,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2r:"
+              id="radix-:r2s:"
               type="button"
             >
               <i
@@ -681,13 +705,19 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  myvar_project
-                </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    myvar_project
+                  </span>
+                </div>
               </div>
             </div>
           </td>
@@ -701,7 +731,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r2v:"
+              id="radix-:r30:"
               type="button"
             >
               <i
@@ -791,13 +821,19 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  variable_name
-                </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    variable_name
+                  </span>
+                </div>
               </div>
             </div>
           </td>
@@ -811,7 +847,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r35:"
+              id="radix-:r36:"
               type="button"
             >
               <i
@@ -992,63 +1028,69 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
-                  data-testid="doppler-tag"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  DOPPLER
-                </span>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
-                >
-                  DOPPLER_PROJECT
-                </span>
-                <span
-                  class="ml-2"
-                  data-state="closed"
-                >
-                  <svg
-                    class="shrink-0 "
-                    fill="none"
-                    height="11px"
-                    name="DOPPLER"
-                    viewBox="0 0 11 12"
-                    width="11px"
-                    xmlns="http://www.w3.org/2000/svg"
+                  <span
+                    class="mr-2 inline-flex h-4 items-center rounded-sm bg-[#3391FB] px-1 text-2xs font-bold text-neutral-50"
+                    data-testid="doppler-tag"
                   >
-                    <path
-                      clip-rule="evenodd"
-                      d="M.202.5a.11.11 0 00-.093.171l1.972 3.087c.164.255.445.41.748.41h2.667c.978 0 1.589.864 1.585 1.832-.003.968-.655 1.824-1.585 1.824H2.648a.295.295 0 00-.295.296v3.084c0 .164.132.296.295.296h3.638C9.433 11.5 10.998 8.514 11 6 11.002 3.486 9.455.5 6.286.5H.202zm1.294 7.332H.788c-.435 0-.788.41-.788.917v2.67c0 .044.036.08.08.08h.708c.435 0 .787-.41.787-.917v-2.67a.08.08 0 00-.08-.08z"
-                      fill="url(#paint0_linear_13638_482988)"
-                      fill-rule="evenodd"
-                    />
-                    <defs>
-                      <lineargradient
-                        gradientUnits="userSpaceOnUse"
-                        id="paint0_linear_13638_482988"
-                        x1="8.78"
-                        x2="1.006"
-                        y1="0.134"
-                        y2="10.56"
-                      >
-                        <stop
-                          offset="0.036"
-                          stop-color="#409FF8"
-                        />
-                        <stop
-                          offset="0.5"
-                          stop-color="#1673FF"
-                        />
-                        <stop
-                          offset="1"
-                          stop-color="#516FF7"
-                        />
-                      </lineargradient>
-                    </defs>
-                  </svg>
-                </span>
+                    DOPPLER
+                  </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    DOPPLER_PROJECT
+                  </span>
+                  <span
+                    class="ml-2"
+                    data-state="closed"
+                  >
+                    <svg
+                      class="shrink-0 "
+                      fill="none"
+                      height="11px"
+                      name="DOPPLER"
+                      viewBox="0 0 11 12"
+                      width="11px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        clip-rule="evenodd"
+                        d="M.202.5a.11.11 0 00-.093.171l1.972 3.087c.164.255.445.41.748.41h2.667c.978 0 1.589.864 1.585 1.832-.003.968-.655 1.824-1.585 1.824H2.648a.295.295 0 00-.295.296v3.084c0 .164.132.296.295.296h3.638C9.433 11.5 10.998 8.514 11 6 11.002 3.486 9.455.5 6.286.5H.202zm1.294 7.332H.788c-.435 0-.788.41-.788.917v2.67c0 .044.036.08.08.08h.708c.435 0 .787-.41.787-.917v-2.67a.08.08 0 00-.08-.08z"
+                        fill="url(#paint0_linear_13638_482988)"
+                        fill-rule="evenodd"
+                      />
+                      <defs>
+                        <lineargradient
+                          gradientUnits="userSpaceOnUse"
+                          id="paint0_linear_13638_482988"
+                          x1="8.78"
+                          x2="1.006"
+                          y1="0.134"
+                          y2="10.56"
+                        >
+                          <stop
+                            offset="0.036"
+                            stop-color="#409FF8"
+                          />
+                          <stop
+                            offset="0.5"
+                            stop-color="#1673FF"
+                          />
+                          <stop
+                            offset="1"
+                            stop-color="#516FF7"
+                          />
+                        </lineargradient>
+                      </defs>
+                    </svg>
+                  </span>
+                </div>
               </div>
             </div>
           </td>
@@ -1062,7 +1104,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r3b:"
+              id="radix-:r3c:"
               type="button"
             >
               <i
@@ -1243,12 +1285,27 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
+                >
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    FOO
+                  </span>
+                </div>
                 <span
-                  class="truncate text-sm font-medium"
+                  class=""
                   data-state="closed"
                 >
-                  FOO
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-circle-info  text-neutral-350"
+                  />
                 </span>
               </div>
             </div>
@@ -1263,7 +1320,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r3g:"
+              id="radix-:r3i:"
               type="button"
             >
               <i
@@ -1353,18 +1410,24 @@ exports[`VariableList should match snapshot 1`] = `
             <div
               class="flex flex-col justify-center gap-1"
             >
-              <div>
-                <span
-                  class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+              <div
+                class="flex items-center gap-2"
+              >
+                <div
+                  class="truncate"
                 >
-                  ALIAS
-                </span>
-                <span
-                  class="truncate text-sm font-medium"
-                  data-state="closed"
-                >
-                  BAR
-                </span>
+                  <span
+                    class="mr-2 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50"
+                  >
+                    ALIAS
+                  </span>
+                  <span
+                    class="truncate text-sm font-medium"
+                    data-state="closed"
+                  >
+                    BAR
+                  </span>
+                </div>
               </div>
               <div
                 class="flex flex-row gap-1 text-2xs text-neutral-350"
@@ -1389,7 +1452,7 @@ exports[`VariableList should match snapshot 1`] = `
               aria-label="actions"
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent"
               data-state="closed"
-              id="radix-:r3m:"
+              id="radix-:r3o:"
               type="button"
             >
               <i
