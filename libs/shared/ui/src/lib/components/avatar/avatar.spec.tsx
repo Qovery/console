@@ -1,64 +1,11 @@
-import { render, screen } from '__tests__/utils/setup-jest'
-import { IconEnum } from '@qovery/shared/enums'
-import { Avatar, type AvatarProps } from './avatar'
-
-let props: AvatarProps
-
-let container
-
-beforeEach(() => {
-  props = {
-    firstName: 'Rémi',
-    lastName: 'Bonnet',
-  }
-  container = document.createElement('div')
-  document.body.appendChild(container)
-})
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { Icon } from '../icon/icon'
+import { Avatar } from './avatar'
 
 describe('Avatar', () => {
-  it('should render successfully', () => {
-    const { baseElement } = render(<Avatar {...props} />)
-    expect(baseElement).toBeTruthy()
-  })
-
-  it('should apply the accurate classes', () => {
-    props.className = 'some-class-name'
-
-    render(<Avatar {...props} />)
-
-    const avatar = screen.getByTestId('avatar')
-
-    expect(avatar?.classList.contains('some-class-name')).toBe(true)
-  })
-
-  it('should have an icon', () => {
-    props.icon = IconEnum.GITHUB
-
-    render(<Avatar {...props} />)
-
-    const icon = screen.getByTestId('avatar-icon')
-
-    expect(icon).toBeInTheDocument()
-  })
-
-  it('should have an avatar logo with img', () => {
-    props.logoUrl = 'https://qovery.com/image'
-
-    render(<Avatar {...props} />)
-
-    const logo = screen.getByTestId('avatar-logo')
-
-    expect(logo.querySelector('img')).toBeDefined()
-  })
-
-  it('should have an avatar logo with placeholder', () => {
-    props.logoText = 'Orga'
-
-    render(<Avatar {...props} />)
-
-    const logo = screen.getByTestId('avatar-logo')
-
-    expect(logo.querySelector('span')).toBeDefined()
-    expect(logo).toHaveTextContent('Orga')
+  it('should match snapshot', async () => {
+    const { baseElement } = renderWithProviders(<Avatar fallback={<Icon data-testid="foobar" name="ENVIRONMENT" />} />)
+    await screen.findByTestId('foobar')
+    expect(baseElement).toMatchSnapshot()
   })
 })

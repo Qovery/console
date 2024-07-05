@@ -70,8 +70,9 @@ import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
+import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
-import { ServiceResourceAvatar } from '../service-resource-avatar/service-resource-avatar'
+import { ServiceTemplateIndicator } from '../service-template-indicator/service-template-indicator'
 import { ServiceListActionBar } from './service-list-action-bar'
 import { ServiceListSkeleton } from './service-list-skeleton'
 
@@ -85,25 +86,15 @@ function getServiceIcon(service: AnyService) {
     .otherwise(() => IconEnum.APPLICATION)
 }
 
-function ServiceIcon({ service }: { service: AnyService }) {
-  return match(service)
-    .with({ serviceType: 'JOB' }, (s) =>
-      s.job_type === 'LIFECYCLE' ? (
-        <ServiceResourceAvatar size="xs" icon="LIFECYCLE_JOB" type={s.schedule.lifecycle_type} />
-      ) : (
-        <ServiceResourceAvatar size="xs" icon="CRON_JOB" />
-      )
-    )
-    .otherwise((s) => <ServiceResourceAvatar size="xs" icon={s.serviceType} />)
-}
-
 function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   const navigate = useNavigate()
 
   return (
     <div className="flex items-center justify-between">
       <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
-        <ServiceIcon service={service} />
+        <ServiceTemplateIndicator service={service} size="xs">
+          <ServiceAvatar service={service} size="xs" border="solid" />
+        </ServiceTemplateIndicator>
         {match(service)
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (

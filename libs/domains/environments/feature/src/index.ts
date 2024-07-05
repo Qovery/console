@@ -2,6 +2,7 @@ export * from './lib/environment-deployment-status-label/environment-deployment-
 export * from './lib/environment-mode/environment-mode'
 export * from './lib/environment-state-chip/environment-state-chip'
 export * from './lib/environment-list/environment-list'
+export * from './lib/environment-avatar/environment-avatar'
 export * from './lib/terraform-export-modal/terraform-export-modal'
 export * from './lib/create-clone-environment-modal/create-clone-environment-modal'
 export * from './lib/environment-action-toolbar/environment-action-toolbar'

@@ -2,12 +2,12 @@ import { clsx } from 'clsx'
 import { type Commit } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
 import {
-  Avatar,
-  AvatarStyle,
   Button,
   Icon,
   IconAwesomeEnum,
   InputSearch,
+  LegacyAvatar,
+  LegacyAvatarStyle,
   RadioGroup,
   ScrollShadowWrapper,
   TagCommit,
@@ -143,9 +143,9 @@ export function SelectCommitModal({
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <div className="flex items-center gap-1.5">
-                              <Avatar
+                              <LegacyAvatar
                                 size={28}
-                                style={AvatarStyle.STROKED}
+                                style={LegacyAvatarStyle.STROKED}
                                 firstName={author_name}
                                 url={author_avatar_url}
                               />

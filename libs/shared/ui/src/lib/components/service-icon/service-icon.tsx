@@ -29,6 +29,7 @@ export const iconByService = (service: AnyService) => {
     .exhaustive()
 }
 
+// @deprecated use ServiceAvatar instead
 export function ServiceIcon({ service, notRounded, size = '28', padding = '1', className = '' }: ServiceIconProps) {
   return (
     <div

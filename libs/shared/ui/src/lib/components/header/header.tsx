@@ -6,8 +6,6 @@ import Truncate from '../truncate/truncate'
 export interface HeaderProps extends PropsWithChildren {
   title?: string
   buttons?: ReactNode
-  copyTitle?: boolean
-  copyContent?: string
   actions?: ReactNode
 }
 

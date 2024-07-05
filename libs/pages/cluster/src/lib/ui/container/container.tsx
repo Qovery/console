@@ -4,6 +4,7 @@ import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   ClusterActionToolbar,
+  ClusterAvatar,
   ClusterType,
   useCluster,
   useClusterStatus,
@@ -93,17 +94,11 @@ export function Container({ children }: PropsWithChildren) {
     },
   ]
 
-  const icon = match(cluster?.cloud_provider)
-    .with('ON_PREMISE', () => IconEnum.KUBERNETES)
-    .otherwise(() => cluster?.cloud_provider)
-
   return (
     <ErrorBoundary>
       <Section className="flex-1">
         <Header title={cluster?.name} actions={headerActions}>
-          <div className="flex h-16 w-16 items-center justify-center">
-            <Icon name={icon} className="w-10" />
-          </div>
+          {cluster && <ClusterAvatar cluster={cluster} />}
         </Header>
         <Tabs items={tabsItems} />
         {cluster && cluster.deployment_status !== ClusterDeploymentStatusEnum.UP_TO_DATE && (

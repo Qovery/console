@@ -1,7 +1,7 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { useNavigate } from 'react-router-dom'
 import { LOGOUT_URL, ONBOARDING_PROJECT_URL, ONBOARDING_URL, ORGANIZATION_URL, USER_URL } from '@qovery/shared/routes'
-import { Avatar, Icon, IconAwesomeEnum, Menu, MenuAlign, type MenuData, MenuDirection } from '@qovery/shared/ui'
+import { Icon, IconAwesomeEnum, LegacyAvatar, Menu, MenuAlign, type MenuData, MenuDirection } from '@qovery/shared/ui'
 
 export interface MenuAccountProps {
   organizations: Organization[]
@@ -58,7 +58,7 @@ export function MenuAccount(props: MenuAccountProps) {
           itemContentCustom: (
             <div className="flex w-full items-center justify-between">
               <div className="flex">
-                <Avatar
+                <LegacyAvatar
                   className="mr-3"
                   size={40}
                   url={user?.picture}
@@ -98,7 +98,7 @@ export function MenuAccount(props: MenuAccountProps) {
     <Menu
       trigger={
         <div className="cursor-pointer select-none" data-testid="btn-menu-account">
-          <Avatar
+          <LegacyAvatar
             size={40}
             firstName={user?.firstName || ''}
             lastName={user?.lastName}

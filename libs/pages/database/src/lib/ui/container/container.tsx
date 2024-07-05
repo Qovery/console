@@ -7,6 +7,7 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   NeedRedeployFlag,
   ServiceActionToolbar,
+  ServiceAvatar,
   ServiceStateChip,
   ServiceTerminalContext,
 } from '@qovery/domains/services/feature'
@@ -114,9 +115,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
     <ErrorBoundary>
       <Section className="flex-1">
         <Header title={service?.name} actions={headerActions}>
-          <div className="flex h-16 w-16 items-center justify-center">
-            <Icon name="DATABASE" className="w-10" />
-          </div>
+          {service && <ServiceAvatar service={service} />}
         </Header>
         <Tabs items={tabsItems} />
         <NeedRedeployFlag />

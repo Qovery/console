@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { isJobGitSource } from '@qovery/shared/enums'
 import {
-  Avatar,
-  AvatarStyle,
   Button,
   Icon,
   InputCheckbox,
+  LegacyAvatar,
+  LegacyAvatarStyle,
   LoaderSpinner,
   ScrollShadowWrapper,
   TagCommit,
@@ -169,10 +169,10 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                       onClick={(e) => e.stopPropagation()}
                     >
                       {}
-                      <Avatar
+                      <LegacyAvatar
                         size={28}
                         className="mr-2"
-                        style={AvatarStyle.STROKED}
+                        style={LegacyAvatarStyle.STROKED}
                         firstName={getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'}
                         url={getAvatarForCommit(application, gitRepository?.deployed_commit_id)}
                       />
@@ -185,10 +185,10 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                         className={`flex items-center ${!isChecked(application.id) ? 'opacity-50' : ''}`}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Avatar
+                        <LegacyAvatar
                           size={28}
                           className="mr-2"
-                          style={AvatarStyle.STROKED}
+                          style={LegacyAvatarStyle.STROKED}
                           firstName={application.commits[0].author_name || ''}
                           url={application.commits[0].author_avatar_url || ''}
                         />
