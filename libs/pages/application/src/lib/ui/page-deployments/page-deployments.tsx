@@ -83,8 +83,14 @@ export function Deployments(props: PageDeploymentsProps) {
 }
 
 export const PageDeployments = memo(Deployments, (prevProps, nextProps) => {
-  const prevDeploymentIds = prevProps.deployments?.map((deployment) => deployment.id)
-  const nextDeploymentIds = nextProps.deployments?.map((deployment) => deployment.id)
+  const prevDeployment = prevProps.deployments?.map((deployment) => ({
+    id: deployment.id,
+    status: deployment.status,
+  }))
+  const nextDeployment = nextProps.deployments?.map((deployment) => ({
+    id: deployment.id,
+    status: deployment.status,
+  }))
 
-  return JSON.stringify(prevDeploymentIds) === JSON.stringify(nextDeploymentIds)
+  return JSON.stringify(prevDeployment) === JSON.stringify(nextDeployment)
 })

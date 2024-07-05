@@ -106,11 +106,13 @@ export const PageDeployments = memo(PageDeploymentsMemo, (prevProps, nextProps) 
     JSON.stringify(
       prevProps.deployments?.map((service) => ({
         id: service.id,
+        status: service.status,
       }))
     ) ===
     JSON.stringify(
       nextProps.deployments?.map((service) => ({
         id: service.id,
+        status: service.status,
       }))
     )
   )

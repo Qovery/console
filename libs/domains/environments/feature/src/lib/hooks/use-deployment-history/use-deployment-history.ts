@@ -8,7 +8,7 @@ export interface UseDeploymentHistoryProps {
 export function useDeploymentHistory({ environmentId }: UseDeploymentHistoryProps) {
   return useQuery({
     ...queries.environments.deploymentHistory({ environmentId }),
-    refetchInterval: 10000,
+    refetchInterval: 2000,
   })
 }
 
