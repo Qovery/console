@@ -1,5 +1,4 @@
-import { type ChangeEventHandler, type ReactNode, useEffect, useRef, useState } from 'react'
-import { forwardRef } from 'react'
+import { type ChangeEventHandler, type ReactNode, forwardRef, useEffect, useRef, useState } from 'react'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
