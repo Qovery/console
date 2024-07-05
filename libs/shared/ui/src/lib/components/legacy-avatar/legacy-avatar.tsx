@@ -1,16 +1,16 @@
 import Icon from '../icon/icon'
 import Tooltip from '../tooltip/tooltip'
 
-export enum AvatarStyle {
+export enum LegacyAvatarStyle {
   NORMAL = 'normal',
   STROKED = 'stroked',
 }
 
-export interface AvatarProps {
+export interface LegacyAvatarProps {
   firstName: string
   lastName?: string
   url?: string
-  style?: AvatarStyle
+  style?: LegacyAvatarStyle
   icon?: string
   logoUrl?: string
   logoText?: string
@@ -21,7 +21,10 @@ export interface AvatarProps {
   noTooltip?: boolean
 }
 
-export function Avatar(props: AvatarProps) {
+/**
+ * @deprecated This component has been deprecated due to composability issue, use Avatar instead
+ */
+export function LegacyAvatar(props: LegacyAvatarProps) {
   const {
     firstName,
     lastName = '',
@@ -37,7 +40,7 @@ export function Avatar(props: AvatarProps) {
     noTooltip = false,
   } = props
 
-  const defineClass = `${style === AvatarStyle.STROKED ? 'border border-neutral-200' : ''} ${
+  const defineClass = `${style === LegacyAvatarStyle.STROKED ? 'border border-neutral-200' : ''} ${
     onClick ? 'cursor-pointer' : ''
   }`
 
@@ -83,4 +86,4 @@ export function Avatar(props: AvatarProps) {
   return !noTooltip ? <Tooltip content={`${firstName} ${lastName}`}>{avatarContent}</Tooltip> : <>{avatarContent}</>
 }
 
-export default Avatar
+export default LegacyAvatar

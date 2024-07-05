@@ -8,10 +8,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
-  Avatar,
   ButtonIconAction,
   Icon,
   IconAwesomeEnum,
+  LegacyAvatar,
   LoaderSpinner,
   Menu,
   type MenuData,
@@ -234,7 +234,7 @@ export function RowMember(props: RowMemberProps) {
           <div className="flex items-center px-4 py-3">
             {name && (
               <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>
-                <Avatar firstName={name[0]} lastName={name[1]} url={(member as Member).profile_picture_url} />
+                <LegacyAvatar firstName={name[0]} lastName={name[1]} url={(member as Member).profile_picture_url} />
               </Skeleton>
             )}
             <div className="ml-3 truncate text-xs">

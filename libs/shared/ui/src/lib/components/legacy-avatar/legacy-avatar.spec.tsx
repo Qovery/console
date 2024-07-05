@@ -1,8 +1,8 @@
 import { render, screen } from '__tests__/utils/setup-jest'
 import { IconEnum } from '@qovery/shared/enums'
-import { Avatar, type AvatarProps } from './avatar'
+import { LegacyAvatar, type LegacyAvatarProps } from './legacy-avatar'
 
-let props: AvatarProps
+let props: LegacyAvatarProps
 
 let container
 
@@ -17,14 +17,14 @@ beforeEach(() => {
 
 describe('Avatar', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Avatar {...props} />)
+    const { baseElement } = render(<LegacyAvatar {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should apply the accurate classes', () => {
     props.className = 'some-class-name'
 
-    render(<Avatar {...props} />)
+    render(<LegacyAvatar {...props} />)
 
     const avatar = screen.getByTestId('avatar')
 
@@ -34,7 +34,7 @@ describe('Avatar', () => {
   it('should have an icon', () => {
     props.icon = IconEnum.GITHUB
 
-    render(<Avatar {...props} />)
+    render(<LegacyAvatar {...props} />)
 
     const icon = screen.getByTestId('avatar-icon')
 
@@ -44,7 +44,7 @@ describe('Avatar', () => {
   it('should have an avatar logo with img', () => {
     props.logoUrl = 'https://qovery.com/image'
 
-    render(<Avatar {...props} />)
+    render(<LegacyAvatar {...props} />)
 
     const logo = screen.getByTestId('avatar-logo')
 
@@ -54,7 +54,7 @@ describe('Avatar', () => {
   it('should have an avatar logo with placeholder', () => {
     props.logoText = 'Orga'
 
-    render(<Avatar {...props} />)
+    render(<LegacyAvatar {...props} />)
 
     const logo = screen.getByTestId('avatar-logo')
 

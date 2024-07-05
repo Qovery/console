@@ -1,13 +1,13 @@
 import { type Meta, type Story } from '@storybook/react'
 import { IconEnum } from '@qovery/shared/enums'
-import { Avatar, type AvatarProps } from './avatar'
+import { LegacyAvatar, type LegacyAvatarProps } from './legacy-avatar'
 
 export default {
-  component: Avatar,
-  title: 'Avatar',
+  component: LegacyAvatar,
+  title: 'LegacyAvatar',
 } as Meta
 
-const Template: Story<AvatarProps> = (args) => <Avatar {...args}></Avatar>
+const Template: Story<LegacyAvatarProps> = (args) => <LegacyAvatar {...args}></LegacyAvatar>
 
 export const Primary = Template.bind({})
 Primary.args = {
