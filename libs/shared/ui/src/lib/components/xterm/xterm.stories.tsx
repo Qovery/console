@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react'
+import { useXTerm } from 'react-xtermjs'
 import Button from '../button/button'
-import { useXTerm } from './xterm'
 
 const MyComponent = () => {
   const { instance, ref } = useXTerm()
