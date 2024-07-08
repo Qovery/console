@@ -4,6 +4,7 @@ import { matchPath, useLocation, useNavigate, useParams } from 'react-router-dom
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   EnvironmentActionToolbar,
+  EnvironmentAvatar,
   EnvironmentMode,
   EnvironmentStateChip,
   useDeployEnvironment,
@@ -248,7 +249,9 @@ export function Container({ children }: PropsWithChildren) {
     <VariablesProvider>
       <ErrorBoundary>
         <Section className="flex-1">
-          <Header title={environment?.name} icon={IconEnum.SERVICES} actions={headerActions} />
+          <Header title={environment?.name} actions={headerActions}>
+            {environment && <EnvironmentAvatar environment={environment} />}
+          </Header>
           <Tabs items={tabsItems} contentRight={contentTabs} />
           {cancelOnGoing && <Banner color="yellow">Deployment cancel ongoing...</Banner>}
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">

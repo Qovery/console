@@ -1,10 +1,10 @@
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { Avatar, type AvatarProps } from '@qovery/shared/ui'
+import { LegacyAvatar, type LegacyAvatarProps } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
 
-export interface LastCommitAuthorProps extends Omit<AvatarProps, 'firstName' | 'lastName' | 'url'> {
+export interface LastCommitAuthorProps extends Omit<LegacyAvatarProps, 'firstName' | 'lastName' | 'url'> {
   gitRepository: ApplicationGitRepository
   serviceId: string
   serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'HELM'>
@@ -23,7 +23,7 @@ export function LastCommitAuthor({
   } = useLastDeployedCommit({ gitRepository, serviceId, serviceType })
 
   return deployedCommit.author_name && deployedCommit.author_avatar_url ? (
-    <Avatar
+    <LegacyAvatar
       size={size ?? 20}
       className={twMerge('border-2 border-neutral-200', className)}
       firstName={deployedCommit.author_name.split(' ')[0] || ''}
@@ -32,7 +32,7 @@ export function LastCommitAuthor({
       {...props}
     />
   ) : (
-    <Avatar
+    <LegacyAvatar
       size={size ?? 20}
       className={twMerge('border-2 border-neutral-200', className)}
       firstName={gitRepository.owner || ''}

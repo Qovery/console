@@ -12,6 +12,7 @@ import AWSGrayIcon from './icons/aws-gray'
 import AzureIcon from './icons/azure'
 import BuildpacksIcon from './icons/buildpacks'
 import ChildrenArrow from './icons/children-arrow'
+import CloudformationIcon from './icons/cloudformationIcon'
 import { ContainerIcon } from './icons/container'
 import CronJobIcon from './icons/cron-job'
 import CronJobStrokeIcon from './icons/cron-job-stroke-icon'
@@ -159,6 +160,8 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
     case IconEnum.ON_PREMISE:
     case IconEnum.ON_PREMISE_GRAY:
       return <KubernetesIcon {...formattedProps} />
+    case IconEnum.CLOUDFORMATION:
+      return <CloudformationIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }

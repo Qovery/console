@@ -1,86 +1,129 @@
-import Icon from '../icon/icon'
-import Tooltip from '../tooltip/tooltip'
+import * as AvatarPrimitive from '@radix-ui/react-avatar'
+import { type VariantProps, cva } from 'class-variance-authority'
+import {
+  Children,
+  type ComponentPropsWithoutRef,
+  type ElementRef,
+  type ReactNode,
+  cloneElement,
+  forwardRef,
+  useState,
+} from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 
-export enum AvatarStyle {
-  NORMAL = 'normal',
-  STROKED = 'stroked',
+// Util from radix-thems copied from
+// https://github.com/radix-ui/themes/blob/e500aac124faa4f15bb302aa120049c262767eaa/packages/radix-ui-themes/src/helpers/get-subtree.ts#L10
+function getSubtree(
+  options: { asChild: boolean | undefined; children: React.ReactNode },
+  content: React.ReactNode | ((children: React.ReactNode) => React.ReactNode)
+) {
+  const { asChild, children } = options
+  if (!asChild) return typeof content === 'function' ? content(children) : content
+
+  const firstChild = Children.only(children) as React.ReactElement
+  return cloneElement(firstChild, {
+    children: typeof content === 'function' ? content(firstChild.props.children) : content,
+  })
 }
 
-export interface AvatarProps {
-  firstName: string
-  lastName?: string
-  url?: string
-  style?: AvatarStyle
-  icon?: string
-  logoUrl?: string
-  logoText?: string
-  className?: string
-  alt?: string
-  onClick?: () => void
-  size?: number
-  noTooltip?: boolean
-}
+const avatarVariants = cva(['flex', 'items-center', 'justify-center'], {
+  variants: {
+    size: {
+      md: ['h-16', 'w-16'],
+      xs: ['h-8', 'w-8'],
+    },
+    radius: {
+      none: [],
+      full: ['rounded-full'],
+    },
+    border: {
+      none: [],
+      solid: ['border', 'border-neutral-200'],
+    },
+  },
+  defaultVariants: {
+    size: 'md',
+    border: 'none',
+    radius: 'full',
+  },
+})
 
-export function Avatar(props: AvatarProps) {
-  const {
-    firstName,
-    lastName = '',
-    url,
-    style,
-    icon,
-    logoUrl,
-    logoText,
-    className = '',
-    alt,
-    onClick,
-    size = 32,
-    noTooltip = false,
-  } = props
+interface AvatarProps extends AvatarImplProps, VariantProps<typeof avatarVariants> {}
 
-  const defineClass = `${style === AvatarStyle.STROKED ? 'border border-neutral-200' : ''} ${
-    onClick ? 'cursor-pointer' : ''
-  }`
-
-  const avatarContent = (
-    <div
-      data-testid="avatar"
-      style={{ width: size, height: size }}
-      className={`relative block rounded-full ${defineClass} ${className}`}
-      onClick={() => onClick && onClick()}
+const Avatar = forwardRef<AvatarImplElement, AvatarProps>(function Avatar(
+  { asChild, children, className, style, size, border, radius, ...imageProps },
+  forwardedRef
+) {
+  return (
+    <AvatarPrimitive.Root
+      className={twMerge(avatarVariants({ size, border, radius }), className)}
+      style={style}
+      asChild={asChild}
     >
-      {url ? (
-        <img src={url} alt={alt} className="h-full w-full rounded-full" />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center rounded-full bg-neutral-200 text-center">
-          <span className="relative text-xs font-medium text-neutral-400">
-            {firstName && firstName.charAt(0).toUpperCase()}
-            {lastName && lastName.charAt(0).toUpperCase()}
-          </span>
-        </div>
-      )}
-      {icon && (
-        <Icon data-testid="avatar-icon" name={icon} className="absolute -bottom-1 -right-1 h-4 w-4 drop-shadow-sm" />
-      )}
-      {(logoUrl || logoText) && (
-        <div
-          data-testid="avatar-logo"
-          className="absolute -right-[2px] top-[24px] flex h-[18px] w-[18px] items-center rounded-full text-sm font-medium"
-        >
-          {logoUrl ? (
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-neutral-50 p-[2px]">
-              <img src={logoUrl} alt="Logo Organization" />
-            </span>
-          ) : (
-            <span className="flex h-full w-full items-center justify-center rounded-full border border-neutral-50 bg-neutral-150 text-2xs uppercase text-neutral-350">
-              {logoText}
-            </span>
-          )}
-        </div>
-      )}
-    </div>
+      {getSubtree({ asChild, children }, <AvatarImpl ref={forwardedRef} size={size} border={border} {...imageProps} />)}
+    </AvatarPrimitive.Root>
   )
+})
 
-  return !noTooltip ? <Tooltip content={`${firstName} ${lastName}`}>{avatarContent}</Tooltip> : <>{avatarContent}</>
+type AvatarImplElement = ElementRef<typeof AvatarPrimitive.Image>
+
+const avatarFallbackVariants = cva('flex items-center justify-center', {
+  variants: {
+    size: {
+      md: [],
+      xs: [],
+    },
+    border: {
+      solid: [],
+      none: [],
+    },
+  },
+  compoundVariants: [
+    { border: 'solid', size: 'md', className: ['h-10', 'w-10'] },
+    { border: 'solid', size: 'xs', className: ['h-6', 'w-6'] },
+    { border: 'none', size: 'md', className: ['h-16', 'w-16'] },
+    { border: 'none', size: 'xs', className: ['h-8', 'w-8'] },
+  ],
+  defaultVariants: {
+    size: 'md',
+    border: 'none',
+  },
+})
+
+interface AvatarImplProps
+  extends ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>,
+    VariantProps<typeof avatarFallbackVariants> {
+  fallback: ReactNode
 }
 
-export default Avatar
+const AvatarImpl = forwardRef<AvatarImplElement, AvatarImplProps>(function AvatarImpl(
+  { fallback, size, border, ...imageProps },
+  forwardedRef
+) {
+  const [status, setStatus] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle')
+  return (
+    <>
+      {
+        //No loading state define yet
+        //{status === 'idle' || status === 'loading' ? <span className="rt-AvatarFallback" /> : null}
+      }
+      {status === 'error' ? (
+        <AvatarPrimitive.Fallback className={avatarFallbackVariants({ size, border })} delayMs={0}>
+          {fallback}
+        </AvatarPrimitive.Fallback>
+      ) : null}
+      <AvatarPrimitive.Image
+        ref={forwardedRef}
+        {...imageProps}
+        onLoadingStatusChange={(status) => {
+          imageProps.onLoadingStatusChange?.(status)
+          setStatus(status)
+        }}
+      />
+    </>
+  )
+})
+
+export { Avatar }
+
+export type { AvatarProps }

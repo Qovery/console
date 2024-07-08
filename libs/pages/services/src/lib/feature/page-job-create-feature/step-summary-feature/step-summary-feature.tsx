@@ -82,6 +82,7 @@ function prepareJobRequest(
         entrypoint: configureData.on_delete?.entrypoint,
         arguments: configureData.on_delete?.arguments,
       },
+      lifecycle_type: generalData.template_type,
     }
 
     if (!configureData.on_start?.enabled) {

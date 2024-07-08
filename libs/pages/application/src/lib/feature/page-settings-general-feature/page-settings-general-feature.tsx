@@ -248,7 +248,10 @@ export function PageSettingsGeneralFeature() {
             image_entry_point: cronjob?.entrypoint,
           }
         })
-        .otherwise(() => ({}))
+        .with({ job_type: 'LIFECYCLE' }, (s) => ({
+          template_type: s.schedule.lifecycle_type,
+        }))
+        .exhaustive()
 
       return {
         auto_deploy: service.auto_deploy,

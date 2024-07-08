@@ -1,5 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputText, InputTextArea } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface GeneralSettingProps {
   label?: string
@@ -37,6 +38,21 @@ export function GeneralSetting({ label = 'Name' }: GeneralSettingProps) {
             label="Description (optional)"
           />
         )}
+      />
+      <Controller
+        name="template_type"
+        control={control}
+        render={({ field }) =>
+          field.value && (
+            <InputText
+              name={field.name}
+              onChange={field.onChange}
+              value={upperCaseFirstLetter(field.value)}
+              label="Type"
+              disabled
+            />
+          )
+        }
       />
     </>
   )

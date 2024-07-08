@@ -1,13 +1,14 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import {
   NeedRedeployFlag,
   ServiceActionToolbar,
+  ServiceAvatar,
+  ServiceTemplateIndicator,
   ServiceTerminalContext,
   useService,
 } from '@qovery/domains/services/feature'
@@ -79,16 +80,17 @@ export function Container({ children }: ContainerProps) {
     </div>
   )
 
-  const headerIcon = match(service)
-    .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
-    .with({ serviceType: 'JOB' }, (s) => (s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB))
-    .otherwise(() => IconEnum.APPLICATION)
-
   return (
     <VariablesProvider>
       <ErrorBoundary>
         <Section className="flex-1">
-          <Header title={service?.name} icon={headerIcon} actions={headerActions} />
+          <Header title={service?.name} actions={headerActions}>
+            {service && (
+              <ServiceTemplateIndicator service={service} size="md">
+                <ServiceAvatar service={service} size="md" border="solid" />
+              </ServiceTemplateIndicator>
+            )}
+          </Header>
           <TabsFeature />
           <NeedRedeployFlag />
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
