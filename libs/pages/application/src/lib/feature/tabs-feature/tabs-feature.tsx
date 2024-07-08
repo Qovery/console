@@ -2,7 +2,13 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ServiceLinksPopover, ServiceStateChip, useDeployService, useService } from '@qovery/domains/services/feature'
+import {
+  ServiceAccessModal,
+  ServiceLinksPopover,
+  ServiceStateChip,
+  useDeployService,
+  useService,
+} from '@qovery/domains/services/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import {
   APPLICATION_DEPLOYMENTS_URL,
@@ -79,6 +85,7 @@ function ContentRightEnvVariable({ projectId, service }: { projectId: string; se
 export function TabsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { openModal } = useModal()
   const location = useLocation()
 
   const items: TabsItem[] = [
@@ -129,18 +136,36 @@ export function TabsFeature() {
           {matchEnvVariableRoute && service ? (
             <ContentRightEnvVariable service={service} projectId={projectId} />
           ) : (
-            <ServiceLinksPopover
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              serviceId={applicationId}
-            >
-              <Button className="gap-2" size="lg" color="neutral" variant="surface">
-                <Icon iconName="angle-down" />
-                Links
-                <Icon iconName="link" />
+            <div className="flex gap-3">
+              <ServiceLinksPopover
+                organizationId={organizationId}
+                projectId={projectId}
+                environmentId={environmentId}
+                serviceId={applicationId}
+              >
+                <Button className="gap-2" size="md" color="neutral" variant="surface">
+                  Links
+                  <Icon iconName="link" />
+                </Button>
+              </ServiceLinksPopover>
+              <Button
+                className="gap-2"
+                size="md"
+                color="neutral"
+                variant="surface"
+                onClick={() =>
+                  openModal({
+                    content: service && <ServiceAccessModal service={service} />,
+                    options: {
+                      width: 680,
+                    },
+                  })
+                }
+              >
+                Access info
+                <Icon iconName="info-circle" iconStyle="light" />
               </Button>
-            </ServiceLinksPopover>
+            </div>
           )}
         </div>
       }
