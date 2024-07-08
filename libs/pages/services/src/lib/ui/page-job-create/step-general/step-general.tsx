@@ -60,7 +60,7 @@ export function StepGeneral(props: StepGeneralProps) {
       <form className="space-y-10" onSubmit={props.onSubmit}>
         <Section className="gap-4">
           <Heading>General</Heading>
-          <GeneralSetting label="Service name" templateType={props.jobType === 'LIFECYCLE_JOB'} />
+          <GeneralSetting label="Service name" />
         </Section>
 
         <Section className="gap-4">

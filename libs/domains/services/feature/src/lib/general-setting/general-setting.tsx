@@ -4,10 +4,9 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface GeneralSettingProps {
   label?: string
-  templateType?: boolean
 }
 
-export function GeneralSetting({ label = 'Name', templateType = false }: GeneralSettingProps) {
+export function GeneralSetting({ label = 'Name' }: GeneralSettingProps) {
   const { control } = useFormContext()
 
   return (
@@ -40,11 +39,11 @@ export function GeneralSetting({ label = 'Name', templateType = false }: General
           />
         )}
       />
-      {templateType && (
-        <Controller
-          name="template_type"
-          control={control}
-          render={({ field }) => (
+      <Controller
+        name="template_type"
+        control={control}
+        render={({ field }) =>
+          field.value && (
             <InputText
               name={field.name}
               onChange={field.onChange}
@@ -52,9 +51,9 @@ export function GeneralSetting({ label = 'Name', templateType = false }: General
               label="Type"
               disabled
             />
-          )}
-        />
-      )}
+          )
+        }
+      />
     </>
   )
 }
