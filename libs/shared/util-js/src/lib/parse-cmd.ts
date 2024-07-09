@@ -15,10 +15,6 @@ export const parseCmd = (cmd: string): string[] => {
 
   return args.flatMap((arg) => {
     if (typeof arg === 'string') {
-      const words = arg.split(' ').length
-      if (words > 1) {
-        return `"${arg}"`
-      }
       return arg
     }
     if ('op' in arg) {
@@ -42,4 +38,8 @@ function extractEnvVariables(inputString: string): { [key: string]: string } {
   })
 
   return envObject
+}
+// Necessary to display args with quotes in the UI
+export function joinArgsWithQuotes(args: string[]) {
+  return args.map((arg) => (arg.split(' ').length > 1 ? `"${arg}"` : arg)).join(' ')
 }
