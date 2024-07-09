@@ -1,7 +1,20 @@
+import { type Credentials } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type Application, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
-import { ExternalLink, Heading, Icon, Section, TabsPrimitives, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  ExternalLink,
+  Heading,
+  Icon,
+  Section,
+  TabsPrimitives,
+  ToastEnum,
+  Tooltip,
+  toast,
+} from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import useMasterCredentials from '../hooks/use-master-credentials/use-master-credentials'
 import CopyButton from './copy-button/copy-button'
 import SectionExpand from './section-expand/section-expand'
 
@@ -15,11 +28,20 @@ export interface ServiceAccessModalProps {
 
 export function ServiceAccessModal({ service, organizationId, projectId }: ServiceAccessModalProps) {
   const { serviceType } = service
+  const [, copyToClipboard] = useCopyToClipboard()
 
   const { data: variables } = useVariables({
     parentId: serviceType === 'APPLICATION' ? service.id : service.environment.id,
     scope: serviceType === 'APPLICATION' ? 'APPLICATION' : 'ENVIRONMENT',
   })
+
+  const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: service.serviceType })
+
+  const handleCopyCredentials = (credentials: Credentials) => {
+    const connectionURI = `${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+    copyToClipboard(connectionURI)
+    toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
+  }
 
   const ports = match(service)
     .with({ serviceType: 'APPLICATION' }, (s) => s.ports)
@@ -185,6 +207,24 @@ export function ServiceAccessModal({ service, organizationId, projectId }: Servi
                 />
               </div>
             </div>
+            {serviceType === 'DATABASE' && (
+              <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
+                <span className="font-medium">3. Access</span>
+                <p className="mb-1.5 text-neutral-350">
+                  Now you can copy the connection URI to connect to your database locally{' '}
+                </p>
+                <Button
+                  className="max-w-max gap-2"
+                  color="neutral"
+                  variant="surface"
+                  size="md"
+                  onClick={() => handleCopyCredentials(masterCredentials!)}
+                >
+                  Copy connection URI
+                  <Icon className="text-sm" iconName="key" iconStyle="light" />
+                </Button>
+              </div>
+            )}
           </Tabs.Content>
         </div>
       </Tabs.Root>
