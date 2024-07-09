@@ -10,7 +10,7 @@ describe('parseCmd function', () => {
   it('should handle quoted arguments', () => {
     const cmd = 'docker run -v  "arg arg" "/data:/mnt/data" nginx'
     const result = parseCmd(cmd)
-    expect(result).toEqual(['docker', 'run', '-v', '"arg arg"', '/data:/mnt/data', 'nginx'])
+    expect(result).toEqual(['docker', 'run', '-v', 'arg arg', '/data:/mnt/data', 'nginx'])
   })
 
   it('should handle operations', () => {
@@ -42,7 +42,7 @@ describe('parseCmd function', () => {
       '-p',
       '8080:80',
       'nginx',
-      '"arg arg"',
+      'arg arg',
       '#',
       ' start nginx container',
     ])
