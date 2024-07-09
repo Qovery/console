@@ -1,8 +1,11 @@
+import { applicationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import ServiceAccessModal, { type ServiceAccessModalProps } from './service-access-modal'
 
 const props: ServiceAccessModalProps = {
-  serviceType: 'APPLICATION',
+  organizationId: '1',
+  projectId: '1',
+  service: applicationFactoryMock(1)[0],
 }
 
 describe('ServiceAccessModal', () => {

@@ -148,25 +148,29 @@ export function TabsFeature() {
                   <Icon iconName="link" />
                 </Button>
               </ServiceLinksPopover>
-              <Button
-                className="gap-2"
-                size="md"
-                color="neutral"
-                variant="surface"
-                onClick={() =>
-                  openModal({
-                    content: service && (
-                      <ServiceAccessModal organizationId={organizationId} projectId={projectId} service={service} />
-                    ),
-                    options: {
-                      width: 680,
-                    },
-                  })
-                }
-              >
-                Access info
-                <Icon iconName="info-circle" iconStyle="light" />
-              </Button>
+              {match(service)
+                .with({ serviceType: 'APPLICATION' }, (s) => (
+                  <Button
+                    className="gap-2"
+                    size="md"
+                    color="neutral"
+                    variant="surface"
+                    onClick={() =>
+                      openModal({
+                        content: (
+                          <ServiceAccessModal organizationId={organizationId} projectId={projectId} service={s} />
+                        ),
+                        options: {
+                          width: 680,
+                        },
+                      })
+                    }
+                  >
+                    Access info
+                    <Icon iconName="info-circle" iconStyle="light" />
+                  </Button>
+                ))
+                .otherwise(() => null)}
             </div>
           )}
         </div>
