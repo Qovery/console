@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import SectionExpand, { SectionExpandProps } from './section-expand'
+import SectionExpand, { type SectionExpandProps } from './section-expand'
 
 const props: SectionExpandProps = {
   title: 'my-title',
