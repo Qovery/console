@@ -19,7 +19,7 @@ export interface TabsProps {
 }
 
 /**
- * @deprecated This should be migrated to the tabs-primitives.tsx component
+ * @deprecated This should be migrated to the tabs-primitives component
  */
 export function Tabs(props: TabsProps) {
   const { items = [], contentRight, className = 'bg-white pl-4', classNameBtn = '', fullWidth } = props

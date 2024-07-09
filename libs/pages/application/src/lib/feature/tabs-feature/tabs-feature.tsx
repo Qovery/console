@@ -155,7 +155,9 @@ export function TabsFeature() {
                 variant="surface"
                 onClick={() =>
                   openModal({
-                    content: service && <ServiceAccessModal service={service} />,
+                    content: service && (
+                      <ServiceAccessModal organizationId={organizationId} projectId={projectId} service={service} />
+                    ),
                     options: {
                       width: 680,
                     },

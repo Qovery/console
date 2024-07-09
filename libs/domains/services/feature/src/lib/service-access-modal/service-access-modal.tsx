@@ -1,9 +1,11 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useCopyToClipboard } from '@uidotdev/usehooks'
 import clsx from 'clsx'
 import { type PropsWithChildren, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
-import { ExternalLink, Heading, Icon, Section, TabsPrimitives, Tooltip } from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, Section, TabsPrimitives, Tooltip } from '@qovery/shared/ui'
 
 interface SectionAccordionProps extends PropsWithChildren {
   title: string
@@ -37,13 +39,38 @@ function SectionAccordion({ title, description, children }: SectionAccordionProp
   )
 }
 
+function CopyConnect() {
+  const [icon, setIcon] = useState<IconName>('copy')
+  const [, copyToClipboard] = useCopyToClipboard()
+
+  const onClickCopyToClipboard = (content: string) => {
+    copyToClipboard(content)
+    setIcon('check')
+    setTimeout(() => setIcon('copy'), 1000)
+  }
+
+  return (
+    <Button
+      type="button"
+      variant="surface"
+      onClick={() => onClickCopyToClipboard('')}
+      className="cursor-pointer gap-2 font-medium"
+    >
+      Copy
+      <Icon iconName={icon} className="text-xs" />
+    </Button>
+  )
+}
+
 const { Tabs } = TabsPrimitives
 
 export interface ServiceAccessModalProps {
+  organizationId: string
+  projectId: string
   service: AnyService
 }
 
-export function ServiceAccessModal({ service }: ServiceAccessModalProps) {
+export function ServiceAccessModal({ service, organizationId, projectId }: ServiceAccessModalProps) {
   if (service.serviceType !== 'DATABASE' && service.serviceType !== 'APPLICATION') return null
 
   const { data: variables } = useVariables({ parentId: service.id, scope: 'APPLICATION' })
@@ -144,7 +171,11 @@ export function ServiceAccessModal({ service }: ServiceAccessModalProps) {
                   >
                     <div className="max-h-60 overflow-y-scroll">
                       {variables
-                        ?.filter((v) => v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
+                        ?.filter(
+                          (v) =>
+                            v.service_id === service.id &&
+                            (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
+                        )
                         ?.map((variable) => (
                           <div
                             key={variable.id}
@@ -182,7 +213,7 @@ export function ServiceAccessModal({ service }: ServiceAccessModalProps) {
                     </div>
                   </SectionAccordion>
                 </Tabs.Content>
-                <Tabs.Content value="local-machine">
+                <Tabs.Content className="flex flex-col gap-4" value="local-machine">
                   <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
                     <span className="font-medium">1. Download/Update Qovery CLI</span>
                     <p className="text-neutral-350">
@@ -191,6 +222,18 @@ export function ServiceAccessModal({ service }: ServiceAccessModalProps) {
                     <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install">
                       https://hub.qovery.com/docs/using-qovery/interface/cli/#install
                     </ExternalLink>
+                  </div>
+                  <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
+                    <span className="font-medium">2. Connect via port-forward</span>
+                    <p className="text-neutral-350">Run the following command from your terminal.</p>
+                    <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                      <div>
+                        <span className="select-none">$ </span>qovery port-forward
+                        https://console.qovery.com/organization/{organizationId}/project/{projectId}/environment/
+                        {s.environment.id}/application/{s.id} -p [local-port]:[target-port]
+                      </div>
+                      <CopyConnect />
+                    </div>
                   </div>
                 </Tabs.Content>
               </div>
