@@ -19,7 +19,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
@@ -222,7 +222,7 @@ export function PageSettingsGeneralFeature() {
       dockerfile_path: service.dockerfile_path ?? 'Dockerfile',
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
-      cmd_arguments: service.arguments?.length ? service.arguments.join(' ') : '',
+      cmd_arguments: service.arguments?.length ? joinArgsWithQuotes(service.arguments) : '',
       labels_groups: service.labels_groups?.map((group) => group.id),
       annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
@@ -232,7 +232,7 @@ export function PageSettingsGeneralFeature() {
       image_tag: service.tag,
       image_entry_point: service.entrypoint,
       auto_deploy: service.auto_deploy,
-      cmd_arguments: service.arguments?.length ? service.arguments.join(' ') : '',
+      cmd_arguments: service.arguments?.length ? joinArgsWithQuotes(service.arguments) : '',
       labels_groups: service.labels_groups?.map((group) => group.id),
       annotations_groups: service.annotations_groups?.map((group) => group.id),
     }))
@@ -274,7 +274,7 @@ export function PageSettingsGeneralFeature() {
       auto_preview: service.auto_preview,
       allow_cluster_wide_resources: service.allow_cluster_wide_resources,
       timeout_sec: service.timeout_sec,
-      arguments: service.arguments.join(' '),
+      arguments: joinArgsWithQuotes(service.arguments),
     }))
     .otherwise(() => undefined)
 

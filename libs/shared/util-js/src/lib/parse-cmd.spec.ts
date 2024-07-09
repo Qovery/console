@@ -1,4 +1,4 @@
-import { parseCmd } from './parse-cmd'
+import { joinArgsWithQuotes, parseCmd } from './parse-cmd'
 
 describe('parseCmd function', () => {
   it('should parse a simple command string', () => {
@@ -10,7 +10,7 @@ describe('parseCmd function', () => {
   it('should handle quoted arguments', () => {
     const cmd = 'docker run -v  "arg arg" "/data:/mnt/data" nginx'
     const result = parseCmd(cmd)
-    expect(result).toEqual(['docker', 'run', '-v', '"arg arg"', '/data:/mnt/data', 'nginx'])
+    expect(result).toEqual(['docker', 'run', '-v', 'arg arg', '/data:/mnt/data', 'nginx'])
   })
 
   it('should handle operations', () => {
@@ -22,7 +22,7 @@ describe('parseCmd function', () => {
   it('should handle comments', () => {
     const cmd = 'docker run nginx # start nginx container'
     const result = parseCmd(cmd)
-    expect(result).toEqual(['docker', 'run', 'nginx', '#', ' start nginx container'])
+    expect(result).toEqual(['docker', 'run', 'nginx', '# start nginx container'])
   })
 
   it('should handle env variables', () => {
@@ -42,9 +42,40 @@ describe('parseCmd function', () => {
       '-p',
       '8080:80',
       'nginx',
-      '"arg arg"',
-      '#',
-      ' start nginx container',
+      'arg arg',
+      '# start nginx container',
     ])
+  })
+})
+
+describe('joinArgsWithQuotes', () => {
+  it('should handle single word arguments correctly', () => {
+    const input = ['arg1', 'arg2']
+    const expected = 'arg1 arg2'
+    expect(joinArgsWithQuotes(input)).toBe(expected)
+  })
+
+  it('should handle arguments with multiple words correctly', () => {
+    const input = ['arg1', 'arg3 arg4']
+    const expected = 'arg1 "arg3 arg4"'
+    expect(joinArgsWithQuotes(input)).toBe(expected)
+  })
+
+  it('should handle arguments starting with # correctly', () => {
+    const input = ['arg1', '# hello world 123']
+    const expected = 'arg1 # hello world 123'
+    expect(joinArgsWithQuotes(input)).toBe(expected)
+  })
+
+  it('should handle mixed arguments correctly', () => {
+    const input = ['arg2', 'arg3 arg4', '# test test test']
+    const expected = 'arg2 "arg3 arg4" # test test test'
+    expect(joinArgsWithQuotes(input)).toBe(expected)
+  })
+
+  it('should handle multiple words starting with # correctly', () => {
+    const input = ['# singleword', 'multiple words here']
+    const expected = '# singleword "multiple words here"'
+    expect(joinArgsWithQuotes(input)).toBe(expected)
   })
 })

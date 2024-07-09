@@ -24,7 +24,7 @@ describe('displayParsedCmd', () => {
 
   it('command with comment', () => {
     const cmd = 'docker run --entrypoint test image-name arg1 arg2 # comment'
-    expect(displayParsedCmd(cmd)).toBe('docker run --entrypoint test image-name arg1 arg2 #  comment')
+    expect(displayParsedCmd(cmd)).toBe('docker run --entrypoint test image-name arg1 arg2 # comment')
   })
 
   it('command with special operator', () => {

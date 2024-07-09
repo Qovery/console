@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputText } from '@qovery/shared/ui'
-import { parseCmd } from '@qovery/shared/util-js'
+import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 
 export interface EntrypointCmdInputsProps {
   entrypointRequired?: boolean
@@ -11,7 +11,7 @@ export interface EntrypointCmdInputsProps {
 
 export const displayParsedCmd = (cmd: string) => {
   const parsedArgs = parseCmd(cmd)
-  return parsedArgs.join(' ')
+  return joinArgsWithQuotes(parsedArgs)
 }
 
 export function EntrypointCmdInputs({
