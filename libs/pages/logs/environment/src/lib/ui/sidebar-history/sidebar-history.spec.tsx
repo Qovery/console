@@ -74,9 +74,10 @@ describe('SidebarHistory', () => {
     await userEvent.click(btn)
 
     const item = screen.getByText(trimId(props.data[1].id))
-    await userEvent.click(item)
-
-    expect(mockNavigate).toHaveBeenCalledWith('/organization/1/project/2/environment/3/logs/4/deployment-logs/2')
+    expect(item.parentElement?.parentElement?.parentElement).toHaveAttribute(
+      'href',
+      '/organization/1/project/2/environment/3/logs/4/deployment-logs/2'
+    )
   })
 
   it('should have latest label if the environmentState is not new', async () => {

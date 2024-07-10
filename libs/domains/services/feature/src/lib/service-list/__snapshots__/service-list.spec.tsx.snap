@@ -154,12 +154,13 @@ exports[`ServiceList should match snapshot 1`] = `
                 <span
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
-                  <span
-                    class="max-w-max truncate"
+                  <a
+                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                     data-state="closed"
+                    href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"
                   >
                     FRONT-END
-                  </span>
+                  </a>
                 </span>
                 <div>
                   <button
@@ -401,12 +402,13 @@ exports[`ServiceList should match snapshot 1`] = `
                 <span
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
-                  <span
-                    class="max-w-max truncate"
+                  <a
+                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                     data-state="closed"
+                    href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/04308de2-af27-405f-9e95-570fa94ed577/services/general"
                   >
                     back-end-A
-                  </span>
+                  </a>
                 </span>
                 <div>
                   <button
@@ -647,12 +649,13 @@ exports[`ServiceList should match snapshot 1`] = `
                 <span
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
-                  <span
-                    class="max-w-max truncate"
+                  <a
+                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                     data-state="closed"
+                    href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/services/general"
                   >
                     CRONJOB
-                  </span>
+                  </a>
                   <span
                     class="text-xs font-normal text-neutral-350"
                   >
@@ -908,12 +911,13 @@ exports[`ServiceList should match snapshot 1`] = `
                 <span
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
-                  <span
-                    class="max-w-max truncate"
+                  <a
+                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                     data-state="closed"
+                    href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/services/general"
                   >
                     seed_script
-                  </span>
+                  </a>
                   <span
                     class="text-xs font-normal text-neutral-350"
                   >
