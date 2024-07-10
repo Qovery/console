@@ -70,7 +70,7 @@ export function GitTokenList() {
               </div>
               <div>
                 <Button
-                  variant="outline"
+                  variant="surface"
                   color="neutral"
                   size="md"
                   className="relative mr-2"
@@ -94,7 +94,7 @@ export function GitTokenList() {
                   <Icon iconName="layer-group" />
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="surface"
                   color="neutral"
                   size="md"
                   className="mr-2"
@@ -114,7 +114,7 @@ export function GitTokenList() {
                   <Icon iconName="gear" />
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="surface"
                   color="neutral"
                   size="md"
                   onClick={() => {

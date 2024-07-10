@@ -94,7 +94,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                     <Button
                       data-testid="edit-webhook"
                       type="button"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       size="md"
                       onClick={() => props.openEdit(webhook)}
@@ -104,7 +104,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                     <Button
                       data-testid="delete-webhook"
                       type="button"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       size="md"
                       onClick={() => props.onDelete(webhook)}

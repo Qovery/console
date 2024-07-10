@@ -27,7 +27,7 @@ exports[`PageSettingsDockerfileFeature should match snapshot 1`] = `
                 The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).
               </p>
               <button
-                class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-5 px-1 rounded bg-brand-50 border border-brand-500 text-brand-500 hover:[&:not(:active):not(:disabled)]:bg-transparent w-fit items-center gap-1"
+                class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-5 px-1 rounded bg-brand-50 border border-brand-500 text-brand-500 hover:[&:not(:active):not(:disabled)]:bg-white w-fit items-center gap-1"
               >
                 <i
                   aria-hidden="true"

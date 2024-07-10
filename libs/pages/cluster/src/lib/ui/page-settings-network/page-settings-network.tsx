@@ -57,7 +57,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                     )}
                     <Button
                       data-testid="edit-button"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       size="md"
                       className="h-9 w-9 justify-center"
@@ -67,7 +67,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                     </Button>
                     <Button
                       data-testid="delete-button"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       size="md"
                       className="h-9 w-9 justify-center"
