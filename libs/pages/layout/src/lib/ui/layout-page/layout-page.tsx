@@ -50,7 +50,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { organizationId = '' } = useParams()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { data: clusterStatuses } = useClusterStatuses({ organizationId })
+  const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: user } = useUserAccount()
 
   const isQoveryUser = checkQoveryUser(user?.communication_email)

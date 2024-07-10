@@ -11,7 +11,7 @@ export function MenuAccountFeature() {
   const { user: userToken } = useAuth()
 
   const { data: organizations = [] } = useOrganizations()
-  const { data: currentOrganization } = useOrganization({ organizationId })
+  const { data: currentOrganization } = useOrganization({ organizationId, enabled: !!organizationId })
 
   return (
     <MenuAccount
