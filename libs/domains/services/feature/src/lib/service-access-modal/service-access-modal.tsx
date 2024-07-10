@@ -111,7 +111,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
         </Tabs.List>
         <div className="mt-6">
           <Tabs.Content className="flex flex-col gap-4" value="another-service">
-            {serviceType === 'APPLICATION' && (
+            {serviceType !== 'DATABASE' && (
               <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
                 <span className="font-medium">How to connect</span>
                 <p className="text-neutral-350">
