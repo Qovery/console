@@ -7,6 +7,7 @@ export interface SectionExpandProps extends PropsWithChildren {
   description: string
 }
 
+// TODO: update it with Accordion component
 export function SectionExpand({ title, description, children }: SectionExpandProps) {
   const [isOpen, setIsOpen] = useState(false)
 
