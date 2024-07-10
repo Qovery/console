@@ -20,7 +20,7 @@ import {
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlow, useModalConfirmation } from '@qovery/shared/ui'
+import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
 import { serviceTemplates } from '../page-new-feature/service-templates'
@@ -81,7 +81,6 @@ export const findTemplateData = (slug?: string, option?: string) => {
 export function PageJobCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const location = useLocation()
-  const { openModalConfirmation } = useModalConfirmation()
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -146,19 +145,12 @@ export function PageJobCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          openModalConfirmation({
-            mode: 'PRODUCTION',
-            title: 'Close creation flow',
-            description: 'To close the creation flow, you will lose all the data you have entered.',
-            name: 'confirm',
-            placeholder: 'Type "confirm" to close the creation flow',
-            action: () => {
-              const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-                flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-              }`
-              navigate(link)
-            },
-          })
+          if (window.confirm('Do you really want to leave?')) {
+            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
+              flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
+            }`
+            navigate(link)
+          }
         }}
         totalSteps={5}
         currentStep={currentStep}

@@ -13,7 +13,7 @@ import {
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { FunnelFlow, useModalConfirmation } from '@qovery/shared/ui'
+import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_HELM_CREATION } from '../../router/router'
 import { serviceTemplates } from '../page-new-feature/service-templates'
 
@@ -58,7 +58,6 @@ export const useHelmCreateContext = () => {
 
 export function PageHelmCreateFeature() {
   const navigate = useNavigate()
-  const { openModalConfirmation } = useModalConfirmation()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const [currentStep, setCurrentStep] = useState<number>(1)
 
@@ -100,19 +99,12 @@ export function PageHelmCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          openModalConfirmation({
-            mode: 'PRODUCTION',
-            title: 'Close creation flow',
-            description: 'To close the creation flow, you will lose all the data you have entered.',
-            name: 'confirm',
-            placeholder: 'Type "confirm" to close the creation flow',
-            action: () => {
-              const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-                flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-              }`
-              navigate(link)
-            },
-          })
+          if (window.confirm('Do you really want to leave?')) {
+            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
+              flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
+            }`
+            navigate(link)
+          }
         }}
         totalSteps={steps.length}
         currentStep={currentStep}
