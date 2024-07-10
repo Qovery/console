@@ -137,7 +137,7 @@ export function PageClusterCreateFeature() {
           openModalConfirmation({
             mode: 'PRODUCTION',
             title: 'Close creation flow',
-            description: 'To close the creation flow, you will lose all the data you have entered. Are you sure?',
+            description: 'To close the creation flow, you will lose all the data you have entered.',
             name: 'confirm',
             placeholder: 'Type "confirm" to close the creation flow',
             action: () => navigate(CLUSTERS_URL(organizationId)),
