@@ -3,6 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { useUserAccount } from '@qovery/shared/iam/feature'
 import {
@@ -51,6 +52,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
+  const { data: organization } = useOrganization({ organizationId })
   const { data: user } = useUserAccount()
 
   const isQoveryUser = checkQoveryUser(user?.communication_email)
@@ -75,6 +77,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   return (
     <>
+      <Banner color="yellow">
+        Qovery admin - This organization is a customer (<b>{organization?.name}</b>), please be careful with actions.
+      </Banner>
       {!isQoveryUser && <WarningScreenMobile />}
       <main className="bg-neutral-200 dark:h-full dark:bg-neutral-900">
         <div className="flex">
