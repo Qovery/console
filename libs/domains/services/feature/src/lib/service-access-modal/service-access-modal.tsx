@@ -1,12 +1,15 @@
 import { type Credentials } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type Application, type Database } from '@qovery/domains/services/data-access'
+import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
+import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   Button,
   ExternalLink,
   Heading,
   Icon,
+  Link,
+  LoaderSpinner,
   Section,
   TabsPrimitives,
   ToastEnum,
@@ -23,19 +26,13 @@ const { Tabs } = TabsPrimitives
 export interface ServiceAccessModalProps {
   organizationId: string
   projectId: string
-  service: Application | Database
+  service: Application | Container | Database
+  onClose: () => void
 }
 
-export function ServiceAccessModal({ service, organizationId, projectId }: ServiceAccessModalProps) {
-  const { serviceType } = service
+function SectionDatabaseConnectionUri({ serviceId }: { serviceId: string }) {
   const [, copyToClipboard] = useCopyToClipboard()
-
-  const { data: variables } = useVariables({
-    parentId: serviceType === 'APPLICATION' ? service.id : service.environment.id,
-    scope: serviceType === 'APPLICATION' ? 'APPLICATION' : 'ENVIRONMENT',
-  })
-
-  const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: service.serviceType })
+  const { data: masterCredentials } = useMasterCredentials({ serviceId: serviceId, serviceType: 'DATABASE' })
 
   const handleCopyCredentials = (credentials: Credentials) => {
     const connectionURI = `${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
@@ -43,25 +40,74 @@ export function ServiceAccessModal({ service, organizationId, projectId }: Servi
     toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   }
 
+  return (
+    <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
+      <span className="font-medium">3. Access</span>
+      <p className="mb-1.5 text-neutral-350">
+        Now you can copy the connection URI to connect to your database locally{' '}
+      </p>
+      <Button
+        className="max-w-max gap-2"
+        color="neutral"
+        variant="surface"
+        size="md"
+        onClick={() => handleCopyCredentials(masterCredentials!)}
+      >
+        Copy connection URI
+        <Icon className="text-sm" iconName="key" iconStyle="light" />
+      </Button>
+    </div>
+  )
+}
+
+export function ServiceAccessModal({ service, organizationId, projectId, onClose }: ServiceAccessModalProps) {
+  const { serviceType } = service
+
+  const { data: variables = [], isLoading: isLoadingVariables } = useVariables({
+    parentId: serviceType === 'DATABASE' ? service.environment.id : service.id,
+    scope: serviceType === 'DATABASE' ? 'ENVIRONMENT' : serviceType,
+  })
+
   const ports = match(service)
-    .with({ serviceType: 'APPLICATION' }, (s) => s.ports)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => s.ports)
     .otherwise(() => undefined)
+
+  const connectPortForward = match(serviceType)
+    .with(
+      'DATABASE',
+      () => `qovery port-forward -p 3306 https://console.qovery.com/organization/
+  ${organizationId}/project/{projectId}/environment/
+  ${service.environment.id}/database/${service.id}`
+    )
+    .otherwise(
+      () => `qovery port-forward https://console.qovery.com/organization/
+    ${organizationId}/project/{projectId}/environment/
+    ${service.environment.id}/application/${service.id} -p
+    [local-port]:[target-port]`
+    )
 
   return (
     <Section className="p-5">
       <Heading className="h4 max-w-sm truncate text-neutral-400">Access from</Heading>
       <p className="mb-4 mt-2 text-sm text-neutral-350">
-        This section explains how to connect to this service from the public network, from another service or from your
-        local machine.
+        This section explains how to connect to this service from another service or from your local machine.
       </p>
       <Tabs.Root defaultValue="another-service">
-        <Tabs.List>
-          <Tabs.Trigger size="md" value="another-service" className="w-1/2 justify-start pl-0">
+        <Tabs.List className="w-full">
+          <Tabs.Trigger size="md" value="another-service" className="flex-auto justify-start pl-0">
             Another service
           </Tabs.Trigger>
-          <Tabs.Trigger size="md" value="local-machine" className="w-1/2 justify-start pl-0">
-            Local machine
-          </Tabs.Trigger>
+          {match(service)
+            .with({ serviceType: 'DATABASE', accessibility: 'PUBLIC' }, () => (
+              <Tabs.Trigger size="md" value="public-access" className="flex-auto justify-start pl-0">
+                Public access
+              </Tabs.Trigger>
+            ))
+            .otherwise(() => (
+              <Tabs.Trigger size="md" value="local-machine" className="flex-auto justify-start pl-0">
+                Local machine
+              </Tabs.Trigger>
+            ))}
         </Tabs.List>
         <div className="mt-6">
           <Tabs.Content className="flex flex-col gap-4" value="another-service">
@@ -84,12 +130,17 @@ export function ServiceAccessModal({ service, organizationId, projectId }: Servi
                 {!ports || ports.length === 0 ? (
                   <div className="flex w-full flex-col gap-2 py-4 text-center text-sm">
                     <span className="font-medium text-neutral-350">No ports declared yet.</span>
-                    <ExternalLink
+                    <Link
                       className="justify-center"
-                      href="https://hub.qovery.com/docs/using-qovery/configuration/application/#ports"
+                      to={
+                        APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
+                        APPLICATION_SETTINGS_URL +
+                        APPLICATION_SETTINGS_PORT_URL
+                      }
+                      onClick={() => onClose()}
                     >
                       Declare a port in application settings
-                    </ExternalLink>
+                    </Link>
                   </div>
                 ) : (
                   <div>
@@ -123,9 +174,16 @@ export function ServiceAccessModal({ service, organizationId, projectId }: Servi
                       </div>
                     ))}
                     <div className="flex h-14 items-center justify-center">
-                      <ExternalLink href="https://hub.qovery.com/docs/using-qovery/configuration/application/#ports">
+                      <Link
+                        onClick={() => onClose()}
+                        to={
+                          APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
+                          APPLICATION_SETTINGS_URL +
+                          APPLICATION_SETTINGS_PORT_URL
+                        }
+                      >
                         Declare a port in application settings
-                      </ExternalLink>
+                      </Link>
                     </div>
                   </div>
                 )}
@@ -133,51 +191,59 @@ export function ServiceAccessModal({ service, organizationId, projectId }: Servi
             )}
             <SectionExpand
               title={
-                serviceType === 'APPLICATION' ? '2. BUILT_IN environment variables' : 'BUILT_IN environment variables'
+                serviceType !== 'DATABASE' ? '2. BUILT_IN environment variables' : 'BUILT_IN environment variables'
               }
               description={
-                serviceType === 'APPLICATION'
+                serviceType !== 'DATABASE'
                   ? 'Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
                   : 'Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
               }
             >
-              <div className="max-h-60 overflow-y-scroll">
-                {variables
-                  ?.filter(
-                    (v) =>
-                      v.service_id === service.id &&
-                      (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
-                  )
-                  ?.map((variable) => (
-                    <div
-                      key={variable.id}
-                      className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center truncate">
+              <div className="max-h-48 overflow-y-scroll">
+                {isLoadingVariables ? (
+                  <div className="flex justify-center p-5">
+                    <LoaderSpinner className="w-5" />
+                  </div>
+                ) : (
+                  <>
+                    {variables
+                      ?.filter(
+                        (v) =>
+                          v.service_id === service.id &&
+                          (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
+                      )
+                      ?.map((variable) => (
+                        <div
+                          key={variable.id}
+                          className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center truncate">
+                              {variable.aliased_variable && (
+                                <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+                                  ALIAS
+                                </span>
+                              )}
+                              <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
+                              {variable.description && (
+                                <Tooltip content={variable.description}>
+                                  <span>
+                                    <Icon iconName="circle-info" iconStyle="solid" className="ml-2 text-neutral-350" />
+                                  </span>
+                                </Tooltip>
+                              )}
+                            </div>
+                          </div>
                           {variable.aliased_variable && (
-                            <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
-                              ALIAS
-                            </span>
-                          )}
-                          <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
-                          {variable.description && (
-                            <Tooltip content={variable.description}>
-                              <span>
-                                <Icon iconName="circle-info" iconStyle="solid" className="ml-2 text-neutral-350" />
-                              </span>
-                            </Tooltip>
+                            <div className="flex flex-row gap-1 text-xs text-neutral-350">
+                              <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
+                              <span>{variable.aliased_variable.key}</span>
+                            </div>
                           )}
                         </div>
-                      </div>
-                      {variable.aliased_variable && (
-                        <div className="flex flex-row gap-1 text-xs text-neutral-350">
-                          <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
-                          <span>{variable.aliased_variable.key}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      ))}
+                  </>
+                )}
               </div>
             </SectionExpand>
           </Tabs.Content>
@@ -196,35 +262,16 @@ export function ServiceAccessModal({ service, organizationId, projectId }: Servi
               <p className="text-neutral-350">Run the following command from your terminal.</p>
               <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
                 <div>
-                  <span className="select-none">$ </span>qovery port-forward https://console.qovery.com/organization/
-                  {organizationId}/project/{projectId}/environment/
-                  {service.environment.id}/{serviceType.toLowerCase()}/{service.id} -p [local-port]:[target-port]
+                  <span className="select-none">$ </span>
+                  {connectPortForward}
                 </div>
-                <CopyButton
-                  content={`qovery port-forward
-                        https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/
-                        ${service.environment.id}/${serviceType.toLowerCase()}/${service.id} -p [local-port]:[target-port]`}
-                />
+                <CopyButton content={connectPortForward} />
               </div>
             </div>
-            {serviceType === 'DATABASE' && (
-              <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
-                <span className="font-medium">3. Access</span>
-                <p className="mb-1.5 text-neutral-350">
-                  Now you can copy the connection URI to connect to your database locally{' '}
-                </p>
-                <Button
-                  className="max-w-max gap-2"
-                  color="neutral"
-                  variant="surface"
-                  size="md"
-                  onClick={() => handleCopyCredentials(masterCredentials!)}
-                >
-                  Copy connection URI
-                  <Icon className="text-sm" iconName="key" iconStyle="light" />
-                </Button>
-              </div>
-            )}
+            {serviceType === 'DATABASE' && <SectionDatabaseConnectionUri serviceId={service.id} />}
+          </Tabs.Content>
+          <Tabs.Content className="flex flex-col gap-4" value="public-access">
+            <SectionDatabaseConnectionUri serviceId={service.id} />
           </Tabs.Content>
         </div>
       </Tabs.Root>

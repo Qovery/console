@@ -85,7 +85,7 @@ function ContentRightEnvVariable({ projectId, service }: { projectId: string; se
 export function TabsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
-  const { openModal } = useModal()
+  const { closeModal, openModal } = useModal()
   const location = useLocation()
 
   const items: TabsItem[] = [
@@ -149,7 +149,7 @@ export function TabsFeature() {
                 </Button>
               </ServiceLinksPopover>
               {match(service)
-                .with({ serviceType: 'APPLICATION' }, (s) => (
+                .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => (
                   <Button
                     className="gap-2"
                     size="md"
@@ -158,7 +158,12 @@ export function TabsFeature() {
                     onClick={() =>
                       openModal({
                         content: (
-                          <ServiceAccessModal organizationId={organizationId} projectId={projectId} service={s} />
+                          <ServiceAccessModal
+                            organizationId={organizationId}
+                            projectId={projectId}
+                            service={s}
+                            onClose={closeModal}
+                          />
                         ),
                         options: {
                           width: 680,

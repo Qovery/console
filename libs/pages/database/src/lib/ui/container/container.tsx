@@ -43,7 +43,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
   const { setOpen } = useContext(ServiceTerminalContext)
   const location = useLocation()
-  const { openModal } = useModal()
+  const { closeModal, openModal } = useModal()
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
 
@@ -142,7 +142,14 @@ export function Container({ service, environment, children }: PropsWithChildren<
                 variant="surface"
                 onClick={() =>
                   openModal({
-                    content: <ServiceAccessModal organizationId={organizationId} projectId={projectId} service={s} />,
+                    content: (
+                      <ServiceAccessModal
+                        organizationId={organizationId}
+                        projectId={projectId}
+                        service={s}
+                        onClose={closeModal}
+                      />
+                    ),
                     options: {
                       width: 680,
                     },

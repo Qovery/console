@@ -13,7 +13,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
     <p
       class="mb-4 mt-2 text-sm text-neutral-350"
     >
-      This section explains how to connect to this service from the public network, from another service or from your local machine.
+      This section explains how to connect to this service from another service or from your local machine.
     </p>
     <div
       data-orientation="horizontal"
@@ -21,7 +21,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
     >
       <div
         aria-orientation="horizontal"
-        class="flex gap-1 overflow-x-auto whitespace-nowrap"
+        class="flex gap-1 overflow-x-auto whitespace-nowrap w-full"
         data-orientation="horizontal"
         role="tablist"
         style="outline: none;"
@@ -30,7 +30,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
         <button
           aria-controls="radix-:r6:-content-another-service"
           aria-selected="true"
-          class="relative flex items-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 w-1/2 justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="active"
@@ -53,7 +53,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
         <button
           aria-controls="radix-:r6:-content-local-machine"
           aria-selected="false"
-          class="relative flex items-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 w-1/2 justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="inactive"
@@ -172,6 +172,16 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
           role="tabpanel"
           tabindex="0"
         />
+        <div
+          aria-labelledby="radix-:r6:-trigger-public-access"
+          class="relative outline-0 flex flex-col gap-4"
+          data-orientation="horizontal"
+          data-state="inactive"
+          hidden=""
+          id="radix-:r6:-content-public-access"
+          role="tabpanel"
+          tabindex="0"
+        />
       </div>
     </div>
   </section>
@@ -191,7 +201,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
     <p
       class="mb-4 mt-2 text-sm text-neutral-350"
     >
-      This section explains how to connect to this service from the public network, from another service or from your local machine.
+      This section explains how to connect to this service from another service or from your local machine.
     </p>
     <div
       data-orientation="horizontal"
@@ -199,7 +209,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
     >
       <div
         aria-orientation="horizontal"
-        class="flex gap-1 overflow-x-auto whitespace-nowrap"
+        class="flex gap-1 overflow-x-auto whitespace-nowrap w-full"
         data-orientation="horizontal"
         role="tablist"
         style="outline: none;"
@@ -208,7 +218,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
         <button
           aria-controls="radix-:rf:-content-another-service"
           aria-selected="true"
-          class="relative flex items-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 w-1/2 justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="active"
@@ -231,7 +241,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
         <button
           aria-controls="radix-:rf:-content-local-machine"
           aria-selected="false"
-          class="relative flex items-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 w-1/2 justify-start pl-0"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="inactive"
@@ -303,6 +313,16 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
           data-state="inactive"
           hidden=""
           id="radix-:rf:-content-local-machine"
+          role="tabpanel"
+          tabindex="0"
+        />
+        <div
+          aria-labelledby="radix-:rf:-trigger-public-access"
+          class="relative outline-0 flex flex-col gap-4"
+          data-orientation="horizontal"
+          data-state="inactive"
+          hidden=""
+          id="radix-:rf:-content-public-access"
           role="tabpanel"
           tabindex="0"
         />

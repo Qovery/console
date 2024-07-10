@@ -30,6 +30,7 @@ const props: ServiceAccessModalProps = {
   organizationId: '1',
   projectId: '1',
   service: applicationFactoryMock(1)[0],
+  onClose: jest.fn(),
 }
 
 describe('ServiceAccessModal', () => {
