@@ -10,8 +10,8 @@ import { BreadcrumbMemo } from '../../ui/breadcrumb/breadcrumb'
 export function BreadcrumbFeature() {
   const { organizationId = '', projectId = '', clusterId } = useParams()
   const { data: organizations = [] } = useOrganizations()
-  const { data: organization } = useOrganization({ organizationId })
-  const { data: clusters } = useClusters({ organizationId })
+  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
+  const { data: clusters } = useClusters({ organizationId, enabled: !!organizationId })
 
   const { data: projects = [] } = useProjects({ organizationId, enabled: !clusterId })
   const { data: environments } = useEnvironments({ projectId })

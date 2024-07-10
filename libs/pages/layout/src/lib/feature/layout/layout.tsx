@@ -23,7 +23,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
   const { user } = useAuth0()
 
-  const { data: clusters = [] } = useClusters({ organizationId })
+  const { data: clusters = [] } = useClusters({ organizationId, enabled: !!organizationId })
   const { data: organizations = [] } = useOrganizations()
   const { refetch: fetchOrganization } = useOrganization({ organizationId, enabled: false })
 
@@ -34,8 +34,10 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
 
     async function fetchOrganizationForQoveryTeam() {
       try {
-        await fetchOrganization()
-        redirect(ORGANIZATION_URL(organizationId))
+        if (organizationId) {
+          await fetchOrganization()
+          redirect(ORGANIZATION_URL(organizationId))
+        }
       } catch (error) {
         console.error(error)
         redirect(ORGANIZATION_URL(organizations[0].id))
