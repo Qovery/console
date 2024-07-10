@@ -11,7 +11,7 @@ import {
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { FunnelFlow } from '@qovery/shared/ui'
+import { FunnelFlow, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_CLUSTER_CREATION } from '../../router/router'
 
@@ -94,6 +94,7 @@ export const defaultResourcesData: ClusterResourcesData = {
 
 export function PageClusterCreateFeature() {
   const { organizationId = '' } = useParams()
+  const { openModalConfirmation } = useModalConfirmation()
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -133,7 +134,14 @@ export function PageClusterCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(CLUSTERS_URL(organizationId))
+          openModalConfirmation({
+            mode: 'PRODUCTION',
+            title: 'Close creation flow',
+            description: 'To close the creation flow, you will lose all the data you have entered. Are you sure?',
+            name: 'confirm',
+            placeholder: 'Type "confirm" to close the creation flow',
+            action: () => navigate(CLUSTERS_URL(organizationId)),
+          })
         }}
         totalSteps={steps(generalData, resourcesData?.cluster_type).length}
         currentStep={currentStep}
