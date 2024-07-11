@@ -55,8 +55,19 @@ export function OutputVariables({ serviceId, className, ...props }: JobOutputVar
         enableSorting: true,
         size: 50,
         cell: (info) => {
-          const key = info.getValue()
-          return <span className="text-sm text-neutral-350">{key}</span>
+          const { key, description } = info.row.original
+          return (
+            <div className="flex items-center gap-1">
+              <span className="text-sm text-neutral-350">{key}</span>{' '}
+              {description && (
+                <Tooltip content={description}>
+                  <span>
+                    <Icon iconName="circle-info" className="text-neutral-350" />
+                  </span>
+                </Tooltip>
+              )}
+            </div>
+          )
         },
       }),
       columnHelper.accessor('value', {

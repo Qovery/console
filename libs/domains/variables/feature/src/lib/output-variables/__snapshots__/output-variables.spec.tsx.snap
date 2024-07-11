@@ -49,11 +49,16 @@ exports[`OutputVariables should match snapshot 1`] = `
               class="h-14 px-4 py-0"
               style="width: 50%;"
             >
-              <span
-                class="text-sm text-neutral-350"
+              <div
+                class="flex items-center gap-1"
               >
-                DB_PASSWORD
-              </span>
+                <span
+                  class="text-sm text-neutral-350"
+                >
+                  DB_PASSWORD
+                </span>
+                 
+              </div>
             </td>
             <td
               class="h-14 px-4 py-0"
@@ -87,11 +92,16 @@ exports[`OutputVariables should match snapshot 1`] = `
               class="h-14 px-4 py-0"
               style="width: 50%;"
             >
-              <span
-                class="text-sm text-neutral-350"
+              <div
+                class="flex items-center gap-1"
               >
-                DB_USERNAME
-              </span>
+                <span
+                  class="text-sm text-neutral-350"
+                >
+                  DB_USERNAME
+                </span>
+                 
+              </div>
             </td>
             <td
               class="h-14 px-4 py-0"
