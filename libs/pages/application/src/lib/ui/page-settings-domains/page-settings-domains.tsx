@@ -44,7 +44,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                   />
                   <Button
                     data-testid="edit-button"
-                    variant="outline"
+                    variant="surface"
                     color="neutral"
                     size="lg"
                     className="h-[52px] w-[52px] justify-center"
@@ -54,7 +54,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                   </Button>
                   <Button
                     data-testid="delete-button"
-                    variant="outline"
+                    variant="surface"
                     color="neutral"
                     size="lg"
                     className="h-[52px] w-[52px] justify-center"

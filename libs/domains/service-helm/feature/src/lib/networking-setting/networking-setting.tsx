@@ -128,7 +128,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
                   <div className="flex gap-2">
                     <Button
                       size="md"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       onClick={() => onEditPort(port)}
                       type="button"
@@ -138,7 +138,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
                     </Button>
                     <Button
                       size="md"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       onClick={() => onRemovePort(port)}
                       type="button"

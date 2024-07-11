@@ -98,7 +98,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                       <div data-testid={`role-actions-${role.id}`} className="flex gap-2">
                         <Link
                           as="button"
-                          variant="outline"
+                          variant="surface"
                           color="neutral"
                           size="md"
                           to={`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`}
@@ -107,7 +107,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                         </Link>
                         <Button
                           type="button"
-                          variant="outline"
+                          variant="surface"
                           color="neutral"
                           size="md"
                           onClick={() => onDeleteRole(role)}
@@ -119,7 +119,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                       <div data-testid={`role-doc-${role.id}`}>
                         <ExternalLink
                           as="button"
-                          variant="outline"
+                          variant="surface"
                           color="neutral"
                           size="md"
                           href="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"

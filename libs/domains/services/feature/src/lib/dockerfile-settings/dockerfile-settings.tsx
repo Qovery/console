@@ -118,7 +118,7 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
                         aria-label="Edit"
                         type="button"
                         size="xs"
-                        variant="outline"
+                        variant="surface"
                         onClick={() => openModalDockerfileRaw(field)}
                         className="hover:text-neutral-400"
                       >

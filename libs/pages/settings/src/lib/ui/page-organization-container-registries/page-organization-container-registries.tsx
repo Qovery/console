@@ -80,10 +80,10 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="md" variant="outline" color="neutral" onClick={() => onEdit(registry)}>
+                      <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(registry)}>
                         <Icon iconName="gear" />
                       </Button>
-                      <Button size="md" variant="outline" color="neutral" onClick={() => onDelete(registry)}>
+                      <Button size="md" variant="surface" color="neutral" onClick={() => onDelete(registry)}>
                         <Icon iconName="trash" />
                       </Button>
                     </div>

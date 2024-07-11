@@ -23,7 +23,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             Manage the resources assigned to the service.
           </p>
           <button
-            class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-5 px-1 rounded bg-brand-50 border border-brand-500 text-brand-500 hover:[&:not(:active):not(:disabled)]:bg-transparent w-fit items-center gap-1"
+            class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-5 px-1 rounded bg-brand-50 border border-brand-500 text-brand-500 hover:[&:not(:active):not(:disabled)]:bg-white w-fit items-center gap-1"
           >
             <i
               aria-hidden="true"

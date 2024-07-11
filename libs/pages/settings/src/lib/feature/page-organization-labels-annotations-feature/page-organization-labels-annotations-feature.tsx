@@ -108,7 +108,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                   </div>
                   <div className="flex gap-2">
                     <Button
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       size="md"
                       className="relative mr-2"
@@ -134,7 +134,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                     </Button>
                     <Button
                       size="md"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       onClick={() => {
                         openModal({
@@ -154,7 +154,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                     <Tooltip content="Labels group still in used" disabled={labelsGroup.associated_items_count === 0}>
                       <Button
                         size="md"
-                        variant="outline"
+                        variant="surface"
                         color="neutral"
                         disabled={labelsGroup.associated_items_count !== 0}
                         onClick={() => {
@@ -219,7 +219,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                   </div>
                   <div className="flex gap-2">
                     <Button
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       size="md"
                       className="relative mr-2"
@@ -245,7 +245,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                     </Button>
                     <Button
                       size="md"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       onClick={() => {
                         openModal({
@@ -268,7 +268,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                     >
                       <Button
                         size="md"
-                        variant="outline"
+                        variant="surface"
                         color="neutral"
                         disabled={annotationsGroup.associated_items_count !== 0}
                         onClick={() => {

@@ -155,7 +155,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     aria-controls="radix-:rd:"
     aria-expanded="true"
     aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-green-500 bg-white"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-white self-start border-green-500 bg-white"
     data-state="open"
     type="button"
   >
@@ -324,7 +324,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
     aria-controls="radix-:rk:"
     aria-expanded="true"
     aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none self-start border-red-500 bg-white"
+    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-white self-start border-red-500 bg-white"
     data-state="open"
     type="button"
   >

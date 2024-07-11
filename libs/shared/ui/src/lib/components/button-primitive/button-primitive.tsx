@@ -63,7 +63,7 @@ const _buttonVariants = cva(
           'bg-neutral-100',
           'dark:bg-neutral-500',
           'dark:hover:bg-neutral-550',
-          'hover:[&:not(:active):not(:disabled)]:bg-transparent',
+          'hover:[&:not(:active):not(:disabled)]:bg-white',
         ],
       },
       {
@@ -75,13 +75,13 @@ const _buttonVariants = cva(
           'border',
           'border-brand-500',
           'text-brand-500',
-          'hover:[&:not(:active):not(:disabled)]:bg-transparent',
+          'hover:[&:not(:active):not(:disabled)]:bg-white',
         ],
       },
       {
         variant: 'outline',
         color: 'neutral',
-        className: ['bg-transparent'],
+        className: ['bg-white'],
       },
       {
         variant: 'plain',

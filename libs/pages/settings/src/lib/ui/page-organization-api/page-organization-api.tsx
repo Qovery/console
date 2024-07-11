@@ -69,7 +69,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                   <div>
                     <Button
                       data-testid="delete-token"
-                      variant="outline"
+                      variant="surface"
                       color="neutral"
                       size="md"
                       onClick={() => onDelete(token)}

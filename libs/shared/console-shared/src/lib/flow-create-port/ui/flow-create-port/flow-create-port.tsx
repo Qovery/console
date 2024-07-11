@@ -107,7 +107,7 @@ export function FlowCreatePort({
                     {onEdit && (
                       <Button
                         data-testid="edit-button"
-                        variant="outline"
+                        variant="surface"
                         color="neutral"
                         size="md"
                         className="mr-2 h-9 w-9 justify-center"
@@ -119,7 +119,7 @@ export function FlowCreatePort({
                     {onRemovePort && (
                       <Button
                         data-testid="delete-button"
-                        variant="outline"
+                        variant="surface"
                         color="neutral"
                         size="md"
                         className="h-9 w-9 justify-center"

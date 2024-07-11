@@ -154,7 +154,7 @@ export function ButtonPopoverSubnets({ children, sections, required = false }: B
           type="button"
           radius="full"
           color="neutral"
-          variant="outline"
+          variant="surface"
           className={clsx(
             'self-start',
             watchSubnetsFields.reduce((acc, watchSubnets) => !!watchSubnets && watchSubnets.length > 0 && acc, true) &&

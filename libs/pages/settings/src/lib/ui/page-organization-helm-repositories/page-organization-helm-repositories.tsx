@@ -64,10 +64,10 @@ export function PageOrganizationHelmRepositories({
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button size="md" variant="outline" color="neutral" onClick={() => onEdit(repository)}>
+                    <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(repository)}>
                       <Icon iconName="gear" />
                     </Button>
-                    <Button size="md" variant="outline" color="neutral" onClick={() => onDelete(repository)}>
+                    <Button size="md" variant="surface" color="neutral" onClick={() => onDelete(repository)}>
                       <Icon iconName="trash" />
                     </Button>
                   </div>
