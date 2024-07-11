@@ -30,9 +30,9 @@ export interface ServiceAccessModalProps {
   onClose: () => void
 }
 
-function SectionDatabaseConnectionUri({ serviceId }: { serviceId: string }) {
+function SectionDatabaseConnectionUri({ service }: { service: Database }) {
   const [, copyToClipboard] = useCopyToClipboard()
-  const { data: masterCredentials } = useMasterCredentials({ serviceId: serviceId, serviceType: 'DATABASE' })
+  const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: 'DATABASE' })
 
   const handleCopyCredentials = (credentials: Credentials) => {
     const connectionURI = `${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
@@ -40,9 +40,13 @@ function SectionDatabaseConnectionUri({ serviceId }: { serviceId: string }) {
     toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   }
 
+  const title = match(service)
+    .with({ accessibility: 'PUBLIC' }, () => 'Access')
+    .otherwise(() => '3. Access')
+
   return (
     <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
-      <span className="font-medium">3. Access</span>
+      <span className="font-medium">{title}</span>
       <p className="mb-1.5 text-neutral-350">
         Now you can copy the connection URI to connect to your database locally{' '}
       </p>
@@ -76,12 +80,12 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
     .with(
       { serviceType: 'DATABASE' },
       (s) => `qovery port-forward -p ${s.port} https://console.qovery.com/organization/
-  ${organizationId}/project/{projectId}/environment/
+  ${organizationId}/project/${projectId}/environment/
   ${service.environment.id}/database/${service.id}`
     )
     .otherwise(
       () => `qovery port-forward https://console.qovery.com/organization/
-    ${organizationId}/project/{projectId}/environment/
+    ${organizationId}/project/${projectId}/environment/
     ${service.environment.id}/application/${service.id} -p
     [local-port]:[target-port]`
     )
@@ -272,11 +276,13 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 <CopyButton content={connectPortForward} />
               </div>
             </div>
-            {serviceType === 'DATABASE' && <SectionDatabaseConnectionUri serviceId={service.id} />}
+            {serviceType === 'DATABASE' && <SectionDatabaseConnectionUri service={service} />}
           </Tabs.Content>
-          <Tabs.Content className="flex flex-col gap-4" value="public-access">
-            <SectionDatabaseConnectionUri serviceId={service.id} />
-          </Tabs.Content>
+          {serviceType === 'DATABASE' && (
+            <Tabs.Content className="flex flex-col gap-4" value="public-access">
+              <SectionDatabaseConnectionUri service={service} />
+            </Tabs.Content>
+          )}
         </div>
       </Tabs.Root>
     </Section>

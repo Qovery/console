@@ -172,16 +172,6 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
           role="tabpanel"
           tabindex="0"
         />
-        <div
-          aria-labelledby="radix-:r6:-trigger-public-access"
-          class="relative outline-0 flex flex-col gap-4"
-          data-orientation="horizontal"
-          data-state="inactive"
-          hidden=""
-          id="radix-:r6:-content-public-access"
-          role="tabpanel"
-          tabindex="0"
-        />
       </div>
     </div>
   </section>
