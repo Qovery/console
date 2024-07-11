@@ -89,6 +89,19 @@ function getServiceIcon(service: AnyService) {
 function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   const navigate = useNavigate()
 
+  const serviceLink = match(service)
+    .with(
+      { serviceType: ServiceTypeEnum.DATABASE },
+      ({ id }) =>
+        DATABASE_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
+        DATABASE_GENERAL_URL
+    )
+    .otherwise(
+      ({ id }) =>
+        APPLICATION_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
+        SERVICES_GENERAL_URL
+    )
+
   return (
     <div className="flex items-center justify-between">
       <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
@@ -100,7 +113,9 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
                 <Tooltip content={service.name}>
-                  <span className="max-w-max truncate">{service.name}</span>
+                  <Link className="max-w-max truncate" color="current" to={serviceLink} underline>
+                    {service.name}
+                  </Link>
                 </Tooltip>
                 <span className="text-xs font-normal text-neutral-350">
                   {match(db.mode)
@@ -114,7 +129,9 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           .with({ serviceType: 'JOB' }, (job) => (
             <span className="flex min-w-0 shrink flex-col truncate pr-2">
               <Tooltip content={service.name}>
-                <span className="max-w-max truncate">{service.name}</span>
+                <Link className="max-w-max truncate" color="current" to={serviceLink} underline>
+                  {service.name}
+                </Link>
               </Tooltip>
               <span className="text-xs font-normal text-neutral-350">
                 {match(job)
@@ -137,7 +154,9 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           .otherwise(() => (
             <span className="flex min-w-0 shrink flex-col truncate pr-2">
               <Tooltip content={service.name}>
-                <span className="max-w-max truncate">{service.name}</span>
+                <Link className="max-w-max truncate" color="current" to={serviceLink} underline>
+                  {service.name}
+                </Link>
               </Tooltip>
             </span>
           ))}

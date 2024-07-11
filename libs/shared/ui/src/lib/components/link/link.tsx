@@ -20,10 +20,15 @@ const linkVariants = cva(
         xs: ['text-xs'],
         sm: ['text-sm'],
       },
+      underline: {
+        true: ['hover:underline'],
+        false: [],
+      },
     },
     defaultVariants: {
       color: 'sky',
       size: 'sm',
+      underline: false,
     },
   }
 )
@@ -58,10 +63,10 @@ export const ExternalLink = forwardRef<HTMLAnchorElement, ExternalLinkProps>(
           {children}
         </a>
       ))
-      .otherwise(({ children, color, size, className, withIcon = true, ...rest }) => (
+      .otherwise(({ children, color, size, className, withIcon = true, underline, ...rest }) => (
         <a
           ref={forwardedRef}
-          className={twMerge(linkVariants({ color, size }), className)}
+          className={twMerge(linkVariants({ color, size, underline }), className)}
           target="_blank"
           rel="noopener noreferrer"
           {...rest}
@@ -88,8 +93,8 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(props
         {children}
       </ReactLink>
     ))
-    .otherwise(({ className, children, color, size, ...rest }) => (
-      <ReactLink ref={forwardedRef} className={twMerge(linkVariants({ color, size }), className)} {...rest}>
+    .otherwise(({ className, children, color, size, underline, ...rest }) => (
+      <ReactLink ref={forwardedRef} className={twMerge(linkVariants({ color, size, underline }), className)} {...rest}>
         {children}
       </ReactLink>
     ))

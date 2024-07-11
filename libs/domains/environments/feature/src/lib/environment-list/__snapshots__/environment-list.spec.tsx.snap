@@ -138,12 +138,13 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="flex min-w-0 shrink flex-col pr-2"
               >
-                <span
-                  class="max-w-max truncate"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                   data-state="closed"
+                  href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"
                 >
                   gcp
-                </span>
+                </a>
                 <span
                   class="text-xs font-normal text-neutral-350"
                 >
@@ -324,12 +325,13 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="flex min-w-0 shrink flex-col pr-2"
               >
-                <span
-                  class="max-w-max truncate"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                   data-state="closed"
+                  href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/services/general"
                 >
                   my-prod-env
-                </span>
+                </a>
                 <span
                   class="text-xs font-normal text-neutral-350"
                 >
@@ -489,12 +491,13 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="flex min-w-0 shrink flex-col pr-2"
               >
-                <span
-                  class="max-w-max truncate"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                   data-state="closed"
+                  href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/services/general"
                 >
                   my-dev-env
-                </span>
+                </a>
                 <span
                   class="text-xs font-normal text-neutral-350"
                 >
@@ -654,12 +657,13 @@ exports[`EnvironmentList should match snapshot 1`] = `
               <span
                 class="flex min-w-0 shrink flex-col pr-2"
               >
-                <span
-                  class="max-w-max truncate"
+                <a
+                  class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-current hover:brightness-75 text-sm hover:underline max-w-max truncate"
                   data-state="closed"
+                  href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/services/general"
                 >
                   fgsdfg-sdfg-sdfg
-                </span>
+                </a>
                 <span
                   class="text-xs font-normal text-neutral-350"
                 >

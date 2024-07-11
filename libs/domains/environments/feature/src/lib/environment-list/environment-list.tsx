@@ -53,7 +53,16 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
         </Tooltip>
         <span className="flex min-w-0 shrink flex-col pr-2">
           <Tooltip content={environment.name}>
-            <span className="max-w-max truncate">{environment.name}</span>
+            <Link
+              className="max-w-max truncate"
+              color="current"
+              to={
+                SERVICES_URL(environment.organization.id, environment.project.id, environment.id) + SERVICES_GENERAL_URL
+              }
+              underline
+            >
+              {environment.name}
+            </Link>
           </Tooltip>
           <span className="text-xs font-normal text-neutral-350">{upperCaseFirstLetter(environment.mode)}</span>
         </span>

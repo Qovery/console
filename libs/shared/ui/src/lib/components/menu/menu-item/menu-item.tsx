@@ -1,6 +1,5 @@
 import { type ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
 import { type ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { CopyToClipboardButtonIcon } from '../../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import { Tooltip } from '../../tooltip/tooltip'
 import { Truncate } from '../../truncate/truncate'
@@ -42,7 +41,6 @@ export function MenuItem(props: MenuItemProps) {
     tooltip,
   } = props
 
-  const navigate = useNavigate()
   const disabledClassName = disabled ? 'opacity-50 cursor-not-allowed' : ''
 
   const itemContent = itemContentCustom ? (
@@ -96,11 +94,10 @@ export function MenuItem(props: MenuItemProps) {
       defaultValue="prod"
       onClick={(e: ClickEvent) => {
         e.syntheticEvent.preventDefault()
-        if (!disabled) {
-          link?.url && navigate(link?.url)
-          onClick && onClick(e)
-        }
+        onClick && onClick(e)
       }}
+      href={link?.url}
+      disabled={disabled}
     >
       {itemContent}
     </Item>

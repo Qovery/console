@@ -39,7 +39,16 @@ import {
   SERVICES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { ActionToolbar, DropdownMenu, Icon, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  ActionToolbar,
+  DropdownMenu,
+  Icon,
+  Link,
+  Skeleton,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,
@@ -555,67 +564,56 @@ function MenuOtherActions({
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item
-          icon={<Icon iconName="scroll" />}
-          onSelect={() => {
-            navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
-              state: { prevUrl: pathname },
-            })
-          }}
-        >
-          Logs
+        <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
+          <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
+            Logs
+          </Link>
         </DropdownMenu.Item>
         {editCodeUrl && (
           <a href={editCodeUrl} target="_blank" rel="noreferrer">
             <DropdownMenu.Item icon={<Icon iconName="code" />}>Edit code</DropdownMenu.Item>
           </a>
         )}
-        <DropdownMenu.Item
-          icon={<Icon iconName="clock-rotate-left" />}
-          onSelect={() =>
-            navigate(
-              AUDIT_LOGS_PARAMS_URL(organizationId, {
-                targetId: service.id,
-                targetType: service.serviceType,
-                projectId,
-                environmentId,
-              })
-            )
-          }
-        >
-          See audit logs
+        <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
+          <Link
+            to={AUDIT_LOGS_PARAMS_URL(organizationId, {
+              targetId: service.id,
+              targetType: service.serviceType,
+              projectId,
+              environmentId,
+            })}
+          >
+            See audit logs
+          </Link>
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
           Copy identifiers
         </DropdownMenu.Item>
-        <DropdownMenu.Item
-          icon={<Icon iconName="gear" />}
-          onSelect={() =>
-            navigate(
-              match(service?.serviceType)
-                .with(
-                  'DATABASE',
-                  () =>
-                    `${DATABASE_URL(
-                      organizationId,
-                      projectId,
-                      environmentId,
-                      service.id
-                    )}${DATABASE_SETTINGS_URL}${DATABASE_SETTINGS_GENERAL_URL}`
-                )
-                .otherwise(
-                  () =>
-                    `${APPLICATION_URL(
-                      organizationId,
-                      projectId,
-                      environmentId,
-                      service.id
-                    )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_GENERAL_URL}`
-                )
-            )
-          }
-        >
-          Open settings
+        <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
+          <Link
+            to={match(service?.serviceType)
+              .with(
+                'DATABASE',
+                () =>
+                  `${DATABASE_URL(
+                    organizationId,
+                    projectId,
+                    environmentId,
+                    service.id
+                  )}${DATABASE_SETTINGS_URL}${DATABASE_SETTINGS_GENERAL_URL}`
+              )
+              .otherwise(
+                () =>
+                  `${APPLICATION_URL(
+                    organizationId,
+                    projectId,
+                    environmentId,
+                    service.id
+                  )}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_GENERAL_URL}`
+              )}
+          >
+            Open settings
+          </Link>
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => openServiceCloneModal()}>
           Clone
@@ -643,7 +641,6 @@ export function ServiceActionToolbar({
   shellAction?: () => void
 }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
@@ -661,14 +658,10 @@ export function ServiceActionToolbar({
         environmentLogsLink={environmentLogsLink}
       />
       <Tooltip content="Logs">
-        <ActionToolbar.Button
-          onClick={() =>
-            navigate(environmentLogsLink + SERVICE_LOGS_URL(service.id), {
-              state: { prevUrl: pathname },
-            })
-          }
-        >
-          <Icon iconName="scroll" />
+        <ActionToolbar.Button asChild>
+          <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
+            <Icon iconName="scroll" />
+          </Link>
         </ActionToolbar.Button>
       </Tooltip>
       {shellAction && (

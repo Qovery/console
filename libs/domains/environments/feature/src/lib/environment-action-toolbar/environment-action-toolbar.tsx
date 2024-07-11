@@ -1,8 +1,17 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { UpdateAllModal, useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { ActionToolbar, DropdownMenu, Icon, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import {
+  ActionToolbar,
+  DropdownMenu,
+  Icon,
+  Link,
+  Skeleton,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,
@@ -114,7 +123,6 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
 }
 
 function MenuOtherActions({ state, environment }: { state: StateEnum; environment: Environment }) {
-  const navigate = useNavigate()
   const { pathname } = useLocation()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -162,29 +170,24 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item
-          icon={<Icon iconName="scroll" />}
-          onSelect={() =>
-            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
-              state: { prevUrl: pathname },
-            })
-          }
-        >
-          Logs
+        <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
+          <Link
+            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+            state={{ prevUrl: pathname }}
+          >
+            Logs
+          </Link>
         </DropdownMenu.Item>
-        <DropdownMenu.Item
-          icon={<Icon iconName="clock-rotate-left" />}
-          onSelect={() =>
-            navigate(
-              AUDIT_LOGS_PARAMS_URL(environment.organization.id, {
-                targetType: OrganizationEventTargetType.ENVIRONMENT,
-                projectId: environment.project.id,
-                targetId: environment.id,
-              })
-            )
-          }
-        >
-          See audit logs
+        <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
+          <Link
+            to={AUDIT_LOGS_PARAMS_URL(environment.organization.id, {
+              targetType: OrganizationEventTargetType.ENVIRONMENT,
+              projectId: environment.project.id,
+              targetId: environment.id,
+            })}
+          >
+            See audit logs
+          </Link>
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
           Copy identifier
@@ -213,7 +216,6 @@ export interface EnvironmentActionToolbarProps {
 }
 
 export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
-  const navigate = useNavigate()
   const { pathname } = useLocation()
   const { data: services } = useServices({ environmentId: environment.id })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
@@ -225,14 +227,13 @@ export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolb
     <ActionToolbar.Root>
       {hasServices && <MenuManageDeployment environment={environment} state={deploymentStatus.state} />}
       <Tooltip content="Logs">
-        <ActionToolbar.Button
-          onClick={() =>
-            navigate(ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id), {
-              state: { prevUrl: pathname },
-            })
-          }
-        >
-          <Icon iconName="scroll" />
+        <ActionToolbar.Button asChild>
+          <Link
+            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+            state={{ prevUrl: pathname }}
+          >
+            <Icon iconName="scroll" />
+          </Link>
         </ActionToolbar.Button>
       </Tooltip>
       <MenuOtherActions environment={environment} state={deploymentStatus.state} />

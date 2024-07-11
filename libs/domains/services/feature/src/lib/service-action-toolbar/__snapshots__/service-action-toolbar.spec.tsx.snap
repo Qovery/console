@@ -48,11 +48,12 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         />
       </div>
     </button>
-    <button
-      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-sm outline-0 min-w-[36px]"
+    <a
+      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
+      href="/organization/123/project/456/environment/789/logs/0/live-logs"
       tabindex="-1"
       type="button"
     >
@@ -60,7 +61,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         aria-hidden="true"
         class="fa-solid fa-scroll "
       />
-    </button>
+    </a>
     <button
       aria-expanded="false"
       aria-haspopup="menu"
@@ -219,11 +220,12 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         />
       </div>
     </button>
-    <button
-      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-sm outline-0 min-w-[36px]"
+    <a
+      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-transparent first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:bg-neutral-150 hover:text-brand-400 data-[state=open]:bg-neutral-150 data-[state=open]:text-brand-400 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
+      href="/organization/123/project/456/environment/789/logs/0/live-logs"
       tabindex="-1"
       type="button"
     >
@@ -231,7 +233,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         aria-hidden="true"
         class="fa-solid fa-scroll "
       />
-    </button>
+    </a>
     <button
       aria-controls="radix-:r10:"
       aria-expanded="true"
@@ -292,10 +294,11 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
           />
         </svg>
       </span>
-      <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+      <a
+        class="transition duration-100 gap-1 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
+        href="/organization/123/project/456/environment/789/logs/0/live-logs"
         role="menuitem"
         tabindex="-1"
       >
@@ -304,7 +307,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
           class="fa-solid fa-scroll text-sm mr-3 text-brand-400"
         />
         Logs
-      </div>
+      </a>
       <a
         href="https://gitpod.io/#/tree/"
         rel="noreferrer"
@@ -324,10 +327,11 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
           Edit code
         </div>
       </a>
-      <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+      <a
+        class="transition duration-100 gap-1 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
+        href="/organization/123/audit-logs/general?targetId=0&targetType=HELM&projectId=123&environmentId=3840068565336064"
         role="menuitem"
         tabindex="-1"
       >
@@ -336,7 +340,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
           class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-400"
         />
         See audit logs
-      </div>
+      </a>
       <div
         class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
@@ -350,10 +354,11 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         />
         Copy identifiers
       </div>
-      <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+      <a
+        class="transition duration-100 gap-1 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
         data-radix-collection-item=""
+        href="/organization/123/project/123/environment/3840068565336064/application/0/settings/general"
         role="menuitem"
         tabindex="-1"
       >
@@ -362,7 +367,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
           class="fa-solid fa-gear text-sm mr-3 text-brand-400"
         />
         Open settings
-      </div>
+      </a>
       <div
         class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
         data-orientation="vertical"
