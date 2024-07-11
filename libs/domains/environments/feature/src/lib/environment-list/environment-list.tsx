@@ -54,12 +54,13 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
         <span className="flex min-w-0 shrink flex-col pr-2">
           <Tooltip content={environment.name}>
             <Link
-              className="max-w-max truncate"
+              className="inline max-w-max truncate"
               color="current"
               to={
                 SERVICES_URL(environment.organization.id, environment.project.id, environment.id) + SERVICES_GENERAL_URL
               }
               underline
+              onClick={(e) => e.stopPropagation()}
             >
               {environment.name}
             </Link>

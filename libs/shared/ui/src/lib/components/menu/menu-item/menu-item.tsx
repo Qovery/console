@@ -1,34 +1,49 @@
-import { type ClickEvent, MenuItem as Item } from '@szhsin/react-menu'
+import { type ClickEvent, FocusableItem, MenuItem as Item } from '@szhsin/react-menu'
 import { type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { CopyToClipboardButtonIcon } from '../../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import { Tooltip } from '../../tooltip/tooltip'
 import { Truncate } from '../../truncate/truncate'
 
-export interface MenuItemProps {
-  name?: string
-  link?: { url: string; external?: boolean }
-  contentLeft?: ReactNode
-  contentRight?: ReactNode
-  onClick?: (e: ClickEvent) => void
-  copy?: string
-  copyTooltip?: string
-  containerClassName?: string
-  className?: string
-  textClassName?: string
-  isActive?: boolean
-  truncateLimit?: number
-  disabled?: boolean
-  itemContentCustom?: ReactNode
-  tooltip?: string
-}
+export type MenuItemProps =
+  | {
+      name?: string
+      contentLeft?: ReactNode
+      contentRight?: ReactNode
+      onClick?: (e: ClickEvent) => void
+      copy?: string
+      copyTooltip?: string
+      containerClassName?: string
+      className?: string
+      textClassName?: string
+      isActive?: boolean
+      truncateLimit?: number
+      disabled?: boolean
+      itemContentCustom?: ReactNode
+      tooltip?: string
+    }
+  | {
+      name?: string
+      link?: { url: string; external?: boolean }
+      contentLeft?: ReactNode
+      contentRight?: ReactNode
+      copy?: string
+      copyTooltip?: string
+      containerClassName?: string
+      className?: string
+      textClassName?: string
+      isActive?: boolean
+      truncateLimit?: number
+      disabled?: boolean
+      itemContentCustom?: ReactNode
+      tooltip?: string
+    }
 
 export function MenuItem(props: MenuItemProps) {
   const {
     name,
-    link,
     contentLeft,
     contentRight,
-    onClick,
     copy,
     copyTooltip,
     isActive = false,
@@ -73,35 +88,49 @@ export function MenuItem(props: MenuItemProps) {
     </>
   )
 
-  const item = link?.external ? (
-    <Item
-      className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}
-      href={link.url}
-      data-testid="menuItem"
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={(e: ClickEvent) => {
-        e.syntheticEvent.stopPropagation()
-        onClick && onClick(e)
-      }}
-    >
-      {itemContent}
-    </Item>
-  ) : (
-    <Item
-      className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName} ${disabledClassName}`}
-      data-testid="menuItem"
-      defaultValue="prod"
-      onClick={(e: ClickEvent) => {
-        e.syntheticEvent.preventDefault()
-        onClick && onClick(e)
-      }}
-      href={link?.url}
-      disabled={disabled}
-    >
-      {itemContent}
-    </Item>
-  )
+  const item =
+    'link' in props ? (
+      props.link?.external ? (
+        <Item
+          className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}
+          href={props.link?.url}
+          data-testid="menuItem"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {itemContent}
+        </Item>
+      ) : (
+        <FocusableItem className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName}`}>
+          {({ ref, closeMenu }) => (
+            <Link
+              ref={ref}
+              to={props.link?.url ?? '/'}
+              className="flex h-full w-full items-center"
+              data-testid="menuItem"
+              onClick={({ detail }) => closeMenu(detail === 0 ? 'Enter' : undefined)}
+            >
+              {itemContent}
+            </Link>
+          )}
+        </FocusableItem>
+      )
+    ) : (
+      <Item
+        className={`menu-item ${isActive ? 'menu-item--hover' : ''} ${containerClassName} ${disabledClassName}`}
+        data-testid="menuItem"
+        defaultValue="prod"
+        onClick={(e: ClickEvent) => {
+          e.syntheticEvent.preventDefault()
+          if (!disabled) {
+            'onClick' in props && props.onClick?.(e)
+          }
+        }}
+        disabled={disabled}
+      >
+        {itemContent}
+      </Item>
+    )
 
   const result = tooltip ? <Tooltip content={tooltip}>{item}</Tooltip> : item
 
