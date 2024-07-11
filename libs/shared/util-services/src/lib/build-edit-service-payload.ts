@@ -169,6 +169,7 @@ function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
     jobRequest.source = {
       docker: {
         dockerfile_path: job.source.docker?.dockerfile_path,
+        dockerfile_raw: job.source.docker?.dockerfile_raw,
         git_repository: {
           provider: job.source.docker?.git_repository?.provider,
           owner: job.source.docker?.git_repository?.owner,
