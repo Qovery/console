@@ -74,10 +74,12 @@ export function PageDatabaseCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-            flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-          }`
-          navigate(link)
+          if (window.confirm('Do you really want to leave?')) {
+            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
+              flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
+            }`
+            navigate(link)
+          }
         }}
         totalSteps={3}
         currentStep={currentStep}

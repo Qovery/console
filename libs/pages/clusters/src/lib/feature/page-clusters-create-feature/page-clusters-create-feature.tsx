@@ -133,7 +133,9 @@ export function PageClusterCreateFeature() {
     >
       <FunnelFlow
         onExit={() => {
-          navigate(CLUSTERS_URL(organizationId))
+          if (window.confirm('Do you really want to leave?')) {
+            navigate(CLUSTERS_URL(organizationId))
+          }
         }}
         totalSteps={steps(generalData, resourcesData?.cluster_type).length}
         currentStep={currentStep}
