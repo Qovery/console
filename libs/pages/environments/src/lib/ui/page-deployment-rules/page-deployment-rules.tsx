@@ -1,4 +1,4 @@
-import { type ProjectDeploymentRule } from 'qovery-typescript-axios'
+import { type Cluster, type ProjectDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import {
   DragDropContext,
@@ -14,6 +14,8 @@ import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
 import PlaceholderNoRules from '../placeholder-no-rules/placeholder-no-rules'
 
 export interface PageDeploymentRulesProps {
+  organizationId: string
+  clusters: Cluster[]
   deploymentRules: ProjectDeploymentRule[]
   updateDeploymentRulesOrder: (list: ProjectDeploymentRule[]) => void
   deleteDeploymentRule: (rule: string) => void
@@ -22,6 +24,8 @@ export interface PageDeploymentRulesProps {
 }
 
 export function PageDeploymentRules({
+  organizationId,
+  clusters,
   deploymentRules,
   updateDeploymentRulesOrder,
   isLoading = false,
@@ -54,7 +58,13 @@ export function PageDeploymentRules({
   return (
     <>
       {isLoading && <div className="h-full" />}
-      {listRules.length === 0 && !isLoading && <PlaceholderNoRules linkNewRule={linkNewRule} />}
+      {listRules.length === 0 && !isLoading && (
+        <PlaceholderNoRules
+          organizationId={organizationId}
+          clusterAvailable={clusters.length > 0}
+          linkNewRule={linkNewRule}
+        />
+      )}
       {listRules.length >= 1 && !isLoading && (
         <div className="min-h-0 flex-grow overflow-y-auto px-10 py-7">
           <div className="mb-8 flex w-[640px] items-center justify-between">

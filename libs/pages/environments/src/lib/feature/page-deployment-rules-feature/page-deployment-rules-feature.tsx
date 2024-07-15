@@ -1,5 +1,6 @@
 import { type ProjectDeploymentRule } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import {
   useDeleteDeploymentRule,
   useEditDeploymentRulesPriorityOrder,
@@ -25,6 +26,7 @@ export function PageDeploymentRulesFeature() {
       },
     })
   }
+  const { data: clusters = [] } = useClusters({ organizationId })
 
   const removeDeploymentRule = (deploymentRuleId: string) => {
     deleteDeploymentRule({ projectId, deploymentRuleId })
@@ -34,6 +36,8 @@ export function PageDeploymentRulesFeature() {
 
   return (
     <PageDeploymentRules
+      organizationId={organizationId}
+      clusters={clusters}
       deploymentRules={deploymentRules}
       updateDeploymentRulesOrder={updateDeploymentRulesOrder}
       isLoading={isLoadingDeploymentRules}

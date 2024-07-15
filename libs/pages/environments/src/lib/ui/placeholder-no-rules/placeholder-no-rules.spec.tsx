@@ -3,7 +3,9 @@ import PlaceholderNoRules, { type PlaceholderNoRulesProps } from './placeholder-
 
 describe('PlaceholderNoRules', () => {
   const props: PlaceholderNoRulesProps = {
+    organizationId: '123',
     linkNewRule: '/general',
+    clusterAvailable: true,
   }
 
   it('should render successfully', () => {
