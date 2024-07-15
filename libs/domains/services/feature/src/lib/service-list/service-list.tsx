@@ -78,14 +78,6 @@ import { ServiceListSkeleton } from './service-list-skeleton'
 
 const { Table } = TablePrimitives
 
-function getServiceIcon(service: AnyService) {
-  return match(service)
-    .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
-    .with({ serviceType: 'DATABASE' }, () => IconEnum.DATABASE)
-    .with({ serviceType: 'JOB' }, (s) => (s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB))
-    .otherwise(() => IconEnum.APPLICATION)
-}
-
 function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
   const navigate = useNavigate()
 
@@ -297,7 +289,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             }
             return (
               <span className="flex items-center gap-2 text-sm font-medium">
-                <Icon name={getServiceIcon(service)} width="20" />
+                <ServiceAvatar service={service} size="xs" />
                 {value}
               </span>
             )
