@@ -45,8 +45,8 @@ const stages: DeploymentStageResponse[] = [
       id: '1',
     },
     services: [
-      { id: '1', created_at: '', service_id: '1' },
-      { id: '2', created_at: '', service_id: '2' },
+      { id: '1', created_at: '', service_id: '1', service_type: 'APPLICATION' },
+      { id: '2', created_at: '', service_id: '2', service_type: 'APPLICATION' },
     ],
   },
   {
@@ -62,9 +62,9 @@ const stages: DeploymentStageResponse[] = [
 ]
 
 const services = [
-  { id: '1', created_at: '', name: 'Service 1' },
-  { id: '2', created_at: '', name: 'Database 2' },
-  { id: '3', created_at: '', name: 'Application 3' },
+  { id: '1', created_at: '', name: 'Service 1', serviceType: 'APPLICATION' },
+  { id: '2', created_at: '', name: 'Database 2', serviceType: 'DATABASE' },
+  { id: '3', created_at: '', name: 'Application 3', serviceType: 'APPLICATION' },
 ]
 
 const defaultProps: PageSettingsDeploymentPipelineProps = {
@@ -158,8 +158,8 @@ describe('PageSettingsDeploymentPipeline', () => {
           id: '1',
         },
         services: [
-          { id: '1', created_at: '', service_id: '1' },
-          { id: '2', created_at: '', service_id: '2' },
+          { id: '1', created_at: '', service_id: '1', service_type: 'APPLICATION' },
+          { id: '2', created_at: '', service_id: '2', service_type: 'APPLICATION' },
         ],
       },
       {
