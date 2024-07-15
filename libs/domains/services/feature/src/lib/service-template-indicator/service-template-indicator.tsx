@@ -9,6 +9,7 @@ const indicatorVariants = cva('', {
     size: {
       md: ['h-6', 'w-6', 'top-2.5', 'right-2.5'],
       sm: ['h-4', 'w-4', 'top-1', 'right-0.5'],
+      xs: ['h-2', 'w-2', 'top-1', 'right-0.5'],
     },
     defaultVariants: {
       size: 'md',

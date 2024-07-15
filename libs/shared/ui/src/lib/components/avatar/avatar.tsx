@@ -31,6 +31,7 @@ const avatarVariants = cva(['flex', 'items-center', 'justify-center'], {
     size: {
       md: ['h-16', 'w-16'],
       sm: ['h-8', 'w-8'],
+      xs: ['h-4', 'w-4'],
     },
     radius: {
       none: [],
@@ -72,6 +73,7 @@ const avatarFallbackVariants = cva('flex items-center justify-center', {
     size: {
       md: [],
       sm: [],
+      xs: [],
     },
     border: {
       solid: [],
@@ -81,8 +83,10 @@ const avatarFallbackVariants = cva('flex items-center justify-center', {
   compoundVariants: [
     { border: 'solid', size: 'md', className: ['h-10', 'w-10'] },
     { border: 'solid', size: 'sm', className: ['h-6', 'w-6'] },
+    { border: 'solid', size: 'xs', className: ['h-4', 'w-4'] },
     { border: 'none', size: 'md', className: ['h-16', 'w-16'] },
     { border: 'none', size: 'sm', className: ['h-8', 'w-8'] },
+    { border: 'none', size: 'xs', className: ['h-4', 'w-4'] },
   ],
   defaultVariants: {
     size: 'md',
