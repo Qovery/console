@@ -1,23 +1,31 @@
-import { type ServiceStorageStorageInner } from 'qovery-typescript-axios'
+import { type ServiceStorageStorageInner, type StateEnum } from 'qovery-typescript-axios'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, EmptyState, Icon, InputText, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, EmptyState, Icon, InputText, Section, Tooltip } from '@qovery/shared/ui'
 
 export interface PageSettingsStorageProps {
   storages: ServiceStorageStorageInner[]
+  deploymentState: StateEnum
   onAddStorage: () => void
   onRemove: (storage: ServiceStorageStorageInner) => void
   onEdit: (storage: ServiceStorageStorageInner) => void
 }
 
 export function PageSettingsStorage(props: PageSettingsStorageProps) {
+  const disableAdd = props.deploymentState !== 'READY'
+
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading title="Storage" description="Add persistent local storage for your application.">
-          <Button className="gap-2" size="lg" onClick={() => props.onAddStorage()}>
-            Add Storage
-            <Icon iconName="plus-circle" />
-          </Button>
+          <Tooltip
+            disabled={!disableAdd}
+            content="Storage can be added only to services that have never been deployed before"
+          >
+            <Button className="gap-2" size="lg" onClick={() => props.onAddStorage()} disabled={disableAdd}>
+              Add Storage
+              <Icon iconName="plus-circle" />
+            </Button>
+          </Tooltip>
         </SettingsHeading>
 
         {props.storages?.length > 0 ? (

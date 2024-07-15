@@ -12,6 +12,12 @@ jest.mock('@qovery/domains/services/feature', () => ({
     mutateAsync: jest.fn(),
     isLoading: false,
   }),
+  useDeploymentStatus: () => ({
+    data: {
+      state: 'READY',
+    },
+    isLoading: false,
+  }),
 }))
 
 describe('PageSettingsStorageFeature', () => {
