@@ -19,7 +19,7 @@ exports[`ServiceList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -130,7 +130,7 @@ exports[`ServiceList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -471,7 +471,7 @@ exports[`ServiceList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -811,7 +811,7 @@ exports[`ServiceList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
@@ -1455,7 +1455,7 @@ exports[`ServiceList should match snapshot 1`] = `
             >
               <button
                 aria-checked="false"
-                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-2 data-[state=indeterminate]:border-brand-500 disabled:border disabled:border-neutral-250 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300"
                 data-state="unchecked"
                 role="checkbox"
                 type="button"
