@@ -2,17 +2,10 @@ import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
-import {
-  type KeyboardEvent,
-  type MouseEvent as MouseDownEvent,
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Button, Icon, LoaderSpinner, XTerm, toast } from '@qovery/shared/ui'
+import { XTerm } from 'react-xtermjs'
+import { Button, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { useRunningStatus } from '../..'
 import { InputSearch } from './input-search/input-search'

@@ -3906,6 +3906,7 @@ __metadata:
     react-select-event: ^5.5.1
     react-syntax-highlighter: ^15.5.0
     react-use-intercom: ^5.3.0
+    react-xtermjs: ^1.0.7
     semantic-release: ^19.0.5
     shell-quote: ^1.8.1
     storybook: ^8.0.10
@@ -19909,6 +19910,13 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: b08e1aa92b93ebeea01aa89f799eaed51d27887026a5983458800e13a7cf20fc267b59b3d12e78eb04335428f3000ceb779c92b4cbd4348cd70811c733d12d8c
+  languageName: node
+  linkType: hard
+
+"react-xtermjs@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "react-xtermjs@npm:1.0.7"
+  checksum: 655822e8e07e0d18c50162e0d0df816b54b94595956f33fcc66b2aff0682f79937fcd9013c9997c8b8fb243a2754d993300fb789bfac06a46cc7f1e19b6d697e
   languageName: node
   linkType: hard
 
