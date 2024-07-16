@@ -4,7 +4,6 @@ import { match } from 'ts-pattern'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { parseCmd } from '@qovery/shared/util-js'
-import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
 export function PageSettingsConfigureJobFeature() {
@@ -99,15 +98,13 @@ export function PageSettingsConfigureJobFeature() {
 
     editService({
       serviceId: service.id,
-      payload: buildEditServicePayload({
-        service,
-        request: {
-          max_duration_seconds: data.max_duration,
-          max_nb_restart: data.nb_restarts,
-          port: data.port,
-          schedule,
-        },
-      }),
+      payload: {
+        ...service,
+        max_duration_seconds: data.max_duration,
+        max_nb_restart: data.nb_restarts,
+        port: data.port,
+        schedule,
+      },
     })
   })
 
