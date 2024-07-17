@@ -155,6 +155,7 @@ export function RowEvent(props: RowEventProps) {
     .otherwise((v) => (
       <Badge size="xs" color="neutral">
         {upperCaseFirstLetter(v)}
+        <Icon iconName="rotate" className="ml-1" />
       </Badge>
     ))
 
