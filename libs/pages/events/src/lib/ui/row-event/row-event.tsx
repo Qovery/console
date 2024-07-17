@@ -152,7 +152,12 @@ export function RowEvent(props: RowEventProps) {
         Trigger Restart <Icon iconName="rotate-right" className="ml-1" />
       </Badge>
     ))
-    .otherwise(() => '-')
+    .otherwise((v) => (
+      <Badge size="xs" color="neutral">
+        {upperCaseFirstLetter(v)}
+        <Icon iconName="rotate" className="ml-1" />
+      </Badge>
+    ))
 
   return (
     <>
