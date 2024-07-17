@@ -105,6 +105,7 @@ const AvatarImpl = forwardRef<AvatarImplElement, AvatarImplProps>(function Avata
   forwardedRef
 ) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle')
+
   return (
     <>
       {
@@ -112,7 +113,7 @@ const AvatarImpl = forwardRef<AvatarImplElement, AvatarImplProps>(function Avata
         //{status === 'idle' || status === 'loading' ? <span className="rt-AvatarFallback" /> : null}
       }
       {status === 'error' ? (
-        <AvatarPrimitive.Fallback className={avatarFallbackVariants({ size, border })} delayMs={0}>
+        <AvatarPrimitive.Fallback className={avatarFallbackVariants({ size, border })}>
           {fallback}
         </AvatarPrimitive.Fallback>
       ) : null}
