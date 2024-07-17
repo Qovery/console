@@ -105,7 +105,13 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
                 <Tooltip content={service.name}>
-                  <Link className="max-w-max truncate" color="current" to={serviceLink} underline>
+                  <Link
+                    className="inline max-w-max truncate"
+                    color="current"
+                    to={serviceLink}
+                    underline
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     {service.name}
                   </Link>
                 </Tooltip>
@@ -121,7 +127,13 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           .with({ serviceType: 'JOB' }, (job) => (
             <span className="flex min-w-0 shrink flex-col truncate pr-2">
               <Tooltip content={service.name}>
-                <Link className="max-w-max truncate" color="current" to={serviceLink} underline>
+                <Link
+                  className="inline max-w-max truncate"
+                  color="current"
+                  to={serviceLink}
+                  underline
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {service.name}
                 </Link>
               </Tooltip>
@@ -146,7 +158,13 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           .otherwise(() => (
             <span className="flex min-w-0 shrink flex-col truncate pr-2">
               <Tooltip content={service.name}>
-                <Link className="max-w-max truncate" color="current" to={serviceLink} underline>
+                <Link
+                  className="inline max-w-max truncate"
+                  color="current"
+                  to={serviceLink}
+                  underline
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {service.name}
                 </Link>
               </Tooltip>
