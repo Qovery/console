@@ -135,19 +135,28 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
                 >
                   Select...
                 </div>
-                <input
-                  aria-autocomplete="list"
-                  aria-describedby="react-select-2-placeholder"
-                  aria-expanded="false"
-                  aria-haspopup="true"
-                  aria-readonly="true"
-                  class="css-mohuvp-dummyInput-DummyInput"
-                  id="Project"
-                  inputmode="none"
-                  role="combobox"
-                  tabindex="0"
-                  value=""
-                />
+                <div
+                  class="input-select__input-container css-qbdosj-Input"
+                  data-value=""
+                >
+                  <input
+                    aria-autocomplete="list"
+                    aria-describedby="react-select-2-placeholder"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    class="input-select__input"
+                    id="Project"
+                    role="combobox"
+                    spellcheck="false"
+                    style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
               <div
                 class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
@@ -233,19 +242,28 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
                 >
                   Select...
                 </div>
-                <input
-                  aria-autocomplete="list"
-                  aria-describedby="react-select-3-placeholder"
-                  aria-expanded="false"
-                  aria-haspopup="true"
-                  aria-readonly="true"
-                  class="css-mohuvp-dummyInput-DummyInput"
-                  id="Environment"
-                  inputmode="none"
-                  role="combobox"
-                  tabindex="0"
-                  value=""
-                />
+                <div
+                  class="input-select__input-container css-qbdosj-Input"
+                  data-value=""
+                >
+                  <input
+                    aria-autocomplete="list"
+                    aria-describedby="react-select-3-placeholder"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    autocapitalize="none"
+                    autocomplete="off"
+                    autocorrect="off"
+                    class="input-select__input"
+                    id="Environment"
+                    role="combobox"
+                    spellcheck="false"
+                    style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                    tabindex="0"
+                    type="text"
+                    value=""
+                  />
+                </div>
               </div>
               <div
                 class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
