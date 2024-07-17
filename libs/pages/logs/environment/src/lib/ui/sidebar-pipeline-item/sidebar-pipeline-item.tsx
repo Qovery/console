@@ -2,8 +2,9 @@ import { type DeploymentStageWithServicesStatuses, type Status } from 'qovery-ty
 import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { BadgeDeploymentOrder, Icon, ServiceIcon, StatusChip } from '@qovery/shared/ui'
+import { BadgeDeploymentOrder, Icon, StatusChip } from '@qovery/shared/ui'
 import { ServiceStageIdsContext } from '../../feature/service-stage-ids-context/service-stage-ids-context'
 
 export function mergeServices(
@@ -89,12 +90,11 @@ export function SidebarPipelineItem({ currentStage, index, serviceId, versionId,
                     } ${service.is_part_last_deployment ? '!text-brand-400' : ''}`}
                   >
                     <div className="flex truncate">
-                      <ServiceIcon
+                      <ServiceAvatar
+                        size="xs"
                         service={currentApplication(service.id)!}
                         className="mr-2.5 mt-0.5"
-                        size="16"
-                        padding="0"
-                        notRounded
+                        border="none"
                       />
                       <span className="truncate">{currentApplication(service.id)?.name}</span>
                     </div>

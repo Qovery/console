@@ -8,7 +8,8 @@ const indicatorVariants = cva('', {
   variants: {
     size: {
       md: ['h-6', 'w-6', 'top-2.5', 'right-2.5'],
-      xs: ['h-4', 'w-4', 'top-1', 'right-0.5'],
+      sm: ['h-4', 'w-4', 'top-1', 'right-0.5'],
+      xs: ['h-2', 'w-2', 'top-1', 'right-0.5'],
     },
     defaultVariants: {
       size: 'md',
@@ -39,7 +40,7 @@ export function ServiceTemplateIndicator({
       <Indicator
         className={twMerge(indicatorVariants({ size }), className)}
         content={
-          <Tooltip content={`via ${upperCaseFirstLetter(templateType)}`} disabled={size === 'xs'}>
+          <Tooltip content={`via ${upperCaseFirstLetter(templateType)}`} disabled={size === 'sm'}>
             <span>
               <Icon className="h-full w-full" name={templateType} />
             </span>

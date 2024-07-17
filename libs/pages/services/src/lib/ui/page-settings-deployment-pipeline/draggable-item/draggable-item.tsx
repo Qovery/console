@@ -1,6 +1,7 @@
 import { type DraggableProvided, type DraggableStateSnapshot } from 'react-beautiful-dnd'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
-import { ServiceIcon, Truncate } from '@qovery/shared/ui'
+import { ServiceAvatar } from '@qovery/domains/services/feature'
+import { Truncate } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface DraggableItemProps {
@@ -18,8 +19,6 @@ export function DraggableItem(props: DraggableItemProps) {
   const { services, serviceId, provided, snapshot } = props
 
   const service = getServiceByServiceId(serviceId || '', services)
-
-  const serviceType = service?.serviceType
 
   const classNameItem = (isDragging: boolean) =>
     `flex items-center bg-neutral-50 rounded px-2 py-3 border ${
@@ -49,7 +48,7 @@ export function DraggableItem(props: DraggableItemProps) {
       style={{ ...provided?.draggableProps.style }}
       className={snapshot && classNameItem(snapshot.isDragging)}
     >
-      {serviceType && <ServiceIcon className="mr-2" service={service} />}
+      {service && <ServiceAvatar className="mr-2" service={service} size="sm" border="solid" />}
       {content(service?.name, (service as Database)?.type, (service as Database)?.mode)}
     </div>
   )
