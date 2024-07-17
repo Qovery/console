@@ -1,11 +1,13 @@
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useContext } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import {
   NeedRedeployFlag,
+  ServiceAccessModal,
   ServiceActionToolbar,
   ServiceAvatar,
   ServiceStateChip,
@@ -19,7 +21,18 @@ import {
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
 } from '@qovery/shared/routes'
-import { ErrorBoundary, Header, Icon, Link, Section, Skeleton, Tabs, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  ErrorBoundary,
+  Header,
+  Icon,
+  Link,
+  Section,
+  Skeleton,
+  Tabs,
+  Tooltip,
+  useModal,
+} from '@qovery/shared/ui'
 
 export interface ContainerProps {
   service?: AnyService
@@ -30,6 +43,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
   const { setOpen } = useContext(ServiceTerminalContext)
   const location = useLocation()
+  const { closeModal, openModal } = useModal()
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id || '' })
 
@@ -117,7 +131,37 @@ export function Container({ service, environment, children }: PropsWithChildren<
         <Header title={service?.name} actions={headerActions}>
           {service && <ServiceAvatar service={service} />}
         </Header>
-        <Tabs items={tabsItems} />
+        <Tabs
+          items={tabsItems}
+          contentRight={match(service)
+            .with({ serviceType: 'DATABASE' }, (s) => (
+              <Button
+                className="mr-4 gap-2"
+                size="md"
+                color="neutral"
+                variant="surface"
+                onClick={() =>
+                  openModal({
+                    content: (
+                      <ServiceAccessModal
+                        organizationId={organizationId}
+                        projectId={projectId}
+                        service={s}
+                        onClose={closeModal}
+                      />
+                    ),
+                    options: {
+                      width: 680,
+                    },
+                  })
+                }
+              >
+                Access info
+                <Icon iconName="info-circle" iconStyle="light" />
+              </Button>
+            ))
+            .otherwise(() => null)}
+        />
         <NeedRedeployFlag />
         <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
           <ErrorBoundary>{children}</ErrorBoundary>

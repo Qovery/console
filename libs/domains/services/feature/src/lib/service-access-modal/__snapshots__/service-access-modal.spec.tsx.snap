@@ -1,0 +1,323 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServiceAccessModal should match snapshot with Application 1`] = `
+<div>
+  <section
+    class="flex flex-col p-5"
+  >
+    <h1
+      class="text-xl font-bold h4 max-w-sm truncate text-neutral-400"
+    >
+      Access from
+    </h1>
+    <p
+      class="mb-4 mt-2 text-sm text-neutral-350"
+    >
+      This section explains how to connect to this service from another service or from your local machine.
+    </p>
+    <div
+      data-orientation="horizontal"
+      dir="ltr"
+    >
+      <div
+        aria-orientation="horizontal"
+        class="flex gap-1 overflow-x-auto whitespace-nowrap w-full"
+        data-orientation="horizontal"
+        role="tablist"
+        style="outline: none;"
+        tabindex="0"
+      >
+        <button
+          aria-controls="radix-:r6:-content-another-service"
+          aria-selected="true"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          data-orientation="horizontal"
+          data-radix-collection-item=""
+          data-state="active"
+          id="radix-:r6:-trigger-another-service"
+          role="tab"
+          tabindex="-1"
+          type="button"
+        >
+          <span
+            class="absolute flex items-center justify-center"
+          >
+            Another service
+          </span>
+          <span
+            class="invisible flex items-center justify-center"
+          >
+            Another service
+          </span>
+        </button>
+        <button
+          aria-controls="radix-:r6:-content-local-machine"
+          aria-selected="false"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          data-orientation="horizontal"
+          data-radix-collection-item=""
+          data-state="inactive"
+          id="radix-:r6:-trigger-local-machine"
+          role="tab"
+          tabindex="-1"
+          type="button"
+        >
+          <span
+            class="absolute flex items-center justify-center"
+          >
+            Local machine
+          </span>
+          <span
+            class="invisible flex items-center justify-center"
+          >
+            Local machine
+          </span>
+        </button>
+      </div>
+      <div
+        class="mt-6"
+      >
+        <div
+          aria-labelledby="radix-:r6:-trigger-another-service"
+          class="relative outline-0 flex flex-col gap-4"
+          data-orientation="horizontal"
+          data-state="active"
+          id="radix-:r6:-content-another-service"
+          role="tabpanel"
+          style="animation-duration: 0s;"
+          tabindex="0"
+        >
+          <div
+            class="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm"
+          >
+            <span
+              class="font-medium"
+            >
+              How to connect
+            </span>
+            <p
+              class="text-neutral-350"
+            >
+              You can interconnect services via the declared ports and the Qovery BUILT_IN environment variables. These variables contains the connection parameter of the service and they are automatically injected on every service of the environment. To match the variables naming convention within your code, create an alias.
+            </p>
+          </div>
+          <div
+            class="overflow-hidden rounded border border-neutral-250 text-sm"
+          >
+            <div
+              class="flex cursor-pointer items-center justify-between gap-5 px-4 py-3 transition-colors hover:bg-neutral-100"
+            >
+              <div
+                class="flex flex-col gap-1.5"
+              >
+                <span
+                  class="font-medium"
+                >
+                  1. Declared ports
+                </span>
+                <p
+                  class="text-neutral-350"
+                >
+                  Below you can find the ports exposed by this service.
+                </p>
+              </div>
+              <button
+                class="flex h-5 w-5 items-center justify-center"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down text-sm"
+                />
+              </button>
+            </div>
+          </div>
+          <div
+            class="overflow-hidden rounded border border-neutral-250 text-sm"
+          >
+            <div
+              class="flex cursor-pointer items-center justify-between gap-5 px-4 py-3 transition-colors hover:bg-neutral-100"
+            >
+              <div
+                class="flex flex-col gap-1.5"
+              >
+                <span
+                  class="font-medium"
+                >
+                  2. BUILT_IN environment variables
+                </span>
+                <p
+                  class="text-neutral-350"
+                >
+                  Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.
+                </p>
+              </div>
+              <button
+                class="flex h-5 w-5 items-center justify-center"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down text-sm"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-labelledby="radix-:r6:-trigger-local-machine"
+          class="relative outline-0 flex flex-col gap-4"
+          data-orientation="horizontal"
+          data-state="inactive"
+          hidden=""
+          id="radix-:r6:-content-local-machine"
+          role="tabpanel"
+          tabindex="0"
+        />
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`ServiceAccessModal should match snapshot with Database 1`] = `
+<div>
+  <section
+    class="flex flex-col p-5"
+  >
+    <h1
+      class="text-xl font-bold h4 max-w-sm truncate text-neutral-400"
+    >
+      Access from
+    </h1>
+    <p
+      class="mb-4 mt-2 text-sm text-neutral-350"
+    >
+      This section explains how to connect to this service from another service or from your local machine.
+    </p>
+    <div
+      data-orientation="horizontal"
+      dir="ltr"
+    >
+      <div
+        aria-orientation="horizontal"
+        class="flex gap-1 overflow-x-auto whitespace-nowrap w-full"
+        data-orientation="horizontal"
+        role="tablist"
+        style="outline: none;"
+        tabindex="0"
+      >
+        <button
+          aria-controls="radix-:rf:-content-another-service"
+          aria-selected="true"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          data-orientation="horizontal"
+          data-radix-collection-item=""
+          data-state="active"
+          id="radix-:rf:-trigger-another-service"
+          role="tab"
+          tabindex="-1"
+          type="button"
+        >
+          <span
+            class="absolute flex items-center justify-center"
+          >
+            Another service
+          </span>
+          <span
+            class="invisible flex items-center justify-center"
+          >
+            Another service
+          </span>
+        </button>
+        <button
+          aria-controls="radix-:rf:-content-local-machine"
+          aria-selected="false"
+          class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
+          data-orientation="horizontal"
+          data-radix-collection-item=""
+          data-state="inactive"
+          id="radix-:rf:-trigger-local-machine"
+          role="tab"
+          tabindex="-1"
+          type="button"
+        >
+          <span
+            class="absolute flex items-center justify-center"
+          >
+            Local machine
+          </span>
+          <span
+            class="invisible flex items-center justify-center"
+          >
+            Local machine
+          </span>
+        </button>
+      </div>
+      <div
+        class="mt-6"
+      >
+        <div
+          aria-labelledby="radix-:rf:-trigger-another-service"
+          class="relative outline-0 flex flex-col gap-4"
+          data-orientation="horizontal"
+          data-state="active"
+          id="radix-:rf:-content-another-service"
+          role="tabpanel"
+          style="animation-duration: 0s;"
+          tabindex="0"
+        >
+          <div
+            class="overflow-hidden rounded border border-neutral-250 text-sm"
+          >
+            <div
+              class="flex cursor-pointer items-center justify-between gap-5 px-4 py-3 transition-colors hover:bg-neutral-100"
+            >
+              <div
+                class="flex flex-col gap-1.5"
+              >
+                <span
+                  class="font-medium"
+                >
+                  BUILT_IN environment variables
+                </span>
+                <p
+                  class="text-neutral-350"
+                >
+                  Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.
+                </p>
+              </div>
+              <button
+                class="flex h-5 w-5 items-center justify-center"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down text-sm"
+                />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-labelledby="radix-:rf:-trigger-local-machine"
+          class="relative outline-0 flex flex-col gap-4"
+          data-orientation="horizontal"
+          data-state="inactive"
+          hidden=""
+          id="radix-:rf:-content-local-machine"
+          role="tabpanel"
+          tabindex="0"
+        />
+        <div
+          aria-labelledby="radix-:rf:-trigger-public-access"
+          class="relative outline-0 flex flex-col gap-4"
+          data-orientation="horizontal"
+          data-state="inactive"
+          hidden=""
+          id="radix-:rf:-content-public-access"
+          role="tabpanel"
+          tabindex="0"
+        />
+      </div>
+    </div>
+  </section>
+</div>
+`;
