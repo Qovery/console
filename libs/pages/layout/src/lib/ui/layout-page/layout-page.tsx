@@ -36,13 +36,12 @@ export const displayClusterDeploymentBanner = (status?: ClusterStateEnum): boole
   - If the user is a Qovery employee, the console is displayed on the mobile
   - If the user has set the debug view to desktop, the console is displayed on the mobile
 */
-function checkQoveryUser(communication_email?: string) {
+function checkQoveryUser(isQoveryAdminUser: boolean) {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-  const isQoveryUser = communication_email?.endsWith('@qovery.com')
 
   const debugViewDesktop = localStorage.getItem('qovery-debug-view-desktop') === 'true'
 
-  return (isMobile && isQoveryUser) || (debugViewDesktop && isQoveryUser)
+  return (isMobile && isQoveryAdminUser) || (debugViewDesktop && isQoveryAdminUser)
 }
 
 export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
@@ -54,9 +53,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { data: user } = useUserAccount()
-  const { roles } = useUserRole()
+  const { roles, isQoveryAdminUser } = useUserRole()
 
-  const isQoveryUser = checkQoveryUser(user?.communication_email)
+  const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterStatuses?.[0]?.cluster_id))
 
@@ -78,9 +77,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   // Display Qovery admin if we don't have the organization in the token
   const displayQoveryAdminBanner = useMemo(() => {
-    const isQoveryUser = roles[0] === 'admin'
-
-    if (isQoveryUser) {
+    if (isQoveryAdminUser) {
       const checkIfUserHasOrganization = roles.some((org) => org.includes(organizationId)) ?? true
       return !checkIfUserHasOrganization
     }
@@ -95,7 +92,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
           actions.
         </Banner>
       )}
-      {!isQoveryUser && <WarningScreenMobile />}
+      {!isQoveryUserWithMobileCheck && <WarningScreenMobile />}
       <main className="bg-neutral-200 dark:h-full dark:bg-neutral-900">
         <div className="flex">
           <div className="sticky top-0 h-full">

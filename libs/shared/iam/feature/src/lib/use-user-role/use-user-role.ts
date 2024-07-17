@@ -9,6 +9,8 @@ export function useUserRole() {
   const [roles, setRoles] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
+  const isQoveryAdminUser = roles.some((r) => r === 'admin')
+
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -28,6 +30,7 @@ export function useUserRole() {
   return {
     roles,
     loading,
+    isQoveryAdminUser,
   }
 }
 
