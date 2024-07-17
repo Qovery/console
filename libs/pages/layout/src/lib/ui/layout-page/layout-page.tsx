@@ -82,7 +82,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       return !checkIfUserHasOrganization
     }
     return false
-  }, [roles, organizationId])
+  }, [roles, organizationId, isQoveryAdminUser])
 
   return (
     <>
