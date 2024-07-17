@@ -526,6 +526,9 @@ function MenuOtherActions({
           serviceId={service.id}
         />
       ),
+      options: {
+        fakeModal: true,
+      },
     })
   }
 

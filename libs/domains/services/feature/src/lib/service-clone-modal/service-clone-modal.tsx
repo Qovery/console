@@ -155,7 +155,8 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
               label="Project"
               error={error?.message}
               options={projects.map((c) => ({ value: c.id, label: c.name }))}
-              portal={true}
+              portal
+              isSearchable
             />
           )}
         />
@@ -177,7 +178,8 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
                 label="Environment"
                 error={error?.message}
                 options={environments.map((c) => ({ value: c.id, label: c.name }))}
-                portal={true}
+                portal
+                isSearchable
               />
             )
           }
