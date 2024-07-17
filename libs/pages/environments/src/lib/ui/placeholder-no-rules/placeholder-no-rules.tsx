@@ -12,30 +12,26 @@ export function PlaceholderNoRules({ clusterAvailable, linkNewRule, organization
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-grow overflow-y-auto">
-      <div className="flex flex-grow items-center justify-center">
-        <EmptyState
-          title={`${clusterAvailable ? 'Create your first Deployment Rules 🕹' : 'Create your Cluster first 💫'}`}
-          description={
-            clusterAvailable
-              ? undefined
-              : 'Deploying a cluster is necessary to start using Qovery and create your first Deployment Rules'
-          }
-        >
-          <Button
-            className="mt-5"
-            size="lg"
-            onClick={() =>
-              clusterAvailable
-                ? navigate(linkNewRule)
-                : navigate(CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
-            }
-          >
-            {clusterAvailable ? 'Create Deployment Rule' : 'Create a Cluster'}
-          </Button>
-        </EmptyState>
-      </div>
-    </div>
+    <EmptyState
+      title={`${clusterAvailable ? 'Create your first Deployment Rules 🕹' : 'Create your Cluster first 💫'}`}
+      description={
+        clusterAvailable
+          ? undefined
+          : 'Deploying a cluster is necessary to start using Qovery and create your first Deployment Rules'
+      }
+    >
+      <Button
+        className="mt-5"
+        size="lg"
+        onClick={() =>
+          clusterAvailable
+            ? navigate(linkNewRule)
+            : navigate(CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
+        }
+      >
+        {clusterAvailable ? 'Create Deployment Rule' : 'Create a Cluster'}
+      </Button>
+    </EmptyState>
   )
 }
 
