@@ -90,7 +90,7 @@ export function HelmChartsSetting({
                 required: 'Please enter a version.',
               }}
               render={({ field, fieldState: { error } }) =>
-                !isOci || helmsChartsVersionsOptions.length === 0 ? (
+                !isOci && helmsChartsVersionsOptions.length > 0 ? (
                   <InputSelect
                     label="Version"
                     options={helmsChartsVersionsOptions}
@@ -108,7 +108,7 @@ export function HelmChartsSetting({
                     value={field.value}
                     error={error?.message}
                     hint={
-                      helmsChartsVersionsOptions.length === 0 ? (
+                      !isOci && helmsChartsVersionsOptions.length === 0 ? (
                         <span className="text-orange-500">
                           No version found. Please verify that the chart name or helm repository is correct. You can
                           still enter your version manually.
