@@ -1,13 +1,11 @@
-import { useAuth0 } from '@auth0/auth0-react'
-import { jwtDecode } from 'jwt-decode'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect, useState } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
-import { useUserAccount } from '@qovery/shared/iam/feature'
+import { useUserAccount, useUserRole } from '@qovery/shared/iam/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -56,7 +54,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { data: user } = useUserAccount()
-  const { getAccessTokenSilently } = useAuth0()
+  const { roles } = useUserRole()
 
   const isQoveryUser = checkQoveryUser(user?.communication_email)
 
@@ -78,26 +76,20 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const clusterCredentialError = Boolean(!matchLogInfraRoute && invalidCluster)
 
-  const [bannerAdmin, setBannerAdmin] = useState(false)
+  // Display Qovery admin if we don't have the organization in the token
+  const displayQoveryAdminBanner = useMemo(() => {
+    const isQoveryUser = roles[0] === 'admin'
 
-  useEffect(() => {
-    async function displayQoveryAdminBanner() {
-      const token = await getAccessTokenSilently()
-      const tokenDecoded: {
-        'https://qovery.com/roles': string[]
-      } = jwtDecode(token)
-      const listOrganizations = tokenDecoded['https://qovery.com/roles']
-      const adminPattern = new RegExp(`^organization:${organizationId}:admin$`)
-      const isUserOrganization = listOrganizations.some((org) => adminPattern.test(org))
-      setBannerAdmin(!isUserOrganization)
+    if (isQoveryUser) {
+      const checkIfUserHasOrganization = roles.some((org) => org.includes(organizationId)) ?? true
+      return !checkIfUserHasOrganization
     }
-
-    displayQoveryAdminBanner()
-  }, [organizationId])
+    return false
+  }, [roles, organizationId])
 
   return (
     <>
-      {bannerAdmin && (
+      {displayQoveryAdminBanner && (
         <Banner color="yellow">
           Qovery admin message - This organization is a customer (<b>{organization?.name}</b>), please be careful with
           actions.
