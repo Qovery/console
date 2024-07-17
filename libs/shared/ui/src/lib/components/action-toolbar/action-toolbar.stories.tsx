@@ -21,7 +21,7 @@ export const Primary = {
     <ActionToolbar.Root>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <ActionToolbar.Button>
+          <ActionToolbar.Button color="yellow">
             <Icon iconName="play" className="mr-4" />
             <Icon iconName="chevron-down" />
           </ActionToolbar.Button>
