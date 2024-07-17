@@ -1,10 +1,11 @@
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
-import { useUserAccount } from '@qovery/shared/iam/feature'
+import { useUserAccount, useUserRole } from '@qovery/shared/iam/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -35,13 +36,12 @@ export const displayClusterDeploymentBanner = (status?: ClusterStateEnum): boole
   - If the user is a Qovery employee, the console is displayed on the mobile
   - If the user has set the debug view to desktop, the console is displayed on the mobile
 */
-function checkQoveryUser(communication_email?: string) {
+function checkQoveryUser(isQoveryAdminUser: boolean) {
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-  const isQoveryUser = communication_email?.endsWith('@qovery.com')
 
   const debugViewDesktop = localStorage.getItem('qovery-debug-view-desktop') === 'true'
 
-  return (isMobile && isQoveryUser) || (debugViewDesktop && isQoveryUser)
+  return (isMobile && isQoveryAdminUser) || (debugViewDesktop && isQoveryAdminUser)
 }
 
 export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
@@ -51,9 +51,11 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
+  const { data: organization } = useOrganization({ organizationId })
   const { data: user } = useUserAccount()
+  const { roles, isQoveryAdminUser } = useUserRole()
 
-  const isQoveryUser = checkQoveryUser(user?.communication_email)
+  const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterStatuses?.[0]?.cluster_id))
 
@@ -73,9 +75,24 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const clusterCredentialError = Boolean(!matchLogInfraRoute && invalidCluster)
 
+  // Display Qovery admin if we don't have the organization in the token
+  const displayQoveryAdminBanner = useMemo(() => {
+    if (isQoveryAdminUser) {
+      const checkIfUserHasOrganization = roles.some((org) => org.includes(organizationId)) ?? true
+      return !checkIfUserHasOrganization
+    }
+    return false
+  }, [roles, organizationId, isQoveryAdminUser])
+
   return (
     <>
-      {!isQoveryUser && <WarningScreenMobile />}
+      {displayQoveryAdminBanner && (
+        <Banner color="yellow">
+          Qovery admin message - This organization is a customer (<b>{organization?.name}</b>), please be careful with
+          actions.
+        </Banner>
+      )}
+      {!isQoveryUserWithMobileCheck && <WarningScreenMobile />}
       <main className="bg-neutral-200 dark:h-full dark:bg-neutral-900">
         <div className="flex">
           <div className="sticky top-0 h-full">
