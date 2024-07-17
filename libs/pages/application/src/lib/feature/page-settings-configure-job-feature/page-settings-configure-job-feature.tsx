@@ -21,7 +21,7 @@ export function PageSettingsConfigureJobFeature() {
       }
     })
     .with({ job_type: 'LIFECYCLE' }, (s) => {
-      const { on_start, on_delete, on_stop } = s.schedule
+      const { on_start, on_delete, on_stop, lifecycle_type } = s.schedule
 
       return {
         on_start: {
@@ -42,6 +42,7 @@ export function PageSettingsConfigureJobFeature() {
             on_delete?.arguments && on_delete?.arguments.length > 0 ? on_delete?.arguments?.join(' ') : undefined,
           entrypoint: on_delete?.entrypoint,
         },
+        lifecycle_type,
       }
     })
     .otherwise(() => ({}))
@@ -70,8 +71,9 @@ export function PageSettingsConfigureJobFeature() {
           },
         }
       })
-      .with({ job_type: 'LIFECYCLE' }, () => {
+      .with({ job_type: 'LIFECYCLE' }, (s) => {
         return {
+          lifecycle_type: s.schedule.lifecycle_type,
           on_start: data.on_start?.enabled
             ? {
                 entrypoint: data.on_start.entrypoint,
