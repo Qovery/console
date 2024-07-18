@@ -205,7 +205,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general"
             >
@@ -249,7 +249,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs"
             >
@@ -462,7 +462,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/04308de2-af27-405f-9e95-570fa94ed577/services/general"
             >
@@ -506,7 +506,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/04308de2-af27-405f-9e95-570fa94ed577/deployment-logs"
             >
@@ -714,7 +714,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/services/general"
             >
@@ -758,7 +758,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/deployment-logs"
             >
@@ -976,7 +976,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/33962e52-7883-42fd-8613-85e04229a9b6/services/general"
             >
@@ -1020,7 +1020,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 15%;"
           >
             <a
-              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white gap-2 whitespace-nowrap text-sm"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
               href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/33962e52-7883-42fd-8613-85e04229a9b6/deployment-logs"
             >

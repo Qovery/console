@@ -26,7 +26,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-yellow-600 h-9 px-3 first:rounded-l last:rounded-r first:border-x border border-yellow-600 bg-neutral-50 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-yellow-600 h-9 px-3 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"
@@ -49,7 +49,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
@@ -66,7 +66,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
@@ -198,7 +198,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-yellow-600 h-9 px-3 first:rounded-l last:rounded-r first:border-x border border-yellow-600 bg-neutral-50 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-yellow-600 h-9 px-3 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
@@ -221,7 +221,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
@@ -239,7 +239,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-white first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-350 dark:text-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"

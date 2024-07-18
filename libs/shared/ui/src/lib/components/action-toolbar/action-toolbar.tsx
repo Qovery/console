@@ -63,8 +63,6 @@ const toolbarButtonVariants = cva([], {
         'border-l-0',
         'border',
         'border-yellow-600',
-        'bg-neutral-50',
-
         'text-yellow-600',
         'data-[state=open]:text-yellow-600',
         'text-sm',

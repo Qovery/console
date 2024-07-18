@@ -17,7 +17,7 @@ const _buttonVariants = cva(
       variant: {
         solid: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
         surface: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
-        outline: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
+        outline: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none', 'bg-white'],
         plain: ['hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm', 'active:[&:not(:focus-visible)]:shadow-none'],
       },
       color: {
@@ -81,7 +81,6 @@ const _buttonVariants = cva(
       {
         variant: 'outline',
         color: 'neutral',
-        className: ['bg-white'],
       },
       {
         variant: 'plain',
