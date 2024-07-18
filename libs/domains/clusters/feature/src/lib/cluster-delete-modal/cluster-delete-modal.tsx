@@ -81,7 +81,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
               <Checkbox
                 name="confirm_kubernetes"
                 id="confirm_kubernetes"
-                className="invisible shrink-0"
+                className="shrink-0"
                 checked={confirmKubernetesChecked}
                 onCheckedChange={setConfirmKubernetesChecked}
               />
