@@ -15,6 +15,7 @@ export interface ModalConfirmationProps extends PropsWithChildren {
   warning?: ReactNode
   placeholder?: string
   ctaButton?: string
+  ctaButtonDisabled?: boolean
   isDelete?: boolean
 }
 
@@ -27,6 +28,7 @@ export function ModalConfirmation({
   isDelete = false,
   placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
   ctaButton = 'Confirm',
+  ctaButtonDisabled,
   children,
 }: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
@@ -105,7 +107,7 @@ export function ModalConfirmation({
           <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
             Cancel
           </Button>
-          <Button type="submit" size="lg" color={isDelete ? 'red' : 'brand'}>
+          <Button type="submit" size="lg" color={isDelete ? 'red' : 'brand'} disabled={ctaButtonDisabled}>
             {ctaButton}
           </Button>
         </div>
