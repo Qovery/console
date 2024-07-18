@@ -56,11 +56,11 @@ export function StepIntroductionFeature() {
       <div className="mx-auto flex flex-col items-center justify-center gap-16">
         <Section className="flex flex-col gap-8">
           <div>
-            <Heading className="mb-4 text-[32px]">Deploying `lifecycle_type` manifest</Heading>
+            <Heading className="mb-4 text-[32px]">Lifecycle Jobs</Heading>
             <p className="text-neutral-350">
-              Qovery packages your `lifecycle_type` manifest, inputs and `Lifecicle_type` CLI as a containerized
-              application. It is then executed on your Kubernetes cluster as job (Qovery Lifecycle job), allowing you to
-              create/update/destroy your resources based on the events on your environment (start/stop/delete).
+              A Lifecycle job allows to execute custom code based on the event triggered on the environment
+              (start/stop/delete). This can be useful to manage the lifecycle of an external resource (create/destroy)
+              or execute a script based on a specific event.{' '}
             </p>
           </div>
           <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-1">
