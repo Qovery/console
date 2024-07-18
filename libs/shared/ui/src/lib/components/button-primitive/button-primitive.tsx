@@ -79,10 +79,6 @@ const _buttonVariants = cva(
         ],
       },
       {
-        variant: 'outline',
-        color: 'neutral',
-      },
-      {
         variant: 'plain',
         color: 'neutral',
         className: [
