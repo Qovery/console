@@ -82,6 +82,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
                 name="confirm_kubernetes"
                 id="confirm_kubernetes"
                 className="shrink-0"
+                color="red"
                 checked={confirmKubernetesChecked}
                 onCheckedChange={setConfirmKubernetesChecked}
               />
