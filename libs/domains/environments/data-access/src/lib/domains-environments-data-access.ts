@@ -15,6 +15,7 @@ import {
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
   EnvironmentsApi,
+  LifecycleTemplateMainCallsApi,
 } from 'qovery-typescript-axios'
 import { type RunningState } from '@qovery/shared/enums'
 
@@ -27,6 +28,7 @@ const environmentExportApi = new EnvironmentExportApi()
 const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const databasesApi = new DatabasesApi()
 const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
+const lifecycleTemplateMainCallsApi = new LifecycleTemplateMainCallsApi()
 
 export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket
@@ -91,6 +93,20 @@ export const environments = createQueryKeys('environments', {
     queryKey: [environmentId],
     async queryFn() {
       const result = await environmentDeploymentRulesApi.getEnvironmentDeploymentRule(environmentId)
+      return result.data
+    },
+  }),
+  listLifecycleTemplates: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const result = await lifecycleTemplateMainCallsApi.listEnvironmentLifecycleTemplates(environmentId)
+      return result.data.results
+    },
+  }),
+  lifecycleTemplate: ({ environmentId, templateId }: { environmentId: string; templateId: string }) => ({
+    queryKey: [environmentId, templateId],
+    async queryFn() {
+      const result = await lifecycleTemplateMainCallsApi.getEnvironmentLifecycleTemplate(environmentId, templateId)
       return result.data
     },
   }),
