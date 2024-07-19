@@ -1,10 +1,10 @@
 import clsx from 'clsx'
 import posthog from 'posthog-js'
-import { type CloudProviderEnum } from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useEnvironment, useLifecycleTemplates } from '@qovery/domains/environments/feature'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -100,7 +100,18 @@ function CardOption({ parentSlug, slug, icon, title, description, type, recommen
   )
 }
 
-function CardService({ title, icon, description, slug, options, type, link }: ServiceTemplateType) {
+function CardService({
+  title,
+  icon,
+  description,
+  slug,
+  options,
+  type,
+  link,
+  availableTemplates,
+}: ServiceTemplateType & {
+  availableTemplates: LifecycleTemplateListResponseResultsInner[]
+}) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [expanded, setExpanded] = useState(false)
   const { data: environment } = useEnvironment({ environmentId })
@@ -138,6 +149,15 @@ function CardService({ title, icon, description, slug, options, type, link }: Se
             </div>
             <div className="grid grid-cols-3 gap-2">
               {options
+                .filter((c) => {
+                  if (c.template_id) {
+                    // Iterate on all available templates to find the matching one
+                    // If there isn't, it means that no template is available so entry must be exclude
+                    return availableTemplates.reduce((acc, template) => c.template_id === template.id || acc, false)
+                  } else {
+                    return true
+                  }
+                })
                 .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
                 .sort((a, b) => {
                   if (a.recommended && !b.recommended) return -1
@@ -204,11 +224,13 @@ function SectionByTag({
   description,
   tag,
   cloudProvider,
+  availableTemplates,
 }: {
   title: string
   tag: keyof typeof TagsEnum
   cloudProvider?: CloudProviderEnum
   description?: string
+  availableTemplates: LifecycleTemplateListResponseResultsInner[]
 }) {
   return (
     <Section>
@@ -220,7 +242,7 @@ function SectionByTag({
           .filter(({ tag: t }) => t === tag)
           .sort((a, b) => a.title.localeCompare(b.title))
           .map((service) => (
-            <CardService key={service.title} {...service} />
+            <CardService key={service.title} availableTemplates={availableTemplates} {...service} />
           ))}
       </div>
     </Section>
@@ -232,6 +254,8 @@ export function PageNewFeature() {
   useDocumentTitle('Create new service - Qovery')
 
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
+
   const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
 
   const serviceEmpty = [
@@ -347,24 +371,28 @@ export function PageNewFeature() {
               description="Find your perfect data and storage template with presets."
               tag="DATA_STORAGE"
               cloudProvider={cloudProvider}
+              availableTemplates={availableTemplates}
             />
             <SectionByTag
               title="Back-end"
               description="Find your perfect Back-end template with presets."
               tag="BACK_END"
               cloudProvider={cloudProvider}
+              availableTemplates={availableTemplates}
             />
             <SectionByTag
               title="Front-end"
               description="Find your perfect Front-end template with presets."
               tag="FRONT_END"
               cloudProvider={cloudProvider}
+              availableTemplates={availableTemplates}
             />
             <SectionByTag
               title="More template"
               description="Look for other template presets."
               tag="OTHER"
               cloudProvider={cloudProvider}
+              availableTemplates={availableTemplates}
             />
           </>
         ) : [...serviceEmpty, ...serviceTemplates]
@@ -378,7 +406,7 @@ export function PageNewFeature() {
                 .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
                 .filter(filterService)
                 .map((service) => (
-                  <CardService key={service.title} {...service} />
+                  <CardService key={service.title} availableTemplates={availableTemplates} {...service} />
                 ))}
             </div>
           </Section>
