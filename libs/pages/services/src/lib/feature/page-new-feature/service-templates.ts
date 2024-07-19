@@ -35,6 +35,7 @@ const Crossplane = '/assets/devicon/crossplane.svg'
 const Kubecost = '/assets/devicon/kubecost.svg'
 const Windmill = '/assets/devicon/windmill.svg'
 const Temporal = '/assets/devicon/temporal.svg'
+const CloudFormation = '/assets/devicon/cloudformation.svg'
 
 // HACK: Backend doesn't provides an enum for possible templates,
 // so we must hardcode their ids ¯\_(ツ)_/¯
@@ -217,6 +218,17 @@ export const serviceTemplates: ServiceTemplateType[] = [
     title: 'Terraform',
     description: 'Terraform is an open-source infrastructure as code software tool.',
     icon: Terraform,
+    type: 'LIFECYCLE_JOB',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    tag: 'OTHER',
+    slug: 'cloudformation',
+    title: 'CloudFormation',
+    description:
+      'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
+    icon: CloudFormation,
     type: 'LIFECYCLE_JOB',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
