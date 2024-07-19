@@ -6,7 +6,7 @@ import {
 import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { APPLICATION_URL, SERVICES_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { Accordion, Heading, Icon, InputSearch, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Heading, Icon, InputSearch, Link, LoaderSpinner, Section, TreeView } from '@qovery/shared/ui'
 import { useGitTokenAssociatedServices } from '../hooks/use-git-token-associated-services/use-git-token-associated-services'
 
 export interface GitTokenServicesListModalProps {
@@ -103,19 +103,19 @@ export function GitTokenServicesListModal({
             onChange={(value) => setSearchValue(value)}
           />
           {data.length > 0 ? (
-            <Accordion.Root
+            <TreeView.Root
               type="single"
               collapsible
               className="rounded border border-neutral-250 bg-neutral-100 px-4 py-2"
             >
               {data.map((project) => (
-                <Accordion.Item key={project.project_id} value={project.project_name}>
-                  <Accordion.Trigger>{project.project_name}</Accordion.Trigger>
-                  <Accordion.Content>
+                <TreeView.Item key={project.project_id} value={project.project_name}>
+                  <TreeView.Trigger>{project.project_name}</TreeView.Trigger>
+                  <TreeView.Content>
                     {project.environments.map((environment) => (
-                      <Accordion.Root key={environment.environment_id} type="single" collapsible>
-                        <Accordion.Item value={environment.environment_name}>
-                          <Accordion.Trigger>
+                      <TreeView.Root key={environment.environment_id} type="single" collapsible>
+                        <TreeView.Item value={environment.environment_name}>
+                          <TreeView.Trigger>
                             <Link
                               color="brand"
                               onClick={() => onClose()}
@@ -127,8 +127,8 @@ export function GitTokenServicesListModal({
                             >
                               {environment.environment_name}
                             </Link>
-                          </Accordion.Trigger>
-                          <Accordion.Content>
+                          </TreeView.Trigger>
+                          <TreeView.Content>
                             <ul>
                               {environment.services.map((service) => (
                                 <li key={service.service_id} className=" border-neutral border-l">
@@ -155,14 +155,14 @@ export function GitTokenServicesListModal({
                                 </li>
                               ))}
                             </ul>
-                          </Accordion.Content>
-                        </Accordion.Item>
-                      </Accordion.Root>
+                          </TreeView.Content>
+                        </TreeView.Item>
+                      </TreeView.Root>
                     ))}
-                  </Accordion.Content>
-                </Accordion.Item>
+                  </TreeView.Content>
+                </TreeView.Item>
               ))}
-            </Accordion.Root>
+            </TreeView.Root>
           ) : (
             <div className="px-5 py-4 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-350" />
