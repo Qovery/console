@@ -52,7 +52,7 @@ function prepareJobRequest(
     memory: memory,
     max_nb_restart: Number(configureData.nb_restarts) || 0,
     max_duration_seconds: Number(configureData.max_duration) || 0,
-    auto_preview: true,
+    auto_preview: false,
     auto_deploy: generalData.auto_deploy,
     healthchecks: {},
     annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
