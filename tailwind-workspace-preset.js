@@ -313,6 +313,10 @@ module.exports = {
           '75%': { transform: 'rotate(-8deg)' },
           '100%': { transform: 'rotate(0deg)' },
         },
+        backgroundLinear: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '100%': { backgroundPosition: '200% 50%' },
+        },
         ...slideEntrances(),
         ...slideExits(),
       },

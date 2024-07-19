@@ -15,6 +15,7 @@ import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_GENERAL_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
+  SERVICES_JOB_CREATION_INTRODUCTION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_NEW_URL,
@@ -24,6 +25,7 @@ import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
 import { serviceTemplates } from '../page-new-feature/service-templates'
+import { getLocalStorageStepIntroduction } from './step-introduction-feature/util-localstorage-step'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
@@ -125,6 +127,8 @@ export function PageJobCreateFeature() {
 
   const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
 
+  const displayIntroductionView = jobType === ServiceTypeEnum.LIFECYCLE_JOB && !getLocalStorageStepIntroduction()
+
   return (
     <JobContainerCreateContext.Provider
       value={{
@@ -161,7 +165,15 @@ export function PageJobCreateFeature() {
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
           {jobURL && (
-            <Route path="*" element={<Navigate replace to={pathCreate + SERVICES_JOB_CREATION_GENERAL_URL} />} />
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  replace
+                  to={`${pathCreate}${displayIntroductionView ? SERVICES_JOB_CREATION_INTRODUCTION_URL : SERVICES_JOB_CREATION_GENERAL_URL}`}
+                />
+              }
+            />
           )}
         </Routes>
         <AssistantTrigger defaultOpen />

@@ -17,6 +17,7 @@ import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_DOCKERFILE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
+  SERVICES_JOB_CREATION_INTRODUCTION_URL,
   SERVICES_JOB_CREATION_POST_URL,
   SERVICES_JOB_CREATION_RESOURCES_URL,
   SERVICES_JOB_CREATION_VARIABLE_URL,
@@ -46,6 +47,7 @@ import { StepValuesOverrideFilesFeature as HelmStepValuesOverrideFilesFeature } 
 import { StepConfigureFeature } from '../feature/page-job-create-feature/step-configure-feature/step-configure-feature'
 import { StepDockerfileFeature } from '../feature/page-job-create-feature/step-dockerfile-feature/step-dockerfile-feature'
 import { StepGeneralFeature } from '../feature/page-job-create-feature/step-general-feature/step-general-feature'
+import StepIntroductionFeature from '../feature/page-job-create-feature/step-introduction-feature/step-introduction-feature'
 import { StepResourcesFeature } from '../feature/page-job-create-feature/step-resources-feature/step-resources-feature'
 import { StepSummaryFeature } from '../feature/page-job-create-feature/step-summary-feature/step-summary-feature'
 import { StepVariableFeature } from '../feature/page-job-create-feature/step-variable-feature/step-variable-feature'
@@ -160,6 +162,10 @@ export const ROUTER_SERVICE_DATABASE_CREATION: Route[] = [
 ]
 
 export const ROUTER_SERVICE_JOB_CREATION: Route[] = [
+  {
+    path: SERVICES_JOB_CREATION_INTRODUCTION_URL,
+    component: <StepIntroductionFeature />,
+  },
   {
     path: SERVICES_JOB_CREATION_GENERAL_URL,
     component: <StepGeneralFeature />,
