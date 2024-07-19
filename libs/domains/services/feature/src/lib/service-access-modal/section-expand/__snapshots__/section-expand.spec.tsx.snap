@@ -3,33 +3,52 @@
 exports[`SectionExpand should match snapshot 1`] = `
 <div>
   <div
-    class="overflow-hidden rounded border border-neutral-250 text-sm"
+    data-orientation="vertical"
   >
     <div
-      class="flex cursor-pointer items-center justify-between gap-5 px-4 py-3 transition-colors hover:bg-neutral-100"
+      class="mt-px first:mt-0 first:rounded-t last:rounded-b overflow-hidden rounded border border-neutral-250"
+      data-orientation="vertical"
+      data-state="closed"
     >
-      <div
-        class="flex flex-col gap-1.5"
-      >
-        <span
-          class="font-medium"
-        >
-          my-title
-        </span>
-        <p
-          class="text-neutral-350"
-        >
-          description
-        </p>
-      </div>
       <button
-        class="flex h-5 w-5 items-center justify-center"
+        aria-controls="radix-:r7:"
+        aria-expanded="false"
+        class="group flex min-h-14 items-center gap-5 bg-white text-sm outline-none w-full cursor-pointer flex-row-reverse justify-between px-4 py-3"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        data-state="closed"
+        id="radix-:r6:"
+        type="button"
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-chevron-down text-sm"
+          class="fa-solid fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
         />
+        <div
+          class="flex flex-col gap-1.5 text-left"
+        >
+          <span
+            class="font-medium"
+          >
+            my-title
+          </span>
+          <p
+            class="text-neutral-350"
+          >
+            description
+          </p>
+        </div>
       </button>
+      <div
+        aria-labelledby="radix-:r6:"
+        class="data-[state=closed]:slidein-up-sm-faded overflow-hidden data-[state=open]:animate-slidein-down-sm-faded border-t border-neutral-250 p-0 text-sm"
+        data-orientation="vertical"
+        data-state="closed"
+        hidden=""
+        id="radix-:r7:"
+        role="region"
+        style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+      />
     </div>
   </div>
 </div>

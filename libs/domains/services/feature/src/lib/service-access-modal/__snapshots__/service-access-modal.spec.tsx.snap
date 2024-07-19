@@ -88,77 +88,112 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
           tabindex="0"
         >
           <div
-            class="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm"
-          >
-            <span
-              class="font-medium"
-            >
-              How to connect
-            </span>
-            <p
-              class="text-neutral-350"
-            >
-              You can interconnect services via the declared ports and the Qovery BUILT_IN environment variables. These variables contains the connection parameter of the service and they are automatically injected on every service of the environment. To match the variables naming convention within your code, create an alias.
-            </p>
-          </div>
-          <div
-            class="overflow-hidden rounded border border-neutral-250 text-sm"
+            class="flex flex-col gap-4"
+            data-orientation="vertical"
           >
             <div
-              class="flex cursor-pointer items-center justify-between gap-5 px-4 py-3 transition-colors hover:bg-neutral-100"
+              class="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm"
             >
-              <div
-                class="flex flex-col gap-1.5"
+              <span
+                class="font-medium"
               >
-                <span
-                  class="font-medium"
-                >
-                  1. Declared ports
-                </span>
-                <p
-                  class="text-neutral-350"
-                >
-                  Below you can find the ports exposed by this service.
-                </p>
-              </div>
-              <button
-                class="flex h-5 w-5 items-center justify-center"
+                How to connect
+              </span>
+              <p
+                class="text-neutral-350"
               >
-                <i
-                  aria-hidden="true"
-                  class="fa-solid fa-chevron-down text-sm"
-                />
-              </button>
+                You can interconnect services via the declared ports and the Qovery BUILT_IN environment variables. These variables contains the connection parameter of the service and they are automatically injected on every service of the environment. To match the variables naming convention within your code, create an alias.
+              </p>
             </div>
-          </div>
-          <div
-            class="overflow-hidden rounded border border-neutral-250 text-sm"
-          >
             <div
-              class="flex cursor-pointer items-center justify-between gap-5 px-4 py-3 transition-colors hover:bg-neutral-100"
+              class="mt-px first:mt-0 first:rounded-t last:rounded-b overflow-hidden rounded border border-neutral-250"
+              data-orientation="vertical"
+              data-state="closed"
             >
-              <div
-                class="flex flex-col gap-1.5"
-              >
-                <span
-                  class="font-medium"
-                >
-                  2. BUILT_IN environment variables
-                </span>
-                <p
-                  class="text-neutral-350"
-                >
-                  Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.
-                </p>
-              </div>
               <button
-                class="flex h-5 w-5 items-center justify-center"
+                aria-controls="radix-:ra:"
+                aria-expanded="false"
+                class="group flex min-h-14 items-center gap-5 bg-white text-sm outline-none w-full cursor-pointer flex-row-reverse justify-between px-4 py-3"
+                data-orientation="vertical"
+                data-radix-collection-item=""
+                data-state="closed"
+                id="radix-:r9:"
+                type="button"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down text-sm"
+                  class="fa-solid fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
                 />
+                <div
+                  class="flex flex-col gap-1.5 text-left"
+                >
+                  <span
+                    class="font-medium"
+                  >
+                    1. Declared ports
+                  </span>
+                  <p
+                    class="text-neutral-350"
+                  >
+                    Below you can find the ports exposed by this service.
+                  </p>
+                </div>
               </button>
+              <div
+                aria-labelledby="radix-:r9:"
+                class="data-[state=closed]:slidein-up-sm-faded overflow-hidden data-[state=open]:animate-slidein-down-sm-faded border-t border-neutral-250 p-0 text-sm"
+                data-orientation="vertical"
+                data-state="closed"
+                hidden=""
+                id="radix-:ra:"
+                role="region"
+                style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+              />
+            </div>
+            <div
+              class="mt-px first:mt-0 first:rounded-t last:rounded-b overflow-hidden rounded border border-neutral-250"
+              data-orientation="vertical"
+              data-state="closed"
+            >
+              <button
+                aria-controls="radix-:rc:"
+                aria-expanded="false"
+                class="group flex min-h-14 items-center gap-5 bg-white text-sm outline-none w-full cursor-pointer flex-row-reverse justify-between px-4 py-3"
+                data-orientation="vertical"
+                data-radix-collection-item=""
+                data-state="closed"
+                id="radix-:rb:"
+                type="button"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+                />
+                <div
+                  class="flex flex-col gap-1.5 text-left"
+                >
+                  <span
+                    class="font-medium"
+                  >
+                    2. BUILT_IN environment variables
+                  </span>
+                  <p
+                    class="text-neutral-350"
+                  >
+                    Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.
+                  </p>
+                </div>
+              </button>
+              <div
+                aria-labelledby="radix-:rb:"
+                class="data-[state=closed]:slidein-up-sm-faded overflow-hidden data-[state=open]:animate-slidein-down-sm-faded border-t border-neutral-250 p-0 text-sm"
+                data-orientation="vertical"
+                data-state="closed"
+                hidden=""
+                id="radix-:rc:"
+                role="region"
+                style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+              />
             </div>
           </div>
         </div>
@@ -206,13 +241,13 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
         tabindex="0"
       >
         <button
-          aria-controls="radix-:rf:-content-another-service"
+          aria-controls="radix-:rj:-content-another-service"
           aria-selected="true"
           class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="active"
-          id="radix-:rf:-trigger-another-service"
+          id="radix-:rj:-trigger-another-service"
           role="tab"
           tabindex="-1"
           type="button"
@@ -229,13 +264,13 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
           </span>
         </button>
         <button
-          aria-controls="radix-:rf:-content-local-machine"
+          aria-controls="radix-:rj:-content-local-machine"
           aria-selected="false"
           class="relative flex items-center select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 text-sm px-4 h-[52px] font-medium border-b-2 flex-auto justify-start pl-0"
           data-orientation="horizontal"
           data-radix-collection-item=""
           data-state="inactive"
-          id="radix-:rf:-trigger-local-machine"
+          id="radix-:rj:-trigger-local-machine"
           role="tab"
           tabindex="-1"
           type="button"
@@ -256,63 +291,83 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
         class="mt-6"
       >
         <div
-          aria-labelledby="radix-:rf:-trigger-another-service"
+          aria-labelledby="radix-:rj:-trigger-another-service"
           class="relative outline-0 flex flex-col gap-4"
           data-orientation="horizontal"
           data-state="active"
-          id="radix-:rf:-content-another-service"
+          id="radix-:rj:-content-another-service"
           role="tabpanel"
           style="animation-duration: 0s;"
           tabindex="0"
         >
           <div
-            class="overflow-hidden rounded border border-neutral-250 text-sm"
+            class="flex flex-col gap-4"
+            data-orientation="vertical"
           >
             <div
-              class="flex cursor-pointer items-center justify-between gap-5 px-4 py-3 transition-colors hover:bg-neutral-100"
+              class="mt-px first:mt-0 first:rounded-t last:rounded-b overflow-hidden rounded border border-neutral-250"
+              data-orientation="vertical"
+              data-state="closed"
             >
-              <div
-                class="flex flex-col gap-1.5"
-              >
-                <span
-                  class="font-medium"
-                >
-                  BUILT_IN environment variables
-                </span>
-                <p
-                  class="text-neutral-350"
-                >
-                  Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.
-                </p>
-              </div>
               <button
-                class="flex h-5 w-5 items-center justify-center"
+                aria-controls="radix-:rn:"
+                aria-expanded="false"
+                class="group flex min-h-14 items-center gap-5 bg-white text-sm outline-none w-full cursor-pointer flex-row-reverse justify-between px-4 py-3"
+                data-orientation="vertical"
+                data-radix-collection-item=""
+                data-state="closed"
+                id="radix-:rm:"
+                type="button"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down text-sm"
+                  class="fa-solid fa-chevron-down text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
                 />
+                <div
+                  class="flex flex-col gap-1.5 text-left"
+                >
+                  <span
+                    class="font-medium"
+                  >
+                    BUILT_IN environment variables
+                  </span>
+                  <p
+                    class="text-neutral-350"
+                  >
+                    Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.
+                  </p>
+                </div>
               </button>
+              <div
+                aria-labelledby="radix-:rm:"
+                class="data-[state=closed]:slidein-up-sm-faded overflow-hidden data-[state=open]:animate-slidein-down-sm-faded border-t border-neutral-250 p-0 text-sm"
+                data-orientation="vertical"
+                data-state="closed"
+                hidden=""
+                id="radix-:rn:"
+                role="region"
+                style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+              />
             </div>
           </div>
         </div>
         <div
-          aria-labelledby="radix-:rf:-trigger-local-machine"
+          aria-labelledby="radix-:rj:-trigger-local-machine"
           class="relative outline-0 flex flex-col gap-4"
           data-orientation="horizontal"
           data-state="inactive"
           hidden=""
-          id="radix-:rf:-content-local-machine"
+          id="radix-:rj:-content-local-machine"
           role="tabpanel"
           tabindex="0"
         />
         <div
-          aria-labelledby="radix-:rf:-trigger-public-access"
+          aria-labelledby="radix-:rj:-trigger-public-access"
           class="relative outline-0 flex flex-col gap-4"
           data-orientation="horizontal"
           data-state="inactive"
           hidden=""
-          id="radix-:rf:-content-public-access"
+          id="radix-:rj:-content-public-access"
           role="tabpanel"
           tabindex="0"
         />
