@@ -4,6 +4,7 @@ import { type Application, type Container, type Database } from '@qovery/domains
 import { useVariables } from '@qovery/domains/variables/feature'
 import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
+  Accordion,
   Button,
   ExternalLink,
   Heading,
@@ -115,141 +116,149 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
         </Tabs.List>
         <div className="mt-6">
           <Tabs.Content className="flex flex-col gap-4" value="another-service">
-            {serviceType !== 'DATABASE' && (
-              <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
-                <span className="font-medium">How to connect</span>
-                <p className="text-neutral-350">
-                  You can interconnect services via the declared ports and the Qovery BUILT_IN environment variables.
-                  These variables contains the connection parameter of the service and they are automatically injected
-                  on every service of the environment. To match the variables naming convention within your code, create
-                  an alias.
-                </p>
-              </div>
-            )}
-            {ports && (
-              <SectionExpand
-                title="1. Declared ports"
-                description="Below you can find the ports exposed by this service."
-              >
-                {!ports || ports.length === 0 ? (
-                  <div className="flex w-full flex-col gap-2 py-4 text-center text-sm">
-                    <span className="font-medium text-neutral-350">No ports declared yet.</span>
-                    <Link
-                      className="justify-center"
-                      to={
-                        APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
-                        APPLICATION_SETTINGS_URL +
-                        APPLICATION_SETTINGS_PORT_URL
-                      }
-                      onClick={() => onClose()}
-                    >
-                      Declare a port in application settings
-                    </Link>
-                  </div>
-                ) : (
-                  <div>
-                    {ports.map((port) => (
-                      <div
-                        key={port.id}
-                        className="flex h-14 items-center justify-between border-b border-neutral-250 px-4 last:border-0"
-                      >
-                        <div className="flex gap-6 text-neutral-350">
-                          <p className="text-neutral-350">
-                            Application port: <span className="font-medium text-neutral-400">{port.internal_port}</span>
-                          </p>
-                          {port.external_port && (
-                            <p className="text-neutral-350">
-                              External port: <span className="font-medium text-neutral-400">{port.external_port}</span>
-                            </p>
-                          )}
-                          <p className="text-neutral-350">
-                            Public:{' '}
-                            <span className="font-medium text-neutral-400">
-                              {port.publicly_accessible ? 'Yes' : 'No'}
-                            </span>
-                          </p>
-                          <p className="text-neutral-350">
-                            Protocol: <span className="font-medium text-neutral-400">{port.protocol}</span>
-                          </p>
-                          <p className="text-neutral-350">
-                            Port name: <span className="font-medium text-neutral-400">{port.name}</span>
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex h-14 items-center justify-center">
+            <Accordion.Root type="single" collapsible className="flex flex-col gap-4">
+              {serviceType !== 'DATABASE' && (
+                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
+                  <span className="font-medium">How to connect</span>
+                  <p className="text-neutral-350">
+                    You can interconnect services via the declared ports and the Qovery BUILT_IN environment variables.
+                    These variables contains the connection parameter of the service and they are automatically injected
+                    on every service of the environment. To match the variables naming convention within your code,
+                    create an alias.
+                  </p>
+                </div>
+              )}
+              {ports && (
+                <SectionExpand
+                  title="1. Declared ports"
+                  description="Below you can find the ports exposed by this service."
+                >
+                  {!ports || ports.length === 0 ? (
+                    <div className="flex w-full flex-col gap-2 py-4 text-center text-sm">
+                      <span className="font-medium text-neutral-350">No ports declared yet.</span>
                       <Link
-                        onClick={() => onClose()}
+                        className="justify-center"
                         to={
                           APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
                           APPLICATION_SETTINGS_URL +
                           APPLICATION_SETTINGS_PORT_URL
                         }
+                        onClick={() => onClose()}
                       >
                         Declare a port in application settings
                       </Link>
                     </div>
-                  </div>
-                )}
-              </SectionExpand>
-            )}
-            <SectionExpand
-              title={
-                serviceType !== 'DATABASE' ? '2. BUILT_IN environment variables' : 'BUILT_IN environment variables'
-              }
-              description={
-                serviceType !== 'DATABASE'
-                  ? 'Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
-                  : 'Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
-              }
-            >
-              <div className="max-h-48 overflow-y-scroll">
-                {isLoadingVariables ? (
-                  <div className="flex justify-center p-5">
-                    <LoaderSpinner className="w-5" />
-                  </div>
-                ) : (
-                  <>
-                    {variables
-                      ?.filter(
-                        (v) =>
-                          v.service_id === service.id &&
-                          (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
-                      )
-                      ?.map((variable) => (
+                  ) : (
+                    <div>
+                      {ports.map((port) => (
                         <div
-                          key={variable.id}
-                          className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
+                          key={port.id}
+                          className="flex h-14 items-center justify-between border-b border-neutral-250 px-4 last:border-0"
                         >
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center truncate">
-                              {variable.aliased_variable && (
-                                <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
-                                  ALIAS
-                                </span>
-                              )}
-                              <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
-                              {variable.description && (
-                                <Tooltip content={variable.description}>
-                                  <span>
-                                    <Icon iconName="circle-info" iconStyle="solid" className="ml-2 text-neutral-350" />
-                                  </span>
-                                </Tooltip>
-                              )}
-                            </div>
+                          <div className="flex gap-6 text-neutral-350">
+                            <p className="text-neutral-350">
+                              Application port:{' '}
+                              <span className="font-medium text-neutral-400">{port.internal_port}</span>
+                            </p>
+                            {port.external_port && (
+                              <p className="text-neutral-350">
+                                External port:{' '}
+                                <span className="font-medium text-neutral-400">{port.external_port}</span>
+                              </p>
+                            )}
+                            <p className="text-neutral-350">
+                              Public:{' '}
+                              <span className="font-medium text-neutral-400">
+                                {port.publicly_accessible ? 'Yes' : 'No'}
+                              </span>
+                            </p>
+                            <p className="text-neutral-350">
+                              Protocol: <span className="font-medium text-neutral-400">{port.protocol}</span>
+                            </p>
+                            <p className="text-neutral-350">
+                              Port name: <span className="font-medium text-neutral-400">{port.name}</span>
+                            </p>
                           </div>
-                          {variable.aliased_variable && (
-                            <div className="flex flex-row gap-1 text-xs text-neutral-350">
-                              <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
-                              <span>{variable.aliased_variable.key}</span>
-                            </div>
-                          )}
                         </div>
                       ))}
-                  </>
-                )}
-              </div>
-            </SectionExpand>
+                      <div className="flex h-14 items-center justify-center">
+                        <Link
+                          onClick={() => onClose()}
+                          to={
+                            APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
+                            APPLICATION_SETTINGS_URL +
+                            APPLICATION_SETTINGS_PORT_URL
+                          }
+                        >
+                          Declare a port in application settings
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </SectionExpand>
+              )}
+              <SectionExpand
+                title={
+                  serviceType !== 'DATABASE' ? '2. BUILT_IN environment variables' : 'BUILT_IN environment variables'
+                }
+                description={
+                  serviceType !== 'DATABASE'
+                    ? 'Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
+                    : 'Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
+                }
+              >
+                <div className="max-h-48 overflow-y-scroll">
+                  {isLoadingVariables ? (
+                    <div className="flex justify-center p-5">
+                      <LoaderSpinner className="w-5" />
+                    </div>
+                  ) : (
+                    <>
+                      {variables
+                        ?.filter(
+                          (v) =>
+                            v.service_id === service.id &&
+                            (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
+                        )
+                        ?.map((variable) => (
+                          <div
+                            key={variable.id}
+                            className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center truncate">
+                                {variable.aliased_variable && (
+                                  <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+                                    ALIAS
+                                  </span>
+                                )}
+                                <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
+                                {variable.description && (
+                                  <Tooltip content={variable.description}>
+                                    <span>
+                                      <Icon
+                                        iconName="circle-info"
+                                        iconStyle="solid"
+                                        className="ml-2 text-neutral-350"
+                                      />
+                                    </span>
+                                  </Tooltip>
+                                )}
+                              </div>
+                            </div>
+                            {variable.aliased_variable && (
+                              <div className="flex flex-row gap-1 text-xs text-neutral-350">
+                                <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
+                                <span>{variable.aliased_variable.key}</span>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                    </>
+                  )}
+                </div>
+              </SectionExpand>
+            </Accordion.Root>
           </Tabs.Content>
           <Tabs.Content className="flex flex-col gap-4" value="local-machine">
             <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
