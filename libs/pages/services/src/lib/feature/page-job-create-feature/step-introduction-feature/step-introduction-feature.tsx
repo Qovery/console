@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { SERVICES_JOB_CREATION_DOCKERFILE_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Checkbox, ExternalLink, FunnelFlowBody, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 import imageBuild from './images/build.svg'
 import imageDeploy from './images/deploy.svg'
@@ -18,8 +19,13 @@ interface CardProps extends PropsWithChildren {
 
 function Card({ title, content, className, children }: CardProps) {
   return (
-    <div className={className}>
-      <div className="w-full overflow-hidden rounded-[16px] bg-gradient-to-r from-[#B160F0] via-[#7366FF] to-[#B160F0] bg-[length:200%_auto] p-0.5 shadow-md transition hover:shadow-lg motion-safe:animate-[backgroundLinear_4s_linear_infinite] sm:max-w-[196px]">
+    <div
+      className={twMerge(
+        'overflow-hidden rounded-[16px] shadow-md transition hover:-translate-y-1.5 hover:shadow-lg',
+        className
+      )}
+    >
+      <div className="w-full bg-gradient-to-r from-[#B160F0] via-[#7366FF] to-[#B160F0] bg-[length:200%_auto] p-0.5 motion-safe:animate-[backgroundLinear_4s_linear_infinite] sm:max-w-[196px]">
         <div className="flex h-full w-full flex-col gap-2 rounded-[14px] bg-white">
           <h1 className="flex p-3 pb-0 text-[28px] text-brand-500">
             {title}
