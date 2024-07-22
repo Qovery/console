@@ -5,6 +5,7 @@ export interface VariableData {
   value?: string
   scope?: APIVariableScopeEnum
   isSecret: boolean
+  isDisabled?: boolean
 }
 
 export interface FlowVariableData {

@@ -23,6 +23,7 @@ export function VariableRow(props: VariableRowProps) {
   const { index, availableScopes, gridTemplateColumns = '6fr 6fr 204px 2fr 1fr 1fr' } = props
   const { control, trigger, watch } = useFormContext<FlowVariableData>()
   const watchSecret = watch().variables[index]?.isSecret
+  const watchDisabled = watch().variables[index]?.isDisabled
 
   const pattern = /^[^\s]+$/
 
@@ -48,6 +49,7 @@ export function VariableRow(props: VariableRowProps) {
               error={error?.message}
               label="Variable"
               errorMessagePosition="left"
+              disabled={watchDisabled}
             />
           )}
         />
