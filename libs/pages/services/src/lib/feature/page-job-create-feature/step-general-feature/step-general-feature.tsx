@@ -1,4 +1,3 @@
-import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -14,25 +13,13 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { parseCmd } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
-import { findTemplateData, useJobContainerCreateContext } from '../page-job-create-feature'
-
-function getLifycleType(option?: string): JobLifecycleTypeEnum {
-  if (option?.includes('terraform')) {
-    return 'TERRAFORM'
-  }
-
-  if (option?.includes('cloudformation')) {
-    return 'CLOUDFORMATION'
-  }
-
-  return 'GENERIC'
-}
+import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Job')
   const { setGeneralData, generalData, dockerfileForm, setCurrentStep, jobURL, jobType } =
     useJobContainerCreateContext()
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
   const { data: organization } = useOrganization({ organizationId })
@@ -41,14 +28,9 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const templateData = findTemplateData(slug, option)
-
   const methods = useForm<JobGeneralData>({
     defaultValues: {
-      name: templateData ? templateData.slug : '',
-      serviceType: templateData?.slug === 'container' ? 'CONTAINER' : 'APPLICATION',
       auto_deploy: true,
-      template_type: getLifycleType(option),
       ...generalData,
     },
     mode: 'onChange',

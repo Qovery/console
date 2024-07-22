@@ -24,8 +24,10 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
+import { type ServiceTemplateOptionType } from '../page-new-feature/service-templates'
 import { serviceTemplates } from '../page-new-feature/service-templates'
 import { getLocalStorageStepIntroduction } from './step-introduction-feature/util-localstorage-step'
+import { TemplateFormContextSync } from './template-form-context-sync'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
@@ -83,6 +85,7 @@ export const findTemplateData = (slug?: string, option?: string) => {
 export function PageJobCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const location = useLocation()
+  const templateData = findTemplateData(slug, option)
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -129,6 +132,40 @@ export function PageJobCreateFeature() {
 
   const displayIntroductionView = jobType === ServiceTypeEnum.LIFECYCLE_JOB && !getLocalStorageStepIntroduction()
 
+  const funnel = (
+    <FunnelFlow
+      onExit={() => {
+        if (window.confirm('Do you really want to leave?')) {
+          const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
+            flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
+          }`
+          navigate(link)
+        }
+      }}
+      totalSteps={5}
+      currentStep={currentStep}
+      currentTitle={steps[currentStep - 1].title}
+    >
+      <Routes>
+        {ROUTER_SERVICE_JOB_CREATION.map((route) => (
+          <Route key={route.path} path={route.path} element={route.component} />
+        ))}
+        {jobURL && (
+          <Route
+            path="*"
+            element={
+              <Navigate
+                replace
+                to={`${pathCreate}${displayIntroductionView ? SERVICES_JOB_CREATION_INTRODUCTION_URL : SERVICES_JOB_CREATION_GENERAL_URL}`}
+              />
+            }
+          />
+        )}
+      </Routes>
+      <AssistantTrigger defaultOpen />
+    </FunnelFlow>
+  )
+
   return (
     <JobContainerCreateContext.Provider
       value={{
@@ -147,37 +184,16 @@ export function PageJobCreateFeature() {
         dockerfileForm,
       }}
     >
-      <FunnelFlow
-        onExit={() => {
-          if (window.confirm('Do you really want to leave?')) {
-            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-              flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-            }`
-            navigate(link)
-          }
-        }}
-        totalSteps={5}
-        currentStep={currentStep}
-        currentTitle={steps[currentStep - 1].title}
-      >
-        <Routes>
-          {ROUTER_SERVICE_JOB_CREATION.map((route) => (
-            <Route key={route.path} path={route.path} element={route.component} />
-          ))}
-          {jobURL && (
-            <Route
-              path="*"
-              element={
-                <Navigate
-                  replace
-                  to={`${pathCreate}${displayIntroductionView ? SERVICES_JOB_CREATION_INTRODUCTION_URL : SERVICES_JOB_CREATION_GENERAL_URL}`}
-                />
-              }
-            />
-          )}
-        </Routes>
-        <AssistantTrigger defaultOpen />
-      </FunnelFlow>
+      {templateData && 'template_id' in templateData && templateData.template_id ? (
+        <TemplateFormContextSync
+          environmentId={environmentId}
+          templateData={templateData as ServiceTemplateOptionType & { template_id: string }}
+        >
+          {funnel}
+        </TemplateFormContextSync>
+      ) : (
+        funnel
+      )}
     </JobContainerCreateContext.Provider>
   )
 }
