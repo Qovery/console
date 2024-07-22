@@ -1,5 +1,5 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
@@ -31,18 +31,18 @@ export interface JobContainerCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalData: JobGeneralData | undefined
-  setGeneralData: (data: JobGeneralData) => void
+  setGeneralData: Dispatch<SetStateAction<JobGeneralData | undefined>>
 
   dockerfileForm: UseFormReturn<DockerfileSettingsData>
 
   configureData: JobConfigureData | undefined
-  setConfigureData: (data: JobConfigureData) => void
+  setConfigureData: Dispatch<SetStateAction<JobConfigureData | undefined>>
 
   resourcesData: JobResourcesData | undefined
-  setResourcesData: (data: JobResourcesData) => void
+  setResourcesData: Dispatch<SetStateAction<JobResourcesData | undefined>>
 
   variableData: FlowVariableData | undefined
-  setVariableData: (data: FlowVariableData) => void
+  setVariableData: Dispatch<SetStateAction<FlowVariableData | undefined>>
 
   jobType: JobType
   jobURL: string | undefined
