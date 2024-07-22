@@ -12,7 +12,7 @@ export interface PageGeneralProps {
 export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob }: PageGeneralProps) {
   return (
     <div className="flex grow flex-row">
-      <div className="flex min-h-0 grow flex-col gap-6 overflow-y-auto px-10 py-7">
+      <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
         <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
         <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
           {isCronJob && (
@@ -33,7 +33,11 @@ export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJo
         </PodsMetrics>
         {isLifecycleJob && <OutputVariables serviceId={serviceId} />}
       </div>
-      <ServiceDetails className="w-[360px] border-l" environmentId={environmentId} serviceId={serviceId} />
+      <ServiceDetails
+        className="w-1/4 max-w-[360px] flex-1 border-l"
+        environmentId={environmentId}
+        serviceId={serviceId}
+      />
     </div>
   )
 }

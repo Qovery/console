@@ -99,7 +99,13 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
           </Tooltip>
         ) : (
           <CopyToClipboard text={podName}>
-            <Button size="xs" variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
+            <Button
+              className="truncate"
+              size="xs"
+              variant="surface"
+              color="neutral"
+              onClick={(e) => e.stopPropagation()}
+            >
               {podName}
             </Button>
           </CopyToClipboard>
@@ -293,8 +299,8 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
 
   return (
     <>
-      <div className="overflow-hidden rounded border">
-        <Table.Root className="w-full min-w-[800px] text-xs">
+      <div className="overflow-x-scroll rounded border xl:overflow-hidden">
+        <Table.Root className="w-full overflow-y-scroll text-xs xl:overflow-auto">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id}>
