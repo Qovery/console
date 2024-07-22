@@ -79,15 +79,12 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
   const connectPortForward = match(service)
     .with(
       { serviceType: 'DATABASE' },
-      (s) => `qovery port-forward -p ${s.port} https://console.qovery.com/organization/
-  ${organizationId}/project/${projectId}/environment/
-  ${service.environment.id}/database/${service.id}`
+      (s) =>
+        `qovery port-forward -p ${s.port} https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${service.environment.id}/database/${service.id}`
     )
     .otherwise(
-      () => `qovery port-forward https://console.qovery.com/organization/
-    ${organizationId}/project/${projectId}/environment/
-    ${service.environment.id}/application/${service.id} -p
-    [local-port]:[target-port]`
+      () =>
+        `qovery port-forward https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${service.environment.id}/application/${service.id} -p [local-port]:[target-port]`
     )
 
   return (
