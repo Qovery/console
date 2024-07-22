@@ -7,6 +7,7 @@ const chance = new Chance('123')
 export const containerFactoryMock = (howMany: number): Container[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: index.toString(),
+    icon_uri: 'app://qovery-console/container',
     name: chance.name(),
     description: chance.word({ length: 10 }),
     serviceType: 'CONTAINER' as const,
