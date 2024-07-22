@@ -214,7 +214,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   if (organizations?.length === 0) return <div />
 
   return (
-    <div className="flex w-full items-center justify-between">
+    <div className="flex items-center justify-between">
       <div className="flex h-full items-center">
         {organizationId && (projectId || clusterId || matchAuditLogs || matchClusters || matchSettings) && (
           <Tooltip content={currentOrganization?.name || ''}>
