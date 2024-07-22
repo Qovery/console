@@ -3,6 +3,11 @@ import { type ComponentPropsWithoutRef, type ElementRef, forwardRef, useState } 
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 
+/*
+  Radix doesn't provide a TreeView component, so we have to build it we accordion component
+  https://github.com/radix-ui/primitives/issues/1456
+*/
+
 interface TreeViewItemProps extends ComponentPropsWithoutRef<typeof TreeViewPrimitive.Item> {}
 
 const TreeViewItem = forwardRef<ElementRef<typeof TreeViewPrimitive.Item>, TreeViewItemProps>(
