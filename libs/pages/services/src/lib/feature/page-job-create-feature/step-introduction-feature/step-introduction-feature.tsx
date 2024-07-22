@@ -76,18 +76,7 @@ export function StepIntroductionFeature() {
             <Card
               title="Build"
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_100ms] motion-safe:opacity-0"
-              content={
-                <ul className="list-disc pl-3">
-                  <li>Your manifest and inputs are packaged as a containerised application via a Dockerfile.</li>
-                  <li>
-                    The Dockerfile defines the execution environment: Terraform CLI version, commands to run during the
-                    job execution (e.g: command “start” corresponds to “cloudformation deploy..”).
-                  </li>
-                  <li>
-                    Qovery provides you with a pre-configured Dockerfile that you can customize to match your needs.
-                  </li>
-                </ul>
-              }
+              content="When a deployment on your environment is triggered, an image is built from your code source (deploying from a container registry is supported as well)."
             >
               <img src={imageBuild} alt="Build - Lifecycle job" className="pointer-events-none w-full select-none" />
             </Card>
@@ -97,7 +86,7 @@ export function StepIntroductionFeature() {
             />
             <Card
               title="Deploy"
-              content="Depending on the action triggered on your environment (start/stop/delete), a dedicated command defined within your Dockerfile will be executed to create/destroy the resource. Example: on “environment start” execute “start”"
+              content="You can decide on which “environment event” (start/stop/delete) the job needs to be deployed and the command to execute. Example: on “environment start” run “/bin/sh start.sh”, on “environment delete” run “/bin/sh destroy.sh”."
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_150ms] motion-safe:opacity-0"
             >
               <img src={imageDeploy} alt="Deploy - Lifecycle job" className="pointer-events-none w-full select-none" />
@@ -108,7 +97,7 @@ export function StepIntroductionFeature() {
             />
             <Card
               title="Run"
-              content="The container is executed as a Kubernetes Job on your cluster and it runs the command chosen from the previous step. At this step it will create/destroy the resource (DB, queues ..)."
+              content="Your code is executed as a Kubernetes Job on your cluster and it runs the command chosen from the previous step. At this step it can create external resources (DB, queues ..) or interact with some existing system (seed db..)."
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_250ms] motion-safe:opacity-0"
             >
               <img src={imageRun} alt="Run - Lifecycle job" className="pointer-events-none w-full select-none" />
@@ -119,7 +108,7 @@ export function StepIntroductionFeature() {
             />
             <Card
               title="Output"
-              content="If a resource is created, the job can write the references of the external resouces within an “output file” (format and path to be respected). Qovery automatically  injects its content as environment variable on any application within the same environment, allowing them to access the resource."
+              content="(Optional) The job can generate an “output file”, containing the references of the external resources created during its execution (format and path to be respected). Qovery automatically  injects its content as environment variable on any application within the same environment, allowing them to access the resource."
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_350ms] motion-safe:opacity-0"
             >
               <img src={imageOutput} alt="Output - Lifecycle job" className="pointer-events-none w-full select-none" />
