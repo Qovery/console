@@ -82,13 +82,12 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
             control={control}
             rules={{
               required: 'Please enter service name.',
-              ...namePatternRules,
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 name={field.name}
                 onChange={(e: FormEvent<HTMLInputElement>) => {
-                  const name = `${e.currentTarget.value}-p${watchInternalPort}`
+                  const name = `p${watchInternalPort}-${e.currentTarget.value}`
                   if (name.length < namePatternRules.maxLength.value) {
                     setValue('name', name)
                   }
@@ -130,7 +129,7 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
                 type="number"
                 name={field.name}
                 onChange={(e: FormEvent<HTMLInputElement>) => {
-                  const name = `${watchServiceName}-p${e.currentTarget.value}`
+                  const name = `p${e.currentTarget.value}-${watchServiceName}`
                   if (name.length < namePatternRules.maxLength.value) {
                     setValue('name', name)
                   }
@@ -173,7 +172,7 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
           <div>
             <Controller
               name="name"
-              defaultValue={watchInternalPort ? `p${watchInternalPort}` : ''}
+              defaultValue={watchInternalPort ? `p${watchInternalPort}-${watchServiceName}` : ''}
               control={control}
               rules={{
                 required: 'Please enter a port name.',
@@ -191,7 +190,7 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
               )}
             />
             <p className="mb-5 ml-4 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application
-port from the internet. Default value is <service_name>-p<port_number>`}</p>
+port from the internet. Default value is p<port_number>-<service_name>`}</p>
           </div>
         </div>
       </ModalCrud>
