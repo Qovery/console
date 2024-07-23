@@ -182,7 +182,7 @@ export function PageGeneral({
         </div>
       </Table>
       <Pagination
-        className="pb-7 pt-4"
+        className="pb-20 pt-4"
         onPrevious={onPrevious}
         onNext={onNext}
         nextDisabled={nextDisabled}
