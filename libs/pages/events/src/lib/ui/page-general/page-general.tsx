@@ -5,7 +5,6 @@ import {
   OrganizationEventType,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
-import { useIntercom } from 'react-use-intercom'
 import {
   Icon,
   Pagination,
@@ -32,6 +31,7 @@ export interface PageGeneralProps {
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
   organization?: Organization
+  showIntercom?: () => void
 }
 
 const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
@@ -98,9 +98,8 @@ export function PageGeneral({
   filter,
   handleClearFilter,
   organization,
+  showIntercom,
 }: PageGeneralProps) {
-  const { show: showIntercom } = useIntercom()
-
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
   const currentDate = new Date().getTime()
   const retentionLimitDate = currentDate - auditLogsRetentionInDays * 24 * 60 * 60 * 1000
@@ -154,7 +153,7 @@ export function PageGeneral({
                   {/* TODO: add a real button */}
                   <span
                     className="cursor-pointer font-medium text-sky-500 transition-colors hover:text-sky-600"
-                    onClick={showIntercom}
+                    onClick={() => showIntercom()}
                   >
                     Upgrade your plan to see more
                   </span>
