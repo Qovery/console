@@ -4,7 +4,7 @@ import { useLifecycleTemplate } from '@qovery/domains/environments/feature'
 import { type ServiceTemplateOptionType } from '../page-new-feature/service-templates'
 import { useJobContainerCreateContext } from './page-job-create-feature'
 
-function getLifycleType(option?: string): JobLifecycleTypeEnum {
+function getLifecycleType(option?: string): JobLifecycleTypeEnum {
   if (option?.includes('terraform')) {
     return 'TERRAFORM'
   }
@@ -34,7 +34,7 @@ export function TemplateFormContextSync({
 
   useEffect(() => {
     if (template) {
-      setTemplateType(getLifycleType(slug))
+      setTemplateType(getLifecycleType(slug))
 
       // General
       setGeneralData((generalData) => ({
