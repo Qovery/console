@@ -19,6 +19,7 @@ import RowEventFeature from '../../feature/row-event-feature/row-event-feature'
 
 export interface PageGeneralProps {
   isLoading: boolean
+  showIntercom: () => void
   handleClearFilter: () => void
   events?: OrganizationEventResponse[]
   placeholderEvents?: OrganizationEventResponse[]
@@ -31,7 +32,6 @@ export interface PageGeneralProps {
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
   organization?: Organization
-  showIntercom?: () => void
 }
 
 const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
