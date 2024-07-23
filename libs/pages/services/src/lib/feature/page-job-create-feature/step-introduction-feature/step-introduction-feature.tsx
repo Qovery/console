@@ -45,7 +45,7 @@ function Card({ title, content, className, children }: CardProps) {
 export function StepIntroductionFeature() {
   useDocumentTitle('Introduction - Create Job')
 
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { setCurrentStep, jobURL } = useJobContainerCreateContext()
   const navigate = useNavigate()
 
