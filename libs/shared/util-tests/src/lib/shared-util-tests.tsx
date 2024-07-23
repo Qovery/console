@@ -40,7 +40,6 @@ function renderWithProviders(
   function Wrapper({ children }: PropsWithChildren) {
     const queryClient = new QueryClient()
     const FlatChainedProviders = useChainProviders()
-      .add(IntercomProvider, { appId: '__test__app__id__' })
       .add(Auth0Provider, { clientId: '__test_client_id__', domain: '__test_domain__' })
       .add(QueryClientProvider, { client: queryClient })
       .add(TooltipProvider)

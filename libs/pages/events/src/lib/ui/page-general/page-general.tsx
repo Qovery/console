@@ -32,6 +32,7 @@ export interface PageGeneralProps {
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
   organization?: Organization
+  showIntercom?: () => void
 }
 
 const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
@@ -153,7 +154,7 @@ export function PageGeneral({
                   {/* TODO: add a real button */}
                   <span
                     className="cursor-pointer font-medium text-sky-500 transition-colors hover:text-sky-600"
-                    onClick={showIntercom}
+                    onClick={() => showIntercom()}
                   >
                     Upgrade your plan to see more
                   </span>
