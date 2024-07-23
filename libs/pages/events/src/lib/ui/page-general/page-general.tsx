@@ -167,7 +167,7 @@ export function PageGeneral({
                   {[...Array(6)].map((_, index) => (
                     <div className="flex items-center gap-4">
                       {index === 0 ? <Icon iconName="lock-keyhole" className="text-sm text-neutral-350" /> : null}
-                      <Skeleton key={index} height={16} width={116} />
+                      <Skeleton key={index} height={10} width={116} />
                     </div>
                   ))}
                 </div>
