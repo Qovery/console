@@ -6,6 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useIntercom } from 'react-use-intercom'
 import { createEnumParam } from 'serialize-query-params'
 import { NumberParam, StringParam, useQueryParams, withDefault } from 'use-query-params'
 import { type EventQueryParams, useFetchEvents } from '@qovery/domains/event'
@@ -48,6 +49,7 @@ export function PageGeneralFeature() {
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
+  const { show: showIntercom } = useIntercom()
 
   // Sync queryParams -> table filters
   useEffect(() => {
@@ -136,6 +138,7 @@ export function PageGeneralFeature() {
       filter={filter}
       setFilter={setFilter}
       organization={organization}
+      showIntercom={showIntercom}
     />
   )
 }
