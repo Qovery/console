@@ -15,6 +15,7 @@ import { type PropsWithChildren, type ReactElement } from 'react'
 import { useChainProviders } from 'react-flat-providers'
 import { InstantSearch } from 'react-instantsearch'
 import { MemoryRouter } from 'react-router-dom'
+import { IntercomProvider } from 'react-use-intercom'
 import { QueryParamProvider } from 'use-query-params'
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -39,6 +40,7 @@ function renderWithProviders(
   function Wrapper({ children }: PropsWithChildren) {
     const queryClient = new QueryClient()
     const FlatChainedProviders = useChainProviders()
+      .add(IntercomProvider, { appId: '__test__app__id__' })
       .add(Auth0Provider, { clientId: '__test_client_id__', domain: '__test_domain__' })
       .add(QueryClientProvider, { client: queryClient })
       .add(TooltipProvider)

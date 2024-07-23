@@ -53,7 +53,10 @@ describe('PageGeneral', () => {
   })
 
   it('should call onPageSizeChange when changing page size', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneral {...props} />)
+    const { userEvent, baseElement, debug } = renderWithProviders(<PageGeneral {...props} />)
+
+    debug(baseElement, 100000)
+
     await userEvent.selectOptions(screen.getByTestId('select-page-size'), '100')
     expect(props.onPageSizeChange).toHaveBeenCalledWith('100')
   })
