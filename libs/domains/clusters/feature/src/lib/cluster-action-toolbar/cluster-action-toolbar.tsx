@@ -216,9 +216,8 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
       },
       content: (
         <ClusterInstallationGuideModal
+          cluster={cluster}
           type={type}
-          organizationId={cluster.organization.id}
-          clusterId={cluster.id}
           onClose={() => {
             searchParams.delete(showSelfManagedGuideKey)
             setSearchParams(searchParams)
