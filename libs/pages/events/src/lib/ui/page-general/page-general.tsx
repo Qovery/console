@@ -153,7 +153,7 @@ export function PageGeneral({
                   {/* TODO: add a real button */}
                   <span
                     className="cursor-pointer font-medium text-sky-500 transition-colors hover:text-sky-600"
-                    onClick={() => showIntercom()}
+                    onClick={showIntercom}
                   >
                     Upgrade your plan to see more
                   </span>
