@@ -63,6 +63,7 @@ export type ServiceTemplateType = {
   type?: keyof typeof ServiceTypeEnum
   options?: ServiceTemplateOptionType[]
   cloud_provider?: keyof typeof CloudProviderEnum
+  template_id?: (typeof TemplateIds)[keyof typeof TemplateIds]
 }
 
 export type ServiceTemplateOptionType = {
@@ -216,6 +217,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     tag: 'OTHER',
     slug: 'terraform',
     title: 'Terraform',
+    template_id: TemplateIds.TERRAFORM,
     description: 'Terraform is an open-source infrastructure as code software tool.',
     icon: Terraform,
     type: 'LIFECYCLE_JOB',
@@ -226,6 +228,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     tag: 'OTHER',
     slug: 'cloudformation',
     title: 'CloudFormation',
+    template_id: TemplateIds.CLOUDFORMATION,
     description:
       'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
     icon: CloudFormation,
