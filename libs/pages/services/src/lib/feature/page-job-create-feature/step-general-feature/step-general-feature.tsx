@@ -17,7 +17,7 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Job')
-  const { setGeneralData, generalData, dockerfileForm, setCurrentStep, jobURL, jobType } =
+  const { setGeneralData, generalData, dockerfileForm, setCurrentStep, jobURL, jobType, templateType } =
     useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
@@ -31,6 +31,7 @@ export function StepGeneralFeature() {
   const methods = useForm<JobGeneralData>({
     defaultValues: {
       auto_deploy: true,
+      template_type: templateType,
       ...generalData,
     },
     mode: 'onChange',
@@ -61,7 +62,7 @@ export function StepGeneralFeature() {
   return (
     <FunnelFlowBody>
       <FormProvider {...methods}>
-        <StepGeneral organization={organization} onSubmit={onSubmit} jobType={jobType} />
+        <StepGeneral organization={organization} onSubmit={onSubmit} jobType={jobType} templateType={templateType} />
       </FormProvider>
     </FunnelFlowBody>
   )

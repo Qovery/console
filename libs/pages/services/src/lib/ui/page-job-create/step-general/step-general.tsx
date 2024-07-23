@@ -1,4 +1,4 @@
-import { type Organization } from 'qovery-typescript-axios'
+import { type JobLifecycleTypeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -14,6 +14,7 @@ import { serviceTemplates } from '../../../feature/page-new-feature/service-temp
 
 export interface StepGeneralProps {
   jobType: JobType
+  templateType: JobLifecycleTypeEnum | undefined
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization
 }
@@ -65,7 +66,12 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <Section className="gap-4">
           <Heading>Source</Heading>
-          <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
+          <JobGeneralSettings
+            jobType={props.jobType}
+            organization={props.organization}
+            isEdition={false}
+            rootPathLabel={props.templateType === 'CLOUDFORMATION' ? 'Template folder path' : undefined}
+          />
         </Section>
 
         {watchServiceType && (

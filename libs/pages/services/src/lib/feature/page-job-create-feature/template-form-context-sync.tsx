@@ -28,12 +28,14 @@ export function TemplateFormContextSync({
   children,
 }: TemplateFormContextSyncProps) {
   const { data: template } = useLifecycleTemplate({ environmentId, templateId })
-  const { setGeneralData, setConfigureData, setVariableData, setResourcesData, dockerfileForm } =
+  const { setGeneralData, setConfigureData, setVariableData, setResourcesData, dockerfileForm, setTemplateType } =
     useJobContainerCreateContext()
   const [shouldRender, setShouldRender] = useState(false)
 
   useEffect(() => {
     if (template) {
+      setTemplateType(getLifycleType(slug))
+
       // General
       setGeneralData((generalData) => ({
         ...(generalData ?? {}),
@@ -41,7 +43,6 @@ export function TemplateFormContextSync({
         description: '',
         name: slug,
         serviceType: slug === 'container' ? 'CONTAINER' : 'APPLICATION',
-        template_type: getLifycleType(slug),
       }))
 
       // Configure / Dockerfile

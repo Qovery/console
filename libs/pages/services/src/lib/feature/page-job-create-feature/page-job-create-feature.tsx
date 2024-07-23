@@ -1,4 +1,5 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -48,6 +49,9 @@ export interface JobContainerCreateContextInterface {
 
   jobType: JobType
   jobURL: string | undefined
+
+  templateType: keyof typeof JobLifecycleTypeEnum | undefined
+  setTemplateType: Dispatch<SetStateAction<JobLifecycleTypeEnum | undefined>>
 }
 
 export const JobContainerCreateContext = createContext<JobContainerCreateContextInterface | undefined>(undefined)
@@ -92,6 +96,7 @@ export function PageJobCreateFeature() {
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
   const [jobType, setJobType] = useState<JobType>(ServiceTypeEnum.CRON_JOB)
   const [jobURL, setJobURL] = useState<string | undefined>()
+  const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>()
 
   const dockerfileForm = useForm<DockerfileSettingsData>({
     mode: 'onChange',
@@ -182,6 +187,8 @@ export function PageJobCreateFeature() {
         configureData,
         setConfigureData,
         dockerfileForm,
+        templateType,
+        setTemplateType,
       }}
     >
       {templateData && 'template_id' in templateData && templateData.template_id ? (

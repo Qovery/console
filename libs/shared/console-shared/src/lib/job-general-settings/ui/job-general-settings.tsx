@@ -11,6 +11,7 @@ export interface JobGeneralSettingProps {
   organization?: Organization
   jobType: JobType
   isEdition?: boolean
+  rootPathLabel?: string
 }
 
 export function JobGeneralSettings(props: JobGeneralSettingProps) {
@@ -67,7 +68,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 </BlockContent>
               </div>
             ) : (
-              <GitRepositorySettings gitDisabled={false} />
+              <GitRepositorySettings gitDisabled={false} rootPathLabel={props.rootPathLabel} />
             ))}
 
           {watchServiceType === 'CONTAINER' &&

@@ -14,6 +14,7 @@ export interface GitRepositorySettingsProps {
   currentProvider?: string
   currentRepository?: string
   editGitSettings?: () => void
+  rootPathLabel?: string
 }
 
 export function GitRepositorySettings({
@@ -21,6 +22,7 @@ export function GitRepositorySettings({
   editGitSettings,
   currentRepository,
   currentProvider,
+  rootPathLabel,
 }: GitRepositorySettingsProps) {
   const { watch } = useFormContext<{
     provider: keyof typeof GitProviderEnum
@@ -57,6 +59,7 @@ export function GitRepositorySettings({
               disabled={gitDisabled}
               gitProvider={watchFieldProvider}
               gitTokenId={watchFieldGitTokenId}
+              rootPathLabel={rootPathLabel}
             />
           )}
         </>

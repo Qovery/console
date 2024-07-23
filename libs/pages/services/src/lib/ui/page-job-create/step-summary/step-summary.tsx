@@ -1,4 +1,5 @@
 import {
+  JobLifecycleTypeEnum,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
@@ -30,6 +31,7 @@ export interface StepSummaryProps {
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
   jobType: JobType
+  templateType?: keyof typeof JobLifecycleTypeEnum
   labelsGroup: OrganizationLabelsGroupEnrichedResponse[]
   annotationsGroup: OrganizationAnnotationsGroupResponse[]
 }
@@ -63,9 +65,9 @@ export function StepSummary(props: StepSummaryProps) {
                   {props.generalData.description}
                 </li>
               )}
-              {props.generalData.template_type && props.jobType === 'LIFECYCLE_JOB' && (
+              {props.templateType && props.templateType !== 'GENERIC' && props.jobType === 'LIFECYCLE_JOB' && (
                 <li>
-                  <strong className="font-medium">Type:</strong> {upperCaseFirstLetter(props.generalData.template_type)}
+                  <strong className="font-medium">Type:</strong> {upperCaseFirstLetter(props.templateType)}
                 </li>
               )}
               <div className="py-2">

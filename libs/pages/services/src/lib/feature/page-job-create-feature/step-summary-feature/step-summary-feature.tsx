@@ -1,6 +1,7 @@
 import posthog from 'posthog-js'
 import {
   APIVariableScopeEnum,
+  type JobLifecycleTypeEnum,
   type JobRequest,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
@@ -32,15 +33,25 @@ import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
-function prepareJobRequest(
-  generalData: JobGeneralData,
-  configureData: JobConfigureData,
-  resourcesData: JobResourcesData,
-  jobType: JobType,
-  labelsGroup: OrganizationLabelsGroupEnrichedResponse[],
-  annotationsGroup: OrganizationAnnotationsGroupResponse[],
+function prepareJobRequest({
+  generalData,
+  configureData,
+  resourcesData,
+  jobType,
+  templateType,
+  labelsGroup,
+  annotationsGroup,
+  dockerfileData,
+}: {
+  generalData: JobGeneralData
+  configureData: JobConfigureData
+  resourcesData: JobResourcesData
+  jobType: JobType
+  templateType?: keyof typeof JobLifecycleTypeEnum
+  labelsGroup: OrganizationLabelsGroupEnrichedResponse[]
+  annotationsGroup: OrganizationAnnotationsGroupResponse[]
   dockerfileData?: DockerfileSettingsData
-): JobRequest {
+}): JobRequest {
   const memory = Number(resourcesData['memory'])
   const cpu = resourcesData['cpu']
 
@@ -82,7 +93,7 @@ function prepareJobRequest(
         entrypoint: configureData.on_delete?.entrypoint,
         arguments: configureData.on_delete?.arguments,
       },
-      lifecycle_type: generalData.template_type,
+      lifecycle_type: templateType,
     }
 
     if (!configureData.on_start?.enabled) {
@@ -142,8 +153,17 @@ function prepareVariableRequest(variablesData: FlowVariableData): VariableImport
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Application')
-  const { generalData, dockerfileForm, resourcesData, configureData, setCurrentStep, jobURL, variableData, jobType } =
-    useJobContainerCreateContext()
+  const {
+    generalData,
+    dockerfileForm,
+    resourcesData,
+    configureData,
+    setCurrentStep,
+    jobURL,
+    variableData,
+    jobType,
+    templateType,
+  } = useJobContainerCreateContext()
 
   const dockerfileData = dockerfileForm.getValues()
 
@@ -194,15 +214,16 @@ export function StepSummaryFeature() {
     if (generalData && resourcesData && variableData && configureData) {
       toggleLoading(true, withDeploy)
 
-      const jobRequest: JobRequest = prepareJobRequest(
+      const jobRequest: JobRequest = prepareJobRequest({
         generalData,
         configureData,
         resourcesData,
         jobType,
+        templateType,
         labelsGroup,
         annotationsGroup,
-        dockerfileData
-      )
+        dockerfileData,
+      })
       const variableImportRequest = prepareVariableRequest(variableData)
 
       try {
@@ -274,6 +295,7 @@ export function StepSummaryFeature() {
           variableData={variableData}
           selectedRegistryName={containerRegistry?.name}
           jobType={jobType}
+          templateType={templateType}
           gotoConfigureJob={gotoConfigureJob}
           gotoDockerfileJob={gotoDockerfileJob}
           labelsGroup={labelsGroup}
