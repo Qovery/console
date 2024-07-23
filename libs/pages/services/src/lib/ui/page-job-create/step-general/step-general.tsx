@@ -2,6 +2,7 @@ import { type JobLifecycleTypeEnum, type Organization } from 'qovery-typescript-
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
@@ -43,7 +44,19 @@ export function StepGeneral(props: StepGeneralProps) {
               {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
             </Heading>
             <p className="text-sm text-neutral-350">
-              General settings allow you to set up your lifecycle name with our git repository settings.
+              {match(props.templateType)
+                .with(
+                  'TERRAFORM',
+                  'CLOUDFORMATION',
+                  () =>
+                    'These general settings allow you to set up the service name, its source and deployment parameters.'
+                )
+                .with(
+                  'GENERIC',
+                  undefined,
+                  () => 'General settings allow you to set up your lifecycle name with our git repository settings.'
+                )
+                .exhaustive()}
             </p>
           </div>
         </div>

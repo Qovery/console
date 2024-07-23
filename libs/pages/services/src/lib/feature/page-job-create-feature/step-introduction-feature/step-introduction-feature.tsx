@@ -1,9 +1,10 @@
 import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { SERVICES_JOB_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Checkbox, ExternalLink, FunnelFlowBody, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 import imageBuild from './images/build.svg'
 import imageOutput from './images/output.svg'
@@ -46,7 +47,7 @@ export function StepIntroductionFeature() {
   useDocumentTitle('Introduction - Create Job')
 
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { setCurrentStep, jobURL } = useJobContainerCreateContext()
+  const { setCurrentStep, jobURL, templateType } = useJobContainerCreateContext()
   const navigate = useNavigate()
 
   const [dontShowAgain, setDontShowAgain] = useState(false)
@@ -65,18 +66,70 @@ export function StepIntroductionFeature() {
       <div className="mx-auto flex flex-col items-center justify-center gap-16">
         <Section className="flex flex-col gap-10">
           <div className="motion-safe:animate-[fadein_0.3s_ease-in-out]">
-            <Heading className="mb-4 text-[32px]">Lifecycle Jobs</Heading>
+            <Heading className="mb-4 text-[32px]">
+              {match(templateType)
+                .with(
+                  'CLOUDFORMATION',
+                  'TERRAFORM',
+                  (templateType) => `Deploying ${upperCaseFirstLetter(templateType)} manifest`
+                )
+                .with('GENERIC', undefined, () => 'Lifecycle Jobs')
+                .exhaustive()}
+            </Heading>
             <p className="text-neutral-350">
-              A Lifecycle job allows to execute custom code based on the event triggered on the environment
-              (start/stop/delete). This can be useful to manage the lifecycle of an external resource (create/destroy)
-              or execute a script based on a specific event.{' '}
+              {match(templateType)
+                .with(
+                  'CLOUDFORMATION',
+                  'TERRAFORM',
+                  (templateType) =>
+                    `Qovery packages your ${upperCaseFirstLetter(templateType)} manifest, inputs and ${upperCaseFirstLetter(templateType)} CLI as a containerized application. It is then executed on your Kubernetes cluster as job (Qovery Lifecycle job), allowing you to create/update/destroy your resources based on the events on your environment (start/stop/delete).`
+                )
+                .with(
+                  'GENERIC',
+                  undefined,
+                  () =>
+                    'A Lifecycle job allows to execute custom code based on the event triggered on the environment (start/stop/delete). This can be useful to manage the lifecycle of an external resource (create/destroy) or execute a script based on a specific event.'
+                )
+                .exhaustive()}
             </p>
           </div>
           <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-1">
             <Card
               title="Build"
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_100ms] motion-safe:opacity-0"
-              content="When a deployment on your environment is triggered, an image is built from your code source (deploying from a container registry is supported as well)."
+              content={match(templateType)
+                .returnType<ReactNode>()
+                .with('CLOUDFORMATION', () => (
+                  <ul className="list-outside list-disc pl-2">
+                    <li>Your manifest and inputs are containerised via a Dockerfile.</li>
+                    <li>
+                      The Dockerfile defines the Cloudformation CLI version and commands to run during the job execution
+                      (e.g: command “start” corresponds to “cloudformation deploy..”).
+                    </li>
+                    <li>
+                      Qovery provides you with a pre-configured Dockerfile that you can customize to match your needs.`
+                    </li>
+                  </ul>
+                ))
+                .with('TERRAFORM', () => (
+                  <ul className="list-outside list-disc pl-2">
+                    <li>Your manifest and inputs are containerised via a Dockerfile.</li>
+                    <li>
+                      The Dockerfile defines the Terraform CLI version and commands to run during the job execution
+                      (e.g: command “start” corresponds to “terraform apply..”).
+                    </li>
+                    <li>
+                      Qovery provides you with a pre-configured Dockerfile that you can customize to match your needs.`
+                    </li>
+                  </ul>
+                ))
+                .with(
+                  'GENERIC',
+                  undefined,
+                  () =>
+                    'When a deployment on your environment is triggered, an image is built from your code source (deploying from a container registry is supported as well).'
+                )
+                .exhaustive()}
             >
               <img src={imageBuild} alt="Build - Lifecycle job" className="pointer-events-none w-full select-none" />
             </Card>

@@ -97,9 +97,11 @@ export function TemplateFormContextSync({
         variables: template.variables.map((v) => ({
           variable: v.name,
           isSecret: v.is_secret,
-          isDisabled: true,
+          isReadOnly: true,
+          file: v.file,
           scope: APIVariableScopeEnum.JOB,
-          value: '',
+          value: v.file ? v.default : '',
+          description: v.description,
         })),
       }))
 

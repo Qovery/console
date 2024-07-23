@@ -17,7 +17,8 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepVariableFeature() {
   useDocumentTitle('Environment Variable - Create Job')
-  const { setCurrentStep, generalData, setVariableData, variableData, jobURL, jobType } = useJobContainerCreateContext()
+  const { setCurrentStep, generalData, setVariableData, variableData, jobURL, jobType, templateType } =
+    useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
@@ -82,6 +83,7 @@ export function StepVariableFeature() {
           onAdd={onAddPort}
           onRemove={removePort}
           variables={variables}
+          templateType={templateType}
         />
       </FormProvider>
     </FunnelFlowBody>

@@ -1,5 +1,5 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { JobLifecycleTypeEnum } from 'qovery-typescript-axios'
+import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'

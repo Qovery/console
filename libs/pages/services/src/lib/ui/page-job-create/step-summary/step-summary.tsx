@@ -1,8 +1,9 @@
 import {
-  JobLifecycleTypeEnum,
+  type JobLifecycleTypeEnum,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -39,11 +40,35 @@ export interface StepSummaryProps {
 export function StepSummary(props: StepSummaryProps) {
   return (
     <Section>
-      <Heading className="mb-2">Ready to create your {props.jobType === 'CRON_JOB' ? 'Cron' : 'Lifecycle'} job</Heading>
+      <Heading className="mb-2">
+        {match(props.templateType)
+          .with(
+            'TERRAFORM',
+            'CLOUDFORMATION',
+            (templateType) => `Ready to create your ${upperCaseFirstLetter(templateType)} job`
+          )
+          .with(
+            'GENERIC',
+            undefined,
+            () => `Ready to create your ${props.jobType === 'CRON_JOB' ? 'Cron' : 'Lifecycle'} job`
+          )
+          .exhaustive()}
+      </Heading>
       <form className="space-y-10">
         <p className="text-sm text-neutral-350">
-          The basic application setup is done, you can now deploy your application or move forward with some advanced
-          setup.
+          {match(props.templateType)
+            .with(
+              'TERRAFORM',
+              'CLOUDFORMATION',
+              () => 'The setup is done, you can now deploy your job or move forward with some advanced setup.'
+            )
+            .with(
+              'GENERIC',
+              undefined,
+              () =>
+                'The basic application setup is done, you can now deploy your application or move forward with some advanced setup.'
+            )
+            .exhaustive()}
         </p>
 
         <div className="flex flex-col gap-6">
