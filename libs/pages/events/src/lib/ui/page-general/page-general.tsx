@@ -32,7 +32,6 @@ export interface PageGeneralProps {
   setFilter?: Dispatch<SetStateAction<TableFilterProps[]>>
   filter?: TableFilterProps[]
   organization?: Organization
-  showIntercom?: () => void
 }
 
 const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
