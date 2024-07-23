@@ -1,8 +1,9 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { type OrganizationEventResponseList } from 'qovery-typescript-axios'
+import { IntercomProvider } from 'react-use-intercom'
 import { type EventQueryParams } from '@qovery/domains/event'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import PageGeneralFeature from './page-general-feature'
 
 jest.mock('react-router-dom', () => ({
@@ -31,49 +32,76 @@ describe('PageGeneralFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<PageGeneralFeature />)
+    const { baseElement } = renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
     expect(baseElement).toBeTruthy()
   })
 
   it('should fetch the event with correct payload', () => {
-    renderWithProviders(<PageGeneralFeature />)
+    renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
     expect(mockUseFetchEvents).toHaveBeenCalledWith('0', { pageSize: 30 })
   })
 
   it('should change query params on click on next', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneralFeature />)
+    const { userEvent } = renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
 
-    const button = screen.getByTestId('button-next-page')
+    // `waitFor` is necessary because `IntercomProvider` provides somes rendering
+    waitFor(async () => {
+      const button = screen.getByTestId('button-next-page')
+      await userEvent.click(button)
 
-    await userEvent.click(button)
-
-    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
-      pageSize: 30,
-      continueToken: '1683211879216566000',
+      expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
+        pageSize: 30,
+        continueToken: '1683211879216566000',
+      })
     })
   })
 
   it('should change query params on click on previous', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneralFeature />)
-    const button = screen.getByTestId('button-previous-page')
+    const { userEvent } = renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
 
-    await userEvent.click(button)
+    // `waitFor` is necessary because `IntercomProvider` provides somes rendering
+    waitFor(async () => {
+      const button = screen.getByTestId('button-previous-page')
+      await userEvent.click(button)
 
-    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
-      pageSize: 30,
-      stepBackToken: '1683211879216566001',
+      expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
+        pageSize: 30,
+        stepBackToken: '1683211879216566001',
+      })
     })
   })
 
   it('should change query params on click on pageSize', async () => {
-    const { userEvent } = renderWithProviders(<PageGeneralFeature />)
+    const { userEvent } = renderWithProviders(
+      <IntercomProvider appId="__test__app__id__">
+        <PageGeneralFeature />
+      </IntercomProvider>
+    )
 
-    const select = screen.getByTestId('select-page-size')
+    // `waitFor` is necessary because `IntercomProvider` provides somes rendering
+    waitFor(async () => {
+      const select = screen.getByTestId('select-page-size')
+      await userEvent.selectOptions(select, '50')
 
-    await userEvent.selectOptions(select, '50')
-
-    expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
-      pageSize: 50,
+      expect(mockUseFetchEvents).toHaveBeenCalledWith('0', {
+        pageSize: 50,
+      })
     })
   })
 })
