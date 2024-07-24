@@ -105,6 +105,7 @@ function refactoApplication({ service: application, request = {} }: applicationP
 
   const applicationRequestPayload: ApplicationEditRequest = {
     name: application.name,
+    icon_uri: application.icon_uri,
     storage: application.storage,
     cpu: application.cpu,
     git_repository: application.git_repository as ApplicationGitRepositoryRequest,
@@ -129,6 +130,7 @@ function refactoApplication({ service: application, request = {} }: applicationP
 function refactoContainer({ service: container, request = {} }: containerProps): ContainerRequest {
   const containerRequestPayload = {
     name: container.name || '',
+    icon_uri: container.icon_uri,
     description: container.description || '',
     storage: container.storage,
     ports: container.ports,
@@ -152,6 +154,7 @@ function refactoContainer({ service: container, request = {} }: containerProps):
 function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
   const jobRequest = {
     name: job.name,
+    icon_uri: job.icon_uri,
     description: job.description,
     cpu: job.cpu,
     memory: job.memory,
@@ -197,6 +200,7 @@ function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
 function refactoDatabase({ service: database, request = {} }: databaseProps): DatabaseEditRequest {
   const databaseRequestPayload = {
     name: database.name,
+    icon_uri: database.icon_uri,
     description: database.description,
     version: database.version,
     accessibility: database.accessibility,
@@ -238,6 +242,7 @@ function refactoHelm({ service: helm, request = {} }: helmProps): HelmRequest {
 
   const helmRequestPayload: HelmRequest = {
     name: helm.name,
+    icon_uri: helm.icon_uri,
     description: helm.description,
     auto_preview: helm.auto_preview,
     auto_deploy: helm.auto_deploy,

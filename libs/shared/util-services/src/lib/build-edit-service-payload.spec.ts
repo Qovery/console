@@ -7,6 +7,7 @@ describe('testing payload refactoring', () => {
     const response: Application = {
       id: '1',
       serviceType: 'APPLICATION',
+      icon_uri: 'app://qovery-console/application',
       created_at: '',
       updated_at: '',
       storage: [
@@ -36,6 +37,7 @@ describe('testing payload refactoring', () => {
 
     expect(buildEditServicePayload({ service: response })).toEqual({
       serviceType: 'APPLICATION',
+      icon_uri: 'app://qovery-console/application',
       storage: [
         {
           id: '1',
@@ -61,6 +63,7 @@ describe('testing payload refactoring', () => {
     const response: Container = {
       id: '1',
       serviceType: 'CONTAINER',
+      icon_uri: 'app://qovery-console/container',
       created_at: '',
       updated_at: '',
       environment: {
@@ -101,6 +104,7 @@ describe('testing payload refactoring', () => {
 
     expect(buildEditServicePayload({ service: response })).toEqual({
       serviceType: 'CONTAINER',
+      icon_uri: 'app://qovery-console/container',
       name: 'hello-2',
       description: 'test',
       storage: [
@@ -133,6 +137,7 @@ describe('testing payload refactoring', () => {
       name: 'hello',
       description: 'test',
       serviceType: 'DATABASE',
+      icon_uri: 'app://qovery-console/database',
       type: DatabaseTypeEnum.POSTGRESQL,
       mode: DatabaseModeEnum.CONTAINER,
       created_at: '',
@@ -150,6 +155,7 @@ describe('testing payload refactoring', () => {
 
     expect(buildEditServicePayload({ service: response })).toEqual({
       serviceType: 'DATABASE',
+      icon_uri: 'app://qovery-console/database',
       name: 'hello',
       description: 'test',
       version: '12',
@@ -171,6 +177,7 @@ describe('testing payload refactoring', () => {
       name: 'my-job',
       job_type: 'CRON',
       serviceType: 'JOB',
+      icon_uri: 'app://qovery-console/cron-job',
       description: '',
       cpu: 500,
       memory: 512,
@@ -208,6 +215,7 @@ describe('testing payload refactoring', () => {
 
     expect(buildEditServicePayload({ service: job })).toEqual({
       serviceType: 'JOB',
+      icon_uri: 'app://qovery-console/cron-job',
       name: 'my-job',
       description: '',
       cpu: 500,
