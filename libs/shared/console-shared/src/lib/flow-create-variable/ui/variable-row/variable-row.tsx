@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 import {
+  BlockContent,
   Button,
   ButtonIcon,
   ButtonIconStyle,
@@ -153,22 +154,18 @@ export function VariableRow(props: VariableRowProps) {
         </div>
       </div>
       {watchFile && openEditor && (
-        <Controller
-          name={`variables.${index}.value`}
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field }) => (
-            <CodeEditor
-              language="json"
-              height="496px"
-              className="mt-3 overflow-hidden rounded border border-neutral-250"
-              value={field.value}
-              onChange={field.onChange}
-            />
-          )}
-        />
+        <BlockContent title={watchFile.path} className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
+          <Controller
+            name={`variables.${index}.value`}
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field }) => (
+              <CodeEditor language="json" height="496px" value={field.value} onChange={field.onChange} readOnly />
+            )}
+          />
+        </BlockContent>
       )}
     </div>
   )

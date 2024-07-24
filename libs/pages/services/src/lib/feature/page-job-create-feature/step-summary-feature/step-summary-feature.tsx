@@ -3,21 +3,23 @@ import {
   APIVariableScopeEnum,
   type JobLifecycleTypeEnum,
   type JobRequest,
+  type LifecycleTemplateResponseVariablesInnerFile,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
   type VariableImportRequest,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { type DockerfileSettingsData, useCreateService, useDeployService } from '@qovery/domains/services/feature'
-import { useImportVariables } from '@qovery/domains/variables/feature'
+import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
-  type FlowVariableData,
   type JobConfigureData,
   type JobGeneralData,
   type JobResourcesData,
+  type VariableData,
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
@@ -135,18 +137,18 @@ function prepareJobRequest({
   return jobRequest
 }
 
-function prepareVariableRequest(variablesData: FlowVariableData): VariableImportRequest | null {
-  if (variablesData.variables && variablesData.variables.length === 0) {
+function prepareVariableImportRequest(variables: VariableData[]): VariableImportRequest | null {
+  if (variables && variables.length === 0) {
     return null
   }
 
   return {
     overwrite: true,
-    vars: variablesData.variables.map((variable) => ({
-      name: variable.variable || '',
-      scope: variable.scope || APIVariableScopeEnum.PROJECT,
-      value: variable.value || '',
-      is_secret: variable.isSecret,
+    vars: variables.map(({ variable, scope, value, isSecret }) => ({
+      name: variable || '',
+      scope: scope || APIVariableScopeEnum.PROJECT,
+      value: value || '',
+      is_secret: isSecret,
     })),
   }
 }
@@ -203,6 +205,7 @@ export function StepSummaryFeature() {
   }
 
   const { mutateAsync: importVariables } = useImportVariables()
+  const { mutateAsync: createVariable } = useCreateVariable()
 
   useEffect(() => {
     !generalData?.name &&
@@ -224,7 +227,23 @@ export function StepSummaryFeature() {
         annotationsGroup,
         dockerfileData,
       })
-      const variableImportRequest = prepareVariableRequest(variableData)
+
+      const { variables, fileVariables } = variableData.variables.reduce<{
+        variables: VariableData[]
+        fileVariables: (VariableData & { file: LifecycleTemplateResponseVariablesInnerFile })[]
+      }>(
+        (acc, v) => {
+          if (v.file) {
+            acc.fileVariables.push(v as VariableData & { file: LifecycleTemplateResponseVariablesInnerFile })
+          } else {
+            acc.variables.push(v)
+          }
+          return acc
+        },
+        { variables: [], fileVariables: [] }
+      )
+
+      const variableImportRequest = prepareVariableImportRequest(variables)
 
       try {
         const service = await createService({
@@ -240,6 +259,26 @@ export function StepSummaryFeature() {
             serviceType: ServiceTypeEnum.JOB,
             serviceId: service.id,
             variableImportRequest,
+          })
+        }
+
+        for (const fileVariable of fileVariables) {
+          createVariable({
+            variableRequest: {
+              key: fileVariable.variable ?? '',
+              value: fileVariable.value ?? '',
+              variable_scope: fileVariable.scope ?? APIVariableScopeEnum.PROJECT,
+              variable_parent_id: match(fileVariable.scope)
+                .with('JOB', () => service.id)
+                .with('ENVIRONMENT', () => service.environment.id)
+                .with('PROJECT', () => projectId)
+                .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'HELM', undefined, () => {
+                  throw new Error('Should not be possible')
+                })
+                .exhaustive(),
+              is_secret: fileVariable.isSecret,
+              mount_path: fileVariable.file.path,
+            },
           })
         }
 

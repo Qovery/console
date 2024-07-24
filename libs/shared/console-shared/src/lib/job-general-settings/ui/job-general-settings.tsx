@@ -17,6 +17,7 @@ export interface JobGeneralSettingProps {
 export function JobGeneralSettings(props: JobGeneralSettingProps) {
   const { control, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
+  const watchTemplateType = watch('template_type')
 
   return (
     <>
@@ -46,6 +47,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
               ]}
               label="Application source"
               error={error?.message}
+              disabled={!!watchTemplateType}
             />
           )}
         />
