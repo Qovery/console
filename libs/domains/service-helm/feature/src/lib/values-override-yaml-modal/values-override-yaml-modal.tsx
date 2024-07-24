@@ -43,7 +43,13 @@ export function ValuesOverrideYamlModal({
 
   return (
     <FormProvider {...methods}>
-      <ModalCrud title="Raw YAML" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">
+      <ModalCrud
+        title="Raw YAML"
+        description="Define here the values override for your chart. You can use Qovery any environment variable via the macro qovery.env.<ENV_VAR_NAME>"
+        onSubmit={onSubmitValue}
+        onClose={onClose}
+        submitLabel="Save"
+      >
         <div className="flex h-full">
           <BlockContent title="Override" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
             <Controller
