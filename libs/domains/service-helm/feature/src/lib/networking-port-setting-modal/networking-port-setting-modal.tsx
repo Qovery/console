@@ -123,9 +123,9 @@ export function NetworkingPortSettingModal({ port, onClose, onSubmit }: Networki
                 value: /^[0-9]+$/,
                 message: 'Please enter a number.',
               },
-              maxLength: {
-                value: 5,
-                message: 'Port number cannot exceed 5 digits.',
+              max: {
+                value: 65535,
+                message: 'Port number must be less than or equal to 65535.',
               },
             }}
             render={({ field, fieldState: { error } }) => (
