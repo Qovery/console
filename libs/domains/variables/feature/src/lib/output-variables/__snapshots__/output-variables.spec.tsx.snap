@@ -7,7 +7,7 @@ exports[`OutputVariables should match snapshot 1`] = `
       class="overflow-hidden rounded border"
     >
       <table
-        class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[800px] text-xs"
+        class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full text-xs"
       >
         <thead>
           <tr>
