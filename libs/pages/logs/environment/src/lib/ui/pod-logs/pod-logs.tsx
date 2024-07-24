@@ -4,7 +4,15 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
 import { LayoutLogs } from '@qovery/shared/console-shared'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
-import { Icon, IconAwesomeEnum, StatusChip, Table, type TableFilterProps, type TableHeadProps } from '@qovery/shared/ui'
+import {
+  Icon,
+  IconAwesomeEnum,
+  StatusChip,
+  Table,
+  type TableFilterProps,
+  type TableHeadProps,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
 import RowPod from '../row-pod/row-pod'
 
@@ -104,11 +112,13 @@ export function PodLogs({
                 <div className="mr-2.5 w-4">
                   <StatusChip status={currentPod?.state} />
                 </div>
-                <p className="mr-5 truncate text-xs font-medium text-neutral-100" title={data.pod_name}>
-                  {data.pod_name && data.pod_name.length > 23
-                    ? trimId(data.pod_name, 'both', { startOffset: 10, endOffset: 10 })
-                    : data.pod_name}
-                </p>
+                <Tooltip content={data.pod_name}>
+                  <p className="mr-5 truncate text-xs font-medium text-neutral-100" title={data.pod_name}>
+                    {data.pod_name && data.pod_name.length > 23
+                      ? trimId(data.pod_name, 'both', { startOffset: 10, endOffset: 10 })
+                      : data.pod_name}
+                  </p>
+                </Tooltip>
                 <span className="mr-2 block text-2xs text-neutral-350">
                   {data.version && (
                     <>
