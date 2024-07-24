@@ -14,6 +14,11 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
       >
         Raw YAML
       </h2>
+      <p
+        class="mt-2 text-sm text-neutral-350"
+      >
+        Define here the values override for your chart. You can use Qovery any environment variable via the macro qovery.env.&lt;ENV_VAR_NAME&gt;
+      </p>
       <form
         class="mt-6"
       >
