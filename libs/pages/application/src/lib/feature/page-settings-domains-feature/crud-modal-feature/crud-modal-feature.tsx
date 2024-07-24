@@ -1,4 +1,4 @@
-import { type CustomDomain } from 'qovery-typescript-axios'
+import { type CustomDomain, type CustomDomainRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateCustomDomain, useEditCustomDomain } from '@qovery/domains/custom-domains/feature'
@@ -14,10 +14,11 @@ export interface CrudModalFeatureProps {
 }
 
 export function CrudModalFeature({ customDomain, service, onClose }: CrudModalFeatureProps) {
-  const methods = useForm({
+  const methods = useForm<CustomDomainRequest>({
     defaultValues: {
       domain: customDomain ? customDomain.domain : '',
       generate_certificate: customDomain ? customDomain?.generate_certificate : true,
+      use_cdn: false,
     },
     mode: 'onChange',
   })
