@@ -1,14 +1,14 @@
 import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { SERVICES_JOB_CREATION_DOCKERFILE_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_JOB_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Checkbox, ExternalLink, FunnelFlowBody, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 import imageBuild from './images/build.svg'
-import imageDeploy from './images/deploy.svg'
 import imageOutput from './images/output.svg'
 import imageRun from './images/run.svg'
+import imageTrigger from './images/trigger.svg'
 import { setLocalStorageStepIntroduction } from './util-localstorage-step'
 
 interface CardProps extends PropsWithChildren {
@@ -25,7 +25,7 @@ function Card({ title, content, className, children }: CardProps) {
         className
       )}
     >
-      <div className="w-full bg-gradient-to-r from-[#B160F0] via-[#7366FF] to-[#B160F0] bg-[length:200%_auto] p-0.5 motion-safe:animate-[backgroundLinear_4s_linear_infinite] sm:max-w-[196px]">
+      <div className="w-full bg-gradient-to-r from-[#B160F0] via-[#7366FF] to-[#B160F0] bg-[length:200%_auto] p-0.5 motion-safe:animate-[backgroundLinear_2s_linear_infinite] sm:max-w-[196px]">
         <div className="flex h-full w-full flex-col gap-2 rounded-[14px] bg-white">
           <h1 className="flex p-3 pb-0 text-[28px] text-brand-500">
             {title}
@@ -57,7 +57,7 @@ export function StepIntroductionFeature() {
 
   const onSubmit = () => {
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-    navigate(pathCreate + SERVICES_JOB_CREATION_DOCKERFILE_URL)
+    navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)
   }
 
   return (
@@ -85,11 +85,15 @@ export function StepIntroductionFeature() {
               className="mt-8 hidden text-brand-500  motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_150ms] motion-safe:opacity-0 md:block"
             />
             <Card
-              title="Deploy"
+              title="Trigger"
               content="You can decide on which “environment event” (start/stop/delete) the job needs to be deployed and the command to execute. Example: on “environment start” run “/bin/sh start.sh”, on “environment delete” run “/bin/sh destroy.sh”."
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_150ms] motion-safe:opacity-0"
             >
-              <img src={imageDeploy} alt="Deploy - Lifecycle job" className="pointer-events-none w-full select-none" />
+              <img
+                src={imageTrigger}
+                alt="Trigger - Lifecycle job"
+                className="pointer-events-none w-full select-none"
+              />
             </Card>
             <Icon
               iconName="angles-right"
