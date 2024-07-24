@@ -52,7 +52,7 @@ describe('NetworkingPortSettingModal', () => {
       internal_port: 1234,
       external_port: 443,
       protocol: 'GRPC',
-      name: 'foo-p1234',
+      name: 'p1234-foo',
     })
   })
 })

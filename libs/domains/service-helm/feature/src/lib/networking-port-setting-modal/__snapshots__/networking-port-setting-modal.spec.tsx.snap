@@ -293,7 +293,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
               class="mb-5 ml-4 text-xs text-neutral-350"
             >
               Port Name allows to customize the subdomain assigned to reach the application
-port from the internet. Default value is &lt;service_name&gt;-p&lt;port_number&gt;
+port from the internet. Default value is p&lt;port_number&gt;-&lt;service_name&gt;
             </p>
           </div>
         </div>
@@ -615,7 +615,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
               class="mb-5 ml-4 text-xs text-neutral-350"
             >
               Port Name allows to customize the subdomain assigned to reach the application
-port from the internet. Default value is &lt;service_name&gt;-p&lt;port_number&gt;
+port from the internet. Default value is p&lt;port_number&gt;-&lt;service_name&gt;
             </p>
           </div>
         </div>
