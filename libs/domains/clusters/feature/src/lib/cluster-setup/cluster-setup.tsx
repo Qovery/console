@@ -23,11 +23,17 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
         <pre className="flex items-center justify-between rounded-sm bg-neutral-150 p-3 font-mono text-neutral-400">
           {type === 'LOCAL_DEMO' ? (
             <>
-              $ qovery demo up <CopyButton content="qovery demo up" />
+              <span>
+                <span className="select-none">$ </span>qovery demo up
+              </span>
+              <CopyButton content="qovery demo up" />
             </>
           ) : (
             <>
-              $ qovery cluster install <CopyButton content="qovery cluster install" />
+              <span>
+                <span className="select-none">$ </span>qovery cluster install
+              </span>
+              <CopyButton content="qovery cluster install" />
             </>
           )}
         </pre>

@@ -1,25 +1,23 @@
 import download from 'downloadjs'
+import { type Cluster } from 'qovery-typescript-axios'
 import { Button, Callout, ExternalLink, Icon } from '@qovery/shared/ui'
 import { ClusterSetup } from '../cluster-setup/cluster-setup'
 import { useInstallationHelmValues } from '../hooks/use-installation-helm-values/use-installation-helm-values'
 
 export interface ClusterInstallationGuideModalProps {
-  clusterId: string
-  organizationId: string
-  onClose: () => void
+  cluster: Cluster
   type: 'MANAGED' | 'ON_PREMISE'
+  onClose: () => void
 }
 
-export function ClusterInstallationGuideModal({
-  clusterId,
-  organizationId,
-  onClose,
-  type,
-}: ClusterInstallationGuideModalProps) {
+export function ClusterInstallationGuideModal({ cluster, type, onClose }: ClusterInstallationGuideModalProps) {
   const { mutateAsync: getInstallationHelmValues, isLoading } = useInstallationHelmValues()
   const downloadInstallationValues = async () => {
-    const installationHelmValues = await getInstallationHelmValues({ organizationId, clusterId })
-    download(installationHelmValues ?? '', `cluster-installation-guide-${clusterId}.yaml`, 'text/plain')
+    const installationHelmValues = await getInstallationHelmValues({
+      organizationId: cluster.organization.id,
+      clusterId: cluster.id,
+    })
+    download(installationHelmValues ?? '', `cluster-installation-guide-${cluster.id}.yaml`, 'text/plain')
   }
 
   return (
@@ -72,7 +70,7 @@ export function ClusterInstallationGuideModal({
           </ol>
         )}
 
-        {type === 'ON_PREMISE' && <ClusterSetup type="SELF_MANAGED" />}
+        {type === 'ON_PREMISE' && <ClusterSetup type={cluster.is_demo ? 'LOCAL_DEMO' : 'SELF_MANAGED'} />}
       </div>
 
       {type === 'MANAGED' && (
