@@ -144,11 +144,42 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
           <p
             class="font-medium"
           >
-            Use it carefully this action is irreversible. Please confirm that you are aware that this operation will delete:
+            Use it carefully this action is irreversible. Please confirm that you are aware of the operation impact:
           </p>
           <p
             class="flex flex-col"
           >
+            <div
+              class="flex flex-row gap-3 py-2"
+            >
+              <button
+                aria-checked="false"
+                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 shrink-0"
+                data-state="unchecked"
+                id="confirm_qovery_config"
+                role="checkbox"
+                type="button"
+                value="on"
+              />
+              <input
+                aria-hidden="true"
+                name="confirm_qovery_config"
+                style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                tabindex="-1"
+                type="checkbox"
+                value="on"
+              />
+              <label
+                for="confirm_qovery_config"
+              >
+                <span
+                  class="font-medium"
+                >
+                  Qovery organization:
+                </span>
+                 the configuration of this cluster and any linked environment will be deleted.
+              </label>
+            </div>
             <div
               class="flex flex-1 flex-row gap-3 py-2"
             >
@@ -179,37 +210,6 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                 </span>
                  
                 any resource created by Qovery on your cloud provider account to run this cluster, including any application running on it.
-              </label>
-            </div>
-            <div
-              class="flex flex-row gap-3 py-2"
-            >
-              <button
-                aria-checked="false"
-                class="group transition bg-neutral-100 border border-neutral-300 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 shrink-0"
-                data-state="unchecked"
-                id="confirm_qovery_config"
-                role="checkbox"
-                type="button"
-                value="on"
-              />
-              <input
-                aria-hidden="true"
-                name="confirm_qovery_config"
-                style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
-                tabindex="-1"
-                type="checkbox"
-                value="on"
-              />
-              <label
-                for="confirm_qovery_config"
-              >
-                <span
-                  class="font-medium"
-                >
-                  Qovery organization:
-                </span>
-                 the configuration of this cluster and any linked environment.
               </label>
             </div>
           </p>

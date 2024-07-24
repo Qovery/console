@@ -1,5 +1,5 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
-import { type Cluster, ClusterDeleteMode } from 'qovery-typescript-axios'
+import { type Cluster, ClusterDeleteMode, Value } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -24,12 +24,49 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
   const [confirmKubernetesChecked, setConfirmKubernetesChecked] = useState<CheckedState>()
   const [confirmCloudProviderChecked, setConfirmCloudProviderChecked] = useState<CheckedState>()
 
-  const formattedClusterDeleteMode = (clusterDeleteMode: ClusterDeleteMode) =>
-    match(clusterDeleteMode)
-      .with('DEFAULT', () => 'Default')
-      .with('DELETE_CLUSTER_AND_QOVERY_CONFIG', () => 'Cluster and Qovery config')
-      .with('DELETE_QOVERY_CONFIG', () => 'Qovery Config only')
-      .exhaustive()
+  const clusterDeleteModeOptions = [
+    {
+      label: 'Default',
+      value: ClusterDeleteMode.DEFAULT,
+    },
+    {
+      label: 'Qovery config only',
+      value: ClusterDeleteMode.DELETE_QOVERY_CONFIG,
+    },
+    {
+      label: 'Cluster and Qovery config',
+      value: ClusterDeleteMode.DELETE_CLUSTER_AND_QOVERY_CONFIG,
+    },
+  ]
+
+  const clusterDeleteModeOptionsFormatted = match(cluster)
+    .with(
+      {
+        kubernetes: 'SELF_MANAGED',
+      },
+      () =>
+        clusterDeleteModeOptions.filter(
+          (e) => !(e.value === 'DELETE_CLUSTER_AND_QOVERY_CONFIG' && cluster.kubernetes === 'SELF_MANAGED')
+        )
+    )
+    .with({ cloud_provider: 'AWS' }, () =>
+      clusterDeleteModeOptions.map((o) =>
+        o.value === 'DELETE_CLUSTER_AND_QOVERY_CONFIG'
+          ? {
+              ...o,
+              label: 'Cluster and Qovery config - Skip managed databases',
+            }
+          : o
+      )
+    )
+    .otherwise(() => clusterDeleteModeOptions)
+
+  match(clusterDeleteMode)
+    .with('DEFAULT', () => 'Default')
+    .with('DELETE_CLUSTER_AND_QOVERY_CONFIG', () => 'Cluster and Qovery config')
+    .with('DELETE_QOVERY_CONFIG', () => 'Qovery Config only')
+    .exhaustive()
+
   const navigate = useNavigate()
 
   const ctaButtonDisabled =
@@ -60,37 +97,66 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
           <InputSelect
             className="mb-3"
             label="Delete mode"
-            options={Object.values(ClusterDeleteMode)
-              .filter((e) => !(e === 'DELETE_CLUSTER_AND_QOVERY_CONFIG' && cluster.kubernetes === 'SELF_MANAGED'))
-              .map((mode) => ({
-                label: formattedClusterDeleteMode(mode),
-                value: mode,
-              }))}
+            options={clusterDeleteModeOptionsFormatted}
             onChange={(value) => setClusterDeleteMode(value as ClusterDeleteMode)}
             value={clusterDeleteMode}
           />
         )}
         <p className="font-medium">
-          Use it carefully this action is irreversible. Please confirm that you are aware that this operation will
-          delete:
+          Use it carefully this action is irreversible. Please confirm that you are aware of the operation impact:
         </p>
 
         <p className="flex flex-col">
+          <div className="flex flex-row gap-3 py-2">
+            <Checkbox
+              name="confirm_qovery_config"
+              id="confirm_qovery_config"
+              className="shrink-0"
+              color="red"
+              checked={confirmQoveryConfigChecked}
+              onCheckedChange={setConfirmQoveryConfigChecked}
+            />
+            <label htmlFor="confirm_qovery_config">
+              <span className="font-medium">Qovery organization:</span> the configuration of this cluster and any linked
+              environment will be deleted.
+            </label>
+          </div>
           {cluster.kubernetes === 'SELF_MANAGED' ? (
-            <div className="flex flex-1 flex-row gap-3 py-2">
-              <Checkbox
-                name="confirm_kubernetes"
-                id="confirm_kubernetes"
-                className="shrink-0"
-                color="red"
-                checked={confirmKubernetesChecked}
-                onCheckedChange={setConfirmKubernetesChecked}
-              />
-              <label htmlFor="confirm_kubernetes">
-                <span className="font-medium">Kubernetes</span>: nothing will be deleted on your cluster. You will have
-                to manually delete any deployed application and uninstall the Qovery helm chart from your cluster.
-              </label>
-            </div>
+            <>
+              <div className="flex flex-1 flex-row gap-3 py-2">
+                <Checkbox
+                  name="confirm_kubernetes"
+                  id="confirm_kubernetes"
+                  className="shrink-0"
+                  color="red"
+                  checked={confirmKubernetesChecked}
+                  onCheckedChange={setConfirmKubernetesChecked}
+                />
+                <label htmlFor="confirm_kubernetes">
+                  <span className="font-medium">Your Kubernetes cluster</span>:{' '}
+                  {cluster.is_demo
+                    ? 'nothing will be deleted on your cluster, you will have to manually delete it.'
+                    : ' nothing will be deleted on your cluster. You will have to manually delete any deployed application and uninstall the Qovery helm chart from your cluster.'}
+                </label>
+              </div>
+              {cluster.is_demo && (
+                <Callout.Root className="mt-3 text-xs" color="sky">
+                  <Callout.Icon>
+                    <Icon iconName="info-circle" iconStyle="light" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    <p>The best way to delete your cluster is via our CLI!</p>
+                    <ul className="list-disc pl-3">
+                      <li>You can delete your local demo cluster using the CLI command `qovery demo destroy`.</li>
+                      <li>
+                        If you want to destroy your local demo cluster and the configuration of the environment deployed
+                        on it, use the CLI command `qovery demo destroy -d`
+                      </li>
+                    </ul>
+                  </Callout.Text>
+                </Callout.Root>
+              )}
+            </>
           ) : (
             <div className="flex flex-1 flex-row gap-3 py-2">
               <Checkbox
@@ -123,20 +189,6 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
               </label>
             </div>
           )}
-          <div className="flex flex-row gap-3 py-2">
-            <Checkbox
-              name="confirm_qovery_config"
-              id="confirm_qovery_config"
-              className="shrink-0"
-              color="red"
-              checked={confirmQoveryConfigChecked}
-              onCheckedChange={setConfirmQoveryConfigChecked}
-            />
-            <label htmlFor="confirm_qovery_config">
-              <span className="font-medium">Qovery organization:</span> the configuration of this cluster and any linked
-              environment.
-            </label>
-          </div>
         </p>
         {kubernetes !== 'SELF_MANAGED' && clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
           <Callout.Root className="mt-3 text-xs" color="yellow">
