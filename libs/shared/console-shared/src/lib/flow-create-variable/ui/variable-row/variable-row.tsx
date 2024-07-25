@@ -162,7 +162,7 @@ export function VariableRow(props: VariableRowProps) {
               required: true,
             }}
             render={({ field }) => (
-              <CodeEditor language="json" height="496px" value={field.value} onChange={field.onChange} readOnly />
+              <CodeEditor language="json" height="496px" value={field.value} onChange={field.onChange} />
             )}
           />
         </BlockContent>
