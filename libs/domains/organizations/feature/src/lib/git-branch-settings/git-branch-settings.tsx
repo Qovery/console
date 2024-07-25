@@ -10,6 +10,7 @@ export interface GitBranchSettingsProps {
   disabled?: boolean
   hideRootPath?: boolean
   rootPathLabel?: string
+  rootPathHint?: string
 }
 
 export function GitBranchSettings({
@@ -18,6 +19,7 @@ export function GitBranchSettings({
   gitTokenId,
   hideRootPath,
   rootPathLabel = 'Root application path',
+  rootPathHint,
 }: GitBranchSettingsProps) {
   const { control, watch } = useFormContext()
   const { organizationId = '' } = useParams()
@@ -98,6 +100,7 @@ export function GitBranchSettings({
               value={field.value}
               error={error?.message}
               disabled={disabled}
+              hint={rootPathHint}
             />
           )}
         />

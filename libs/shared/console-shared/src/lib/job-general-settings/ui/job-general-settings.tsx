@@ -12,6 +12,7 @@ export interface JobGeneralSettingProps {
   jobType: JobType
   isEdition?: boolean
   rootPathLabel?: string
+  rootPathHint?: string
 }
 
 export function JobGeneralSettings(props: JobGeneralSettingProps) {
@@ -70,7 +71,11 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 </BlockContent>
               </div>
             ) : (
-              <GitRepositorySettings gitDisabled={false} rootPathLabel={props.rootPathLabel} />
+              <GitRepositorySettings
+                gitDisabled={false}
+                rootPathLabel={props.rootPathLabel}
+                rootPathHint={props.rootPathHint}
+              />
             ))}
 
           {watchServiceType === 'CONTAINER' &&

@@ -84,6 +84,11 @@ export function StepGeneral(props: StepGeneralProps) {
             organization={props.organization}
             isEdition={false}
             rootPathLabel={props.templateType === 'CLOUDFORMATION' ? 'Template folder path' : undefined}
+            rootPathHint={
+              props.templateType === 'CLOUDFORMATION'
+                ? 'Provide the folder path in the repository where the template is located'
+                : undefined
+            }
           />
         </Section>
 
