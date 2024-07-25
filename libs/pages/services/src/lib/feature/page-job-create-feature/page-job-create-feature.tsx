@@ -52,6 +52,9 @@ export interface JobContainerCreateContextInterface {
 
   templateType: keyof typeof JobLifecycleTypeEnum | undefined
   setTemplateType: Dispatch<SetStateAction<JobLifecycleTypeEnum | undefined>>
+
+  dockerfileDefaultContent?: string
+  setDockerfileDefaultContent: Dispatch<SetStateAction<string | undefined>>
 }
 
 export const JobContainerCreateContext = createContext<JobContainerCreateContextInterface | undefined>(undefined)
@@ -97,6 +100,7 @@ export function PageJobCreateFeature() {
   const [jobType, setJobType] = useState<JobType>(ServiceTypeEnum.CRON_JOB)
   const [jobURL, setJobURL] = useState<string | undefined>()
   const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>()
+  const [dockerfileDefaultContent, setDockerfileDefaultContent] = useState<string>()
 
   const dockerfileForm = useForm<DockerfileSettingsData>({
     mode: 'onChange',
@@ -189,6 +193,8 @@ export function PageJobCreateFeature() {
         dockerfileForm,
         templateType,
         setTemplateType,
+        dockerfileDefaultContent,
+        setDockerfileDefaultContent,
       }}
     >
       {templateData && 'template_id' in templateData && templateData.template_id ? (

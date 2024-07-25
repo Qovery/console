@@ -15,7 +15,8 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepDockerfileFeature() {
   useDocumentTitle('Dockerfile - Create Job')
-  const { dockerfileForm, setCurrentStep, generalData, jobURL } = useJobContainerCreateContext()
+  const { dockerfileForm, setCurrentStep, generalData, jobURL, dockerfileDefaultContent } =
+    useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
   const creationFlowUrl = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
@@ -77,7 +78,7 @@ export function StepDockerfileFeature() {
             command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery
             control plane (Raw).
           </p>
-          <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit}>
+          <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit} defaultContent={dockerfileDefaultContent}>
             <div className="flex justify-between">
               <Button
                 type="button"

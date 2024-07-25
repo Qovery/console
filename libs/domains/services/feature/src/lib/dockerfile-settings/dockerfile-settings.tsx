@@ -26,9 +26,16 @@ export interface DockerfileSettingsProps extends PropsWithChildren {
   methods: UseFormReturn<DockerfileSettingsData>
   onSubmit: () => void
   directSubmit?: boolean
+  defaultContent?: string
 }
 
-export function DockerfileSettings({ children, methods, onSubmit, directSubmit = false }: DockerfileSettingsProps) {
+export function DockerfileSettings({
+  children,
+  methods,
+  onSubmit,
+  directSubmit = false,
+  defaultContent,
+}: DockerfileSettingsProps) {
   const { openModal, closeModal } = useModal()
   const { setValue, control, watch } = methods
 
@@ -61,6 +68,7 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
               handleSubmit()
             }
           }}
+          defaultContent={defaultContent}
         />
       ),
       options: {

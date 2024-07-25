@@ -28,8 +28,15 @@ export function TemplateFormContextSync({
   children,
 }: TemplateFormContextSyncProps) {
   const { data: template } = useLifecycleTemplate({ environmentId, templateId })
-  const { setGeneralData, setConfigureData, setVariableData, setResourcesData, dockerfileForm, setTemplateType } =
-    useJobContainerCreateContext()
+  const {
+    setGeneralData,
+    setConfigureData,
+    setVariableData,
+    setResourcesData,
+    dockerfileForm,
+    setTemplateType,
+    setDockerfileDefaultContent,
+  } = useJobContainerCreateContext()
   const [shouldRender, setShouldRender] = useState(false)
 
   useEffect(() => {
@@ -48,6 +55,7 @@ export function TemplateFormContextSync({
       // Configure / Dockerfile
       dockerfileForm.setValue('dockerfile_source', 'DOCKERFILE_RAW')
       dockerfileForm.setValue('dockerfile_raw', template.dockerfile)
+      setDockerfileDefaultContent(template.dockerfile)
 
       // Resources
       setResourcesData((resourcesData) => ({
