@@ -31,6 +31,7 @@ const props: CrudModalFeatureProps = {
     updated_at: '2020-01-01T00:00:00Z',
     created_at: '2020-01-01T00:00:00Z',
     generate_certificate: true,
+    use_cdn: false,
   },
   service: applicationFactoryMock(1)[0] as Application,
   onClose: jest.fn(),
@@ -57,6 +58,7 @@ describe('CrudModalFeature', () => {
       payload: {
         domain: 'example.com',
         generate_certificate: true,
+        use_cdn: false,
       },
     })
   })
@@ -70,6 +72,7 @@ describe('CrudModalFeature', () => {
       updated_at: '2020-01-01T00:00:00Z',
       created_at: '2020-01-01T00:00:00Z',
       generate_certificate: false,
+      use_cdn: false,
     }
 
     const { userEvent } = renderWithProviders(<CrudModalFeature {...props} />)
@@ -88,6 +91,7 @@ describe('CrudModalFeature', () => {
       payload: {
         domain: 'example.com',
         generate_certificate: false,
+        use_cdn: false,
       },
     })
   })

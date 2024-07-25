@@ -1,4 +1,4 @@
-import { type CustomDomain } from 'qovery-typescript-axios'
+import { type CustomDomain, type CustomDomainRequest } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ExternalLink, InputText, InputToggle, ModalCrud } from '@qovery/shared/ui'
 
@@ -12,7 +12,7 @@ export interface CrudModalProps {
 }
 
 export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, link }: CrudModalProps) {
-  const { control, watch } = useFormContext()
+  const { control, watch, setValue } = useFormContext<CustomDomainRequest>()
 
   const watchDomain = watch('domain')
   const hideDomain = !watchDomain?.includes('*')
@@ -83,6 +83,26 @@ export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, li
           </div>
         </div>
       )}
+      <Controller
+        name="use_cdn"
+        control={control}
+        render={({ field }) => (
+          <InputToggle
+            className="mt-6"
+            value={field.value}
+            onChange={(value) => {
+              if (value) {
+                setValue('generate_certificate', false)
+              }
+              field.onChange(value)
+            }}
+            title="Domain behind a CDN"
+            description="Check this if the traffic on this domain is managed by a CDN."
+            forceAlignTop
+            small
+          />
+        )}
+      />
       <Controller
         name="generate_certificate"
         control={control}

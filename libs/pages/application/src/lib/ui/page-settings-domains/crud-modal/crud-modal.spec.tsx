@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CustomDomainStatusEnum } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import CrudModal, { type CrudModalProps } from './crud-modal'
 
 const props: CrudModalProps = {
@@ -30,8 +30,8 @@ describe('CrudModal', () => {
     const input = screen.getByRole('textbox', { name: /domain/i })
     await userEvent.type(input, 'test.qovery.com')
 
-    const toggle = screen.getByRole('checkbox')
-    await userEvent.click(toggle)
+    const certificateToggle = screen.getAllByRole('checkbox')[0]
+    await userEvent.click(certificateToggle)
 
     screen.getByDisplayValue('test.qovery.com')
     screen.getByDisplayValue('true')
@@ -54,6 +54,33 @@ describe('CrudModal', () => {
     await userEvent.type(input, '*.qovery.com')
 
     screen.getByText('*.qovery.com CNAME')
+  })
+
+  it('should turn off generate_certificate when enabling use_cdn', async () => {
+    const spy = jest.fn().mockImplementation((e) => e.preventDefault())
+    props.onSubmit = spy
+
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<CrudModal {...props} />, {
+        defaultValues: { domain: 'test.qovery.com', generate_certificate: true, use_cdn: false },
+      })
+    )
+
+    const [cdnToggle, certificateToggle] = screen.getAllByRole('checkbox')
+
+    expect(cdnToggle).not.toBeChecked()
+    expect(certificateToggle).toBeChecked()
+
+    await userEvent.click(cdnToggle)
+
+    expect(cdnToggle).toBeChecked()
+    waitFor(() => expect(certificateToggle).not.toBeChecked())
+
+    const btn = screen.getByRole('button', { name: /create/i })
+    await userEvent.click(btn)
+
+    expect(btn).toBeEnabled()
+    expect(spy).toHaveBeenCalled()
   })
 
   it('should submit the form', async () => {
