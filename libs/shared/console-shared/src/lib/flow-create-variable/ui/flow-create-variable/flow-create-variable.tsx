@@ -14,7 +14,7 @@ export interface FlowCreateVariableProps {
   onRemove: (index: number) => void
   variables: VariableData[]
   availableScopes: APIVariableScopeEnum[]
-  templateType: JobLifecycleTypeEnum | undefined
+  templateType?: JobLifecycleTypeEnum
 }
 
 export function FlowCreateVariable(props: FlowCreateVariableProps) {

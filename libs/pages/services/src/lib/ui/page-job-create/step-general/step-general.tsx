@@ -15,7 +15,7 @@ import { serviceTemplates } from '../../../feature/page-new-feature/service-temp
 
 export interface StepGeneralProps {
   jobType: JobType
-  templateType: JobLifecycleTypeEnum | undefined
+  templateType?: JobLifecycleTypeEnum
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization
 }

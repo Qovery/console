@@ -5,6 +5,7 @@ export interface DockerfileRawModalProps {
   onSubmit: (value?: string) => void
   onClose: () => void
   content?: string
+  description?: string
   defaultContent?: string
 }
 
@@ -12,6 +13,7 @@ export function DockerfileRawModal({
   onClose,
   onSubmit,
   content,
+  description,
   defaultContent = `FROM alpine:latest
 
 # copy the entire repository in the container image
@@ -34,7 +36,13 @@ ENTRYPOINT [ "/bin/sh" ]`,
 
   return (
     <FormProvider {...methods}>
-      <ModalCrud title="Dockerfile" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">
+      <ModalCrud
+        title="Dockerfile"
+        onSubmit={onSubmitValue}
+        onClose={onClose}
+        submitLabel="Save"
+        description={description}
+      >
         <div className="flex h-full">
           <BlockContent title="Override" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
             <Controller
