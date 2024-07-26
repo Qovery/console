@@ -83,12 +83,16 @@ export function StepGeneral(props: StepGeneralProps) {
             jobType={props.jobType}
             organization={props.organization}
             isEdition={false}
-            rootPathLabel={props.templateType === 'CLOUDFORMATION' ? 'Template folder path' : undefined}
-            rootPathHint={
-              props.templateType === 'CLOUDFORMATION'
-                ? 'Provide the folder path in the repository where the template is located'
-                : undefined
-            }
+            rootPathLabel={match(props.templateType)
+              .with('CLOUDFORMATION', () => 'Template folder path')
+              .with('TERRAFORM', () => 'Manifest folder path')
+              .with('GENERIC', undefined, () => undefined)
+              .exhaustive()}
+            rootPathHint={match(props.templateType)
+              .with('CLOUDFORMATION', () => 'Provide the folder path in the repository where the template is located')
+              .with('TERRAFORM', () => 'Provide the folder path in the repository where the manifest is located')
+              .with('GENERIC', undefined, () => undefined)
+              .exhaustive()}
           />
         </Section>
 
