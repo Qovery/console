@@ -154,7 +154,7 @@ export function VariableRow(props: VariableRowProps) {
         </div>
       </div>
       {watchFile && openEditor && (
-        <BlockContent title={watchFile.path} className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
+        <BlockContent title={watchFile.path} classNameContent="p-0">
           <Controller
             name={`variables.${index}.value`}
             control={control}
