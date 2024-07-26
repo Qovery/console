@@ -38,7 +38,7 @@ export function VariableRow(props: VariableRowProps) {
 
   return (
     <div data-testid="variable-row" className="mb-3 w-full items-center">
-      <div key={index} data-testid="form-row" className="mb-3 grid" style={{ gridTemplateColumns }}>
+      <div key={index} data-testid="form-row" className="mb-3 grid max-w-full" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}
           control={control}
@@ -49,27 +49,32 @@ export function VariableRow(props: VariableRowProps) {
               message: 'Variable name cannot contain spaces.',
             },
           }}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextSmall
-              className="mr-3 flex-1 shrink-0 grow"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-              label="Variable"
-              errorMessagePosition="left"
-              readOnly={watchReadOnly}
-              iconRight={
-                watchDescription && (
+          render={({ field, fieldState: { error } }) =>
+            watchReadOnly ? (
+              <div className="mr-3 flex items-center gap-2 truncate rounded border border-neutral-200 bg-neutral-100 px-2 text-sm text-neutral-350">
+                <span className="max-w-full truncate" title={field.value}>
+                  {field.value}
+                </span>
+                {watchDescription && (
                   <Tooltip content={watchDescription}>
                     <span>
-                      <Icon iconName="info-circle" iconStyle="regular" />
+                      <Icon className="text-neutral-400" iconName="info-circle" iconStyle="regular" />
                     </span>
                   </Tooltip>
-                )
-              }
-            />
-          )}
+                )}
+              </div>
+            ) : (
+              <InputTextSmall
+                className="mr-3 flex-1 shrink-0 grow"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                label="Variable"
+                errorMessagePosition="left"
+              />
+            )
+          }
         />
 
         {watchFile ? (

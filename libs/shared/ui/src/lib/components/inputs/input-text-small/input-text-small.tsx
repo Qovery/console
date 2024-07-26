@@ -16,9 +16,7 @@ export interface InputTextSmallProps {
   dataTestId?: string
   errorMessagePosition?: 'left' | 'bottom'
   hasShowPasswordButton?: boolean
-  iconRight?: ReactNode
   disabled?: boolean
-  readOnly?: boolean
 }
 
 export function InputTextSmall(props: InputTextSmallProps) {
@@ -34,10 +32,8 @@ export function InputTextSmall(props: InputTextSmallProps) {
     errorMessagePosition = 'bottom',
     hasShowPasswordButton = false,
     disabled = false,
-    readOnly = false,
     label,
     dataTestId = 'input-value',
-    iconRight,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -46,7 +42,6 @@ export function InputTextSmall(props: InputTextSmallProps) {
   const hasError = error && error.length > 0 ? 'input--error' : ''
   const hasFocus = focused ? 'input--focused' : ''
   const hasDisabled = disabled ? 'input--disabled' : ''
-  const hasReadOnly = readOnly ? ' input--readonly' : ''
 
   const classNameError = errorMessagePosition === 'left' ? 'flex gap-3 items-center' : ''
 
@@ -63,16 +58,13 @@ export function InputTextSmall(props: InputTextSmallProps) {
           </div>
         </Tooltip>
       )}
-      <div
-        data-testid="input"
-        className={`input input--small flex-grow ${hasError} ${hasFocus} ${hasDisabled}${hasReadOnly}`}
-      >
+      <div data-testid="input" className={`input input--small flex-grow ${hasError} ${hasFocus} ${hasDisabled}`}>
         <label className="hidden" htmlFor={label}>
           {label}
         </label>
         <input
           className={`absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 ${
-            hasShowPasswordButton || iconRight ? 'text-ellipsis pr-8' : ''
+            hasShowPasswordButton ? 'pr-8' : ''
           }`}
           name={name}
           type={currentType}
@@ -80,7 +72,6 @@ export function InputTextSmall(props: InputTextSmallProps) {
           value={value}
           onInput={onChange}
           disabled={disabled}
-          readOnly={readOnly}
           id={label}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -94,9 +85,6 @@ export function InputTextSmall(props: InputTextSmallProps) {
           >
             <Icon name={currentType === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
           </div>
-        )}
-        {iconRight && (
-          <div className="absolute right-2 -translate-y-0.5 transform text-sm text-neutral-400">{iconRight}</div>
         )}
       </div>
       {error && errorMessagePosition === 'bottom' && (
