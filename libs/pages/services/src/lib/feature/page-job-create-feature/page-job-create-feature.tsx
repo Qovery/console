@@ -28,7 +28,7 @@ import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
 import { type ServiceTemplateOptionType } from '../page-new-feature/service-templates'
 import { serviceTemplates } from '../page-new-feature/service-templates'
 import { getLocalStorageStepIntroduction } from './step-introduction-feature/util-localstorage-step'
-import { TemplateFormContextSync } from './template-form-context-sync'
+import { TemplateFormSync } from './template-form-sync'
 
 export interface JobContainerCreateContextInterface {
   currentStep: number
@@ -198,12 +198,12 @@ export function PageJobCreateFeature() {
       }}
     >
       {templateData && 'template_id' in templateData && templateData.template_id ? (
-        <TemplateFormContextSync
+        <TemplateFormSync
           environmentId={environmentId}
           templateData={templateData as ServiceTemplateOptionType & { template_id: string }}
         >
           {funnel}
-        </TemplateFormContextSync>
+        </TemplateFormSync>
       ) : (
         funnel
       )}

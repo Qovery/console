@@ -16,17 +16,17 @@ function getLifecycleType(option?: string): JobLifecycleTypeEnum {
   return 'GENERIC'
 }
 
-interface TemplateFormContextSyncProps {
+interface TemplateFormSyncProps {
   environmentId: string
   templateData: ServiceTemplateOptionType & { template_id: string }
   children: ReactNode
 }
 
-export function TemplateFormContextSync({
+export function TemplateFormSync({
   environmentId,
   templateData: { slug, template_id: templateId },
   children,
-}: TemplateFormContextSyncProps) {
+}: TemplateFormSyncProps) {
   const { data: template } = useLifecycleTemplate({ environmentId, templateId })
   const {
     setGeneralData,
@@ -120,4 +120,4 @@ export function TemplateFormContextSync({
   return shouldRender ? children : null
 }
 
-export default TemplateFormContextSync
+export default TemplateFormSync
