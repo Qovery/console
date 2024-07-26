@@ -32,7 +32,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
       </div>
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-sm text-neutral-350">
+        <p className="mr-36 text-sm text-neutral-350">
           {match(props.templateType)
             .with(
               'CLOUDFORMATION',
