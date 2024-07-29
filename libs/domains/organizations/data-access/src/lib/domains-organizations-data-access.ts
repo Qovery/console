@@ -140,6 +140,19 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  helmRepositoryAssociatedServices: ({
+    organizationId,
+    helmRepositoryId,
+  }: {
+    organizationId: string
+    helmRepositoryId: string
+  }) => ({
+    queryKey: [organizationId, helmRepositoryId],
+    async queryFn() {
+      const response = await organizationApi.getHelmRepositoryAssociatedServices(organizationId, helmRepositoryId)
+      return response.data.results
+    },
+  }),
   authProviders: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

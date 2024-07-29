@@ -1,9 +1,20 @@
 import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Heading,
+  Icon,
+  Indicator,
+  LoaderSpinner,
+  Section,
+  Tooltip,
+  Truncate,
+} from '@qovery/shared/ui'
 
 export interface PageOrganizationHelmRepositoriesProps {
+  onOpenServicesAssociatedModal: (repository: HelmRepositoryResponse) => void
   onAddRepository: () => void
   onEdit: (repository: HelmRepositoryResponse) => void
   onDelete: (repository: HelmRepositoryResponse) => void
@@ -17,6 +28,7 @@ export function PageOrganizationHelmRepositories({
   onAddRepository,
   onEdit,
   onDelete,
+  onOpenServicesAssociatedModal,
 }: PageOrganizationHelmRepositoriesProps) {
   return (
     <div className="flex w-full flex-col justify-between">
@@ -64,6 +76,23 @@ export function PageOrganizationHelmRepositories({
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <Indicator
+                      content={
+                        <span className="flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+                          {repository.associated_services_count}
+                        </span>
+                      }
+                    >
+                      <Button
+                        variant="surface"
+                        color="neutral"
+                        size="md"
+                        disabled={repository.associated_services_count === 0}
+                        onClick={() => onOpenServicesAssociatedModal(repository)}
+                      >
+                        <Icon iconName="layer-group" />
+                      </Button>
+                    </Indicator>
                     <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(repository)}>
                       <Icon iconName="gear" />
                     </Button>

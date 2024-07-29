@@ -7,6 +7,7 @@ import {
 
 describe('PageOrganizationHelmRepositories', () => {
   const props: PageOrganizationHelmRepositoriesProps = {
+    onOpenServicesAssociatedModal: jest.fn(),
     onAddRepository: jest.fn(),
     onEdit: jest.fn(),
     onDelete: jest.fn(),
