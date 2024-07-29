@@ -10,6 +10,7 @@ export interface JobGeneralData {
   auto_deploy: boolean
   labels_groups?: string[]
   annotations_groups?: string[]
+  icon_uri?: string
 
   // container - docker registry source
   registry?: string

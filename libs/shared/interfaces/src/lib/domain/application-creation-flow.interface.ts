@@ -14,6 +14,7 @@ export interface ApplicationGeneralData {
   auto_deploy: boolean
   labels_groups?: string[]
   annotations_groups?: string[]
+  icon_uri?: string
 
   // container
   registry?: string

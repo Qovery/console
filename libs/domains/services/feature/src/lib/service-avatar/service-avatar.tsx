@@ -2,6 +2,7 @@ import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'reac
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Avatar, Icon } from '@qovery/shared/ui'
+import { IconURI, ServiceIcons } from './service-icon'
 
 export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback'> {
   service: AnyService
@@ -19,5 +20,19 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
     .with({ serviceType: 'DATABASE' }, () => 'DATABASE')
     .exhaustive()
 
-  return <Avatar ref={ref} fallback={<Icon name={iconName} height="100%" width="100%" />} {...props} />
+  const serviceAvatar = ServiceIcons[service.icon_uri as IconURI]
+
+  return (
+    <Avatar
+      ref={ref}
+      fallback={
+        serviceAvatar ? (
+          <img src={serviceAvatar.icon} height="100%" width="100%" className="max-h-full max-w-full" />
+        ) : (
+          <Icon name={iconName} height="100%" width="100%" />
+        )
+      }
+      {...props}
+    />
+  )
 })

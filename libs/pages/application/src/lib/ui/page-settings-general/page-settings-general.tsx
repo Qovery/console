@@ -18,7 +18,7 @@ import { Button, Callout, Heading, Icon, InputSelect, InputText, Section } from 
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
-  service?: AnyService
+  service: AnyService
   isLoadingEditService?: boolean
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization
@@ -115,7 +115,7 @@ export function PageSettingsGeneral({
           {service?.serviceType !== 'JOB' && (
             <Section className="gap-4">
               <Heading>General</Heading>
-              <GeneralSetting label="Service name" />
+              <GeneralSetting label="Service name" service={service} />
             </Section>
           )}
           {match(service)
@@ -123,7 +123,7 @@ export function PageSettingsGeneral({
               <>
                 <Section className="gap-4">
                   <Heading>General</Heading>
-                  <GeneralSetting label="Service name" />
+                  <GeneralSetting label="Service name" service={service} />
                 </Section>
                 <JobGeneralSettings
                   isEdition={true}

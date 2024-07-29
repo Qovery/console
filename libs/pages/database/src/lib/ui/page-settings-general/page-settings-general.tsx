@@ -2,6 +2,7 @@ import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'q
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
+import { type Database } from '@qovery/domains/services/data-access'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type Value } from '@qovery/shared/interfaces'
@@ -9,6 +10,7 @@ import { Button, Callout, ExternalLink, Heading, Icon, InputSelect, LoaderSpinne
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
+  database: Database
   onSubmit: FormEventHandler<HTMLFormElement>
   databaseMode?: DatabaseModeEnum
   publicOptionNotAvailable?: boolean
@@ -29,14 +31,16 @@ const databasesMode = Object.values(DatabaseModeEnum).map((value) => ({
 }))
 
 export function PageSettingsGeneral({
+  database,
   onSubmit,
   loading,
   publicOptionNotAvailable,
   databaseVersionOptions,
   databaseVersionLoading,
-  databaseMode,
 }: PageSettingsGeneralProps) {
   const { control, formState } = useFormContext()
+
+  const { mode: databaseMode } = database
 
   const databasesAccessibility = Object.values(DatabaseAccessibilityEnum).map((value) => ({
     label: upperCaseFirstLetter(value),
@@ -73,7 +77,7 @@ export function PageSettingsGeneral({
           <div className="space-y-10">
             <Section className="gap-4">
               <Heading>General</Heading>
-              <GeneralSetting label="Database name" />
+              <GeneralSetting label="Database name" service={database} />
               <Controller
                 name="type"
                 control={control}
