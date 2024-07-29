@@ -7,6 +7,7 @@ import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
 export interface PageOrganizationContainerRegistriesProps {
   onAddRegistry: () => void
+  onOpenServicesAssociatedModal: (registry: ContainerRegistryResponse) => void
   onEdit: (registry: ContainerRegistryResponse) => void
   onDelete: (registry: ContainerRegistryResponse) => void
   containerRegistries?: ContainerRegistryResponse[]
@@ -14,7 +15,7 @@ export interface PageOrganizationContainerRegistriesProps {
 }
 
 export function PageOrganizationContainerRegistries(props: PageOrganizationContainerRegistriesProps) {
-  const { containerRegistries, isFetched, onAddRegistry, onEdit, onDelete } = props
+  const { containerRegistries, isFetched, onAddRegistry, onEdit, onDelete, onOpenServicesAssociatedModal } = props
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -80,6 +81,19 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       </div>
                     </div>
                     <div className="flex gap-2">
+                      <Button
+                        variant="surface"
+                        color="neutral"
+                        size="md"
+                        className="relative mr-2"
+                        disabled={registry.associated_services_count === 0}
+                        onClick={() => onOpenServicesAssociatedModal(registry)}
+                      >
+                        <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+                          {registry.associated_services_count}
+                        </span>
+                        <Icon iconName="layer-group" />
+                      </Button>
                       <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(registry)}>
                         <Icon iconName="gear" />
                       </Button>

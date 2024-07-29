@@ -2,6 +2,7 @@ import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import {
   ContainerRegistryCreateEditModal,
+  ContainerRegistryServicesListModal,
   useContainerRegistries,
   useDeleteContainerRegistry,
 } from '@qovery/domains/organizations/feature'
@@ -64,6 +65,18 @@ export function PageOrganizationContainerRegistriesFeature() {
               console.error(error)
             }
           },
+        })
+      }}
+      onOpenServicesAssociatedModal={(registry: ContainerRegistryResponse) => {
+        openModal({
+          content: (
+            <ContainerRegistryServicesListModal
+              organizationId={organizationId}
+              containerRegistryId={registry.id}
+              onClose={closeModal}
+              associatedServicesCount={registry.associated_services_count ?? 0}
+            />
+          ),
         })
       }}
     />
