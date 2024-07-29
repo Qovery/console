@@ -1,10 +1,19 @@
 import { type User, useAuth0 } from '@auth0/auth0-react'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
+import * as Sentry from '@sentry/react'
 import axios from 'axios'
 import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import {
+  Navigate,
+  Route,
+  Routes,
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
 import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
@@ -105,6 +114,31 @@ export function App() {
             return response
           },
         },
+      })
+
+      Sentry.init({
+        dsn: 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024',
+        integrations: [
+          // See docs for support of different versions of variation of react router
+          // https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/react-router/
+          Sentry.reactRouterV6BrowserTracingIntegration({
+            useEffect,
+            useLocation,
+            useNavigationType,
+            createRoutesFromChildren,
+            matchRoutes,
+          }),
+          Sentry.replayIntegration(),
+        ],
+
+        // Set tracesSampleRate to 1.0 to capture 100%
+        // of transactions for tracing.
+        tracesSampleRate: 1.0,
+
+        // Capture Replay for 10% of all sessions,
+        // plus for 100% of sessions with an error
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
       })
     }
   }, [])
