@@ -78,7 +78,7 @@ export function PageOrganizationHelmRepositories({
                   <div className="flex gap-2">
                     <Indicator
                       content={
-                        <span className="flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+                        <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                           {repository.associated_services_count}
                         </span>
                       }
