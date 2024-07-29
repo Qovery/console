@@ -28,6 +28,7 @@ import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactElement } from 'react'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { TemplateIds } from '@qovery/shared/util-services'
 
 const Qovery = '/assets/logos/logo-icon.svg'
 const Datadog = '/assets/devicon/datadog.svg'
@@ -36,13 +37,6 @@ const Kubecost = '/assets/devicon/kubecost.svg'
 const Windmill = '/assets/devicon/windmill.svg'
 const Temporal = '/assets/devicon/temporal.svg'
 const CloudFormation = '/assets/devicon/cloudformation.svg'
-
-// HACK: Backend doesn't provides an enum for possible templates,
-// so we must hardcode their ids ¯\_(ツ)_/¯
-const TemplateIds = {
-  CLOUDFORMATION: '94e9e430-8109-4879-8088-6c589e38c5f5' as const,
-  TERRAFORM: '5f9c2fcd-86d4-42c9-9a5a-2f4126f39b06' as const,
-}
 
 export enum TagsEnum {
   FRONT_END = 'FRONT_END',

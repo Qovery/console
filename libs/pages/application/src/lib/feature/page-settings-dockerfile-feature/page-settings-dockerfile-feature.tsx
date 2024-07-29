@@ -1,6 +1,7 @@
+import { type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useCheckDockerfile } from '@qovery/domains/environments/feature'
+import { useCheckDockerfile, useLifecycleTemplate } from '@qovery/domains/environments/feature'
 import {
   DockerfileSettings,
   type DockerfileSettingsData,
@@ -10,6 +11,7 @@ import {
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
 import { Button } from '@qovery/shared/ui'
+import { TemplateIds } from '@qovery/shared/util-services'
 
 export function PageSettingsDockerfileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
@@ -97,6 +99,33 @@ export function PageSettingsDockerfileFeature() {
     // https://github.com/react-hook-form/react-hook-form/issues/2755
     const isValid = watchDockerfileSource === 'DOCKERFILE_RAW' ? !!watchDockerfileRaw : !!watchDockerfilePath
 
+    const DockerfileSettingsWrapper =
+      service?.job_type === 'LIFECYCLE' && service.schedule.lifecycle_type !== 'GENERIC'
+        ? ({ children }: { children: ReactNode }) => {
+            // This is ok to call a hook here as DockerfileSettingsWrapper is an anonymous component.
+            // It avoids the creation of multiple real components for the sake of having to deal with conditionals
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            const { data: template } = useLifecycleTemplate({
+              environmentId: service.environment.id,
+              templateId: TemplateIds[service.schedule.lifecycle_type as keyof typeof TemplateIds],
+            })
+            return (
+              <DockerfileSettings
+                methods={dockerfileForm}
+                onSubmit={onSubmit}
+                directSubmit
+                defaultContent={template?.dockerfile}
+              >
+                {children}
+              </DockerfileSettings>
+            )
+          }
+        : ({ children }: { children: ReactNode }) => (
+            <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit} directSubmit>
+              {children}
+            </DockerfileSettings>
+          )
+
     return (
       <div className="flex w-full flex-col justify-between">
         <div className="max-w-content-with-navigation-left p-8">
@@ -104,7 +133,7 @@ export function PageSettingsDockerfileFeature() {
             title="Dockerfile"
             description="The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw)."
           />
-          <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit} directSubmit>
+          <DockerfileSettingsWrapper>
             <div className="flex justify-end">
               <Button
                 type="submit"
@@ -115,7 +144,7 @@ export function PageSettingsDockerfileFeature() {
                 Save
               </Button>
             </div>
-          </DockerfileSettings>
+          </DockerfileSettingsWrapper>
         </div>
       </div>
     )
