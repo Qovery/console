@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { parseCmd } from '@qovery/shared/util-js'
+import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
 export function PageSettingsConfigureJobFeature() {
@@ -27,19 +27,23 @@ export function PageSettingsConfigureJobFeature() {
         on_start: {
           enabled: !!on_start,
           arguments_string:
-            on_start?.arguments && on_start?.arguments?.length > 0 ? on_start?.arguments?.join(' ') : undefined,
+            on_start?.arguments && on_start?.arguments?.length > 0
+              ? joinArgsWithQuotes(on_start?.arguments)
+              : undefined,
           entrypoint: on_start?.entrypoint,
         },
         on_stop: {
           enabled: !!on_stop,
           arguments_string:
-            on_stop?.arguments && on_stop?.arguments.length > 0 ? on_stop?.arguments?.join(' ') : undefined,
+            on_stop?.arguments && on_stop?.arguments.length > 0 ? joinArgsWithQuotes(on_stop?.arguments) : undefined,
           entrypoint: on_stop?.entrypoint,
         },
         on_delete: {
           enabled: !!on_delete,
           arguments_string:
-            on_delete?.arguments && on_delete?.arguments.length > 0 ? on_delete?.arguments?.join(' ') : undefined,
+            on_delete?.arguments && on_delete?.arguments.length > 0
+              ? joinArgsWithQuotes(on_delete?.arguments)
+              : undefined,
           entrypoint: on_delete?.entrypoint,
         },
         lifecycle_type,

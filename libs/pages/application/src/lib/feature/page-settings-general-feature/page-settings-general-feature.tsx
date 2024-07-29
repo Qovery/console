@@ -243,8 +243,7 @@ export function PageSettingsGeneralFeature() {
         .with({ job_type: 'CRON' }, (s) => {
           const { cronjob } = s.schedule
           return {
-            cmd_arguments:
-              cronjob?.arguments && cronjob?.arguments.length > 0 ? JSON.stringify(cronjob?.arguments) : undefined,
+            cmd_arguments: cronjob?.arguments?.length ? joinArgsWithQuotes(cronjob?.arguments) : '',
             image_entry_point: cronjob?.entrypoint,
           }
         })
