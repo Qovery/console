@@ -76,9 +76,9 @@ export function StepSummary(props: StepSummaryProps) {
 
       <div className="mb-10">
         {props.generalData.installation_type === 'MANAGED' && (
-          <Callout.Root color="yellow" className="mb-5">
+          <Callout.Root color="sky" className="mb-5">
             <Callout.Icon>
-              <Icon iconName="triangle-exclamation" />
+              <Icon iconName="circle-exclamation" iconStyle="light" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
@@ -86,12 +86,12 @@ export function StepSummary(props: StepSummaryProps) {
                 Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
                 <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
                 drift in the configuration.
+                <br />
                 <ExternalLink
-                  className="ml-0.5"
                   size="xs"
-                  href="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
+                  href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#how-does-qovery-handle-cluster-updates-and-upgrades"
                 >
-                  See more details
+                  Click here for more details
                 </ExternalLink>
               </Callout.TextDescription>
             </Callout.Text>

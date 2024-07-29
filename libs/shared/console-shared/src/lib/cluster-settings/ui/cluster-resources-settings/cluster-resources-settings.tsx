@@ -47,26 +47,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
   return (
     <div className="flex flex-col gap-10">
-      <Callout.Root color="yellow">
-        <Callout.Icon>
-          <Icon iconName="triangle-exclamation" />
-        </Callout.Icon>
-        <Callout.Text>
-          <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
-          <Callout.TextDescription className="text-xs">
-            Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
-            <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a drift
-            in the configuration.
-            <ExternalLink
-              href="https://hub.qovery.com/docs/useful-resources/faq/#how-do-you-support-new-kubernetes-version"
-              className="ml-0.5"
-              size="xs"
-            >
-              See more details
-            </ExternalLink>
-          </Callout.TextDescription>
-        </Callout.Text>
-      </Callout.Root>
       <BlockContent title="Cluster" className="mb-0">
         {!props.fromDetail ? (
           <Controller
