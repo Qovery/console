@@ -11,11 +11,14 @@ export interface JobGeneralSettingProps {
   organization?: Organization
   jobType: JobType
   isEdition?: boolean
+  rootPathLabel?: string
+  rootPathHint?: string
 }
 
 export function JobGeneralSettings(props: JobGeneralSettingProps) {
   const { control, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
+  const watchTemplateType = watch('template_type')
 
   return (
     <>
@@ -45,6 +48,7 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
               ]}
               label="Application source"
               error={error?.message}
+              disabled={!!watchTemplateType}
             />
           )}
         />
@@ -67,7 +71,11 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
                 </BlockContent>
               </div>
             ) : (
-              <GitRepositorySettings gitDisabled={false} />
+              <GitRepositorySettings
+                gitDisabled={false}
+                rootPathLabel={props.rootPathLabel}
+                rootPathHint={props.rootPathHint}
+              />
             ))}
 
           {watchServiceType === 'CONTAINER' &&

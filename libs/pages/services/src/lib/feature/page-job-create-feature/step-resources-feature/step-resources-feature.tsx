@@ -15,7 +15,8 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Job')
-  const { setCurrentStep, resourcesData, setResourcesData, generalData, jobURL } = useJobContainerCreateContext()
+  const { setCurrentStep, resourcesData, setResourcesData, generalData, jobURL, templateType } =
+    useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
@@ -48,7 +49,7 @@ export function StepResourcesFeature() {
   return (
     <FunnelFlowBody>
       <FormProvider {...methods}>
-        <StepResources onBack={onBack} onSubmit={onSubmit} />
+        <StepResources onBack={onBack} onSubmit={onSubmit} templateType={templateType} />
       </FormProvider>
     </FunnelFlowBody>
   )

@@ -17,8 +17,16 @@ import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepConfigureFeature() {
   useDocumentTitle('Configure - Create Job')
-  const { configureData, setConfigureData, setCurrentStep, generalData, dockerfileForm, jobURL, jobType } =
-    useJobContainerCreateContext()
+  const {
+    configureData,
+    setConfigureData,
+    setCurrentStep,
+    generalData,
+    dockerfileForm,
+    jobURL,
+    jobType,
+    templateType,
+  } = useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
@@ -81,7 +89,7 @@ export function StepConfigureFeature() {
   return (
     <FunnelFlowBody>
       <FormProvider {...methods}>
-        <StepConfigure onSubmit={onSubmit} onBack={onBack} jobType={jobType} />
+        <StepConfigure onSubmit={onSubmit} onBack={onBack} jobType={jobType} templateType={templateType} />
       </FormProvider>
     </FunnelFlowBody>
   )

@@ -1,14 +1,17 @@
+import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { JobConfigureSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { Button, Heading, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 
 export interface StepConfigureProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   onBack: () => void
   jobType: JobType
+  templateType?: JobLifecycleTypeEnum
 }
 
 export function StepConfigure(props: StepConfigureProps) {
@@ -28,6 +31,20 @@ export function StepConfigure(props: StepConfigureProps) {
       <form className="space-y-10" onSubmit={props.onSubmit}>
         <p className="text-sm text-neutral-350">Job configuration allows you to control the behaviour of your job</p>
 
+        {match(props.templateType)
+          .with('CLOUDFORMATION', 'TERRAFORM', () => (
+            <Callout.Root color="sky">
+              <Callout.Icon>
+                <Icon iconName="circle-info" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text className="text-xs">
+                Qovery provides you with a default set of commands to be executed for each environment event based on
+                the default Dockerfile. You can customize these based on your needs.
+              </Callout.Text>
+            </Callout.Root>
+          ))
+          .with('GENERIC', undefined, () => undefined)
+          .exhaustive()}
         <JobConfigureSettings jobType={props.jobType} />
 
         <div className="flex justify-between">

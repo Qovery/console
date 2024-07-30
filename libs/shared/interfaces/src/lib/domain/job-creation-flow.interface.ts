@@ -5,7 +5,7 @@ import { type ServiceTypeEnum } from '@qovery/shared/enums'
 export interface JobGeneralData {
   name: string
   description: string
-  template_type: keyof typeof JobLifecycleTypeEnum
+  template_type?: keyof typeof JobLifecycleTypeEnum
   serviceType: keyof typeof ServiceTypeEnum
   auto_deploy: boolean
   labels_groups?: string[]

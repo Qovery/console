@@ -1,6 +1,9 @@
-import { useForm } from 'react-hook-form'
+import { type LifecycleJobResponse } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
+import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useCheckDockerfile } from '@qovery/domains/environments/feature'
+import { match } from 'ts-pattern'
+import { useCheckDockerfile, useLifecycleTemplate } from '@qovery/domains/environments/feature'
 import {
   DockerfileSettings,
   type DockerfileSettingsData,
@@ -10,6 +13,36 @@ import {
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
 import { Button } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { TemplateIds } from '@qovery/shared/util-services'
+
+function DockerfileSettingsFromTemplate({
+  children,
+  onSubmit,
+  dockerfileForm,
+  service,
+}: {
+  children: ReactNode
+  onSubmit: () => void
+  dockerfileForm: UseFormReturn<DockerfileSettingsData>
+  service: LifecycleJobResponse
+}) {
+  const { data: template } = useLifecycleTemplate({
+    environmentId: service.environment.id,
+    templateId: TemplateIds[service.schedule.lifecycle_type as keyof typeof TemplateIds],
+  })
+  return (
+    <DockerfileSettings
+      methods={dockerfileForm}
+      onSubmit={onSubmit}
+      directSubmit
+      defaultContent={template?.dockerfile}
+      templateType={service.schedule.lifecycle_type}
+    >
+      {children}
+    </DockerfileSettings>
+  )
+}
 
 export function PageSettingsDockerfileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
@@ -97,14 +130,44 @@ export function PageSettingsDockerfileFeature() {
     // https://github.com/react-hook-form/react-hook-form/issues/2755
     const isValid = watchDockerfileSource === 'DOCKERFILE_RAW' ? !!watchDockerfileRaw : !!watchDockerfilePath
 
+    const DockerfileSettingsWrapper =
+      service?.job_type === 'LIFECYCLE' && service.schedule.lifecycle_type !== 'GENERIC'
+        ? ({ children }: { children: ReactNode }) => (
+            <DockerfileSettingsFromTemplate onSubmit={onSubmit} dockerfileForm={dockerfileForm} service={service}>
+              {children}
+            </DockerfileSettingsFromTemplate>
+          )
+        : ({ children }: { children: ReactNode }) => (
+            <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit} directSubmit>
+              {children}
+            </DockerfileSettings>
+          )
+
     return (
       <div className="flex w-full flex-col justify-between">
         <div className="max-w-content-with-navigation-left p-8">
           <SettingsHeading
             title="Dockerfile"
-            description="The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw)."
+            description={match(service.schedule.lifecycle_type)
+              .with(
+                'CLOUDFORMATION',
+                (templateType) =>
+                  `The Dockerfile allows to package your template and input into a container image with the right ${upperCaseFirstLetter(templateType)} CLI, inputs and commands to run. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+              )
+              .with(
+                'TERRAFORM',
+                (templateType) =>
+                  `The Dockerfile allows to package your manifest and input into a container image with the right ${upperCaseFirstLetter(templateType)} CLI, inputs and commands to run. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+              )
+              .with(
+                'GENERIC',
+                undefined,
+                () =>
+                  `The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+              )
+              .exhaustive()}
           />
-          <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit} directSubmit>
+          <DockerfileSettingsWrapper>
             <div className="flex justify-end">
               <Button
                 type="submit"
@@ -115,7 +178,7 @@ export function PageSettingsDockerfileFeature() {
                 Save
               </Button>
             </div>
-          </DockerfileSettings>
+          </DockerfileSettingsWrapper>
         </div>
       </div>
     )

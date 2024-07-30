@@ -1,7 +1,8 @@
-import { type Organization } from 'qovery-typescript-axios'
+import { type JobLifecycleTypeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
@@ -14,6 +15,7 @@ import { serviceTemplates } from '../../../feature/page-new-feature/service-temp
 
 export interface StepGeneralProps {
   jobType: JobType
+  templateType?: JobLifecycleTypeEnum
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization
 }
@@ -42,7 +44,19 @@ export function StepGeneral(props: StepGeneralProps) {
               {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
             </Heading>
             <p className="text-sm text-neutral-350">
-              General settings allow you to set up your lifecycle name with our git repository settings.
+              {match(props.templateType)
+                .with(
+                  'TERRAFORM',
+                  'CLOUDFORMATION',
+                  () =>
+                    'These general settings allow you to set up the service name, its source and deployment parameters.'
+                )
+                .with(
+                  'GENERIC',
+                  undefined,
+                  () => 'General settings allow you to set up your lifecycle name with our git repository settings.'
+                )
+                .exhaustive()}
             </p>
           </div>
         </div>
@@ -65,7 +79,21 @@ export function StepGeneral(props: StepGeneralProps) {
 
         <Section className="gap-4">
           <Heading>Source</Heading>
-          <JobGeneralSettings jobType={props.jobType} organization={props.organization} isEdition={false} />
+          <JobGeneralSettings
+            jobType={props.jobType}
+            organization={props.organization}
+            isEdition={false}
+            rootPathLabel={match(props.templateType)
+              .with('CLOUDFORMATION', () => 'Template folder path')
+              .with('TERRAFORM', () => 'Manifest folder path')
+              .with('GENERIC', undefined, () => undefined)
+              .exhaustive()}
+            rootPathHint={match(props.templateType)
+              .with('CLOUDFORMATION', () => 'Provide the folder path in the repository where the template is located')
+              .with('TERRAFORM', () => 'Provide the folder path in the repository where the manifest is located')
+              .with('GENERIC', undefined, () => undefined)
+              .exhaustive()}
+          />
         </Section>
 
         {watchServiceType && (

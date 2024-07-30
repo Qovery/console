@@ -1,14 +1,20 @@
 import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 import {
+  BlockContent,
+  Button,
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacySize,
+  CodeEditor,
+  Icon,
   IconAwesomeEnum,
   InputSelectSmall,
   InputTextSmall,
   InputToggle,
+  Tooltip,
 } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 
@@ -22,13 +28,17 @@ export interface VariableRowProps {
 export function VariableRow(props: VariableRowProps) {
   const { index, availableScopes, gridTemplateColumns = '6fr 6fr 204px 2fr 1fr 1fr' } = props
   const { control, trigger, watch } = useFormContext<FlowVariableData>()
+  const [openEditor, setOpenEditor] = useState(true)
   const watchSecret = watch().variables[index]?.isSecret
+  const watchReadOnly = watch().variables[index]?.isReadOnly
+  const watchFile = watch().variables[index]?.file
+  const watchDescription = watch().variables[index]?.description
 
   const pattern = /^[^\s]+$/
 
   return (
     <div data-testid="variable-row" className="mb-3 w-full items-center">
-      <div key={index} data-testid="form-row" className="mb-3 grid" style={{ gridTemplateColumns }}>
+      <div key={index} data-testid="form-row" className="mb-3 grid max-w-full" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}
           control={control}
@@ -39,39 +49,77 @@ export function VariableRow(props: VariableRowProps) {
               message: 'Variable name cannot contain spaces.',
             },
           }}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextSmall
-              className="mr-3 flex-1 shrink-0 grow"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-              label="Variable"
-              errorMessagePosition="left"
-            />
-          )}
+          render={({ field, fieldState: { error } }) =>
+            watchReadOnly ? (
+              <Tooltip content={field.value}>
+                <div className="mr-3 flex items-center justify-between truncate rounded border border-neutral-200 bg-neutral-100 px-2 text-sm text-neutral-350">
+                  <span className="max-w-full truncate">{field.value}</span>
+                  {watchDescription && (
+                    <Tooltip content={watchDescription}>
+                      <span>
+                        <Icon className="text-neutral-400" iconName="info-circle" iconStyle="regular" />
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
+              </Tooltip>
+            ) : (
+              <InputTextSmall
+                className="mr-3 flex-1 shrink-0 grow"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                label="Variable"
+                errorMessagePosition="left"
+              />
+            )
+          }
         />
 
-        <Controller
-          name={`variables.${index}.value`}
-          control={control}
-          rules={{
-            required: 'Please enter a value.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextSmall
-              className="mr-3 flex-1 shrink-0 grow"
-              data-testid="value"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-              errorMessagePosition="left"
-              type={watchSecret ? 'password' : 'text'}
-              hasShowPasswordButton={watchSecret}
-            />
-          )}
-        />
+        {watchFile ? (
+          <Button
+            size="md"
+            color="neutral"
+            variant="surface"
+            type="button"
+            className="mr-3 h-[36px] flex-1 shrink-0 grow justify-between"
+            onClick={() => setOpenEditor((open) => !open)}
+          >
+            {openEditor ? (
+              <>
+                Close
+                <Icon iconName="angle-up" className="text-neutral-400" />
+              </>
+            ) : (
+              <>
+                Edit
+                <Icon iconName="edit" className="text-neutral-400" />
+              </>
+            )}
+          </Button>
+        ) : (
+          <Controller
+            name={`variables.${index}.value`}
+            control={control}
+            rules={{
+              required: 'Please enter a value.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputTextSmall
+                className="mr-3 flex-1 shrink-0 grow"
+                data-testid="value"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                errorMessagePosition="left"
+                type={watchSecret ? 'password' : 'text'}
+                hasShowPasswordButton={watchSecret}
+              />
+            )}
+          />
+        )}
 
         <Controller
           name={`variables.${index}.scope`}
@@ -110,6 +158,20 @@ export function VariableRow(props: VariableRowProps) {
           />
         </div>
       </div>
+      {watchFile && openEditor && (
+        <BlockContent title={watchFile.path} classNameContent="p-0">
+          <Controller
+            name={`variables.${index}.value`}
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field }) => (
+              <CodeEditor language="json" height="496px" value={field.value} onChange={field.onChange} />
+            )}
+          />
+        </BlockContent>
+      )}
     </div>
   )
 }

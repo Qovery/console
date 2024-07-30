@@ -28,6 +28,7 @@ import Vue from 'devicon/icons/vuejs/vuejs-original.svg'
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactElement } from 'react'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { TemplateIds } from '@qovery/shared/util-services'
 
 const Qovery = '/assets/logos/logo-icon.svg'
 const Datadog = '/assets/devicon/datadog.svg'
@@ -35,6 +36,7 @@ const Crossplane = '/assets/devicon/crossplane.svg'
 const Kubecost = '/assets/devicon/kubecost.svg'
 const Windmill = '/assets/devicon/windmill.svg'
 const Temporal = '/assets/devicon/temporal.svg'
+const CloudFormation = '/assets/devicon/cloudformation.svg'
 
 export enum TagsEnum {
   FRONT_END = 'FRONT_END',
@@ -55,6 +57,7 @@ export type ServiceTemplateType = {
   type?: keyof typeof ServiceTypeEnum
   options?: ServiceTemplateOptionType[]
   cloud_provider?: keyof typeof CloudProviderEnum
+  template_id?: (typeof TemplateIds)[keyof typeof TemplateIds]
 }
 
 export type ServiceTemplateOptionType = {
@@ -68,6 +71,7 @@ export type ServiceTemplateOptionType = {
   lifecycle_job_options?: LifecycleJobOptionsType
   recommended?: boolean
   cloud_provider?: keyof typeof CloudProviderEnum
+  template_id?: (typeof TemplateIds)[keyof typeof TemplateIds]
 }
 
 export type LifecycleJobOptionsType = {
@@ -101,6 +105,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-aws-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'AWS RDS via Terraform',
         description: 'Create a PostgreSQL database using AWS RDS via Terraform.',
         icon: Terraform,
@@ -122,6 +127,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-aws-cloudformation',
+        template_id: TemplateIds.CLOUDFORMATION,
         title: 'AWS RDS via Cloudformation',
         description: 'Create a PostgreSQL database using AWS RDS via Cloudformation.',
         icon: AWS,
@@ -142,6 +148,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-gcp-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
         description: 'Create a PostgreSQL database using Google Cloud SQL via Terraform.',
         icon: GCP,
@@ -178,6 +185,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-aws-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'AWS ElastiCache via Terraform',
         description: 'Create a Redis database using AWS ElastiCache via Terraform.',
         icon: Terraform,
@@ -188,6 +196,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-gcp-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
         description: 'Create a Redis database using Google Cloud Memorystore via Terraform.',
         icon: Terraform,
@@ -202,8 +211,21 @@ export const serviceTemplates: ServiceTemplateType[] = [
     tag: 'OTHER',
     slug: 'terraform',
     title: 'Terraform',
+    template_id: TemplateIds.TERRAFORM,
     description: 'Terraform is an open-source infrastructure as code software tool.',
     icon: Terraform,
+    type: 'LIFECYCLE_JOB',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    tag: 'OTHER',
+    slug: 'cloudformation',
+    title: 'CloudFormation',
+    template_id: TemplateIds.CLOUDFORMATION,
+    description:
+      'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
+    icon: CloudFormation,
     type: 'LIFECYCLE_JOB',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -316,6 +338,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     options: [
       {
         slug: 'cloudformation',
+        template_id: TemplateIds.CLOUDFORMATION,
         title: 'Cloudformation',
         description: 'Deploy an AWS Lambda function using CloudFormation.',
         icon: AWS,
@@ -326,6 +349,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'Terraform',
         description: 'Deploy an AWS Lambda function using Terraform.',
         icon: Terraform,
@@ -362,6 +386,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-aws-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'AWS RDS via Terraform',
         description: 'Create a MySQL database using AWS RDS via Terraform.',
         icon: Terraform,
@@ -372,6 +397,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-aws-cloudformation',
+        template_id: TemplateIds.CLOUDFORMATION,
         title: 'AWS RDS via Cloudformation',
         description: 'Create a MySQL database using AWS RDS via Cloudformation.',
         icon: AWS,
@@ -382,6 +408,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-gcp-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
         description: 'Create a MySQL database using Google Cloud SQL via Terraform.',
         icon: Terraform,
@@ -418,6 +445,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-aws-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'AWS DocumentDB via Terraform',
         description: 'Create a MongoDB database using AWS DocumentDB via Terraform.',
         icon: Terraform,
@@ -428,6 +456,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-gcp-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
         description: 'Create a MongoDB database using Google Cloud Firestore via Terraform.',
         icon: Terraform,
@@ -701,6 +730,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 's3-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'S3 via Terraform',
         description: 'Do operations on S3 using Terraform.',
         icon: Terraform,
@@ -711,6 +741,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 's3-cloudformation',
+        template_id: TemplateIds.CLOUDFORMATION,
         title: 'S3 via Cloudformation',
         description: 'Do operations on S3 using Cloudformation.',
         icon: AWS,
@@ -745,6 +776,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'bigquery-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'BigQuery via Terraform',
         description: 'Do operations on BigQuery using Terraform.',
         icon: Terraform,
@@ -813,6 +845,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-aws-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'AWS Elasticsearch via Terraform',
         description: 'Create an Elasticsearch database using AWS Elasticsearch via Terraform.',
         icon: Terraform,
@@ -823,6 +856,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       },
       {
         slug: 'managed-gcp-terraform',
+        template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
         description: 'Create an Elasticsearch database using Google Cloud Elasticsearch via Terraform.',
         icon: Terraform,

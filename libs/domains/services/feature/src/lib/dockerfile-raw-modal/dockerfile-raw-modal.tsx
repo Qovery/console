@@ -5,17 +5,23 @@ export interface DockerfileRawModalProps {
   onSubmit: (value?: string) => void
   onClose: () => void
   content?: string
+  description?: string
+  defaultContent?: string
 }
 
-export function DockerfileRawModal({ onClose, onSubmit, content }: DockerfileRawModalProps) {
-  const defaultContent = `FROM alpine:latest
+export function DockerfileRawModal({
+  onClose,
+  onSubmit,
+  content,
+  description,
+  defaultContent = `FROM alpine:latest
 
 # copy the entire repository in the container image
 ADD . .
 
 # Set the default command to run when the container starts
-ENTRYPOINT [ "/bin/sh" ]`
-
+ENTRYPOINT [ "/bin/sh" ]`,
+}: DockerfileRawModalProps) {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -30,7 +36,13 @@ ENTRYPOINT [ "/bin/sh" ]`
 
   return (
     <FormProvider {...methods}>
-      <ModalCrud title="Dockerfile" onSubmit={onSubmitValue} onClose={onClose} submitLabel="Save">
+      <ModalCrud
+        title="Dockerfile"
+        onSubmit={onSubmitValue}
+        onClose={onClose}
+        submitLabel="Save"
+        description={description}
+      >
         <div className="flex h-full">
           <BlockContent title="Override" className="mb-0 rounded-r-none border-r-0" classNameContent="p-0">
             <Controller

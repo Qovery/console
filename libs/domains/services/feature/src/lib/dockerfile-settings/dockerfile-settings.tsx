@@ -1,8 +1,11 @@
+import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { Controller, type ControllerRenderProps, type UseFormReturn } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import {
   BlockContent,
   Button,
+  Callout,
   CodeEditor,
   ExternalLink,
   Heading,
@@ -12,6 +15,7 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { DockerfileRawModal } from '../dockerfile-raw-modal/dockerfile-raw-modal'
 
 type FileSource = 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
@@ -26,9 +30,18 @@ export interface DockerfileSettingsProps extends PropsWithChildren {
   methods: UseFormReturn<DockerfileSettingsData>
   onSubmit: () => void
   directSubmit?: boolean
+  defaultContent?: string
+  templateType?: JobLifecycleTypeEnum
 }
 
-export function DockerfileSettings({ children, methods, onSubmit, directSubmit = false }: DockerfileSettingsProps) {
+export function DockerfileSettings({
+  children,
+  methods,
+  onSubmit,
+  directSubmit = false,
+  defaultContent,
+  templateType,
+}: DockerfileSettingsProps) {
   const { openModal, closeModal } = useModal()
   const { setValue, control, watch } = methods
 
@@ -54,6 +67,15 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
       content: (
         <DockerfileRawModal
           content={field.value ?? ''}
+          description={match(templateType)
+            .with(
+              'CLOUDFORMATION',
+              'TERRAFORM',
+              (templateType) =>
+                `Qovery provides you with a default Dockerfile to deploy your ${upperCaseFirstLetter(templateType)}.`
+            )
+            .with('GENERIC', undefined, () => undefined)
+            .exhaustive()}
           onClose={closeModal}
           onSubmit={(dockerfile_raw) => {
             field.onChange(dockerfile_raw)
@@ -61,6 +83,7 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
               handleSubmit()
             }
           }}
+          defaultContent={defaultContent}
         />
       ),
       options: {
@@ -97,10 +120,48 @@ export function DockerfileSettings({ children, methods, onSubmit, directSubmit =
             <div>
               <Heading className="mb-2">Dockerfile as raw file</Heading>
               <p className="text-sm text-neutral-350">
-                You can customize here the dockerfile to be used for this service and it will be stored on the Qovery
-                control plane.
+                {match(templateType)
+                  .with(
+                    'CLOUDFORMATION',
+                    'TERRAFORM',
+                    (templateType) =>
+                      `Customize here the dockerfile used to package your ${upperCaseFirstLetter(templateType)} and store it in the Qovery control plane.`
+                  )
+                  .with(
+                    'GENERIC',
+                    undefined,
+                    () =>
+                      'You can customize here the dockerfile to be used for this service and it will be stored on the Qovery control plane.'
+                  )
+                  .exhaustive()}
               </p>
             </div>
+
+            {match(templateType)
+              .with('CLOUDFORMATION', () => (
+                <Callout.Root color="sky">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    Qovery provides a default Dockerfile and job parameters to deploy your template. These can be
+                    customize based on your needs (additional arguments in the CLI commands etc..).
+                  </Callout.Text>
+                </Callout.Root>
+              ))
+              .with('TERRAFORM', () => (
+                <Callout.Root color="sky">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    Qovery provides a default Dockerfile and job parameters to deploy your manifest. These can be
+                    customize based on your needs (additional arguments in the CLI commands etc..).
+                  </Callout.Text>
+                </Callout.Root>
+              ))
+              .with('GENERIC', undefined, () => undefined)
+              .exhaustive()}
 
             <Controller
               name="dockerfile_raw"

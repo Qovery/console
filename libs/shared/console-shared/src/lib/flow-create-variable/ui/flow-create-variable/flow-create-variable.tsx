@@ -1,8 +1,10 @@
-import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum, type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
-import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import VariableRow from '../variable-row/variable-row'
 
 export interface FlowCreateVariableProps {
@@ -12,6 +14,7 @@ export interface FlowCreateVariableProps {
   onRemove: (index: number) => void
   variables: VariableData[]
   availableScopes: APIVariableScopeEnum[]
+  templateType?: JobLifecycleTypeEnum
 }
 
 export function FlowCreateVariable(props: FlowCreateVariableProps) {
@@ -29,7 +32,31 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
       </div>
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-sm text-neutral-350">Define here the variables required by your service.</p>
+        <p className="mr-36 text-sm text-neutral-350">
+          {match(props.templateType)
+            .with(
+              'CLOUDFORMATION',
+              'TERRAFORM',
+              (templateType) =>
+                `Fill the parameters required to execute the ${upperCaseFirstLetter(templateType)} commands. These will be stored as environment variables, you can reuse in the field “Value” any existing variable via the macro {{VARIABLE_NAME}}`
+            )
+            .with('GENERIC', undefined, () => 'Define here the variables required by your service.')
+            .exhaustive()}
+        </p>
+        {match(props.templateType)
+          .with('CLOUDFORMATION', 'TERRAFORM', () => (
+            <Callout.Root color="sky">
+              <Callout.Icon>
+                <Icon iconName="circle-info" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text className="text-xs">
+                Some environment variable are proposed by default to match the default Dockerfile provided in the
+                previous step.
+              </Callout.Text>
+            </Callout.Root>
+          ))
+          .with('GENERIC', undefined, () => undefined)
+          .exhaustive()}
         <div>
           {props.variables?.length > 0 && (
             <div className="mb-3 grid" style={{ gridTemplateColumns }}>

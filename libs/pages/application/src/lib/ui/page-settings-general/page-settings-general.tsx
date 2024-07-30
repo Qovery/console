@@ -133,7 +133,24 @@ export function PageSettingsGeneral({
                 <Section className="gap-4">
                   <Heading>Source</Heading>
                   {isJobGitSource(job.source) ? (
-                    <EditGitRepositorySettingsFeature />
+                    <EditGitRepositorySettingsFeature
+                      rootPathLabel={match(job.job_type === 'LIFECYCLE' ? job.schedule.lifecycle_type : undefined)
+                        .with('CLOUDFORMATION', () => 'Template folder path')
+                        .with('TERRAFORM', () => 'Manifest folder path')
+                        .with('GENERIC', undefined, () => undefined)
+                        .exhaustive()}
+                      rootPathHint={match(job.job_type === 'LIFECYCLE' ? job.schedule.lifecycle_type : undefined)
+                        .with(
+                          'CLOUDFORMATION',
+                          () => 'Provide the folder path in the repository where the template is located'
+                        )
+                        .with(
+                          'TERRAFORM',
+                          () => 'Provide the folder path in the repository where the manifest is located'
+                        )
+                        .with('GENERIC', undefined, () => undefined)
+                        .exhaustive()}
+                    />
                   ) : (
                     <GeneralContainerSettings organization={organization} />
                   )}
