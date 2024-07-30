@@ -1,5 +1,6 @@
+import { type LifecycleJobResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { useForm } from 'react-hook-form'
+import { type UseFormReturn, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCheckDockerfile, useLifecycleTemplate } from '@qovery/domains/environments/feature'
@@ -14,6 +15,34 @@ import { isJobGitSource } from '@qovery/shared/enums'
 import { Button } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
+
+function DockerfileSettingsFromTemplate({
+  children,
+  onSubmit,
+  dockerfileForm,
+  service,
+}: {
+  children: ReactNode
+  onSubmit: () => void
+  dockerfileForm: UseFormReturn<DockerfileSettingsData>
+  service: LifecycleJobResponse
+}) {
+  const { data: template } = useLifecycleTemplate({
+    environmentId: service.environment.id,
+    templateId: TemplateIds[service.schedule.lifecycle_type as keyof typeof TemplateIds],
+  })
+  return (
+    <DockerfileSettings
+      methods={dockerfileForm}
+      onSubmit={onSubmit}
+      directSubmit
+      defaultContent={template?.dockerfile}
+      templateType={service.schedule.lifecycle_type}
+    >
+      {children}
+    </DockerfileSettings>
+  )
+}
 
 export function PageSettingsDockerfileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
@@ -103,26 +132,11 @@ export function PageSettingsDockerfileFeature() {
 
     const DockerfileSettingsWrapper =
       service?.job_type === 'LIFECYCLE' && service.schedule.lifecycle_type !== 'GENERIC'
-        ? ({ children }: { children: ReactNode }) => {
-            // This is ok to call a hook here as DockerfileSettingsWrapper is an anonymous component.
-            // It avoids the creation of multiple real components for the sake of having to deal with conditionals
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            const { data: template } = useLifecycleTemplate({
-              environmentId: service.environment.id,
-              templateId: TemplateIds[service.schedule.lifecycle_type as keyof typeof TemplateIds],
-            })
-            return (
-              <DockerfileSettings
-                methods={dockerfileForm}
-                onSubmit={onSubmit}
-                directSubmit
-                defaultContent={template?.dockerfile}
-                templateType={service.schedule.lifecycle_type}
-              >
-                {children}
-              </DockerfileSettings>
-            )
-          }
+        ? ({ children }: { children: ReactNode }) => (
+            <DockerfileSettingsFromTemplate onSubmit={onSubmit} dockerfileForm={dockerfileForm} service={service}>
+              {children}
+            </DockerfileSettingsFromTemplate>
+          )
         : ({ children }: { children: ReactNode }) => (
             <DockerfileSettings methods={dockerfileForm} onSubmit={onSubmit} directSubmit>
               {children}
