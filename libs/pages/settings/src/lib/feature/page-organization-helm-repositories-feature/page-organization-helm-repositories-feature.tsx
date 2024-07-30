@@ -2,6 +2,7 @@ import { type HelmRepositoryResponse } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import {
   HelmRepositoryCreateEditModal,
+  HelmRepositoryServicesListModal,
   useDeleteHelmRepository,
   useHelmRepositories,
 } from '@qovery/domains/organizations/feature'
@@ -55,6 +56,18 @@ export function PageOrganizationHelmRepositoriesFeature() {
               console.error(error)
             }
           },
+        })
+      }}
+      onOpenServicesAssociatedModal={(repository: HelmRepositoryResponse) => {
+        openModal({
+          content: (
+            <HelmRepositoryServicesListModal
+              organizationId={organizationId}
+              helmRepositoryId={repository.id}
+              onClose={closeModal}
+              associatedServicesCount={repository.associated_services_count ?? 0}
+            />
+          ),
         })
       }}
     />
