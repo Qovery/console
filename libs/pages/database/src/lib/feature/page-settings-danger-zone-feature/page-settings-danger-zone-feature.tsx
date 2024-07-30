@@ -9,7 +9,7 @@ export function PageSettingsDangerZoneFeature() {
   const navigate = useNavigate()
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: databaseId })
-  const { mutateAsync: deleteService } = useDeleteService({ environmentId })
+  const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
 
   const mutationDeleteDatabase = async () => {
     if (!service) return

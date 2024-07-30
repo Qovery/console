@@ -495,7 +495,7 @@ function MenuOtherActions({
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { mutateAsync: deleteService } = useDeleteService({ environmentId })
+  const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
 
   const [, copyToClipboard] = useCopyToClipboard()
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
