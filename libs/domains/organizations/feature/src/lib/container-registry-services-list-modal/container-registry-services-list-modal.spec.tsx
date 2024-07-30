@@ -35,7 +35,7 @@ const data = [
     environment_name: 'Development',
     service_id: '102',
     service_name: 'Service 2',
-    service_type: ContainerRegistryAssociatedServiceType.CONTAINER,
+    service_type: ContainerRegistryAssociatedServiceType.CRON,
   },
   {
     project_id: '2',
@@ -44,7 +44,7 @@ const data = [
     environment_name: 'Staging',
     service_id: '201',
     service_name: 'Service 3',
-    service_type: ContainerRegistryAssociatedServiceType.CONTAINER,
+    service_type: ContainerRegistryAssociatedServiceType.LIFECYCLE,
   },
 ]
 
