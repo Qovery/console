@@ -138,14 +138,25 @@ export function DockerfileSettings({
             </div>
 
             {match(templateType)
-              .with('CLOUDFORMATION', 'TERRAFORM', () => (
+              .with('CLOUDFORMATION', () => (
                 <Callout.Root color="sky">
                   <Callout.Icon>
                     <Icon iconName="circle-info" iconStyle="regular" />
                   </Callout.Icon>
                   <Callout.Text className="text-xs">
-                    Qovery provides a default Dockerfile and job parameters to deploy your manifest/template. These can
-                    be customize based on your needs (additional arguments in the CLI commands etc..).
+                    Qovery provides a default Dockerfile and job parameters to deploy your template. These can be
+                    customize based on your needs (additional arguments in the CLI commands etc..).
+                  </Callout.Text>
+                </Callout.Root>
+              ))
+              .with('TERRAFORM', () => (
+                <Callout.Root color="sky">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    Qovery provides a default Dockerfile and job parameters to deploy your manifest. These can be
+                    customize based on your needs (additional arguments in the CLI commands etc..).
                   </Callout.Text>
                 </Callout.Root>
               ))

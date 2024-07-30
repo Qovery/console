@@ -80,9 +80,13 @@ export function StepIntroductionFeature() {
               {match(templateType)
                 .with(
                   'CLOUDFORMATION',
+                  (templateType) =>
+                    `Qovery packages your ${upperCaseFirstLetter(templateType)} template, inputs and Terraform CLI as a containerized application and executes it on your Kubernetes cluster as job (Qovery Lifecycle job). A different command is executed depending on the event triggered (deploy/stop/delete), allowing you to synchronously manage the lifecycle of any external resource (create/pause/destroy).`
+                )
+                .with(
                   'TERRAFORM',
                   (templateType) =>
-                    `Qovery packages your ${upperCaseFirstLetter(templateType)} manifest, inputs and ${upperCaseFirstLetter(templateType)} CLI as a containerized application. It is then executed on your Kubernetes cluster as job (Qovery Lifecycle job), allowing you to create/update/destroy your resources based on the events on your environment (start/stop/delete).`
+                    `Qovery packages your ${upperCaseFirstLetter(templateType)} manifest, inputs and Terraform CLI as a containerized application and executes it on your Kubernetes cluster as job (Qovery Lifecycle job). A different command is executed depending on the event triggered (deploy/stop/delete), allowing you to synchronously manage the lifecycle of any external resource (create/pause/destroy).`
                 )
                 .with(
                   'GENERIC',
@@ -101,7 +105,7 @@ export function StepIntroductionFeature() {
                 .returnType<ReactNode>()
                 .with('CLOUDFORMATION', () => (
                   <ul className="list-outside list-disc pl-2">
-                    <li>Your manifest and inputs are containerised via a Dockerfile.</li>
+                    <li>Your template and inputs are containerised via a Dockerfile.</li>
                     <li>
                       The Dockerfile defines the Cloudformation CLI version and commands to run during the job execution
                       (e.g: command “start” corresponds to “cloudformation deploy..”).

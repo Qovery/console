@@ -78,9 +78,13 @@ export function StepDockerfileFeature() {
             {match(templateType)
               .with(
                 'CLOUDFORMATION',
+                (templateType) =>
+                  `The Dockerfile allows to package your template and input into a container image with the right ${upperCaseFirstLetter(templateType)} CLI, inputs and commands to run. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+              )
+              .with(
                 'TERRAFORM',
                 (templateType) =>
-                  `The Dockerfile allows to package your manifest/template and input into a container image with the right ${upperCaseFirstLetter(templateType)} CLI, inputs and commands to run. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+                  `The Dockerfile allows to package your manifest and input into a container image with the right ${upperCaseFirstLetter(templateType)} CLI, inputs and commands to run. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
               )
               .with(
                 'GENERIC',

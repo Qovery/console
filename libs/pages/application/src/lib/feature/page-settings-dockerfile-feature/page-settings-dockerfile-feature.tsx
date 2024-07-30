@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCheckDockerfile, useLifecycleTemplate } from '@qovery/domains/environments/feature'
 import {
   DockerfileSettings,
@@ -11,6 +12,7 @@ import {
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
 import { Button } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
 
 export function PageSettingsDockerfileFeature() {
@@ -115,6 +117,7 @@ export function PageSettingsDockerfileFeature() {
                 onSubmit={onSubmit}
                 directSubmit
                 defaultContent={template?.dockerfile}
+                templateType={service.schedule.lifecycle_type}
               >
                 {children}
               </DockerfileSettings>
@@ -131,7 +134,24 @@ export function PageSettingsDockerfileFeature() {
         <div className="max-w-content-with-navigation-left p-8">
           <SettingsHeading
             title="Dockerfile"
-            description="The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw)."
+            description={match(service.schedule.lifecycle_type)
+              .with(
+                'CLOUDFORMATION',
+                (templateType) =>
+                  `The Dockerfile allows to package your template and input into a container image with the right ${upperCaseFirstLetter(templateType)} CLI, inputs and commands to run. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+              )
+              .with(
+                'TERRAFORM',
+                (templateType) =>
+                  `The Dockerfile allows to package your manifest and input into a container image with the right ${upperCaseFirstLetter(templateType)} CLI, inputs and commands to run. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+              )
+              .with(
+                'GENERIC',
+                undefined,
+                () =>
+                  `The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).`
+              )
+              .exhaustive()}
           />
           <DockerfileSettingsWrapper>
             <div className="flex justify-end">
