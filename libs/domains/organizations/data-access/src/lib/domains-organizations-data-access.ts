@@ -153,6 +153,19 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  containerRegistryAssociatedServices: ({
+    organizationId,
+    containerRegistryId,
+  }: {
+    organizationId: string
+    containerRegistryId: string
+  }) => ({
+    queryKey: [organizationId, containerRegistryId],
+    async queryFn() {
+      const response = await organizationApi.getContainerRegistryAssociatedServices(organizationId, containerRegistryId)
+      return response.data.results
+    },
+  }),
   authProviders: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

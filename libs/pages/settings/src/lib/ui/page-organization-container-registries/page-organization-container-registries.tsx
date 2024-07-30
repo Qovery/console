@@ -1,12 +1,23 @@
 import { type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, Heading, Icon, LoaderSpinner, Section, Tooltip, Truncate } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Heading,
+  Icon,
+  Indicator,
+  LoaderSpinner,
+  Section,
+  Tooltip,
+  Truncate,
+} from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 
 export interface PageOrganizationContainerRegistriesProps {
   onAddRegistry: () => void
+  onOpenServicesAssociatedModal: (registry: ContainerRegistryResponse) => void
   onEdit: (registry: ContainerRegistryResponse) => void
   onDelete: (registry: ContainerRegistryResponse) => void
   containerRegistries?: ContainerRegistryResponse[]
@@ -14,7 +25,7 @@ export interface PageOrganizationContainerRegistriesProps {
 }
 
 export function PageOrganizationContainerRegistries(props: PageOrganizationContainerRegistriesProps) {
-  const { containerRegistries, isFetched, onAddRegistry, onEdit, onDelete } = props
+  const { containerRegistries, isFetched, onAddRegistry, onEdit, onDelete, onOpenServicesAssociatedModal } = props
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -80,6 +91,23 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       </div>
                     </div>
                     <div className="flex gap-2">
+                      <Indicator
+                        content={
+                          <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
+                            {registry.associated_services_count}
+                          </span>
+                        }
+                      >
+                        <Button
+                          variant="surface"
+                          color="neutral"
+                          size="md"
+                          disabled={registry.associated_services_count === 0}
+                          onClick={() => onOpenServicesAssociatedModal(registry)}
+                        >
+                          <Icon iconName="layer-group" />
+                        </Button>
+                      </Indicator>
                       <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(registry)}>
                         <Icon iconName="gear" />
                       </Button>
