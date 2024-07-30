@@ -7,7 +7,15 @@ import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 
-export function EditGitRepositorySettingsFeature() {
+interface EditGitRepositorySettingsFeatureProps {
+  rootPathLabel?: string
+  rootPathHint?: string
+}
+
+export function EditGitRepositorySettingsFeature({
+  rootPathHint,
+  rootPathLabel,
+}: EditGitRepositorySettingsFeatureProps) {
   const { applicationId = '' } = useParams()
   const { data: service } = useService({ serviceId: applicationId })
 
@@ -54,6 +62,8 @@ export function EditGitRepositorySettingsFeature() {
       editGitSettings={editGitSettings}
       currentProvider={gitRepository?.provider}
       currentRepository={gitRepository?.name}
+      rootPathLabel={rootPathLabel}
+      rootPathHint={rootPathHint}
     />
   )
 }
