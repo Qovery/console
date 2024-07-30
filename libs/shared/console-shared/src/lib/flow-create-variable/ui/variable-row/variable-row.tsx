@@ -51,18 +51,18 @@ export function VariableRow(props: VariableRowProps) {
           }}
           render={({ field, fieldState: { error } }) =>
             watchReadOnly ? (
-              <div className="mr-3 flex items-center gap-2 truncate rounded border border-neutral-200 bg-neutral-100 px-2 text-sm text-neutral-350">
-                <span className="max-w-full truncate" title={field.value}>
-                  {field.value}
-                </span>
-                {watchDescription && (
-                  <Tooltip content={watchDescription}>
-                    <span>
-                      <Icon className="text-neutral-400" iconName="info-circle" iconStyle="regular" />
-                    </span>
-                  </Tooltip>
-                )}
-              </div>
+              <Tooltip content={field.value}>
+                <div className="mr-3 flex items-center justify-between truncate rounded border border-neutral-200 bg-neutral-100 px-2 text-sm text-neutral-350">
+                  <span className="max-w-full truncate">{field.value}</span>
+                  {watchDescription && (
+                    <Tooltip content={watchDescription}>
+                      <span>
+                        <Icon className="text-neutral-400" iconName="info-circle" iconStyle="regular" />
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
+              </Tooltip>
             ) : (
               <InputTextSmall
                 className="mr-3 flex-1 shrink-0 grow"
