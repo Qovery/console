@@ -24,7 +24,7 @@ interface TemplateFormSyncProps {
 
 export function TemplateFormSync({
   environmentId,
-  templateData: { slug, template_id: templateId },
+  templateData: { slug, template_id: templateId, icon_uri },
   children,
 }: TemplateFormSyncProps) {
   const { data: template } = useLifecycleTemplate({ environmentId, templateId })
@@ -50,6 +50,7 @@ export function TemplateFormSync({
         description: '',
         name: slug,
         serviceType: slug === 'container' ? 'CONTAINER' : 'APPLICATION',
+        icon_uri,
       }))
 
       // Configure / Dockerfile
