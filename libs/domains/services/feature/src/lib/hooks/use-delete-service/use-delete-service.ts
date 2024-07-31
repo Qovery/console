@@ -13,20 +13,44 @@ export function useDeleteService({ organizationId, environmentId }: { organizati
       queryClient.invalidateQueries({
         queryKey: queries.services.listStatuses(environmentId).queryKey,
       })
+      // gitTokens requests
       queryClient.invalidateQueries({
         queryKey: queries.organizations.gitTokens({ organizationId }).queryKey,
       })
       queryClient.invalidateQueries({
+        queryKey: queries.organizations.gitTokenAssociatedServices._def,
+      })
+
+      // containerRegistries requests
+      queryClient.invalidateQueries({
         queryKey: queries.organizations.containerRegistries({ organizationId }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.organizations.containerRegistryAssociatedServices._def,
+      })
+
+      // helmRepositories requests
       queryClient.invalidateQueries({
         queryKey: queries.organizations.helmRepositories({ organizationId }).queryKey,
       })
       queryClient.invalidateQueries({
+        queryKey: queries.organizations.helmRepositoryAssociatedServices._def,
+      })
+
+      // labelsGroups requests
+      queryClient.invalidateQueries({
         queryKey: queries.organizations.labelsGroups({ organizationId }).queryKey,
       })
       queryClient.invalidateQueries({
+        queryKey: queries.organizations.labelsGroupAssociatedItems._def,
+      })
+
+      // annotationsGroups requests
+      queryClient.invalidateQueries({
         queryKey: queries.organizations.annotationsGroups({ organizationId }).queryKey,
+      })
+      queryClient.invalidateQueries({
+        queryKey: queries.organizations.annotationsGroupAssociatedItems._def,
       })
     },
     meta: {
