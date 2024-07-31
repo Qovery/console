@@ -181,7 +181,7 @@ export function StepSummaryFeature() {
   const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
-  const { mutateAsync: createService } = useCreateService()
+  const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {

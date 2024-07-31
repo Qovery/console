@@ -37,7 +37,7 @@ export function StepSummaryFeature() {
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
   const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
 
-  const { mutateAsync: createService } = useCreateService()
+  const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutate: deployService } = useDeployService({ environmentId })
 
   const gotoGlobalInformations = () => {
