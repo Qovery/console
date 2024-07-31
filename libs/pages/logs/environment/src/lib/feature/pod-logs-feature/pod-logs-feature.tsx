@@ -11,6 +11,7 @@ import { match } from 'ts-pattern'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { type TableFilterProps } from '@qovery/shared/ui'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import _PodLogs from '../../ui/pod-logs/pod-logs'
 
@@ -99,7 +100,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   )
 
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/service/logs',
+    url: QOVERY_WS + '/service/logs',
     urlSearchParams: {
       organization: organizationId,
       cluster: clusterId,
@@ -126,7 +127,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   )
 
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/infra/logs',
+    url: QOVERY_WS + '/infra/logs',
     urlSearchParams: {
       organization: organizationId,
       cluster: clusterId,

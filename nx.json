@@ -36,6 +36,9 @@
         },
         {
           "env": "NX_QOVERY_API"
+        },
+        {
+          "env": "NX_QOVERY_WS"
         }
       ],
       "cache": true
