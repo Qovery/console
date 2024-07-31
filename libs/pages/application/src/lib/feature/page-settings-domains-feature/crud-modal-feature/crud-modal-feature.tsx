@@ -18,7 +18,7 @@ export function CrudModalFeature({ customDomain, service, onClose }: CrudModalFe
     defaultValues: {
       domain: customDomain ? customDomain.domain : '',
       generate_certificate: customDomain ? customDomain?.generate_certificate : true,
-      use_cdn: false,
+      use_cdn: customDomain?.use_cdn ?? false,
     },
     mode: 'onChange',
   })
