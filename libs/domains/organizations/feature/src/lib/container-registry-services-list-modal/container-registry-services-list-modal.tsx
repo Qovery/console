@@ -147,8 +147,7 @@ export function ContainerRegistryServicesListModal({
                                   >
                                     <Icon
                                       name={match(service.service_type)
-                                        // .with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
-                                        .with('JOB', () => `${service.service_type}_JOB`)
+                                        .with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
                                         .otherwise(() => service.service_type)}
                                       width={20}
                                       className="mr-2"
