@@ -116,7 +116,18 @@ export function TemplateFormSync({
 
       setShouldRender(true)
     }
-  }, [template])
+  }, [
+    slug,
+    icon_uri,
+    setTemplateType,
+    template,
+    setGeneralData,
+    setDockerfileDefaultContent,
+    setResourcesData,
+    setConfigureData,
+    setVariableData,
+    setShouldRender,
+  ])
 
   return shouldRender ? children : null
 }

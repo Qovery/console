@@ -1,5 +1,5 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
@@ -18,6 +18,7 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_CREATION } from '../../router/router'
+import { findTemplateData } from '../page-job-create-feature/page-job-create-feature'
 
 export interface ApplicationContainerCreateContextInterface {
   currentStep: number
@@ -78,6 +79,21 @@ export function PageApplicationCreateFeature() {
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
   const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
+  const templateData = findTemplateData(slug, option)
+
+  // Sync general data with frontend template data
+  useEffect(() => {
+    if (templateData) {
+      setGeneralData((generalData) => ({
+        ...(generalData ?? {}),
+        auto_deploy: true,
+        description: '',
+        name: templateData.slug ?? '',
+        serviceType: slug === 'container' ? 'CONTAINER' : 'APPLICATION',
+        icon_uri: templateData.icon_uri,
+      }))
+    }
+  }, [templateData, setGeneralData])
 
   return (
     <ApplicationContainerCreateContext.Provider

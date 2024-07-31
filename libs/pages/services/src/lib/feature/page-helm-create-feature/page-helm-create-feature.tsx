@@ -67,6 +67,7 @@ export function PageHelmCreateFeature() {
     mode: 'onChange',
     defaultValues: {
       name: dataTemplate?.slug ?? '',
+      icon_uri: dataTemplate?.icon_uri ?? 'app://qovery-console/helm',
     },
   })
 

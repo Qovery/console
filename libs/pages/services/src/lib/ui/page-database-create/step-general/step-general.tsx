@@ -76,16 +76,13 @@ export function StepGeneral({
   return (
     <Section>
       {isTemplate ? (
-        <div className="mb-10 flex items-center gap-6">
-          <img src={dataTemplate?.icon as string} alt={slug} className="h-10 w-10" />
-          <div>
-            <Heading className="mb-2">
-              {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
-            </Heading>
-            <p className="text-sm text-neutral-350">
-              These general settings allow you to set up the database name, type and version.
-            </p>
-          </div>
+        <div className="mb-10">
+          <Heading className="mb-2">
+            {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
+          </Heading>
+          <p className="text-sm text-neutral-350">
+            These general settings allow you to set up the database name, type and version.
+          </p>
         </div>
       ) : (
         <>
@@ -99,7 +96,22 @@ export function StepGeneral({
       <form className="space-y-10" onSubmit={onSubmit}>
         <Section className="gap-4">
           <Heading>General</Heading>
-          <GeneralSetting label="Service name" />
+          <GeneralSetting
+            label="Service name"
+            service={{
+              id: '',
+              name: '',
+              serviceType: 'DATABASE',
+              created_at: '',
+              type: 'MONGODB',
+              environment: {
+                id: '',
+              },
+              version: '',
+              icon_uri: 'app://qovery-console/database',
+              mode: watchMode,
+            }}
+          />
         </Section>
 
         <BlockContent title="Database mode" className="mb-0">

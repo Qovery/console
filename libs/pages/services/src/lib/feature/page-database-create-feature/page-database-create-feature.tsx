@@ -1,5 +1,6 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { createContext, useContext, useState } from 'react'
+import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
@@ -13,6 +14,7 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_DATABASE_CREATION } from '../../router/router'
+import { findTemplateData } from '../page-job-create-feature/page-job-create-feature'
 import { type GeneralData, type ResourcesData } from './database-creation-flow.interface'
 
 export interface DatabaseCreateContextInterface {
@@ -59,6 +61,22 @@ export function PageDatabaseCreateFeature() {
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
   const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
+  const templateData = findTemplateData(slug, option)
+
+  // Sync general data with frontend template data
+  useEffect(() => {
+    if (templateData) {
+      setGeneralData((generalData) => ({
+        ...(generalData ?? {}),
+        description: '',
+        name: templateData.slug ?? '',
+        type: templateData.slug?.toUpperCase() as DatabaseTypeEnum,
+        mode: templateData.slug === 'managed' ? 'MANAGED' : 'CONTAINER',
+        version: '',
+        icon_uri: templateData.icon_uri,
+      }))
+    }
+  }, [templateData, setGeneralData])
 
   return (
     <DatabaseCreateContext.Provider

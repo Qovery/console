@@ -6,6 +6,8 @@ export interface JobGeneralData {
   name: string
   description: string
   template_type?: keyof typeof JobLifecycleTypeEnum
+  // NOTE: This does NOT represent the current serviceType created, which should always be 'JOB'
+  // This represents rather the source type underneath: existing docker image (CONTAINER) / custom dockerfile (APPLICATION)
   serviceType: keyof typeof ServiceTypeEnum
   auto_deploy: boolean
   labels_groups?: string[]

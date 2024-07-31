@@ -2,7 +2,7 @@ import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'reac
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Avatar, Icon } from '@qovery/shared/ui'
-import { IconURI, ServiceIcons } from '../service-icon/service-icon'
+import { type IconURI, ServiceIcons } from '../service-icon/service-icon'
 
 export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback'> {
   service: AnyService
