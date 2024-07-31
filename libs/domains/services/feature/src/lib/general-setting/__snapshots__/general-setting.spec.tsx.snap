@@ -4,33 +4,41 @@ exports[`GeneralSetting should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class=""
-      data-testid="input-text-wrapper"
+      class="flex items-center gap-4"
     >
       <div
-        class="relative"
+        class="grow"
       >
         <div
-          aria-label="input-container"
-          class="input     "
+          class=""
+          data-testid="input-text-wrapper"
         >
           <div
-            class=""
+            class="relative"
           >
-            <label
-              class="translate-y-2 text-sm"
-              for="Name"
+            <div
+              aria-label="input-container"
+              class="input     "
             >
-              Name
-            </label>
-            <input
-              class="input__value "
-              data-testid="input-text"
-              id="Name"
-              name="name"
-              type="text"
-              value=""
-            />
+              <div
+                class=""
+              >
+                <label
+                  class="translate-y-2 text-sm"
+                  for="Name"
+                >
+                  Name
+                </label>
+                <input
+                  class="input__value "
+                  data-testid="input-text"
+                  id="Name"
+                  name="name"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
