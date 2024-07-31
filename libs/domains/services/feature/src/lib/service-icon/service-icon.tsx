@@ -32,6 +32,7 @@ const Crossplane = '/assets/devicon/crossplane.svg'
 const Kubecost = '/assets/devicon/kubecost.svg'
 const Windmill = '/assets/devicon/windmill.svg'
 const Temporal = '/assets/devicon/temporal.svg'
+const CloudFormation = '/assets/devicon/cloudformation.svg'
 
 export const ServiceIcons = {
   'app://qovery-console/lifecycle-job': { icon: '/assets/services/lifecycle-job.svg', title: 'LifecycleJob' },
@@ -80,6 +81,7 @@ export const ServiceIcons = {
   'app://qovery-console/kubecost': { icon: Kubecost, title: 'Kubecost' },
   'app://qovery-console/windmill': { icon: Windmill, title: 'Windmill' },
   'app://qovery-console/temporal': { icon: Temporal, title: 'Temporal' },
+  'app://qovery-console/cloudformation': { icon: CloudFormation, title: 'CloudFormation' },
 } as const
 
 export type IconURI = keyof typeof ServiceIcons

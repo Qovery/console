@@ -2,7 +2,7 @@ import { clsx } from 'clsx'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Icon, Popover } from '@qovery/shared/ui'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
-import { type IconURI, ServiceIcons } from '../service-avatar/service-icon'
+import { type IconURI, ServiceIcons } from '../service-icon/service-icon'
 import { ServiceTemplateIndicator } from '../service-template-indicator/service-template-indicator'
 
 const icons = (Object.keys(ServiceIcons) as Array<IconURI>).map((iconUri) => ({
