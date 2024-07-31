@@ -12,6 +12,7 @@ import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import _DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
@@ -107,7 +108,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   )
 
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/deployment/logs',
+    url: QOVERY_WS + '/deployment/logs',
     urlSearchParams: {
       organization: organizationId,
       cluster: environment?.cluster_id,

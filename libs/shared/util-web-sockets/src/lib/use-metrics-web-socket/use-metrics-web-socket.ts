@@ -1,5 +1,6 @@
 import { type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { type ServiceType } from '@qovery/domains/services/data-access'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
 
@@ -21,7 +22,7 @@ export function useMetricsWebSocket({
   serviceType,
 }: UseMetricsWebSocketProps) {
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/service/metrics',
+    url: QOVERY_WS + '/service/metrics',
     urlSearchParams: {
       organization: organizationId,
       cluster: clusterId,

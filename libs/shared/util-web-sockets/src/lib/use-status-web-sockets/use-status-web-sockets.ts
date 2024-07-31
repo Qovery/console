@@ -1,5 +1,6 @@
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import { type ServiceStatusDto } from 'qovery-ws-typescript-axios'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
 
@@ -24,7 +25,7 @@ export function useStatusWebSockets({
   versionId,
 }: UseStatusWebSocketsProps) {
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/deployment/status',
+    url: QOVERY_WS + '/deployment/status',
     urlSearchParams: {
       organization: organizationId,
       environment: environmentId,
@@ -65,7 +66,7 @@ export function useStatusWebSockets({
   })
 
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/service/status',
+    url: QOVERY_WS + '/service/status',
     urlSearchParams: {
       organization: organizationId,
       environment: environmentId,

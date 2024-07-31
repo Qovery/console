@@ -6,6 +6,7 @@ import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEf
 import { createPortal } from 'react-dom'
 import { XTerm } from 'react-xtermjs'
 import { Button, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { useRunningStatus } from '../..'
 import { InputSearch } from './input-search/input-search'
@@ -68,7 +69,7 @@ export function ServiceTerminal({
   const cols = Math.ceil(document.body.clientWidth / 8)
 
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/shell/exec',
+    url: QOVERY_WS + '/shell/exec',
     urlSearchParams: {
       organization: organizationId,
       cluster: clusterId,

@@ -5,6 +5,7 @@ declare global {
       NODE_ENV: string
       NX_GIT_SHA: string
       NX_QOVERY_API: string
+      NX_QOVERY_WS: string
       NX_OAUTH_DOMAIN: string
       NX_OAUTH_KEY: string
       NX_OAUTH_AUDIENCE: string
@@ -23,6 +24,7 @@ declare global {
 export const NODE_ENV = process.env.NODE_ENV,
   NX_GIT_SHA = process.env.NX_GIT_SHA,
   QOVERY_API = process.env.NX_QOVERY_API,
+  QOVERY_WS = process.env.NX_QOVERY_WS,
   OAUTH_DOMAIN = process.env.NX_OAUTH_DOMAIN,
   OAUTH_KEY = process.env.NX_OAUTH_KEY,
   OAUTH_AUDIENCE = process.env.NX_OAUTH_AUDIENCE,

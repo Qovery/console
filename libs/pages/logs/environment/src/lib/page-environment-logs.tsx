@@ -12,6 +12,7 @@ import {
 } from '@qovery/shared/routes'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
@@ -61,7 +62,7 @@ export function PageEnvironmentLogs() {
     [setStatusStages, setEnvironmentStatus]
   )
   useReactQueryWsSubscription({
-    url: 'wss://ws.qovery.com/deployment/status',
+    url: QOVERY_WS + '/deployment/status',
     urlSearchParams: {
       organization: organizationId,
       cluster: environment?.cluster_id,
