@@ -1,7 +1,7 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { DatabaseCreateContext } from '../page-database-create-feature'
 import StepGeneralFeature, { filterDatabaseTypes } from './step-general-feature'
 
@@ -65,7 +65,7 @@ describe('StepGeneralFeature', () => {
     const submitButton = await screen.findByTestId('button-submit')
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
-    expect(submitButton).toBeEnabled()
+    waitFor(() => expect(submitButton).toBeEnabled())
 
     await userEvent.click(submitButton)
 

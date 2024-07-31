@@ -12,7 +12,6 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 export interface PageSettingsGeneralProps {
   database: Database
   onSubmit: FormEventHandler<HTMLFormElement>
-  databaseMode?: DatabaseModeEnum
   publicOptionNotAvailable?: boolean
   databaseVersionOptions?: Value[]
   databaseVersionLoading?: boolean
