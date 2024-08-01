@@ -326,7 +326,7 @@ export const organizations = createQueryKeys('organizations', {
     },
   }),
   customRole: ({ organizationId, customRoleId }: { organizationId: string; customRoleId: string }) => ({
-    queryKey: [organizationId],
+    queryKey: [organizationId, customRoleId],
     async queryFn() {
       const response = await customRolesApi.getOrganizationCustomRole(organizationId, customRoleId)
       return response.data
