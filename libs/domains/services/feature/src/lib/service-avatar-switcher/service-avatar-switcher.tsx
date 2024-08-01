@@ -36,6 +36,10 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
       <Popover.Content side="bottom" className="grid grid-cols-8 gap-2 text-sm text-neutral-350" style={{ width: 400 }}>
         {icons.map(({ icon, title, uri }) => {
           const isSelected = uri === service.icon_uri
+          // XXX: corner case as application and container have the same icon, we want to hide one of them.
+          if (uri === 'app://qovery-console/container') {
+            return null
+          }
           return (
             <Popover.Close key={title}>
               <img
