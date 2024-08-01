@@ -102,6 +102,7 @@ export function StepSummaryFeature() {
         helmRequest: {
           name: generalData.name,
           description: generalData.description,
+          icon_uri: generalData.icon_uri,
           source,
           allow_cluster_wide_resources: generalData.allow_cluster_wide_resources,
           arguments: parseCmd(generalData.arguments),

@@ -51,6 +51,7 @@ export function StepSummaryFeature() {
       const databaseRequest: DatabaseRequest = {
         name: generalData.name,
         description: generalData.description || '',
+        icon_uri: generalData.icon_uri,
         type: generalData.type,
         version: generalData.version,
         accessibility: generalData.accessibility,
