@@ -62,7 +62,7 @@ describe('TableRowDeployment', () => {
     renderWithProviders(<TableRowDeployment {...props} />)
 
     const btnLogs = screen.getByTestId('btn-logs')
-    expect(btnLogs).toHaveAttribute('href', '/organization/0/project/1/environment/2/logs/3/live-logs')
+    expect(btnLogs).toHaveAttribute('href', '/organization/0/project/1/environment/2/logs/3/deployment-logs/0')
   })
 
   it('should have link to deployment logs with version', async () => {
