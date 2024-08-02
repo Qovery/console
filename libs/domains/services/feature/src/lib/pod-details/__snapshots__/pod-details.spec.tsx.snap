@@ -7,19 +7,15 @@ exports[`PodDetails should match snapshot with container based pod and with mult
       class="relative pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute right-2 top-2"
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/live-logs"
+        type="button"
       >
-        <button
-          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-white gap-2"
-          type="button"
-        >
-          Logs
-          <i
-            aria-hidden="true"
-            class="fa-solid fa-scroll "
-          />
-        </button>
+        Logs
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-scroll "
+        />
       </a>
       <div
         data-orientation="horizontal"
@@ -125,7 +121,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
                   class="grid items-center gap-2"
                 >
                   <svg
-                    class="z-10 bg-neutral-550"
+                    class="z-10 bg-neutral-700"
                     fill="none"
                     height="16"
                     viewBox="0 0 16 16"
@@ -180,19 +176,15 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
       class="relative pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute right-2 top-2"
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/live-logs"
+        type="button"
       >
-        <button
-          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-white gap-2"
-          type="button"
-        >
-          Logs
-          <i
-            aria-hidden="true"
-            class="fa-solid fa-scroll "
-          />
-        </button>
+        Logs
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-scroll "
+        />
       </a>
       <div
         data-orientation="horizontal"
@@ -262,7 +254,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
                   class="grid items-center gap-2"
                 >
                   <svg
-                    class="z-10 bg-neutral-550"
+                    class="z-10 bg-neutral-700"
                     fill="none"
                     height="16"
                     viewBox="0 0 16 16"
@@ -301,7 +293,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
                   class="grid gap-2"
                 >
                   <svg
-                    class="z-10 bg-neutral-550"
+                    class="z-10 bg-neutral-700"
                     fill="none"
                     height="16"
                     viewBox="0 0 16 16"
@@ -352,19 +344,15 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
       class="relative pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute right-2 top-2"
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/live-logs"
+        type="button"
       >
-        <button
-          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-white gap-2"
-          type="button"
-        >
-          Logs
-          <i
-            aria-hidden="true"
-            class="fa-solid fa-scroll "
-          />
-        </button>
+        Logs
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-scroll "
+        />
       </a>
       <div
         data-orientation="horizontal"
@@ -431,7 +419,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
                   class="grid items-center gap-2"
                 >
                   <svg
-                    class="z-10 bg-neutral-550"
+                    class="z-10 bg-neutral-700"
                     fill="none"
                     height="16"
                     viewBox="0 0 16 16"
@@ -476,19 +464,15 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
       class="relative pb-4 pl-4 pr-20 pt-3"
     >
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm absolute right-2 top-2"
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/live-logs?pod_name=app-z0fb41d62-5c7fdb6f5f-44wpd"
+        type="button"
       >
-        <button
-          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-white gap-2"
-          type="button"
-        >
-          Logs
-          <i
-            aria-hidden="true"
-            class="fa-solid fa-scroll "
-          />
-        </button>
+        Logs
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-scroll "
+        />
       </a>
       <dl
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
@@ -500,7 +484,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
             class="grid items-center gap-2"
           >
             <svg
-              class="z-10 bg-neutral-550"
+              class="z-10 bg-neutral-700"
               fill="none"
               height="16"
               viewBox="0 0 16 16"

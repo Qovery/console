@@ -155,7 +155,7 @@ exports[`DockerfileSettings should match snapshot 1`] = `
                     </h2>
                     <button
                       aria-label="Edit"
-                      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-350 text-neutral-400 dark:text-neutral-300 hover:[&:not(:active)]:border-neutral-300 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 dark:hover:bg-neutral-550 hover:[&:not(:active):not(:disabled)]:bg-white hover:text-neutral-400"
+                      class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-5 px-1 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 hover:text-neutral-400"
                       type="button"
                     >
                       <i
