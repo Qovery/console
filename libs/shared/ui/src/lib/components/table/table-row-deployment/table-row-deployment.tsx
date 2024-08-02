@@ -167,7 +167,7 @@ export function TableRowDeployment({
                 size="md"
                 to={
                   fromService
-                    ? pathEnvironmentLogs + SERVICE_LOGS_URL(serviceId)
+                    ? pathEnvironmentLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentService).id)
                     : pathEnvironmentLogs +
                       DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentService).execution_id)
                 }
