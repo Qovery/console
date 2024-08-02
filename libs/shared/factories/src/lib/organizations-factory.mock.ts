@@ -50,6 +50,7 @@ export const credentialsMock = (howMany: number): ClusterCredentials[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     name: chance.name(),
+    object_type: 'OTHER',
   }))
 
 export const membersMock = (howMany: number, roleName = 'Admin', customIndex?: string): Member[] =>
