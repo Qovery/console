@@ -80,6 +80,7 @@ export function StepSummaryFeature() {
         const applicationRequest: ApplicationRequest = {
           name: generalData.name,
           description: generalData.description || '',
+          icon_uri: generalData.icon_uri,
           ports:
             portData.ports?.map((port) => ({
               internal_port: port.application_port || 80,

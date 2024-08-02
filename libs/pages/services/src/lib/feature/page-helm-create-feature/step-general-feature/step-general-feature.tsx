@@ -49,16 +49,13 @@ export function StepGeneralFeature() {
       <FormProvider {...generalForm}>
         <Section>
           {isTemplate ? (
-            <div className="mb-10 flex items-center gap-6">
-              <img src={dataTemplate?.icon as string} alt={slug} className="h-10 w-10" />
-              <div>
-                <Heading className="mb-2">
-                  {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
-                </Heading>
-                <p className="text-sm text-neutral-350">
-                  These general settings allow you to set up the service name, its source and deployment parameters.
-                </p>
-              </div>
+            <div className="mb-10">
+              <Heading className="mb-2">
+                {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
+              </Heading>
+              <p className="text-sm text-neutral-350">
+                These general settings allow you to set up the service name, its source and deployment parameters.
+              </p>
             </div>
           ) : (
             <>
@@ -71,7 +68,35 @@ export function StepGeneralFeature() {
           <form className="space-y-10" onSubmit={onSubmit}>
             <Section className="gap-4">
               <Heading>General</Heading>
-              <GeneralSetting label="Service name" />
+              <GeneralSetting
+                label="Service name"
+                service={{
+                  serviceType: 'HELM',
+                  id: '',
+                  name: '',
+                  created_at: '',
+                  environment: {
+                    id: '',
+                  },
+                  auto_deploy: false,
+                  auto_preview: false,
+                  source: {
+                    repository: {
+                      chart_name: '',
+                      chart_version: '',
+                      repository: {
+                        id: '',
+                        name: '',
+                        url: '',
+                      },
+                    },
+                  },
+                  arguments: [],
+                  icon_uri: 'app://qovery-console/helm',
+                  allow_cluster_wide_resources: false,
+                  values_override: {},
+                }}
+              />
             </Section>
             <Section className="gap-4">
               <Heading>Source</Heading>

@@ -61,6 +61,7 @@ function prepareJobRequest({
     name: generalData.name,
     port: Number(configureData.port),
     description: generalData.description || '',
+    icon_uri: generalData.icon_uri,
     cpu: cpu,
     memory: memory,
     max_nb_restart: Number(configureData.nb_restarts) || 0,

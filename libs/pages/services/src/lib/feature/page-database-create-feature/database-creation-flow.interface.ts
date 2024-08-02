@@ -9,6 +9,7 @@ export interface GeneralData {
   accessibility?: DatabaseAccessibilityEnum
   labels_groups?: string[]
   annotations_groups?: string[]
+  icon_uri?: string
 }
 
 export interface ResourcesData {

@@ -36,16 +36,13 @@ export function StepGeneral(props: StepGeneralProps) {
   return (
     <Section>
       {isTemplate ? (
-        <div className="mb-10 flex items-center gap-6">
-          <img src={dataTemplate?.icon as string} alt={slug} className="h-10 w-10" />
-          <div>
-            <Heading className="mb-2">
-              {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
-            </Heading>
-            <p className="text-sm text-neutral-350">
-              These general settings allow you to set up the service name, its source and deployment parameters.
-            </p>
-          </div>
+        <div className="mb-10">
+          <Heading className="mb-2">
+            {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
+          </Heading>
+          <p className="text-sm text-neutral-350">
+            These general settings allow you to set up the service name, its source and deployment parameters.
+          </p>
         </div>
       ) : (
         <>
@@ -59,7 +56,20 @@ export function StepGeneral(props: StepGeneralProps) {
       <form className="space-y-10" onSubmit={props.onSubmit}>
         <Section className="gap-4">
           <Heading>General</Heading>
-          <GeneralSetting label="Service name" />
+          <GeneralSetting
+            label="Service name"
+            service={{
+              id: '',
+              name: '',
+              environment: {
+                id: '',
+              },
+              serviceType: 'APPLICATION',
+              created_at: '',
+              healthchecks: {},
+              icon_uri: 'app://qovery-console/application',
+            }}
+          />
         </Section>
 
         <Section className="gap-4">

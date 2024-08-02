@@ -34,6 +34,7 @@ export const handleGitApplicationSubmit = (
     git_repository: undefined,
     name: data.name,
     description: data.description || '',
+    icon_uri: data.icon_uri,
     auto_deploy: data.auto_deploy,
   }
   cloneApplication.auto_deploy = data.auto_deploy
@@ -80,6 +81,7 @@ export const handleContainerSubmit = (
     ...container,
     name: data.name,
     description: data.description || '',
+    icon_uri: data.icon_uri,
     auto_deploy: data.auto_deploy,
     tag: data.image_tag || '',
     image_name: data.image_name || '',
@@ -123,6 +125,7 @@ export const handleJobSubmit = (
       ...job,
       name: data.name,
       description: data.description,
+      icon_uri: data.icon_uri,
       auto_deploy: data.auto_deploy,
       annotations_groups: annotationsGroups.filter((annotationsGroups) =>
         data.annotations_groups?.includes(annotationsGroups.id)
@@ -146,6 +149,7 @@ export const handleJobSubmit = (
       ...job,
       name: data.name,
       description: data.description,
+      icon_uri: data.icon_uri,
       auto_deploy: data.auto_deploy,
       annotations_groups: annotationsGroups.filter((annotationsGroups) =>
         data.annotations_groups?.includes(annotationsGroups.id)
@@ -191,6 +195,7 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
     ...helm,
     name: data.name,
     description: data.description,
+    icon_uri: data.icon_uri,
     source,
     allow_cluster_wide_resources: data.allow_cluster_wide_resources,
     arguments: parseCmd(data.arguments),
@@ -282,6 +287,7 @@ export function PageSettingsGeneralFeature() {
     defaultValues: {
       name: service?.name,
       description: service?.description,
+      icon_uri: service?.icon_uri,
       ...defaultValues,
     },
   })
@@ -328,12 +334,14 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral
-        service={service}
-        isLoadingEditService={isLoadingEditService}
-        onSubmit={onSubmit}
-        organization={organization}
-      />
+      {service && (
+        <PageSettingsGeneral
+          service={service}
+          isLoadingEditService={isLoadingEditService}
+          onSubmit={onSubmit}
+          organization={organization}
+        />
+      )}
     </FormProvider>
   )
 }

@@ -1,4 +1,9 @@
-import { type JobLifecycleTypeEnum, type Organization } from 'qovery-typescript-axios'
+import {
+  type CronJobResponse,
+  type JobLifecycleTypeEnum,
+  type LifecycleJobResponse,
+  type Organization,
+} from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -37,28 +42,25 @@ export function StepGeneral(props: StepGeneralProps) {
   return (
     <Section>
       {isTemplate ? (
-        <div className="mb-10 flex items-center gap-6">
-          <img src={dataTemplate?.icon as string} alt={slug} className="h-10 w-10" />
-          <div>
-            <Heading className="mb-2">
-              {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
-            </Heading>
-            <p className="text-sm text-neutral-350">
-              {match(props.templateType)
-                .with(
-                  'TERRAFORM',
-                  'CLOUDFORMATION',
-                  () =>
-                    'These general settings allow you to set up the service name, its source and deployment parameters.'
-                )
-                .with(
-                  'GENERIC',
-                  undefined,
-                  () => 'General settings allow you to set up your lifecycle name with our git repository settings.'
-                )
-                .exhaustive()}
-            </p>
-          </div>
+        <div className="mb-10">
+          <Heading className="mb-2">
+            {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
+          </Heading>
+          <p className="text-sm text-neutral-350">
+            {match(props.templateType)
+              .with(
+                'TERRAFORM',
+                'CLOUDFORMATION',
+                () =>
+                  'These general settings allow you to set up the service name, its source and deployment parameters.'
+              )
+              .with(
+                'GENERIC',
+                undefined,
+                () => 'General settings allow you to set up your lifecycle name with our git repository settings.'
+              )
+              .exhaustive()}
+          </p>
         </div>
       ) : (
         <>
@@ -74,7 +76,49 @@ export function StepGeneral(props: StepGeneralProps) {
       <form className="space-y-10" onSubmit={props.onSubmit}>
         <Section className="gap-4">
           <Heading>General</Heading>
-          <GeneralSetting label="Service name" />
+          <GeneralSetting
+            label="Service name"
+            service={match(props.jobType)
+              .with(ServiceTypeEnum.LIFECYCLE_JOB, (): LifecycleJobResponse & { serviceType: 'JOB' } => ({
+                id: '',
+                name: '',
+                environment: {
+                  id: '',
+                },
+                serviceType: 'JOB',
+                job_type: 'LIFECYCLE',
+                auto_preview: false,
+                maximum_cpu: 0,
+                maximum_memory: 0,
+                cpu: 0,
+                memory: 0,
+                created_at: '',
+                healthchecks: {},
+                icon_uri: 'app://qovery-console/lifecycle-job',
+                source: { docker: {} },
+                schedule: { lifecycle_type: props.templateType },
+              }))
+              .with(ServiceTypeEnum.CRON_JOB, (): CronJobResponse & { serviceType: 'JOB' } => ({
+                id: '',
+                name: '',
+                environment: {
+                  id: '',
+                },
+                serviceType: 'JOB',
+                job_type: 'CRON',
+                auto_preview: false,
+                maximum_cpu: 0,
+                maximum_memory: 0,
+                cpu: 0,
+                memory: 0,
+                created_at: '',
+                healthchecks: {},
+                icon_uri: 'app://qovery-console/cron-job',
+                source: { docker: {} },
+                schedule: { cronjob: { timezone: '', scheduled_at: '' } },
+              }))
+              .exhaustive()}
+          />
         </Section>
 
         <Section className="gap-4">

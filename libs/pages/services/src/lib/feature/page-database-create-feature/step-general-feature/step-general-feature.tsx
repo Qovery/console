@@ -16,8 +16,6 @@ import { FunnelFlowBody, Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type ValueOf } from '@qovery/shared/util-types'
 import StepGeneral from '../../../ui/page-database-create/step-general/step-general'
-import { findTemplateData } from '../../page-job-create-feature/page-job-create-feature'
-import { serviceTemplates } from '../../page-new-feature/service-templates'
 import { type GeneralData } from '../database-creation-flow.interface'
 import { useDatabaseCreateContext } from '../page-database-create-feature'
 
@@ -120,23 +118,13 @@ export function StepGeneralFeature() {
   const showManagedWithVpcOptions =
     generateDatabasesTypesAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions.length > 0
 
-  const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
-  const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
-
   const methods = useForm<GeneralData>({
-    defaultValues: generalData
-      ? generalData
-      : cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED'
-        ? {
-            name: dataTemplate?.slug ?? '',
-            mode: DatabaseModeEnum.CONTAINER,
-            type: dataTemplate?.slug?.toUpperCase() as DatabaseTypeEnum,
-          }
-        : {
-            name: dataTemplate?.slug ?? '',
-            mode: dataOptionTemplate?.slug === 'managed' ? DatabaseModeEnum.MANAGED : DatabaseModeEnum.CONTAINER,
-            type: dataTemplate?.slug?.toUpperCase() as DatabaseTypeEnum,
-          },
+    defaultValues: {
+      ...generalData,
+      mode:
+        generalData?.mode ??
+        (cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED' ? 'CONTAINER' : 'MANAGED'),
+    },
     mode: 'onChange',
   })
 

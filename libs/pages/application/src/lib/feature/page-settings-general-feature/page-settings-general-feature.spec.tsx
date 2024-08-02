@@ -144,8 +144,9 @@ describe('PageSettingsGeneralFeature', () => {
         source_provider: 'GIT',
         allow_cluster_wide_resources: true,
         arguments: '--set image.tag=latest',
-        timeout_sec: 600,
+        timeout_sec: '600',
         auto_deploy: false,
+        icon_uri: 'app://qovery-console/helm',
       },
       helm
     )
@@ -156,6 +157,7 @@ describe('PageSettingsGeneralFeature', () => {
       arguments: ['--set', 'image.tag=latest'],
       timeout_sec: 600,
       auto_deploy: false,
+      icon_uri: 'app://qovery-console/helm',
       source: {
         git_repository: {
           url: 'https://github.com/qovery/console.git',
@@ -178,16 +180,18 @@ describe('PageSettingsGeneralFeature', () => {
         source_provider: 'HELM_REPOSITORY',
         allow_cluster_wide_resources: true,
         arguments: '--set image.tag=latest',
-        timeout_sec: 600,
+        timeout_sec: '600',
         auto_deploy: false,
         chart_name: 'chart',
         chart_version: '1.0.0',
+        icon_uri: 'app://qovery-console/helm',
       },
       helm
     )
     expect(app).toStrictEqual({
       name: 'hello',
       description: 'description',
+      icon_uri: 'app://qovery-console/helm',
       allow_cluster_wide_resources: true,
       arguments: ['--set', 'image.tag=latest'],
       timeout_sec: 600,

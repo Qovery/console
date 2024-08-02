@@ -38,6 +38,7 @@ export function PageSettingsGeneralFeature() {
     defaultValues: {
       name: database?.name,
       description: database?.description,
+      icon_uri: database?.icon_uri,
       type: database?.type,
       mode: database?.mode,
       version: database?.version,
@@ -67,14 +68,16 @@ export function PageSettingsGeneralFeature() {
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral
-        onSubmit={onSubmit}
-        loading={isLoadingService}
-        publicOptionNotAvailable={publicOptionNotAvailable}
-        databaseVersionLoading={isLoading}
-        databaseVersionOptions={databaseVersionOptions}
-        databaseMode={database?.mode}
-      />
+      {database && (
+        <PageSettingsGeneral
+          onSubmit={onSubmit}
+          loading={isLoadingService}
+          publicOptionNotAvailable={publicOptionNotAvailable}
+          databaseVersionLoading={isLoading}
+          databaseVersionOptions={databaseVersionOptions}
+          database={database}
+        />
+      )}
     </FormProvider>
   )
 }

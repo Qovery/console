@@ -129,7 +129,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
     <ErrorBoundary>
       <Section className="flex-1">
         <Header title={service?.name} actions={headerActions}>
-          {service && <ServiceAvatar service={service} />}
+          {service && <ServiceAvatar service={service} border="solid" />}
         </Header>
         <Tabs
           items={tabsItems}

@@ -175,6 +175,20 @@ export function PageJobCreateFeature() {
     </FunnelFlow>
   )
 
+  // Sync general data with frontend template data
+  useEffect(() => {
+    if (templateData) {
+      setGeneralData((generalData) => ({
+        ...(generalData ?? {}),
+        auto_deploy: true,
+        description: '',
+        name: templateData.slug ?? '',
+        serviceType: slug === 'container' ? 'CONTAINER' : 'APPLICATION',
+        icon_uri: templateData.icon_uri,
+      }))
+    }
+  }, [templateData, setGeneralData])
+
   return (
     <JobContainerCreateContext.Provider
       value={{
@@ -198,6 +212,7 @@ export function PageJobCreateFeature() {
       }}
     >
       {templateData && 'template_id' in templateData && templateData.template_id ? (
+        // Sync general data with backend template data
         <TemplateFormSync
           environmentId={environmentId}
           templateData={templateData as ServiceTemplateOptionType & { template_id: string }}
