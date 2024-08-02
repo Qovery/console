@@ -17,7 +17,7 @@ const _buttonVariants = cva(
       variant: {
         solid: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
         surface: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
-        outline: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none', 'bg-white'],
+        outline: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none', 'bg-white', 'dark:bg-neutral-600'],
         plain: ['hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm', 'active:[&:not(:focus-visible)]:shadow-none'],
       },
       color: {
@@ -46,10 +46,11 @@ const _buttonVariants = cva(
         className: [
           'border',
           'border-neutral-250',
-          'dark:border-neutral-350',
+          'dark:border-neutral-400',
           'text-neutral-400',
-          'dark:text-neutral-300',
+          'dark:text-white',
           'hover:[&:not(:active)]:border-neutral-300',
+          'dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350',
           'active:bg-neutral-150',
           'disabled:text-neutral-300',
           'disabled:bg-neutral-100',
@@ -62,8 +63,8 @@ const _buttonVariants = cva(
         className: [
           'bg-neutral-100',
           'dark:bg-neutral-500',
-          'dark:hover:bg-neutral-550',
           'hover:[&:not(:active):not(:disabled)]:bg-white',
+          'dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400',
         ],
       },
       {

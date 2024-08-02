@@ -4,7 +4,6 @@ import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import {
-  Button,
   DescriptionDetails as Dd,
   DescriptionListRoot as Dl,
   DescriptionTerm as Dt,
@@ -30,7 +29,7 @@ function TimelineCircle() {
       height="16"
       viewBox="0 0 16 16"
       fill="none"
-      className="z-10 bg-neutral-550"
+      className="z-10 bg-neutral-700"
     >
       <circle cx="8" cy="8" r="3.75" stroke="#67778E" strokeWidth="1.5" />
     </svg>
@@ -62,12 +61,15 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
               .otherwise(() => pod.name)
           )
         }
-        className="absolute right-2 top-2"
+        className="absolute right-2 top-2 gap-2"
+        as="button"
+        type="button"
+        size="sm"
+        color="neutral"
+        variant="surface"
       >
-        <Button type="button" size="sm" color="neutral" variant="surface" className="gap-2">
-          Logs
-          <Icon iconName="scroll" />
-        </Button>
+        Logs
+        <Icon iconName="scroll" />
       </Link>
       {containers.length ? (
         <Tabs.Root defaultValue={containers[0].name}>

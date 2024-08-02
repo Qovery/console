@@ -112,7 +112,7 @@ export function ServiceTerminal({
   }
 
   return createPortal(
-    <div className="fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650">
+    <div className="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650">
       <button
         className="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
         type="button"
@@ -148,6 +148,7 @@ export function ServiceTerminal({
           {fitAddon && (
             <Button
               color="neutral"
+              variant="surface"
               onClick={() => {
                 terminalParentHeight === MAX_TERMINAL_HEIGHT
                   ? setTerminalParentHeight(MIN_TERMINAL_HEIGHT)
@@ -160,7 +161,7 @@ export function ServiceTerminal({
               />
             </Button>
           )}
-          <Button color="neutral" onClick={() => setOpen(false)}>
+          <Button color="neutral" variant="surface" onClick={() => setOpen(false)}>
             Close shell
             <Icon iconName="xmark" className="ml-2 text-sm" />
           </Button>
