@@ -90,6 +90,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
         }
       }}
       ctaButtonDisabled={ctaButtonDisabled}
+      shouldValidate
       isDelete
     >
       <div className="mb-6 rounded border border-red-500 bg-red-50 p-4 text-sm text-neutral-400">
