@@ -106,10 +106,10 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               <span className="text-4xl">
                 The Leading <br />
               </span>
-              <span className="text-[32px]">Internal Developer Platform</span>
+              <span className="text-[32px]">DevOps Automation Platform</span>
             </h2>
             <p className="mb-12 text-white">
-              Trusted by 50.000 developers and platform engineers <br /> from the best companies
+              Trusted by 50.000 developers and DevOps engineers <br /> from the best companies
             </p>
             <ul className="mx-auto grid max-w-sm grid-cols-2 gap-12">
               <li className="flex items-center justify-center">
