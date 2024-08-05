@@ -112,11 +112,30 @@ export function RowEvent(props: RowEventProps) {
         Create <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
+    .with(OrganizationEventType.DEPLOYED, OrganizationEventType.STOPPED, OrganizationEventType.RESTARTED, (v) => (
+      <Badge size="xs" color="green">
+        {upperCaseFirstLetter(v)}
+        <Icon iconName="check" className="ml-1" />
+      </Badge>
+    ))
     .with(OrganizationEventType.DELETE, () => (
       <Badge size="xs" color="neutral">
         Delete <Icon iconName="eraser" className="ml-1" />
       </Badge>
     ))
+    .with(
+      OrganizationEventType.DELETED,
+      OrganizationEventType.DEPLOY_FAILED,
+      OrganizationEventType.STOP_FAILED,
+      OrganizationEventType.DELETE_FAILED,
+      OrganizationEventType.RESTART_FAILED,
+      (v) => (
+        <Badge size="xs" color="neutral">
+          {upperCaseFirstLetter(v)}
+          <Icon iconName="eraser" className="ml-1" />
+        </Badge>
+      )
+    )
     .with(OrganizationEventType.UPDATE, () => (
       <Badge size="xs" color="sky">
         Update <Icon iconName="rotate" className="ml-1" />
