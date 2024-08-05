@@ -1,5 +1,5 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
-import { type Cluster, ClusterDeleteMode, Value } from 'qovery-typescript-axios'
+import { type Cluster, ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -61,12 +61,6 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
     )
     .otherwise(() => clusterDeleteModeOptions)
 
-  match(clusterDeleteMode)
-    .with('DEFAULT', () => 'Default')
-    .with('DELETE_CLUSTER_AND_QOVERY_CONFIG', () => 'Cluster and Qovery config')
-    .with('DELETE_QOVERY_CONFIG', () => 'Qovery Config only')
-    .exhaustive()
-
   const navigate = useNavigate()
 
   const ctaButtonDisabled =
@@ -90,6 +84,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
         }
       }}
       ctaButtonDisabled={ctaButtonDisabled}
+      shouldValidate
       isDelete
     >
       <div className="mb-6 rounded border border-red-500 bg-red-50 p-4 text-sm text-neutral-400">
