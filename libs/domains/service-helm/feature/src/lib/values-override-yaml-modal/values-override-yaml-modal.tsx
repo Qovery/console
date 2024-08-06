@@ -1,5 +1,6 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { CodeEditorVariables } from '@qovery/domains/variables/feature'
 import { BlockContent, CodeEditor, CopyToClipboardButtonIcon, Icon, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 import useHelmDefaultValues from '../hooks/use-helm-default-values/use-helm-default-values'
 
@@ -56,7 +57,8 @@ export function ValuesOverrideYamlModal({
               name="content"
               control={methods.control}
               render={({ field }) => (
-                <CodeEditor
+                <CodeEditorVariables
+                  environmentId={environmentId}
                   width="100%"
                   height="calc(100vh  - 254px)"
                   language="yaml"
