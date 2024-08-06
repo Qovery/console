@@ -72,7 +72,7 @@ export function TemplateFormSync({
 
       setConfigureData((configureData) => ({
         ...(configureData ?? {}),
-        max_duration: template.max_duration_in_minutes,
+        max_duration: template.max_duration_in_sec,
         on_start: startEvent
           ? {
               enabled: true,
