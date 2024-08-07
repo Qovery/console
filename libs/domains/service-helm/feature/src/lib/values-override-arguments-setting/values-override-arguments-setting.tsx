@@ -8,11 +8,11 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { CodeEditorVariables } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
   Button,
-  CodeEditor,
   EmptyState,
   Heading,
   Icon,
@@ -41,6 +41,7 @@ export interface ValuesOverrideArgumentsSettingProps extends PropsWithChildren {
 }
 
 function Row({ key, index, remove }: { key: string; index: number; remove: UseFieldArrayRemove }) {
+  const { environmentId = '' } = useParams()
   const { watch, control } = useFormContext()
 
   const [openEditor, setOpenEditor] = useState(true)
@@ -132,7 +133,8 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
             required: true,
           }}
           render={({ field }) => (
-            <CodeEditor
+            <CodeEditorVariables
+              environmentId={environmentId}
               language="json"
               height="496px"
               className="mt-3 overflow-hidden rounded border border-neutral-250"
