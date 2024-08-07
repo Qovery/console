@@ -1,6 +1,8 @@
 import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
+import { CodeEditorVariables } from '@qovery/domains/variables/feature'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 import {
   BlockContent,
@@ -8,7 +10,6 @@ import {
   ButtonIcon,
   ButtonIconStyle,
   ButtonLegacySize,
-  CodeEditor,
   Icon,
   IconAwesomeEnum,
   InputSelectSmall,
@@ -33,6 +34,7 @@ export function VariableRow(props: VariableRowProps) {
   const watchReadOnly = watch().variables[index]?.isReadOnly
   const watchFile = watch().variables[index]?.file
   const watchDescription = watch().variables[index]?.description
+  const { environmentId = '' } = useParams()
 
   const pattern = /^[^\s]+$/
 
@@ -167,7 +169,13 @@ export function VariableRow(props: VariableRowProps) {
               required: true,
             }}
             render={({ field }) => (
-              <CodeEditor language="json" height="496px" value={field.value} onChange={field.onChange} />
+              <CodeEditorVariables
+                environmentId={environmentId}
+                language="json"
+                height="496px"
+                value={field.value}
+                onChange={field.onChange}
+              />
             )}
           />
         </BlockContent>
