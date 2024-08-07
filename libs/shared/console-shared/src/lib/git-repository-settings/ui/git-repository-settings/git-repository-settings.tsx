@@ -16,6 +16,7 @@ export interface GitRepositorySettingsProps {
   editGitSettings?: () => void
   rootPathLabel?: string
   rootPathHint?: string
+  urlRepository?: string
 }
 
 export function GitRepositorySettings({
@@ -25,6 +26,7 @@ export function GitRepositorySettings({
   currentProvider,
   rootPathLabel,
   rootPathHint,
+  urlRepository,
 }: GitRepositorySettingsProps) {
   const { watch } = useFormContext<{
     provider: keyof typeof GitProviderEnum
@@ -46,7 +48,7 @@ export function GitRepositorySettings({
     <div className="flex flex-col gap-4">
       <GitProviderSetting disabled={gitDisabled} />
       {watchFieldIsPublicRepository ? (
-        <GitPublicRepositorySettings disabled={gitDisabled} />
+        <GitPublicRepositorySettings urlRepository={urlRepository} disabled={gitDisabled} />
       ) : (
         <>
           {watchFieldProvider && (
@@ -54,6 +56,7 @@ export function GitRepositorySettings({
               disabled={gitDisabled}
               gitProvider={watchFieldProvider}
               gitTokenId={watchFieldGitTokenId}
+              urlRepository={urlRepository}
             />
           )}
           {watchFieldProvider && watchFieldRepository && (

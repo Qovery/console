@@ -1,14 +1,19 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { InputText } from '@qovery/shared/ui'
+import { ExternalLink, InputText } from '@qovery/shared/ui'
 import { Callout, Icon } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 
 export interface GitPublicRepositorySettingsProps {
   disabled?: boolean
   hideRootPath?: boolean
+  urlRepository?: string
 }
 
-export function GitPublicRepositorySettings({ disabled = false, hideRootPath }: GitPublicRepositorySettingsProps) {
+export function GitPublicRepositorySettings({
+  disabled = false,
+  urlRepository,
+  hideRootPath,
+}: GitPublicRepositorySettingsProps) {
   const { control, setValue } = useFormContext()
 
   const onRepositoryChange = (value: string) => {
@@ -31,17 +36,24 @@ export function GitPublicRepositorySettings({ disabled = false, hideRootPath }: 
               null || 'URL must be valid, start with «http(s)://» and end with «.git»',
         }}
         render={({ field, fieldState: { error } }) => (
-          <InputText
-            label="Public repository URL (.git)"
-            name={field.name}
-            onChange={(e) => {
-              field.onChange(e)
-              onRepositoryChange(e.target.value)
-            }}
-            value={field.value}
-            error={error?.message}
-            disabled={disabled}
-          />
+          <div>
+            <InputText
+              label="Public repository URL (.git)"
+              name={field.name}
+              onChange={(e) => {
+                field.onChange(e)
+                onRepositoryChange(e.target.value)
+              }}
+              value={field.value}
+              error={error?.message}
+              disabled={disabled}
+            />
+            {urlRepository && (
+              <ExternalLink className="ml-4" size="xs" href={urlRepository}>
+                Go to repository
+              </ExternalLink>
+            )}
+          </div>
         )}
       />
       <Controller

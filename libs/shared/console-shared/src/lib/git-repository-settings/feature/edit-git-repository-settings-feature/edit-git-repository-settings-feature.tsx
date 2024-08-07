@@ -62,6 +62,7 @@ export function EditGitRepositorySettingsFeature({
       editGitSettings={editGitSettings}
       currentProvider={gitRepository?.provider}
       currentRepository={gitRepository?.name}
+      urlRepository={gitRepository?.url}
       rootPathLabel={rootPathLabel}
       rootPathHint={rootPathHint}
     />

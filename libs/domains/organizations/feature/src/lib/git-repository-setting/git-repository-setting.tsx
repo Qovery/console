@@ -1,7 +1,7 @@
 import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { InputSelect, LoaderSpinner } from '@qovery/shared/ui'
+import { ExternalLink, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useRepositories } from '../hooks/use-repositories/use-repositories'
 
@@ -9,9 +9,10 @@ export interface GitRepositorySettingProps {
   gitProvider: keyof typeof GitProviderEnum
   gitTokenId?: string
   disabled?: boolean
+  urlRepository?: string
 }
 
-export function GitRepositorySetting({ disabled, gitProvider, gitTokenId }: GitRepositorySettingProps) {
+export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRepository }: GitRepositorySettingProps) {
   const { control, setValue, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
@@ -50,32 +51,39 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId }: GitR
         validate: () => true,
       }}
       render={({ field, fieldState: { error } }) => (
-        <InputSelect
-          label="Repository"
-          options={
-            disabled
-              ? [
-                  {
-                    label: upperCaseFirstLetter(watchFieldRepository) ?? '',
-                    value: watchFieldRepository ?? '',
-                  },
-                ]
-              : repositories.map((repository) => ({
-                  label: upperCaseFirstLetter(repository.name),
-                  value: repository.name,
-                }))
-          }
-          onChange={(event) => {
-            field.onChange(event)
-            const currentRepository = repositories.find((repository) => repository.name === event)
-            // Set default branch
-            setValue('branch', currentRepository?.default_branch)
-          }}
-          value={field.value}
-          error={error?.message}
-          disabled={disabled}
-          isSearchable
-        />
+        <div>
+          <InputSelect
+            label="Repository"
+            options={
+              disabled
+                ? [
+                    {
+                      label: upperCaseFirstLetter(watchFieldRepository) ?? '',
+                      value: watchFieldRepository ?? '',
+                    },
+                  ]
+                : repositories.map((repository) => ({
+                    label: upperCaseFirstLetter(repository.name),
+                    value: repository.name,
+                  }))
+            }
+            onChange={(event) => {
+              field.onChange(event)
+              const currentRepository = repositories.find((repository) => repository.name === event)
+              // Set default branch
+              setValue('branch', currentRepository?.default_branch)
+            }}
+            value={field.value}
+            error={error?.message}
+            disabled={disabled}
+            isSearchable
+          />
+          {urlRepository && (
+            <ExternalLink className="ml-4" size="xs" href={urlRepository}>
+              Go to repository
+            </ExternalLink>
+          )}
+        </div>
       )}
     />
   )
