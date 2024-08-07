@@ -326,7 +326,7 @@ export function PageNewFeature() {
             {
               title: 'Terraform',
               description: 'Terraform is an open-source infrastructure as code software tool.',
-              icon: <img className="mt-1 select-none" width={32} height={32} src={TerraformIcon} alt="Terraform" />,
+              icon: <img className="select-none" width={32} height={32} src={TerraformIcon} alt="Terraform" />,
               link:
                 SERVICES_URL(organizationId, projectId, environmentId) +
                 SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL('terraform', 'current'),
@@ -337,13 +337,7 @@ export function PageNewFeature() {
               description:
                 'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
               icon: (
-                <img
-                  className="mt-1 select-none"
-                  width={32}
-                  height={32}
-                  src={CloudFormationIcon}
-                  alt="CloudFormation"
-                />
+                <img className="select-none" width={32} height={32} src={CloudFormationIcon} alt="CloudFormation" />
               ),
               link:
                 SERVICES_URL(organizationId, projectId, environmentId) +
