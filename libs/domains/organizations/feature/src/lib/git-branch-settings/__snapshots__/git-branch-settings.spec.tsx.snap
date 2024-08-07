@@ -126,14 +126,14 @@ exports[`GitBranchSettings should match snapshot 1`] = `
           >
             <label
               class="translate-y-2 text-sm"
-              for="Root application path"
+              for="Application root folder path"
             >
-              Root application path
+              Application root folder path
             </label>
             <input
               class="input__value "
               data-testid="input-text"
-              id="Root application path"
+              id="Application root folder path"
               name="root_path"
               type="text"
               value="/"
@@ -141,6 +141,11 @@ exports[`GitBranchSettings should match snapshot 1`] = `
           </div>
         </div>
       </div>
+      <p
+        class="mt-0.5 px-4 text-xs font-normal text-neutral-350"
+      >
+        Provide the folder path in the repository where the application is located.
+      </p>
     </div>
   </div>
 </body>

@@ -18,8 +18,8 @@ export function GitBranchSettings({
   gitProvider,
   gitTokenId,
   hideRootPath,
-  rootPathLabel = 'Root application path',
-  rootPathHint,
+  rootPathLabel = 'Application root folder path',
+  rootPathHint = 'Provide the folder path in the repository where the application is located.',
 }: GitBranchSettingsProps) {
   const { control, watch } = useFormContext()
   const { organizationId = '' } = useParams()
