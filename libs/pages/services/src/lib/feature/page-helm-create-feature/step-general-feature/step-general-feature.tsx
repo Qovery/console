@@ -112,7 +112,12 @@ export function StepGeneralFeature() {
                         <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
                       )}
                       {watchFieldGitProvider && watchFieldGitRepository && (
-                        <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+                        <GitBranchSettings
+                          gitProvider={watchFieldGitProvider}
+                          gitTokenId={watchFieldGitTokenId}
+                          rootPathLabel="Chart root folder path"
+                          rootPathHint="Provide the folder path in the repository where the chart is located."
+                        />
                       )}
                     </>
                   )}
