@@ -3,37 +3,51 @@
 exports[`GitPublicRepositorySettings should match snapshot 1`] = `
 <body>
   <div>
-    <div
-      class=""
-      data-testid="input-text-wrapper"
-    >
+    <div>
       <div
-        class="relative"
+        class=""
+        data-testid="input-text-wrapper"
       >
         <div
-          aria-label="input-container"
-          class="input     "
+          class="relative"
         >
           <div
-            class=""
+            aria-label="input-container"
+            class="input     "
           >
-            <label
-              class="translate-y-2 text-sm"
-              for="Public repository URL (.git)"
+            <div
+              class=""
             >
-              Public repository URL (.git)
-            </label>
-            <input
-              class="input__value "
-              data-testid="input-text"
-              id="Public repository URL (.git)"
-              name="repository"
-              type="text"
-              value=""
-            />
+              <label
+                class="translate-y-2 text-sm"
+                for="Public repository URL (.git)"
+              >
+                Public repository URL (.git)
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="Public repository URL (.git)"
+                name="repository"
+                type="text"
+                value=""
+              />
+            </div>
           </div>
         </div>
       </div>
+      <a
+        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs ml-4"
+        href="https://github.com/qovery/console"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Go to repository
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+        />
+      </a>
     </div>
     <div
       class=""

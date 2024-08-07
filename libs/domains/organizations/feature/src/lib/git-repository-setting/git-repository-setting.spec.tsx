@@ -26,7 +26,13 @@ jest.mock('../hooks/use-repositories/use-repositories', () => {
 describe('GitRepositorySetting', () => {
   it('should match snapshot', async () => {
     const { baseElement } = renderWithProviders(
-      wrapWithReactHookForm(<GitRepositorySetting disabled={false} gitProvider={GitProviderEnum.GITHUB} />)
+      wrapWithReactHookForm(
+        <GitRepositorySetting
+          disabled={false}
+          gitProvider={GitProviderEnum.GITHUB}
+          urlRepository="https://github.com/qovery/console"
+        />
+      )
     )
     expect(baseElement).toMatchSnapshot()
   })
