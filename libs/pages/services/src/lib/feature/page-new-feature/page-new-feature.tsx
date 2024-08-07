@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import TerraformIcon from 'devicon/icons/terraform/terraform-original.svg'
 import posthog from 'posthog-js'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
@@ -27,6 +28,8 @@ import {
   type TagsEnum,
   serviceTemplates,
 } from './service-templates'
+
+const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
 
 function Card({
   title,
@@ -317,7 +320,32 @@ export function PageNewFeature() {
       <p className="mb-5 text-xs text-neutral-350">Use one of those options below.</p>
 
       <div className="grid grid-cols-3 gap-4">
-        {serviceEmpty.map((service) => (
+        {[
+          ...serviceEmpty,
+          ...[
+            {
+              title: 'Terraform',
+              description: 'Terraform is an open-source infrastructure as code software tool.',
+              icon: <img className="select-none" width={32} height={32} src={TerraformIcon} alt="Terraform" />,
+              link:
+                SERVICES_URL(organizationId, projectId, environmentId) +
+                SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL('terraform', 'current'),
+              cloud_provider: cloudProvider,
+            },
+            {
+              title: 'CloudFormation',
+              description:
+                'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
+              icon: (
+                <img className="select-none" width={32} height={32} src={CloudFormationIcon} alt="CloudFormation" />
+              ),
+              link:
+                SERVICES_URL(organizationId, projectId, environmentId) +
+                SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL('cloudformation', 'current'),
+              cloud_provider: cloudProvider,
+            },
+          ],
+        ].map((service) => (
           <Card key={service.title} {...service} />
         ))}
       </div>
