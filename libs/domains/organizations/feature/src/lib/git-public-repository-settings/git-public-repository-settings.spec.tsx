@@ -4,7 +4,9 @@ import { GitPublicRepositorySettings } from './git-public-repository-settings'
 
 describe('GitPublicRepositorySettings', () => {
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GitPublicRepositorySettings />))
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(<GitPublicRepositorySettings urlRepository="https://github.com/qovery/console" />)
+    )
     expect(baseElement).toMatchSnapshot()
   })
 })
