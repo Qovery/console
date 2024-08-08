@@ -8,7 +8,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { CodeEditorVariables } from '@qovery/domains/variables/feature'
+import { CodeEditorVariables, WrapperDropdownVariables } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
@@ -110,7 +110,14 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
               required: true,
             }}
             render={({ field, fieldState: { error } }) => (
-              <InputTextSmall name={field.name} value={field.value} onChange={field.onChange} error={error?.message} />
+              <WrapperDropdownVariables environmentId={environmentId} onSelect={field.onChange}>
+                <InputTextSmall
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={error?.message}
+                />
+              </WrapperDropdownVariables>
             )}
           />
         )}
