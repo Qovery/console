@@ -81,7 +81,7 @@ export function StepIntroductionFeature() {
                 .with(
                   'CLOUDFORMATION',
                   (templateType) =>
-                    `Qovery packages your ${upperCaseFirstLetter(templateType)} template, inputs and Terraform CLI as a containerized application and executes it on your Kubernetes cluster as job (Qovery Lifecycle job). A different command is executed depending on the event triggered (deploy/stop/delete), allowing you to synchronously manage the lifecycle of any external resource (create/pause/destroy).`
+                    `Qovery packages your ${upperCaseFirstLetter(templateType)} template, inputs and Cloudformation CLI as a containerized application and executes it on your Kubernetes cluster as job (Qovery Lifecycle job). A different command is executed depending on the event triggered (deploy/stop/delete), allowing you to synchronously manage the lifecycle of any external resource (create/pause/destroy).`
                 )
                 .with(
                   'TERRAFORM',
@@ -105,25 +105,25 @@ export function StepIntroductionFeature() {
                 .returnType<ReactNode>()
                 .with('CLOUDFORMATION', () => (
                   <ul className="list-outside list-disc pl-2">
-                    <li>Your template and inputs are containerised via a Dockerfile.</li>
                     <li>
-                      The Dockerfile defines the Cloudformation CLI version and commands to run during the job execution
-                      (e.g: command “start” corresponds to “cloudformation deploy..”).
+                      Your template and inputs are packaged within a container image via a Dockerfile, defining the
+                      runtime environment: Cloudformation CLI version and commands to run during the execution (e.g: if
+                      container launched with command “start”, run "cloudformation deploy + ”).
                     </li>
                     <li>
-                      Qovery provides you with a pre-configured Dockerfile that you can customize to match your needs.`
+                      Qovery provides you with a pre-configured Dockerfile that you can customize to match your needs.
                     </li>
                   </ul>
                 ))
                 .with('TERRAFORM', () => (
                   <ul className="list-outside list-disc pl-2">
-                    <li>Your manifest and inputs are containerised via a Dockerfile.</li>
                     <li>
-                      The Dockerfile defines the Terraform CLI version and commands to run during the job execution
-                      (e.g: command “start” corresponds to “terraform apply..”).
+                      Your manifest and inputs are packaged within a container image via a Dockerfile, defining the
+                      runtime environment: Terraform CLI version and commands to run during the execution (e.g: if
+                      container launched with command “start”, run “terraform apply + output”).
                     </li>
                     <li>
-                      Qovery provides you with a pre-configured Dockerfile that you can customize to match your needs.`
+                      Qovery provides you with a pre-configured Dockerfile that you can customize to match your needs.
                     </li>
                   </ul>
                 ))
@@ -143,7 +143,7 @@ export function StepIntroductionFeature() {
             />
             <Card
               title="Trigger"
-              content="You can decide on which “environment event” (start/stop/delete) the job needs to be deployed and the command to execute. Example: on “environment start” run “/bin/sh start.sh”, on “environment delete” run “/bin/sh destroy.sh”."
+              content="Depending on the event triggered on your environment (deploy/stop/delete), a command defined within your Dockerfile will be executed to create/destroy the resource. Example: on event “deploy” execute the command “start.sh”"
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_150ms] motion-safe:opacity-0"
             >
               <img
@@ -158,7 +158,21 @@ export function StepIntroductionFeature() {
             />
             <Card
               title="Run"
-              content="Your code is executed as a Kubernetes Job on your cluster and it runs the command chosen from the previous step. At this step it can create external resources (DB, queues ..) or interact with some existing system (seed db..)."
+              content={match(templateType)
+                .returnType<ReactNode>()
+                .with(
+                  'CLOUDFORMATION',
+                  'TERRAFORM',
+                  () =>
+                    'The container is executed as a Kubernetes Job on your cluster and it runs the command chosen from the previous step. At this step it will create/destroy the resource (DB, queues ..).'
+                )
+                .with(
+                  'GENERIC',
+                  undefined,
+                  () =>
+                    'Your code is executed as a Kubernetes Job on your cluster and it runs the command chosen from the previous step. At this step it can create external resources (DB, queues ..) or interact with some existing system (seed db..).'
+                )
+                .exhaustive()}
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_250ms] motion-safe:opacity-0"
             >
               <img src={imageRun} alt="Run - Lifecycle job" className="pointer-events-none w-full select-none" />
@@ -169,7 +183,25 @@ export function StepIntroductionFeature() {
             />
             <Card
               title="Output"
-              content="(Optional) The job can generate an “output file”, containing the references of the external resources created during its execution (format and path to be respected). Qovery automatically  injects its content as environment variable on any application within the same environment, allowing them to access the resource."
+              content={match(templateType)
+                .returnType<ReactNode>()
+                .with(
+                  'CLOUDFORMATION',
+                  () =>
+                    'The output of the Cloudformation describe-stack command is automatically retrieved and injected as environment variable on any application within the same environment, allowing them to access the resource created during the Terraform execution.'
+                )
+                .with(
+                  'TERRAFORM',
+                  () =>
+                    'The output of the Terraform apply command is automatically retrieved and injected as environment variable on any application within the same environment, allowing them to access the resource created during the Terraform execution.'
+                )
+                .with(
+                  'GENERIC',
+                  undefined,
+                  () =>
+                    '(Optional) The job can generate an “output file”, containing the references of the external resources created during its execution (format and path to be respected). Qovery automatically  injects its content as environment variable on any application within the same environment, allowing them to access the resource.'
+                )
+                .exhaustive()}
               className=" motion-safe:animate-[fadein_0.3s_ease-in-out_forwards_350ms] motion-safe:opacity-0"
             >
               <img src={imageOutput} alt="Output - Lifecycle job" className="pointer-events-none w-full select-none" />
