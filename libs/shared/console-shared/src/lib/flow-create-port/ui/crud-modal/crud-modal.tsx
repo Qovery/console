@@ -163,8 +163,8 @@ export function CrudModal({
           </div>
         )}
       />
-      {kubernetes === 'SELF_MANAGED' && cloudProvider === 'ON_PREMISE' && (
-        <Callout.Root color="sky" className="mb-4">
+      {watchPublicly && kubernetes === 'SELF_MANAGED' && cloudProvider === 'ON_PREMISE' && (
+        <Callout.Root color="sky" className="mb-5">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="light" />
           </Callout.Icon>
