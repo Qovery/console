@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form'
 import { type Job } from '@qovery/domains/services/data-access'
 import { JobConfigureSettings, SettingsHeading } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { Button } from '@qovery/shared/ui'
+import { Button, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsConfigureJobProps {
   service: Job
@@ -14,7 +14,7 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
   const { formState } = useFormContext()
 
   return (
-    <div className="flex w-full flex-col justify-between">
+    <Section className="flex w-full flex-col justify-between">
       <div className="max-w-content-with-navigation-left p-8">
         <SettingsHeading
           title="Triggers"
@@ -32,7 +32,7 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
           </div>
         </form>
       </div>
-    </div>
+    </Section>
   )
 }
 
