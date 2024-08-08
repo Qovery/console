@@ -69,7 +69,7 @@ export const useJobContainerCreateContext = () => {
 
 export const steps: { title: string }[] = [
   { title: 'Create new job' },
-  { title: 'Job Configuration' },
+  { title: 'Triggers' },
   { title: 'Set resources' },
   { title: 'Set variable environments' },
   { title: 'Ready to install' },
