@@ -386,8 +386,10 @@ export function PageNewFeature() {
         {searchInput.length === 0 ? (
           <>
             <Section>
-              <Heading className="mb-1">Select an empty service</Heading>
-              <p className="mb-5 text-xs text-neutral-350">Services without pre-configuration for technical stack.</p>
+              <Heading className="mb-1">Default Qovery services</Heading>
+              <p className="mb-5 text-xs text-neutral-350">
+                Services without pre-configuration. These are the basic blocks to deploy any technical stack.
+              </p>
               <div className="grid grid-cols-3 gap-4">
                 {serviceEmpty.map((service) => (
                   <Card key={service.title} {...service} />
@@ -412,6 +414,13 @@ export function PageNewFeature() {
               title="Front-end"
               description="Find your perfect Front-end template with presets."
               tag="FRONT_END"
+              cloudProvider={cloudProvider}
+              availableTemplates={availableTemplates}
+            />
+            <SectionByTag
+              title="IAC"
+              description="Find your perfect IAC template with presets."
+              tag="IAC"
               cloudProvider={cloudProvider}
               availableTemplates={availableTemplates}
             />

@@ -40,6 +40,7 @@ const Temporal = '/assets/devicon/temporal.svg'
 const CloudFormation = '/assets/devicon/cloudformation.svg'
 
 export enum TagsEnum {
+  IAC = 'IAC',
   FRONT_END = 'FRONT_END',
   BACK_END = 'BACK_END',
   DATA_STORAGE = 'DATA_STORAGE',
@@ -113,7 +114,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'AWS RDS via Terraform',
-        description: 'Create a PostgreSQL database using AWS RDS via Terraform.',
+        description:
+          'Create a PostgreSQL database using AWS RDS via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/postgresql',
         type: 'LIFECYCLE_JOB',
@@ -136,7 +138,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-aws-cloudformation',
         template_id: TemplateIds.CLOUDFORMATION,
         title: 'AWS RDS via Cloudformation',
-        description: 'Create a PostgreSQL database using AWS RDS via Cloudformation.',
+        description:
+          'Create a PostgreSQL database using AWS RDS via Cloudformation. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
         icon: AWS,
         icon_uri: 'app://qovery-console/postgresql',
         type: 'LIFECYCLE_JOB',
@@ -158,7 +161,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
-        description: 'Create a PostgreSQL database using Google Cloud SQL via Terraform.',
+        description:
+          'Create a PostgreSQL database using Google Cloud SQL via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: GCP,
         icon_uri: 'app://qovery-console/postgresql',
         type: 'LIFECYCLE_JOB',
@@ -199,7 +203,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'AWS ElastiCache via Terraform',
-        description: 'Create a Redis database using AWS ElastiCache via Terraform.',
+        description:
+          'Create a Redis database using AWS ElastiCache via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/redis',
         type: 'LIFECYCLE_JOB',
@@ -211,7 +216,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
-        description: 'Create a Redis database using Google Cloud Memorystore via Terraform.',
+        description:
+          'Create a Redis database using Google Cloud Memorystore via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/redis',
         type: 'LIFECYCLE_JOB',
@@ -222,7 +228,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
-    tag: 'OTHER',
+    tag: 'IAC',
     slug: 'terraform',
     title: 'Terraform',
     template_id: TemplateIds.TERRAFORM,
@@ -234,7 +240,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'OTHER',
+    tag: 'IAC',
     slug: 'cloudformation',
     title: 'CloudFormation',
     template_id: TemplateIds.CLOUDFORMATION,
@@ -267,7 +273,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'aws-cloudfront-s3',
         title: 'AWS Cloudfront and S3',
-        description: 'Expose a React application through AWS CloudFront and S3.',
+        description:
+          'Expose a React application through AWS CloudFront and S3. Resource managed via a Qovery Lifecycle Job.',
         icon: AWS,
         icon_uri: 'app://qovery-console/react',
         type: 'LIFECYCLE_JOB',
@@ -298,7 +305,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'aws-cloudfront-s3',
         title: 'AWS Cloudfront and S3',
-        description: 'Expose a Vue application through AWS CloudFront and S3.',
+        description:
+          'Expose a Vue application through AWS CloudFront and S3. Resource managed via a Qovery Lifecycle Job.',
         icon: AWS,
         icon_uri: 'app://qovery-console/vue',
         type: 'LIFECYCLE_JOB',
@@ -331,7 +339,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'aws-cloudfront-s3',
         title: 'AWS Cloudfront and S3',
-        description: 'Expose an Angular application through AWS CloudFront and S3.',
+        description:
+          'Expose an Angular application through AWS CloudFront and S3. Resource managed via a Qovery Lifecycle Job.',
         icon: AWS,
         icon_uri: 'app://qovery-console/angular',
         type: 'LIFECYCLE_JOB',
@@ -367,7 +376,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'cloudformation',
         template_id: TemplateIds.CLOUDFORMATION,
         title: 'Cloudformation',
-        description: 'Deploy an AWS Lambda function using CloudFormation.',
+        description:
+          'Deploy an AWS Lambda function using CloudFormation. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
         icon: AWS,
         icon_uri: 'app://qovery-console/aws',
         type: 'LIFECYCLE_JOB',
@@ -379,7 +389,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'Terraform',
-        description: 'Deploy an AWS Lambda function using Terraform.',
+        description:
+          'Deploy an AWS Lambda function using Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/aws',
         type: 'LIFECYCLE_JOB',
@@ -420,7 +431,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'AWS RDS via Terraform',
-        description: 'Create a MySQL database using AWS RDS via Terraform.',
+        description:
+          'Create a MySQL database using AWS RDS via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mysql',
         type: 'LIFECYCLE_JOB',
@@ -432,7 +444,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-aws-cloudformation',
         template_id: TemplateIds.CLOUDFORMATION,
         title: 'AWS RDS via Cloudformation',
-        description: 'Create a MySQL database using AWS RDS via Cloudformation.',
+        description:
+          'Create a MySQL database using AWS RDS via Cloudformation. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
         icon: AWS,
         icon_uri: 'app://qovery-console/mysql',
         type: 'LIFECYCLE_JOB',
@@ -444,7 +457,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
-        description: 'Create a MySQL database using Google Cloud SQL via Terraform.',
+        description:
+          'Create a MySQL database using Google Cloud SQL via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mysql',
         type: 'LIFECYCLE_JOB',
@@ -485,7 +499,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'AWS DocumentDB via Terraform',
-        description: 'Create a MongoDB database using AWS DocumentDB via Terraform.',
+        description:
+          'Create a MongoDB database using AWS DocumentDB via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mongodb',
         type: 'LIFECYCLE_JOB',
@@ -497,7 +512,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
-        description: 'Create a MongoDB database using Google Cloud Firestore via Terraform.',
+        description:
+          'Create a MongoDB database using Google Cloud Firestore via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/mongodb',
         type: 'LIFECYCLE_JOB',
@@ -561,7 +577,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'aws-cloudfront-s3',
         title: 'AWS Cloudfront and S3',
-        description: 'Expose a NextJS application through AWS CloudFront and S3.',
+        description:
+          'Expose a NextJS application through AWS CloudFront and S3. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
         icon: AWS,
         icon_uri: 'app://qovery-console/nextjs',
         type: 'LIFECYCLE_JOB',
@@ -575,7 +592,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     tag: 'DATA_STORAGE',
     slug: 'couchbase',
     title: 'Couchbase',
-    description: 'Couchbase is an open-source, distributed, NoSQL document-oriented database.',
+    description:
+      'Couchbase is an open-source, distributed, NoSQL document-oriented database. Resource managed via a Qovery Lifecycle Job.',
     icon: Couchbase,
     icon_uri: 'app://qovery-console/couchbase',
     type: 'LIFECYCLE_JOB',
@@ -728,7 +746,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     slug: 'replibyte',
     title: 'Replibyte',
     description:
-      'Replibyte is a tool written in Rust by the Qovery team to seed databases with production data without sensitive data.',
+      'Replibyte is a tool written in Rust by the Qovery team to seed databases with production data without sensitive data. Resource managed via a Qovery Lifecycle Job.',
     icon: Rust,
     icon_uri: 'app://qovery-console/rust',
     type: 'LIFECYCLE_JOB',
@@ -740,7 +758,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
     slug: 'cloudflare-worker',
     title: 'Cloudflare Worker',
     description:
-      'Cloudflare Worker is a serverless platform that enables you to write and deploy code on Cloudflare’s edge.',
+      'Cloudflare Worker is a serverless platform that enables you to write and deploy code on Cloudflare’s edge. Resource managed via a Qovery Lifecycle Job.',
     icon: Cloudflare,
     icon_uri: 'app://qovery-console/cloudflare',
     type: 'LIFECYCLE_JOB',
@@ -786,7 +804,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 's3-cli',
         title: 'S3 CLI',
-        description: 'Do operations on AWS S3 using the AWS CLI.',
+        description: 'Do operations on S3 using the AWS CLI. Resource managed via a Qovery Lifecycle Job.',
         icon: AWS,
         icon_uri: 'app://qovery-console/aws',
         type: 'LIFECYCLE_JOB',
@@ -798,7 +816,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 's3-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'S3 via Terraform',
-        description: 'Do operations on S3 using Terraform.',
+        description:
+          'Do operations on S3 using Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/aws',
         type: 'LIFECYCLE_JOB',
@@ -810,7 +829,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 's3-cloudformation',
         template_id: TemplateIds.CLOUDFORMATION,
         title: 'S3 via Cloudformation',
-        description: 'Do operations on S3 using Cloudformation.',
+        description:
+          'Do operations on S3 using Cloudformation. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
         icon: AWS,
         icon_uri: 'app://qovery-console/aws',
         type: 'LIFECYCLE_JOB',
@@ -836,7 +856,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       {
         slug: 'bigquery-cli',
         title: 'BigQuery CLI',
-        description: 'Do operations on GCP BigQuery using the GCP CLI.',
+        description: 'Do operations on GCP BigQuery using the GCP CLI. Resource managed via a Qovery Lifecycle Job.',
         icon: GCP,
         icon_uri: 'app://qovery-console/gcp',
         type: 'LIFECYCLE_JOB',
@@ -848,7 +868,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'bigquery-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'BigQuery via Terraform',
-        description: 'Do operations on BigQuery using Terraform.',
+        description:
+          'Do operations on BigQuery using Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/gcp',
         type: 'LIFECYCLE_JOB',
@@ -881,7 +902,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
   },
   {
-    tag: 'OTHER',
+    tag: 'IAC',
     slug: 'crossplane',
     title: 'Crossplane',
     description:
@@ -924,7 +945,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-aws-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'AWS Elasticsearch via Terraform',
-        description: 'Create an Elasticsearch database using AWS Elasticsearch via Terraform.',
+        description:
+          'Create an Elasticsearch database using AWS Elasticsearch via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/elasticsearch',
         type: 'LIFECYCLE_JOB',
@@ -936,7 +958,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 'managed-gcp-terraform',
         template_id: TemplateIds.TERRAFORM,
         title: 'Managed via Terraform',
-        description: 'Create an Elasticsearch database using Google Cloud Elasticsearch via Terraform.',
+        description:
+          'Create an Elasticsearch database using Google Cloud Elasticsearch via Terraform. Resource managed via a Qovery Lifecycle Job specialized for Terraform.',
         icon: Terraform,
         icon_uri: 'app://qovery-console/elasticsearch',
         type: 'LIFECYCLE_JOB',
