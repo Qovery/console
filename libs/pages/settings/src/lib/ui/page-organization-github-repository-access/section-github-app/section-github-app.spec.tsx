@@ -1,5 +1,6 @@
-import { act, getByTestId, getByText, render } from '__tests__/utils/setup-jest'
+import { type Auth0ProviderOptions } from '@auth0/auth0-react'
 import { GitProviderEnum } from 'qovery-typescript-axios'
+import { act, getByTestId, getByText, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import SectionGithubApp, { type SectionGithubAppProps } from './section-github-app'
 
 const props: SectionGithubAppProps = {
@@ -17,9 +18,21 @@ const props: SectionGithubAppProps = {
   repositoriesLoading: false,
 }
 
+const mockGetTokenSilently = jest.fn()
+jest.mock('@auth0/auth0-react', () => ({
+  Auth0Provider: ({ children }: Auth0ProviderOptions) => children,
+  useAuth0: () => {
+    return {
+      getAccessTokenSilently: mockGetTokenSilently,
+    }
+  },
+}))
+
+const mockRefetchAuthProviders = jest.fn()
+
 describe('SectionGithubApp', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<SectionGithubApp {...props} />)
+    const { baseElement } = renderWithProviders(<SectionGithubApp {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -31,7 +44,7 @@ describe('SectionGithubApp', () => {
         use_bot: false,
       },
     }
-    const { baseElement } = render(<SectionGithubApp {...testProps} />)
+    const { baseElement } = renderWithProviders(<SectionGithubApp {...testProps} />)
 
     await act(() => {
       getByTestId(baseElement, 'install-button').click()
@@ -41,7 +54,7 @@ describe('SectionGithubApp', () => {
   })
 
   it('should display disconnect and manage permissions buttons if githubAuthProvider use_bot', async () => {
-    const { baseElement } = render(<SectionGithubApp {...props} />)
+    const { baseElement } = renderWithProviders(<SectionGithubApp {...props} />)
     const disconnectButton = getByTestId(baseElement, 'disconnect-button')
     const permissionButton = getByTestId(baseElement, 'permission-button')
 
@@ -72,7 +85,7 @@ describe('SectionGithubApp', () => {
         },
       ],
     }
-    const { baseElement } = render(<SectionGithubApp {...testProps} />)
+    const { baseElement } = renderWithProviders(<SectionGithubApp {...testProps} />)
     getByText(baseElement, 'name')
   })
 })
