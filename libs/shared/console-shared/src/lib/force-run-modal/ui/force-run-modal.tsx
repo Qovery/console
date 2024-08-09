@@ -65,7 +65,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
                   fieldValue={field.value}
                   onChange={field.onChange}
                   name={field.name}
-                  label="Start"
+                  label="Deploy"
                   value="start"
                   description={props.service.schedule && description('on_start', props.service.schedule)}
                 />
