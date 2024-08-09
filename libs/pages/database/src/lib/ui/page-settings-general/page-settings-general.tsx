@@ -134,16 +134,23 @@ export function PageSettingsGeneral({
                       />
                     )}
                   />
-                  <Callout.Root color="yellow">
-                    <Callout.Icon>
-                      <Icon iconName="circle-info" />
-                    </Callout.Icon>
-                    {databaseMode === DatabaseModeEnum.CONTAINER ? (
+                  {databaseMode === DatabaseModeEnum.CONTAINER && formState.dirtyFields['version'] && (
+                    <Callout.Root color="yellow">
+                      <Callout.Icon>
+                        <Icon iconName="circle-info" />
+                      </Callout.Icon>
                       <Callout.Text className="text-xs">
                         Upgrading the version might cause service interruption. Have a look at the database
                         documentation before launching the upgrade.
                       </Callout.Text>
-                    ) : (
+                    </Callout.Root>
+                  )}
+
+                  {databaseMode === DatabaseModeEnum.MANAGED && formState.dirtyFields['version'] && (
+                    <Callout.Root color="yellow">
+                      <Callout.Icon>
+                        <Icon iconName="circle-info" />
+                      </Callout.Icon>
                       <Callout.Text className="text-xs text-neutral-350">
                         Once triggered, the update will be managed by your cloud provider and applied during the
                         configured maintenance window. Moreover, the operation might cause a service interruption.{' '}
@@ -155,8 +162,8 @@ export function PageSettingsGeneral({
                           Have a look at the documentation first
                         </ExternalLink>
                       </Callout.Text>
-                    )}
-                  </Callout.Root>
+                    </Callout.Root>
+                  )}
                 </>
               )}
               <Controller
