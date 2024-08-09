@@ -10,6 +10,7 @@ import {
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Application, type Container } from '@qovery/domains/services/data-access'
 import { useEditService } from '@qovery/domains/services/feature'
@@ -132,9 +133,14 @@ export function handleSubmit<
 export function CrudModalFeature({ service, onClose, port }: CrudModalFeatureProps) {
   const { enableAlertClickOutside } = useModal()
   const { data: environment } = useEnvironment({ environmentId: service?.environment?.id || '' })
+  const { data: cluster } = useCluster({
+    organizationId: environment?.organization.id ?? '',
+    clusterId: environment?.cluster_id ?? '',
+  })
   const { mutateAsync: editService, isLoading: isLoadingEditService } = useEditService({
     environmentId: service.environment?.id || '',
   })
+
   const livenessType = service.healthchecks?.liveness_probe?.type
   const readinessType = service.healthchecks?.readiness_probe?.type
 
@@ -184,6 +190,7 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
     <FormProvider {...methods}>
       <CrudModal
         cloudProvider={environment?.cloud_provider.provider as CloudProviderEnum}
+        kubernetes={cluster?.kubernetes}
         currentProtocol={port?.protocol}
         isEdit={!!port}
         isMatchingHealthCheck={isMatchingHealthCheck(port, livenessType) || isMatchingHealthCheck(port, readinessType)}
