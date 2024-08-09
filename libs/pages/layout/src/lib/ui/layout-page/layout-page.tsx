@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
-import { useUserAccount, useUserRole } from '@qovery/shared/iam/feature'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_URL,
@@ -52,7 +52,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const navigate = useNavigate()
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
-  const { data: user } = useUserAccount()
   const { roles, isQoveryAdminUser } = useUserRole()
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
