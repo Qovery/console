@@ -146,7 +146,7 @@ export function PageSettingsGeneral({
                     </Callout.Root>
                   )}
 
-                  {databaseMode !== DatabaseModeEnum.CONTAINER && (
+                  {databaseMode === DatabaseModeEnum.MANAGED && formState.dirtyFields['version'] && (
                     <Callout.Root color="yellow">
                       <Callout.Icon>
                         <Icon iconName="circle-info" />
