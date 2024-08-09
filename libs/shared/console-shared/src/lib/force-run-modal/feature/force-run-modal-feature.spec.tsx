@@ -31,7 +31,7 @@ describe('ForceRunModalFeature', () => {
   it('should dispatch forceRunJob with the good payload', async () => {
     const { userEvent } = renderWithProviders(<ForceRunModalFeature service={mockLifecycle} />)
 
-    const radioBox = screen.getByLabelText('Start')
+    const radioBox = screen.getByLabelText('Deploy')
     await userEvent.click(radioBox)
 
     const submit = screen.getByRole('button', { name: 'Force Run' })
