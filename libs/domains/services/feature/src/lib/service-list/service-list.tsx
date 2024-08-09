@@ -147,7 +147,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
                   .with(
                     { job_type: 'LIFECYCLE' },
                     ({ schedule }) =>
-                      [schedule.on_start && 'Start', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
+                      [schedule.on_start && 'Deploy', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
                         .filter(Boolean)
                         .join(' - ') || undefined
                   )

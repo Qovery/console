@@ -1,6 +1,7 @@
 import { type LifecycleJobResponseAllOfSchedule } from 'qovery-typescript-axios'
 import { type JobRequestAllOfScheduleOnStart } from 'qovery-typescript-axios/api'
 import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { type Job } from '@qovery/domains/services/data-access'
 import { InputRadioBox, ModalCrud } from '@qovery/shared/ui'
 
@@ -20,6 +21,8 @@ export function ForceRunModal(props: ForceRunModalProps) {
 
     if (!scheduleEvent) return
 
+    console.log(scheduleEvent.arguments)
+
     return (
       <>
         {scheduleEvent.entrypoint && (
@@ -29,7 +32,12 @@ export function ForceRunModal(props: ForceRunModalProps) {
         )}
         {scheduleEvent.arguments && scheduleEvent.arguments && scheduleEvent.arguments.length > 0 && (
           <p>
-            CMD Arguments: <strong className="font-normal text-neutral-400">{scheduleEvent.arguments.join(' ')}</strong>
+            CMD Arguments:{' '}
+            <strong className="font-normal text-neutral-400">
+              {match(scheduleEvent.arguments.join(' '))
+                .with('start', () => 'deploy')
+                .otherwise((v) => v)}
+            </strong>
           </p>
         )}
       </>

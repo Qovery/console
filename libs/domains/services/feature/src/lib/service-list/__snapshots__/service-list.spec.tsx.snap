@@ -1664,7 +1664,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <span
                     class="text-xs font-normal text-neutral-350"
                   >
-                    Start
+                    Deploy
                   </span>
                 </span>
                 <div>

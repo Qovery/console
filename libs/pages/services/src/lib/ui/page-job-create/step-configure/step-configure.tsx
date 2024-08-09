@@ -26,10 +26,12 @@ export function StepConfigure(props: StepConfigureProps) {
 
   return (
     <Section>
-      <Heading className="mb-2">Job configuration</Heading>
+      <Heading className="mb-2">Triggers</Heading>
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-sm text-neutral-350">Job configuration allows you to control the behaviour of your job</p>
+        <p className="text-sm text-neutral-350">
+          Define the events triggering the execution of this job and the commands to execute.
+        </p>
 
         {match(props.templateType)
           .with('CLOUDFORMATION', 'TERRAFORM', () => (

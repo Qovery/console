@@ -56,7 +56,7 @@ describe('Configure', () => {
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
 
-    const checkbox = screen.getByLabelText('Start')
+    const checkbox = screen.getByLabelText('Deploy')
 
     checkbox.click()
 

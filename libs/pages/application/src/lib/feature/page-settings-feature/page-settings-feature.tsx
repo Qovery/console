@@ -73,7 +73,7 @@ export function PageSettingsFeature() {
   }
 
   const configureJobSetting = {
-    title: 'Configure Job',
+    title: 'Triggers',
     icon: IconAwesomeEnum.GEARS,
     url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
   }

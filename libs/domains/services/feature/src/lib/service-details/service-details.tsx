@@ -197,11 +197,11 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
             .with({ job_type: 'LIFECYCLE' }, ({ schedule }) => (
               <ResourceUnit
                 value={
-                  [schedule.on_start && 'Start', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
+                  [schedule.on_start && 'Deploy', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
                     .filter(Boolean)
                     .join(' - ') || undefined
                 }
-                description="Event"
+                description="Triggered on"
               />
             ))
             .with({ job_type: 'CRON' }, ({ schedule }) => (

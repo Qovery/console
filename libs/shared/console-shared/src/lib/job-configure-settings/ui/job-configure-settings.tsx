@@ -62,9 +62,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
         </Section>
       ) : (
         <Section className="gap-4">
-          <Heading>Event</Heading>
+          <Heading>Events</Heading>
           <p className="text-sm text-neutral-350">
-            Select one or more environment event where the job should be executed
+            Select one or more event where the job should be executed and the command to execute.
           </p>
 
           <Controller
@@ -74,9 +74,9 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
               <EnableBox
                 className="flex flex-col gap-4"
                 checked={field.value}
-                title="Start"
+                title="Deploy"
                 name="on_start"
-                description="Execute this job when the environment starts (Deploy and Redeploy)"
+                description="Execute this job when the environment/job starts"
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
@@ -96,7 +96,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 checked={field.value}
                 title="Stop"
                 name="on_stop"
-                description="Execute this job when the environment stops"
+                description="Execute this job when the environment/job stops"
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
@@ -116,7 +116,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 checked={field.value}
                 title="Delete"
                 name="on_delete"
-                description="Execute this job when the environment is deleted"
+                description="Execute this job when the environment/job is deleted"
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
@@ -130,7 +130,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
       )}
 
       <Section className="gap-4">
-        <Heading>Parameters</Heading>
+        <Heading>Execution behaviour</Heading>
         <Controller
           name="nb_restarts"
           control={control}
