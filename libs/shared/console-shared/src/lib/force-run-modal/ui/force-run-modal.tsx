@@ -18,10 +18,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
 
   const description = (key: keyof LifecycleJobResponseAllOfSchedule, schedule: LifecycleJobResponseAllOfSchedule) => {
     const scheduleEvent: JobRequestAllOfScheduleOnStart = schedule[key] as JobRequestAllOfScheduleOnStart
-
     if (!scheduleEvent) return
-
-    console.log(scheduleEvent.arguments)
 
     return (
       <>
