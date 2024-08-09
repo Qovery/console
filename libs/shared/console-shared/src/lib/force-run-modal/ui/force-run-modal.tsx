@@ -44,7 +44,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
   return (
     <ModalCrud
       title="Force Run"
-      description="Select the event you want to run for the following Job"
+      description="Select the event you want to force trigger."
       onClose={props.closeModal}
       onSubmit={props.onSubmit}
       forServiceName={props.service.name}
