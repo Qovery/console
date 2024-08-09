@@ -45,7 +45,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
         const tokenDecoded: { [GITHUB_APP_INSTALLATIONS]: string[] } = jwtDecode(token)
         setDisplayGitAppSection(tokenDecoded[GITHUB_APP_INSTALLATIONS].length > 0)
       } catch (error) {
-        console.error('Error fetching roles:', error)
+        console.error(error)
       }
     }
 
