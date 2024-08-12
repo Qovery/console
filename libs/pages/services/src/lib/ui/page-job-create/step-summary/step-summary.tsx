@@ -200,7 +200,7 @@ export function StepSummary(props: StepSummaryProps) {
 
           <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
             <div className="flex justify-between">
-              <Heading>Job configuration</Heading>
+              <Heading>Triggers</Heading>
               <Button type="button" variant="plain" size="md" onClick={props.gotoConfigureJob}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>

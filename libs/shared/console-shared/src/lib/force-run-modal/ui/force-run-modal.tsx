@@ -18,10 +18,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
 
   const description = (key: keyof LifecycleJobResponseAllOfSchedule, schedule: LifecycleJobResponseAllOfSchedule) => {
     const scheduleEvent: JobRequestAllOfScheduleOnStart = schedule[key] as JobRequestAllOfScheduleOnStart
-
     if (!scheduleEvent) return
-
-    console.log(scheduleEvent.arguments)
 
     return (
       <>
@@ -47,7 +44,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
   return (
     <ModalCrud
       title="Force Run"
-      description="Select the event you want to run for the following Job"
+      description="Select the event you want to force trigger."
       onClose={props.closeModal}
       onSubmit={props.onSubmit}
       forServiceName={props.service.name}
@@ -68,7 +65,7 @@ export function ForceRunModal(props: ForceRunModalProps) {
                   fieldValue={field.value}
                   onChange={field.onChange}
                   name={field.name}
-                  label="Start"
+                  label="Deploy"
                   value="start"
                   description={props.service.schedule && description('on_start', props.service.schedule)}
                 />
