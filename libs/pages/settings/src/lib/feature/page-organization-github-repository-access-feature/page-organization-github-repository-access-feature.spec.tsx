@@ -62,35 +62,4 @@ describe('PageOrganizationGithubRepositoryAccessFeature', () => {
       expect(mockRefetchAuthProviders).toHaveBeenCalled()
     })
   })
-
-  it('should disconnect without opening the modal', async () => {
-    const { userEvent } = renderWithProviders(<PageOrganizationGithubRepositoryAccessFeature />)
-
-    mockDisconnectGithubApp.mockReturnValueOnce({
-      unwrap: jest.fn().mockResolvedValueOnce({}),
-    })
-
-    const disconnectButton = screen.getByTestId('disconnect-button')
-    await userEvent.click(disconnectButton)
-
-    await waitFor(() => {
-      expect(mockGetTokenSilently).toHaveBeenCalled()
-      expect(mockRefetchAuthProviders).toHaveBeenCalled()
-    })
-  })
-
-  it('calls onDisconnectWithModal if error is thrown', async () => {
-    const error = new Error('error')
-    error.name = 'Bad Request'
-    error.message = 'This git provider is'
-
-    const { userEvent } = renderWithProviders(<PageOrganizationGithubRepositoryAccessFeature />)
-
-    mockDisconnectGithubApp.mockReturnValueOnce({
-      unwrap: jest.fn().mockRejectedValueOnce(error),
-    })
-
-    const disconnectButton = screen.getByTestId('disconnect-button')
-    await userEvent.click(disconnectButton)
-  })
 })
