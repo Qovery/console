@@ -37,7 +37,7 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
 
   return (
     <FormProvider {...methods}>
-      <PageSettingsGeneral onSubmit={onSubmit} loading={isEditClusterLoading} />
+      <PageSettingsGeneral cluster={cluster} onSubmit={onSubmit} loading={isEditClusterLoading} />
     </FormProvider>
   )
 }
