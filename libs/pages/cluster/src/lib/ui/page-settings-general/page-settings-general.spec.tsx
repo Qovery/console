@@ -1,9 +1,11 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsGeneral, { type PageSettingsGeneralProps } from './page-settings-general'
 
 describe('PageSettingsGeneral', () => {
   const props: PageSettingsGeneralProps = {
+    cluster: clusterFactoryMock(1)[0],
     onSubmit: jest.fn((e) => e.preventDefault()),
     loading: false,
   }
