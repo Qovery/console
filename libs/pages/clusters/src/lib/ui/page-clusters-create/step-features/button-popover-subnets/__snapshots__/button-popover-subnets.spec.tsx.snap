@@ -141,12 +141,16 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
           >
             Cancel
           </button>
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+          <span
             type="button"
           >
-            Confirm
-          </button>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+              type="button"
+            >
+              Confirm
+            </button>
+          </span>
         </div>
       </div>
     </div>
@@ -310,12 +314,18 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
           >
             Cancel
           </button>
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+          <span
             type="button"
           >
-            Confirm
-          </button>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+              data-state="closed"
+              disabled=""
+              type="button"
+            >
+              Confirm
+            </button>
+          </span>
         </div>
       </div>
     </div>

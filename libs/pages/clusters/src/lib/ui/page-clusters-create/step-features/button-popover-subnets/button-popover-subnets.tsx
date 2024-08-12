@@ -9,7 +9,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { type Subnets } from '@qovery/shared/interfaces'
-import { Button, Icon, InputTextSmall, Popover } from '@qovery/shared/ui'
+import { Button, Icon, InputTextSmall, Popover, Tooltip } from '@qovery/shared/ui'
 import { removeEmptySubnet } from '../../../../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
@@ -197,9 +197,13 @@ export function ButtonPopoverSubnets({ children, sections, required = false }: B
               </Button>
             </Popover.Close>
             <Popover.Close>
-              <Button size="md" type="button">
-                Confirm
-              </Button>
+              <span>
+                <Tooltip content="Please fill all fields" disabled={isValid}>
+                  <Button disabled={!isValid} size="md" type="button">
+                    Confirm
+                  </Button>
+                </Tooltip>
+              </span>
             </Popover.Close>
           </div>
         </div>
