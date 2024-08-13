@@ -3878,7 +3878,6 @@ __metadata:
     jest-websocket-mock: ^2.4.1
     jwt-decode: ^4.0.0
     lint-staged: ^13.0.3
-    logrocket: ^8.1.0
     monaco-editor: ^0.44.0
     msw: ^1.3.0
     nx: 18.3.0
@@ -16383,13 +16382,6 @@ __metadata:
     slice-ansi: ^4.0.0
     wrap-ansi: ^6.2.0
   checksum: ae2f85bbabc1906034154fb7d4c4477c79b3e703d22d78adee8b3862fa913942772e7fa11713e3d96fb46de4e3cabefbf5d0a544344f03b58d3c4bff52aa9eb2
-  languageName: node
-  linkType: hard
-
-"logrocket@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "logrocket@npm:8.1.0"
-  checksum: 9925bae3ca61612c2e82964d23987ecd35ba43be19ac7b694d5296e2edf50eff69b3c97962e43f4f75df20ea36a3155a5d4842c77586e483ba355279a8d946a6
   languageName: node
   linkType: hard
 
