@@ -17,9 +17,6 @@
           "env": "NX_INTERCOM"
         },
         {
-          "env": "NX_LOGROCKET"
-        },
-        {
           "env": "NX_OAUTH_AUDIENCE"
         },
         {

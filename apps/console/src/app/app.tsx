@@ -2,7 +2,6 @@ import { type User, useAuth0 } from '@auth0/auth0-react'
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import * as Sentry from '@sentry/react'
 import axios from 'axios'
-import LogRocket from 'logrocket'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useState } from 'react'
 import {
@@ -25,7 +24,7 @@ import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { GTM, LOGROCKET, NODE_ENV, NX_GIT_SHA, QOVERY_API } from '@qovery/shared/util-node-env'
+import { GTM, NODE_ENV, NX_GIT_SHA, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 import PreviewCode from './components/preview-code'
 import ScrollToTop from './components/scroll-to-top'
@@ -62,11 +61,6 @@ export function App() {
         ...user,
       })
 
-      if (NODE_ENV === 'production') {
-        LogRocket.identify(user.sub, {
-          ...user,
-        })
-      }
       const INTERCOM_HASH_KEY = 'https://qovery.com/intercom_hash'
 
       updateIntercom({
@@ -83,39 +77,8 @@ export function App() {
   useAuthInterceptor(axios, QOVERY_API)
 
   useEffect(() => {
-    // init logrocket
+    // init Sentry
     if (NODE_ENV === 'production') {
-      LogRocket.init(LOGROCKET, {
-        release: NX_GIT_SHA,
-        dom: {
-          inputSanitizer: true,
-          textSanitizer: true,
-        },
-        network: {
-          requestSanitizer(request) {
-            request.headers['Authorization'] = undefined
-            if (
-              ['secret', 'credential', 'password', 'private'].some((field) =>
-                request.body?.toLowerCase?.().includes?.(field)
-              )
-            ) {
-              delete request.body
-            }
-            return request
-          },
-          responseSanitizer(response) {
-            if (
-              ['secret', 'credential', 'password', 'private'].some((field) =>
-                response.body?.toLowerCase?.().includes?.(field)
-              )
-            ) {
-              delete response.body
-            }
-            return response
-          },
-        },
-      })
-
       Sentry.init({
         dsn: 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024',
         integrations: [
