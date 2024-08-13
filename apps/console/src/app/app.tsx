@@ -80,6 +80,7 @@ export function App() {
     // init Sentry
     if (NODE_ENV === 'production') {
       Sentry.init({
+        release: NX_GIT_SHA,
         dsn: 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024',
         integrations: [
           // See docs for support of different versions of variation of react router
