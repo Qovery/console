@@ -2,22 +2,10 @@ import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { CodeEditorVariables } from '@qovery/domains/variables/feature'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
-import {
-  BlockContent,
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
-  Icon,
-  IconAwesomeEnum,
-  InputSelectSmall,
-  InputTextSmall,
-  InputToggle,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
+import { CodeEditorVariables } from '../../code-editor-variables/code-editor-variables'
 
 export interface VariableRowProps {
   index: number
@@ -150,14 +138,9 @@ export function VariableRow(props: VariableRowProps) {
         </div>
 
         <div className="flex h-full w-full grow items-center">
-          <ButtonIcon
-            icon={IconAwesomeEnum.TRASH}
-            style={ButtonIconStyle.STROKED}
-            size={ButtonLegacySize.TINY}
-            onClick={() => props.onDelete(index)}
-            className="!h-8 !w-8 text-neutral-350 hover:text-neutral-400"
-            iconClassName="!text-xs"
-          />
+          <Button type="button" variant="plain" size="md" onClick={() => props.onDelete(index)}>
+            <Icon className="text-base" iconName="trash-can" iconStyle="light" />
+          </Button>
         </div>
       </div>
       {watchFile && openEditor && (

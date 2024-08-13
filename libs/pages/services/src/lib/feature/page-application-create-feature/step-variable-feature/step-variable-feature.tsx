@@ -1,9 +1,8 @@
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
+import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreateVariable } from '@qovery/domains/variables/feature'
-import { type VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CREATION_HEALTHCHECKS_URL,
@@ -27,7 +26,6 @@ export function StepVariableFeature() {
   useEffect(() => {
     setCurrentStep(5)
   }, [setCurrentStep])
-
   const { fields, append, remove } = useFieldArray({
     control: variablesForm.control,
     name: 'variables',

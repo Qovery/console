@@ -1,7 +1,7 @@
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import FlowCreateVariable, { type FlowCreateVariableProps } from './flow-create-variable'
 
 const props: FlowCreateVariableProps = {
@@ -15,7 +15,7 @@ const props: FlowCreateVariableProps = {
 
 describe('FlowCreateVariable', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm<FlowVariableData>(<FlowCreateVariable {...props} />, {
         defaultValues: {
           variables: [],
