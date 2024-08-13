@@ -1,11 +1,13 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   type ApplicationGeneralData,
   type ApplicationResourcesData,
   type FlowPortData,
+  type FlowVariableData,
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_APPLICATION_CREATION_URL,
@@ -30,6 +32,12 @@ export interface ApplicationContainerCreateContextInterface {
   portData: FlowPortData | undefined
   setPortData: (data: FlowPortData) => void
   creationFlowUrl?: string
+
+  /* 
+    XXX: Using new format of storage steps (need to refacto other steps)
+    Similare with Helm creation flow context
+  */
+  variablesForm: UseFormReturn<FlowVariableData>
 }
 
 export const ApplicationContainerCreateContext = createContext<ApplicationContainerCreateContextInterface | undefined>(
@@ -49,13 +57,14 @@ export const steps: { title: string }[] = [
   { title: 'Set resources' },
   { title: 'Set port' },
   { title: 'Set health checks' },
+  { title: 'Set variables' },
   { title: 'Ready to install' },
 ]
 
 export function PageApplicationCreateFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
 
-  // values and setters for context initialization
+  // Deprecated: `values and setters for context initialization`, using directly `useForm` to init form
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ApplicationGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
@@ -63,6 +72,13 @@ export function PageApplicationCreateFeature() {
     cpu: 500,
     min_running_instances: 1,
     max_running_instances: 2,
+  })
+
+  const variablesForm = useForm<FlowVariableData>({
+    defaultValues: {
+      variables: [],
+    },
+    mode: 'onChange',
   })
 
   const [portData, setPortData] = useState<FlowPortData | undefined>({
@@ -107,6 +123,7 @@ export function PageApplicationCreateFeature() {
         portData,
         setPortData,
         creationFlowUrl,
+        variablesForm,
       }}
     >
       <FunnelFlow

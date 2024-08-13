@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
 import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import VariableRow from '../variable-row/variable-row'
+import VariableRow from './variable-row/variable-row'
 
 export interface FlowCreateVariableProps {
   onBack: () => void
@@ -17,7 +17,15 @@ export interface FlowCreateVariableProps {
   templateType?: JobLifecycleTypeEnum
 }
 
-export function FlowCreateVariable(props: FlowCreateVariableProps) {
+export function FlowCreateVariable({
+  onAdd,
+  onBack,
+  onSubmit,
+  onRemove,
+  templateType,
+  variables,
+  availableScopes,
+}: FlowCreateVariableProps) {
   const { formState } = useFormContext<FlowVariableData>()
   const gridTemplateColumns = '6fr 6fr 204px 2fr 1fr'
 
@@ -25,15 +33,15 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
     <Section>
       <div className="flex justify-between">
         <Heading className="mb-2">Environment variables</Heading>
-        <Button className="gap-2" size="lg" onClick={props.onAdd}>
+        <Button className="gap-2" size="lg" onClick={onAdd}>
           Add variable
           <Icon iconName="plus-circle" />
         </Button>
       </div>
 
-      <form className="space-y-10" onSubmit={props.onSubmit}>
+      <form className="space-y-10" onSubmit={onSubmit}>
         <p className="mr-36 text-sm text-neutral-350">
-          {match(props.templateType)
+          {match(templateType)
             .with(
               'CLOUDFORMATION',
               'TERRAFORM',
@@ -43,7 +51,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
             .with('GENERIC', undefined, () => 'Define here the variables required by your service.')
             .exhaustive()}
         </p>
-        {match(props.templateType)
+        {match(templateType)
           .with('CLOUDFORMATION', 'TERRAFORM', () => (
             <Callout.Root color="sky">
               <Callout.Icon>
@@ -58,7 +66,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
           .with('GENERIC', undefined, () => undefined)
           .exhaustive()}
         <div>
-          {props.variables?.length > 0 && (
+          {variables?.length > 0 && (
             <div className="mb-3 grid" style={{ gridTemplateColumns }}>
               <span className="text-sm font-medium text-neutral-400">Variable</span>
               <span className="text-sm font-medium text-neutral-400">Value</span>
@@ -69,11 +77,11 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
           )}
 
           <div className="mb-10">
-            {props.variables?.map((_, index) => (
+            {variables?.map((_, index) => (
               <VariableRow
                 gridTemplateColumns={gridTemplateColumns}
-                availableScopes={props.availableScopes}
-                onDelete={props.onRemove}
+                availableScopes={availableScopes}
+                onDelete={onRemove}
                 key={index}
                 index={index}
               />
@@ -82,7 +90,7 @@ export function FlowCreateVariable(props: FlowCreateVariableProps) {
         </div>
 
         <div className="flex justify-between">
-          <Button onClick={props.onBack} type="button" size="lg" variant="plain">
+          <Button onClick={onBack} type="button" size="lg" variant="plain">
             Back
           </Button>
           <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">

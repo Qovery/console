@@ -9,6 +9,7 @@ import {
   type ApplicationGeneralData,
   type ApplicationResourcesData,
   type FlowPortData,
+  type VariableData,
 } from '@qovery/shared/interfaces'
 import { Button, Heading, Icon, Section, Truncate } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -22,12 +23,14 @@ export interface StepSummaryProps {
   gotoGlobalInformation: () => void
   gotoResources: () => void
   gotoPorts: () => void
+  gotoVariables: () => void
   gotoHealthchecks: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   selectedRegistryName?: string
   annotationsGroup: OrganizationAnnotationsGroupResponse[]
   labelsGroup: OrganizationLabelsGroupEnrichedResponse[]
+  variablesData: VariableData[]
 }
 
 export function StepSummary({
@@ -45,6 +48,8 @@ export function StepSummary({
   selectedRegistryName,
   annotationsGroup,
   labelsGroup,
+  gotoVariables,
+  variablesData,
 }: StepSummaryProps) {
   return (
     <Section>
@@ -299,6 +304,32 @@ export function StepSummary({
                 </ul>
               </Section>
             )}
+
+          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+            <div className="flex justify-between">
+              <Heading>Environment variables</Heading>
+              <Button type="button" variant="plain" size="md" onClick={gotoVariables}>
+                <Icon className="text-base" iconName="gear-complex" />
+              </Button>
+            </div>
+            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+              {variablesData && variablesData.length > 0 ? (
+                variablesData?.map((variable, index) => (
+                  <li className="grid grid-cols-3" key={index}>
+                    <strong className="truncate font-medium">
+                      {variable.variable} = {variable.isSecret ? '********' : variable.value}
+                    </strong>
+                    <span>
+                      <strong className="font-medium">Scope:</strong> {upperCaseFirstLetter(variable.scope)}
+                    </span>
+                    <span>{variable.isSecret ? 'Secret' : 'Public'}</span>
+                  </li>
+                ))
+              ) : (
+                <li>No variable declared</li>
+              )}
+            </ul>
+          </Section>
         </div>
 
         <div className="flex justify-between">

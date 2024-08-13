@@ -7,7 +7,7 @@ import { type HealthcheckData, type ProbeExtended } from '@qovery/shared/interfa
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_PORTS_URL,
-  SERVICES_CREATION_POST_URL,
+  SERVICES_CREATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -85,7 +85,7 @@ export function StepHealthchecksFeature() {
       },
     })
 
-    navigate(creationFlowUrl + SERVICES_CREATION_POST_URL)
+    navigate(creationFlowUrl + SERVICES_CREATION_VARIABLES_URL)
   })
 
   const onBack = () => {
