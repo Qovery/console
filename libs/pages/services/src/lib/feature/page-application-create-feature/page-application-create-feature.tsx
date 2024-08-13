@@ -34,8 +34,8 @@ export interface ApplicationContainerCreateContextInterface {
   creationFlowUrl?: string
 
   /* 
-    XXX: Using new format of storage steps (need to refacto other steps)
-    Similare with Helm creation flow context
+    XXX: Using a new format for storage steps (need to refactor other steps)
+    Similar to the Helm creation flow context
   */
   variablesForm: UseFormReturn<FlowVariableData>
 }
