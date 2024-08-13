@@ -284,28 +284,29 @@ export function StepSummary(props: StepSummaryProps) {
                         </ul>
                       </li>
                     )}
-                    {props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets?.length !== 0 && (
-                      <li className="mb-2">
-                        EKS private subnet IDs:{' '}
-                        <ul className="ml-4 list-disc">
-                          <SubnetsList
-                            title="zone A:"
-                            index="A"
-                            subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
-                          />
-                          <SubnetsList
-                            title="zone B:"
-                            index="B"
-                            subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
-                          />
-                          <SubnetsList
-                            title="zone C:"
-                            index="C"
-                            subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
-                          />
-                        </ul>
-                      </li>
-                    )}
+                    {props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets &&
+                      props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets?.length !== 0 && (
+                        <li className="mb-2">
+                          EKS private subnet IDs:{' '}
+                          <ul className="ml-4 list-disc">
+                            <SubnetsList
+                              title="zone A:"
+                              index="A"
+                              subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
+                            />
+                            <SubnetsList
+                              title="zone B:"
+                              index="B"
+                              subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
+                            />
+                            <SubnetsList
+                              title="zone C:"
+                              index="C"
+                              subnets={props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets}
+                            />
+                          </ul>
+                        </li>
+                      )}
                     {props.featuresData.aws_existing_vpc.mongodb_subnets?.length !== 0 && (
                       <li className="mb-2">
                         MongoDB subnet IDs:
