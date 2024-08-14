@@ -1,7 +1,7 @@
 import { PortProtocolEnum } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { FlowVariableData } from '@qovery/shared/interfaces'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
 import { ApplicationContainerCreateContext } from '../page-application-create-feature'
 import StepPortFeature from './step-port-feature'
