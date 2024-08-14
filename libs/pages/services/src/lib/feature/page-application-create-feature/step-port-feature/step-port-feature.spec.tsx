@@ -48,7 +48,7 @@ describe('PageApplicationCreatePortFeature', () => {
       <ApplicationContainerCreateContext.Provider
         value={{
           ...context,
-          ...variablesForm,
+          variablesForm: variablesForm.current,
         }}
       >
         <StepPortFeature />
