@@ -1,9 +1,25 @@
+import { useForm } from 'react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
+import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
 import { ApplicationContainerCreateContext } from '../page-application-create-feature'
 import { StepVariableFeature } from './step-variable-feature'
 
 describe('StepVariableFeature', () => {
+  const { result: variablesForm } = renderHook(() =>
+    useForm<FlowVariableData>({
+      mode: 'onChange',
+      defaultValues: {
+        variables: [
+          {
+            variable: 'test',
+            value: 'test',
+            scope: 'PROJECT',
+          },
+        ],
+      },
+    })
+  )
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       <ApplicationContainerCreateContext.Provider
@@ -26,9 +42,7 @@ describe('StepVariableFeature', () => {
               },
             ],
           },
-          variablesForm: {
-            control: jest.fn(),
-          },
+          variablesForm: variablesForm.current,
         }}
       >
         <StepVariableFeature />
