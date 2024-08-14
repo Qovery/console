@@ -1,31 +1,38 @@
-import { render } from '__tests__/utils/setup-jest'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { JobContainerCreateContext } from '../page-job-create-feature'
-import StepVariableFeature from './step-variable-feature'
+import { renderWithProviders } from '@qovery/shared/util-tests'
+import { ApplicationContainerCreateContext } from '../page-application-create-feature'
+import { StepVariableFeature } from './step-variable-feature'
 
 describe('StepVariableFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
-      <JobContainerCreateContext.Provider
+    const { baseElement } = renderWithProviders(
+      <ApplicationContainerCreateContext.Provider
         value={{
           currentStep: 1,
           setCurrentStep: jest.fn(),
-          generalData: {
-            name: 'test',
-            serviceType: ServiceTypeEnum.APPLICATION,
-            description: 'Application Description',
-          },
+          generalData: { name: 'test', serviceType: ServiceTypeEnum.APPLICATION },
           setGeneralData: jest.fn(),
           resourcesData: undefined,
           setResourcesData: jest.fn(),
-          jobType: ServiceTypeEnum.CRON_JOB,
-          jobURL: '#',
-          variableData: undefined,
-          setVariableData: jest.fn(),
+          setPortData: jest.fn(),
+          portData: {
+            ports: [
+              {
+                protocol: 'HTTP',
+                name: 'p3000',
+                application_port: 3000,
+                external_port: 3000,
+                is_public: false,
+              },
+            ],
+          },
+          variablesForm: {
+            control: jest.fn(),
+          },
         }}
       >
         <StepVariableFeature />
-      </JobContainerCreateContext.Provider>
+      </ApplicationContainerCreateContext.Provider>
     )
     expect(baseElement).toBeTruthy()
   })

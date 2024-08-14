@@ -1,6 +1,8 @@
-import { render } from '__tests__/utils/setup-jest'
 import { PortProtocolEnum } from 'qovery-typescript-axios'
+import { useForm } from 'react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { FlowVariableData } from '@qovery/shared/interfaces'
+import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
 import { ApplicationContainerCreateContext } from '../page-application-create-feature'
 import StepPortFeature from './step-port-feature'
 
@@ -26,9 +28,29 @@ const context = {
 }
 
 describe('PageApplicationCreatePortFeature', () => {
+  const { result: variablesForm } = renderHook(() =>
+    useForm<FlowVariableData>({
+      mode: 'onChange',
+      defaultValues: {
+        variables: [
+          {
+            variable: 'test',
+            value: 'test',
+            scope: 'PROJECT',
+          },
+        ],
+      },
+    })
+  )
+
   it('should render successfully', () => {
-    const { baseElement } = render(
-      <ApplicationContainerCreateContext.Provider value={context}>
+    const { baseElement } = renderWithProviders(
+      <ApplicationContainerCreateContext.Provider
+        value={{
+          ...context,
+          ...variablesForm,
+        }}
+      >
         <StepPortFeature />
       </ApplicationContainerCreateContext.Provider>
     )
