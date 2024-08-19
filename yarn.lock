@@ -3835,7 +3835,7 @@ __metadata:
     "@types/shell-quote": ^1.7.5
     "@typescript-eslint/eslint-plugin": 7.7.0
     "@typescript-eslint/parser": 7.7.0
-    "@uidotdev/usehooks": ^2.2.0
+    "@uidotdev/usehooks": ^2.4.1
     "@xterm/addon-attach": ^0.10.0
     "@xterm/addon-fit": ^0.9.0
     "@xterm/xterm": ^5.5.0
@@ -7917,13 +7917,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uidotdev/usehooks@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@uidotdev/usehooks@npm:2.2.0"
+"@uidotdev/usehooks@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "@uidotdev/usehooks@npm:2.4.1"
   peerDependencies:
     react: ">=18.0.0"
     react-dom: ">=18.0.0"
-  checksum: cd5946d77622abe23bc86d8782f9af0a52ff7139f31964e1db3d70e1a78114fd3835dd6cc092100b71164ce49e08466238b3aa674027cbbcb5a40fcc5e61ec8f
+  checksum: d381ce7d4853abe53127b70b0734935d1cfba97bfd2314e67aa42d4f35cd5b955712c6e968f435d8818bd51bea9cf7688b60eeb0db19bae2a6666a37ceee8b5f
   languageName: node
   linkType: hard
 
