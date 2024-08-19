@@ -24,7 +24,8 @@ export function VariableRow(props: VariableRowProps) {
   const watchDescription = watch().variables[index]?.description
   const { environmentId = '' } = useParams()
 
-  const pattern = /^[^\s]+$/
+  const patternNoSpaces = /^[^\s]+$/
+  const patternValidVariable = /^[a-zA-Z_][a-zA-Z0-9_]*$/
 
   return (
     <div data-testid="variable-row" className="mb-3 w-full items-center">
@@ -34,9 +35,16 @@ export function VariableRow(props: VariableRowProps) {
           control={control}
           rules={{
             required: 'Please enter a value.',
-            pattern: {
-              value: pattern,
-              message: 'Variable name cannot contain spaces.',
+            validate: (value) => {
+              if (!value) return true
+
+              if (!patternNoSpaces.test(value)) {
+                return 'Variable name cannot contain spaces.'
+              }
+              if (!patternValidVariable.test(value)) {
+                return 'Variable name must start with a letter or underscore, and contain only letters, numbers, and underscores.'
+              }
+              return true
             },
           }}
           render={({ field, fieldState: { error } }) =>
