@@ -2,7 +2,7 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { FlowCreateVariable } from '@qovery/shared/console-shared'
+import { FlowCreateVariable } from '@qovery/domains/variables/feature'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_GENERAL_URL,

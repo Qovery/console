@@ -1,6 +1,8 @@
 import { PortProtocolEnum } from 'qovery-typescript-axios'
+import { useForm } from 'react-hook-form'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
+import { renderHook, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   ApplicationContainerCreateContext,
   type ApplicationContainerCreateContextInterface,
@@ -48,9 +50,28 @@ const mockContext: Required<ApplicationContainerCreateContextInterface> = {
 }
 
 describe('PageApplicationPostFeature', () => {
+  const { result: variablesForm } = renderHook(() =>
+    useForm<FlowVariableData>({
+      mode: 'onChange',
+      defaultValues: {
+        variables: [
+          {
+            variable: 'test',
+            value: 'test',
+            scope: 'PROJECT',
+          },
+        ],
+      },
+    })
+  )
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
-      <ApplicationContainerCreateContext.Provider value={mockContext}>
+      <ApplicationContainerCreateContext.Provider
+        value={{
+          ...mockContext,
+          variablesForm: variablesForm.current,
+        }}
+      >
         <StepSummaryFeature />
       </ApplicationContainerCreateContext.Provider>
     )
@@ -63,6 +84,7 @@ describe('PageApplicationPostFeature', () => {
       <ApplicationContainerCreateContext.Provider
         value={{
           ...mockContext,
+          variablesForm: variablesForm.current,
           generalData: {
             ...mockContext.generalData,
             name: 'test',
@@ -120,6 +142,7 @@ describe('PageApplicationPostFeature', () => {
       <ApplicationContainerCreateContext.Provider
         value={{
           ...mockContext,
+          variablesForm: variablesForm.current,
           generalData: {
             ...mockContext.generalData,
             name: 'test',

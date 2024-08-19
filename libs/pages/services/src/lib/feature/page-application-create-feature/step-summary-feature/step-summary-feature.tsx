@@ -1,19 +1,24 @@
 import posthog from 'posthog-js'
 import {
+  APIVariableScopeEnum,
   type ApplicationRequest,
   BuildModeEnum,
   type BuildPackLanguageEnum,
   type ContainerRequest,
+  type VariableImportRequest,
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useImportVariables } from '@qovery/domains/variables/feature'
+import { type VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_HEALTHCHECKS_URL,
   SERVICES_CREATION_PORTS_URL,
   SERVICES_CREATION_RESOURCES_URL,
+  SERVICES_CREATION_VARIABLES_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
@@ -22,9 +27,25 @@ import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 
+function prepareVariableImportRequest(variables: VariableData[]): VariableImportRequest | null {
+  if (variables && variables.length === 0) {
+    return null
+  }
+
+  return {
+    overwrite: true,
+    vars: variables.map(({ variable, scope, value, isSecret }) => ({
+      name: variable || '',
+      scope: scope || APIVariableScopeEnum.PROJECT,
+      value: value || '',
+      is_secret: isSecret,
+    })),
+  }
+}
+
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Application')
-  const { generalData, portData, resourcesData, setCurrentStep, creationFlowUrl } =
+  const { generalData, portData, resourcesData, setCurrentStep, variablesForm, creationFlowUrl } =
     useApplicationContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
@@ -38,7 +59,10 @@ export function StepSummaryFeature() {
   const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
 
   const { mutateAsync: createService } = useCreateService({ organizationId })
+  const { mutateAsync: importVariables } = useImportVariables()
   const { mutate: deployService } = useDeployService({ environmentId })
+
+  const variablesData = variablesForm.getValues().variables
 
   const gotoGlobalInformations = () => {
     navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)
@@ -56,12 +80,12 @@ export function StepSummaryFeature() {
     navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
   }
 
+  const gotoVariables = () => {
+    navigate(creationFlowUrl + SERVICES_CREATION_VARIABLES_URL)
+  }
+
   const onPrevious = () => {
-    if (portData?.ports && portData?.ports.length > 0) {
-      navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
-    } else {
-      gotoPorts()
-    }
+    navigate(creationFlowUrl + SERVICES_CREATION_VARIABLES_URL)
   }
 
   useEffect(() => {
@@ -75,6 +99,7 @@ export function StepSummaryFeature() {
 
       const memory = Number(resourcesData['memory'])
       const cpu = resourcesData['cpu']
+      const variableImportRequest = prepareVariableImportRequest(variablesData)
 
       if (generalData.serviceType === 'APPLICATION') {
         const applicationRequest: ApplicationRequest = {
@@ -122,6 +147,14 @@ export function StepSummaryFeature() {
               ...applicationRequest,
             },
           })
+
+          if (variableImportRequest) {
+            importVariables({
+              serviceType: 'APPLICATION',
+              serviceId: service.id,
+              variableImportRequest,
+            })
+          }
 
           if (withDeploy) {
             deployService({
@@ -181,6 +214,14 @@ export function StepSummaryFeature() {
             },
           })
 
+          if (variableImportRequest) {
+            importVariables({
+              serviceType: 'CONTAINER',
+              serviceId: service.id,
+              variableImportRequest,
+            })
+          }
+
           if (withDeploy) {
             deployService({
               serviceId: service.id,
@@ -213,6 +254,8 @@ export function StepSummaryFeature() {
           onPrevious={onPrevious}
           generalData={generalData}
           resourcesData={resourcesData}
+          variablesData={variablesData}
+          gotoVariables={gotoVariables}
           portsData={portData}
           gotoResources={gotoResources}
           gotoGlobalInformation={gotoGlobalInformations}

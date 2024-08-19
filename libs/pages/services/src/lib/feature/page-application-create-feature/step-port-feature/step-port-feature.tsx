@@ -8,6 +8,7 @@ import {
   SERVICES_CREATION_HEALTHCHECKS_URL,
   SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
+  SERVICES_CREATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -34,7 +35,7 @@ export function StepPortFeature() {
     if (portData?.ports && portData.ports.length > 0) {
       navigate(creationFlowUrl + SERVICES_CREATION_HEALTHCHECKS_URL)
     } else {
-      navigate(creationFlowUrl + SERVICES_CREATION_POST_URL)
+      navigate(creationFlowUrl + SERVICES_CREATION_VARIABLES_URL)
     }
   }
 
