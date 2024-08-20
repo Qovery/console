@@ -249,8 +249,16 @@ export function RowEvent(props: RowEventProps) {
         <div className="px-4">
           <Skeleton height={16} width={80} show={isPlaceholder}>
             <div className="truncate">
-              <span className="mr-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
-              {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
+              {event.user_agent ? (
+                <Tooltip content={event.user_agent} side="left">
+                  <span>{event.user_agent}</span>
+                </Tooltip>
+              ) : (
+                <>
+                  <span className="mr-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
+                  {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
+                </>
+              )}
             </div>
           </Skeleton>
         </div>
