@@ -8,6 +8,7 @@ import {
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
 import { type Value } from '@qovery/shared/interfaces'
@@ -104,7 +105,7 @@ export const generateDatabasesTypesAndVersionOptions = (
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Database')
   const { setGeneralData, generalData, setCurrentStep, creationFlowUrl } = useDatabaseCreateContext()
-  const { organizationId = '', environmentId = '', slug, option } = useParams()
+  const { organizationId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
 
   const { data: environment } = useEnvironment({ environmentId })
@@ -121,9 +122,18 @@ export function StepGeneralFeature() {
   const methods = useForm<GeneralData>({
     defaultValues: {
       ...generalData,
-      mode:
-        generalData?.mode ??
-        (cloudProvider === 'AWS' && cluster?.kubernetes !== 'SELF_MANAGED' ? 'CONTAINER' : 'MANAGED'),
+      mode: match({ cloudProvider, cluster, generalData })
+        // If 'generalData' has 'mode', use it
+        .with({ generalData: { mode: 'CONTAINER' } }, () => DatabaseModeEnum.CONTAINER)
+        .with({ generalData: { mode: 'MANAGED' } }, () => DatabaseModeEnum.MANAGED)
+        // If 'cloudProvider' is 'AWS' and Kubernetes is not 'SELF_MANAGED', return 'CONTAINER'
+        .with(
+          { cloudProvider: 'AWS', cluster: { kubernetes: P.not('SELF_MANAGED') } },
+          () => DatabaseModeEnum.CONTAINER
+        )
+        // If 'cloudProvider' is 'ON_PREMISE', return 'CONTAINER'
+        .with({ cloudProvider: 'ON_PREMISE' }, () => DatabaseModeEnum.CONTAINER)
+        .otherwise(() => DatabaseModeEnum.MANAGED),
     },
     mode: 'onChange',
   })
