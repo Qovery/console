@@ -172,7 +172,6 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           })
         })
         .with({ mode: 'CREATE', type: 'FILE' }, { mode: 'CREATE', type: 'BUILT_IN' }, () => {
-          console.log('here')
           return Promise.resolve()
         })
         .with({ mode: 'UPDATE' }, () => {
