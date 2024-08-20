@@ -6,6 +6,7 @@ import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
+import { AssistantIconSwitcher } from '../assistant-icon-switcher/assistant-icon-switcher'
 import { DotStatus } from '../dot-status/dot-status'
 import { Hit } from '../hit/hit'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
@@ -119,29 +120,34 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           <span className="text-sm">Feedback</span>
         </a>
         {appStatus && appStatus.status ? (
-          <a
-            className="flex h-10 items-center justify-center gap-2 px-5 text-xs text-neutral-350 transition hover:bg-neutral-150 dark:text-neutral-250 dark:hover:bg-neutral-550"
-            href={QOVERY_STATUS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span>
-              {match(appStatus)
-                .with({ status: 'OPERATIONAL' }, () => 'All systems operational')
-                .with({ status: 'MAJOROUTAGE' }, () => 'Major outage ongoing')
-                .with({ status: 'MINOROUTAGE' }, () => 'Minor outage ongoing')
-                .with({ status: 'PARTIALOUTAGE' }, () => 'Partial outage ongoing')
-                .exhaustive()}
-            </span>
-            <DotStatus
-              color={match(appStatus)
-                .with({ status: 'OPERATIONAL' }, () => 'green' as const)
-                .with({ status: 'MAJOROUTAGE' }, () => 'red' as const)
-                .with({ status: 'MINOROUTAGE' }, () => 'yellow' as const)
-                .with({ status: 'PARTIALOUTAGE' }, () => 'yellow' as const)
-                .exhaustive()}
-            />
-          </a>
+          <div className="relative">
+            <a
+              className="flex h-10 items-center justify-center gap-2 px-5 text-xs text-neutral-350 transition hover:bg-neutral-150 dark:text-neutral-250 dark:hover:bg-neutral-550"
+              href={QOVERY_STATUS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>
+                {match(appStatus)
+                  .with({ status: 'OPERATIONAL' }, () => 'All systems operational')
+                  .with({ status: 'MAJOROUTAGE' }, () => 'Major outage ongoing')
+                  .with({ status: 'MINOROUTAGE' }, () => 'Minor outage ongoing')
+                  .with({ status: 'PARTIALOUTAGE' }, () => 'Partial outage ongoing')
+                  .exhaustive()}
+              </span>
+              <DotStatus
+                color={match(appStatus)
+                  .with({ status: 'OPERATIONAL' }, () => 'green' as const)
+                  .with({ status: 'MAJOROUTAGE' }, () => 'red' as const)
+                  .with({ status: 'MINOROUTAGE' }, () => 'yellow' as const)
+                  .with({ status: 'PARTIALOUTAGE' }, () => 'yellow' as const)
+                  .exhaustive()}
+              />
+            </a>
+            <div className="absolute inset-y-0 right-2 flex items-center">
+              <AssistantIconSwitcher />
+            </div>
+          </div>
         ) : (
           <div className="h-10"></div>
         )}
