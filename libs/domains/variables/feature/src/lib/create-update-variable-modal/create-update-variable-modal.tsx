@@ -88,7 +88,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
       value: variable?.value ?? '',
       isSecret: variable?.is_secret,
       description: variable?.description,
-      enable_interpolation_in_file: variable?.enable_interpolation_in_file,
+      enable_interpolation_in_file: variable?.enable_interpolation_in_file ?? true,
       mountPath,
     },
     mode: 'onChange',
