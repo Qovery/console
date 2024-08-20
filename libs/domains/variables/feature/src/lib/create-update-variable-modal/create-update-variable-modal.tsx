@@ -79,6 +79,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     description?: string
     scope: Scope
     isSecret: boolean
+    enable_interpolation_in_file?: boolean
     mountPath?: string
   }>({
     defaultValues: {
@@ -87,6 +88,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
       value: variable?.value ?? '',
       isSecret: variable?.is_secret,
       description: variable?.description,
+      enable_interpolation_in_file: variable?.enable_interpolation_in_file,
       mountPath,
     },
     mode: 'onChange',
@@ -137,6 +139,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               mount_path: data.mountPath || null,
               variable_parent_id: parentId,
               variable_scope: data.scope,
+              enable_interpolation_in_file: data.enable_interpolation_in_file,
             },
           })
         )
@@ -169,6 +172,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           })
         })
         .with({ mode: 'CREATE', type: 'FILE' }, { mode: 'CREATE', type: 'BUILT_IN' }, () => {
+          console.log('here')
           return Promise.resolve()
         })
         .with({ mode: 'UPDATE' }, () => {
@@ -220,6 +224,8 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
       () =>
         'Variable are used at build/run time. Secrets are special variables, their value can only be accessed by the application.'
     )
+
+  console.log(type)
 
   return (
     <FormProvider {...methods}>
@@ -334,6 +340,24 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 value={field.value}
                 label="Value"
                 error={error?.message}
+              />
+            )}
+          />
+        )}
+
+        {_isFile && type === 'VALUE' && (
+          <Controller
+            name="enable_interpolation_in_file"
+            control={methods.control}
+            render={({ field }) => (
+              <InputToggle
+                small
+                forceAlignTop
+                className="mb-3 mt-5"
+                value={field.value}
+                onChange={field.onChange}
+                title="Variable interpolation"
+                description="Enable the variable interpolation feature within the file content. Use {{<var_name>}} to access the variable value."
               />
             )}
           />
