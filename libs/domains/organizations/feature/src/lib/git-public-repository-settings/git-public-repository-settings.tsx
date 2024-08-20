@@ -66,7 +66,10 @@ export function GitPublicRepositorySettings({
           <InputText
             label="Branch"
             name={field.name}
-            onChange={field.onChange}
+            onChange={(event) => {
+              event.target.value = event.target.value.trim()
+              field.onChange(event)
+            }}
             value={field.value}
             error={error?.message}
             disabled={disabled}

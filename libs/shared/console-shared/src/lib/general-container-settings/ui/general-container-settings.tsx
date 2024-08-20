@@ -182,7 +182,10 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
           <InputText
             dataTestId="input-text-image-name"
             name="image_name"
-            onChange={field.onChange}
+            onChange={(event) => {
+              event.target.value = event.target.value.trim()
+              field.onChange(event)
+            }}
             value={field.value}
             label="Image name"
             error={error?.message}
