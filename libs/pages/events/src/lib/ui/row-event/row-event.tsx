@@ -254,10 +254,10 @@ export function RowEvent(props: RowEventProps) {
                   <span>{event.user_agent}</span>
                 </Tooltip>
               ) : (
-                <span>
+                <>
                   <span className="mr-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
                   {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
-                </span>
+                </>
               )}
             </div>
           </Skeleton>
