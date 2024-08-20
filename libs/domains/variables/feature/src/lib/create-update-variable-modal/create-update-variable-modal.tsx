@@ -224,8 +224,6 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         'Variable are used at build/run time. Secrets are special variables, their value can only be accessed by the application.'
     )
 
-  console.log(type)
-
   return (
     <FormProvider {...methods}>
       <ModalCrud
