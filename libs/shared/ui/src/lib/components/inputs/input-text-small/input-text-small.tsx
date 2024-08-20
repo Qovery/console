@@ -1,4 +1,6 @@
+import clsx from 'clsx'
 import { type ChangeEventHandler, useEffect, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Tooltip from '../../tooltip/tooltip'
@@ -12,6 +14,7 @@ export interface InputTextSmallProps {
   error?: string
   warning?: string
   className?: string
+  classNameInput?: string
   label?: string
   dataTestId?: string
   errorMessagePosition?: 'left' | 'bottom'
@@ -29,6 +32,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
     onChange,
     type = 'text',
     className = '',
+    classNameInput = '',
     errorMessagePosition = 'bottom',
     hasShowPasswordButton = false,
     disabled = false,
@@ -49,6 +53,16 @@ export function InputTextSmall(props: InputTextSmallProps) {
     setCurrentType(type)
   }, [type])
 
+  const classNameInputClsx = twMerge(
+    clsx(
+      'absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350',
+      {
+        'pr-8': hasShowPasswordButton,
+      },
+      classNameInput
+    )
+  )
+
   return (
     <div data-testid="input-small-wrapper" className={`${className} ${classNameError}`}>
       {(error || warning) && errorMessagePosition === 'left' && (
@@ -63,9 +77,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
           {label}
         </label>
         <input
-          className={`absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 ${
-            hasShowPasswordButton ? 'pr-8' : ''
-          }`}
+          className={classNameInputClsx}
           name={name}
           type={currentType}
           placeholder={placeholder}
