@@ -2,6 +2,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import posthog from 'posthog-js'
 import { type PropsWithChildren, memo, useEffect } from 'react'
 import { redirect, useParams } from 'react-router-dom'
+import { useIntercom } from 'react-use-intercom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
@@ -22,6 +23,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, spotlight, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
   const { user } = useAuth0()
+  const { update: updateIntercom } = useIntercom()
 
   const { data: clusters = [] } = useClusters({ organizationId, enabled: !!organizationId })
   const { data: organizations = [] } = useOrganizations()
@@ -43,12 +45,33 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
         redirect(ORGANIZATION_URL(organizations[0].id))
       }
     }
-
-    // fetch organization by id neccessary for debug by Qovery team
-    if (organizations.length > 0 && !organizationIds.includes(organizationId)) {
-      fetchOrganizationForQoveryTeam()
+    async function fetchOrganizationAndUpdateIntercom() {
+      try {
+        if (organizationId) {
+          const { data: currentOrganization } = await fetchOrganization()
+          updateIntercom({
+            company: currentOrganization
+              ? {
+                  companyId: currentOrganization.id,
+                  name: currentOrganization.name,
+                }
+              : undefined,
+          })
+        }
+      } catch (error) {
+        console.error(error)
+      }
     }
-  }, [organizationId, organizations, fetchOrganization])
+
+    if (organizations.length > 0) {
+      // fetch organization by id neccessary for debug by Qovery team
+      if (!organizationIds.includes(organizationId)) {
+        fetchOrganizationForQoveryTeam()
+      } else {
+        fetchOrganizationAndUpdateIntercom()
+      }
+    }
+  }, [updateIntercom, organizationId, organizations, fetchOrganization])
 
   useEffect(() => {
     posthog.group('organization_id', organizationId)
