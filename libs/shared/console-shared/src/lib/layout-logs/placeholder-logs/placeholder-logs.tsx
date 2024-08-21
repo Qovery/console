@@ -1,4 +1,4 @@
-import { DatabaseModeEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { type DatabaseModeEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { P, match } from 'ts-pattern'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
