@@ -465,6 +465,33 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
+  checkCustomDomains: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
+  }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const { query } = match(serviceType)
+        .with('APPLICATION', (serviceType) => ({
+          query: customDomainApplicationApi.checkApplicationCustomDomain.bind(customDomainApplicationApi),
+          serviceType,
+        }))
+        .with('CONTAINER', (serviceType) => ({
+          query: customDomainApplicationApi.checkContainerCustomDomain.bind(customDomainApplicationApi),
+          serviceType,
+        }))
+        .with('HELM', (serviceType) => ({
+          query: customDomainApplicationApi.checkHelmCustomDomain.bind(customDomainApplicationApi),
+          serviceType,
+        }))
+        .exhaustive()
+      const response = await query(serviceId)
+      return response.data.results
+    },
+  }),
 })
 
 type CloneServiceRequest = {
