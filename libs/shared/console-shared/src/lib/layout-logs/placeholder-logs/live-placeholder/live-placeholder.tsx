@@ -1,6 +1,8 @@
-import { DatabaseModeEnum, type StateEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { LoaderPlaceholder } from '../loader-placeholder/loader-placeholder'
 
@@ -9,16 +11,12 @@ export interface LivePlaceholderProps {
   loadingStatus?: LoadingStatus
   databaseMode?: DatabaseModeEnum
   itemsLength?: number
-  deploymentState?: StateEnum
 }
 
-export function LivePlaceholder({
-  serviceName,
-  databaseMode,
-  loadingStatus,
-  itemsLength,
-  deploymentState,
-}: LivePlaceholderProps) {
+export function LivePlaceholder({ serviceName, databaseMode, loadingStatus, itemsLength }: LivePlaceholderProps) {
+  const { environmentId, serviceId } = useParams()
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
+  const { state: deploymentState } = deploymentStatus ?? {}
   const [showPlaceholder, setShowPlaceholder] = useState(false)
 
   useEffect(() => {

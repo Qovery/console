@@ -1,8 +1,6 @@
 import { DatabaseModeEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { type logsType } from '../layout-logs'
 import LivePlaceholder from './live-placeholder/live-placeholder'
@@ -29,15 +27,12 @@ export function PlaceholderLogs({
   itemsLength,
   hideLogs,
 }: PlaceholderLogsProps) {
-  const { environmentId, serviceId } = useParams()
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
-
   const deploymentPlaceholder = () => {
     const outOfDateOrUpToDate =
       serviceDeploymentStatus === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ||
       serviceDeploymentStatus === ServiceDeploymentStatusEnum.UP_TO_DATE
 
-    const displaySpinner = match({ loadingStatus, itemsLength, hideLogs, serviceDeploymentStatus, deploymentStatus })
+    const displaySpinner = match({ loadingStatus, itemsLength, hideLogs, serviceDeploymentStatus })
       .with(
         {
           loadingStatus: P.not('loaded'),
@@ -93,7 +88,6 @@ export function PlaceholderLogs({
           databaseMode={databaseMode}
           loadingStatus={loadingStatus}
           itemsLength={itemsLength}
-          deploymentState={deploymentStatus?.state}
         />
       )}
 

@@ -1,5 +1,5 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import LivePlaceholder from './live-placeholder'
 
 jest.mock('../loader-placeholder/loader-placeholder', () => ({
@@ -14,7 +14,6 @@ describe('LivePlaceholder', () => {
         databaseMode={DatabaseModeEnum.CONTAINER}
         loadingStatus="loading"
         itemsLength={0}
-        deploymentState="DEPLOYING"
       />
     )
 
