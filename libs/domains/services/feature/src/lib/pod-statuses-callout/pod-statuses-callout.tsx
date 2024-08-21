@@ -66,28 +66,19 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     if (certificatesInError && certificatesInError.length > 0) {
       callouts.push({
         id: 3,
-        icon: IconAwesomeEnum.CHECK,
+        icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
         color: 'red',
         title: 'Certificate Issues',
-        description: (
-          <>
-            Couldn’t issue certificates for:
-            <ul>
-              {certificatesInError.map(({ dns_names, state_message }) =>
-                dns_names.map((dns_name) => (
-                  <li key={dns_name}>
-                    {dns_name} {state_message}
-                  </li>
-                ))
-              )}
-            </ul>
-            Ensure you have configured the right domain and check your DNS configuration.
-            <br />
+        description:
+          'One or more certificates couldn’t be generated for your domains. Have a look at the domain section to know more.',
+        children: (
+          <div className="flex flex-row items-center">
             <Button
               type="button"
               color="neutral"
               variant="outline"
-              className="mt-2"
+              className="text-md gap-2"
+              size="md"
               onClick={() =>
                 navigate(
                   APPLICATION_URL(organizationId, projectId, environmentId, serviceId) +
@@ -97,8 +88,9 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
               }
             >
               Domain settings
+              <Icon iconName="gear-complex" iconStyle="regular" />
             </Button>
-          </>
+          </div>
         ),
       })
     } else {
@@ -132,7 +124,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>
-                {callouts.length > 1 ? `${index + 1}/${callouts.length}` : undefined}
+                {callouts.length > 1 ? `${index + 1}/${callouts.length} ` : undefined}
                 {title}
               </Callout.TextHeading>
               <Callout.TextDescription>{description}</Callout.TextDescription>

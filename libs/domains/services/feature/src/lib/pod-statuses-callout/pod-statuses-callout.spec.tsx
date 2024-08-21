@@ -33,7 +33,7 @@ describe('PodStatusesCallout', () => {
     const { baseElement } = renderWithProviders(<PodStatusesCallout environmentId="1" serviceId="1" />)
     expect(baseElement).toMatchSnapshot()
   })
-  it('should handle multiple messages', async () => {
+  it('should handle certificate errors properly', async () => {
     jest.spyOn(useServiceTypeImport, 'useServiceType').mockReturnValue({
       data: ServiceTypeEnum.APPLICATION,
       isLoading: false,
@@ -64,15 +64,8 @@ describe('PodStatusesCallout', () => {
       },
       isLoading: false,
     })
-    const { userEvent } = renderWithProviders(<PodStatusesCallout environmentId="1" serviceId="1" />)
-    let buttons = screen.getAllByRole('button')
-    expect(buttons[0]).toBeDisabled()
-    expect(buttons[1]).toBeEnabled()
-    await userEvent.click(buttons[1])
-
-    buttons = screen.getAllByRole('button')
-    // Skip first button with is in the text description
-    expect(buttons[1]).toBeEnabled()
-    expect(buttons[2]).toBeDisabled()
+    renderWithProviders(<PodStatusesCallout environmentId="1" serviceId="1" />)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(1)
   })
 })
