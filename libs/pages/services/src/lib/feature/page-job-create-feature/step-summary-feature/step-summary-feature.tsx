@@ -279,6 +279,7 @@ export function StepSummaryFeature() {
                 .exhaustive(),
               is_secret: fileVariable.isSecret,
               mount_path: fileVariable.file.path,
+              enable_interpolation_in_file: true,
             },
           })
         }
