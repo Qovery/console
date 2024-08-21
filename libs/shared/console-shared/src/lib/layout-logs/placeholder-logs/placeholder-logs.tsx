@@ -1,8 +1,12 @@
 import { DatabaseModeEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
+import { useParams } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
-import { LoaderSpinner } from '@qovery/shared/ui'
 import { type logsType } from '../layout-logs'
+import LivePlaceholder from './live-placeholder/live-placeholder'
+import { LoaderPlaceholder } from './loader-placeholder/loader-placeholder'
 
 export interface PlaceholderLogsProps {
   type: logsType
@@ -25,24 +29,31 @@ export function PlaceholderLogs({
   itemsLength,
   hideLogs,
 }: PlaceholderLogsProps) {
-  const defaultLoader = (
-    <div className="flex w-full justify-center text-center">
-      <LoaderSpinner className="h-6 w-6" theme="dark" />
-    </div>
-  )
+  const { environmentId, serviceId } = useParams()
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
   const deploymentPlaceholder = () => {
     const outOfDateOrUpToDate =
       serviceDeploymentStatus === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ||
       serviceDeploymentStatus === ServiceDeploymentStatusEnum.UP_TO_DATE
 
-    const displaySpinner = loadingStatus !== 'loaded' && itemsLength === 0 && !hideLogs && !serviceDeploymentStatus
+    const displaySpinner = match({ loadingStatus, itemsLength, hideLogs, serviceDeploymentStatus, deploymentStatus })
+      .with(
+        {
+          loadingStatus: P.not('loaded'),
+          itemsLength: 0,
+          hideLogs: false,
+          serviceDeploymentStatus: P.nullish,
+        },
+        () => true
+      )
+      .otherwise(() => false)
 
     const displayPlaceholders = loadingStatus === 'loaded' && hideLogs
 
     if (displaySpinner) {
       // Display loader spinner
-      return defaultLoader
+      return <LoaderPlaceholder />
     } else {
       if (displayPlaceholders) {
         return (
@@ -66,8 +77,9 @@ export function PlaceholderLogs({
           </div>
         )
       }
+
       // Return the default loader spinner
-      return defaultLoader
+      return <LoaderPlaceholder />
     }
   }
 
@@ -76,30 +88,19 @@ export function PlaceholderLogs({
       {type === 'deployment' && deploymentPlaceholder()}
 
       {type === 'live' && (
-        <div>
-          {databaseMode !== DatabaseModeEnum.MANAGED && loadingStatus !== 'loaded' && itemsLength === 0 ? (
-            defaultLoader
-          ) : (
-            <div className="text-center">
-              <p className="mb-1 font-medium text-neutral-50">
-                No logs are available for <span className="text-brand-400">{serviceName}</span>.
-              </p>
-
-              {databaseMode === DatabaseModeEnum.MANAGED && (
-                <p className="text-sm font-normal text-neutral-300">
-                  Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider
-                  console.
-                </p>
-              )}
-            </div>
-          )}
-        </div>
+        <LivePlaceholder
+          serviceName={serviceName}
+          databaseMode={databaseMode}
+          loadingStatus={loadingStatus}
+          itemsLength={itemsLength}
+          deploymentState={deploymentStatus?.state}
+        />
       )}
 
       {type === 'infra' && (
         <div>
           {!loadingStatus || loadingStatus === 'not loaded' ? (
-            defaultLoader
+            <LoaderPlaceholder />
           ) : (
             <p className="mb-1 font-medium text-neutral-50">No logs available (yet).</p>
           )}
