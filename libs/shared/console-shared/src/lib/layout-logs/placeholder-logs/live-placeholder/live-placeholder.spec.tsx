@@ -19,4 +19,18 @@ describe('LivePlaceholder', () => {
 
     expect(screen.getByText('Loading...')).toBeInTheDocument()
   })
+
+  it('render default placeholder', () => {
+    renderWithProviders(
+      <LivePlaceholder
+        serviceName="my-app"
+        databaseMode={DatabaseModeEnum.CONTAINER}
+        loadingStatus="loaded"
+        itemsLength={10}
+      />
+    )
+
+    expect(screen.getByText(/No logs are available for/)).toBeInTheDocument()
+    expect(screen.getByText(/my-app/)).toBeInTheDocument()
+  })
 })
