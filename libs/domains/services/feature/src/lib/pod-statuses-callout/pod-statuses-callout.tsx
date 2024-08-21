@@ -61,18 +61,9 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
   }
 
   if (runningStatuses.state === 'WARNING') {
-    callouts.push({
-      id: 2,
-      icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
-      color: 'yellow',
-      title: 'Application pods have experienced issues in the past',
-      description: 'Some pods experienced issues in the past. Have a look at the table below for investigation.',
-    })
-  }
-
-  if ('certificates' in runningStatuses) {
-    const certificatesInError = runningStatuses.certificates.filter(({ state }) => state === 'ERROR')
-    if (certificatesInError.length > 0) {
+    const certificatesInError =
+      'certificates' in runningStatuses && runningStatuses.certificates.filter(({ state }) => state === 'ERROR')
+    if (certificatesInError && certificatesInError.length > 0) {
       callouts.push({
         id: 3,
         icon: IconAwesomeEnum.CHECK,
@@ -109,6 +100,14 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
             </Button>
           </>
         ),
+      })
+    } else {
+      callouts.push({
+        id: 2,
+        icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
+        color: 'yellow',
+        title: 'Application pods have experienced issues in the past',
+        description: 'Some pods experienced issues in the past. Have a look at the table below for investigation.',
       })
     }
   }
