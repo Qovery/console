@@ -1,8 +1,21 @@
-import { type CustomDomain } from 'qovery-typescript-axios'
+import { type CheckedCustomDomainResponse, type CustomDomain } from 'qovery-typescript-axios'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, EmptyState, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  EmptyState,
+  Icon,
+  InputText,
+  LoaderSpinner,
+  Section,
+  Tooltip,
+} from '@qovery/shared/ui'
 
 export interface PageSettingsDomainsProps {
+  onCheckCustomDomains: () => void
+  checkedCustomDomains?: CheckedCustomDomainResponse[]
+  isFetchingCheckedCustomDomains: boolean
   onAddDomain: () => void
   onEdit: (customDomain: CustomDomain) => void
   onDelete: (customDomain: CustomDomain) => void
@@ -20,6 +33,16 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
             <Icon iconName="circle-plus" className="ml-2" />
           </Button>
         </SettingsHeading>
+        {props.checkedCustomDomains?.some(({ error_details }) => error_details) && (
+          <Callout.Root className="mb-6 mt-2.5" color="red">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" />
+            </Callout.Icon>
+            <Callout.TextHeading className="text-neutral-400">
+              Some domains are in error. Please check the status below.
+            </Callout.TextHeading>
+          </Callout.Root>
+        )}
         {props.loading && props.domains?.length === 0 ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
@@ -27,43 +50,80 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
         ) : props.domains && props.domains.length > 0 ? (
           <BlockContent title="Configured domains">
             {props.domains &&
-              props.domains.map((customDomain, i) => (
-                <div
-                  key={`domain-${customDomain.domain}-${customDomain.id}`}
-                  className={`flex w-full items-center justify-between gap-3 ${
-                    props.domains && props.domains.length !== i + 1 ? 'mb-5' : ''
-                  }`}
-                  data-testid="form-row"
-                >
-                  <InputText
-                    name={`domain-${customDomain.domain}-${customDomain.id}`}
-                    className="flex-1 shrink-0 grow"
-                    value={customDomain.domain}
-                    label="Default Domain"
-                    disabled
-                  />
-                  <Button
-                    data-testid="edit-button"
-                    variant="surface"
-                    color="neutral"
-                    size="lg"
-                    className="h-[52px] w-[52px] justify-center"
-                    onClick={() => props.onEdit(customDomain)}
+              props.domains.map((customDomain, i) => {
+                const checkedCustomDomain = props.checkedCustomDomains?.find(
+                  ({ domain_name }) => customDomain.domain === domain_name
+                )
+                return (
+                  <div
+                    key={`domain-${customDomain.domain}-${customDomain.id}`}
+                    className={`flex w-full items-center justify-between gap-3 ${
+                      props.domains && props.domains.length !== i + 1 ? 'mb-5' : ''
+                    }`}
+                    data-testid="form-row"
                   >
-                    <Icon iconName="gear" />
-                  </Button>
-                  <Button
-                    data-testid="delete-button"
-                    variant="surface"
-                    color="neutral"
-                    size="lg"
-                    className="h-[52px] w-[52px] justify-center"
-                    onClick={() => props.onDelete(customDomain)}
-                  >
-                    <Icon iconName="trash" />
-                  </Button>
-                </div>
-              ))}
+                    <InputText
+                      name={`domain-${customDomain.domain}-${customDomain.id}`}
+                      className="flex-1 shrink-0 grow"
+                      value={customDomain.domain}
+                      label="Default Domain"
+                      disabled
+                    />
+                    <Tooltip
+                      disabled={props.isFetchingCheckedCustomDomains}
+                      content={
+                        <>
+                          {checkedCustomDomain?.error_details && (
+                            <>
+                              {checkedCustomDomain?.error_details}
+                              <br />
+                              <br />
+                            </>
+                          )}
+                          <strong>Click to check set-up again.</strong>
+                        </>
+                      }
+                    >
+                      <Button
+                        data-testid="recheck-button"
+                        variant="surface"
+                        color="neutral"
+                        size="lg"
+                        className="h-[52px] w-[52px] justify-center"
+                        onClick={() => props.onCheckCustomDomains()}
+                      >
+                        {props.isFetchingCheckedCustomDomains ? (
+                          <LoaderSpinner />
+                        ) : checkedCustomDomain?.error_details ? (
+                          <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                        ) : (
+                          <Icon iconName="check" className="text-green-500" />
+                        )}
+                      </Button>
+                    </Tooltip>
+                    <Button
+                      data-testid="edit-button"
+                      variant="surface"
+                      color="neutral"
+                      size="lg"
+                      className="h-[52px] w-[52px] justify-center"
+                      onClick={() => props.onEdit(customDomain)}
+                    >
+                      <Icon iconName="gear" />
+                    </Button>
+                    <Button
+                      data-testid="delete-button"
+                      variant="surface"
+                      color="neutral"
+                      size="lg"
+                      className="h-[52px] w-[52px] justify-center"
+                      onClick={() => props.onDelete(customDomain)}
+                    >
+                      <Icon iconName="trash" />
+                    </Button>
+                  </div>
+                )
+              })}
           </BlockContent>
         ) : (
           <EmptyState title="No domains are set" description="Define a custom domain for your application" />
