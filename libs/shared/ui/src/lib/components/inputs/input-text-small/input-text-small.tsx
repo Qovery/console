@@ -53,16 +53,6 @@ export function InputTextSmall(props: InputTextSmallProps) {
     setCurrentType(type)
   }, [type])
 
-  const classNameInputClsx = twMerge(
-    clsx(
-      'absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350',
-      {
-        'pr-8': hasShowPasswordButton,
-      },
-      classNameInput
-    )
-  )
-
   return (
     <div data-testid="input-small-wrapper" className={`${className} ${classNameError}`}>
       {(error || warning) && errorMessagePosition === 'left' && (
@@ -77,7 +67,15 @@ export function InputTextSmall(props: InputTextSmallProps) {
           {label}
         </label>
         <input
-          className={classNameInputClsx}
+          className={twMerge(
+            clsx(
+              'absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350',
+              {
+                'pr-8': hasShowPasswordButton,
+              },
+              classNameInput
+            )
+          )}
           name={name}
           type={currentType}
           placeholder={placeholder}

@@ -35,7 +35,7 @@ export function InputDropdownVariables({
     <Indicator
       side="right"
       align="center"
-      className="right-[23px]"
+      className="right-[24px]"
       content={
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
