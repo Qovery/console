@@ -18,7 +18,7 @@ import {
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
-interface InputDropdownVariablesProps extends PropsWithChildren {
+export interface InputDropdownVariablesProps extends PropsWithChildren {
   environmentId: string
   controller: {
     // We can't define the type of `field` and `fieldState` because it's a generic type
