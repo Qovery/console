@@ -41,27 +41,21 @@ export function InputDropdownVariables({
       content={
         <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
           <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
-            <div>
-              <Popover.Trigger>
-                <Button size="md" type="button" color="neutral" variant="surface" className="rounded-l-none">
-                  <Icon iconName="wand-magic-sparkles" />
-                </Button>
-              </Popover.Trigger>
-            </div>
+            <Popover.Trigger>
+              <Button size="md" type="button" color="neutral" variant="surface" className="rounded-l-none">
+                <Icon iconName="wand-magic-sparkles" />
+              </Button>
+            </Popover.Trigger>
             <DropdownMenu.Content asChild>
               <Popover.Content className="h-60 w-[400px] overflow-y-scroll">
                 <InputSearch placeholder="Search..." className="mb-4" />
                 {variables.map((variable) => (
                   <Popover.Close>
-                    <DropdownMenu.Item className="min-h-9 gap-2">
-                      <Truncate text={variable.key} truncateLimit={38} />
-                      {variable.description && (
-                        <Tooltip content={variable.description}>
-                          <span>
-                            <Icon iconName="info-circle" className="text-neutral-350" />
-                          </span>
-                        </Tooltip>
-                      )}
+                    <DropdownMenu.Item className="flex min-h-9 flex-col gap-1 px-2 py-1.5">
+                      <span className="text-sm">
+                        <Truncate text={variable.key} truncateLimit={38} />
+                      </span>
+                      {variable.description && <Truncate text={variable.description} truncateLimit={38} />}
                     </DropdownMenu.Item>
                   </Popover.Close>
                 ))}
