@@ -80,6 +80,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
 
   const now = useMemo(() => Date.now(), [])
   const [showPreviousLogs, setShowPreviousLogs] = useState<boolean>(false)
+  const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
   const [logs, setLogs] = useState<EnvironmentLogs[]>([])
   const [loadingStatusDeploymentLogs, setLoadingStatusDeploymentLogs] = useState<LoadingStatus>('not loaded')
   const [messageChunks, setMessageChunks] = useState<EnvironmentLogs[][]>([])
@@ -94,6 +95,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
 
   const messageHandler = useCallback(
     (_: QueryClient, message: EnvironmentLogs[]) => {
+      setNewMessagesAvailable(true)
       setLoadingStatusDeploymentLogs('loaded')
       setMessageChunks((prevChunks) => {
         const lastChunk = prevChunks[prevChunks.length - 1] || []
@@ -211,6 +213,8 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
         isDeploymentProgressing={isDeploymentProgressing}
         showPreviousLogs={showPreviousLogs}
         setShowPreviousLogs={setShowPreviousLogs}
+        newMessagesAvailable={newMessagesAvailable}
+        setNewMessagesAvailable={setNewMessagesAvailable}
       />
     )
   )

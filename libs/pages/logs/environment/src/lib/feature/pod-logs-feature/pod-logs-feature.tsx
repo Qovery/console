@@ -61,6 +61,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
   const [pauseStatusLogs, setPauseStatusLogs] = useState<boolean>(false)
   const [enabledNginx, setEnabledNginx] = useState<boolean>(false)
   const [showPreviousLogs, setShowPreviousLogs] = useState<boolean>(false)
+  const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
   const [serviceMessages, setServiceMessages] = useState<Array<ServiceLogResponseDto & { id: number }>>([])
   const debouncedServiceMessages = useDebounce(serviceMessages, debounceTime)
   const [infraMessages, setInfraMessages] = useState<Array<ServiceInfraLogResponseDto & { id: number }>>([])
@@ -94,6 +95,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
+      setNewMessagesAvailable(true)
       setServiceMessages((prevMessages) => [...prevMessages, { ...message, id: logCounter.current++ }])
     },
     [setServiceMessages]
@@ -121,6 +123,7 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
 
   const infraMessageHandler = useCallback(
     (_: QueryClient, message: ServiceInfraLogResponseDto) => {
+      setNewMessagesAvailable(true)
       setInfraMessages((prevMessages) => [...prevMessages, { ...message, id: logCounter.current++ }])
     },
     [setInfraMessages]
@@ -166,6 +169,8 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
       isProgressing={isProgressing}
       filter={filter}
       setFilter={setFilter}
+      newMessagesAvailable={newMessagesAvailable}
+      setNewMessagesAvailable={setNewMessagesAvailable}
     />
   )
 }

@@ -8,14 +8,14 @@ import {
   type ServiceDeploymentStatusEnum,
 } from 'qovery-typescript-axios'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
-import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
+import { type Dispatch, type PropsWithChildren, type ReactNode, type SetStateAction, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
 import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, InputCheckbox, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, InputCheckbox, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/util-js'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
 import MenuTimeFormat from './menu-time-format/menu-time-format'
@@ -49,6 +49,8 @@ export interface LayoutLogsProps {
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   isProgressing?: boolean
   progressingMsg?: string
+  newMessagesAvailable?: boolean
+  setNewMessagesAvailable?: Dispatch<SetStateAction<boolean>>
 }
 
 export interface ErrorLogsProps {
@@ -77,6 +79,8 @@ export function LayoutLogs({
   serviceDeploymentStatus,
   isProgressing,
   progressingMsg,
+  newMessagesAvailable,
+  setNewMessagesAvailable,
 }: PropsWithChildren<LayoutLogsProps>) {
   const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -141,7 +145,6 @@ export function LayoutLogs({
           )}
         </div>
       )}
-
       {!data || data?.items?.length === 0 || data?.hideLogs ? (
         <PlaceholderLogs
           type={type}
@@ -173,30 +176,30 @@ export function LayoutLogs({
                 </p>
               )}
               {setEnabledNginx && (
-                <Tooltip open={pauseLogs} content="To activate the nginx logs button, unpause the logs" side="right">
-                  <div key={serviceId} className="flex shrink-0 items-center text-xs font-medium text-neutral-300">
-                    <InputCheckbox
-                      dataTestId="checkbox-debug"
-                      name="checkbox-debug"
-                      value={(enabledNginx || false).toString()}
-                      onChange={() => setEnabledNginx(!enabledNginx)}
-                      label="NGINX logs"
-                      className="-ml-1"
-                      disabled={pauseLogs}
-                    />
-                    {enabledNginx && countNginx !== undefined ? <span className="ml-1 block">({countNginx})</span> : ''}
-                    <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX). Click here to know the log format.">
-                      <a
-                        className="relative top-[1px] ml-2 hover:text-neutral-100"
-                        rel="noreferrer"
-                        href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
-                        target="_blank"
-                      >
-                        <Icon iconName="circle-info" />
-                      </a>
-                    </Tooltip>
-                  </div>
-                </Tooltip>
+                <div key={serviceId} className="flex shrink-0 items-center text-xs font-medium text-neutral-300">
+                  <InputCheckbox
+                    dataTestId="checkbox-debug"
+                    name="checkbox-debug"
+                    value={(enabledNginx || false).toString()}
+                    onChange={() => {
+                      setEnabledNginx(!enabledNginx)
+                      setPauseLogs?.(false)
+                    }}
+                    label="NGINX logs"
+                    className="-ml-1"
+                  />
+                  {enabledNginx && countNginx !== undefined ? <span className="ml-1 block">({countNginx})</span> : ''}
+                  <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX). Click here to know the log format.">
+                    <a
+                      className="relative top-[1px] ml-2 hover:text-neutral-100"
+                      rel="noreferrer"
+                      href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
+                      target="_blank"
+                    >
+                      <Icon iconName="circle-info" />
+                    </a>
+                  </Tooltip>
+                </div>
               )}
             </div>
             <div className="flex">
@@ -213,14 +216,18 @@ export function LayoutLogs({
           </div>
           <div
             ref={refScrollSection}
-            onWheel={(event) =>
-              !pauseLogs &&
-              setPauseLogs &&
-              refScrollSection.current &&
-              refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
-              event.deltaY < 0 &&
-              setPauseLogs(true)
-            }
+            onWheel={(event) => {
+              if (
+                !pauseLogs &&
+                setPauseLogs &&
+                refScrollSection.current &&
+                refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
+                event.deltaY < 0
+              ) {
+                setPauseLogs(true)
+                setNewMessagesAvailable?.(false)
+              }
+            }}
             className={`mb-5 h-[calc(100%-20px)] w-full overflow-y-auto bg-neutral-700 pb-16 ${
               lineNumbers
                 ? 'before:absolute before:left-1 before:top-9 before:-z-[1] before:h-full before:w-10 before:bg-neutral-700'
@@ -240,10 +247,14 @@ export function LayoutLogs({
                     role="progressbar"
                     className="relative -top-8 flex h-8 items-center border-b border-neutral-500 pl-3 text-sm text-neutral-350"
                   >
-                    <span className="mr-1.5">{progressingMsg}</span>
-                    <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px] bg-neutral-350" />
-                    <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]  rounded-[0.5px] bg-neutral-350" />
-                    <span className="h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px] bg-neutral-350" />
+                    <span className="mr-1.5">{pauseLogs ? 'Streaming paused' : progressingMsg}</span>
+                    {!pauseLogs && (
+                      <>
+                        <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px] bg-neutral-350" />
+                        <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]  rounded-[0.5px] bg-neutral-350" />
+                        <span className="h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px] bg-neutral-350" />
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -253,6 +264,19 @@ export function LayoutLogs({
             <TabsClusterLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />
           )}
         </>
+      )}
+      {pauseLogs && newMessagesAvailable && (
+        <Button
+          className="absolute bottom-5 left-1/2 flex w-72 -translate-x-1/2 items-center justify-center text-sm"
+          variant="solid"
+          radius="full"
+          size="md"
+          type="button"
+          onClick={() => setPauseLogs?.(false)}
+        >
+          New logs&nbsp;
+          <Icon iconName="arrow-down-to-line" />
+        </Button>
       )}
     </div>
   )
