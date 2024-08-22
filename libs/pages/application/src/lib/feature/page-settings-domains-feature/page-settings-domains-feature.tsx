@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCustomDomains, useDeleteCustomDomain } from '@qovery/domains/custom-domains/feature'
-import { useService } from '@qovery/domains/services/feature'
+import { useCheckCustomDomains, useService } from '@qovery/domains/services/feature'
 import { Callout, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
@@ -11,6 +11,15 @@ export function PageSettingsDomainsFeature() {
 
   const { data: service } = useService({ serviceId: applicationId })
   const { data: customDomains, isLoading: isLoadingCustomDomains } = useCustomDomains({
+    serviceId: applicationId,
+    serviceType: service?.serviceType ?? 'APPLICATION',
+  })
+
+  const {
+    data: checkedCustomDomains,
+    refetch: refetchCheckCustomDomains,
+    isFetching: isFetchingCheckedCustomDomains,
+  } = useCheckCustomDomains({
     serviceId: applicationId,
     serviceType: service?.serviceType ?? 'APPLICATION',
   })
@@ -24,6 +33,9 @@ export function PageSettingsDomainsFeature() {
       <PageSettingsDomains
         domains={customDomains}
         loading={isLoadingCustomDomains}
+        onCheckCustomDomains={refetchCheckCustomDomains}
+        checkedCustomDomains={checkedCustomDomains}
+        isFetchingCheckedCustomDomains={isFetchingCheckedCustomDomains}
         onAddDomain={() => {
           openModal({
             content: <CrudModalFeature onClose={closeModal} service={s} />,

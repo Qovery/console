@@ -21,5 +21,7 @@ jest.mock('@uidotdev/usehooks', () => ({
   useClickAway: jest.fn(),
   useCopyToClipboard: () => [jest.fn(), jest.fn()],
   useDebounce: () => [jest.fn(), jest.fn()],
-  useLocalStorage: (_, intialValue) => [intialValue, jest.fn()],
+  // Params are implicitly `any` and needed for the tests
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  useLocalStorage: (_: any, intialValue: any) => [intialValue, jest.fn()],
 }))

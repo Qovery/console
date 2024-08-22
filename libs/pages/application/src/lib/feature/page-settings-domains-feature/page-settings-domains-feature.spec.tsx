@@ -9,6 +9,12 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useService: () => ({
     data: mockApplication,
   }),
+  useCheckCustomDomains: () => ({
+    data: [],
+    isLoading: false,
+    isFetching: false,
+    refetch: jest.fn(),
+  }),
 }))
 
 jest.mock('@qovery/domains/custom-domains/feature', () => ({
