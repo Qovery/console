@@ -51,6 +51,7 @@ export interface LayoutLogsProps {
   progressingMsg?: string
   newMessagesAvailable?: boolean
   setNewMessagesAvailable?: Dispatch<SetStateAction<boolean>>
+  resetFilterPodName?: () => void
 }
 
 export interface ErrorLogsProps {
@@ -81,6 +82,7 @@ export function LayoutLogs({
   progressingMsg,
   newMessagesAvailable,
   setNewMessagesAvailable,
+  resetFilterPodName,
 }: PropsWithChildren<LayoutLogsProps>) {
   const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -184,6 +186,7 @@ export function LayoutLogs({
                     onChange={() => {
                       setEnabledNginx(!enabledNginx)
                       setPauseLogs?.(false)
+                      resetFilterPodName?.()
                     }}
                     label="NGINX logs"
                     className="-ml-1"

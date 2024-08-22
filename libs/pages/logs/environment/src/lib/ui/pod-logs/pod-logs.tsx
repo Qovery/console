@@ -199,6 +199,7 @@ export function PodLogs({
       lineNumbers
       newMessagesAvailable={newMessagesAvailable}
       setNewMessagesAvailable={setNewMessagesAvailable}
+      resetFilterPodName={() => setFilter([{ key: 'pod_name', value: 'ALL' }])}
     >
       <Table
         className="bg-transparent"
