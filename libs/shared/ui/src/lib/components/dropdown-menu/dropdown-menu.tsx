@@ -186,4 +186,4 @@ const DropdownMenu = Object.assign(
   }
 )
 
-export { DropdownMenu }
+export { DropdownMenu, dropdownMenuItemVariants }
