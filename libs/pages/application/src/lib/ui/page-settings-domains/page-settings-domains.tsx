@@ -89,16 +89,21 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                         variant="surface"
                         color="neutral"
                         size="lg"
-                        className="h-[52px] w-[52px] justify-center"
+                        className="group h-[52px] w-[52px] justify-center"
                         onClick={() => props.onCheckCustomDomains()}
                       >
                         {props.isFetchingCheckedCustomDomains ? (
                           <LoaderSpinner />
                         ) : checkedCustomDomain?.error_details ? (
-                          <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                          <Icon
+                            iconName="circle-exclamation"
+                            iconStyle="regular"
+                            className="text-red-500 group-hover:hidden"
+                          />
                         ) : (
-                          <Icon iconName="check" className="text-green-500" />
+                          <Icon iconName="check" className="text-green-500 group-hover:hidden" />
                         )}
+                        <Icon iconName="arrow-rotate-right" className="hidden group-hover:block" />
                       </Button>
                     </Tooltip>
                     <Button
@@ -109,7 +114,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                       className="h-[52px] w-[52px] justify-center"
                       onClick={() => props.onEdit(customDomain)}
                     >
-                      <Icon iconName="gear" />
+                      <Icon iconName="gear" iconStyle="regular" />
                     </Button>
                     <Button
                       data-testid="delete-button"
@@ -119,7 +124,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                       className="h-[52px] w-[52px] justify-center"
                       onClick={() => props.onDelete(customDomain)}
                     >
-                      <Icon iconName="trash" />
+                      <Icon iconName="trash-alt" iconStyle="regular" />
                     </Button>
                   </div>
                 )
