@@ -208,12 +208,7 @@ export function LayoutLogs({
                   setUpdateTimeContext={setUpdateTimeContext}
                 />
               )}
-              <ButtonsActionsLogs
-                data={data}
-                refScrollSection={refScrollSection}
-                pauseLogs={pauseLogs}
-                setPauseLogs={setPauseLogs}
-              />
+              <ButtonsActionsLogs data={data} refScrollSection={refScrollSection} pauseLogs={pauseLogs} />
             </div>
           </div>
           <div
