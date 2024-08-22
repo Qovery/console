@@ -1,16 +1,18 @@
-import { type PropsWithChildren } from 'react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { type PropsWithChildren, useState } from 'react'
 import {
   type ControllerFieldState,
   type ControllerRenderProps,
   type FieldValues,
   type UseFormStateReturn,
 } from 'react-hook-form'
-import { Button, DropdownMenu, Icon, Indicator, InputTextSmall, Tooltip, Truncate } from '@qovery/shared/ui'
+import { Button, Icon, Indicator, InputSearch, InputTextSmall, Popover, Tooltip, Truncate } from '@qovery/shared/ui'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
 interface InputDropdownVariablesProps extends PropsWithChildren {
   environmentId: string
   controller: {
+    // We can't define the type of `field` and `fieldState` because it's a generic type
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     field: ControllerRenderProps<FieldValues, any>
     fieldState: ControllerFieldState
@@ -29,34 +31,43 @@ export function InputDropdownVariables({
     parentId: environmentId,
     scope: 'ENVIRONMENT',
   })
+  const [open, setOpen] = useState(false)
 
   return (
-    // <div className="inline-flex pr-10">
     <Indicator
       side="right"
       align="center"
-      className="right-[24px]"
+      className="right-6"
       content={
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <Button size="md" type="button" color="neutral" variant="surface" className="rounded-l-none">
-              <Icon iconName="wand-magic-sparkles" />
-            </Button>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content className="h-60 w-[400px] overflow-y-scroll" onChange={field.onChange}>
-            {variables.map((variable) => (
-              <DropdownMenu.Item key={variable.id} className="min-h-9 gap-2">
-                <Truncate text={variable.key} truncateLimit={38} />
-                {variable.description && (
-                  <Tooltip content={variable.description}>
-                    <span>
-                      <Icon iconName="info-circle" className="text-neutral-350" />
-                    </span>
-                  </Tooltip>
-                )}
-              </DropdownMenu.Item>
-            ))}
-          </DropdownMenu.Content>
+        <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
+          <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
+            <div>
+              <Popover.Trigger>
+                <Button size="md" type="button" color="neutral" variant="surface" className="rounded-l-none">
+                  <Icon iconName="wand-magic-sparkles" />
+                </Button>
+              </Popover.Trigger>
+            </div>
+            <DropdownMenu.Content asChild>
+              <Popover.Content className="h-60 w-[400px] overflow-y-scroll">
+                <InputSearch placeholder="Search..." className="mb-4" />
+                {variables.map((variable) => (
+                  <Popover.Close>
+                    <DropdownMenu.Item className="min-h-9 gap-2">
+                      <Truncate text={variable.key} truncateLimit={38} />
+                      {variable.description && (
+                        <Tooltip content={variable.description}>
+                          <span>
+                            <Icon iconName="info-circle" className="text-neutral-350" />
+                          </span>
+                        </Tooltip>
+                      )}
+                    </DropdownMenu.Item>
+                  </Popover.Close>
+                ))}
+              </Popover.Content>
+            </DropdownMenu.Content>
+          </Popover.Root>
         </DropdownMenu.Root>
       }
     >
@@ -69,7 +80,6 @@ export function InputDropdownVariables({
         error={error?.message}
       />
     </Indicator>
-    // </div>
   )
 }
 
