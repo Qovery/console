@@ -6,6 +6,7 @@ import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 import { CodeEditorVariables } from '../../code-editor-variables/code-editor-variables'
+import { WrapperDropdownVariables } from '../../wrapper-suggestions-variables/wrapper-suggestions-variables'
 
 export interface VariableRowProps {
   index: number
@@ -15,7 +16,7 @@ export interface VariableRowProps {
 }
 
 export function VariableRow(props: VariableRowProps) {
-  const { index, availableScopes, gridTemplateColumns = '6fr 6fr 204px 2fr 1fr 1fr' } = props
+  const { index, availableScopes, gridTemplateColumns = '172px 172px 188px 2fr 1fr' } = props
   const { control, trigger, watch } = useFormContext<FlowVariableData>()
   const [openEditor, setOpenEditor] = useState(true)
   const watchSecret = watch().variables[index]?.isSecret
@@ -29,7 +30,7 @@ export function VariableRow(props: VariableRowProps) {
 
   return (
     <div data-testid="variable-row" className="mb-3 w-full items-center">
-      <div key={index} data-testid="form-row" className="mb-3 grid max-w-full" style={{ gridTemplateColumns }}>
+      <div key={index} data-testid="form-row" className="mb-3 grid max-w-full gap-3" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}
           control={control}
@@ -50,7 +51,7 @@ export function VariableRow(props: VariableRowProps) {
           render={({ field, fieldState: { error } }) =>
             watchReadOnly ? (
               <Tooltip content={field.value}>
-                <div className="mr-3 flex items-center justify-between truncate rounded border border-neutral-200 bg-neutral-100 px-2 text-sm text-neutral-350">
+                <div className="flex items-center justify-between truncate rounded border border-neutral-200 bg-neutral-100 px-2 text-sm text-neutral-350">
                   <span className="max-w-full truncate">{field.value}</span>
                   {watchDescription && (
                     <Tooltip content={watchDescription}>
@@ -63,7 +64,7 @@ export function VariableRow(props: VariableRowProps) {
               </Tooltip>
             ) : (
               <InputTextSmall
-                className="mr-3 flex-1 shrink-0 grow"
+                className="flex-1 shrink-0 grow"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -81,7 +82,7 @@ export function VariableRow(props: VariableRowProps) {
             color="neutral"
             variant="surface"
             type="button"
-            className="mr-3 h-[36px] flex-1 shrink-0 grow justify-between"
+            className="h-[36px] flex-1 shrink-0 grow justify-between"
             onClick={() => setOpenEditor((open) => !open)}
           >
             {openEditor ? (
@@ -104,17 +105,19 @@ export function VariableRow(props: VariableRowProps) {
               required: 'Please enter a value.',
             }}
             render={({ field, fieldState: { error } }) => (
-              <InputTextSmall
-                className="mr-3 flex-1 shrink-0 grow"
-                data-testid="value"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-                errorMessagePosition="left"
-                type={watchSecret ? 'password' : 'text'}
-                hasShowPasswordButton={watchSecret}
-              />
+              <WrapperDropdownVariables environmentId={environmentId} onChange={field.onChange}>
+                <InputTextSmall
+                  className="w-full"
+                  data-testid="value"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  errorMessagePosition="left"
+                  type={watchSecret ? 'password' : 'text'}
+                  hasShowPasswordButton={watchSecret}
+                />
+              </WrapperDropdownVariables>
             )}
           />
         )}
@@ -137,7 +140,7 @@ export function VariableRow(props: VariableRowProps) {
           )}
         />
 
-        <div className="ml-1 flex w-14 items-center justify-center">
+        <div className="flex w-14 items-center justify-center">
           <Controller
             name={`variables.${index}.isSecret`}
             control={control}

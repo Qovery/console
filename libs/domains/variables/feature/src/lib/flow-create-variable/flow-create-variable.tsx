@@ -27,7 +27,7 @@ export function FlowCreateVariable({
   availableScopes,
 }: FlowCreateVariableProps) {
   const { formState } = useFormContext<FlowVariableData>()
-  const gridTemplateColumns = '6fr 6fr 204px 2fr 1fr'
+  const gridTemplateColumns = '172px 172px 188px 2fr 1fr'
 
   return (
     <Section>
@@ -67,7 +67,7 @@ export function FlowCreateVariable({
           .exhaustive()}
         <div>
           {variables?.length > 0 && (
-            <div className="mb-3 grid" style={{ gridTemplateColumns }}>
+            <div className="mb-3 grid gap-x-3" style={{ gridTemplateColumns }}>
               <span className="text-sm font-medium text-neutral-400">Variable</span>
               <span className="text-sm font-medium text-neutral-400">Value</span>
               <span className="text-sm font-medium text-neutral-400">Scope</span>

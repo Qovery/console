@@ -1,41 +1,21 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { type PropsWithChildren, useState } from 'react'
-import {
-  type ControllerFieldState,
-  type ControllerRenderProps,
-  type FieldValues,
-  type UseFormStateReturn,
-} from 'react-hook-form'
-import {
-  Button,
-  Icon,
-  InputSearch,
-  InputTextSmall,
-  Popover,
-  Truncate,
-  dropdownMenuItemVariants,
-} from '@qovery/shared/ui'
+import { Button, Icon, InputSearch, Popover, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
-export interface InputDropdownVariablesProps extends PropsWithChildren {
+export interface WrapperDropdownVariablesProps extends PropsWithChildren {
   environmentId: string
-  controller: {
-    // We can't define the type of `field` and `fieldState` because it's a generic type
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    field: ControllerRenderProps<FieldValues, any>
-    fieldState: ControllerFieldState
-    formState: UseFormStateReturn<FieldValues>
-  }
+  onChange: (value: string) => void
+  className?: string
 }
 
-export function InputDropdownVariables({
+export function WrapperDropdownVariables({
   environmentId,
-  controller: {
-    field,
-    fieldState: { error },
-  },
-}: InputDropdownVariablesProps) {
+  onChange,
+  className,
+  children,
+}: WrapperDropdownVariablesProps) {
   const { data: variables = [] } = useVariables({
     parentId: environmentId,
     scope: 'ENVIRONMENT',
@@ -54,14 +34,8 @@ export function InputDropdownVariables({
   // DropdownMenu.Root for entries.
   // So both open state should be sync
   return (
-    <div className="flex w-[calc(100%+4px)]">
-      <InputTextSmall
-        className="w-full"
-        name={field.name}
-        value={field.value}
-        onChange={field.onChange}
-        error={error?.message}
-      />
+    <div className={twMerge('flex w-[calc(100%+4px)]', className)}>
+      {children}
       <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
         <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
           <Popover.Trigger>
@@ -78,10 +52,10 @@ export function InputDropdownVariables({
           <DropdownMenu.Content asChild>
             <Popover.Content className="flex max-h-60 w-[256px] flex-col p-2">
               {/* 
-                  `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
-                  ix issue with item focus if we use input search
-                  https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
-                */}
+                `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
+                fix issue with item focus if we use input search
+                https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
+              */}
               <div className="bg-white dark:bg-neutral-700" onKeyDown={(e) => e.stopPropagation()}>
                 <InputSearch
                   placeholder="Search..."
@@ -99,7 +73,7 @@ export function InputDropdownVariables({
                           dropdownMenuItemVariants({ color: 'brand' }),
                           'h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5'
                         )}
-                        onClick={() => field.onChange(variable.key)}
+                        onClick={() => onChange(variable.key)}
                       >
                         <span className="text-sm font-medium">
                           <Truncate text={variable.key} truncateLimit={24} />
@@ -128,4 +102,4 @@ export function InputDropdownVariables({
   )
 }
 
-export default InputDropdownVariables
+export default WrapperDropdownVariables
