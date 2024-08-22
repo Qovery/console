@@ -72,7 +72,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     <Tooltip
                       disabled={props.isFetchingCheckedCustomDomains}
                       content={
-                        <>
+                        <div className="max-w-56">
                           {checkedCustomDomain?.error_details && (
                             <>
                               {checkedCustomDomain?.error_details}
@@ -81,7 +81,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                             </>
                           )}
                           <strong>Click to check set-up again.</strong>
-                        </>
+                        </div>
                       }
                     >
                       <Button
