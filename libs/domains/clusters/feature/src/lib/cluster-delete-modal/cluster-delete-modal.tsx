@@ -24,7 +24,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
   const [confirmQoveryConfigChecked, setConfirmQoveryConfigChecked] = useState<CheckedState>()
   const [confirmKubernetesChecked, setConfirmKubernetesChecked] = useState<CheckedState>()
   const [confirmCloudProviderChecked, setConfirmCloudProviderChecked] = useState<CheckedState>()
-  const { handleSubmit, control, formState } = useForm()
+  const { handleSubmit, control, watch } = useForm()
   const { closeModal } = useModal()
 
   const onSubmit = handleSubmit(async (data) => {
@@ -90,7 +90,10 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
 
   const ctaButtonDisabled =
     (kubernetes === 'SELF_MANAGED' ? confirmKubernetesChecked !== true : confirmCloudProviderChecked !== true) ||
-    confirmQoveryConfigChecked !== true
+    confirmQoveryConfigChecked !== true ||
+    // WARN: Cannot use react-hook-form isValid due to
+    // https://github.com/react-hook-form/react-hook-form/issues/2755
+    watch('name') !== 'delete'
 
   return (
     <div className="p-6">
@@ -242,7 +245,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
           <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
             Cancel
           </Button>
-          <Button type="submit" size="lg" color="red" disabled={ctaButtonDisabled || !formState.isValid}>
+          <Button type="submit" size="lg" color="red" disabled={ctaButtonDisabled}>
             Confirm
           </Button>
         </div>
