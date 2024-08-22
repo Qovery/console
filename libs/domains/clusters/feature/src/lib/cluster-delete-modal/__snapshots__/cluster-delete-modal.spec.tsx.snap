@@ -146,7 +146,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
           >
             Use it carefully this action is irreversible. Please confirm that you are aware of the operation impact:
           </p>
-          <p
+          <div
             class="flex flex-col"
           >
             <div
@@ -212,7 +212,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                 any resource created by Qovery on your cloud provider account to run this cluster, including any application running on it.
               </label>
             </div>
-          </p>
+          </div>
           <div
             class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mt-3 text-xs"
             data-accent-color="yellow"

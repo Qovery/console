@@ -132,7 +132,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
             Use it carefully this action is irreversible. Please confirm that you are aware of the operation impact:
           </p>
 
-          <p className="flex flex-col">
+          <div className="flex flex-col">
             <div className="flex flex-row gap-3 py-2">
               <Checkbox
                 name="confirm_qovery_config"
@@ -215,7 +215,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
                 </label>
               </div>
             )}
-          </p>
+          </div>
           {kubernetes !== 'SELF_MANAGED' && clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
             <Callout.Root className="mt-3 text-xs" color="yellow">
               <Callout.Icon>
