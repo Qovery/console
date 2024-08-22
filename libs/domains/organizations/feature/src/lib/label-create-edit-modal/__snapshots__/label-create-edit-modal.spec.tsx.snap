@@ -107,7 +107,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                       data-testid="labels.0.key"
                       name="labels.0.key"
                       type="text"
@@ -127,7 +127,7 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                       data-testid="labels.0.value"
                       name="labels.0.value"
                       type="text"

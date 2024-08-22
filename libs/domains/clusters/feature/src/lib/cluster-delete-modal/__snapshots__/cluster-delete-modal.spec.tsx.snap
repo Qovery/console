@@ -33,7 +33,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
               class="hidden"
             />
             <input
-              class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+              class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
               data-testid="input-value"
               name="name"
               placeholder="Enter "delete""
