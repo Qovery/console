@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`InputDropdownVariables should render dropdown content when clicked 1`] = `
+exports[`WrapperDropdownVariables should render dropdown content when clicked 1`] = `
 <div
   aria-labelledby="radix-:rf:"
   aria-orientation="vertical"
