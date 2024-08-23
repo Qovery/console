@@ -61,10 +61,7 @@ const Avatar = forwardRef<AvatarImplElement, AvatarProps>(function Avatar(
       style={style}
       asChild={asChild}
     >
-      {getSubtree(
-        { asChild, children },
-        <AvatarImpl ref={forwardedRef} size={size} border={border} radius={radius} {...imageProps} />
-      )}
+      {getSubtree({ asChild, children }, <AvatarImpl ref={forwardedRef} size={size} border={border} {...imageProps} />)}
     </AvatarPrimitive.Root>
   )
 })
