@@ -7,7 +7,7 @@ exports[`Avatar should match snapshot 1`] = `
       class="flex items-center justify-center h-16 w-16 rounded-full"
     >
       <span
-        class="flex items-center justify-center h-16 w-16"
+        class="flex items-center justify-center rounded-full h-16 w-16"
       >
         <svg
           class="shrink-0 "
