@@ -61,7 +61,10 @@ const Avatar = forwardRef<AvatarImplElement, AvatarProps>(function Avatar(
       style={style}
       asChild={asChild}
     >
-      {getSubtree({ asChild, children }, <AvatarImpl ref={forwardedRef} size={size} border={border} {...imageProps} />)}
+      {getSubtree(
+        { asChild, children },
+        <AvatarImpl ref={forwardedRef} size={size} border={border} radius={radius} {...imageProps} />
+      )}
     </AvatarPrimitive.Root>
   )
 })
@@ -74,6 +77,10 @@ const avatarFallbackVariants = cva('flex items-center justify-center', {
       md: [],
       sm: [],
       xs: [],
+    },
+    radius: {
+      none: [],
+      full: ['rounded-full'],
     },
     border: {
       solid: [],
@@ -91,6 +98,7 @@ const avatarFallbackVariants = cva('flex items-center justify-center', {
   defaultVariants: {
     size: 'md',
     border: 'none',
+    radius: 'full',
   },
 })
 
@@ -101,7 +109,7 @@ interface AvatarImplProps
 }
 
 const AvatarImpl = forwardRef<AvatarImplElement, AvatarImplProps>(function AvatarImpl(
-  { fallback, size, border, ...imageProps },
+  { fallback, size, border, radius, ...imageProps },
   forwardedRef
 ) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'loaded' | 'error'>('idle')
@@ -113,12 +121,13 @@ const AvatarImpl = forwardRef<AvatarImplElement, AvatarImplProps>(function Avata
         //{status === 'idle' || status === 'loading' ? <span className="rt-AvatarFallback" /> : null}
       }
       {status === 'error' ? (
-        <AvatarPrimitive.Fallback className={avatarFallbackVariants({ size, border })}>
+        <AvatarPrimitive.Fallback className={avatarFallbackVariants({ size, border, radius })}>
           {fallback}
         </AvatarPrimitive.Fallback>
       ) : null}
       <AvatarPrimitive.Image
         ref={forwardedRef}
+        className={avatarFallbackVariants({ size, border, radius })}
         {...imageProps}
         onLoadingStatusChange={(status) => {
           imageProps.onLoadingStatusChange?.(status)

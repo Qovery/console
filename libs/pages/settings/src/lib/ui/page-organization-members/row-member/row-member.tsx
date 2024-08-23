@@ -5,13 +5,14 @@ import {
   type OrganizationAvailableRole,
 } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { MemberRoleEnum } from '@qovery/shared/enums'
+import { IconEnum, MemberRoleEnum } from '@qovery/shared/enums'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
+  Avatar,
   ButtonIconAction,
   Icon,
   IconAwesomeEnum,
-  LegacyAvatar,
+  Indicator,
   LoaderSpinner,
   Menu,
   type MenuData,
@@ -48,6 +49,22 @@ export const RolesIcons: { [key: string]: string } = {
   BILLING: IconAwesomeEnum.WALLET,
   DEVOPS: IconAwesomeEnum.WHEEL,
   VIEWER: IconAwesomeEnum.EYE,
+}
+
+const getProviderIcon = (id: string): IconEnum | undefined => {
+  if (id.toUpperCase().includes('GITHUB')) {
+    return IconEnum.GITHUB
+  } else if (id.toUpperCase().includes('GITLAB')) {
+    return IconEnum.GITLAB
+  } else if (id.toUpperCase().includes('BITBUCKET')) {
+    return IconEnum.BITBUCKET
+  } else if (id.toUpperCase().includes('GOOGLE')) {
+    return IconEnum.GOOGLE
+  } else if (id.toUpperCase().includes('WINDOWSLIVE')) {
+    return IconEnum.MICROSOFT
+  } else {
+    return undefined
+  }
 }
 
 export function RowMember(props: RowMemberProps) {
@@ -234,7 +251,29 @@ export function RowMember(props: RowMemberProps) {
           <div className="flex items-center px-4 py-3">
             {name && (
               <Skeleton className="shrink-0" show={loading} width={32} height={32} rounded>
-                <LegacyAvatar firstName={name[0]} lastName={name[1]} url={(member as Member).profile_picture_url} />
+                <Indicator
+                  className="bottom-1 right-1"
+                  side="bottom"
+                  content={
+                    getProviderIcon(member.id) && (
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-100">
+                        <Icon name={getProviderIcon(member.id)} className="p-0.5 text-base" width={20} height={20} />
+                      </span>
+                    )
+                  }
+                >
+                  <Avatar
+                    size="sm"
+                    radius="full"
+                    src={(member as Member).profile_picture_url}
+                    fallback={
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-200">
+                        {name[0]?.charAt(0).toUpperCase()}
+                        {name[1]?.charAt(0).toUpperCase()}
+                      </span>
+                    }
+                  />
+                </Indicator>
               </Skeleton>
             )}
             <div className="ml-3 truncate text-xs">
