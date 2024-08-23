@@ -108,8 +108,11 @@ exports[`GitTokenList should match snapshot 1`] = `
               class="flex"
             >
               <svg
-                class="svg-icon shrink-0 "
+                class="shrink-0 "
+                height="20px"
+                name="GITLAB"
                 viewBox="0 0 24 24"
+                width="20px"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
