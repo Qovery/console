@@ -1,8 +1,8 @@
 import { type IconProps } from '../icon'
 
-export function GitlabIcon(props: IconProps) {
+export function GitlabIcon({ className, ...props }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" className={`svg-icon ${props.className || ''}`} viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} {...props} viewBox="0 0 24 24">
       <path
         fill="#DA6539"
         d="M21.667 10.069l-.028-.072-2.722-7.104a.709.709 0 00-.704-.446.729.729 0 00-.41.153.729.729 0 00-.241.367L15.724 8.59H8.281L6.443 2.967a.714.714 0 00-.241-.368.729.729 0 00-.833-.045.716.716 0 00-.28.338L2.36 9.993l-.027.072a5.055 5.055 0 001.677 5.842l.009.007.025.018 4.147 3.105 2.051 1.553 1.25.944a.84.84 0 001.016 0l1.25-.944 2.051-1.553 4.172-3.124.01-.008a5.057 5.057 0 001.675-5.836z"
