@@ -15,7 +15,7 @@ import { ServiceStateChip } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, InputCheckbox, Tooltip } from '@qovery/shared/ui'
+import { Button, Checkbox, Icon, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/util-js'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
 import MenuTimeFormat from './menu-time-format/menu-time-format'
@@ -179,22 +179,22 @@ export function LayoutLogs({
               )}
               {setEnabledNginx && (
                 <div key={serviceId} className="flex shrink-0 items-center text-xs font-medium text-neutral-300">
-                  <InputCheckbox
-                    dataTestId="checkbox-debug"
-                    name="checkbox-debug"
-                    value={(enabledNginx || false).toString()}
-                    onChange={() => {
-                      setEnabledNginx(!enabledNginx)
-                      setPauseLogs?.(false)
-                      resetFilterPodName?.()
-                    }}
-                    label="NGINX logs"
-                    className="-ml-1"
-                  />
-                  {enabledNginx && countNginx !== undefined ? <span className="ml-1 block">({countNginx})</span> : ''}
+                  <label className="flex cursor-pointer items-center gap-3 text-sm" data-testid="checkbox-debug">
+                    <Checkbox
+                      checked={enabledNginx || false}
+                      onCheckedChange={() => {
+                        setEnabledNginx(!enabledNginx)
+                        setPauseLogs?.(false)
+                        resetFilterPodName?.()
+                      }}
+                    />{' '}
+                    NGINX logs
+                  </label>
+                  &nbsp;
+                  {enabledNginx && countNginx !== undefined ? <span className="block">({countNginx})</span> : ''}
                   <Tooltip content="Display the logs of the Kubernetes ingress controller (NGINX). Click here to know the log format.">
                     <a
-                      className="relative top-[1px] ml-2 hover:text-neutral-100"
+                      className="ml-2 hover:text-neutral-100"
                       rel="noreferrer"
                       href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
                       target="_blank"
