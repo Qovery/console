@@ -1,5 +1,5 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
-import { type Cluster, ClusterDeleteMode, Value } from 'qovery-typescript-axios'
+import { type Cluster, ClusterDeleteMode } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
