@@ -9,8 +9,10 @@ const checkboxVariants = cva(
     'group',
     'transition',
     'bg-neutral-100',
+    'dark:bg-neutral-500',
     'border',
     'border-neutral-300',
+    'dark:border-neutral-350',
     'rounded-sm',
     'w-[18px]',
     'h-[18px]',
@@ -25,8 +27,11 @@ const checkboxVariants = cva(
       color: {
         brand: [
           'hover:border-brand-500',
+          'dark:hover:border-brand-500',
           'data-[state=checked]:bg-brand-500',
+          'dark:data-[state=checked]:bg-brand-500',
           'data-[state=checked]:border-brand-500',
+          'dark:data-[state=checked]:border-brand-500',
           'data-[state=indeterminate]:border-brand-500',
           'disabled:data-[state=checked]:border-brand-300',
           'disabled:data-[state=checked]:bg-brand-300',
