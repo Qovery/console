@@ -72,42 +72,42 @@ export function CardCluster({ organizationId, cluster }: CardClusterProps) {
       </div>
       <div className="flex flex-wrap gap-2">
         {cluster.production && (
-          <Badge size="xs" color="brand" data-testid="tag-prod">
+          <Badge color="brand" data-testid="tag-prod">
             Production
           </Badge>
         )}
         {cluster.is_default && (
-          <Badge size="xs" color="sky" variant="surface" data-testid="tag-default">
+          <Badge color="sky" variant="surface" data-testid="tag-default">
             Default
           </Badge>
         )}
         {cluster.kubernetes === 'SELF_MANAGED' ? (
           <>
-            <Badge size="xs" color="neutral">
+            <Badge color="neutral">
               <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
               Self managed
             </Badge>
-            <Badge size="xs" color="neutral" data-testid="tag-region">
+            <Badge color="neutral" data-testid="tag-region">
               {cluster.region}
             </Badge>
           </>
         ) : (
           <>
-            <Badge size="xs" color="neutral">
+            <Badge color="neutral">
               <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
               Qovery managed
             </Badge>
-            <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
-            <Badge size="xs" color="neutral" data-testid="tag-region">
+            <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+            <Badge color="neutral" data-testid="tag-region">
               {cluster.region}
             </Badge>
             {cluster.version && (
-              <Badge size="xs" color="neutral" data-testid="tag-version">
+              <Badge color="neutral" data-testid="tag-version">
                 {cluster.version}
               </Badge>
             )}
             {cluster.instance_type && (
-              <Badge size="xs" color="neutral" data-testid="tag-instance">
+              <Badge color="neutral" data-testid="tag-instance">
                 {cluster.instance_type.replace('_', '.').toLowerCase()}
               </Badge>
             )}

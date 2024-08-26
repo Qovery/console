@@ -20,7 +20,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
   const statusLabel = data.status.replace('_', ' ')
   const badge = match(data.status)
     .with(InvoiceStatusEnum.PAID, () => (
-      <Badge color="green" variant="surface" size="xs">
+      <Badge color="green" variant="surface">
         {statusLabel}
       </Badge>
     ))
@@ -30,13 +30,13 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
       InvoiceStatusEnum.POSTED,
       InvoiceStatusEnum.PAYMENT_DUE,
       () => (
-        <Badge color="yellow" variant="surface" size="xs">
+        <Badge color="yellow" variant="surface">
           {statusLabel}
         </Badge>
       )
     )
     .with(InvoiceStatusEnum.UNKNOWN, InvoiceStatusEnum.VOIDED, () => (
-      <Badge color="brand" variant="surface" size="xs">
+      <Badge color="brand" variant="surface">
         {statusLabel}
       </Badge>
     ))

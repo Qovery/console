@@ -178,7 +178,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             serviceId={service.id}
             align="start"
           >
-            <Button size="xs" variant="surface" color="neutral" radius="full">
+            <Button variant="surface" color="neutral" radius="full">
               <Tooltip content="Links">
                 <div className="flex items-center gap-1">
                   <Icon iconName="link" />
@@ -307,7 +307,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             }
             return (
               <span className="flex items-center gap-2 text-sm font-medium">
-                <ServiceAvatar service={service} size="xs" />
+                <ServiceAvatar service={service} />
                 {value}
               </span>
             )
@@ -407,7 +407,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                         onClick={(e) => e.stopPropagation()}
                         color="neutral"
                         variant="surface"
-                        size="xs"
                         className="gap-1 whitespace-nowrap"
                       >
                         <Icon iconName="code-branch" height={14} width={14} />
@@ -428,7 +427,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     onClick={(e) => e.stopPropagation()}
                     color="neutral"
                     variant="surface"
-                    size="xs"
                     className="items-center gap-1 whitespace-nowrap capitalize"
                   >
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
@@ -436,7 +434,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   </ExternalLink>
                 </span>
                 <div>
-                  <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
+                  <Badge variant="surface" className="gap-1 whitespace-nowrap">
                     <Icon width={16} name={IconEnum.CONTAINER} />
                     <Truncate text={`${containerImage.image_name}:${containerImage.tag}`} truncateLimit={35} />
                   </Badge>
@@ -446,7 +444,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
             datasource && (
-              <Badge size="xs" variant="surface" className="ml-7 items-center gap-1 whitespace-nowrap">
+              <Badge variant="surface" className="ml-7 items-center gap-1 whitespace-nowrap">
                 <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
                 {datasource.version}
               </Badge>
@@ -462,7 +460,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     onClick={(e) => e.stopPropagation()}
                     color="neutral"
                     variant="surface"
-                    size="xs"
                     className="items-center gap-1 whitespace-nowrap"
                   >
                     <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
@@ -470,7 +467,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   </ExternalLink>
                 </span>
                 <div>
-                  <Badge variant="surface" size="xs" className="gap-1 whitespace-nowrap">
+                  <Badge variant="surface" className="gap-1 whitespace-nowrap">
                     <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                     {helmRepository.chart_name}:{helmRepository.chart_version}
                   </Badge>
@@ -701,7 +698,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             <Fragment key={row.id}>
               <Table.Row
                 className={twMerge(
-                  'h-16 cursor-pointer hover:bg-neutral-100',
+                  'h-[68px] cursor-pointer hover:bg-neutral-100',
                   row.getIsSelected() ? 'bg-neutral-100' : ''
                 )}
                 onClick={() => {

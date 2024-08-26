@@ -64,7 +64,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
       <div className="flex flex-row items-center gap-2">
         {environment && (
           <Skeleton width={80} height={22} show={!environment?.mode}>
-            <EnvironmentMode size="xs" mode={environment.mode} />
+            <EnvironmentMode mode={environment.mode} />
           </Skeleton>
         )}
         <Skeleton width={120} height={22} show={!cluster}>

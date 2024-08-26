@@ -42,11 +42,11 @@ export function Container({ children }: ContainerProps) {
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
         {environment && (
-          <Skeleton width={80} height={22} show={!environment?.mode}>
-            <EnvironmentMode size="xs" mode={environment.mode} />
+          <Skeleton width={80} height={24} show={!environment?.mode}>
+            <EnvironmentMode mode={environment.mode} />
           </Skeleton>
         )}
-        <Skeleton width={120} height={22} show={!cluster}>
+        <Skeleton width={120} height={24} show={!cluster}>
           <Tooltip content={cluster?.name ?? ''}>
             <Link
               as="button"
@@ -67,10 +67,10 @@ export function Container({ children }: ContainerProps) {
             </Link>
           </Tooltip>
         </Skeleton>
-        <Skeleton width={22} height={22} show={!service}>
+        <Skeleton width={22} height={24} show={!service}>
           {service && 'auto_deploy' in service && service.auto_deploy && (
             <Tooltip content="Auto-deploy">
-              <Badge variant="outline" size="xs">
+              <Badge variant="outline">
                 <Icon className="text-neutral-350" iconName="arrows-rotate" />
               </Badge>
             </Tooltip>
