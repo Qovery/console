@@ -30,6 +30,8 @@ export interface PodLogsProps {
   isProgressing?: boolean
   filter: TableFilterProps[]
   setFilter: Dispatch<SetStateAction<TableFilterProps[]>>
+  newMessagesAvailable: boolean
+  setNewMessagesAvailable: Dispatch<SetStateAction<boolean>>
 }
 
 const COLORS = [
@@ -79,6 +81,8 @@ export function PodLogs({
   isProgressing,
   filter,
   setFilter,
+  newMessagesAvailable,
+  setNewMessagesAvailable,
 }: PodLogsProps) {
   const publiclyExposedPort =
     ((service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
@@ -193,6 +197,9 @@ export function PodLogs({
       progressingMsg="Streaming application logs"
       withLogsNavigation
       lineNumbers
+      newMessagesAvailable={newMessagesAvailable}
+      setNewMessagesAvailable={setNewMessagesAvailable}
+      resetFilterPodName={() => setFilter([{ key: 'pod_name', value: 'ALL' }])}
     >
       <Table
         className="bg-transparent"

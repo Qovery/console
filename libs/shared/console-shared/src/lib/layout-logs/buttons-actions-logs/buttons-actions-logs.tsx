@@ -1,17 +1,16 @@
 import download from 'downloadjs'
 import { type RefObject, useEffect } from 'react'
-import { Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import { type LayoutLogsDataProps } from '../layout-logs'
 
 export interface ButtonsActionsLogsProps {
   refScrollSection: RefObject<HTMLDivElement>
   data: LayoutLogsDataProps
-  setPauseLogs?: (pause: boolean) => void
   pauseLogs?: boolean
 }
 
 export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
-  const { refScrollSection, data, pauseLogs, setPauseLogs } = props
+  const { refScrollSection, data, pauseLogs } = props
 
   const downloadJSON = () => {
     download(JSON.stringify(data?.items), `data-${Date.now()}.json`, 'text/json;charset=utf-8')
@@ -35,20 +34,6 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
 
   return (
     <>
-      {setPauseLogs && (
-        <Tooltip side="top" content="Resume real-time logs" open={pauseLogs}>
-          <div>
-            <Button
-              className="w-10 justify-center"
-              type="button"
-              color={pauseLogs ? 'brand' : 'neutral'}
-              onClick={() => setPauseLogs(!pauseLogs)}
-            >
-              <Icon iconName={pauseLogs ? 'play' : 'pause'} />
-            </Button>
-          </div>
-        </Tooltip>
-      )}
       <Button
         data-testid="scroll-up-button"
         className="ml-2 mr-px w-10 justify-center !rounded-br-none !rounded-tr-none"

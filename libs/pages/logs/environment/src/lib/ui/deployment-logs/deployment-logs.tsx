@@ -4,7 +4,7 @@ import {
   type ServiceDeploymentStatusEnum,
   type Status,
 } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
+import { type Dispatch, type SetStateAction, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ErrorLogsProps, LayoutLogs } from '@qovery/shared/console-shared'
@@ -29,6 +29,8 @@ export interface DeploymentLogsProps {
   isDeploymentProgressing?: boolean
   setShowPreviousLogs?: (showPreviousLogs: boolean) => void
   showPreviousLogs?: boolean
+  newMessagesAvailable: boolean
+  setNewMessagesAvailable: Dispatch<SetStateAction<boolean>>
 }
 
 export function DeploymentLogs({
@@ -44,6 +46,8 @@ export function DeploymentLogs({
   isDeploymentProgressing,
   setShowPreviousLogs,
   showPreviousLogs,
+  newMessagesAvailable,
+  setNewMessagesAvailable,
 }: DeploymentLogsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '', versionId = '' } = useParams()
 
@@ -127,6 +131,8 @@ export function DeploymentLogs({
       progressingMsg="Streaming deployment logs"
       withLogsNavigation
       lineNumbers
+      newMessagesAvailable={newMessagesAvailable}
+      setNewMessagesAvailable={setNewMessagesAvailable}
     >
       {logs.length >= 500 && showPreviousLogs === false && (
         <button
