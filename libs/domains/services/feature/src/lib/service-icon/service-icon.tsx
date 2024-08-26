@@ -1,5 +1,7 @@
 import AWS from 'devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg'
 import Angular from 'devicon/icons/angularjs/angularjs-original.svg'
+import Apache from 'devicon/icons/apache/apache-original.svg'
+import ApacheKafka from 'devicon/icons/apachekafka/apachekafka-original.svg'
 import Cloudflare from 'devicon/icons/cloudflare/cloudflare-original.svg'
 import Couchbase from 'devicon/icons/couchbase/couchbase-original.svg'
 import Docker from 'devicon/icons/docker/docker-original.svg'
@@ -8,6 +10,7 @@ import FastAPI from 'devicon/icons/fastapi/fastapi-original.svg'
 import Flask from 'devicon/icons/flask/flask-original.svg'
 import Golang from 'devicon/icons/go/go-original.svg'
 import GCP from 'devicon/icons/googlecloud/googlecloud-original.svg'
+import Grafana from 'devicon/icons/grafana/grafana-original.svg'
 import Java from 'devicon/icons/java/java-original.svg'
 import MongoDB from 'devicon/icons/mongodb/mongodb-original.svg'
 import MySQL from 'devicon/icons/mysql/mysql-original.svg'
@@ -15,8 +18,12 @@ import NestJS from 'devicon/icons/nestjs/nestjs-original.svg'
 import NextJS from 'devicon/icons/nextjs/nextjs-original.svg'
 import Nginx from 'devicon/icons/nginx/nginx-original.svg'
 import Node from 'devicon/icons/nodejs/nodejs-original.svg'
+import NuxtJS from 'devicon/icons/nuxtjs/nuxtjs-original.svg'
 import PostgreSQL from 'devicon/icons/postgresql/postgresql-original.svg'
+import Prometheus from 'devicon/icons/prometheus/prometheus-original.svg'
+import Pulumi from 'devicon/icons/pulumi/pulumi-original.svg'
 import Python from 'devicon/icons/python/python-original.svg'
+import RabbitMQ from 'devicon/icons/rabbitmq/rabbitmq-original.svg'
 import Rails from 'devicon/icons/rails/rails-plain.svg'
 import React from 'devicon/icons/react/react-original.svg'
 import Redis from 'devicon/icons/redis/redis-original.svg'
@@ -73,6 +80,13 @@ export const ServiceIcons = {
   'app://qovery-console/spring': { icon: Spring, title: 'Spring' },
   'app://qovery-console/terraform': { icon: Terraform, title: 'Terraform' },
   'app://qovery-console/vue': { icon: Vue, title: 'Vue' },
+  'app://qovery-console/apachekafka': { icon: ApacheKafka, title: 'Apache Kafka' },
+  'app://qovery-console/rabbitmq': { icon: RabbitMQ, title: 'RabbitMQ' },
+  'app://qovery-console/nuxtjs': { icon: NuxtJS, title: 'NuxtJS' },
+  'app://qovery-console/pulumi': { icon: Pulumi, title: 'Pulumi' },
+  'app://qovery-console/grafana': { icon: Grafana, title: 'Grafana' },
+  'app://qovery-console/apache': { icon: Apache, title: 'Apache' },
+  'app://qovery-console/prometheus': { icon: Prometheus, title: 'Prometheus' },
 
   // Others
   'app://qovery-console/qovery': { icon: Qovery, title: 'Qovery' },
