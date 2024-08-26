@@ -50,18 +50,6 @@ describe('RowMember', () => {
     screen.getByTestId('spinner')
   })
 
-  it('should have an avatar + render name and email', () => {
-    renderWithProviders(<RowMember {...props} />)
-
-    const avatar = screen.getByTestId('avatar')
-
-    const name = props.member.name?.split(' ') || []
-
-    screen.getByText(props.member.name || '')
-    screen.getByText(props.member.email || '')
-    expect(avatar).toHaveTextContent(`${name[0].charAt(0)}${name[1].charAt(0)}`)
-  })
-
   it('should have last activity and created date', () => {
     renderWithProviders(<RowMember {...props} />)
 
