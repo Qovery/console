@@ -68,7 +68,7 @@ const Avatar = forwardRef<AvatarImplElement, AvatarProps>(function Avatar(
 
 type AvatarImplElement = ElementRef<typeof AvatarPrimitive.Image>
 
-const avatarFallbackVariants = cva('flex items-center justify-center', {
+const avatarImplVariants = cva('flex items-center justify-center', {
   variants: {
     size: {
       md: [],
@@ -101,7 +101,7 @@ const avatarFallbackVariants = cva('flex items-center justify-center', {
 
 interface AvatarImplProps
   extends ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>,
-    VariantProps<typeof avatarFallbackVariants> {
+    VariantProps<typeof avatarImplVariants> {
   fallback: ReactNode
 }
 
@@ -118,13 +118,13 @@ const AvatarImpl = forwardRef<AvatarImplElement, AvatarImplProps>(function Avata
         //{status === 'idle' || status === 'loading' ? <span className="rt-AvatarFallback" /> : null}
       }
       {status === 'error' ? (
-        <AvatarPrimitive.Fallback className={avatarFallbackVariants({ size, border, radius })}>
+        <AvatarPrimitive.Fallback className={avatarImplVariants({ size, border, radius })}>
           {fallback}
         </AvatarPrimitive.Fallback>
       ) : null}
       <AvatarPrimitive.Image
         ref={forwardedRef}
-        className={avatarFallbackVariants({ size, border, radius })}
+        className={avatarImplVariants({ size, border, radius })}
         {...imageProps}
         onLoadingStatusChange={(status) => {
           imageProps.onLoadingStatusChange?.(status)
