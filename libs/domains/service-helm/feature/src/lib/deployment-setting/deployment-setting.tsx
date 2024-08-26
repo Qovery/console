@@ -13,8 +13,8 @@ export function DeploymentSetting() {
   const watchVersion = watch('chart_version')
   const watchCmdArguments = watch('arguments')
 
-  const watchRepository = watch('repository')
   const watchBranch = watch('branch')
+  const watchRootPath = watch('root_path')
 
   return (
     <div className="flex flex-col gap-3">
@@ -51,9 +51,13 @@ export function DeploymentSetting() {
             <span className="break-words text-sm">
               {`helm upgrade --install -n {{KUBERNETES_NAMESPACE}} {{RELEASE_NAME}} . ${displayParsedCmd(watchCmdArguments ?? '')}`}
             </span>
-          ) : (
+          ) : watchChartName ? (
             <span className="break-words text-sm">
               {`helm install ${watchChartName} {{RELEASE_NAME}} ${watchVersion ? `--version ${watchVersion}` : ''} ${displayParsedCmd(watchCmdArguments ?? '')}`}
+            </span>
+          ) : (
+            <span className="break-words text-sm">
+              {`helm install {{RELEASE_NAME}} ${watchVersion ? `--version ${watchVersion}` : ''} ./${watchRootPath.substring(1)} ${displayParsedCmd(watchCmdArguments ?? '')}`}
             </span>
           )}
         </div>
