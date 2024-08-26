@@ -68,7 +68,7 @@ export function EntrypointCmdInputs({
           <span className="select-none text-xs">Docker run format:</span>
           <span className="break-words text-sm">
             docker run {watchEntryPoint ? '--entrypoint ' + watchEntryPoint : ''}
-            {watchImageName ?? ''} {displayParsedCmd(watchCmdArguments ?? '')}
+            {watchImageName ? ` ${watchImageName}` : ''} {displayParsedCmd(watchCmdArguments ?? '')}
           </span>
         </div>
       )}
