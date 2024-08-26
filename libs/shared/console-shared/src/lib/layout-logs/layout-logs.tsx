@@ -270,14 +270,14 @@ export function LayoutLogs({
       )}
       {pauseLogs && newMessagesAvailable && (
         <Button
-          className="absolute bottom-5 left-1/2 flex w-72 -translate-x-1/2 items-center justify-center text-sm"
+          className="absolute bottom-5 left-1/2 flex w-72 -translate-x-1/2 items-center justify-center gap-2 text-sm"
           variant="solid"
           radius="full"
           size="md"
           type="button"
           onClick={() => setPauseLogs?.(false)}
         >
-          New logs&nbsp;
+          New logs
           <Icon iconName="arrow-down-to-line" />
         </Button>
       )}
