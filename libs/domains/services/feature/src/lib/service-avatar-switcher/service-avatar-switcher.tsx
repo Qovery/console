@@ -21,6 +21,9 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
   const handleClick = (newUri: IconURI) => {
     onChange(newUri)
   }
+  const filteredIcons = icons.filter(({ title }) =>
+    searchTerm ? title.toLowerCase().includes(searchTerm.toLowerCase()) : true
+  )
 
   return (
     <Popover.Root>
@@ -38,10 +41,9 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
       <Popover.Content side="bottom" className="flex flex-col gap-2" style={{ width: 400 }}>
         <span className="text-sm text-neutral-350">Change icon</span>
         <InputSearch placeholder="Search..." className="mb-1" onChange={(value) => setSearchTerm(value)} autofocus />
-        <div className="grid grid-cols-8 gap-2 text-sm text-neutral-350">
-          {icons
-            .filter(({ title }) => (searchTerm ? title.toLowerCase().includes(searchTerm.toLowerCase()) : true))
-            .map(({ icon, title, uri }) => {
+        {filteredIcons.length > 0 ? (
+          <div className="grid grid-cols-8 gap-2 text-sm text-neutral-350">
+            {filteredIcons.map(({ icon, title, uri }) => {
               const isSelected = uri === service.icon_uri
               // XXX: corner case as application and container have the same icon, we want to hide one of them.
               if (uri === 'app://qovery-console/container') {
@@ -66,7 +68,13 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
                 </Popover.Close>
               )
             })}
-        </div>
+          </div>
+        ) : (
+          <div className="px-3 py-6 text-center text-neutral-350">
+            <Icon iconName="wave-pulse" />
+            <p className="mt-1 text-xs font-medium">No result for this search</p>
+          </div>
+        )}
       </Popover.Content>
     </Popover.Root>
   )
