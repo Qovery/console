@@ -62,10 +62,13 @@ export function CrudModalFeature({
         fakeLoading()
         setPortData({
           ports: portData?.ports?.map((currentPort) => {
-            if (currentPort.application_port === (port as PortData).application_port) {
+            if (
+              currentPort.application_port === (port as PortData).application_port &&
+              currentPort.protocol === (port as PortData).protocol
+            ) {
               return newPortRow
             } else {
-              return port
+              return currentPort
             }
           }) as PortData[],
           healthchecks: portData?.healthchecks || undefined,

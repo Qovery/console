@@ -56,9 +56,9 @@ export function FlowCreatePort({
         {!isSetting || (ports && ports.length > 0) ? (
           <BlockContent title="Configured ports" classNameContent="p-0">
             {ports &&
-              ports.map((customPort, i) => (
+              ports.map((customPort) => (
                 <div
-                  key={i}
+                  key={`${customPort.protocol}-${customPort.name}-${customPort.external_port}`}
                   className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
                   data-testid="form-row"
                 >
