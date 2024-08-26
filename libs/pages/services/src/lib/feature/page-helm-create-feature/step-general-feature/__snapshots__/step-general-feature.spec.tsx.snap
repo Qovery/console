@@ -507,7 +507,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                     <span
                       class="break-words text-sm"
                     >
-                      helm install undefined {{RELEASE_NAME}}  --wait
+                      helm install {{RELEASE_NAME}}  ./ --wait
                     </span>
                   </div>
                   <div
@@ -1790,7 +1790,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                     <span
                       class="break-words text-sm"
                     >
-                      helm install undefined {{RELEASE_NAME}}  --wait
+                      helm install {{RELEASE_NAME}}  ./ --wait
                     </span>
                   </div>
                   <div
