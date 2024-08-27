@@ -59,8 +59,8 @@ export function FieldVariableSuggestion({
   // DropdownMenu.Root for entries.
   // So both open state should be sync
   return (
-    <div className={twMerge('flex w-[calc(100%+4px)]', className)}>
-      <InputTextSmall ref={inputRef} {...inputProps} />
+    <div className={twMerge('flex w-[calc(100%+36px)]', className)}>
+      <InputTextSmall ref={inputRef} {...inputProps} inputClassName="pr-11" />
       <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
         <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
           <Popover.Trigger>
@@ -69,9 +69,9 @@ export function FieldVariableSuggestion({
               type="button"
               color="neutral"
               variant="surface"
-              className="relative right-1 rounded-l-none"
+              className="relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
             >
-              <Icon iconName="wand-magic-sparkles" />
+              <Icon className="text-sm" iconName="wand-magic-sparkles" />
             </Button>
           </Popover.Trigger>
           <DropdownMenu.Content asChild>
