@@ -114,11 +114,11 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 />
               </div>
               <div
-                class=" "
+                class=""
                 data-testid="input-small-wrapper"
               >
                 <div
-                  class="input input--small flex-grow   "
+                  class="input input--small flex-grow"
                   data-testid="input"
                 >
                   <label
@@ -134,21 +134,21 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </div>
               </div>
               <div
-                class="flex w-[calc(100%+4px)]"
+                class="flex w-[calc(100%+36px)]"
               >
                 <div
-                  class="w-full "
+                  class="w-full"
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 pr-11"
                       data-testid="input-value"
                       name="arguments.0.value"
                       type="text"
@@ -160,13 +160,13 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   aria-controls="radix-:r9:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 relative right-1 rounded-l-none"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
                   data-state="closed"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wand-magic-sparkles "
+                    class="fa-solid fa-wand-magic-sparkles text-sm"
                   />
                 </button>
               </div>
@@ -217,11 +217,11 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 />
               </div>
               <div
-                class=" "
+                class=""
                 data-testid="input-small-wrapper"
               >
                 <div
-                  class="input input--small flex-grow   "
+                  class="input input--small flex-grow"
                   data-testid="input"
                 >
                   <label
@@ -309,11 +309,11 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 />
               </div>
               <div
-                class=" "
+                class=""
                 data-testid="input-small-wrapper"
               >
                 <div
-                  class="input input--small flex-grow   "
+                  class="input input--small flex-grow"
                   data-testid="input"
                 >
                   <label
@@ -329,21 +329,21 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 </div>
               </div>
               <div
-                class="flex w-[calc(100%+4px)]"
+                class="flex w-[calc(100%+36px)]"
               >
                 <div
-                  class="w-full "
+                  class="w-full"
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 pr-11"
                       data-testid="input-value"
                       name="arguments.2.value"
                       type="text"
@@ -355,13 +355,13 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                   aria-controls="radix-:rc:"
                   aria-expanded="false"
                   aria-haspopup="dialog"
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 relative right-1 rounded-l-none"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
                   data-state="closed"
                   type="button"
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wand-magic-sparkles "
+                    class="fa-solid fa-wand-magic-sparkles text-sm"
                   />
                 </button>
               </div>

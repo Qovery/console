@@ -74,6 +74,9 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           'input--disabled': disabled,
         })}
       >
+        <label className="hidden" htmlFor={label}>
+          {label}
+        </label>
         <input
           className={twMerge(
             clsx(

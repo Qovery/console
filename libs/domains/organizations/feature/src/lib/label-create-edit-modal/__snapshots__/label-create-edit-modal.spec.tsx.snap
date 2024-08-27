@@ -96,11 +96,11 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                 class="grid grid-cols-[6fr_6fr_1fr_1fr] items-center gap-x-2"
               >
                 <div
-                  class=" "
+                  class=""
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label
@@ -116,11 +116,11 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                   </div>
                 </div>
                 <div
-                  class=" "
+                  class=""
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label

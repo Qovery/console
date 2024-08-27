@@ -22,11 +22,11 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
       </div>
       <form>
         <div
-          class="mb-5 "
+          class="mb-5"
           data-testid="input-small-wrapper"
         >
           <div
-            class="input input--small flex-grow   "
+            class="input input--small flex-grow"
             data-testid="input"
           >
             <label
