@@ -147,13 +147,13 @@ exports[`ClusterCard should render correctly 1`] = `
       class="flex flex-wrap gap-2"
     >
       <span
-        class="inline-flex items-center shrink-0 font-medium text-brand-500 border text-xs h-7 px-2 rounded border-brand-500"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 text-brand-500 border rounded border-brand-500"
         data-accent-color="brand"
       >
         Production
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium border text-xs h-7 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
         data-accent-color="neutral"
       >
         <svg
@@ -240,29 +240,26 @@ exports[`ClusterCard should render correctly 1`] = `
         Qovery managed
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium border text-xs h-7 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
         data-accent-color="neutral"
       >
         EKS
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium border text-xs h-7 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
         data-accent-color="neutral"
-        data-testid="tag-region"
       >
         us-east-1
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium border text-xs h-7 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
         data-accent-color="neutral"
-        data-testid="tag-version"
       >
         1.21
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium border text-xs h-7 px-2 rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
         data-accent-color="neutral"
-        data-testid="tag-instance"
       >
         t3.medium
       </span>
