@@ -1,8 +1,8 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { ClusterCard } from '@qovery/domains/clusters/feature'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { EmptyState, Heading, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
-import CardCluster from '../card-cluster/card-cluster'
 
 export interface PageClustersGeneralProps {
   clusters: Cluster[]
@@ -35,7 +35,7 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
         ) : clusters && clusters.length > 0 ? (
           <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {clusters.map((cluster) => (
-              <CardCluster key={cluster.id} cluster={cluster} organizationId={organizationId} />
+              <ClusterCard key={cluster.id} cluster={cluster} organizationId={organizationId} />
             ))}
           </div>
         ) : (

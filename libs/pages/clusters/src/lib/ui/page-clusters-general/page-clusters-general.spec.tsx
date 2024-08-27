@@ -2,9 +2,11 @@ import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageClustersGeneral, { type PageClustersGeneralProps } from './page-clusters-general'
 
+const clusters = clusterFactoryMock(2)
+
 describe('PageClustersGeneral', () => {
   const props: PageClustersGeneralProps = {
-    clusters: clusterFactoryMock(2),
+    clusters,
     loading: false,
   }
 
@@ -26,14 +28,16 @@ describe('PageClustersGeneral', () => {
     props.clusters = []
 
     renderWithProviders(<PageClustersGeneral {...props} />)
-    screen.getByText('No cluster set')
+    const emptyStateElement = screen.getByText('No cluster set')
+    expect(emptyStateElement).toBeInTheDocument()
   })
 
-  it('should have an list of registries', () => {
+  it('should have a list of clusters', () => {
     props.loading = false
     props.clusters = clusterFactoryMock(1)
 
     renderWithProviders(<PageClustersGeneral {...props} />)
-    screen.getByTestId(`cluster-list-${props.clusters[0].id}`)
+    const clusterNameElement = screen.getByText(props.clusters[0].name)
+    expect(clusterNameElement).toBeInTheDocument()
   })
 })
