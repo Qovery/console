@@ -100,7 +100,6 @@ export function TemplateFormSync({
       }))
 
       // Variables
-
       setVariableData((variableData) => ({
         ...(variableData ?? {}),
         variables: template.variables.map((v) => ({
