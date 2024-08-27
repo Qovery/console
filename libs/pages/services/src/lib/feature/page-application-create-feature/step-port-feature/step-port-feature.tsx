@@ -6,7 +6,6 @@ import { type PortData } from '@qovery/shared/interfaces'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_CREATION_HEALTHCHECKS_URL,
-  SERVICES_CREATION_POST_URL,
   SERVICES_CREATION_RESOURCES_URL,
   SERVICES_CREATION_VARIABLES_URL,
 } from '@qovery/shared/routes'
