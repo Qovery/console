@@ -12,7 +12,7 @@ export interface ModalCrudProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   isEdit?: boolean
   loading?: boolean
-  description?: string
+  description?: ReactNode
   submitLabel?: string
   forServiceName?: string
   onDelete?: () => void
