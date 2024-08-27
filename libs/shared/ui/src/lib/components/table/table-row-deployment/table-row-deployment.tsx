@@ -183,7 +183,7 @@ export function TableRowDeployment({
               <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
             )}
             {(data as Container).image_name && (
-              <Badge size="xs" className="max-w-[200px] truncate">
+              <Badge className="max-w-[200px] truncate">
                 <span className="block truncate">
                   <Tooltip side="left" content={`${(data as Container).image_name}:${(data as Container).tag}`}>
                     <span>
@@ -194,7 +194,7 @@ export function TableRowDeployment({
               </Badge>
             )}
             {(data as DeploymentHistoryHelmResponse).repository && (
-              <Badge size="xs" className="max-w-[200px] truncate">
+              <Badge className="max-w-[200px] truncate">
                 <span className="block truncate">
                   <Tooltip
                     side="left"

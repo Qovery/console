@@ -91,7 +91,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
           <Tooltip content={podName}>
             <div className="inline-block">
               <CopyToClipboard text={podName}>
-                <Button size="xs" variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
+                <Button variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
                   {podName.substring(0, 10)}...{podName.slice(-10)}
                 </Button>
               </CopyToClipboard>
@@ -99,13 +99,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
           </Tooltip>
         ) : (
           <CopyToClipboard text={podName}>
-            <Button
-              className="truncate"
-              size="xs"
-              variant="surface"
-              color="neutral"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <Button className="truncate" variant="surface" color="neutral" onClick={(e) => e.stopPropagation()}>
               {podName}
             </Button>
           </CopyToClipboard>
@@ -115,7 +109,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
     const statusColumn = columnHelper.accessor('state', {
       header: 'Status',
       cell: (info) => (
-        <Badge size="sm" variant="outline" radius="full" className="gap-2 capitalize">
+        <Badge variant="outline" radius="full" className="gap-2 capitalize">
           <StatusChip status={info.getValue() ?? 'UNKNOWN'} />
           <span className="text-neutral-400">{info.getValue()?.toLowerCase() ?? 'Unknown'}</span>
         </Badge>
@@ -147,7 +141,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         const value = info.getValue()
         return (
           value && (
-            <Badge variant="surface" size="xs" className="max-w-full shrink">
+            <Badge variant="surface" className="max-w-full shrink">
               {containerImage ? (
                 <div className="truncate">
                   {containerImage.image_name}:{containerImage.tag}

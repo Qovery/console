@@ -354,11 +354,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                     rel="noopener noreferrer"
                     className="max-w-full"
                   >
-                    <Badge
-                      variant="surface"
-                      size="xs"
-                      className="max-w-full items-center gap-1 whitespace-nowrap capitalize"
-                    >
+                    <Badge variant="surface" className="max-w-full items-center gap-1 whitespace-nowrap capitalize">
                       <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
                       <span className="truncate">
                         <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
@@ -383,7 +379,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 <Dt>Repository:</Dt>
                 <Dd>
                   <a href={helmRepository.repository.url} target="_blank" rel="noopener noreferrer">
-                    <Badge variant="surface" size="xs" className="items-center gap-1 text-nowrap capitalize">
+                    <Badge variant="surface" className="items-center gap-1 text-nowrap capitalize">
                       <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
                       <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
                     </Badge>
@@ -401,7 +397,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <Dl>
             <Dt>Type:</Dt>
             <Dd>
-              <Badge size="xs" variant="surface" className="items-center gap-1">
+              <Badge variant="surface" className="items-center gap-1">
                 <Icon name={databaseSource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
                 {databaseSource.version}
               </Badge>

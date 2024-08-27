@@ -103,23 +103,23 @@ export function RowEvent(props: RowEventProps) {
 
   const badge = match(event.event_type)
     .with(OrganizationEventType.ACCEPT, () => (
-      <Badge size="xs" color="green">
+      <Badge color="green">
         Accept <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.CREATE, () => (
-      <Badge size="xs" color="green">
+      <Badge color="green">
         Create <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.DEPLOYED, OrganizationEventType.STOPPED, OrganizationEventType.RESTARTED, (v) => (
-      <Badge size="xs" color="green">
+      <Badge color="green">
         {upperCaseFirstLetter(v)}
         <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.DELETE, () => (
-      <Badge size="xs" color="neutral">
+      <Badge color="neutral">
         Delete <Icon iconName="eraser" className="ml-1" />
       </Badge>
     ))
@@ -130,49 +130,49 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.DELETE_FAILED,
       OrganizationEventType.RESTART_FAILED,
       (v) => (
-        <Badge size="xs" color="neutral">
+        <Badge color="neutral">
           {upperCaseFirstLetter(v)}
           <Icon iconName="eraser" className="ml-1" />
         </Badge>
       )
     )
     .with(OrganizationEventType.UPDATE, () => (
-      <Badge size="xs" color="sky">
+      <Badge color="sky">
         Update <Icon iconName="rotate" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_CANCEL, () => (
-      <Badge size="xs" color="neutral">
+      <Badge color="neutral">
         Trigger Cancel <Icon iconName="xmark" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_DELETE, () => (
-      <Badge size="xs" color="neutral">
+      <Badge color="neutral">
         Trigger Delete <Icon iconName="eraser" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_DEPLOY, () => (
-      <Badge size="xs" color="neutral">
+      <Badge color="neutral">
         Trigger Deploy <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_REDEPLOY, () => (
-      <Badge size="xs" color="neutral">
+      <Badge color="neutral">
         Trigger Redeploy <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_STOP, () => (
-      <Badge size="xs" color="sky">
+      <Badge color="sky">
         Trigger Stop <Icon iconName="xmark" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_RESTART, () => (
-      <Badge size="xs" color="sky">
+      <Badge color="sky">
         Trigger Restart <Icon iconName="rotate-right" className="ml-1" />
       </Badge>
     ))
     .otherwise((v) => (
-      <Badge size="xs" color="neutral">
+      <Badge color="neutral">
         {upperCaseFirstLetter(v)}
         <Icon iconName="rotate" className="ml-1" />
       </Badge>

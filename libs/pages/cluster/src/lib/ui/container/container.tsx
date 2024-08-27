@@ -34,53 +34,37 @@ export function Container({ children }: PropsWithChildren) {
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
-        {cluster?.production && (
-          <Badge size="xs" color="neutral">
-            Production
-          </Badge>
-        )}
-        {cluster?.is_default && (
-          <Badge size="xs" color="sky">
-            Default
-          </Badge>
-        )}
+        {cluster?.production && <Badge color="neutral">Production</Badge>}
+        {cluster?.is_default && <Badge color="sky">Default</Badge>}
         {cluster ? (
           cluster.kubernetes === 'SELF_MANAGED' ? (
-            <Badge size="xs" color="neutral">
+            <Badge color="neutral">
               <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
               Self managed
             </Badge>
           ) : (
             <>
-              <Badge size="xs" color="neutral">
+              <Badge color="neutral">
                 <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
                 Qovery managed
               </Badge>
-              <ClusterType size="xs" cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+              <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
             </>
           )
         ) : (
           <Skeleton width={120} height={22} show />
         )}
         <Skeleton width={120} height={22} show={!cluster}>
-          <Badge size="xs" color="neutral">
-            {cluster?.region}
-          </Badge>
+          <Badge color="neutral">{cluster?.region}</Badge>
         </Skeleton>
         {cluster?.kubernetes !== 'SELF_MANAGED' && (
           <>
             <Skeleton width={120} height={22} show={!cluster}>
-              {cluster?.version && (
-                <Badge size="xs" color="neutral">
-                  {cluster?.version}
-                </Badge>
-              )}
+              {cluster?.version && <Badge color="neutral">{cluster?.version}</Badge>}
             </Skeleton>
             <Skeleton width={120} height={22} show={!cluster}>
               {cluster?.instance_type && (
-                <Badge size="xs" color="neutral">
-                  {cluster?.instance_type?.toLowerCase().replace('_', '.')}
-                </Badge>
+                <Badge color="neutral">{cluster?.instance_type?.toLowerCase().replace('_', '.')}</Badge>
               )}
             </Skeleton>
           </>

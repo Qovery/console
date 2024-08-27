@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium'], {
+const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'text-xs', 'h-6', 'px-2'], {
   variants: {
     color: {
       neutral: [],
@@ -16,12 +16,6 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
     variant: {
       outline: ['border'],
       surface: ['border'],
-    },
-    size: {
-      xs: ['text-xs', 'h-5', 'px-1'],
-      sm: ['text-xs', 'h-7', 'px-2'],
-      md: ['text-xs', 'h-9', 'px-3'],
-      lg: ['text-sm', 'h-11', 'px-5'],
     },
     radius: {
       rounded: ['rounded'],
@@ -124,7 +118,6 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
   ],
   defaultVariants: {
     variant: 'outline',
-    size: 'sm',
     color: 'neutral',
     radius: 'rounded',
   },
@@ -135,7 +128,7 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {}
 
 export const Badge = forwardRef<ElementRef<'span'>, BadgeProps>(function Badge(
-  { className, color, variant, size, radius, ...badgeProps },
+  { className, color, variant, radius, ...badgeProps },
   forwardedRef
 ) {
   return (
@@ -143,7 +136,7 @@ export const Badge = forwardRef<ElementRef<'span'>, BadgeProps>(function Badge(
       data-accent-color={color}
       {...badgeProps}
       ref={forwardedRef}
-      className={twMerge(badgeVariants({ color, variant, radius, size }), className)}
+      className={twMerge(badgeVariants({ color, variant, radius }), className)}
     />
   )
 })

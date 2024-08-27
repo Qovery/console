@@ -7,7 +7,7 @@ describe('Badge', () => {
     screen.getByText('Foobar')
   })
   it('shoud match size snapshot', () => {
-    const { baseElement } = renderWithProviders(<Badge size="xs">Foobar</Badge>)
+    const { baseElement } = renderWithProviders(<Badge size="md">Foobar</Badge>)
     expect(baseElement).toMatchSnapshot()
   })
   it('shoud match color snapshot', () => {
