@@ -50,18 +50,18 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
             class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
           >
             <div
-              class="w-full "
+              class="w-full"
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow   "
+                class="input input--small flex-grow"
                 data-testid="input"
               >
                 <label
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
                   name="eks_subnets.0.A"
                   type="text"
@@ -70,18 +70,18 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
               </div>
             </div>
             <div
-              class="w-full "
+              class="w-full"
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow   "
+                class="input input--small flex-grow"
                 data-testid="input"
               >
                 <label
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
                   name="eks_subnets.0.B"
                   type="text"
@@ -90,18 +90,18 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
               </div>
             </div>
             <div
-              class="w-full "
+              class="w-full"
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow   "
+                class="input input--small flex-grow"
                 data-testid="input"
               >
                 <label
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
                   name="eks_subnets.0.C"
                   type="text"
@@ -223,18 +223,18 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
             class="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2"
           >
             <div
-              class="w-full "
+              class="w-full"
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow   "
+                class="input input--small flex-grow"
                 data-testid="input"
               >
                 <label
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
                   name="eks_subnets.0.A"
                   type="text"
@@ -243,18 +243,18 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
               </div>
             </div>
             <div
-              class="w-full "
+              class="w-full"
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow   "
+                class="input input--small flex-grow"
                 data-testid="input"
               >
                 <label
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
                   name="eks_subnets.0.B"
                   type="text"
@@ -263,18 +263,18 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
               </div>
             </div>
             <div
-              class="w-full "
+              class="w-full"
               data-testid="input-small-wrapper"
             >
               <div
-                class="input input--small flex-grow   "
+                class="input input--small flex-grow"
                 data-testid="input"
               >
                 <label
                   class="hidden"
                 />
                 <input
-                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                  class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
                   name="eks_subnets.0.C"
                   type="text"

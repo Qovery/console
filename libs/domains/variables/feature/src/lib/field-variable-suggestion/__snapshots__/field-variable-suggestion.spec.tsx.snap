@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FieldVariableSuggestion should render dropdown content when clicked 1`] = `
+<div
+  aria-labelledby="radix-:rf:"
+  aria-orientation="vertical"
+  class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded flex max-h-60 w-[256px] flex-col p-2"
+  data-align="center"
+  data-orientation="vertical"
+  data-radix-menu-content=""
+  data-side="bottom"
+  data-state="open"
+  dir="ltr"
+  id="radix-:rg:"
+  role="menu"
+  style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
+  tabindex="-1"
+>
+  <div
+    class="bg-white dark:bg-neutral-700"
+  >
+    <div
+      class="relative w-full mb-1"
+    >
+      <span
+        class="icon-solid-magnifying-glass shrink-0 absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-400 dark:text-white"
+        role="img"
+      />
+      <input
+        class="w-full rounded border border-neutral-250 pl-10 pr-6 text-neutral-400 placeholder:text-neutral-350 focus:border-brand-400 focus:outline-none focus:transition-[border-color] dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250 h-9 text-xs"
+        data-testid="input-search"
+        name="search"
+        placeholder="Search..."
+        type="text"
+      />
+    </div>
+  </div>
+  <div
+    class="overflow-y-auto"
+  >
+    <div
+      class="flex text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5"
+      data-orientation="vertical"
+      data-radix-collection-item=""
+      role="menuitem"
+      tabindex="-1"
+      type="button"
+    >
+      <span
+        class="text-sm font-medium"
+      >
+        <span
+          class=""
+          data-state="closed"
+          data-testid="truncate-text"
+        >
+          QOVERY_CONTAINER_Z04308D
+          ...
+        </span>
+      </span>
+      <span
+        class="truncate text-xs font-normal"
+      >
+        test
+      </span>
+    </div>
+  </div>
+</div>
+`;

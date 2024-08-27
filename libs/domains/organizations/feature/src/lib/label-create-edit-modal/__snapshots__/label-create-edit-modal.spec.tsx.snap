@@ -96,18 +96,18 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                 class="grid grid-cols-[6fr_6fr_1fr_1fr] items-center gap-x-2"
               >
                 <div
-                  class=" "
+                  class=""
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                       data-testid="labels.0.key"
                       name="labels.0.key"
                       type="text"
@@ -116,18 +116,18 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                   </div>
                 </div>
                 <div
-                  class=" "
+                  class=""
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                       data-testid="labels.0.value"
                       name="labels.0.value"
                       type="text"

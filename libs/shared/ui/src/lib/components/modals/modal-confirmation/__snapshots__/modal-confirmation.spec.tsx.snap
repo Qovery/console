@@ -29,18 +29,18 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
     </div>
     <form>
       <div
-        class="mb-5 "
+        class="mb-5"
         data-testid="input-small-wrapper"
       >
         <div
-          class="input input--small flex-grow   "
+          class="input input--small flex-grow"
           data-testid="input"
         >
           <label
             class="hidden"
           />
           <input
-            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
             data-testid="input-value"
             name="name"
             placeholder="Enter the current name"
@@ -87,18 +87,18 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
     </div>
     <form>
       <div
-        class="mb-5 "
+        class="mb-5"
         data-testid="input-small-wrapper"
       >
         <div
-          class="input input--small flex-grow   "
+          class="input input--small flex-grow"
           data-testid="input"
         >
           <label
             class="hidden"
           />
           <input
-            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
             data-testid="input-value"
             name="name"
             placeholder="Enter "delete""
@@ -149,18 +149,18 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
     </div>
     <form>
       <div
-        class="mb-5 "
+        class="mb-5"
         data-testid="input-small-wrapper"
       >
         <div
-          class="input input--small flex-grow   "
+          class="input input--small flex-grow"
           data-testid="input"
         >
           <label
             class="hidden"
           />
           <input
-            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+            class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
             data-testid="input-value"
             name="name"
             placeholder="Enter "delete""

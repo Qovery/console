@@ -82,18 +82,18 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                 class="grid grid-cols-[6fr_6fr_1fr] items-center gap-x-2"
               >
                 <div
-                  class=" "
+                  class=""
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                       data-testid="annotations.0.key"
                       name="annotations.0.key"
                       type="text"
@@ -102,18 +102,18 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                   </div>
                 </div>
                 <div
-                  class=" "
+                  class=""
                   data-testid="input-small-wrapper"
                 >
                   <div
-                    class="input input--small flex-grow   "
+                    class="input input--small flex-grow"
                     data-testid="input"
                   >
                     <label
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 "
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                       data-testid="annotations.0.value"
                       name="annotations.0.value"
                       type="text"
