@@ -105,7 +105,7 @@ export function VariableRow(props: VariableRowProps) {
               required: 'Please enter a value.',
             }}
             render={({ field, fieldState: { error } }) => (
-              <WrapperDropdownVariables environmentId={environmentId} onChange={field.onChange}>
+              <WrapperDropdownVariables value={field.value} environmentId={environmentId} onChange={field.onChange}>
                 <InputTextSmall
                   className="w-full"
                   data-testid="value"

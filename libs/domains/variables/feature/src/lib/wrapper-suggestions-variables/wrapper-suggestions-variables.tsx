@@ -7,6 +7,7 @@ import { useVariables } from '../hooks/use-variables/use-variables'
 export interface WrapperDropdownVariablesProps extends PropsWithChildren {
   environmentId: string
   onChange: (value: string) => void
+  value?: string
   className?: string
 }
 
@@ -15,6 +16,7 @@ export function WrapperDropdownVariables({
   onChange,
   className,
   children,
+  value = '',
 }: WrapperDropdownVariablesProps) {
   const { data: variables = [] } = useVariables({
     parentId: environmentId,
@@ -73,7 +75,7 @@ export function WrapperDropdownVariables({
                           dropdownMenuItemVariants({ color: 'brand' }),
                           'h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5'
                         )}
-                        onClick={() => onChange(variable.key)}
+                        onClick={() => onChange(value + `{{${variable.key}}}`)}
                       >
                         <span className="text-sm font-medium">
                           <Truncate text={variable.key} truncateLimit={24} />

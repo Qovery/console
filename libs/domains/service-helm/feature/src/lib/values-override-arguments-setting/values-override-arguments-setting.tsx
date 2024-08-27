@@ -110,7 +110,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
               required: true,
             }}
             render={({ field, fieldState: { error } }) => (
-              <WrapperDropdownVariables environmentId={environmentId} onChange={field.onChange}>
+              <WrapperDropdownVariables value={field.value} environmentId={environmentId} onChange={field.onChange}>
                 <InputTextSmall
                   className="w-full"
                   name={field.name}
