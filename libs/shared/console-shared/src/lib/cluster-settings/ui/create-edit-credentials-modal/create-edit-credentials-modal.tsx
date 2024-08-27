@@ -15,7 +15,7 @@ export interface CreateEditCredentialsModalProps {
 }
 
 export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProps) {
-  const { control, setValue } = useFormContext()
+  const { control, setValue, formState } = useFormContext()
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -117,26 +117,51 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                 />
               )}
             />
-            <hr />
-            <span className="text-sm text-neutral-350">Confirm your secret access key</span>
-            <Controller
-              name="secret_access_key"
-              control={control}
-              rules={{
-                required: 'Please enter a secret key.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-secret-key"
-                  type="password"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Secret access key"
-                  error={error?.message}
-                />
-              )}
-            />
+            {!props.isEdit ? (
+              <Controller
+                name="secret_access_key"
+                control={control}
+                rules={{
+                  required: 'Please enter a secret key.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-secret-key"
+                    type="password"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Secret access key"
+                    error={error?.message}
+                  />
+                )}
+              />
+            ) : (
+              formState.isDirty && (
+                <>
+                  <hr />
+                  <span className="text-sm text-neutral-350">Confirm your secret access key</span>
+                  <Controller
+                    name="secret_access_key"
+                    control={control}
+                    rules={{
+                      required: 'Please enter a secret key.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-secret-key"
+                        type="password"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Secret access key"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                </>
+              )
+            )}
           </>
         )}
         {props.cloudProvider === CloudProviderEnum.SCW && (
@@ -158,26 +183,51 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                 />
               )}
             />
-            <hr />
-            <span className="text-sm text-neutral-350">Confirm your secret access key</span>
-            <Controller
-              name="scaleway_secret_key"
-              control={control}
-              rules={{
-                required: 'Please enter a secret key.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-scw-secret-key"
-                  type="password"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Secret access key"
-                  error={error?.message}
-                />
-              )}
-            />
+            {!props.isEdit ? (
+              <Controller
+                name="scaleway_secret_key"
+                control={control}
+                rules={{
+                  required: 'Please enter a secret key.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-scw-secret-key"
+                    type="password"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Secret access key"
+                    error={error?.message}
+                  />
+                )}
+              />
+            ) : (
+              formState.isDirty && (
+                <>
+                  <hr />
+                  <span className="text-sm text-neutral-350">Confirm your secret access key</span>
+                  <Controller
+                    name="scaleway_secret_key"
+                    control={control}
+                    rules={{
+                      required: 'Please enter a secret key.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-scw-secret-key"
+                        type="password"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Secret access key"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                </>
+              )
+            )}
             <Controller
               name="scaleway_organization_id"
               control={control}

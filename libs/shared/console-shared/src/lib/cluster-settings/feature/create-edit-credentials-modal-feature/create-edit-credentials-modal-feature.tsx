@@ -65,6 +65,20 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
     mode: 'onChange',
     defaultValues: {
       name: currentCredential?.name || '',
+      access_key_id:
+        currentCredential && 'access_key_id' in currentCredential ? currentCredential.access_key_id : undefined,
+      scaleway_organization_id:
+        currentCredential && 'scaleway_organization_id' in currentCredential
+          ? currentCredential.scaleway_organization_id
+          : undefined,
+      scaleway_project_id:
+        currentCredential && 'scaleway_project_id' in currentCredential
+          ? currentCredential.scaleway_project_id
+          : undefined,
+      scaleway_access_key:
+        currentCredential && 'scaleway_access_key' in currentCredential
+          ? currentCredential.scaleway_access_key
+          : undefined,
     },
   })
 
@@ -76,6 +90,12 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
 
   const onSubmit = methods.handleSubmit(async (data) => {
     setLoading(true)
+
+    // Close without edit when no changes
+    if (!methods.formState.isDirty) {
+      onClose()
+      return
+    }
 
     const credentials = handleSubmit(data, cloudProvider)
 
