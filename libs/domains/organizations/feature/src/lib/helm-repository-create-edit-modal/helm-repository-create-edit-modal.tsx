@@ -51,7 +51,7 @@ export function HelmRepositoryCreateEditModal({
   const { mutateAsync: createHelmRepository, isLoading: isCreateHelmRepositoryLoading } = useCreateHelmRepository()
   const loading = isEditHelmRepositoryLoading || isCreateHelmRepositoryLoading
 
-  const methods = useForm<HelmRepositoryRequest>({
+  const methods = useForm<HelmRepositoryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } }>({
     defaultValues: {
       name: repository?.name,
       description: repository?.description,
@@ -59,13 +59,14 @@ export function HelmRepositoryCreateEditModal({
       kind: repository?.kind,
       skip_tls_verification: repository?.skip_tls_verification,
       config: {
-        username: undefined,
+        username: repository?.config?.username,
         password: undefined,
-        region: undefined,
-        access_key_id: undefined,
-        scaleway_access_key: undefined,
+        region: repository?.config?.region,
+        access_key_id: repository?.config?.access_key_id,
+        scaleway_access_key: repository?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
         secret_access_key: undefined,
+        login_type: repository?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
       },
     },
     mode: 'onChange',
@@ -74,20 +75,29 @@ export function HelmRepositoryCreateEditModal({
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const watchKind = methods.watch('kind')
+  const watchLoginType = methods.watch('config.login_type')
 
   const onSubmit = methods.handleSubmit(async (helmRepositoryRequest) => {
+    // Omit `login_type` in the request
+    const { login_type, ...config } = helmRepositoryRequest.config
     try {
       if (repository) {
         const response = await editHelmRepository({
           organizationId: organizationId,
           helmRepositoryId: repository.id,
-          helmRepositoryRequest,
+          helmRepositoryRequest: {
+            ...helmRepositoryRequest,
+            config: config,
+          },
         })
         onClose(response)
       } else {
         const response = await createHelmRepository({
           organizationId: organizationId,
-          helmRepositoryRequest,
+          helmRepositoryRequest: {
+            ...helmRepositoryRequest,
+            config: config,
+          },
         })
         onClose(response)
       }
@@ -224,39 +234,73 @@ export function HelmRepositoryCreateEditModal({
           .otherwise(() => false) && (
           <>
             <Controller
-              name="config.username"
+              name="config.login_type"
               control={methods.control}
               render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-username"
+                <InputSelect
                   className="mb-5"
-                  type="text"
-                  name={field.name}
-                  onChange={field.onChange}
+                  onChange={(value) => {
+                    field.onChange(value)
+                    methods.setValue('config.username', '')
+                    methods.setValue('config.password', '')
+                    methods.clearErrors('config.username')
+                    methods.clearErrors('config.password')
+                  }}
                   value={field.value}
-                  label="Username (optional)"
+                  label="Login type"
                   error={error?.message}
+                  options={[
+                    {
+                      label: 'Account',
+                      value: 'ACCOUNT',
+                    },
+                    {
+                      label: 'Anonymous',
+                      value: 'ANONYMOUS',
+                    },
+                  ]}
+                  portal
                 />
               )}
             />
-            <Controller
-              name="config.password"
-              control={methods.control}
-              render={({ field, fieldState: { error } }) => (
-                <div className="mb-5">
-                  <InputText
-                    dataTestId="input-password"
-                    className="mb-5"
-                    type="password"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    label="Password (optional)"
-                    error={error?.message}
-                  />
-                </div>
-              )}
-            />
+            {watchLoginType === 'ACCOUNT' && (
+              <>
+                <Controller
+                  name="config.username"
+                  control={methods.control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      dataTestId="input-username"
+                      className="mb-5"
+                      type="text"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Username"
+                      error={error?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  name="config.password"
+                  control={methods.control}
+                  render={({ field, fieldState: { error } }) => (
+                    <div className="mb-5">
+                      <InputText
+                        dataTestId="input-password"
+                        className="mb-5"
+                        type="password"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Password"
+                        error={error?.message}
+                      />
+                    </div>
+                  )}
+                />
+              </>
+            )}
           </>
         )}
         {watchKind === 'OCI_SCALEWAY_CR' && (
