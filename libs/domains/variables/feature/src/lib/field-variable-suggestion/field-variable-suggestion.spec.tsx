@@ -1,7 +1,7 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { InputWithDropdownVariables, type InputWithDropdownVariablesProps } from './input-with-suggestions-variables'
+import { FieldVariableSuggestion, type FieldVariableSuggestionProps } from './field-variable-suggestion'
 
-const props: InputWithDropdownVariablesProps = {
+const props: FieldVariableSuggestionProps = {
   environmentId: '000',
   onChange: jest.fn(),
 }
@@ -31,14 +31,14 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
   }),
 }))
 
-describe('InputWithDropdownVariables', () => {
+describe('FieldVariableSuggestion', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<InputWithDropdownVariables {...props} />)
+    const { baseElement } = renderWithProviders(<FieldVariableSuggestion {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render dropdown content when clicked', async () => {
-    const { userEvent } = renderWithProviders(<InputWithDropdownVariables {...props} />)
+    const { userEvent } = renderWithProviders(<FieldVariableSuggestion {...props} />)
 
     const button = screen.getByRole('button')
     await userEvent.click(button)

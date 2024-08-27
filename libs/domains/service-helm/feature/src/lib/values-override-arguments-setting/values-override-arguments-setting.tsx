@@ -8,7 +8,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { CodeEditorVariables, InputWithDropdownVariables } from '@qovery/domains/variables/feature'
+import { CodeEditorVariables, FieldVariableSuggestion } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
@@ -110,7 +110,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
               required: true,
             }}
             render={({ field, fieldState: { error } }) => (
-              <InputWithDropdownVariables
+              <FieldVariableSuggestion
                 value={field.value}
                 environmentId={environmentId}
                 onChange={field.onChange}

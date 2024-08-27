@@ -13,7 +13,7 @@ import {
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
-export interface InputWithDropdownVariablesProps {
+export interface FieldVariableSuggestionProps {
   environmentId: string
   onChange: (value: string) => void
   inputProps: InputTextSmallProps
@@ -21,13 +21,13 @@ export interface InputWithDropdownVariablesProps {
   className?: string
 }
 
-export function InputWithDropdownVariables({
+export function FieldVariableSuggestion({
   environmentId,
   onChange,
   className,
   inputProps,
   value = '',
-}: InputWithDropdownVariablesProps) {
+}: FieldVariableSuggestionProps) {
   const { data: variables = [] } = useVariables({
     parentId: environmentId,
     scope: 'ENVIRONMENT',
@@ -127,4 +127,4 @@ export function InputWithDropdownVariables({
   )
 }
 
-export default InputWithDropdownVariables
+export default FieldVariableSuggestion
