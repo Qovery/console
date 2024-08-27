@@ -105,19 +105,22 @@ export function VariableRow(props: VariableRowProps) {
               required: 'Please enter a value.',
             }}
             render={({ field, fieldState: { error } }) => (
-              <WrapperDropdownVariables value={field.value} environmentId={environmentId} onChange={field.onChange}>
-                <InputTextSmall
-                  className="w-full"
-                  data-testid="value"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  errorMessagePosition="left"
-                  type={watchSecret ? 'password' : 'text'}
-                  hasShowPasswordButton={watchSecret}
-                />
-              </WrapperDropdownVariables>
+              <WrapperDropdownVariables
+                value={field.value}
+                environmentId={environmentId}
+                onChange={field.onChange}
+                inputProps={{
+                  className: 'w-full',
+                  dataTestId: 'value',
+                  name: field.name,
+                  onChange: field.onChange,
+                  value: field.value,
+                  error: error?.message,
+                  errorMessagePosition: 'left',
+                  type: watchSecret ? 'password' : 'text',
+                  hasShowPasswordButton: watchSecret,
+                }}
+              />
             )}
           />
         )}

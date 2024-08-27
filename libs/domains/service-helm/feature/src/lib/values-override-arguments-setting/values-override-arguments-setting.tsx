@@ -110,15 +110,18 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
               required: true,
             }}
             render={({ field, fieldState: { error } }) => (
-              <WrapperDropdownVariables value={field.value} environmentId={environmentId} onChange={field.onChange}>
-                <InputTextSmall
-                  className="w-full"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                />
-              </WrapperDropdownVariables>
+              <WrapperDropdownVariables
+                value={field.value}
+                environmentId={environmentId}
+                onChange={field.onChange}
+                inputProps={{
+                  className: 'w-full',
+                  name: field.name,
+                  onChange: field.onChange,
+                  value: field.value,
+                  error: error?.message,
+                }}
+              />
             )}
           />
         )}

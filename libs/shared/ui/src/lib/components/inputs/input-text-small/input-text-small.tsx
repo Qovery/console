@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { type ChangeEventHandler, useEffect, useState } from 'react'
+import { type ChangeEventHandler, forwardRef, useEffect, useState } from 'react'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Tooltip from '../../tooltip/tooltip'
@@ -20,7 +20,10 @@ export interface InputTextSmallProps {
   disabled?: boolean
 }
 
-export function InputTextSmall(props: InputTextSmallProps) {
+export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(function InputTextSmall(
+  props: InputTextSmallProps,
+  ref
+) {
   const {
     name,
     value,
@@ -70,6 +73,7 @@ export function InputTextSmall(props: InputTextSmallProps) {
               'pr-8': hasShowPasswordButton,
             }
           )}
+          ref={ref}
           name={name}
           type={currentType}
           placeholder={placeholder}
@@ -96,6 +100,6 @@ export function InputTextSmall(props: InputTextSmallProps) {
       )}
     </div>
   )
-}
+})
 
 export default InputTextSmall
