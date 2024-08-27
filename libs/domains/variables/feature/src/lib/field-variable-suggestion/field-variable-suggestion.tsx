@@ -1,33 +1,56 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { type PropsWithChildren, useState } from 'react'
-import { Button, Icon, InputSearch, Popover, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
+import { useRef, useState } from 'react'
+import {
+  Button,
+  Icon,
+  InputSearch,
+  InputTextSmall,
+  type InputTextSmallProps,
+  Popover,
+  Truncate,
+  dropdownMenuItemVariants,
+} from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
-export interface WrapperDropdownVariablesProps extends PropsWithChildren {
+export interface FieldVariableSuggestionProps {
   environmentId: string
   onChange: (value: string) => void
+  inputProps: InputTextSmallProps
   value?: string
   className?: string
 }
 
-export function WrapperDropdownVariables({
+export function FieldVariableSuggestion({
   environmentId,
   onChange,
   className,
-  children,
+  inputProps,
   value = '',
-}: WrapperDropdownVariablesProps) {
+}: FieldVariableSuggestionProps) {
   const { data: variables = [] } = useVariables({
     parentId: environmentId,
     scope: 'ENVIRONMENT',
   })
   const [open, setOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
   const [searchTerm, setSearchTerm] = useState('')
   const filteredVariables = variables.filter((variable) =>
     variable.key.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const handleInsertVariable = (variableKey: string) => {
+    const input = inputRef.current
+    if (!input) return
+
+    const startPos = input.selectionStart ?? 0
+    const endPos = input.selectionEnd ?? 0
+
+    const newValue = value.substring(0, startPos) + `{{${variableKey}}}` + value.substring(endPos)
+
+    onChange(newValue)
+  }
 
   // XXX: https://github.com/radix-ui/primitives/issues/1342
   // We are waiting for radix combobox primitives
@@ -37,7 +60,7 @@ export function WrapperDropdownVariables({
   // So both open state should be sync
   return (
     <div className={twMerge('flex w-[calc(100%+4px)]', className)}>
-      {children}
+      <InputTextSmall ref={inputRef} {...inputProps} />
       <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
         <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
           <Popover.Trigger>
@@ -75,7 +98,7 @@ export function WrapperDropdownVariables({
                           dropdownMenuItemVariants({ color: 'brand' }),
                           'h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5'
                         )}
-                        onClick={() => onChange(value + `{{${variable.key}}}`)}
+                        onClick={() => handleInsertVariable(variable.key)}
                       >
                         <span className="text-sm font-medium">
                           <Truncate text={variable.key} truncateLimit={24} />
@@ -104,4 +127,4 @@ export function WrapperDropdownVariables({
   )
 }
 
-export default WrapperDropdownVariables
+export default FieldVariableSuggestion

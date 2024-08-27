@@ -6,7 +6,7 @@ import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 import { CodeEditorVariables } from '../../code-editor-variables/code-editor-variables'
-import { WrapperDropdownVariables } from '../../wrapper-suggestions-variables/wrapper-suggestions-variables'
+import { FieldVariableSuggestion } from '../../field-variable-suggestion/field-variable-suggestion'
 
 export interface VariableRowProps {
   index: number
@@ -105,19 +105,22 @@ export function VariableRow(props: VariableRowProps) {
               required: 'Please enter a value.',
             }}
             render={({ field, fieldState: { error } }) => (
-              <WrapperDropdownVariables value={field.value} environmentId={environmentId} onChange={field.onChange}>
-                <InputTextSmall
-                  className="w-full"
-                  data-testid="value"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  errorMessagePosition="left"
-                  type={watchSecret ? 'password' : 'text'}
-                  hasShowPasswordButton={watchSecret}
-                />
-              </WrapperDropdownVariables>
+              <FieldVariableSuggestion
+                value={field.value}
+                environmentId={environmentId}
+                onChange={field.onChange}
+                inputProps={{
+                  className: 'w-full',
+                  dataTestId: 'value',
+                  name: field.name,
+                  onChange: field.onChange,
+                  value: field.value,
+                  error: error?.message,
+                  errorMessagePosition: 'left',
+                  type: watchSecret ? 'password' : 'text',
+                  hasShowPasswordButton: watchSecret,
+                }}
+              />
             )}
           />
         )}
