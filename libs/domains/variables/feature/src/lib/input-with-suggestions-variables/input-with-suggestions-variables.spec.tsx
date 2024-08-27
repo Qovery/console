@@ -1,7 +1,7 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { WrapperDropdownVariables, type WrapperDropdownVariablesProps } from './wrapper-suggestions-variables'
+import { InputWithDropdownVariables, type InputWithDropdownVariablesProps } from './input-with-suggestions-variables'
 
-const props: WrapperDropdownVariablesProps = {
+const props: InputWithDropdownVariablesProps = {
   environmentId: '000',
   onChange: jest.fn(),
 }
@@ -31,14 +31,14 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
   }),
 }))
 
-describe('WrapperDropdownVariables', () => {
+describe('InputWithDropdownVariables', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<WrapperDropdownVariables {...props} />)
+    const { baseElement } = renderWithProviders(<InputWithDropdownVariables {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render dropdown content when clicked', async () => {
-    const { userEvent } = renderWithProviders(<WrapperDropdownVariables {...props} />)
+    const { userEvent } = renderWithProviders(<InputWithDropdownVariables {...props} />)
 
     const button = screen.getByRole('button')
     await userEvent.click(button)

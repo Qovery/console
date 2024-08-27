@@ -6,7 +6,7 @@ import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 import { CodeEditorVariables } from '../../code-editor-variables/code-editor-variables'
-import { WrapperDropdownVariables } from '../../wrapper-suggestions-variables/wrapper-suggestions-variables'
+import { InputWithDropdownVariables } from '../../input-with-suggestions-variables/input-with-suggestions-variables'
 
 export interface VariableRowProps {
   index: number
@@ -105,7 +105,7 @@ export function VariableRow(props: VariableRowProps) {
               required: 'Please enter a value.',
             }}
             render={({ field, fieldState: { error } }) => (
-              <WrapperDropdownVariables
+              <InputWithDropdownVariables
                 value={field.value}
                 environmentId={environmentId}
                 onChange={field.onChange}

@@ -13,7 +13,7 @@ import {
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
-export interface WrapperDropdownVariablesProps {
+export interface InputWithDropdownVariablesProps {
   environmentId: string
   onChange: (value: string) => void
   inputProps: InputTextSmallProps
@@ -21,13 +21,13 @@ export interface WrapperDropdownVariablesProps {
   className?: string
 }
 
-export function WrapperDropdownVariables({
+export function InputWithDropdownVariables({
   environmentId,
   onChange,
   className,
   inputProps,
   value = '',
-}: WrapperDropdownVariablesProps) {
+}: InputWithDropdownVariablesProps) {
   const { data: variables = [] } = useVariables({
     parentId: environmentId,
     scope: 'ENVIRONMENT',
@@ -127,4 +127,4 @@ export function WrapperDropdownVariables({
   )
 }
 
-export default WrapperDropdownVariables
+export default InputWithDropdownVariables
