@@ -71,6 +71,7 @@ export function ContainerRegistryForm({
   }
 
   const watchKind = methods.watch('kind')
+  const watchLoginType = methods.watch('config.login_type')
 
   return (
     <>
@@ -179,47 +180,81 @@ export function ContainerRegistryForm({
         .otherwise(() => false) && (
         <>
           <Controller
-            name="config.username"
+            name="config.login_type"
             control={methods.control}
             render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-username"
+              <InputSelect
                 className="mb-5"
-                type="text"
-                name={field.name}
-                onChange={field.onChange}
+                onChange={(value) => {
+                  field.onChange(value)
+                  methods.setValue('config.username', '')
+                  methods.setValue('config.password', '')
+                  methods.clearErrors('config.username')
+                  methods.clearErrors('config.password')
+                }}
                 value={field.value}
-                label="Username (optional)"
+                label="Login type"
                 error={error?.message}
+                options={[
+                  {
+                    label: 'Account',
+                    value: 'ACCOUNT',
+                  },
+                  {
+                    label: 'Anonymous',
+                    value: 'ANONYMOUS',
+                  },
+                ]}
+                portal
               />
             )}
           />
-          <Controller
-            name="config.password"
-            control={methods.control}
-            render={({ field, fieldState: { error } }) => (
-              <div className="mb-5">
-                <InputText
-                  dataTestId="input-password"
-                  className="mb-5"
-                  type="password"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Password (optional)"
-                  error={error?.message}
-                />
-                {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
-                  <p className="my-1 text-xs text-neutral-350">
-                    We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
-                    <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
-                      See here
-                    </ExternalLink>
-                  </p>
+          {watchLoginType === 'ACCOUNT' && (
+            <>
+              <Controller
+                name="config.username"
+                control={methods.control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-username"
+                    className="mb-5"
+                    type="text"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Username"
+                    error={error?.message}
+                  />
                 )}
-              </div>
-            )}
-          />
+              />
+              <Controller
+                name="config.password"
+                control={methods.control}
+                render={({ field, fieldState: { error } }) => (
+                  <div className="mb-5">
+                    <InputText
+                      dataTestId="input-password"
+                      className="mb-5"
+                      type="password"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Password"
+                      error={error?.message}
+                    />
+                    {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
+                      <p className="my-1 text-xs text-neutral-350">
+                        We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
+                        <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
+                          See here
+                        </ExternalLink>
+                      </p>
+                    )}
+                  </div>
+                )}
+              />
+            </>
+          )}
         </>
       )}
       {(watchKind === ContainerRegistryKindEnum.ECR ||
@@ -255,7 +290,6 @@ export function ContainerRegistryForm({
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
-                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -295,7 +329,6 @@ export function ContainerRegistryForm({
             render={({ field, fieldState: { error } }) => (
               <InputText
                 className="mb-5"
-                type="password"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}

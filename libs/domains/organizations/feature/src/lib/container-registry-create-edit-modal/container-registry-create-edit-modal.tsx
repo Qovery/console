@@ -19,7 +19,7 @@ export function ContainerRegistryCreateEditModal({
   onClose,
 }: ContainerRegistryCreateEditModalProps) {
   const { enableAlertClickOutside } = useModal()
-  const methods = useForm<ContainerRegistryRequest>({
+  const methods = useForm<ContainerRegistryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } }>({
     mode: 'onChange',
     defaultValues: {
       name: registry?.name,
@@ -27,14 +27,15 @@ export function ContainerRegistryCreateEditModal({
       url: registry?.url,
       kind: registry?.kind,
       config: {
-        username: undefined,
+        username: registry?.config?.username,
         password: undefined,
-        region: undefined,
-        access_key_id: undefined,
+        region: registry?.config?.region,
+        access_key_id: registry?.config?.access_key_id,
         secret_access_key: undefined,
-        scaleway_access_key: undefined,
+        scaleway_access_key: registry?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
         json_credentials: undefined,
+        login_type: registry?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
       },
     },
   })
@@ -50,18 +51,26 @@ export function ContainerRegistryCreateEditModal({
   }, [methods])
 
   const onSubmit = methods.handleSubmit(async (containerRegistryRequest) => {
+    // Omit `login_type` in the request
+    const { login_type, ...config } = containerRegistryRequest.config
     try {
       if (registry) {
         const response = await editContainerRegistry({
           organizationId: organizationId,
           containerRegistryId: registry.id,
-          containerRegistryRequest,
+          containerRegistryRequest: {
+            ...containerRegistryRequest,
+            config: config,
+          },
         })
         onClose(response)
       } else {
         const response = await createContainerRegistry({
           organizationId: organizationId,
-          containerRegistryRequest,
+          containerRegistryRequest: {
+            ...containerRegistryRequest,
+            config: config,
+          },
         })
         onClose(response)
       }
