@@ -1,5 +1,7 @@
 import AWS from 'devicon/icons/amazonwebservices/amazonwebservices-original-wordmark.svg'
 import Angular from 'devicon/icons/angularjs/angularjs-original.svg'
+import Apache from 'devicon/icons/apache/apache-original.svg'
+import ApacheKafka from 'devicon/icons/apachekafka/apachekafka-original.svg'
 import Cloudflare from 'devicon/icons/cloudflare/cloudflare-original.svg'
 import Couchbase from 'devicon/icons/couchbase/couchbase-original.svg'
 import Docker from 'devicon/icons/docker/docker-original.svg'
@@ -8,6 +10,8 @@ import FastAPI from 'devicon/icons/fastapi/fastapi-original.svg'
 import Flask from 'devicon/icons/flask/flask-original.svg'
 import Golang from 'devicon/icons/go/go-original.svg'
 import GCP from 'devicon/icons/googlecloud/googlecloud-original.svg'
+import Grafana from 'devicon/icons/grafana/grafana-original.svg'
+import Helm from 'devicon/icons/helm/helm-original.svg'
 import Java from 'devicon/icons/java/java-original.svg'
 import MongoDB from 'devicon/icons/mongodb/mongodb-original.svg'
 import MySQL from 'devicon/icons/mysql/mysql-original.svg'
@@ -15,8 +19,12 @@ import NestJS from 'devicon/icons/nestjs/nestjs-original.svg'
 import NextJS from 'devicon/icons/nextjs/nextjs-original.svg'
 import Nginx from 'devicon/icons/nginx/nginx-original.svg'
 import Node from 'devicon/icons/nodejs/nodejs-original.svg'
+import NuxtJS from 'devicon/icons/nuxtjs/nuxtjs-original.svg'
 import PostgreSQL from 'devicon/icons/postgresql/postgresql-original.svg'
+import Prometheus from 'devicon/icons/prometheus/prometheus-original.svg'
+import Pulumi from 'devicon/icons/pulumi/pulumi-original.svg'
 import Python from 'devicon/icons/python/python-original.svg'
+import RabbitMQ from 'devicon/icons/rabbitmq/rabbitmq-original.svg'
 import Rails from 'devicon/icons/rails/rails-plain.svg'
 import React from 'devicon/icons/react/react-original.svg'
 import Redis from 'devicon/icons/redis/redis-original.svg'
@@ -248,6 +256,18 @@ export const serviceTemplates: ServiceTemplateType[] = [
       'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
     icon: CloudFormation,
     icon_uri: 'app://qovery-console/cloudformation',
+    type: 'LIFECYCLE_JOB',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    tag: 'IAC',
+    slug: 'pulumi',
+    title: 'Pulumi',
+    description:
+      "Pulumi's open source infrastructure as code SDK enables you to create, deploy, and manage infrastructure on any cloud, using your favorite languages.",
+    icon: Pulumi,
+    icon_uri: 'app://qovery-console/pulumi',
     type: 'LIFECYCLE_JOB',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -524,6 +544,72 @@ export const serviceTemplates: ServiceTemplateType[] = [
     ],
   },
   {
+    tag: 'DATA_STORAGE',
+    slug: 'apachekafka',
+    title: 'Apache Kafka',
+    description: 'Apache Kafka is an open-source distributed event streaming platform',
+    icon: ApacheKafka,
+    icon_uri: 'app://qovery-console/apachekafka',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create an Apache Kafka using a container.',
+        icon: Docker,
+        icon_uri: 'app://qovery-console/apachekafka',
+        type: 'DATABASE',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'helm',
+        title: 'Helm chart',
+        description: 'Create an Apache Kafka using an Helm chart.',
+        icon: Helm,
+        icon_uri: 'app://qovery-console/apachekafka',
+        type: 'HELM',
+        cloud_provider: 'AWS',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
+  },
+  {
+    tag: 'DATA_STORAGE',
+    slug: 'rabbitmq',
+    title: 'Rabbit MQ',
+    description: 'RabbitMQ is a reliable and mature messaging and streaming broker.',
+    icon: RabbitMQ,
+    icon_uri: 'app://qovery-console/rabbitmq',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a RabbitMQ using a container.',
+        icon: Docker,
+        icon_uri: 'app://qovery-console/rabbitmq',
+        type: 'DATABASE',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'helm',
+        title: 'Helm chart',
+        description: 'Create a RabbitMQ using an Helm chart.',
+        icon: Helm,
+        icon_uri: 'app://qovery-console/rabbitmq',
+        type: 'HELM',
+        cloud_provider: 'AWS',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
+  },
+  {
     tag: 'OTHER',
     slug: 'kubecost',
     title: 'Kubecost',
@@ -581,6 +667,38 @@ export const serviceTemplates: ServiceTemplateType[] = [
           'Expose a NextJS application through AWS CloudFront and S3. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
         icon: AWS,
         icon_uri: 'app://qovery-console/nextjs',
+        type: 'LIFECYCLE_JOB',
+        cloud_provider: 'AWS',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
+  },
+  {
+    tag: 'FRONT_END',
+    slug: 'nuxtjs',
+    title: 'NuxtJS',
+    description: 'NuxtJS is a Vue framework with hybrid static & server rendering.',
+    icon: NuxtJS,
+    icon_uri: 'app://qovery-console/nuxtjs',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Expose a NuxtJS application using a container with Nginx.',
+        icon: Docker,
+        icon_uri: 'app://qovery-console/nuxtjs',
+        type: 'APPLICATION',
+      },
+      {
+        slug: 'aws-cloudfront-s3',
+        title: 'AWS Cloudfront and S3',
+        description:
+          'Expose a NuxtJS application through AWS CloudFront and S3. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
+        icon: AWS,
+        icon_uri: 'app://qovery-console/nuxtjs',
         type: 'LIFECYCLE_JOB',
         cloud_provider: 'AWS',
         dockerfile:
@@ -900,6 +1018,108 @@ export const serviceTemplates: ServiceTemplateType[] = [
     type: 'HELM',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    tag: 'OTHER',
+    slug: 'grafana',
+    title: 'Grafana',
+    description: 'Grafana is the open source analytics & monitoring solution for every database.',
+    icon: Grafana,
+    icon_uri: 'app://qovery-console/grafana',
+    type: 'HELM',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a Grafana using a container.',
+        icon: Docker,
+        icon_uri: 'app://qovery-console/grafana',
+        type: 'CONTAINER',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'helm',
+        title: 'Helm chart',
+        description: 'Create a Grafana using an Helm chart.',
+        icon: Helm,
+        icon_uri: 'app://qovery-console/grafana',
+        type: 'HELM',
+        cloud_provider: 'AWS',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
+  },
+  {
+    tag: 'OTHER',
+    slug: 'apache',
+    title: 'Apache',
+    description:
+      'An open-source monitoring system with a dimensional data model, flexible query language, efficient time series database and modern alerting approach.',
+    icon: Apache,
+    icon_uri: 'app://qovery-console/apache',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a Apache using a container.',
+        icon: Docker,
+        icon_uri: 'app://qovery-console/apache',
+        type: 'CONTAINER',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'helm',
+        title: 'Helm chart',
+        description: 'Create a Apache using an Helm chart.',
+        icon: Helm,
+        icon_uri: 'app://qovery-console/apache',
+        type: 'HELM',
+        cloud_provider: 'AWS',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
+  },
+  {
+    tag: 'OTHER',
+    slug: 'prometheus',
+    title: 'Prometheus',
+    description:
+      'An open-source monitoring system with a dimensional data model, flexible query language, efficient time series database and modern alerting approach.',
+    icon: Prometheus,
+    icon_uri: 'app://qovery-console/prometheus',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+    options: [
+      {
+        slug: 'container',
+        title: 'Container',
+        description: 'Create a Prometheus using a container.',
+        icon: Docker,
+        icon_uri: 'app://qovery-console/prometheus',
+        type: 'CONTAINER',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+      {
+        slug: 'helm',
+        title: 'Helm chart',
+        description: 'Create a Prometheus using an Helm chart.',
+        icon: Helm,
+        icon_uri: 'app://qovery-console/prometheus',
+        type: 'HELM',
+        cloud_provider: 'AWS',
+        dockerfile:
+          'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+      },
+    ],
   },
   {
     tag: 'IAC',
