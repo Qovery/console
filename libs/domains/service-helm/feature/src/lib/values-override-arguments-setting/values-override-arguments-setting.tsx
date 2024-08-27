@@ -8,7 +8,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { CodeEditorVariables, FieldVariableSuggestion } from '@qovery/domains/variables/feature'
+import { CodeEditorVariable, FieldVariableSuggestion } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
@@ -144,7 +144,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
             required: true,
           }}
           render={({ field }) => (
-            <CodeEditorVariables
+            <CodeEditorVariable
               environmentId={environmentId}
               language="json"
               height="496px"

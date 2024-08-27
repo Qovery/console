@@ -1,17 +1,7 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { useRef, useState } from 'react'
-import {
-  Button,
-  Icon,
-  InputSearch,
-  InputTextSmall,
-  type InputTextSmallProps,
-  Popover,
-  Truncate,
-  dropdownMenuItemVariants,
-} from '@qovery/shared/ui'
+import { useRef } from 'react'
+import { Button, Icon, InputTextSmall, type InputTextSmallProps } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { useVariables } from '../hooks/use-variables/use-variables'
+import DropdownVariable from '../dropdown-variable/dropdown-variable'
 
 export interface FieldVariableSuggestionProps {
   environmentId: string
@@ -28,17 +18,7 @@ export function FieldVariableSuggestion({
   inputProps,
   value = '',
 }: FieldVariableSuggestionProps) {
-  const { data: variables = [] } = useVariables({
-    parentId: environmentId,
-    scope: 'ENVIRONMENT',
-  })
-  const [open, setOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
-
-  const [searchTerm, setSearchTerm] = useState('')
-  const filteredVariables = variables.filter((variable) =>
-    variable.key.toLowerCase().includes(searchTerm.toLowerCase())
-  )
 
   const handleInsertVariable = (variableKey: string) => {
     const input = inputRef.current
@@ -61,68 +41,17 @@ export function FieldVariableSuggestion({
   return (
     <div className={twMerge('flex w-[calc(100%+36px)]', className)}>
       <InputTextSmall ref={inputRef} {...inputProps} inputClassName="pr-11" />
-      <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
-        <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
-          <Popover.Trigger>
-            <Button
-              size="md"
-              type="button"
-              color="neutral"
-              variant="surface"
-              className="relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
-            >
-              <Icon className="text-sm" iconName="wand-magic-sparkles" />
-            </Button>
-          </Popover.Trigger>
-          <DropdownMenu.Content asChild>
-            <Popover.Content className="flex max-h-60 w-[256px] flex-col p-2">
-              {/* 
-                `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
-                fix issue with item focus if we use input search
-                https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
-              */}
-              <div className="bg-white dark:bg-neutral-700" onKeyDown={(e) => e.stopPropagation()}>
-                <InputSearch
-                  placeholder="Search..."
-                  className="mb-1"
-                  onChange={(value) => setSearchTerm(value)}
-                  autofocus
-                />
-              </div>
-              <div className="overflow-y-auto">
-                {filteredVariables.length > 0 ? (
-                  filteredVariables.map((variable) => (
-                    <Popover.Close key={variable.key} onClick={() => setSearchTerm('')}>
-                      <DropdownMenu.Item
-                        className={twMerge(
-                          dropdownMenuItemVariants({ color: 'brand' }),
-                          'h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5'
-                        )}
-                        onClick={() => handleInsertVariable(variable.key)}
-                      >
-                        <span className="text-sm font-medium">
-                          <Truncate text={variable.key} truncateLimit={24} />
-                        </span>
-
-                        {variable.description && (
-                          <span className="truncate text-xs font-normal">
-                            <Truncate text={variable.description} truncateLimit={34} />
-                          </span>
-                        )}
-                      </DropdownMenu.Item>
-                    </Popover.Close>
-                  ))
-                ) : (
-                  <div className="px-3 py-6 text-center">
-                    <Icon iconName="wave-pulse" className="text-neutral-350" />
-                    <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
-                  </div>
-                )}
-              </div>
-            </Popover.Content>
-          </DropdownMenu.Content>
-        </Popover.Root>
-      </DropdownMenu.Root>
+      <DropdownVariable environmentId={environmentId} onChange={handleInsertVariable}>
+        <Button
+          size="md"
+          type="button"
+          color="neutral"
+          variant="surface"
+          className="relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
+        >
+          <Icon className="text-sm" iconName="wand-magic-sparkles" />
+        </Button>
+      </DropdownVariable>
     </div>
   )
 }
