@@ -38,7 +38,7 @@ export function CodeEditorVariable({
           insertText: formatVariableKey(variable.key),
           range: {
             startLineNumber: position.lineNumber,
-            startColumn: position.column - 2,
+            startColumn: position.column,
             endLineNumber: position.lineNumber,
             endColumn: position.column,
           },
@@ -57,7 +57,7 @@ export function CodeEditorVariable({
           {
             range: {
               startLineNumber: position.lineNumber,
-              startColumn: position.column - 2,
+              startColumn: position.column,
               endLineNumber: position.lineNumber,
               endColumn: position.column,
             },
