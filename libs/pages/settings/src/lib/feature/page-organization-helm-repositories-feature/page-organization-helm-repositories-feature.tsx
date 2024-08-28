@@ -37,6 +37,7 @@ export function PageOrganizationHelmRepositoriesFeature() {
               organizationId={organizationId}
               onClose={closeModal}
               repository={repository}
+              isEdit
             />
           ),
         })

@@ -78,6 +78,12 @@ export function HelmRepositoryCreateEditModal({
   const watchLoginType = methods.watch('config.login_type')
 
   const onSubmit = methods.handleSubmit(async (helmRepositoryRequest) => {
+    // Close without edit when no changes
+    if (!methods.formState.isDirty) {
+      onClose()
+      return
+    }
+
     // Omit `login_type` in the request
     const { login_type, ...config } = helmRepositoryRequest.config
     try {
@@ -105,6 +111,7 @@ export function HelmRepositoryCreateEditModal({
       console.error(error)
     }
   })
+  const isEditDirty = isEdit && methods.formState.isDirty
 
   return (
     <FormProvider {...methods}>
@@ -137,46 +144,44 @@ export function HelmRepositoryCreateEditModal({
           </>
         }
       >
-        <Controller
-          name="name"
-          control={methods.control}
-          rules={{
-            required: 'Please enter a repository name.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-name"
-              className="mb-5"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Repository name"
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="description"
-          control={methods.control}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextArea
-              className="mb-5"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Description (optional)"
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="kind"
-          control={methods.control}
-          rules={{
-            required: 'Please enter a repository type.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <div className="mb-5">
+        <div className="flex flex-col gap-y-4">
+          <Controller
+            name="name"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a repository name.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-name"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Repository name"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="description"
+            control={methods.control}
+            render={({ field, fieldState: { error } }) => (
+              <InputTextArea
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Description (optional)"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="kind"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a repository type.',
+            }}
+            render={({ field, fieldState: { error } }) => (
               <InputSelect
                 onChange={(value) => {
                   methods.resetField('config')
@@ -194,252 +199,272 @@ export function HelmRepositoryCreateEditModal({
                 }))}
                 portal
               />
-            </div>
-          )}
-        />
-        {watchKind && (
-          <Controller
-            name="url"
-            control={methods.control}
-            rules={{
-              required: 'Please enter a repository url.',
-              validate: (input) => {
-                const regex = new RegExp(
-                  `^(${
-                    watchKind === 'HTTPS' ? 'http(s)' : 'oci'
-                  }?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
-                  'gm'
-                )
-                return (
-                  input?.match(regex) !== null ||
-                  `URL must be valid and start with «${watchKind === 'HTTPS' ? 'http(s)' : 'oci'}://»`
-                )
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-url"
-                className="mb-5"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Repository url"
-                error={error?.message}
-              />
             )}
           />
-        )}
-        {match(watchKind)
-          .with('HTTPS', 'OCI_DOCKER_HUB', 'OCI_GENERIC_CR', 'OCI_GITHUB_CR', 'OCI_GITLAB_CR', () => true)
-          .otherwise(() => false) && (
-          <>
+          {watchKind && (
             <Controller
-              name="config.login_type"
+              name="url"
               control={methods.control}
+              rules={{
+                required: 'Please enter a repository url.',
+                validate: (input) => {
+                  const regex = new RegExp(
+                    `^(${
+                      watchKind === 'HTTPS' ? 'http(s)' : 'oci'
+                    }?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
+                    'gm'
+                  )
+                  return (
+                    input?.match(regex) !== null ||
+                    `URL must be valid and start with «${watchKind === 'HTTPS' ? 'http(s)' : 'oci'}://»`
+                  )
+                },
+              }}
               render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  className="mb-5"
-                  onChange={(value) => {
-                    field.onChange(value)
-                    methods.setValue('config.username', '')
-                    methods.setValue('config.password', '')
-                    methods.clearErrors('config.username')
-                    methods.clearErrors('config.password')
-                  }}
+                <InputText
+                  dataTestId="input-url"
+                  name={field.name}
+                  onChange={field.onChange}
                   value={field.value}
-                  label="Login type"
+                  label="Repository url"
                   error={error?.message}
-                  options={[
-                    {
-                      label: 'Account',
-                      value: 'ACCOUNT',
-                    },
-                    {
-                      label: 'Anonymous',
-                      value: 'ANONYMOUS',
-                    },
-                  ]}
-                  portal
                 />
               )}
             />
-            {watchLoginType === 'ACCOUNT' && (
-              <>
+          )}
+          {match(watchKind)
+            .with('HTTPS', 'OCI_DOCKER_HUB', 'OCI_GENERIC_CR', 'OCI_GITHUB_CR', 'OCI_GITLAB_CR', () => true)
+            .otherwise(() => false) && (
+            <>
+              <Controller
+                name="config.login_type"
+                control={methods.control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    onChange={(value) => {
+                      field.onChange(value)
+                      methods.setValue('config.username', '')
+                      methods.setValue('config.password', '')
+                      methods.clearErrors('config.username')
+                      methods.clearErrors('config.password')
+                    }}
+                    value={field.value}
+                    label="Login type"
+                    error={error?.message}
+                    options={[
+                      {
+                        label: 'Account',
+                        value: 'ACCOUNT',
+                      },
+                      {
+                        label: 'Anonymous',
+                        value: 'ANONYMOUS',
+                      },
+                    ]}
+                    portal
+                  />
+                )}
+              />
+              {watchLoginType === 'ACCOUNT' && (
+                <>
+                  <Controller
+                    name="config.username"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter a username.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-username"
+                        type="text"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Username"
+                        error={error?.message}
+                      />
+                    )}
+                    shouldUnregister
+                  />
+                  {isEditDirty && (
+                    <>
+                      <hr />
+                      <span className="text-sm text-neutral-350">Confirm your password</span>
+                    </>
+                  )}
+                  {(!isEdit || isEditDirty) && (
+                    <Controller
+                      name="config.password"
+                      control={methods.control}
+                      rules={{
+                        required: 'Please enter a password.',
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputText
+                          dataTestId="input-password"
+                          type="password"
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value}
+                          label="Password"
+                          error={error?.message}
+                        />
+                      )}
+                      shouldUnregister
+                    />
+                  )}
+                </>
+              )}
+            </>
+          )}
+          {watchKind === 'OCI_SCALEWAY_CR' && (
+            <>
+              <Controller
+                name="config.region"
+                control={methods.control}
+                rules={{
+                  required: 'Please enter a region.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-region"
+                    type="text"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Region"
+                    error={error?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="config.scaleway_access_key"
+                control={methods.control}
+                rules={{
+                  required: 'Please enter a Scaleway access key.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-scaleway_access_key"
+                    type="text"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Access key"
+                    error={error?.message}
+                  />
+                )}
+              />
+              {isEditDirty && (
+                <>
+                  <hr />
+                  <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                </>
+              )}
+              {(!isEdit || isEditDirty) && (
                 <Controller
-                  name="config.username"
+                  name="config.scaleway_secret_key"
                   control={methods.control}
+                  rules={{
+                    required: 'Please enter a Scaleway secret key.',
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
-                      dataTestId="input-username"
-                      className="mb-5"
-                      type="text"
+                      dataTestId="input-scaleway_secret_key"
+                      type="password"
                       name={field.name}
                       onChange={field.onChange}
                       value={field.value}
-                      label="Username"
+                      label="Secret access key"
                       error={error?.message}
                     />
                   )}
                 />
+              )}
+            </>
+          )}
+          {watchKind === 'OCI_ECR' && (
+            <>
+              <Controller
+                name="config.region"
+                control={methods.control}
+                rules={{
+                  required: 'Please enter a region.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-region"
+                    type="text"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Region"
+                    error={error?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="config.access_key_id"
+                control={methods.control}
+                rules={{
+                  required: 'Please enter an access key.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    dataTestId="input-access_key_id"
+                    type="text"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Access key"
+                    error={error?.message}
+                  />
+                )}
+              />
+              {isEditDirty && (
+                <>
+                  <hr />
+                  <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                </>
+              )}
+              {(!isEdit || isEditDirty) && (
                 <Controller
-                  name="config.password"
+                  name="config.secret_access_key"
                   control={methods.control}
+                  rules={{
+                    required: 'Please enter a secret key.',
+                  }}
                   render={({ field, fieldState: { error } }) => (
-                    <div className="mb-5">
-                      <InputText
-                        dataTestId="input-password"
-                        className="mb-5"
-                        type="password"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value}
-                        label="Password"
-                        error={error?.message}
-                      />
-                    </div>
+                    <InputText
+                      dataTestId="input-secret_access_key"
+                      type="password"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Secret key"
+                      error={error?.message}
+                    />
                   )}
                 />
-              </>
-            )}
-          </>
-        )}
-        {watchKind === 'OCI_SCALEWAY_CR' && (
-          <>
-            <Controller
-              name="config.region"
-              control={methods.control}
-              rules={{
-                required: 'Please enter a region.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-region"
-                  className="mb-5"
-                  type="text"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Region"
-                  error={error?.message}
-                />
               )}
-            />
-            <Controller
-              name="config.scaleway_access_key"
-              control={methods.control}
-              rules={{
-                required: 'Please enter a Scaleway access key.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-scaleway_access_key"
-                  className="mb-5"
-                  type="text"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Access key"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="config.scaleway_secret_key"
-              control={methods.control}
-              rules={{
-                required: 'Please enter a Scaleway secret key.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-scaleway_secret_key"
-                  className="mb-5"
-                  type="password"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Secret access key"
-                  error={error?.message}
-                />
-              )}
-            />
-          </>
-        )}
-        {watchKind === 'OCI_ECR' && (
-          <>
-            <Controller
-              name="config.region"
-              control={methods.control}
-              rules={{
-                required: 'Please enter a region.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-region"
-                  className="mb-5"
-                  type="text"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Region"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="config.access_key_id"
-              control={methods.control}
-              rules={{
-                required: 'Please enter an access key.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-access_key_id"
-                  className="mb-5"
-                  type="text"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Access key"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              name="config.secret_access_key"
-              control={methods.control}
-              rules={{
-                required: 'Please enter a secret key.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-secret_access_key"
-                  className="mb-5"
-                  type="password"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Secret key"
-                  error={error?.message}
-                />
-              )}
-            />
-          </>
-        )}
-        <Controller
-          name="skip_tls_verification"
-          control={methods.control}
-          render={({ field }) => (
-            <InputToggle
-              small
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              title="Skip TLS verification"
-              description="skip tls certificate checks for the repository (--insecure-skip-tls-verify)"
-              forceAlignTop
-            />
+            </>
           )}
-        />
+          <Controller
+            name="skip_tls_verification"
+            control={methods.control}
+            render={({ field }) => (
+              <InputToggle
+                small
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                title="Skip TLS verification"
+                description="skip tls certificate checks for the repository (--insecure-skip-tls-verify)"
+                forceAlignTop
+              />
+            )}
+          />
+        </div>
       </ModalCrud>
     </FormProvider>
   )
