@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { useParams } from 'react-router-dom'
-import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
+import { CreateProjectModal } from '@qovery/domains/projects/feature'
 import { ErrorBoundary, NavigationLeft, type NavigationLeftLinkProps, useModal } from '@qovery/shared/ui'
 
 export interface ContainerProps {
@@ -27,7 +27,7 @@ export function Container(props: ContainerProps) {
                 title: 'New',
                 onClick: () => {
                   openModal({
-                    content: <CreateProjectModalFeature onClose={closeModal} organizationId={organizationId} />,
+                    content: <CreateProjectModal onClose={closeModal} organizationId={organizationId} />,
                   })
                 },
               }}
