@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ElementRef, type PropsWithChildren, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -12,17 +13,20 @@ export interface SkeletonProps extends PropsWithChildren {
 }
 
 export const Skeleton = forwardRef<ElementRef<'div'>, SkeletonProps>(function Skeleton(
-  { children, show = true, width, height, rounded, square, truncate, className = '' },
+  { children, show = true, width, height, rounded, square, truncate, className },
   forwardedRef
 ) {
   return (
     <div
       ref={forwardedRef}
-      data-testid="skeleton"
+      aria-busy={show}
       className={twMerge(
-        `skeleton ${truncate ? 'truncate' : ''} ${!show ? 'skeleton--loaded' : ''} ${
-          rounded || square ? '' : 'rounded'
-        }`,
+        clsx('flex', {
+          truncate: truncate,
+          'block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s]':
+            show,
+          rounded: !rounded && !square,
+        }),
         className
       )}
       style={{
