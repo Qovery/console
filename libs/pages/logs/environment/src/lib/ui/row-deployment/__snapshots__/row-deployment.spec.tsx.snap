@@ -36,7 +36,7 @@ exports[`RowDeployment should have cell error message 1`] = `
         </code>
       </span>
       <span
-        class="bigger-click-zone cursor-pointer !absolute right-2 top-1 text-white opacity-0 group-hover:opacity-100"
+        class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] !absolute right-2 top-1 text-white opacity-0 group-hover:opacity-100"
         data-state="closed"
         data-testid="copy-container"
       >
@@ -94,7 +94,7 @@ exports[`RowDeployment should have cell message with ANSI colors and links 1`] =
         </code>
       </span>
       <span
-        class="bigger-click-zone cursor-pointer !absolute right-2 top-1 text-white opacity-0 group-hover:opacity-100"
+        class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] !absolute right-2 top-1 text-white opacity-0 group-hover:opacity-100"
         data-state="closed"
         data-testid="copy-container"
       >
@@ -144,7 +144,7 @@ exports[`RowDeployment should have cell success message 1`] = `
         </code>
       </span>
       <span
-        class="bigger-click-zone cursor-pointer !absolute right-2 top-1 text-white opacity-0 group-hover:opacity-100"
+        class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] !absolute right-2 top-1 text-white opacity-0 group-hover:opacity-100"
         data-state="closed"
         data-testid="copy-container"
       >

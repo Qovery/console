@@ -67,7 +67,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
           class="flex p-2"
         >
           <span
-            class="bigger-click-zone cursor-pointer mr-2 text-brand-500 hover:text-brand-600"
+            class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] mr-2 text-brand-500 hover:text-brand-600"
             data-state="closed"
             data-testid="copy-container"
           >

@@ -105,7 +105,7 @@ exports[`CardCluster should match snapshot 1`] = `
                   fff[...]fff
                 </span>
                 <span
-                  class="bigger-click-zone cursor-pointer ml-1 text-neutral-300"
+                  class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] ml-1 text-neutral-300"
                   data-state="closed"
                   data-testid="copy-container"
                 >
@@ -145,7 +145,7 @@ exports[`CardCluster should match snapshot 1`] = `
                   0[...]0
                 </span>
                 <span
-                  class="bigger-click-zone cursor-pointer ml-1 text-neutral-300"
+                  class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] ml-1 text-neutral-300"
                   data-state="closed"
                   data-testid="copy-container"
                 >
