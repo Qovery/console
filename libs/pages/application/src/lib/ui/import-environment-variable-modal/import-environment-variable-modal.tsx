@@ -4,17 +4,7 @@ import { type DropzoneRootProps } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
-import {
-  Button,
-  ButtonIcon,
-  ButtonIconStyle,
-  ButtonLegacySize,
-  Dropzone,
-  IconAwesomeEnum,
-  InputSelectSmall,
-  InputTextSmall,
-  InputToggle,
-} from '@qovery/shared/ui'
+import { Button, Dropzone, Icon, InputSelectSmall, InputTextSmall, InputToggle } from '@qovery/shared/ui'
 import { computeAvailableScope, generateScopeLabel } from '@qovery/shared/util-js'
 import { validateKey, warningMessage } from '../../feature/import-environment-variable-modal-feature/utils/form-check'
 
@@ -188,14 +178,9 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
                 </div>
 
                 <div className="flex h-full w-full grow items-center">
-                  <ButtonIcon
-                    icon={IconAwesomeEnum.XMARK}
-                    style={ButtonIconStyle.STROKED}
-                    size={ButtonLegacySize.TINY}
-                    onClick={() => props.deleteKey(key)}
-                    className="!h-8 !w-8 text-neutral-350 hover:text-neutral-400"
-                    iconClassName="!text-xs"
-                  />
+                  <Button type="button" variant="plain" size="md" onClick={() => props.deleteKey(key)}>
+                    <Icon className="text-base" iconName="trash-can" iconStyle="light" />
+                  </Button>
                 </div>
               </div>
             ))}
