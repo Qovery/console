@@ -51,6 +51,12 @@ export function ContainerRegistryCreateEditModal({
   }, [methods])
 
   const onSubmit = methods.handleSubmit(async (containerRegistryRequest) => {
+    // Close without edit when no changes
+    if (!methods.formState.isDirty) {
+      onClose()
+      return
+    }
+
     // Omit `login_type` in the request
     const { login_type, ...config } = containerRegistryRequest.config
     try {
@@ -103,7 +109,7 @@ export function ContainerRegistryCreateEditModal({
           </>
         }
       >
-        <ContainerRegistryForm />
+        <ContainerRegistryForm isEdit={isEdit} />
       </ModalCrud>
     </FormProvider>
   )

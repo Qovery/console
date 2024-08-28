@@ -11,6 +11,7 @@ import { useAvailableContainerRegistries } from '../hooks/use-available-containe
 export interface ContainerRegistryFormProps {
   disabledFieldsExceptConfig?: boolean
   isClusterManaged?: boolean
+  isEdit?: boolean
 }
 
 export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) =>
@@ -31,6 +32,7 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
 export function ContainerRegistryForm({
   disabledFieldsExceptConfig = false,
   isClusterManaged = false,
+  isEdit = false,
 }: ContainerRegistryFormProps) {
   const methods = useFormContext()
 
@@ -70,11 +72,12 @@ export function ContainerRegistryForm({
     [ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY]: '',
   }
 
+  const isEditDirty = isEdit && methods.formState.isDirty
   const watchKind = methods.watch('kind')
   const watchLoginType = methods.watch('config.login_type')
 
   return (
-    <>
+    <div className="flex flex-col gap-y-4">
       <Controller
         name="name"
         control={methods.control}
@@ -85,7 +88,6 @@ export function ContainerRegistryForm({
           <InputText
             dataTestId="input-name"
             disabled={disabledFieldsExceptConfig}
-            className="mb-5"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
@@ -99,7 +101,6 @@ export function ContainerRegistryForm({
         control={methods.control}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
-            className="mb-5"
             disabled={disabledFieldsExceptConfig}
             name={field.name}
             onChange={field.onChange}
@@ -116,22 +117,20 @@ export function ContainerRegistryForm({
           required: 'Please enter a registry type.',
         }}
         render={({ field, fieldState: { error } }) => (
-          <div className="mb-5">
-            <InputSelect
-              disabled={disabledFieldsExceptConfig}
-              onChange={(value) => {
-                methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
-                methods.resetField('config')
-                field.onChange(value)
-              }}
-              value={field.value}
-              label="Type"
-              error={error?.message}
-              options={getOptionsContainerRegistry(availableContainerRegistries)}
-              isSearchable
-              portal
-            />
-          </div>
+          <InputSelect
+            disabled={disabledFieldsExceptConfig}
+            onChange={(value) => {
+              methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
+              methods.resetField('config')
+              field.onChange(value)
+            }}
+            value={field.value}
+            label="Type"
+            error={error?.message}
+            options={getOptionsContainerRegistry(availableContainerRegistries)}
+            isSearchable
+            portal
+          />
         )}
       />
       {watchKind && (
@@ -148,7 +147,6 @@ export function ContainerRegistryForm({
           render={({ field, fieldState: { error } }) => (
             <InputText
               dataTestId="input-url"
-              className="mb-5"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
@@ -184,7 +182,6 @@ export function ContainerRegistryForm({
             control={methods.control}
             render={({ field, fieldState: { error } }) => (
               <InputSelect
-                className="mb-5"
                 onChange={(value) => {
                   field.onChange(value)
                   methods.setValue('config.username', '')
@@ -214,10 +211,12 @@ export function ContainerRegistryForm({
               <Controller
                 name="config.username"
                 control={methods.control}
+                rules={{
+                  required: 'Please enter a username.',
+                }}
                 render={({ field, fieldState: { error } }) => (
                   <InputText
                     dataTestId="input-username"
-                    className="mb-5"
                     type="text"
                     name={field.name}
                     onChange={field.onChange}
@@ -226,33 +225,45 @@ export function ContainerRegistryForm({
                     error={error?.message}
                   />
                 )}
+                shouldUnregister
               />
-              <Controller
-                name="config.password"
-                control={methods.control}
-                render={({ field, fieldState: { error } }) => (
-                  <div className="mb-5">
-                    <InputText
-                      dataTestId="input-password"
-                      className="mb-5"
-                      type="password"
-                      name={field.name}
-                      onChange={field.onChange}
-                      value={field.value}
-                      label="Password"
-                      error={error?.message}
-                    />
-                    {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
-                      <p className="my-1 text-xs text-neutral-350">
-                        We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
-                        <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
-                          See here
-                        </ExternalLink>
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
+              {isEditDirty && (
+                <>
+                  <hr />
+                  <span className="text-sm text-neutral-350">Confirm your password</span>
+                </>
+              )}
+              {(!isEdit || isEditDirty) && (
+                <Controller
+                  name="config.password"
+                  control={methods.control}
+                  rules={{
+                    required: 'Please enter a password.',
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <>
+                      <InputText
+                        dataTestId="input-password"
+                        type="password"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Password"
+                        error={error?.message}
+                      />
+                      {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
+                        <p className="my-1 text-xs text-neutral-350">
+                          We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
+                          <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
+                            See here
+                          </ExternalLink>
+                        </p>
+                      )}
+                    </>
+                  )}
+                  shouldUnregister
+                />
+              )}
             </>
           )}
         </>
@@ -268,7 +279,6 @@ export function ContainerRegistryForm({
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              className="mb-5"
               name={field.name}
               onChange={field.onChange}
               value={field.value}
@@ -289,7 +299,6 @@ export function ContainerRegistryForm({
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                className="mb-5"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -298,24 +307,31 @@ export function ContainerRegistryForm({
               />
             )}
           />
-          <Controller
-            name="config.secret_access_key"
-            control={methods.control}
-            rules={{
-              required: 'Please enter a secret key.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="mb-5"
-                type="password"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Secret key"
-                error={error?.message}
-              />
-            )}
-          />
+          {isEditDirty && (
+            <>
+              <hr />
+              <span className="text-sm text-neutral-350">Confirm your secret key</span>
+            </>
+          )}
+          {(!isEdit || isEditDirty) && (
+            <Controller
+              name="config.secret_access_key"
+              control={methods.control}
+              rules={{
+                required: 'Please enter a secret key.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  type="password"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Secret key"
+                  error={error?.message}
+                />
+              )}
+            />
+          )}
         </>
       )}
       {watchKind === ContainerRegistryKindEnum.SCALEWAY_CR && (
@@ -328,7 +344,6 @@ export function ContainerRegistryForm({
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                className="mb-5"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -337,24 +352,31 @@ export function ContainerRegistryForm({
               />
             )}
           />
-          <Controller
-            name="config.scaleway_secret_key"
-            control={methods.control}
-            rules={{
-              required: 'Please enter a Scaleway secret key.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="mb-5"
-                type="password"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Secret key"
-                error={error?.message}
-              />
-            )}
-          />
+          {isEditDirty && (
+            <>
+              <hr />
+              <span className="text-sm text-neutral-350">Confirm your secret key</span>
+            </>
+          )}
+          {(!isEdit || isEditDirty) && (
+            <Controller
+              name="config.scaleway_secret_key"
+              control={methods.control}
+              rules={{
+                required: 'Please enter a Scaleway secret key.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  type="password"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Secret key"
+                  error={error?.message}
+                />
+              )}
+            />
+          )}
         </>
       )}
       {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && (
@@ -365,7 +387,7 @@ export function ContainerRegistryForm({
             required: 'Please enter your credentials JSON',
           }}
           render={({ field }) => (
-            <div className="mb-5">
+            <>
               {!field.value ? (
                 <div {...getRootProps()}>
                   <input data-testid="input-credentials-json" className="hidden" {...getInputProps()} />
@@ -393,11 +415,11 @@ export function ContainerRegistryForm({
               ) : (
                 <div />
               )}
-            </div>
+            </>
           )}
         />
       )}
-    </>
+    </div>
   )
 }
 
