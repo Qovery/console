@@ -52,12 +52,13 @@ describe('CreateEditCredentialsModalFeature', () => {
 
     const inputName = screen.getByTestId('input-name')
     const inputAccessKey = screen.getByTestId('input-access-key')
-    const inputSecretKey = screen.getByTestId('input-secret-key')
 
     await userEvent.clear(inputName)
 
     await userEvent.type(inputName, 'test')
     await userEvent.type(inputAccessKey, 'access')
+
+    const inputSecretKey = screen.getByTestId('input-secret-key')
     await userEvent.type(inputSecretKey, 'secret')
 
     const submitButton = screen.getByTestId('submit-button')
@@ -84,7 +85,6 @@ describe('CreateEditCredentialsModalFeature', () => {
 
     const inputName = screen.getByTestId('input-name')
     const inputAccessKey = screen.getByTestId('input-scw-access-key')
-    const inputSecretKey = screen.getByTestId('input-scw-secret-key')
     const inputProjectId = screen.getByTestId('input-scw-project-id')
     const inputOrganizationId = screen.getByTestId('input-scw-organization-id')
 
@@ -92,6 +92,8 @@ describe('CreateEditCredentialsModalFeature', () => {
 
     await userEvent.type(inputName, 'test')
     await userEvent.type(inputAccessKey, 'access')
+
+    const inputSecretKey = screen.getByTestId('input-scw-secret-key')
     await userEvent.type(inputSecretKey, 'secret')
     await userEvent.type(inputProjectId, 'project')
     await userEvent.type(inputOrganizationId, 'organization')
