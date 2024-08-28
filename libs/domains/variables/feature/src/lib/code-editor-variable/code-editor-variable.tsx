@@ -1,6 +1,6 @@
 import { type Monaco } from '@monaco-editor/react'
 import { type editor } from 'monaco-editor'
-import { type ComponentProps } from 'react'
+import { type ComponentProps, useRef } from 'react'
 import { Button, CodeEditor, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import DropdownVariable from '../dropdown-variable/dropdown-variable'
@@ -9,6 +9,7 @@ import { useVariables } from '../hooks/use-variables/use-variables'
 interface CodeEditorVariableProps extends ComponentProps<typeof CodeEditor> {
   environmentId: string
 }
+
 export function CodeEditorVariable({
   environmentId,
   language = 'json',
@@ -21,7 +22,11 @@ export function CodeEditorVariable({
     scope: 'ENVIRONMENT',
   })
 
-  const handleEditorDidMount = async (_: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+  const formatVariableKey = (key: string) => `{{${key}}}`
+
+  const handleEditorDidMount = async (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
+    editorRef.current = editor
     const { data: variables = [] } = await refetchVariables()
 
     monaco.languages.registerCompletionItemProvider(language, {
@@ -30,7 +35,7 @@ export function CodeEditorVariable({
           label: variable.key,
           detail: variable.description,
           kind: monaco.languages.CompletionItemKind.Variable,
-          insertText: `{{${variable.key}}}`,
+          insertText: formatVariableKey(variable.key),
           range: {
             startLineNumber: position.lineNumber,
             startColumn: position.column - 2,
@@ -41,6 +46,27 @@ export function CodeEditorVariable({
         return { suggestions }
       },
     })
+  }
+
+  const handleVariableChange = (variableKey: string) => {
+    if (editorRef.current) {
+      const editor = editorRef.current
+      const position = editor.getPosition()
+      if (position) {
+        editor.executeEdits('', [
+          {
+            range: {
+              startLineNumber: position.lineNumber,
+              startColumn: position.column - 2,
+              endLineNumber: position.lineNumber,
+              endColumn: position.column,
+            },
+            text: formatVariableKey(variableKey),
+          },
+        ])
+        editor.focus()
+      }
+    }
   }
 
   return (
@@ -56,15 +82,8 @@ export function CodeEditorVariable({
         }}
         {...props}
       />
-      <DropdownVariable environmentId={environmentId} onChange={(e) => console.log('onChange', e)}>
-        <Button
-          data-testid="button-variable"
-          size="md"
-          type="button"
-          color="neutral"
-          variant="surface"
-          className="absolute right-3 top-3 px-2.5"
-        >
+      <DropdownVariable environmentId={environmentId} onChange={handleVariableChange}>
+        <Button size="md" type="button" color="neutral" variant="surface" className="absolute right-3 top-3 px-2.5">
           <Icon className="text-sm" iconName="wand-magic-sparkles" />
         </Button>
       </DropdownVariable>

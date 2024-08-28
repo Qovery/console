@@ -1,5 +1,5 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { CodeEditorVariable } from '../code-editor-variable'
+import { CodeEditorVariable } from './code-editor-variable'
 
 describe('CodeEditorVariable', () => {
   it('should render successfully', () => {

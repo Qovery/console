@@ -43,7 +43,11 @@ describe('DropdownVariable', () => {
   })
 
   it('should render dropdown content when clicked', async () => {
-    const { userEvent } = renderWithProviders(<DropdownVariable {...props} />)
+    const { userEvent } = renderWithProviders(
+      <DropdownVariable {...props}>
+        <Button>Button</Button>
+      </DropdownVariable>
+    )
 
     const button = screen.getByRole('button')
     await userEvent.click(button)
