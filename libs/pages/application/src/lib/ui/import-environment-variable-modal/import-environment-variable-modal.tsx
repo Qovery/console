@@ -204,7 +204,14 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
               <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => props.closeModal()}>
                 Cancel
               </Button>
-              <Button type="submit" size="lg" variant="solid" disabled={!formState.isValid} loading={loading}>
+              <Button
+                data-testid="submit-button"
+                type="submit"
+                size="lg"
+                variant="solid"
+                disabled={!formState.isValid}
+                loading={loading}
+              >
                 Import
               </Button>
             </div>
