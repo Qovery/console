@@ -1,6 +1,6 @@
 import { type Dispatch, type MouseEvent, type SetStateAction, useEffect, useState } from 'react'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import ButtonLegacy, { ButtonLegacySize, ButtonLegacyStyle } from '../../buttons/button-legacy/button-legacy'
+import { Button } from '../../button/button'
 import Icon from '../../icon/icon'
 import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Menu from '../../menu/menu'
@@ -247,7 +247,6 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
   )
 
   const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
-  const isDark = document.documentElement.classList.contains('dark')
 
   return (
     <div className="flex items-center">
@@ -260,18 +259,14 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <ButtonLegacy className="btn--active flex !h-6 whitespace-nowrap !pr-[26px]" size={ButtonLegacySize.TINY}>
+              <Button variant="solid" size="xs" className="whitespace-nowrap pr-6">
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
-              </ButtonLegacy>
+              </Button>
             ) : (
-              <ButtonLegacy
-                className={`flex !h-6 ${isDark ? 'btn--dark' : ''}`}
-                size={ButtonLegacySize.TINY}
-                style={ButtonLegacyStyle.STROKED}
-                iconRight={IconAwesomeEnum.ANGLE_DOWN}
-              >
+              <Button variant="surface" color="neutral" size="xs" className="items-center gap-1.5">
                 {title}
-              </ButtonLegacy>
+                <Icon iconName="angle-down" className="relative top-[1px]" />
+              </Button>
             )}
           </div>
         }

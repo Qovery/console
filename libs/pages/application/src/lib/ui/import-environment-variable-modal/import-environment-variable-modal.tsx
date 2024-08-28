@@ -5,11 +5,10 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { type EnvironmentVariableSecretOrPublic } from '@qovery/shared/interfaces'
 import {
+  Button,
   ButtonIcon,
   ButtonIconStyle,
-  ButtonLegacy,
   ButtonLegacySize,
-  ButtonLegacyStyle,
   Dropzone,
   IconAwesomeEnum,
   InputSelectSmall,
@@ -202,24 +201,12 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
             ))}
 
             <div className="mt-6 flex justify-end gap-3">
-              <ButtonLegacy
-                className="btn--no-min-w"
-                style={ButtonLegacyStyle.STROKED}
-                size={ButtonLegacySize.XLARGE}
-                onClick={() => props.closeModal()}
-              >
+              <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => props.closeModal()}>
                 Cancel
-              </ButtonLegacy>
-              <ButtonLegacy
-                dataTestId="submit-button"
-                className="btn--no-min-w"
-                type="submit"
-                size={ButtonLegacySize.XLARGE}
-                disabled={!formState.isValid}
-                loading={loading}
-              >
+              </Button>
+              <Button type="submit" size="lg" variant="solid" disabled={!formState.isValid} loading={loading}>
                 Import
-              </ButtonLegacy>
+              </Button>
             </div>
           </form>
         </>
