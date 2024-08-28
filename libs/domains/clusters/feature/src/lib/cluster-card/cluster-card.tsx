@@ -30,8 +30,8 @@ export function ClusterCard({ organizationId, cluster }: ClusterCardProps) {
       to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}
       className="flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm transition-colors duration-150 hover:border-brand-500"
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="flex gap-3 marker:items-center">
+      <div className="flex items-start items-center justify-between gap-2">
+        <div className="flex items-center gap-3">
           <Icon width={28} height={28} name={cloudProviderIcon} />
           <span className="line-clamp-2 block text-base font-semibold text-neutral-400">{cluster.name}</span>
         </div>

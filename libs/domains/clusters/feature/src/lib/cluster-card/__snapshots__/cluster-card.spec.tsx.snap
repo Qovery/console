@@ -7,10 +7,10 @@ exports[`ClusterCard should render correctly 1`] = `
     href="/organization/org-id/cluster/cluster-id/settings"
   >
     <div
-      class="flex items-start justify-between gap-2"
+      class="flex items-start items-center justify-between gap-2"
     >
       <div
-        class="flex gap-3 marker:items-center"
+        class="flex items-center gap-3"
       >
         <svg
           class="shrink-0 "
