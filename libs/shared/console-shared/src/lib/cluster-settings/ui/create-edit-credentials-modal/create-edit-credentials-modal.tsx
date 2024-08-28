@@ -39,6 +39,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       }
     },
   })
+  const isEditDirty = props.isEdit && formState.isDirty
 
   return (
     <ModalCrud
@@ -117,7 +118,13 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                 />
               )}
             />
-            {!props.isEdit ? (
+            {isEditDirty && (
+              <>
+                <hr />
+                <span className="text-sm text-neutral-350">Confirm your secret key</span>
+              </>
+            )}
+            {(!props.isEdit || isEditDirty) && (
               <Controller
                 name="secret_access_key"
                 control={control}
@@ -136,31 +143,6 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                   />
                 )}
               />
-            ) : (
-              formState.isDirty && (
-                <>
-                  <hr />
-                  <span className="text-sm text-neutral-350">Confirm your secret access key</span>
-                  <Controller
-                    name="secret_access_key"
-                    control={control}
-                    rules={{
-                      required: 'Please enter a secret key.',
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputText
-                        dataTestId="input-secret-key"
-                        type="password"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value}
-                        label="Secret access key"
-                        error={error?.message}
-                      />
-                    )}
-                  />
-                </>
-              )
             )}
           </>
         )}
@@ -183,7 +165,13 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                 />
               )}
             />
-            {!props.isEdit ? (
+            {isEditDirty && (
+              <>
+                <hr />
+                <span className="text-sm text-neutral-350">Confirm your secret key</span>
+              </>
+            )}
+            {(!props.isEdit || isEditDirty) && (
               <Controller
                 name="scaleway_secret_key"
                 control={control}
@@ -202,31 +190,6 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
                   />
                 )}
               />
-            ) : (
-              formState.isDirty && (
-                <>
-                  <hr />
-                  <span className="text-sm text-neutral-350">Confirm your secret access key</span>
-                  <Controller
-                    name="scaleway_secret_key"
-                    control={control}
-                    rules={{
-                      required: 'Please enter a secret key.',
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputText
-                        dataTestId="input-scw-secret-key"
-                        type="password"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value}
-                        label="Secret access key"
-                        error={error?.message}
-                      />
-                    )}
-                  />
-                </>
-              )
             )}
             <Controller
               name="scaleway_organization_id"
