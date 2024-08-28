@@ -2,18 +2,7 @@ import { type ClusterLogsError } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CLUSTERS_GENERAL_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import {
-  ButtonLegacy,
-  ButtonLegacySize,
-  ButtonLegacyStyle,
-  CopyToClipboardButtonIcon,
-  ExternalLink,
-  Icon,
-  Link,
-  Tabs,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, ExternalLink, Icon, Link, Tabs, Tooltip, Truncate } from '@qovery/shared/ui'
 import { type ErrorLogsProps } from '../layout-logs'
 
 export const enum TabsClusterLogsSection {
