@@ -157,8 +157,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             >
               <div>
                 <div
-                  class="skeleton rounded"
-                  data-testid="skeleton"
+                  aria-busy="true"
+                  class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
                   style="width: 115px; height: 32px;"
                 />
               </div>
@@ -344,8 +344,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             >
               <div>
                 <div
-                  class="skeleton rounded"
-                  data-testid="skeleton"
+                  aria-busy="true"
+                  class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
                   style="width: 115px; height: 32px;"
                 />
               </div>
@@ -510,8 +510,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             >
               <div>
                 <div
-                  class="skeleton rounded"
-                  data-testid="skeleton"
+                  aria-busy="true"
+                  class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
                   style="width: 115px; height: 32px;"
                 />
               </div>
@@ -676,8 +676,8 @@ exports[`EnvironmentList should match snapshot 1`] = `
             >
               <div>
                 <div
-                  class="skeleton rounded"
-                  data-testid="skeleton"
+                  aria-busy="true"
+                  class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
                   style="width: 115px; height: 32px;"
                 />
               </div>
