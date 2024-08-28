@@ -259,11 +259,11 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <Button variant="solid" size="xs" className="whitespace-nowrap pr-6">
+              <Button type="button" variant="solid" size="xs" className="whitespace-nowrap pr-6">
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
               </Button>
             ) : (
-              <Button variant="surface" color="neutral" size="xs" className="items-center gap-1.5">
+              <Button type="button" variant="surface" color="neutral" size="xs" className="items-center gap-1.5">
                 {title}
                 <Icon iconName="angle-down" className="relative top-[1px]" />
               </Button>
