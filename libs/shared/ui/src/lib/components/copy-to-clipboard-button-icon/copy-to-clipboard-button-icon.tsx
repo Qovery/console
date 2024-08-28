@@ -21,16 +21,17 @@ export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps)
   const onClickCopyToClipboard = () => {
     copyToClipboard(content)
     setIcon(IconAwesomeEnum.CHECK)
-    setTimeout(() => {
-      setIcon(IconAwesomeEnum.COPY)
-    }, 1000)
+    setTimeout(() => setIcon(IconAwesomeEnum.COPY), 1000)
   }
 
   return (
     <Tooltip content={tooltipContent}>
       <span
         onClick={onClickCopyToClipboard}
-        className={twMerge('bigger-click-zone cursor-pointer', className)}
+        className={twMerge(
+          "relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-['']",
+          className
+        )}
         data-testid="copy-container"
       >
         <Icon name={icon} className={iconClassName} />

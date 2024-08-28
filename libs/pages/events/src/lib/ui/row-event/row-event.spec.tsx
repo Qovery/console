@@ -27,7 +27,7 @@ describe('RowEvent', () => {
 
   it('should render 7 skeletons while loading', () => {
     renderWithProviders(<RowEvent {...props} isPlaceholder />)
-    expect(screen.getAllByTestId('skeleton')).toHaveLength(7)
+    expect(screen.getAllByRole('generic', { busy: true })).toHaveLength(7)
   })
 
   it('should render 7 cells with good content', () => {
