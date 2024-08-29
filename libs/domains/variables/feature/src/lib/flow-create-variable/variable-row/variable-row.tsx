@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
-import { CodeEditorVariables } from '../../code-editor-variables/code-editor-variables'
+import { CodeEditorVariable } from '../../code-editor-variable/code-editor-variable'
 import { FieldVariableSuggestion } from '../../field-variable-suggestion/field-variable-suggestion'
 
 export interface VariableRowProps {
@@ -166,7 +166,7 @@ export function VariableRow(props: VariableRowProps) {
               required: true,
             }}
             render={({ field }) => (
-              <CodeEditorVariables
+              <CodeEditorVariable
                 environmentId={environmentId}
                 language="json"
                 height="496px"

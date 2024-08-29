@@ -8,7 +8,7 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { CodeEditorVariables, FieldVariableSuggestion } from '@qovery/domains/variables/feature'
+import { CodeEditorVariable, FieldVariableSuggestion } from '@qovery/domains/variables/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
 import {
@@ -40,7 +40,7 @@ export interface ValuesOverrideArgumentsSettingProps extends PropsWithChildren {
   isSetting?: boolean
 }
 
-function Row({ key, index, remove }: { key: string; index: number; remove: UseFieldArrayRemove }) {
+function Row({ index, remove }: { index: number; remove: UseFieldArrayRemove }) {
   const { environmentId = '' } = useParams()
   const { watch, control } = useFormContext()
 
@@ -48,7 +48,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
   const valueTypeJson = watch(`arguments.${index}.type`) === '--set-json'
 
   return (
-    <li key={key} className="mb-3 last:mb-0">
+    <li className="mb-3 last:mb-0">
       <div className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2">
         <Controller
           name={`arguments.${index}.type`}
@@ -144,7 +144,7 @@ function Row({ key, index, remove }: { key: string; index: number; remove: UseFi
             required: true,
           }}
           render={({ field }) => (
-            <CodeEditorVariables
+            <CodeEditorVariable
               environmentId={environmentId}
               language="json"
               height="496px"

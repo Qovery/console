@@ -1,5 +1,5 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { CodeEditorVariables } from '@qovery/domains/variables/feature'
+import { CodeEditorVariable } from '@qovery/domains/variables/feature'
 import { BlockContent, CodeEditor, CopyToClipboardButtonIcon, ModalCrud } from '@qovery/shared/ui'
 
 export interface DockerfileRawModalProps {
@@ -52,7 +52,7 @@ ENTRYPOINT [ "/bin/sh" ]`,
               name="content"
               control={methods.control}
               render={({ field }) => (
-                <CodeEditorVariables
+                <CodeEditorVariable
                   environmentId={environmentId}
                   width="100%"
                   height="calc(100vh  - 254px)"

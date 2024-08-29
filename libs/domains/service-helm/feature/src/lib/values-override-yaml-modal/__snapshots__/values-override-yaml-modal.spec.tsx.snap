@@ -41,21 +41,38 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
             <div
               class="p-0"
             >
-              <section
-                style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh  - 254px);"
+              <div
+                class="relative"
               >
-                <div
-                  style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                <section
+                  style="display: flex; position: relative; text-align: initial; width: 100%; height: calc(100vh  - 254px);"
                 >
                   <div
-                    class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
-                    data-testid="spinner"
+                    style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                  >
+                    <div
+                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                      data-testid="spinner"
+                    />
+                  </div>
+                  <div
+                    style="width: 100%; display: none;"
                   />
-                </div>
-                <div
-                  style="width: 100%; display: none;"
-                />
-              </section>
+                </section>
+                <button
+                  aria-controls="radix-:ri:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-9 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-3 top-3 px-2.5"
+                  data-state="closed"
+                  type="button"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-solid fa-wand-magic-sparkles text-sm"
+                  />
+                </button>
+              </div>
             </div>
           </div>
           <div
