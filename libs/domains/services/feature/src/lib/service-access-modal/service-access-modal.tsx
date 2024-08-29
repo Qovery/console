@@ -235,7 +235,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                                     <span>
                                       <Icon
                                         iconName="circle-info"
-                                        iconStyle="solid"
+                                        iconStyle="light"
                                         className="ml-2 text-neutral-350"
                                       />
                                     </span>

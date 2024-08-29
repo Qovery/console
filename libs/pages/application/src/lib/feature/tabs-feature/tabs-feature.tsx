@@ -106,7 +106,7 @@ export function TabsFeature() {
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
     },
     {
-      icon: <Icon name="icon-solid-key" />,
+      icon: <Icon iconName="key" iconStyle="light" />,
       name: 'Variables',
       active:
         location.pathname ===
@@ -114,7 +114,7 @@ export function TabsFeature() {
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
     },
     {
-      icon: <Icon name="icon-solid-wheel" />,
+      icon: <Icon iconName="gear" iconStyle="light" />,
       name: 'Settings',
       active: location.pathname.includes(
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL

@@ -83,8 +83,8 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
             )}
             onClick={deployCommitVersion}
           >
-            <Icon iconName="rotate-right" className="hidden w-4 group-hover:inline" />
-            <Icon iconName="code-commit" className="w-4 group-hover:hidden" />
+            <Icon iconName="rotate-right" iconStyle="light" className="hidden w-4 group-hover:inline" />
+            <Icon iconName="code-commit" iconStyle="light" className="w-4 group-hover:hidden" />
             {deployedCommit.git_commit_id.substring(0, 7)}
             <span className="absolute -right-[1px] -top-[1px] bottom-0 flex h-[calc(100%+2px)] min-w-[22px] items-center justify-center rounded-br rounded-tr bg-brand-500 px-1 text-white">
               {delta}
