@@ -75,9 +75,9 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
       </DropdownMenu.Root>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
-          <ActionToolbar.Button color="brand" variant="solid" className="gap-2">
-            <span className="text-xs">New variable</span>
-            <Icon iconName="circle-plus" />
+          <ActionToolbar.Button color="brand" variant="solid" size="md" className="gap-2">
+            New variable
+            <Icon iconName="circle-plus" iconStyle="light" />
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>

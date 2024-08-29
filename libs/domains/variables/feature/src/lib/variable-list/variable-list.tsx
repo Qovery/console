@@ -241,7 +241,7 @@ export function VariableList({
                 {variable.description && (
                   <Tooltip content={variable.description}>
                     <span>
-                      <Icon iconName="circle-info" iconStyle="solid" className="text-neutral-350" />
+                      <Icon iconName="circle-info" iconStyle="light" className="text-neutral-350" />
                     </span>
                   </Tooltip>
                 )}
