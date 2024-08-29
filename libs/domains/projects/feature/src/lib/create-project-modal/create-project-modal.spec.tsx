@@ -1,18 +1,8 @@
-import * as projectsDomain from '@qovery/domains/projects/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import CreateProjectModalFeature, { type CreateProjectModalFeatureProps } from './create-project-modal-feature'
+import * as useCreateProject from '../hooks/use-create-project/use-create-project'
+import CreateProjectModalFeature, { type CreateProjectModalProps } from './create-project-modal'
 
-const useCreateProjectMockSpy = jest.spyOn(projectsDomain, 'useCreateProject') as jest.Mock
-
-jest.mock('@tanstack/react-query', () => {
-  const queryClient = {
-    invalidateQueries: jest.fn(),
-  }
-  return {
-    ...jest.requireActual('@tanstack/react-query'),
-    useQueryClient: () => queryClient,
-  }
-})
+const useCreateProjectMockSpy = jest.spyOn(useCreateProject, 'useCreateProject') as jest.Mock
 
 const mockedUsedNavigate = jest.fn()
 jest.mock('react-router-dom', () => ({
@@ -20,7 +10,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedUsedNavigate,
 }))
 
-const props: CreateProjectModalFeatureProps = {
+const props: CreateProjectModalProps = {
   onClose: jest.fn(),
   organizationId: '0',
 }
@@ -28,7 +18,7 @@ const props: CreateProjectModalFeatureProps = {
 describe('CreateProjectModalFeature', () => {
   beforeEach(() => {
     useCreateProjectMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(),
+      mutateAsync: jest.fn().mockResolvedValue({ id: '1' }),
     })
   })
 
@@ -57,5 +47,22 @@ describe('CreateProjectModalFeature', () => {
         description: 'description',
       },
     })
+  })
+
+  it('should handle error when creating project', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => jest.fn())
+    useCreateProjectMockSpy.mockReturnValue({
+      mutateAsync: jest.fn().mockRejectedValue(new Error('Test error')),
+    })
+
+    const { userEvent } = renderWithProviders(<CreateProjectModalFeature {...props} />)
+
+    const inputName = screen.getByTestId('input-name')
+    await userEvent.type(inputName, 'hello-world')
+
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(consoleErrorSpy).toHaveBeenCalled()
+    consoleErrorSpy.mockRestore()
   })
 })

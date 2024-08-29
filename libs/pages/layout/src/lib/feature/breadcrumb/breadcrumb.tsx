@@ -3,7 +3,7 @@ import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { CreateProjectModalFeature } from '@qovery/shared/console-shared'
+import { CreateProjectModal } from '@qovery/domains/projects/feature'
 import { useModal } from '@qovery/shared/ui'
 import { BreadcrumbMemo } from '../../ui/breadcrumb/breadcrumb'
 
@@ -20,7 +20,7 @@ export function BreadcrumbFeature() {
 
   const createProjectModal = () => {
     openModal({
-      content: <CreateProjectModalFeature onClose={closeModal} organizationId={organizationId} />,
+      content: <CreateProjectModal onClose={closeModal} organizationId={organizationId} />,
     })
   }
 
