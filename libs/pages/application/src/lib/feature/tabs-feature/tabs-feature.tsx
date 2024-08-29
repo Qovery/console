@@ -145,7 +145,7 @@ export function TabsFeature() {
               >
                 <Button className="gap-2" size="md" color="neutral" variant="surface">
                   Links
-                  <Icon iconName="link" />
+                  <Icon iconName="link" iconStyle="light" />
                 </Button>
               </ServiceLinksPopover>
               {match(service)

@@ -409,7 +409,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                         variant="surface"
                         className="gap-1 whitespace-nowrap"
                       >
-                        <Icon iconName="code-branch" height={14} width={14} />
+                        <Icon iconName="code-branch" iconStyle="light" height={14} width={14} />
                         <Truncate text={gitRepository.branch} truncateLimit={18} />
                       </ExternalLink>
                     </span>

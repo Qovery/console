@@ -148,7 +148,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
                 </div>
               ) : (
                 <span className="max-w-full truncate">
-                  <Icon className="mr-2" iconName="code-commit" />
+                  <Icon className="mr-2" iconName="code-commit" iconStyle="light" />
                   {value.substring(0, 7)}
                 </span>
               )}

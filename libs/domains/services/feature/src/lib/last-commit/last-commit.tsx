@@ -77,10 +77,7 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
             variant="surface"
             color="neutral"
             size="xs"
-            className={twMerge(
-              `group relative justify-between ${delta > 0 ? 'w-[98px] pr-[26px]' : 'gap-1'}`,
-              className
-            )}
+            className={twMerge(`group relative justify-between ${delta > 0 ? 'w-[104px] pr-7' : 'gap-1'}`, className)}
             onClick={deployCommitVersion}
           >
             <Icon iconName="rotate-right" iconStyle="light" className="hidden w-4 group-hover:inline" />
@@ -97,10 +94,10 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
               variant="surface"
               color="neutral"
               size="xs"
-              className={twMerge('group justify-between', className)}
+              className={twMerge('group justify-between gap-1', className)}
             >
               <Icon iconName="copy" className="hidden w-4 group-hover:inline" />
-              <Icon iconName="code-commit" className="w-4 group-hover:hidden" />
+              <Icon iconName="code-commit" iconStyle="light" className="w-4 group-hover:hidden" />
               {deployedCommit.git_commit_id.substring(0, 7)}
             </Button>
           </CopyToClipboard>
