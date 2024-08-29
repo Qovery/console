@@ -118,13 +118,13 @@ export function Container({ children }: PropsWithChildren) {
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
     },
     {
-      icon: <Icon name="icon-solid-key" />,
+      icon: <Icon iconName="key" iconStyle="light" />,
       name: 'Variables',
       active: location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
     },
     {
-      icon: <Icon name="icon-solid-wheel" />,
+      icon: <Icon iconName="gear" iconStyle="light" />,
       name: 'Settings',
       active: location.pathname.includes(
         `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`

@@ -22,7 +22,7 @@ export function PlaceholderNoRules({ clusterAvailable, linkNewRule, organization
     >
       <Button
         className="mt-5 gap-2"
-        size="md"
+        size="lg"
         onClick={() =>
           clusterAvailable
             ? navigate(linkNewRule)
