@@ -88,7 +88,7 @@ exports[`ValuesOverrideYamlModal should match snapshot 1`] = `
                 Default values.yaml
               </h2>
               <span
-                class="bigger-click-zone cursor-pointer text-xs hover:text-neutral-400"
+                class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] text-xs hover:text-neutral-400"
                 data-state="closed"
                 data-testid="copy-container"
               >

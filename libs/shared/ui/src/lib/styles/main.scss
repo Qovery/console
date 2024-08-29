@@ -12,8 +12,6 @@ $fa-font-path: '/assets/fonts/font-awesome';
 @import 'base/fonts';
 @import 'base/icons';
 
-@import 'utils/bigger-click-zone';
-
 @import 'object/typography';
 @import 'object/animation';
 @import 'object/link';
@@ -23,12 +21,10 @@ $fa-font-path: '/assets/fonts/font-awesome';
 @import 'components/input';
 @import 'components/menu';
 @import 'components/modal';
-@import 'components/status-menu';
-@import 'components/skeleton';
-@import 'components/button-action';
 @import 'components/toast';
 @import 'components/select';
 @import 'components/date-picker';
+@import 'components/button-action';
 
 body {
   overflow-x: hidden;

@@ -23,7 +23,7 @@ exports[`RowPod should match snapshot 1`] = `
       >
         app-z9d11e...77b6-k9sl7
         <span
-          class="bigger-click-zone cursor-pointer opacity-50"
+          class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] opacity-50"
           data-state="closed"
           data-testid="copy-container"
         >
@@ -52,7 +52,7 @@ exports[`RowPod should match snapshot 1`] = `
           53deb16
         </span>
         <span
-          class="bigger-click-zone cursor-pointer ml-1 opacity-0 group-hover/version:opacity-80"
+          class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] ml-1 opacity-0 group-hover/version:opacity-80"
           data-state="closed"
           data-testid="copy-container"
         >

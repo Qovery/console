@@ -79,8 +79,8 @@ exports[`ClusterCard should render correctly 1`] = `
       </div>
     </div>
     <div
-      class="skeleton skeleton--loaded rounded min-w-max"
-      data-testid="skeleton"
+      aria-busy="false"
+      class="flex rounded min-w-max"
     >
       <div>
         <div
