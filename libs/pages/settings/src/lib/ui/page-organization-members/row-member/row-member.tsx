@@ -223,7 +223,7 @@ export function RowMember(props: RowMemberProps) {
     <Skeleton className="shrink-0" show={loading} width={176} height={30}>
       <div
         data-testid="input"
-        className={`relative flex w-44 select-none rounded border px-3 py-2 ${
+        className={`relative flex h-9 w-44 select-none items-center rounded border px-3 ${
           role?.toUpperCase() === MemberRoleEnum.OWNER || !(member as Member).last_activity_at
             ? 'border-neutral-250 bg-neutral-100 text-neutral-350'
             : 'cursor-pointer border-neutral-300 text-neutral-400'

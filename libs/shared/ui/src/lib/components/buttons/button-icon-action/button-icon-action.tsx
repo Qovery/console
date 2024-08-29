@@ -11,11 +11,7 @@ export function ButtonIconAction(props: ButtonIconActionProps) {
   const { actions, className = '' } = props
 
   return (
-    <div
-      data-testid="button-icon-action"
-      className={`btn-icon-action ${className}`}
-      onClick={(e) => e.preventDefault()}
-    >
+    <div data-testid="button-icon-action" className={className} onClick={(e) => e.preventDefault()}>
       {actions &&
         actions.map(
           (action, index) => (action.menus || action.onClick) && <ButtonIconActionElement key={index} {...action} />

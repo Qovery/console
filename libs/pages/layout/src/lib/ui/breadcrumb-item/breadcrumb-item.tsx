@@ -1,5 +1,5 @@
 import { type ReactElement } from 'react'
-import { ButtonIcon, ButtonIconStyle, Menu, MenuAlign, type MenuData } from '@qovery/shared/ui'
+import { Button, Icon, Menu, MenuAlign, type MenuData } from '@qovery/shared/ui'
 import BreadcrumbItemValue from './breadcrumb-item-value/breadcrumb-item-value'
 
 export interface BreadcrumbItemProps {
@@ -32,12 +32,9 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
               portal={false}
               arrowAlign={MenuAlign.START}
               trigger={
-                <ButtonIcon
-                  className="btn-icon--circle"
-                  iconClassName="text-neutral-350 dark:text-neutral-300"
-                  icon="icon-solid-angle-down"
-                  style={ButtonIconStyle.FLAT}
-                />
+                <Button type="button" variant="plain" radius="full">
+                  <Icon iconName="angle-down" />
+                </Button>
               }
             />
           )}

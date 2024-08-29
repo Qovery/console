@@ -17,14 +17,12 @@ $fa-font-path: '/assets/fonts/font-awesome';
 @import 'object/link';
 @import 'object/code-ansi';
 
-@import 'components/button';
 @import 'components/input';
 @import 'components/menu';
 @import 'components/modal';
 @import 'components/toast';
 @import 'components/select';
 @import 'components/date-picker';
-@import 'components/button-action';
 
 body {
   overflow-x: hidden;

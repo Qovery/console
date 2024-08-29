@@ -1,4 +1,5 @@
-import { type ReactNode, useState } from 'react'
+import { type ReactNode } from 'react'
+import Button from '../../../button/button'
 import { Menu, MenuAlign, type MenuData } from '../../../menu/menu'
 import Tooltip from '../../../tooltip/tooltip'
 
@@ -10,7 +11,6 @@ export interface ButtonIconActionElementProps {
   menus?: MenuData
   menusClassName?: string
   menuAlign?: MenuAlign
-  triggerClassName?: string
 }
 
 export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
@@ -21,11 +21,8 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
     onClick,
     menus,
     menusClassName = '',
-    triggerClassName = '',
     menuAlign = MenuAlign.START,
   } = props
-
-  const [open, setOpen] = useState(false)
 
   const tooltipWrapper = (content: ReactNode, withRightBorder = false) => {
     if (triggerTooltip) {
@@ -46,15 +43,11 @@ export function ButtonIconActionElement(props: ButtonIconActionElementProps) {
         menus={menus}
         arrowAlign={menuAlign}
         width={248}
-        onOpen={(isOpen) => setOpen(isOpen)}
         trigger={
-          <div
-            data-testid="element"
-            className={`btn-icon-action__element ${triggerClassName} ${open ? 'is-active' : ''}`}
-          >
+          <Button data-testid="element" variant="outline" size="md" className="w-9 justify-center">
             {iconLeft}
             {iconRight}
-          </div>
+          </Button>
         }
         triggerTooltip={triggerTooltip}
       />
