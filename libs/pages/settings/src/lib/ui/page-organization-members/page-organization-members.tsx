@@ -123,9 +123,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             </p>
             <NeedHelp />
           </div>
-          <Button onClick={() => onAddMember && onAddMember()} size="lg" className="gap-2">
+          <Button onClick={() => onAddMember && onAddMember()} size="md" className="gap-2">
             Add member
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="light" />
           </Button>
         </div>
         <Table

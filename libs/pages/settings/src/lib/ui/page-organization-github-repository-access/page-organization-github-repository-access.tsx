@@ -46,7 +46,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
     <div className="w-full justify-between">
       <div className="max-w-content-with-navigation-left p-8">
         <Section>
-          <div className="mb-8 flex justify-between">
+          <div className="mb-8 flex justify-between gap-2">
             <div className="mr-5 space-y-3">
               <Heading>Git Repository Access</Heading>
               <p className="text-xs text-neutral-400">
@@ -57,7 +57,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
               <NeedHelp />
             </div>
             <Button
-              size="lg"
+              size="md"
               onClick={() => {
                 openModal({
                   content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
@@ -65,7 +65,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
               }}
             >
               Add new token
-              <Icon iconName="circle-plus" className="ml-2" />
+              <Icon iconName="circle-plus" iconStyle="light" className="ml-2" />
             </Button>
           </div>
           <GitTokenList />
