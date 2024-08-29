@@ -247,6 +247,7 @@ export function TableHeadFilter<T>({ title, dataHead, defaultData, filter, setFi
   )
 
   const hideFilterNumber: boolean = dataHead.filter?.some((item) => item.hideFilterNumber) || false
+  const isDark = document.documentElement.classList.contains('dark')
 
   return (
     <div className="flex items-center">
