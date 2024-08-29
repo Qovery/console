@@ -172,6 +172,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
       <DropdownMenu.Content>
         <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
           <Link
+            className="gap-0"
             to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
             state={{ prevUrl: pathname }}
           >
@@ -180,6 +181,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
+            className="gap-0"
             to={AUDIT_LOGS_PARAMS_URL(environment.organization.id, {
               targetType: OrganizationEventTargetType.ENVIRONMENT,
               projectId: environment.project.id,
