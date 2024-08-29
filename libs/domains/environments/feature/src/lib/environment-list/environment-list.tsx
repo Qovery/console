@@ -27,6 +27,7 @@ import {
   EmptyState,
   Icon,
   Link,
+  Skeleton,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -154,21 +155,23 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const value = info.getValue()
           const environment = info.row.original
           return (
-            <Tooltip content="See logs">
-              <Link
-                as="button"
-                to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-                onClick={(e) => e.stopPropagation()}
-                className="gap-2 whitespace-nowrap text-sm"
-                size="md"
-                color="neutral"
-                variant="outline"
-                radius="full"
-              >
-                <StatusChip status={environment.deploymentStatus?.state} />
-                {value}
-              </Link>
-            </Tooltip>
+            <Skeleton width={102} height={34} show={!value}>
+              <Tooltip content="See logs">
+                <Link
+                  as="button"
+                  to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="gap-2 whitespace-nowrap text-sm"
+                  size="md"
+                  color="neutral"
+                  variant="outline"
+                  radius="full"
+                >
+                  <StatusChip status={environment.deploymentStatus?.state} />
+                  {value}
+                </Link>
+              </Tooltip>
+            </Skeleton>
           )
         },
       }),
