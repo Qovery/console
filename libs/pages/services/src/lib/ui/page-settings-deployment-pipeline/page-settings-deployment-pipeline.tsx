@@ -98,11 +98,11 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           <Button
             data-testid="btn-add-stage"
             className="ml-5 shrink-0 gap-2"
-            size="lg"
+            size="md"
             variant="solid"
             onClick={() => onAddStage()}
           >
-            Add stage <Icon iconName="circle-plus" />
+            Add stage <Icon iconName="circle-plus" iconStyle="light" />
           </Button>
         </SettingsHeading>
         <div className="h-full overflow-x-auto">

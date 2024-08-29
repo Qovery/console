@@ -629,20 +629,20 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           fallback={
             <Link
               as="button"
-              size="lg"
+              size="md"
               className="mt-5 gap-2"
               to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
             >
               New service
-              <Icon iconName="circle-plus" />
+              <Icon iconName="circle-plus" iconStyle="light" />
             </Link>
           }
         >
           <Menu
             trigger={
-              <Button size="lg" className="mt-5 gap-2">
+              <Button size="md" className="mt-5 gap-2">
                 New service
-                <Icon iconName="circle-plus" />
+                <Icon iconName="circle-plus" iconStyle="light" />
               </Button>
             }
             menus={newServicesMenu}

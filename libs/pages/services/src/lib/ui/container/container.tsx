@@ -217,21 +217,21 @@ export function Container({ children }: PropsWithChildren) {
             fallback={
               <Link
                 as="button"
-                size="lg"
+                size="md"
                 id="service-list"
                 className="gap-2"
                 to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
               >
                 New service
-                <Icon iconName="circle-plus" />
+                <Icon iconName="circle-plus" iconStyle="light" />
               </Link>
             }
           >
             <Menu
               trigger={
-                <Button id="service-dropdown" size="lg" className="gap-2">
+                <Button id="service-dropdown" size="md" className="gap-2">
                   New service
-                  <Icon iconName="circle-plus" />
+                  <Icon iconName="circle-plus" iconStyle="light" />
                 </Button>
               }
               menus={newServicesMenu}

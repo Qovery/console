@@ -31,7 +31,7 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       items: [
         {
           name: 'Edit rule',
-          contentLeft: <Icon name="icon-solid-pen" className="text-sm text-brand-400" />,
+          contentLeft: <Icon iconName="pen" iconStyle="light" className="text-sm text-brand-500" />,
           link: {
             url: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}/edit/${id}`,
           },
@@ -42,8 +42,8 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       items: [
         {
           name: 'Delete rule',
-          textClassName: '!text-red-500',
-          contentLeft: <Icon name="icon-solid-trash" className="text-sm text-red-500" />,
+          textClassName: '!text-red-600',
+          contentLeft: <Icon iconName="trash-can" iconStyle="light" className="text-sm text-red-600" />,
           onClick: () => removeDeploymentRule(id),
         },
       ],
