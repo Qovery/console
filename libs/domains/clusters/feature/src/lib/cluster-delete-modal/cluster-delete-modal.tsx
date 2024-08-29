@@ -146,7 +146,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
                 onCheckedChange={setConfirmQoveryConfigChecked}
               />
               <label htmlFor="confirm_qovery_config">
-                <span className="font-medium">Qovery organization:</span> the configuration of this cluster and any
+                <span className="font-medium">Qovery environments:</span> the configuration of this cluster and any
                 linked environment will be deleted.
               </label>
             </div>
