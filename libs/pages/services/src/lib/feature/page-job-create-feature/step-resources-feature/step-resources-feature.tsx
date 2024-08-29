@@ -27,7 +27,7 @@ export function StepResourcesFeature() {
   }, [generalData, navigate, environmentId, organizationId, jobURL, projectId])
 
   useEffect(() => {
-    setCurrentStep(3)
+    setCurrentStep(4)
   }, [setCurrentStep])
 
   const methods = useForm<ApplicationResourcesData>({

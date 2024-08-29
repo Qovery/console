@@ -315,7 +315,7 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(5)
+    setCurrentStep(6)
   }, [setCurrentStep])
 
   return (
