@@ -57,7 +57,7 @@ export function DeploymentSetting() {
             </span>
           ) : (
             <span className="break-words text-sm">
-              {`helm install {{RELEASE_NAME}} ${watchVersion ? `--version ${watchVersion}` : ''} ./${watchRootPath.substring(1)} ${displayParsedCmd(watchCmdArguments ?? '')}`}
+              {`helm install {{RELEASE_NAME}} ${watchVersion ? `--version ${watchVersion}` : ''} ./${watchRootPath?.substring(1) ?? ''} ${displayParsedCmd(watchCmdArguments ?? '')}`}
             </span>
           )}
         </div>
