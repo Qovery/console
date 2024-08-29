@@ -63,7 +63,10 @@ export function PageOrganizationHelmRepositories({
                     <Icon name={IconEnum.HELM_OFFICIAL} width="20" height="20" />
                     <div className="ml-4">
                       <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
-                        <Truncate truncateLimit={60} text={repository.name || ''} />
+                        <Truncate
+                          truncateLimit={60}
+                          text={`${repository.name}${repository.config?.access_key_id ? ` (${repository.config?.access_key_id})` : repository.config?.scaleway_access_key ? ` (${repository.config?.scaleway_access_key})` : repository.config?.username ? ` (${repository.config?.username})` : ''}`}
+                        />
                         {repository.description && (
                           <Tooltip content={repository.description}>
                             <div className="ml-1 cursor-pointer">

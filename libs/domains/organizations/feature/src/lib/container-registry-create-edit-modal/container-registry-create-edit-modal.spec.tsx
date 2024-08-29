@@ -106,8 +106,7 @@ describe('ContainerRegistryCreateEditModal', () => {
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://docker.io')
 
-    screen.getByLabelText('Username (optional)')
-    screen.getByLabelText('Password (optional)')
+    screen.getByLabelText('Login type')
   })
 
   it('should render the form with ECR', async () => {
@@ -191,8 +190,7 @@ describe('ContainerRegistryCreateEditModal', () => {
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://ghcr.io')
 
-    screen.getByLabelText('Username (optional)')
-    screen.getByLabelText('Password (optional)')
+    screen.getByLabelText('Login type')
   })
 
   it('should render the form with GITLAB_CR', async () => {
@@ -214,8 +212,7 @@ describe('ContainerRegistryCreateEditModal', () => {
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://registry.gitlab.com')
 
-    screen.getByLabelText('Username (optional)')
-    screen.getByLabelText('Password (optional)')
+    screen.getByLabelText('Login type')
   })
 
   it('should render the form with GENERIC_CR', async () => {
@@ -237,8 +234,7 @@ describe('ContainerRegistryCreateEditModal', () => {
     screen.getByDisplayValue('hello')
     screen.getByDisplayValue('description')
 
-    screen.getByLabelText('Username (optional)')
-    screen.getByLabelText('Password (optional)')
+    screen.getByLabelText('Login type')
   })
 
   it('should submit the form to create a registry', async () => {

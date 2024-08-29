@@ -66,7 +66,10 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                       />
                       <div className="ml-4">
                         <h2 className="mb-1 flex text-xs font-medium text-neutral-400">
-                          <Truncate truncateLimit={60} text={registry.name || ''} />
+                          <Truncate
+                            truncateLimit={60}
+                            text={`${registry.name}${registry.config?.access_key_id ? ` (${registry.config?.access_key_id})` : registry.config?.scaleway_access_key ? ` (${registry.config?.scaleway_access_key})` : registry.config?.username ? ` (${registry.config?.username})` : ''}`}
+                          />
                           {registry.description && (
                             <Tooltip content={registry.description}>
                               <div className="ml-1 cursor-pointer">

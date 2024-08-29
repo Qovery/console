@@ -104,8 +104,7 @@ describe('HelmRepositoryCreateEditModal', () => {
     screen.getByDisplayValue('hello')
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://helm-charts.io')
-    screen.getByLabelText('Username (optional)')
-    screen.getByLabelText('Password (optional)')
+    screen.getByLabelText('Login type')
   })
 
   it('should create helm repository if form is submitted', async () => {
@@ -118,6 +117,9 @@ describe('HelmRepositoryCreateEditModal', () => {
 
     const selectType = screen.getByLabelText('Kind')
     await selectEvent.select(selectType, 'HTTPS', { container: document.body })
+
+    const selectLoginType = screen.getByLabelText('Login type')
+    await selectEvent.select(selectLoginType, 'Account', { container: document.body })
 
     const inputUsername = screen.getByTestId('input-username')
     await userEvent.type(inputUsername, 'hello')

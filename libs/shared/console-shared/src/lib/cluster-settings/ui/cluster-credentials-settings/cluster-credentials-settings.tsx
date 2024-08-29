@@ -13,7 +13,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
   const { control } = useFormContext()
 
   const buildCredentials = credentials?.map((item: ClusterCredentials) => ({
-    label: item.name,
+    label: `${item.name}${'access_key_id' in item ? ` (${item.access_key_id})` : ''}`,
     value: item.id,
     onClickEditable: () => openCredentialsModal(item.id),
   }))
