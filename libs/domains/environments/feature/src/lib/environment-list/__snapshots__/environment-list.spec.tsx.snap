@@ -213,45 +213,50 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/logs"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/logs"
             >
-              <svg
-                class="text-neutral-300"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <g
-                  clip-path="url(#clip0_5424_5935)"
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                    fill="currentColor"
-                  />
-                </g>
-                <defs>
-                  <clippath
-                    id="clip0_5424_5935"
+                  <g
+                    clip-path="url(#clip0_5424_5935)"
                   >
                     <path
-                      d="M0 0H24V24H0z"
-                      fill="#fff"
+                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                      fill="currentColor"
                     />
-                  </clippath>
-                </defs>
-              </svg>
-            </div>
-            Never deployed
-          </a>
+                  </g>
+                  <defs>
+                    <clippath
+                      id="clip0_5424_5935"
+                    >
+                      <path
+                        d="M0 0H24V24H0z"
+                        fill="#fff"
+                      />
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              Never deployed
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -400,31 +405,36 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/logs"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/logs"
             >
-              <svg
-                class="text-neutral-300"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <path
-                  d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm4.59-15L15 7.41l-.797.798L12 10.41 9.797 8.208 9 7.41 7.41 9l.798.797L10.41 12l-2.203 2.203L7.41 15 9 16.59l.797-.798L12 13.59l2.203 2.203.797.797L16.59 15l-.798-.797L13.59 12l2.203-2.203L16.59 9z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
-            Canceled
-          </a>
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm4.59-15L15 7.41l-.797.798L12 10.41 9.797 8.208 9 7.41 7.41 9l.798.797L10.41 12l-2.203 2.203L7.41 15 9 16.59l.797-.798L12 13.59l2.203 2.203.797.797L16.59 15l-.798-.797L13.59 12l2.203-2.203L16.59 9z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+              Canceled
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -566,31 +576,36 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/logs"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/logs"
             >
-              <svg
-                class="text-neutral-300"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <path
-                  d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm4.59-15L15 7.41l-.797.798L12 10.41 9.797 8.208 9 7.41 7.41 9l.798.797L10.41 12l-2.203 2.203L7.41 15 9 16.59l.797-.798L12 13.59l2.203 2.203.797.797L16.59 15l-.798-.797L13.59 12l2.203-2.203L16.59 9z"
-                  fill="currentColor"
-                />
-              </svg>
-            </div>
-            Canceled
-          </a>
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm4.59-15L15 7.41l-.797.798L12 10.41 9.797 8.208 9 7.41 7.41 9l.798.797L10.41 12l-2.203 2.203L7.41 15 9 16.59l.797-.798L12 13.59l2.203 2.203.797.797L16.59 15l-.798-.797L13.59 12l2.203-2.203L16.59 9z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+              Canceled
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -732,45 +747,50 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/logs"
             >
-              <svg
-                class="text-green-500"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <g
-                  clip-path="url(#clip0_5424_5921)"
+                <svg
+                  class="text-green-500"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm5.297-14.203L18.094 9 16.5 7.41l-.797.798L10.5 13.41l-2.203-2.203-.797-.797L5.91 12l.798.797 3 3 .797.797.797-.797 5.995-6z"
-                    fill="currentColor"
-                  />
-                </g>
-                <defs>
-                  <clippath
-                    id="clip0_5424_5921"
+                  <g
+                    clip-path="url(#clip0_5424_5921)"
                   >
                     <path
-                      d="M0 0H24V24H0z"
-                      fill="#fff"
+                      d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24zm5.297-14.203L18.094 9 16.5 7.41l-.797.798L10.5 13.41l-2.203-2.203-.797-.797L5.91 12l.798.797 3 3 .797.797.797-.797 5.995-6z"
+                      fill="currentColor"
                     />
-                  </clippath>
-                </defs>
-              </svg>
-            </div>
-            Deployed
-          </a>
+                  </g>
+                  <defs>
+                    <clippath
+                      id="clip0_5424_5921"
+                    >
+                      <path
+                        d="M0 0H24V24H0z"
+                        fill="#fff"
+                      />
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              Deployed
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
