@@ -69,6 +69,7 @@ export const useJobContainerCreateContext = () => {
 
 export const steps: { title: string }[] = [
   { title: 'Create new job' },
+  { title: 'Dockerfile' },
   { title: 'Triggers' },
   { title: 'Set resources' },
   { title: 'Set variable environments' },
@@ -151,7 +152,7 @@ export function PageJobCreateFeature() {
           navigate(link)
         }
       }}
-      totalSteps={5}
+      totalSteps={steps.length}
       currentStep={currentStep}
       currentTitle={steps[currentStep - 1].title}
     >

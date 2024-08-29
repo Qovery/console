@@ -70,7 +70,7 @@ export function StepVariableFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(4)
+    setCurrentStep(5)
   }, [setCurrentStep, variableData])
 
   return (

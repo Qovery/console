@@ -37,7 +37,7 @@ export function StepConfigureFeature() {
   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
 
   useEffect(() => {
-    setCurrentStep(2)
+    setCurrentStep(3)
 
     if (configureData?.nb_restarts === undefined) {
       methods.setValue('nb_restarts', 0)
