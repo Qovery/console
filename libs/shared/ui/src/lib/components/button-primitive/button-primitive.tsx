@@ -91,6 +91,7 @@ const _buttonVariants = cva(
           'dark:hover:[&:not(:disabled)]:text-neutral-250',
           'focus-visible:text-neutral-400',
           'active:bg-neutral-150',
+          'dark:active:bg-transparent',
           'active:text-neutral-400',
           'disabled:text-neutral-300',
           'disabled:bg-neutral-150',
