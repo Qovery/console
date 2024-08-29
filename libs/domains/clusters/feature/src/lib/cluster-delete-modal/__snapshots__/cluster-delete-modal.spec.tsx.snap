@@ -175,7 +175,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                 <span
                   class="font-medium"
                 >
-                  Qovery organization:
+                  Qovery environments:
                 </span>
                  the configuration of this cluster and any linked environment will be deleted.
               </label>
