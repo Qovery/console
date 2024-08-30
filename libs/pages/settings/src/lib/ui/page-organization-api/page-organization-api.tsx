@@ -28,7 +28,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
           </div>
           <Button className="shrink-0 gap-2" size="md" onClick={() => onAddToken()}>
             Add new
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Token List" classNameContent="p-0">
@@ -51,7 +51,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                         {token.description && (
                           <Tooltip content={token.description}>
                             <div className="ml-1 cursor-pointer">
-                              <Icon iconName="circle-info" iconStyle="light" />
+                              <Icon iconName="circle-info" iconStyle="regular" />
                             </div>
                           </Tooltip>
                         )}
@@ -74,7 +74,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                       size="md"
                       onClick={() => onDelete(token)}
                     >
-                      <Icon iconName="trash-can" iconStyle="light" />
+                      <Icon iconName="trash-can" iconStyle="regular" />
                     </Button>
                   </div>
                 </li>

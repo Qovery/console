@@ -31,7 +31,7 @@ export function StepFeatures(props: StepFeaturesProps) {
         <div className="mb-10">
           <Callout.Root className="mb-4" color="yellow">
             <Callout.Icon>
-              <Icon className="text-xs" iconName="triangle-exclamation" />
+              <Icon className="text-xs" iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text className="text-xs">
               <Callout.TextHeading>Choose wisely</Callout.TextHeading>
@@ -81,7 +81,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                         {feature.id === 'STATIC_IP' && (
                           <Callout.Root color="yellow" className="mt-4">
                             <Callout.Icon>
-                              <Icon className="text-xs" iconName="triangle-exclamation" />
+                              <Icon className="text-xs" iconName="triangle-exclamation" iconStyle="regular" />
                             </Callout.Icon>
                             <Callout.Text className="text-xs">
                               <Callout.TextHeading>Warning</Callout.TextHeading>

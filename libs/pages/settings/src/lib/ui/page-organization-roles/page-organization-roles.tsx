@@ -58,7 +58,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
           </div>
           <Button onClick={onAddRole} className="gap-2" size="md">
             Add new role
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         {(!roles || roles.length === 0) && loading ? (
@@ -81,7 +81,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                     <div className="flex">
                       <Icon
                         iconName={!isDefaultRole(role.name) ? 'user' : RolesIcons[role.name?.toUpperCase() || '']}
-                        iconStyle="light"
+                        iconStyle="regular"
                         className="text-neutral-350"
                       />
                       <div className="ml-4">
@@ -102,7 +102,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           size="md"
                           to={`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`}
                         >
-                          <Icon iconName="gear" iconStyle="light" />
+                          <Icon iconName="gear" iconStyle="regular" />
                         </Link>
                         <Button
                           type="button"
@@ -111,7 +111,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           size="md"
                           onClick={() => onDeleteRole(role)}
                         >
-                          <Icon iconName="trash-can" iconStyle="light" />
+                          <Icon iconName="trash-can" iconStyle="regular" />
                         </Button>
                       </div>
                     ) : (
@@ -123,7 +123,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           size="md"
                           href="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
                         >
-                          <Icon iconName="book" iconStyle="light" />
+                          <Icon iconName="book" iconStyle="regular" />
                         </ExternalLink>
                       </div>
                     )}

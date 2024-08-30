@@ -43,7 +43,7 @@ export function GitTokenList() {
                     {gitToken.description && (
                       <Tooltip content={gitToken.description}>
                         <span className="ml-1 cursor-pointer">
-                          <Icon iconName="circle-info" iconStyle="light" className="ml-1 cursor-pointer" />
+                          <Icon iconName="circle-info" iconStyle="regular" className="ml-1 cursor-pointer" />
                         </span>
                       </Tooltip>
                     )}
@@ -91,7 +91,7 @@ export function GitTokenList() {
                   <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                     {gitToken.associated_services_count}
                   </span>
-                  <Icon iconName="layer-group" iconStyle="light" />
+                  <Icon iconName="layer-group" iconStyle="regular" />
                 </Button>
                 <Button
                   variant="surface"
@@ -111,7 +111,7 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <Icon iconName="gear" iconStyle="light" />
+                  <Icon iconName="gear" iconStyle="regular" />
                 </Button>
                 <Button
                   variant="surface"
@@ -132,7 +132,7 @@ export function GitTokenList() {
                     })
                   }}
                 >
-                  <Icon iconName="trash-can" iconStyle="light" />
+                  <Icon iconName="trash-can" iconStyle="regular" />
                 </Button>
               </div>
             </li>

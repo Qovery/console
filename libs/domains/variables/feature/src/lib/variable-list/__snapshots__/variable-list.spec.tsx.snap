@@ -208,7 +208,7 @@ exports[`VariableList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-light fa-eye "
+                  class="fa-regular fa-eye "
                 />
               </button>
               <span
@@ -755,7 +755,7 @@ exports[`VariableList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-light fa-eye "
+                  class="fa-regular fa-eye "
                 />
               </button>
               <span
@@ -869,7 +869,7 @@ exports[`VariableList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-light fa-lock-keyhole block w-4"
+                  class="fa-regular fa-lock-keyhole block w-4"
                 />
               </span>
               <span
@@ -1126,7 +1126,7 @@ exports[`VariableList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-light fa-lock-keyhole block w-4"
+                  class="fa-regular fa-lock-keyhole block w-4"
                 />
               </span>
               <span
@@ -1304,7 +1304,7 @@ exports[`VariableList should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-light fa-circle-info text-neutral-350"
+                    class="fa-regular fa-circle-info text-neutral-350"
                   />
                 </span>
               </div>
@@ -1344,7 +1344,7 @@ exports[`VariableList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-light fa-eye "
+                  class="fa-regular fa-eye "
                 />
               </button>
               <span

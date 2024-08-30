@@ -252,7 +252,7 @@ export function RowEvent(props: RowEventProps) {
               <div className="truncate">
                 <span className="mr-1.5 inline-block text-neutral-400">{getSourceIcon(event.origin)}</span>
                 {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
-                {event.user_agent && <Icon iconName="info-circle" iconStyle="light" className="ml-1.5" />}
+                {event.user_agent && <Icon iconName="info-circle" iconStyle="regular" className="ml-1.5" />}
               </div>
             </Tooltip>
           </Skeleton>

@@ -30,13 +30,13 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
         <SettingsHeading title="Domain" description="Add custom domains to your service.">
           <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
             Add Domain
-            <Icon iconName="circle-plus" iconStyle="light" className="ml-2" />
+            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
         </SettingsHeading>
         {props.checkedCustomDomains?.some(({ error_details }) => error_details) && (
           <Callout.Root className="mb-6 mt-2.5" color="red">
             <Callout.Icon>
-              <Icon iconName="triangle-exclamation" />
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
             <Callout.TextHeading className="text-neutral-400">
               Some domains are in error. Please check the status below.

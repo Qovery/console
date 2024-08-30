@@ -55,7 +55,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
               }}
             >
               New Restriction
-              <Icon iconName="plus-circle" iconStyle="light" />
+              <Icon iconName="plus-circle" iconStyle="regular" />
             </Button>
           )}
         </SettingsHeading>

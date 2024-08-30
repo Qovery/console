@@ -34,7 +34,7 @@ export function Table(props: TableProps) {
                 <Icon
                   className="ml-1 cursor-pointer text-xs text-neutral-350"
                   iconName="circle-info"
-                  iconStyle="light"
+                  iconStyle="regular"
                 />
               </div>
             </Tooltip>

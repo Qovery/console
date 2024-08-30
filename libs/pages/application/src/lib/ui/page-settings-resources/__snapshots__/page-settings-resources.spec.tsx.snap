@@ -9,7 +9,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
       class="flex flex-col max-w-content-with-navigation-left p-8"
     >
       <div
-        class="mb-8 flex w-full justify-between"
+        class="mb-8 flex w-full justify-between gap-2"
       >
         <div>
           <h1
@@ -100,7 +100,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-triangle-exclamation "
+                class="fa-regular fa-triangle-exclamation "
               />
             </div>
             <div

@@ -61,7 +61,7 @@ export function PageSettingsGeneral({
           {databaseMode === DatabaseModeEnum.MANAGED && (
             <Callout.Root className="mb-5" color="yellow">
               <Callout.Icon>
-                <Icon iconName="triangle-exclamation" />
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text>
                 <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>
@@ -137,7 +137,7 @@ export function PageSettingsGeneral({
                   {databaseMode === DatabaseModeEnum.CONTAINER && formState.dirtyFields['version'] && (
                     <Callout.Root color="yellow">
                       <Callout.Icon>
-                        <Icon iconName="circle-info" />
+                        <Icon iconName="circle-info" iconStyle="regular" />
                       </Callout.Icon>
                       <Callout.Text className="text-xs">
                         Upgrading the version might cause service interruption. Have a look at the database

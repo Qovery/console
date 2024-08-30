@@ -27,19 +27,19 @@ export function Container({ children }: PropsWithChildren) {
 
   const tabsItems = [
     {
-      icon: <Icon iconName="layer-group" iconStyle="light" />,
+      icon: <Icon iconName="layer-group" iconStyle="regular" />,
       name: 'Environments',
       active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
     },
     {
-      icon: <Icon iconName="browsers" iconStyle="light" />,
+      icon: <Icon iconName="browsers" iconStyle="regular" />,
       name: 'Deployment Rules',
       active: isDeploymentRulesTab,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },
     {
-      icon: <Icon iconName="key" iconStyle="light" />,
+      icon: <Icon iconName="key" iconStyle="regular" />,
       name: 'Variables',
       active: pathname === ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
       link: ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
@@ -81,7 +81,7 @@ export function Container({ children }: PropsWithChildren) {
             }}
           >
             New environment
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </Tooltip>
       )}

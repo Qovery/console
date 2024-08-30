@@ -270,7 +270,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -421,7 +421,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-light fa-code-commit w-4 group-hover:hidden"
+                      class="fa-regular fa-code-commit w-4 group-hover:hidden"
                     />
                     2f74448
                   </button>
@@ -437,7 +437,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-light fa-code-branch "
+                      class="fa-regular fa-code-branch "
                       height="14"
                       width="14"
                     />
@@ -611,7 +611,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -1245,7 +1245,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -1405,7 +1405,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-light fa-code-commit w-4 group-hover:hidden"
+                      class="fa-regular fa-code-commit w-4 group-hover:hidden"
                     />
                     10ad354
                   </button>
@@ -1421,7 +1421,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-light fa-code-branch "
+                      class="fa-regular fa-code-branch "
                       height="14"
                       width="14"
                     />
@@ -1682,7 +1682,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -1842,7 +1842,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-light fa-code-commit w-4 group-hover:hidden"
+                      class="fa-regular fa-code-commit w-4 group-hover:hidden"
                     />
                     10ad354
                   </button>
@@ -1858,7 +1858,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-light fa-code-branch "
+                      class="fa-regular fa-code-branch "
                       height="14"
                       width="14"
                     />

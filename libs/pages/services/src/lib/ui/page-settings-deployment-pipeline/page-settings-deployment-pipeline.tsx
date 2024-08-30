@@ -101,7 +101,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             variant="solid"
             onClick={() => onAddStage()}
           >
-            Add stage <Icon iconName="circle-plus" iconStyle="light" />
+            Add stage <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
         <div className="h-full overflow-x-auto">
@@ -139,7 +139,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                               <div>
                                 <Icon
                                   iconName="circle-info"
-                                  iconStyle="light"
+                                  iconStyle="regular"
                                   className="relative -top-[2px] ml-1 text-xs text-neutral-350"
                                 />
                               </div>

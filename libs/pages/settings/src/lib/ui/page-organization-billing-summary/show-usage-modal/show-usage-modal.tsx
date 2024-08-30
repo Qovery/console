@@ -110,7 +110,7 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
     >
       <Callout.Root className="mb-5 text-xs" color="yellow">
         <Callout.Icon>
-          <Icon iconName="triangle-exclamation" />
+          <Icon iconName="triangle-exclamation" iconStyle="regular" />
         </Callout.Icon>
         <Callout.Text className="flex items-center">
           The report generation could take a few seconds, please be patient.

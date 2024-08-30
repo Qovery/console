@@ -28,7 +28,7 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
         {match(assistantIcon)
           .with('QUESTION_MARK', () => (
             <Icon
-              iconStyle="light"
+              iconStyle="regular"
               iconName="question"
               className="text-2xl group-hover:animate-[shake_0.6s_cubic-bezier(0.36,0.07,0.19,0.97)_both]"
             />

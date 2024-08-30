@@ -26,7 +26,7 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
           <Heading className="mb-2">Payment method</Heading>
           <Button onClick={props.openNewCreditCardModal} size="md" className="gap-2" data-testid="add-new-card-button">
             Add new card
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
 

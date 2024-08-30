@@ -91,7 +91,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
       button: {
         label: (
           <span>
-            New <Icon iconName="circle-plus" className="ml-0.5" />
+            New <Icon iconName="circle-plus" iconStyle="regular" className="ml-0.5" />
           </span>
         ),
         onClick: () => createProjectModal(),
@@ -104,7 +104,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             },
             contentLeft: (
               <Icon
-                name="icon-solid-check"
+                iconName="check"
                 className={`text-sm ${projectId === project.id ? 'text-green-400' : 'text-transparent'}`}
               />
             ),

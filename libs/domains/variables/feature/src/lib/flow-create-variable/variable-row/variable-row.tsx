@@ -153,7 +153,7 @@ export function VariableRow(props: VariableRowProps) {
 
         <div className="flex h-full w-full grow items-center">
           <Button type="button" variant="plain" size="md" onClick={() => props.onDelete(index)}>
-            <Icon className="text-base" iconName="trash-can" iconStyle="light" />
+            <Icon className="text-base" iconName="trash-can" iconStyle="regular" />
           </Button>
         </div>
       </div>

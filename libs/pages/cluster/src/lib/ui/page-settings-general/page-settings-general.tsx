@@ -20,7 +20,7 @@ export function PageSettingsGeneral({ onSubmit, loading, cluster }: PageSettings
         {cluster.cloud_provider !== 'ON_PREMISE' && (
           <Callout.Root color="sky" className="mb-4">
             <Callout.Icon>
-              <Icon iconName="circle-exclamation" iconStyle="light" />
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>

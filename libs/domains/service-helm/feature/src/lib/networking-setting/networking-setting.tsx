@@ -65,9 +65,9 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
           title="Networking"
           description="You can expose publicly over HTTP/gRPC the Kubernetes services deployed."
         >
-          <Button className="gap-2" size="lg" variant="solid" color="brand" onClick={onAddPort}>
-            Add port
-            <Icon iconName="plus-circle" />
+          <Button className="gap-2" size="md" variant="solid" color="brand" onClick={onAddPort}>
+            Add Port
+            <Icon iconName="plus-circle" iconStyle="regular" />
           </Button>
         </SettingsHeading>
       ) : (

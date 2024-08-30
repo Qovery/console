@@ -18,7 +18,7 @@ export function ConfirmationGitModal({
       <h2 className="h4 mb-6 max-w-sm truncate text-neutral-400">Change repository</h2>
       <Callout.Root className="mb-5" color="yellow">
         <Callout.Icon>
-          <Icon iconName="circle-info" />
+          <Icon iconName="circle-info" iconStyle="regular" />
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextHeading>Access to the current repository</Callout.TextHeading>

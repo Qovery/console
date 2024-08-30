@@ -17,7 +17,7 @@ exports[`LastCommit should match snapshot 1`] = `
         />
         <i
           aria-hidden="true"
-          class="fa-light fa-code-commit w-4 group-hover:hidden"
+          class="fa-regular fa-code-commit w-4 group-hover:hidden"
         />
         ddd1cee
       </button>

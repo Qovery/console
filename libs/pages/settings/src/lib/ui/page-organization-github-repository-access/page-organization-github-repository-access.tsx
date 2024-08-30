@@ -65,7 +65,7 @@ export function PageOrganizationGithubRepositoryAccess(props: PageOrganizationGi
               }}
             >
               Add new token
-              <Icon iconName="circle-plus" iconStyle="light" className="ml-2" />
+              <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
             </Button>
           </div>
           <GitTokenList />

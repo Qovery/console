@@ -72,7 +72,7 @@ export function PageDeploymentRules({
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
             <Button size="md" onClick={() => navigate(linkNewRule)}>
-              Add rule <Icon className="ml-2" iconName="circle-plus" iconStyle="light" />
+              Add rule <Icon className="ml-2" iconName="circle-plus" iconStyle="regular" />
             </Button>
           </div>
 

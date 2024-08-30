@@ -83,7 +83,7 @@ function GitRepository({
               rel="noopener noreferrer"
             >
               <Button color="neutral" variant="surface" size="xs" className="gap-1">
-                <Icon iconName="code-branch" iconStyle="light" height={14} width={14} />
+                <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
                 <Truncate text={gitRepository.branch} truncateLimit={18} />
               </Button>
             </a>
@@ -270,7 +270,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="font-medium text-neutral-400">About</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
-            <Icon iconName="gear" iconStyle="light" className="text-base text-neutral-350" />
+            <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-350" />
           </Link>
         </div>
         <p>{service.description || 'No description provided yet'}</p>
@@ -309,7 +309,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           {/* XXX: Should be Heading, typography & design wanted */}
           <span className="font-medium text-neutral-400">Source</span>
           <Link color="current" to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL}`} relative="path">
-            <Icon iconName="gear" iconStyle="light" className="text-base text-neutral-350" />
+            <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-350" />
           </Link>
         </div>
         {match(service)
@@ -419,7 +419,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                       handleCopyCredentials(databaseSource.masterCredentials!)
                     }
                   >
-                    <Icon iconName="key" iconStyle="light" className="mr-2" />
+                    <Icon iconName="key" iconStyle="regular" className="mr-2" />
                     Connection URI
                   </Button>
                 </Dd>
@@ -438,7 +438,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 Resources
                 <Tooltip content="This is based on the configuration of your service">
                   <span className="flex items-center">
-                    <Icon iconName="circle-info" iconStyle="light" className="text-xs text-neutral-350" />
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-350" />
                   </span>
                 </Tooltip>
               </span>
@@ -447,7 +447,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL}`}
                 relative="path"
               >
-                <Icon iconName="gear" iconStyle="light" className="text-base text-neutral-350" />
+                <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-350" />
               </Link>
             </div>
             <div className="grid grid-cols-2 gap-2">{resources}</div>
@@ -466,7 +466,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 to={`..${APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL}`}
                 relative="path"
               >
-                <Icon iconName="gear" iconStyle="light" className="text-base text-neutral-350" />
+                <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-350" />
               </Link>
             </div>
             {valuesOverride}

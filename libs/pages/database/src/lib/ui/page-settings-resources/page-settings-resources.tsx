@@ -32,7 +32,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
           {database.mode === DatabaseModeEnum.MANAGED && (
             <Callout.Root color="yellow">
               <Callout.Icon>
-                <Icon iconName="triangle-exclamation" />
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text>
                 <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>

@@ -45,7 +45,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="flex gap-3">
             <Button className="gap-1" variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
               Show usage
-              <Icon iconName="gauge-high" iconStyle="light" />
+              <Icon iconName="gauge-high" iconStyle="regular" />
             </Button>
             <Button variant="surface" color="neutral" size="md" onClick={props.onPromoCodeClick}>
               Promo code

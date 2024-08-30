@@ -222,7 +222,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-triangle-exclamation "
+                class="fa-regular fa-triangle-exclamation "
               />
             </div>
             <div

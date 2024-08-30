@@ -43,7 +43,7 @@ export function PageOrganizationHelmRepositories({
           </div>
           <Button className="gap-2" size="md" onClick={() => onAddRepository()}>
             Add repository
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Helm repositories" classNameContent="p-0">
@@ -70,7 +70,7 @@ export function PageOrganizationHelmRepositories({
                         {repository.description && (
                           <Tooltip content={repository.description}>
                             <div className="ml-1 cursor-pointer">
-                              <Icon iconName="circle-info" iconStyle="light" />
+                              <Icon iconName="circle-info" iconStyle="regular" />
                             </div>
                           </Tooltip>
                         )}
@@ -93,14 +93,14 @@ export function PageOrganizationHelmRepositories({
                         disabled={repository.associated_services_count === 0}
                         onClick={() => onOpenServicesAssociatedModal(repository)}
                       >
-                        <Icon iconName="layer-group" iconStyle="light" />
+                        <Icon iconName="layer-group" iconStyle="regular" />
                       </Button>
                     </Indicator>
                     <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(repository)}>
-                      <Icon iconName="gear" iconStyle="light" />
+                      <Icon iconName="gear" iconStyle="regular" />
                     </Button>
                     <Button size="md" variant="surface" color="neutral" onClick={() => onDelete(repository)}>
-                      <Icon iconName="trash-can" iconStyle="light" />
+                      <Icon iconName="trash-can" iconStyle="regular" />
                     </Button>
                   </div>
                 </li>

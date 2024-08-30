@@ -39,7 +39,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
           </div>
           <Button data-testid="add-new" onClick={props.openAddNew} size="md" className="shrink-0 gap-2">
             Add new
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Webhook" classNameContent="p-0">
@@ -61,7 +61,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       {webhook.description && (
                         <Tooltip content={webhook.description}>
                           <div className="ml-1 cursor-pointer">
-                            <Icon iconName="circle-info" iconStyle="light" />
+                            <Icon iconName="circle-info" iconStyle="regular" />
                           </div>
                         </Tooltip>
                       )}
@@ -99,7 +99,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       size="md"
                       onClick={() => props.openEdit(webhook)}
                     >
-                      <Icon iconName="gear" iconStyle="light" />
+                      <Icon iconName="gear" iconStyle="regular" />
                     </Button>
                     <Button
                       data-testid="delete-webhook"
@@ -109,7 +109,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       size="md"
                       onClick={() => props.onDelete(webhook)}
                     >
-                      <Icon iconName="trash-can" iconStyle="light" />
+                      <Icon iconName="trash-can" iconStyle="regular" />
                     </Button>
                   </div>
                 </li>

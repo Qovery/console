@@ -179,7 +179,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
 
                 <div className="flex h-full w-full grow items-center">
                   <Button type="button" variant="plain" size="md" onClick={() => props.deleteKey(key)}>
-                    <Icon className="text-base" iconName="trash-can" iconStyle="light" />
+                    <Icon className="text-base" iconName="trash-can" iconStyle="regular" />
                   </Button>
                 </div>
               </div>

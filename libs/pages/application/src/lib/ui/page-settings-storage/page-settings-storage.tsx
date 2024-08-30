@@ -23,7 +23,7 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
           >
             <Button className="gap-2" size="md" onClick={() => props.onAddStorage()} disabled={disableAdd}>
               Add Storage
-              <Icon iconName="plus-circle" iconStyle="light" />
+              <Icon iconName="plus-circle" iconStyle="regular" />
             </Button>
           </Tooltip>
         </SettingsHeading>

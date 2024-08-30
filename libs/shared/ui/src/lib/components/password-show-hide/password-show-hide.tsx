@@ -26,7 +26,7 @@ export function PasswordShowHide({
     <span className={twMerge('flex items-center gap-2 text-sm text-neutral-300', className)} {...props}>
       <Tooltip content="Secret variable">
         <span>
-          <Icon className="block w-4" iconName="lock-keyhole" iconStyle="light" />
+          <Icon className="block w-4" iconName="lock-keyhole" iconStyle="regular" />
         </span>
       </Tooltip>
       <span className="pt-1.5 text-xl font-medium tracking-widest" data-testid="hide_value_secret">
@@ -42,7 +42,7 @@ export function PasswordShowHide({
           onClick={() => setVisible((visible) => !visible)}
           data-testid="toggle-button"
         >
-          {visible ? <Icon iconName="eye-slash" iconStyle="light" /> : <Icon iconName="eye" iconStyle="light" />}
+          {visible ? <Icon iconName="eye-slash" iconStyle="regular" /> : <Icon iconName="eye" iconStyle="regular" />}
         </button>
       </Tooltip>
       {visible ? (

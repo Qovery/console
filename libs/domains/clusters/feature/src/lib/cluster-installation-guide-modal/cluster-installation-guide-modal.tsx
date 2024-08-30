@@ -28,7 +28,7 @@ export function ClusterInstallationGuideModal({ cluster, type, onClose }: Cluste
         {type === 'ON_PREMISE' && (
           <Callout.Root color="sky">
             <Callout.Icon>
-              <Icon iconName="circle-info" />
+              <Icon iconName="circle-info" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text className="text-xs">
               This cluster has been created via Qovery CLI.
@@ -76,7 +76,7 @@ export function ClusterInstallationGuideModal({ cluster, type, onClose }: Cluste
       {type === 'MANAGED' && (
         <Callout.Root color="sky">
           <Callout.Icon>
-            <Icon iconName="circle-info" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text className="text-xs">
             Note: You can access again this installation guide and the configuration file by opening the “Installation

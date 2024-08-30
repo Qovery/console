@@ -13,7 +13,7 @@ exports[`PageSettingsDockerfileFeature should match snapshot 1`] = `
           class="max-w-content-with-navigation-left p-8"
         >
           <div
-            class="mb-8 flex w-full justify-between"
+            class="mb-8 flex w-full justify-between gap-2"
           >
             <div>
               <h1

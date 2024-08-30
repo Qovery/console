@@ -192,7 +192,7 @@ export function ValuesOverrideArgumentsSetting({
         >
           <Button
             className="gap-2"
-            size="lg"
+            size="md"
             onClick={() =>
               append({
                 key: '',
@@ -201,8 +201,8 @@ export function ValuesOverrideArgumentsSetting({
               })
             }
           >
-            Add variable
-            <Icon iconName="plus-circle" />
+            Add Variable
+            <Icon iconName="plus-circle" iconStyle="regular" />
           </Button>
         </SettingsHeading>
       ) : (
@@ -225,7 +225,7 @@ export function ValuesOverrideArgumentsSetting({
                 })
               }
             >
-              Add variable
+              Add Variable
               <Icon iconName="plus-circle" />
             </Button>
           </div>

@@ -147,7 +147,7 @@ export function RowMember(props: RowMemberProps) {
                 {
                   name: 'Transfer ownership',
                   onClick: () => transferOwnership && transferOwnership(member),
-                  contentLeft: <Icon iconName="right-left" iconStyle="light" className="text-sm text-brand-500" />,
+                  contentLeft: <Icon iconName="right-left" iconStyle="regular" className="text-sm text-brand-500" />,
                 },
               ]
             : [],
@@ -164,7 +164,7 @@ export function RowMember(props: RowMemberProps) {
                   action: () => deleteMember && deleteMember(member.id),
                 })
               },
-              contentLeft: <Icon iconName="ban" iconStyle="light" className="text-sm text-red-600" />,
+              contentLeft: <Icon iconName="ban" iconStyle="regular" className="text-sm text-red-600" />,
               containerClassName: 'text-red-600',
             },
           ],

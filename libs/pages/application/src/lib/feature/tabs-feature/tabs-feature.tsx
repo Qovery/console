@@ -106,7 +106,7 @@ export function TabsFeature() {
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
     },
     {
-      icon: <Icon iconName="key" iconStyle="light" />,
+      icon: <Icon iconName="key" iconStyle="regular" />,
       name: 'Variables',
       active:
         location.pathname ===
@@ -114,7 +114,7 @@ export function TabsFeature() {
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
     },
     {
-      icon: <Icon iconName="gear" iconStyle="light" />,
+      icon: <Icon iconName="gear" iconStyle="regular" />,
       name: 'Settings',
       active: location.pathname.includes(
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL
@@ -145,7 +145,7 @@ export function TabsFeature() {
               >
                 <Button className="gap-2" size="md" color="neutral" variant="surface">
                   Links
-                  <Icon iconName="link" iconStyle="light" />
+                  <Icon iconName="link" iconStyle="regular" />
                 </Button>
               </ServiceLinksPopover>
               {match(service)
@@ -172,7 +172,7 @@ export function TabsFeature() {
                     }
                   >
                     Access info
-                    <Icon iconName="info-circle" iconStyle="light" />
+                    <Icon iconName="info-circle" iconStyle="regular" />
                   </Button>
                 ))
                 .otherwise(() => null)}

@@ -100,7 +100,7 @@ export function StepValuesOverrideFilesFeature() {
           ) : generalData.auto_deploy ? (
             <Callout.Root color="sky" className="mt-3">
               <Callout.Icon>
-                <Icon iconName="circle-info" />
+                <Icon iconName="circle-info" iconStyle="regular" />
               </Callout.Icon>
 
               <Callout.Text className="text-xs">
@@ -111,7 +111,7 @@ export function StepValuesOverrideFilesFeature() {
           ) : (
             <Callout.Root color="sky" className="mt-3">
               <Callout.Icon>
-                <Icon iconName="circle-info" />
+                <Icon iconName="circle-info" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text className="text-xs">
                 <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>

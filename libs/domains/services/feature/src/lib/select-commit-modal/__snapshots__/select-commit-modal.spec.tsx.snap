@@ -136,7 +136,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                       >
                         <i
                           aria-hidden="true"
-                          class="fa-light fa-code-commit mr-1"
+                          class="fa-regular fa-code-commit mr-1"
                         />
                       </div>
                       123
@@ -251,7 +251,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                       >
                         <i
                           aria-hidden="true"
-                          class="fa-light fa-code-commit mr-1"
+                          class="fa-regular fa-code-commit mr-1"
                         />
                       </div>
                       456

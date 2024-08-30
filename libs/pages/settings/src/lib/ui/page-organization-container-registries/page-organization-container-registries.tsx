@@ -40,7 +40,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
           </div>
           <Button className="gap-2" size="md" onClick={() => onAddRegistry()}>
             Add registry
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Container registries" classNameContent="p-0">
@@ -73,7 +73,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                           {registry.description && (
                             <Tooltip content={registry.description}>
                               <div className="ml-1 cursor-pointer">
-                                <Icon iconName="circle-info" iconStyle="light" />
+                                <Icon iconName="circle-info" iconStyle="regular" />
                               </div>
                             </Tooltip>
                           )}
@@ -108,14 +108,14 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                           disabled={registry.associated_services_count === 0}
                           onClick={() => onOpenServicesAssociatedModal(registry)}
                         >
-                          <Icon iconName="layer-group" iconStyle="light" />
+                          <Icon iconName="layer-group" iconStyle="regular" />
                         </Button>
                       </Indicator>
                       <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(registry)}>
-                        <Icon iconName="gear" iconStyle="light" />
+                        <Icon iconName="gear" iconStyle="regular" />
                       </Button>
                       <Button size="md" variant="surface" color="neutral" onClick={() => onDelete(registry)}>
-                        <Icon iconName="trash-can" iconStyle="light" />
+                        <Icon iconName="trash-can" iconStyle="regular" />
                       </Button>
                     </div>
                   </li>

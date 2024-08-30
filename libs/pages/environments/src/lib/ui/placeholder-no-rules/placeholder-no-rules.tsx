@@ -30,7 +30,7 @@ export function PlaceholderNoRules({ clusterAvailable, linkNewRule, organization
         }
       >
         {clusterAvailable ? 'Create Deployment Rule' : 'Create a Cluster'}
-        <Icon iconName="circle-plus" iconStyle="light" />
+        <Icon iconName="circle-plus" iconStyle="regular" />
       </Button>
     </EmptyState>
   )

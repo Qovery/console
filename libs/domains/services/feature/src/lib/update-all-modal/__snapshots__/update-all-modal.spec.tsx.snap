@@ -106,7 +106,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-code-commit mr-1"
+                        class="fa-regular fa-code-commit mr-1"
                       />
                     </div>
                     commit0
@@ -149,7 +149,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-code-commit mr-1"
+                        class="fa-regular fa-code-commit mr-1"
                       />
                     </div>
                     commit1
@@ -216,7 +216,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-code-commit mr-1"
+                        class="fa-regular fa-code-commit mr-1"
                       />
                     </div>
                     commit0
@@ -259,7 +259,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-code-commit mr-1"
+                        class="fa-regular fa-code-commit mr-1"
                       />
                     </div>
                     commit1
@@ -326,7 +326,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-code-commit mr-1"
+                        class="fa-regular fa-code-commit mr-1"
                       />
                     </div>
                     commit0
@@ -369,7 +369,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-light fa-code-commit mr-1"
+                        class="fa-regular fa-code-commit mr-1"
                       />
                     </div>
                     commit1

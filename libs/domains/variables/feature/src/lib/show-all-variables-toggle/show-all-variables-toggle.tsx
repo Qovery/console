@@ -13,7 +13,7 @@ export function ShowAllVariablesToggle({ className }: { className?: string }) {
       size="md"
     >
       {showAllVariablesValues ? 'Hide all values' : 'Show all values'}
-      <Icon iconName={showAllVariablesValues ? 'eye-slash' : 'eye'} iconStyle="light" />
+      <Icon iconName={showAllVariablesValues ? 'eye-slash' : 'eye'} iconStyle="regular" />
     </Button>
   )
 }

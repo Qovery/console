@@ -66,7 +66,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Icon iconName="circle-info" iconStyle="light" className="text-neutral-400" />
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-400" />
                 </a>
               </Tooltip>
             </a>
@@ -77,7 +77,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
         <DropdownMenu.Trigger asChild>
           <ActionToolbar.Button color="brand" variant="solid" size="md" className="gap-2">
             New variable
-            <Icon iconName="circle-plus" iconStyle="light" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </ActionToolbar.Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
@@ -86,7 +86,7 @@ export function VariablesActionToolbar({ onCreateVariable, onImportEnvFile, ...p
           </DropdownMenu.Item>
           <DropdownMenu.Item
             onSelect={() => _onCreateVariable(true)}
-            icon={<Icon iconName="file-lines" iconStyle="light" />}
+            icon={<Icon iconName="file-lines" iconStyle="regular" />}
           >
             Variable as file
           </DropdownMenu.Item>
