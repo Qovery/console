@@ -18,11 +18,13 @@ function ImageTag({
   organizationId,
   containerRegistryId,
   imageName,
+  imageTag,
 }: {
   control: Control<{ image_tag?: string }>
   organizationId: string
   containerRegistryId: string
   imageName: string
+  imageTag?: string
 }) {
   const { data: containerVersions = [], isFetching } = useContainerVersions({
     organizationId,
@@ -51,11 +53,13 @@ function ImageTag({
         isDisabled: version === 'latest',
       })) ?? []
 
+  const versionKnown = options.find(({ value }) => value === imageTag)
+
   return isFetching ? (
     <div className="flex justify-center">
       <LoaderSpinner />
     </div>
-  ) : options.length > 0 ? (
+  ) : options.length > 0 && versionKnown ? (
     <Controller
       name="image_tag"
       control={control}
@@ -116,6 +120,7 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
   const { openModal, closeModal } = useModal()
   const watchRegistry = watch('registry')
   const watchImageName = watch('image_name')
+  const watchImageTag = watch('image_tag')
 
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId: organization?.id ?? '' })
 
@@ -198,6 +203,7 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
           organizationId={organization.id}
           containerRegistryId={watchRegistry}
           imageName={watchImageName}
+          imageTag={watchImageTag}
         />
       )}
     </>
