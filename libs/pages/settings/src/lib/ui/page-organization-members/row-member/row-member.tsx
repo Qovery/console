@@ -96,11 +96,7 @@ export function RowMember(props: RowMemberProps) {
   const menuItem = (role: OrganizationAvailableRole, customRole: boolean) => ({
     name: upperCaseFirstLetter(role.name),
     contentLeft: (
-      <Icon
-        iconName={customRole ? 'user' : RolesIcons[role.name?.toUpperCase() || '']}
-        iconStyle="light"
-        className="text-neutral-350"
-      />
+      <Icon iconName={customRole ? 'user' : RolesIcons[role.name?.toUpperCase() || '']} className="text-brand-500" />
     ),
     onClick: () => editMemberRole && editMemberRole(member.id, role.id || ''),
   })

@@ -43,7 +43,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
   const tooltipClusterNeedUpdate = displayYellowColor && (
     <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
       <div className="absolute right-2">
-        <Icon iconName="circle-exclamation" />
+        <Icon iconName="circle-exclamation" iconStyle="light" />
       </div>
     </Tooltip>
   )

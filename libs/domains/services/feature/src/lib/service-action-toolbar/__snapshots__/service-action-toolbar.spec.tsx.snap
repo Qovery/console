@@ -139,7 +139,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-circle-exclamation "
+            class="fa-light fa-circle-exclamation "
           />
         </div>
       </div>

@@ -80,7 +80,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 </span>
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-layer-group "
+                  class="fa-light fa-layer-group "
                 />
               </button>
               <button
@@ -88,7 +88,7 @@ exports[`GitTokenList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-gear "
+                  class="fa-light fa-gear "
                 />
               </button>
               <button
@@ -96,7 +96,7 @@ exports[`GitTokenList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash "
+                  class="fa-light fa-trash-can "
                 />
               </button>
             </div>
@@ -172,7 +172,7 @@ exports[`GitTokenList should match snapshot 1`] = `
                 </span>
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-layer-group "
+                  class="fa-light fa-layer-group "
                 />
               </button>
               <button
@@ -180,7 +180,7 @@ exports[`GitTokenList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-gear "
+                  class="fa-light fa-gear "
                 />
               </button>
               <button
@@ -188,7 +188,7 @@ exports[`GitTokenList should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash "
+                  class="fa-light fa-trash-can "
                 />
               </button>
             </div>

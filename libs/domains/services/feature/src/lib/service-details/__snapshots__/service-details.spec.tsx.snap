@@ -23,7 +23,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-gear text-base text-neutral-300"
+              class="fa-light fa-gear text-base text-neutral-350"
             />
           </a>
         </div>
@@ -83,7 +83,7 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-gear text-base text-neutral-300"
+              class="fa-light fa-gear text-base text-neutral-350"
             />
           </a>
         </div>
@@ -116,7 +116,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-gear text-base text-neutral-300"
+              class="fa-light fa-gear text-base text-neutral-350"
             />
           </a>
         </div>
@@ -176,7 +176,7 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-gear text-base text-neutral-300"
+              class="fa-light fa-gear text-base text-neutral-350"
             />
           </a>
         </div>
@@ -209,7 +209,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-gear text-base text-neutral-300"
+              class="fa-light fa-gear text-base text-neutral-350"
             />
           </a>
         </div>
@@ -269,7 +269,7 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-gear text-base text-neutral-300"
+              class="fa-light fa-gear text-base text-neutral-350"
             />
           </a>
         </div>
