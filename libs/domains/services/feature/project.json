@@ -6,10 +6,6 @@
   "tags": ["scope:domain", "type:feature", "slice:services"],
   "implicitDependencies": ["!shared-console-shared"],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],

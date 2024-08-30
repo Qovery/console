@@ -6,7 +6,6 @@
   "tags": [],
   "targets": {
     "lint": {
-      "executor": "@nx/eslint:lint",
       "options": {
         "exclude": ["libs/shared/utils/**/*.spec.ts", "libs/shared/utils/**/*.stories.ts"]
       }
