@@ -33,7 +33,8 @@
         "styles": ["apps/console/src/styles.scss"],
         "scripts": [],
         "webpackConfig": "apps/console/webpack.config.js",
-        "postcssConfig": "apps/console/postcss.config.js"
+        "postcssConfig": "apps/console/postcss.config.js",
+        "standardWebpackConfigFunction": true
       },
       "configurations": {
         "production": {
