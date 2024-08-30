@@ -1,4 +1,4 @@
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterStatusGet } from 'qovery-typescript-axios'
 import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
@@ -7,20 +7,13 @@ import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
 import { ClusterType } from '../cluster-type/cluster-type'
-import { useClusterStatus } from '../hooks/use-cluster-status/use-cluster-status'
 
 export interface ClusterCardProps {
-  organizationId: string
   cluster: Cluster
+  clusterStatus?: ClusterStatusGet
 }
 
-export function ClusterCard({ organizationId, cluster }: ClusterCardProps) {
-  const { data: clusterStatus, isLoading: isClusterStatusLoading } = useClusterStatus({
-    organizationId,
-    clusterId: cluster.id,
-    refetchInterval: 3000,
-  })
-
+export function ClusterCard({ cluster, clusterStatus }: ClusterCardProps) {
   const cloudProviderIcon = match(cluster.cloud_provider)
     .with('ON_PREMISE', () => IconEnum.KUBERNETES)
     .otherwise(() => cluster.cloud_provider)
@@ -30,7 +23,7 @@ export function ClusterCard({ organizationId, cluster }: ClusterCardProps) {
       to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}
       className="flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm transition-colors duration-150 hover:border-brand-500"
     >
-      <div className="flex items-start items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <Icon width={28} height={28} name={cloudProviderIcon} />
           <span className="line-clamp-2 block text-base font-semibold text-neutral-400">{cluster.name}</span>
@@ -42,7 +35,7 @@ export function ClusterCard({ organizationId, cluster }: ClusterCardProps) {
           </span>
         </div>
       </div>
-      <Skeleton className="min-w-max" height={36} width={146} show={isClusterStatusLoading}>
+      <Skeleton className="min-w-max" height={36} width={146} show={!clusterStatus}>
         {clusterStatus && (
           <div onClick={(e) => e.preventDefault()}>
             <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} />

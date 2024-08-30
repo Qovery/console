@@ -7,7 +7,7 @@ exports[`ClusterCard should render correctly 1`] = `
     href="/organization/org-id/cluster/cluster-id/settings"
   >
     <div
-      class="flex items-start items-center justify-between gap-2"
+      class="flex items-center justify-between gap-2"
     >
       <div
         class="flex items-center gap-3"
@@ -74,7 +74,7 @@ exports[`ClusterCard should render correctly 1`] = `
         <span
           class="text-sm font-medium text-neutral-400"
         >
-          Running
+          Deployed
         </span>
       </div>
     </div>
@@ -91,6 +91,32 @@ exports[`ClusterCard should render correctly 1`] = `
           style="outline: none;"
           tabindex="0"
         >
+          <button
+            aria-expanded="false"
+            aria-haspopup="menu"
+            aria-label="Manage Deployment"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-yellow-600 h-9 px-3 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
+            data-orientation="horizontal"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-:r7:"
+            tabindex="-1"
+            type="button"
+          >
+            <div
+              class="flex h-full w-full items-center justify-center"
+              data-state="closed"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-play mr-4"
+              />
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-chevron-down "
+              />
+            </div>
+          </button>
           <button
             class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
             data-orientation="horizontal"
@@ -125,7 +151,7 @@ exports[`ClusterCard should render correctly 1`] = `
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="closed"
-            id="radix-:rb:"
+            id="radix-:rf:"
             tabindex="-1"
             type="button"
           >
