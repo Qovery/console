@@ -31,7 +31,7 @@ export function SpotlightTrigger() {
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
         <Icon iconName="magnifying-glass" iconStyle="regular" className="text-neutral-400" />
-        <span className="text-neutral-350">Search of help</span>
+        <span className="text-neutral-350">Search for help</span>
         <div className="ml-auto flex gap-1 text-neutral-350">
           <Kbd>{metaKey}</Kbd>
           <Kbd>K</Kbd>
