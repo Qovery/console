@@ -11,7 +11,6 @@ import {
   BadgeDeploymentOrder,
   Button,
   Icon,
-  IconAwesomeEnum,
   LoaderSpinner,
   Menu,
   MenuAlign,
@@ -139,7 +138,8 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                             <Tooltip content={stage.description}>
                               <div>
                                 <Icon
-                                  name={IconAwesomeEnum.CIRCLE_INFO}
+                                  iconName="circle-info"
+                                  iconStyle="light"
                                   className="relative -top-[2px] ml-1 text-xs text-neutral-350"
                                 />
                               </div>
