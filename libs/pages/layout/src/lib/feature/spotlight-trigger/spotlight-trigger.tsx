@@ -22,14 +22,16 @@ export function SpotlightTrigger() {
     return () => document.removeEventListener('keydown', down)
   }, [])
 
+  if (!metaKey) return null
+
   return (
     <>
       <button
-        className="flex w-60 items-center gap-2 rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
+        className="flex min-w-[268px] items-center gap-2 rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
-        <Icon iconName="magnifying-glass" className="text-neutral-400" />
-        <span className="text-neutral-350">Search</span>
+        <Icon iconName="magnifying-glass" iconStyle="regular" className="text-neutral-400" />
+        <span className="text-neutral-350">Search of help</span>
         <div className="ml-auto flex gap-1 text-neutral-350">
           <Kbd>{metaKey}</Kbd>
           <Kbd>K</Kbd>
