@@ -568,7 +568,7 @@ function MenuOtherActions({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
-          <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
+          <Link className="gap-0" to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
             Logs
           </Link>
         </DropdownMenu.Item>
@@ -579,6 +579,7 @@ function MenuOtherActions({
         )}
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
+            className="gap-0"
             to={AUDIT_LOGS_PARAMS_URL(organizationId, {
               targetId: service.id,
               targetType: service.serviceType,
@@ -594,6 +595,7 @@ function MenuOtherActions({
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
           <Link
+            className="gap-0"
             to={match(service?.serviceType)
               .with(
                 'DATABASE',

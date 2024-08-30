@@ -157,7 +157,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-400"
+          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-500"
         />
         Deploy another chart version
       </div>
@@ -295,7 +295,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         </svg>
       </span>
       <a
-        class="transition duration-100 gap-1 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/project/456/environment/789/logs/0/live-logs"
@@ -304,7 +304,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll text-sm mr-3 text-brand-400"
+          class="fa-solid fa-scroll text-sm mr-3 text-brand-500"
         />
         Logs
       </a>
@@ -322,13 +322,13 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-code text-sm mr-3 text-brand-400"
+            class="fa-solid fa-code text-sm mr-3 text-brand-500"
           />
           Edit code
         </div>
       </a>
       <a
-        class="transition duration-100 gap-1 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/audit-logs/general?targetId=0&targetType=HELM&projectId=123&environmentId=3840068565336064"
@@ -337,7 +337,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-400"
+          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-500"
         />
         See audit logs
       </a>
@@ -350,12 +350,12 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-400"
+          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
         />
         Copy identifiers
       </div>
       <a
-        class="transition duration-100 gap-1 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/project/123/environment/3840068565336064/application/0/settings/general"
@@ -364,7 +364,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-gear text-sm mr-3 text-brand-400"
+          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
         />
         Open settings
       </a>
@@ -377,7 +377,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-400"
+          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
         />
         Clone
       </div>

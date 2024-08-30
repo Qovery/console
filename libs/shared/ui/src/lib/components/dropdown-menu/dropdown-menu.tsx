@@ -73,7 +73,7 @@ const dropdownMenuItemIconVariants = cva(['text-sm', 'mr-3'], {
     {
       color: 'brand',
       disabled: false,
-      className: ['text-brand-400'],
+      className: ['text-brand-500'],
     },
     {
       color: 'red',
