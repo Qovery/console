@@ -1,6 +1,6 @@
 #!/bin/sh
 file=".env"
-nx="NX_"
+nx="NX_PUBLIC_"
 e="8CqHsc1kw41fG09u4R7A0"
 echo $nx'URL=https://console.qovery.com' >> $file
 echo $nx'QOVERY_API=https://api.qovery.com' >> $file
