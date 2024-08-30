@@ -21,9 +21,9 @@ export function PageSettingsStorage(props: PageSettingsStorageProps) {
             disabled={!disableAdd}
             content="Storage can be added only to services that have never been deployed before"
           >
-            <Button className="gap-2" size="lg" onClick={() => props.onAddStorage()} disabled={disableAdd}>
+            <Button className="gap-2" size="md" onClick={() => props.onAddStorage()} disabled={disableAdd}>
               Add Storage
-              <Icon iconName="plus-circle" />
+              <Icon iconName="plus-circle" iconStyle="light" />
             </Button>
           </Tooltip>
         </SettingsHeading>

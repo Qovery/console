@@ -41,11 +41,11 @@ export function TagCommit(props: TagCommitProps) {
     >
       {!hover ? (
         <div className="mr-1 w-4">
-          <Icon name="icon-solid-code-commit" iconStyle="light" className="mr-1" />
+          <Icon iconName="code-commit" iconStyle="light" className="mr-1" />
         </div>
       ) : (
         <div className="mr-1 w-4">
-          <Icon name="icon-solid-copy" className="mr-1" />
+          <Icon iconName="copy" className="mr-1" />
         </div>
       )}
       {commitId.substring(0, 7)}
@@ -60,7 +60,7 @@ export function TagCommit(props: TagCommitProps) {
       data-testid="tag-commit"
       className="flex h-7 w-[70px] items-center justify-center bg-green-500 font-medium text-white"
     >
-      <Icon name="icon-solid-check" iconStyle="light" className="mr-1 w-4" />
+      <Icon iconName="check" iconStyle="light" className="mr-1 w-4" />
       Copied
     </Tag>
   )

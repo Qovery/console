@@ -181,7 +181,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             <Button variant="surface" color="neutral" radius="full">
               <Tooltip content="Links">
                 <div className="flex items-center gap-1">
-                  <Icon iconName="link" />
+                  <Icon iconName="link" iconStyle="light" />
                   <Icon iconName="angle-down" />
                 </div>
               </Tooltip>

@@ -46,7 +46,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
           {!isLoadingServiceType && isValidServiceType && (
             <Button
               data-testid="add-button"
-              size="lg"
+              size="md"
               className="gap-2"
               onClick={() => {
                 openModal({
@@ -55,7 +55,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
               }}
             >
               New Restriction
-              <Icon iconName="plus-circle" />
+              <Icon iconName="plus-circle" iconStyle="light" />
             </Button>
           )}
         </SettingsHeading>

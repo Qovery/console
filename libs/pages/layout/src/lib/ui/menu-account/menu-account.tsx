@@ -42,7 +42,7 @@ export function MenuAccount(props: MenuAccountProps) {
       title: 'Organizations',
       sortAlphabetically: true,
       button: {
-        label: <Icon iconName="circle-plus" className="link mr-3 !text-base text-brand-500" />,
+        label: <Icon iconName="circle-plus" iconStyle="light" className="link mr-3 !text-base text-brand-500" />,
         onClick: () => navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL),
       },
       items: organizations.map((organization: Organization) => ({

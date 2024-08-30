@@ -28,9 +28,9 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
     <div className="w-full justify-between">
       <Section className="max-w-content-with-navigation-left  p-8">
         <SettingsHeading title="Domain" description="Add custom domains to your service.">
-          <Button size="lg" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
+          <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
             Add Domain
-            <Icon iconName="circle-plus" className="ml-2" />
+            <Icon iconName="circle-plus" iconStyle="light" className="ml-2" />
           </Button>
         </SettingsHeading>
         {props.checkedCustomDomains?.some(({ error_details }) => error_details) && (
