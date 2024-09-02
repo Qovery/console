@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 
-export function useFormatHotkeys(hotkeys: string): string {
-  const [isMacOS, setIsMacOS] = useState(false)
+export function useFormatHotkeys(hotkeys: string): string | undefined {
+  const [isMacOS, setIsMacOS] = useState<boolean | null>(null)
   useEffect(() => {
     setIsMacOS(window.navigator.userAgent.includes('Mac OS'))
   }, [])
+
+  // Avoid glitch on macOS if not set in useEffect
+  if (isMacOS === null) return undefined
 
   const hotkeysFormat = hotkeys.split('+').map((hotkey) => {
     switch (hotkey) {
