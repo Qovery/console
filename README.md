@@ -13,14 +13,13 @@
 
 <p align="center">
 <a href="https://opensource.org/licenses"><img alt="GPLv3 License" src="https://img.shields.io/badge/License-GPL%20v3-yellow.svg"></a>
-<a href="https://discord.qovery.com"><img alt="Discord" src="https://img.shields.io/discord/688766934917185556?label=discord&style=flat-circle"></a>
 <a href="https://codecov.io/github/Qovery/console" >
 <img src="https://codecov.io/github/Qovery/console/branch/feat/ci-codecov/graph/badge.svg?token=O8SMO6PEQV"/>
 </a>
 </p>
 
 <p align="center">
-    At Qovery for our Console, we use a couple of technologies, like <a href="https://nx.dev" target="_blank">NX</a>, <a href="https://reactjs.org" target="_blank">React</a>, <a href="https://tanstack.com/query/v3/" target="_blank">React Query</a>, <a href="https://tailwindcss.com" target="_blank">Tailwind</a>, and <a href="https://storybook.js.org" target="_blank">Storybook</a>.
+    At Qovery for our Console, we use a couple of technologies, like <a href="https://nx.dev" target="_blank">Nx</a>, <a href="https://reactjs.org" target="_blank">React</a>, <a href="https://tanstack.com/query/v3/" target="_blank">React Query</a>, <a href="https://tailwindcss.com" target="_blank">Tailwind</a>, and <a href="https://storybook.js.org" target="_blank">Storybook</a>.
 </p>
 <br />
 
@@ -37,6 +36,10 @@ Start the project on http://localhost:4200
 Start Storybook on http://localhost:4400
 
     yarn storybook
+
+Run tests
+
+    yarn test
 
 Generate a library
 
@@ -56,8 +59,7 @@ Run end-to-end tests with Cypress
 
 ## Contributing
 
-Qovery Console V3 is in its early stage of development and we need some help, you are welcome to contribute. To better synchronize consider joining our #v3 channel on our [Discord](https://discord.qovery.com).
-Otherwise, you can directly propose improvements from the [issues](https://github.com/Qovery/console/issues) pages or add them directly from your pull request for the changes.
+Qovery Console is actively develop and we need some help, you are welcome to contribute! You can propose improvements directly from the [issues](https://github.com/Qovery/console/issues) page or include them in your pull request for changes.
 
 ## Architecture Decision Records
 
@@ -78,23 +80,34 @@ For help, you can use one of the channels to ask a question:
 
 At Qovery, we believe that the Cloud must be simpler than what it is today. Our goal is to consolidate the Cloud ecosystem and makes it accessible to any developer, DevOps, and company. Qovery helps people to focus on what they build instead of wasting time doing plumbing stuff.
 
-### Why do we use NX?
+### Why do we use Nx?
 
-- NX works like a strong framework and it's very helpful for React app.
-- It allows us to make mono-repo and we can divide our application into several entities/libraries that can reuse.
-- Offers helpers to facilitate generating components, libraries, applications, and tools to check the health of our applications (circular dependencies).
-- Using NX cloud, cache to deploy the application, run tests and build only what has been modified.
-- Provides Framework to facilitate unit tests with [Jest](https://jestjs.io/) and e2e tests with [Cypress](https://www.cypress.io/).
+- Nx acts as a robust framework, providing significant benefits for React applications.
+- It supports mono-repo architecture, allowing us to divide our application into multiple reusable entities/libraries.
+- It offers tools to generate components, libraries, applications, and to check the health of our applications (e.g., circular dependencies).
+- By using [Nx Cloud](https://cloud.nx.app/orgs/62aaef82e814d400050ea393/workspaces/635932a66ecea758758f0563/overview), we can cache deployments, run tests, and build only the modified parts of the application.
+- It provides a framework for unit tests with [Jest](https://jestjs.io/) and end-to-end tests with [Cypress](https://www.cypress.io/).
 
 ### How is the project structured?
 
-Our project is divided into several libraries, we are going to have 4 major categories of libraries:
+To help you navigate through the project, here is a brief overview of its structure.
 
-- Domains: all our store logic is separated by domain, for each we find the slices with Redux, our providers, and mock for tests.
-- Pages: each of the pages includes sub-pages.
-- Shared: several elements of sharing between all components, UI components for the Storybook, enums, helpers, layout.
-- Store: store initialization
+```
+apps/
+└── console/                # General application with main router and tools like PostHog, Sentry, etc.
 
-We have separated the logical components “feature” and the UI components “UI” for each of the libraries. Requests and data are always called in features and flow to UI components. The goal is really to separate our features as much as possible to avoid circular dependencies and facilitate understanding of the project.
+libs/
+├── domains/                # Domain-specific by features
+│   └── [feature-name]/
+│       ├── data-access/    # Data access layer for the feature
+│       └── feature/        # Core logic and components for the feature
+│       ...
+├── pages/                  # Page components for routing and layout, calling features from domain and common shared utilities and components
+└── shared/                 # Shared utilities and components across the application
+    ├── ui/                 # Storybook - UI components for reusable user interface elements
+    ├── util-[name]/        # Utility functions and helpers
+    └── util-queries/       # Shared utility functions for queries
+    ...
+```
 
-It’s an NX-proven approach, feel free to read the book “effective react with NX”, very interesting and well detailed.
+This organization aims to make the codebase more maintainable and understandable, based on our structure and Nx recommendations. For more information about it, read this article: [Organizing and Structuring a React Project with Nx](https://www.qovery.com/blog/nx-architecture-part-1-organizing-and-structuring-a-react-project-with-nx/).

@@ -12,5 +12,4 @@ Put description here
 
 - [ ] This PR introduces breaking change(s) and has been labeled as such
 - [ ] This PR introduces new store changes
-- [ ] I have followed the library pattern i.e `feature`, `ui`, `data`, `utils`
 - [ ] I made sure the code is type safe (no any)
