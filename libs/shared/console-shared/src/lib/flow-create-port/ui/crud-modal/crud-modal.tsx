@@ -9,6 +9,7 @@ export interface CrudModalProps {
   cloudProvider?: CloudProviderEnum
   currentProtocol?: PortProtocolEnum
   isEdit?: boolean
+  isDemo?: boolean
   isMatchingHealthCheck?: boolean
   loading?: boolean
   hidePortName?: boolean
@@ -26,6 +27,7 @@ export function CrudModal({
   onClose,
   onSubmit,
   hidePortName,
+  isDemo,
 }: CrudModalProps) {
   const { control, watch, setValue } = useFormContext()
 
@@ -163,7 +165,7 @@ export function CrudModal({
           </div>
         )}
       />
-      {watchPublicly && kubernetes === 'SELF_MANAGED' && cloudProvider === 'ON_PREMISE' && (
+      {watchPublicly && kubernetes === 'SELF_MANAGED' && cloudProvider === 'ON_PREMISE' && isDemo && (
         <Callout.Root color="sky" className="mb-5">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="light" />
