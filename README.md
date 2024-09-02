@@ -80,7 +80,7 @@ For help, you can use one of the channels to ask a question:
 
 At Qovery, we believe that the Cloud must be simpler than what it is today. Our goal is to consolidate the Cloud ecosystem and makes it accessible to any developer, DevOps, and company. Qovery helps people to focus on what they build instead of wasting time doing plumbing stuff.
 
-### Why do we use NX?
+### Why do we use Nx?
 
 - Nx acts as a robust framework, providing significant benefits for React applications.
 - It supports mono-repo architecture, allowing us to divide our application into multiple reusable entities/libraries.
