@@ -308,7 +308,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             }
             return (
               <span className="flex items-center gap-2 text-sm font-medium">
-                <ServiceAvatar service={service} />
+                <ServiceAvatar service={service} className="h-5 w-5" />
                 {value}
               </span>
             )
