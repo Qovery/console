@@ -8,7 +8,7 @@ export default {
   title: 'Toaster',
   argTypes: {
     actionIcon: {
-      options: ['icon-solid-wheel', 'icon-solid-circle-plus', 'icon-solid-book', 'icon-solid-key'],
+      options: ['gear', 'plus', 'book', 'key'],
       control: { type: 'select' },
     },
   },
@@ -55,7 +55,7 @@ WithActionIcon.args = {
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
-  actionIcon: 'icon-solid-pen',
+  actionIcon: 'pen',
 }
 export const WithActionLabel = Template.bind({})
 
