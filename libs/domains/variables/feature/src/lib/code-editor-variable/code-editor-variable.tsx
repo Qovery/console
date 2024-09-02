@@ -8,12 +8,10 @@ import { useVariables } from '../hooks/use-variables/use-variables'
 
 interface CodeEditorVariableProps extends ComponentProps<typeof CodeEditor> {
   environmentId: string
-  type?: 'STANDARD' | 'YAML'
 }
 
 export function CodeEditorVariable({
   environmentId,
-  type = 'STANDARD',
   language = 'json',
   options,
   className,
@@ -25,7 +23,7 @@ export function CodeEditorVariable({
   })
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
-  const formatVariableKey = (key: string) => (type === 'STANDARD' ? `{{${key}}}` : `qovery.env.${key}`)
+  const formatVariableKey = (key: string) => (language === 'yaml' ? `qovery.env.${key}` : `{{${key}}}`)
 
   const handleEditorDidMount = async (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
     editorRef.current = editor

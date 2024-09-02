@@ -58,7 +58,6 @@ export function ValuesOverrideYamlModal({
               control={methods.control}
               render={({ field }) => (
                 <CodeEditorVariable
-                  type="YAML"
                   environmentId={environmentId}
                   width="100%"
                   height="calc(100vh  - 254px)"
