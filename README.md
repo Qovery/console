@@ -59,7 +59,7 @@ Run end-to-end tests with Cypress
 
 ## Contributing
 
-Qovery Console is in its early stage of development and we need some help, you are welcome to contribute! You can propose improvements directly from the [issues](https://github.com/Qovery/console/issues) page or include them in your pull request for changes.
+Qovery Console is actively develop and we need some help, you are welcome to contribute! You can propose improvements directly from the [issues](https://github.com/Qovery/console/issues) page or include them in your pull request for changes.
 
 ## Architecture Decision Records
 
