@@ -57,6 +57,7 @@ import {
   Menu,
   MenuAlign,
   type MenuData,
+  Skeleton,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -363,21 +364,23 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           const value = info.getValue()
           const service = info.row.original
           return (
-            <Tooltip content="See logs">
-              <Link
-                as="button"
-                to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)}
-                onClick={(e) => e.stopPropagation()}
-                className="gap-2 whitespace-nowrap text-sm"
-                size="md"
-                color="neutral"
-                variant="outline"
-                radius="full"
-              >
-                <StatusChip status={service.deploymentStatus?.state} />
-                {value}
-              </Link>
-            </Tooltip>
+            <Skeleton width={102} height={34} show={!value}>
+              <Tooltip content="See logs">
+                <Link
+                  as="button"
+                  to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="gap-2 whitespace-nowrap text-sm"
+                  size="md"
+                  color="neutral"
+                  variant="outline"
+                  radius="full"
+                >
+                  <StatusChip status={service.deploymentStatus?.state} />
+                  {value}
+                </Link>
+              </Tooltip>
+            </Skeleton>
           )
         },
       }),
