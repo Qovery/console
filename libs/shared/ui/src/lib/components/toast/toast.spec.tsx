@@ -1,4 +1,4 @@
-import { act, render, screen } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ToastEnum } from '../../utils/toast'
 import ToastBehavior, { ToastContent, type ToastProps } from './toast'
 
@@ -8,29 +8,29 @@ const props: ToastProps = {
 
 describe('Toast', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ToastBehavior />)
+    const { baseElement } = renderWithProviders(<ToastBehavior />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render a toast content', () => {
     props.status = ToastEnum.SUCCESS
-    const { baseElement } = render(ToastContent(props.status))
+    const { baseElement } = renderWithProviders(ToastContent(props.status))
     expect(baseElement).toBeTruthy()
   })
 
   it('should have a error icon', () => {
     props.status = ToastEnum.ERROR
-    render(ToastContent(props.status))
+    renderWithProviders(ToastContent(props.status))
 
     const toast = screen.queryByTestId('toast') as HTMLDivElement
 
-    expect(toast.querySelector('.toast__icon span')?.classList).toContain('icon-solid-circle-exclamation')
+    expect(toast.querySelector('span')?.classList).toContain('icon-solid-circle-exclamation')
   })
 
   it('should have a title', () => {
     props.title = 'my-title'
 
-    render(ToastContent(props.status, undefined, props.title))
+    renderWithProviders(ToastContent(props.status, undefined, props.title))
 
     const toastTitle = screen.queryByTestId('toast-title') as HTMLParagraphElement
 
@@ -40,14 +40,14 @@ describe('Toast', () => {
   it('should have a description', () => {
     props.description = 'my-description'
 
-    render(ToastContent(props.status, undefined, '', props.description))
+    renderWithProviders(ToastContent(props.status, undefined, '', props.description))
 
     const toastTitle = screen.queryByTestId('toast-description') as HTMLParagraphElement
 
     expect(toastTitle?.textContent).toBe('my-description')
   })
 
-  it('should render with a label and no icon', () => {
+  it('should render with a label and no icon', async () => {
     props.description = 'my-description'
     props.externalLink = 'https://my-link.com'
     props.actionLabel = 'my-label'
@@ -55,7 +55,7 @@ describe('Toast', () => {
     const spy = jest.fn()
     window.open = jest.fn((url: string, target: string) => ({}))
 
-    render(
+    const { userEvent } = renderWithProviders(
       ToastContent(
         props.status,
         undefined,
@@ -72,9 +72,7 @@ describe('Toast', () => {
 
     expect(labelActionButton).toHaveTextContent('my-label')
 
-    act(() => {
-      labelActionButton.click()
-    })
+    await userEvent.click(labelActionButton)
 
     expect(spy).toHaveBeenCalled()
     expect(window.open).toHaveBeenCalledWith('https://my-link.com', '_blank')

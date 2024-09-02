@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type Toast, toast as toastAction } from 'react-hot-toast'
 import { ToastContent } from '@qovery/shared/ui'
 
@@ -12,7 +13,7 @@ export const toast = (
   title: string,
   description?: string,
   callback?: () => void,
-  iconAction?: string,
+  iconAction?: IconName,
   labelAction?: string,
   externalLink?: string
 ) => {

@@ -1,4 +1,5 @@
 import { Auth0Provider } from '@auth0/auth0-react'
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import {
   type Mutation,
@@ -37,7 +38,7 @@ type ToastArgs = {
   title: string
   description?: string
   callback?: () => void
-  iconAction?: string
+  iconAction?: IconName
   labelAction?: string
   externalLink?: string
 }
