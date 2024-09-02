@@ -32,7 +32,7 @@ export function PageSettingsHealthchecks({
         {environmentMode === EnvironmentModeEnum.PRODUCTION && minRunningInstances === 1 && (
           <Callout.Root color="yellow" className="mb-2">
             <Callout.Icon>
-              <Icon iconName="triangle-exclamation" />
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text className="text-xs">
               Your service is configured to run with a minimum of one instance, setting the health checks will not

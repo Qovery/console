@@ -270,7 +270,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -417,7 +417,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between gap-1"
                     type="button"
                   >
                     <i
@@ -426,7 +426,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-code-commit w-4 group-hover:hidden"
+                      class="fa-regular fa-code-commit w-4 group-hover:hidden"
                     />
                     2f74448
                   </button>
@@ -442,7 +442,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-code-branch "
+                      class="fa-regular fa-code-branch "
                       height="14"
                       width="14"
                     />
@@ -616,7 +616,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -1255,7 +1255,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -1411,7 +1411,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between gap-1"
                     type="button"
                   >
                     <i
@@ -1420,7 +1420,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-code-commit w-4 group-hover:hidden"
+                      class="fa-regular fa-code-commit w-4 group-hover:hidden"
                     />
                     10ad354
                   </button>
@@ -1436,7 +1436,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-code-branch "
+                      class="fa-regular fa-code-branch "
                       height="14"
                       width="14"
                     />
@@ -1697,7 +1697,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-link "
+                        class="fa-regular fa-link "
                       />
                       <i
                         aria-hidden="true"
@@ -1853,7 +1853,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   data-state="closed"
                 >
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between"
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between gap-1"
                     type="button"
                   >
                     <i
@@ -1862,7 +1862,7 @@ exports[`ServiceList should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-code-commit w-4 group-hover:hidden"
+                      class="fa-regular fa-code-commit w-4 group-hover:hidden"
                     />
                     10ad354
                   </button>
@@ -1878,7 +1878,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-code-branch "
+                      class="fa-regular fa-code-branch "
                       height="14"
                       width="14"
                     />

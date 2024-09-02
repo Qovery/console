@@ -68,7 +68,7 @@ export function TableRowInvoice(props: TableRowInvoiceProps) {
               downloadInvoice(data?.id || '')
             }}
           >
-            <Icon iconName="download" />
+            <Icon iconName="download" iconStyle="regular" />
           </Button>
         </div>
       </>

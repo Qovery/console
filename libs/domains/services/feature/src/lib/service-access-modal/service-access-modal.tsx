@@ -59,7 +59,7 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
         onClick={() => handleCopyCredentials(masterCredentials!)}
       >
         Copy connection URI
-        <Icon className="text-sm" iconName="key" iconStyle="light" />
+        <Icon className="text-sm" iconName="key" iconStyle="regular" />
       </Button>
     </div>
   )
@@ -235,7 +235,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                                     <span>
                                       <Icon
                                         iconName="circle-info"
-                                        iconStyle="solid"
+                                        iconStyle="regular"
                                         className="ml-2 text-neutral-350"
                                       />
                                     </span>

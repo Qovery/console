@@ -33,7 +33,7 @@ export function PageOrganizationHelmRepositories({
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
-        <div className="mb-8 flex justify-between">
+        <div className="mb-8 flex justify-between gap-2">
           <div className="space-y-3">
             <Heading>Helm repositories</Heading>
             <p className="text-xs text-neutral-400">
@@ -41,9 +41,9 @@ export function PageOrganizationHelmRepositories({
             </p>
             <NeedHelp />
           </div>
-          <Button className="gap-2" size="lg" onClick={() => onAddRepository()}>
+          <Button className="gap-2" size="md" onClick={() => onAddRepository()}>
             Add repository
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Helm repositories" classNameContent="p-0">
@@ -70,7 +70,7 @@ export function PageOrganizationHelmRepositories({
                         {repository.description && (
                           <Tooltip content={repository.description}>
                             <div className="ml-1 cursor-pointer">
-                              <Icon iconName="circle-info" className="text-neutral-350" />
+                              <Icon iconName="circle-info" iconStyle="regular" />
                             </div>
                           </Tooltip>
                         )}
@@ -93,14 +93,14 @@ export function PageOrganizationHelmRepositories({
                         disabled={repository.associated_services_count === 0}
                         onClick={() => onOpenServicesAssociatedModal(repository)}
                       >
-                        <Icon iconName="layer-group" />
+                        <Icon iconName="layer-group" iconStyle="regular" />
                       </Button>
                     </Indicator>
                     <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(repository)}>
-                      <Icon iconName="gear" />
+                      <Icon iconName="gear" iconStyle="regular" />
                     </Button>
                     <Button size="md" variant="surface" color="neutral" onClick={() => onDelete(repository)}>
-                      <Icon iconName="trash" />
+                      <Icon iconName="trash-can" iconStyle="regular" />
                     </Button>
                   </div>
                 </li>

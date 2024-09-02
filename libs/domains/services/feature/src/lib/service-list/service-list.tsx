@@ -182,7 +182,7 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
             <Button variant="surface" color="neutral" radius="full">
               <Tooltip content="Links">
                 <div className="flex items-center gap-1">
-                  <Icon iconName="link" />
+                  <Icon iconName="link" iconStyle="regular" />
                   <Icon iconName="angle-down" />
                 </div>
               </Tooltip>
@@ -412,7 +412,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                         variant="surface"
                         className="gap-1 whitespace-nowrap"
                       >
-                        <Icon iconName="code-branch" height={14} width={14} />
+                        <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
                         <Truncate text={gitRepository.branch} truncateLimit={18} />
                       </ExternalLink>
                     </span>
@@ -637,7 +637,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
             >
               New service
-              <Icon iconName="circle-plus" />
+              <Icon iconName="circle-plus" iconStyle="regular" />
             </Link>
           }
         >
@@ -645,7 +645,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             trigger={
               <Button size="lg" className="mt-5 gap-2">
                 New service
-                <Icon iconName="circle-plus" />
+                <Icon iconName="circle-plus" iconStyle="regular" />
               </Button>
             }
             menus={newServicesMenu}

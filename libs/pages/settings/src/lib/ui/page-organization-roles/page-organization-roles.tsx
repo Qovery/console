@@ -56,9 +56,9 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
             <p className="text-xs text-neutral-400">Manage the existing custom roles or create a new one.</p>
             <NeedHelp />
           </div>
-          <Button onClick={onAddRole} className="gap-2" size="lg">
+          <Button onClick={onAddRole} className="gap-2" size="md">
             Add new role
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         {(!roles || roles.length === 0) && loading ? (
@@ -80,10 +80,9 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                   >
                     <div className="flex">
                       <Icon
-                        name={
-                          !isDefaultRole(role.name) ? IconAwesomeEnum.USER : RolesIcons[role.name?.toUpperCase() || '']
-                        }
-                        className="text-brand-500"
+                        iconName={!isDefaultRole(role.name) ? 'user' : RolesIcons[role.name?.toUpperCase() || '']}
+                        iconStyle="regular"
+                        className="text-neutral-350"
                       />
                       <div className="ml-4">
                         <h2 className="flex text-xs font-medium text-neutral-400">
@@ -103,7 +102,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           size="md"
                           to={`${SETTINGS_URL(organizationId)}${SETTINGS_ROLES_EDIT_URL(role.id)}`}
                         >
-                          <Icon iconName="gear" />
+                          <Icon iconName="gear" iconStyle="regular" />
                         </Link>
                         <Button
                           type="button"
@@ -112,7 +111,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           size="md"
                           onClick={() => onDeleteRole(role)}
                         >
-                          <Icon iconName="trash" />
+                          <Icon iconName="trash-can" iconStyle="regular" />
                         </Button>
                       </div>
                     ) : (
@@ -124,7 +123,7 @@ export function PageOrganizationRoles(props: PageOrganizationRolesProps) {
                           size="md"
                           href="https://hub.qovery.com/docs/using-qovery/configuration/organization/#roles-based-access-control-rbac"
                         >
-                          <Icon iconName="book" />
+                          <Icon iconName="book" iconStyle="regular" />
                         </ExternalLink>
                       </div>
                     )}

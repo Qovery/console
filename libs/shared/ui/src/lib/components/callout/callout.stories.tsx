@@ -20,7 +20,7 @@ export const Primary = {
   render: () => (
     <Callout.Root color="green">
       <Callout.Icon>
-        <Icon iconName="triangle-exclamation" />
+        <Icon iconName="triangle-exclamation" iconStyle="regular" />
       </Callout.Icon>
       <Callout.Text>
         <Callout.TextHeading>Lorem ipsum</Callout.TextHeading>

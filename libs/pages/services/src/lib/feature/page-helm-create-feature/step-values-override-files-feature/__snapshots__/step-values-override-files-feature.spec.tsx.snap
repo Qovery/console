@@ -334,7 +334,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-circle-info "
+                        class="fa-regular fa-circle-info "
                       />
                     </div>
                     <div

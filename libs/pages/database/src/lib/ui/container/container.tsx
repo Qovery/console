@@ -116,7 +116,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
     },
     {
-      icon: <Icon name="icon-solid-wheel" />,
+      icon: <Icon iconName="gear" iconStyle="regular" />,
       name: 'Settings',
       active: location.pathname.includes(
         DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_SETTINGS_URL
@@ -157,7 +157,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
                 }
               >
                 Access info
-                <Icon iconName="info-circle" iconStyle="light" />
+                <Icon iconName="info-circle" iconStyle="regular" />
               </Button>
             ))
             .otherwise(() => null)}

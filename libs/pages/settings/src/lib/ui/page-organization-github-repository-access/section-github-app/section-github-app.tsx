@@ -37,7 +37,7 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
         </p>
         <Callout.Root className="mb-5" color="yellow">
           <Callout.Icon>
-            <Icon iconName="circle-info" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text className="text-xs">
             The Qovery GitHub app is being deprecated, please use the Git tokens.

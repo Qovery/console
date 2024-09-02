@@ -36,7 +36,7 @@ export function SettingsResourcesInstanceTypes({
       {displayWarning && (
         <Callout.Root className="mt-3" color="yellow" data-testid="settings-resources-instance-types-warning">
           <Callout.Icon>
-            <Icon iconName="circle-info" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text className="text-xs text-neutral-350">
             Once triggered, the update will be managed by your cloud provider and applied during the configured

@@ -171,7 +171,7 @@ export function StepGeneral(props: StepGeneralProps) {
                   {watch('cloud_provider') === CloudProviderEnum.GCP && (
                     <Callout.Root color="yellow" className="mb-2">
                       <Callout.Icon>
-                        <Icon iconName="triangle-exclamation" />
+                        <Icon iconName="triangle-exclamation" iconStyle="regular" />
                       </Callout.Icon>
                       <Callout.Text className="text-xs">
                         GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird

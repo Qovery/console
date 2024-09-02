@@ -120,7 +120,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
         .map(({ id, icon, color, children, title, description: description }, index) => (
           <Callout.Root color={color} key={id}>
             <Callout.Icon>
-              <Icon name={icon} />
+              <Icon name={icon} iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>

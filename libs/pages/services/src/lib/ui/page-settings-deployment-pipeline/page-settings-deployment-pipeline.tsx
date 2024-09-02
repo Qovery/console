@@ -11,7 +11,6 @@ import {
   BadgeDeploymentOrder,
   Button,
   Icon,
-  IconAwesomeEnum,
   LoaderSpinner,
   Menu,
   MenuAlign,
@@ -98,11 +97,11 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           <Button
             data-testid="btn-add-stage"
             className="ml-5 shrink-0 gap-2"
-            size="lg"
+            size="md"
             variant="solid"
             onClick={() => onAddStage()}
           >
-            Add stage <Icon iconName="circle-plus" />
+            Add stage <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
         <div className="h-full overflow-x-auto">
@@ -139,7 +138,8 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                             <Tooltip content={stage.description}>
                               <div>
                                 <Icon
-                                  name={IconAwesomeEnum.CIRCLE_INFO}
+                                  iconName="circle-info"
+                                  iconStyle="regular"
                                   className="relative -top-[2px] ml-1 text-xs text-neutral-350"
                                 />
                               </div>

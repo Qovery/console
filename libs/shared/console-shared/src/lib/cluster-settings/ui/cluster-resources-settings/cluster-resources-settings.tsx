@@ -115,7 +115,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       {watchKarpenter && (
         <Callout.Root color="yellow">
           <Callout.Icon>
-            <Icon iconName="triangle-exclamation" />
+            <Icon iconName="triangle-exclamation" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextHeading>Warning</Callout.TextHeading>
@@ -223,7 +223,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   {warningInstance && (
                     <Callout.Root className="mb-3 mt-1" color="yellow" data-testid="warning-instance">
                       <Callout.Icon>
-                        <Icon iconName="triangle-exclamation" />
+                        <Icon iconName="triangle-exclamation" iconStyle="regular" />
                       </Callout.Icon>
                       <Callout.Text>
                         <Callout.TextHeading>Be careful</Callout.TextHeading>
@@ -262,7 +262,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             {warningClusterNodes && (
               <Callout.Root color="yellow">
                 <Callout.Icon className="text-xs">
-                  <Icon iconName="circle-exclamation" />
+                  <Icon iconName="circle-exclamation" iconStyle="regular" />
                 </Callout.Icon>
                 <Callout.Text className="text-xs">
                   <Callout.TextHeading>

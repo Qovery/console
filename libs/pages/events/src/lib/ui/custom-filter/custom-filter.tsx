@@ -76,7 +76,7 @@ export function CustomFilter({
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
             >
               Timeframe
-              <Icon iconName="clock" iconStyle="light" />
+              <Icon iconName="clock" iconStyle="regular" />
             </Button>
           ) : (
             <Button type="button" data-testid="timeframe-values" onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}>

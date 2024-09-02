@@ -41,7 +41,7 @@ function ConfirmationModal({
       {selectedRowsCount !== count && (
         <Callout.Root color="yellow">
           <Callout.Icon>
-            <Icon iconName="triangle-exclamation" />
+            <Icon iconName="triangle-exclamation" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextHeading>Some services will not be impacted:</Callout.TextHeading>

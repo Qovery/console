@@ -17,7 +17,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
-        <div className="mb-8 flex justify-between">
+        <div className="mb-8 flex justify-between gap-2">
           <div className="space-y-3">
             <Heading className="text-neutral-400">API Token</Heading>
             <p className="text-xs text-neutral-400">
@@ -26,9 +26,9 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
             </p>
             <NeedHelp />
           </div>
-          <Button className="shrink-0 gap-2" size="lg" onClick={() => onAddToken()}>
+          <Button className="shrink-0 gap-2" size="md" onClick={() => onAddToken()}>
             Add new
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Token List" classNameContent="p-0">
@@ -51,7 +51,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                         {token.description && (
                           <Tooltip content={token.description}>
                             <div className="ml-1 cursor-pointer">
-                              <Icon iconName="circle-info" className="text-neutral-350" />
+                              <Icon iconName="circle-info" iconStyle="regular" />
                             </div>
                           </Tooltip>
                         )}
@@ -74,7 +74,7 @@ export function PageOrganizationApi(props: PageOrganizationApiProps) {
                       size="md"
                       onClick={() => onDelete(token)}
                     >
-                      <Icon iconName="trash" />
+                      <Icon iconName="trash-can" iconStyle="regular" />
                     </Button>
                   </div>
                 </li>

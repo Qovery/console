@@ -28,7 +28,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
-        <div className="mb-8 flex justify-between gap-3">
+        <div className="mb-8 flex justify-between gap-2">
           <div className="space-y-3">
             <Heading>Webhook</Heading>
             <p className="text-xs text-neutral-400">
@@ -37,9 +37,9 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
             </p>
             <NeedHelp />
           </div>
-          <Button data-testid="add-new" onClick={props.openAddNew} size="lg" className="shrink-0 gap-2">
+          <Button data-testid="add-new" onClick={props.openAddNew} size="md" className="shrink-0 gap-2">
             Add new
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Webhook" classNameContent="p-0">
@@ -57,11 +57,11 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                 >
                   <div className="flex flex-col">
                     <p className="mb-1 flex text-xs font-medium text-neutral-400">
-                      <Truncate truncateLimit={60} text={webhook.target_url || ''} />
+                      <Truncate truncateLimit={58} text={webhook.target_url || ''} />
                       {webhook.description && (
                         <Tooltip content={webhook.description}>
                           <div className="ml-1 cursor-pointer">
-                            <Icon iconName="circle-info" className="text-neutral-350" />
+                            <Icon iconName="circle-info" iconStyle="regular" />
                           </div>
                         </Tooltip>
                       )}
@@ -99,7 +99,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       size="md"
                       onClick={() => props.openEdit(webhook)}
                     >
-                      <Icon iconName="gear" />
+                      <Icon iconName="gear" iconStyle="regular" />
                     </Button>
                     <Button
                       data-testid="delete-webhook"
@@ -109,7 +109,7 @@ export function PageOrganizationWebhooks(props: PageOrganizationWebhooksProps) {
                       size="md"
                       onClick={() => props.onDelete(webhook)}
                     >
-                      <Icon iconName="trash" />
+                      <Icon iconName="trash-can" iconStyle="regular" />
                     </Button>
                   </div>
                 </li>

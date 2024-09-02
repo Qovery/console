@@ -78,7 +78,7 @@ export function StepSummary(props: StepSummaryProps) {
         {props.generalData.installation_type === 'MANAGED' && (
           <Callout.Root color="sky" className="mb-5">
             <Callout.Icon>
-              <Icon iconName="circle-exclamation" iconStyle="light" />
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>

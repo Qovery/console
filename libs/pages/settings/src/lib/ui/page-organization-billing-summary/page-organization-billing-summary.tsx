@@ -43,14 +43,14 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         <div className="mb-8 flex justify-between">
           <Heading className="mb-2">Plan details</Heading>
           <div className="flex gap-3">
-            <Button variant="surface" color="neutral" size="lg" onClick={props.onShowUsageClick}>
+            <Button className="gap-1" variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
               Show usage
-              <Icon iconName="gauge-high" className="ml-2 text-xs" />
+              <Icon iconName="gauge-high" iconStyle="regular" />
             </Button>
-            <Button variant="surface" color="neutral" size="lg" onClick={props.onPromoCodeClick}>
+            <Button variant="surface" color="neutral" size="md" onClick={props.onPromoCodeClick}>
               Promo code
             </Button>
-            <Button size="lg" onClick={props.openIntercom}>
+            <Button size="md" onClick={props.openIntercom}>
               Upgrade plan
             </Button>
           </div>

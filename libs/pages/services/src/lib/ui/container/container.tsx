@@ -118,13 +118,13 @@ export function Container({ children }: PropsWithChildren) {
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
     },
     {
-      icon: <Icon name="icon-solid-key" />,
+      icon: <Icon iconName="key" iconStyle="regular" />,
       name: 'Variables',
       active: location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
     },
     {
-      icon: <Icon name="icon-solid-wheel" />,
+      icon: <Icon iconName="gear" iconStyle="regular" />,
       name: 'Settings',
       active: location.pathname.includes(
         `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_SETTINGS_URL}`
@@ -217,21 +217,21 @@ export function Container({ children }: PropsWithChildren) {
             fallback={
               <Link
                 as="button"
-                size="lg"
+                size="md"
                 id="service-list"
                 className="gap-2"
                 to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
               >
                 New service
-                <Icon iconName="circle-plus" />
+                <Icon iconName="circle-plus" iconStyle="regular" />
               </Link>
             }
           >
             <Menu
               trigger={
-                <Button id="service-dropdown" size="lg" className="gap-2">
+                <Button id="service-dropdown" size="md" className="gap-2">
                   New service
-                  <Icon iconName="circle-plus" />
+                  <Icon iconName="circle-plus" iconStyle="regular" />
                 </Button>
               }
               menus={newServicesMenu}

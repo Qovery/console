@@ -24,9 +24,9 @@ export function PageOrganizationBilling(props: PageOrganizationBillingProps) {
       <Section className="p-8">
         <div className="mb-8 flex justify-between">
           <Heading className="mb-2">Payment method</Heading>
-          <Button onClick={props.openNewCreditCardModal} size="lg" className="gap-2" data-testid="add-new-card-button">
+          <Button onClick={props.openNewCreditCardModal} size="md" className="gap-2" data-testid="add-new-card-button">
             Add new card
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
 

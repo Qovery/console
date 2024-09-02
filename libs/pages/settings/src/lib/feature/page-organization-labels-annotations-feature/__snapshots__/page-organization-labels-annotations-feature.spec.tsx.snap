@@ -40,7 +40,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
           <button
             aria-expanded="false"
             aria-haspopup="menu"
-            class="inline-flex items-center font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 shrink-0 gap-2"
+            class="inline-flex items-center font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100 shrink-0 gap-2"
             data-state="closed"
             id="radix-:r6:"
             type="button"
@@ -48,7 +48,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
             Add new
             <i
               aria-hidden="true"
-              class="fa-solid fa-circle-plus "
+              class="fa-regular fa-circle-plus "
             />
           </button>
         </div>
@@ -115,7 +115,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-layer-group "
+                      class="fa-regular fa-layer-group "
                     />
                   </button>
                   <button
@@ -123,7 +123,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-gear "
+                      class="fa-regular fa-gear "
                     />
                   </button>
                   <button
@@ -133,7 +133,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-trash "
+                      class="fa-regular fa-trash-can "
                     />
                   </button>
                 </div>
@@ -205,7 +205,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                     />
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-layer-group "
+                      class="fa-regular fa-layer-group "
                     />
                   </button>
                   <button
@@ -213,7 +213,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-gear "
+                      class="fa-regular fa-gear "
                     />
                   </button>
                   <button
@@ -223,7 +223,7 @@ exports[`PageOrganizationLabelsAnnotationsFeature should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-trash "
+                      class="fa-regular fa-trash-can "
                     />
                   </button>
                 </div>

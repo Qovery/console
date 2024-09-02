@@ -45,9 +45,9 @@ export function FlowCreatePort({
         </div>
 
         {isSetting && (
-          <Button size="lg" variant="solid" color="brand" data-testid="add-button" onClick={() => onAddPort()}>
+          <Button size="md" variant="solid" color="brand" data-testid="add-button" onClick={() => onAddPort()}>
             Add Port
-            <Icon iconName="circle-plus" className="ml-2" />
+            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
         )}
       </div>
@@ -143,7 +143,7 @@ export function FlowCreatePort({
               <div className="flex items-center justify-end px-4 py-3">
                 <Button onClick={onAddPort}>
                   Add port
-                  <Icon iconName="circle-plus" className="ml-2" />
+                  <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
                 </Button>
               </div>
             )}

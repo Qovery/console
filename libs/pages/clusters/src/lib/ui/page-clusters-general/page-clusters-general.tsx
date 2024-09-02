@@ -23,9 +23,9 @@ export function PageClustersGeneral({ loading, clusters, clusterStatuses }: Page
             <Heading className="mb-2">Manage your clusters</Heading>
             <p className="text-xs text-neutral-400">Manage your infrastructure across different Cloud providers.</p>
           </div>
-          <Link as="button" to={goToCreateCluster} className="gap-2" size="lg">
+          <Link as="button" to={goToCreateCluster} className="gap-2" size="md">
             Add Cluster
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Link>
         </div>
         {loading && clusters?.length === 0 ? (
@@ -49,7 +49,7 @@ export function PageClustersGeneral({ loading, clusters, clusterStatuses }: Page
               title="No cluster set"
               description="A cluster is necessary to run your applications with Qovery"
             >
-              <Link as="button" to={goToCreateCluster} className="mt-5" size="md">
+              <Link as="button" to={goToCreateCluster} className="mt-5" size="lg">
                 Add Cluster
               </Link>
             </EmptyState>

@@ -71,8 +71,8 @@ export function PageDeploymentRules({
             <p className="text-xs text-neutral-400">
               Configure your default deployment rules. Drag & drop rules to prioritize them.
             </p>
-            <Button size="lg" onClick={() => navigate(linkNewRule)}>
-              Add rule <Icon className="ml-2" iconName="circle-plus" />
+            <Button size="md" onClick={() => navigate(linkNewRule)}>
+              Add rule <Icon className="ml-2" iconName="circle-plus" iconStyle="regular" />
             </Button>
           </div>
 

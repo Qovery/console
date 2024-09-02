@@ -27,19 +27,19 @@ export function Container({ children }: PropsWithChildren) {
 
   const tabsItems = [
     {
-      icon: <Icon iconName="layer-group" />,
+      icon: <Icon iconName="layer-group" iconStyle="regular" />,
       name: 'Environments',
       active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
     },
     {
-      icon: <Icon name="icon-solid-browser" className="text-sm text-inherit" />,
+      icon: <Icon iconName="browsers" iconStyle="regular" />,
       name: 'Deployment Rules',
       active: isDeploymentRulesTab,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },
     {
-      icon: <Icon name="icon-solid-key" />,
+      icon: <Icon iconName="key" iconStyle="regular" />,
       name: 'Variables',
       active: pathname === ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
       link: ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_VARIABLES_URL,
@@ -65,7 +65,7 @@ export function Container({ children }: PropsWithChildren) {
       ) : (
         <Tooltip content="You need to create a cluster first" disabled={clusterAvailable}>
           <Button
-            size="lg"
+            size="md"
             className="gap-2"
             disabled={!clusterAvailable}
             onClick={() => {
@@ -81,7 +81,7 @@ export function Container({ children }: PropsWithChildren) {
             }}
           >
             New environment
-            <Icon iconName="circle-plus" className="text-xs" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </Tooltip>
       )}

@@ -29,7 +29,7 @@ export function CopyToClipboard({ text, children }: CopyToClipboardProps) {
         ? cloneElement(
             child,
             { ...child.props, color: 'green', variant: 'solid' },
-            <Icon iconName="check" className="mr-2" />,
+            <Icon iconName="check" className="mr-1" />,
             'Copied'
           )
         : child}

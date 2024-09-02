@@ -49,9 +49,9 @@ export function PageOrganizationLabelsAnnotationsFeature() {
           </div>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="lg" className="shrink-0 gap-2">
+              <Button size="md" className="shrink-0 gap-2">
                 Add new
-                <Icon iconName="circle-plus" />
+                <Icon iconName="circle-plus" iconStyle="regular" />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content>
@@ -130,7 +130,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                       <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                         {labelsGroup.associated_items_count}
                       </span>
-                      <Icon iconName="layer-group" />
+                      <Icon iconName="layer-group" iconStyle="regular" />
                     </Button>
                     <Button
                       size="md"
@@ -149,7 +149,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                         })
                       }}
                     >
-                      <Icon iconName="gear" />
+                      <Icon iconName="gear" iconStyle="regular" />
                     </Button>
                     <Tooltip content="Labels group still in used" disabled={labelsGroup.associated_items_count === 0}>
                       <Button
@@ -172,7 +172,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                           })
                         }}
                       >
-                        <Icon iconName="trash" />
+                        <Icon iconName="trash-can" iconStyle="regular" />
                       </Button>
                     </Tooltip>
                   </div>
@@ -241,7 +241,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                       <span className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                         {annotationsGroup.associated_items_count}
                       </span>
-                      <Icon iconName="layer-group" />
+                      <Icon iconName="layer-group" iconStyle="regular" />
                     </Button>
                     <Button
                       size="md"
@@ -260,7 +260,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                         })
                       }}
                     >
-                      <Icon iconName="gear" />
+                      <Icon iconName="gear" iconStyle="regular" />
                     </Button>
                     <Tooltip
                       content="Annotations group still in used"
@@ -286,7 +286,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                           })
                         }}
                       >
-                        <Icon iconName="trash" />
+                        <Icon iconName="trash-can" iconStyle="regular" />
                       </Button>
                     </Tooltip>
                   </div>

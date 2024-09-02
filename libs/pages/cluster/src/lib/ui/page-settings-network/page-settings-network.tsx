@@ -18,9 +18,9 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
           title="Network"
           description="The Network tab in your cluster settings allows you to update your Qovery VPC route table so that you can perform VPC peering."
         >
-          <Button data-testid="add-button" size="lg" variant="solid" color="brand" onClick={() => props.onAddRoute()}>
+          <Button data-testid="add-button" size="md" variant="solid" color="brand" onClick={() => props.onAddRoute()}>
             Add Network
-            <Icon iconName="circle-plus" className="ml-2" />
+            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
         </SettingsHeading>
 

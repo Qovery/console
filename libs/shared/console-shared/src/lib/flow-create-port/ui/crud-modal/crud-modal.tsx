@@ -168,7 +168,7 @@ export function CrudModal({
       {watchPublicly && kubernetes === 'SELF_MANAGED' && cloudProvider === 'ON_PREMISE' && isDemo && (
         <Callout.Root color="sky" className="mb-5">
           <Callout.Icon>
-            <Icon iconName="circle-info" iconStyle="light" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text className="text-xs">
             This service is deployed on a local demo cluster and it will be accessible only from the machine where the
@@ -201,7 +201,7 @@ export function CrudModal({
                   watchProtocol !== PortProtocolEnum.UDP && (
                     <Tooltip content="You cannot configure the port used externally" side="left">
                       <div>
-                        <Icon iconName="circle-info" iconStyle="light" className="text-neutral-350" />
+                        <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-350" />
                       </div>
                     </Tooltip>
                   )
@@ -236,7 +236,7 @@ export function CrudModal({
       {(watchProtocol === PortProtocolEnum.TCP || watchProtocol === PortProtocolEnum.UDP) && watchPublicly && (
         <Callout.Root className="mt-4" color="yellow">
           <Callout.Icon>
-            <Icon iconName="circle-info" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text className="text-xs">
             Activating this feature will add an extra cost to your cloud provider bill (a Network Load Balancer will be
@@ -247,7 +247,7 @@ export function CrudModal({
       {isMatchingHealthCheck && currentProtocol === watchProtocol && (
         <Callout.Root className="mt-4" color="yellow">
           <Callout.Icon>
-            <Icon iconName="circle-info" iconStyle="light" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text className="text-xs">The health check will be updated to use the new port value.</Callout.Text>
         </Callout.Root>
@@ -255,7 +255,7 @@ export function CrudModal({
       {isMatchingHealthCheck && currentProtocol !== watchProtocol && (
         <Callout.Root className="mt-4" color="yellow">
           <Callout.Icon>
-            <Icon iconName="circle-info" iconStyle="light" />
+            <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text className="text-xs">Please verify the health check configuration.</Callout.Text>
         </Callout.Root>

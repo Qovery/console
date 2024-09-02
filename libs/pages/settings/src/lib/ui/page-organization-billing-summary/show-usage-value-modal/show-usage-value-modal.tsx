@@ -18,7 +18,7 @@ export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
 
       <Callout.Root className="mb-5" color="yellow">
         <Callout.Icon>
-          <Icon iconName="triangle-exclamation" />
+          <Icon iconName="triangle-exclamation" iconStyle="regular" />
         </Callout.Icon>
         <Callout.Text className="text-xs">
           Please keep this URL safe! It is publicly accessible to anyone who use it. This link expires in{' '}

@@ -30,7 +30,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
-        <div className="mb-8 flex justify-between">
+        <div className="mb-8 flex justify-between gap-2">
           <div className="space-y-3">
             <Heading className="text-neutral-400">Container registries</Heading>
             <p className="text-xs text-neutral-400">
@@ -38,9 +38,9 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
             </p>
             <NeedHelp />
           </div>
-          <Button className="gap-2" size="lg" onClick={() => onAddRegistry()}>
+          <Button className="gap-2" size="md" onClick={() => onAddRegistry()}>
             Add registry
-            <Icon iconName="circle-plus" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <BlockContent title="Container registries" classNameContent="p-0">
@@ -73,7 +73,7 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                           {registry.description && (
                             <Tooltip content={registry.description}>
                               <div className="ml-1 cursor-pointer">
-                                <Icon iconName="circle-info" className="text-neutral-350" />
+                                <Icon iconName="circle-info" iconStyle="regular" />
                               </div>
                             </Tooltip>
                           )}
@@ -108,14 +108,14 @@ export function PageOrganizationContainerRegistries(props: PageOrganizationConta
                           disabled={registry.associated_services_count === 0}
                           onClick={() => onOpenServicesAssociatedModal(registry)}
                         >
-                          <Icon iconName="layer-group" />
+                          <Icon iconName="layer-group" iconStyle="regular" />
                         </Button>
                       </Indicator>
                       <Button size="md" variant="surface" color="neutral" onClick={() => onEdit(registry)}>
-                        <Icon iconName="gear" />
+                        <Icon iconName="gear" iconStyle="regular" />
                       </Button>
                       <Button size="md" variant="surface" color="neutral" onClick={() => onDelete(registry)}>
-                        <Icon iconName="trash" />
+                        <Icon iconName="trash-can" iconStyle="regular" />
                       </Button>
                     </div>
                   </li>

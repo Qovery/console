@@ -171,7 +171,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
                 {cluster.is_demo && (
                   <Callout.Root className="mt-3 text-xs" color="sky">
                     <Callout.Icon>
-                      <Icon iconName="info-circle" iconStyle="light" />
+                      <Icon iconName="info-circle" iconStyle="regular" />
                     </Callout.Icon>
                     <Callout.Text>
                       <p>The best way to delete your cluster is via our CLI!</p>
@@ -222,7 +222,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
           {kubernetes !== 'SELF_MANAGED' && clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
             <Callout.Root className="mt-3 text-xs" color="yellow">
               <Callout.Icon>
-                <Icon iconName="triangle-exclamation" />
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text>
                 <p>Please note that you will have to manually delete on your cloud account:</p>

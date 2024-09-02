@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, EmptyState } from '@qovery/shared/ui'
+import { Button, EmptyState, Icon } from '@qovery/shared/ui'
 
 export interface PlaceholderNoRulesProps {
   organizationId: string
@@ -21,7 +21,7 @@ export function PlaceholderNoRules({ clusterAvailable, linkNewRule, organization
       }
     >
       <Button
-        className="mt-5"
+        className="mt-5 gap-2"
         size="lg"
         onClick={() =>
           clusterAvailable
@@ -30,6 +30,7 @@ export function PlaceholderNoRules({ clusterAvailable, linkNewRule, organization
         }
       >
         {clusterAvailable ? 'Create Deployment Rule' : 'Create a Cluster'}
+        <Icon iconName="circle-plus" iconStyle="regular" />
       </Button>
     </EmptyState>
   )
