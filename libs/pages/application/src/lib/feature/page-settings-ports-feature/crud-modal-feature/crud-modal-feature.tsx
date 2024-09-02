@@ -193,6 +193,7 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
         kubernetes={cluster?.kubernetes}
         currentProtocol={port?.protocol}
         isEdit={!!port}
+        isDemo={cluster?.is_demo}
         isMatchingHealthCheck={isMatchingHealthCheck(port, livenessType) || isMatchingHealthCheck(port, readinessType)}
         loading={isLoadingEditService}
         onClose={onClose}
