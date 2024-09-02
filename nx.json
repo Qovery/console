@@ -197,6 +197,15 @@
         "libs/shared/utils/**/*",
         "libs/state/util-queries/**/*"
       ]
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "serveTargetName": "serve"
+      }
     }
   ]
 }

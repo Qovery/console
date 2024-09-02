@@ -6,69 +6,18 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{projectRoot}/{options.outputPath}", "{workspaceRoot}/dist/{projectRoot}"],
       "defaultConfiguration": "production",
-      "options": {
-        "compiler": "babel",
-        "outputPath": "dist/apps/console",
-        "index": "apps/console/src/index.html",
-        "baseHref": "/",
-        "main": "apps/console/src/main.tsx",
-        "tsConfig": "apps/console/tsconfig.app.json",
-        "assets": [
-          "apps/console/src/favicon.ico",
-          "apps/console/src/assets",
-          {
-            "glob": "*",
-            "input": "node_modules/@awesome.me/kit-c4457d1be4/icons/webfonts",
-            "output": "assets/fonts/font-awesome"
-          },
-          {
-            "glob": "**/*",
-            "input": "libs/shared/ui/src/lib/assets",
-            "output": "/assets"
-          }
-        ],
-        "styles": ["apps/console/src/styles.scss"],
-        "scripts": [],
-        "webpackConfig": "apps/console/webpack.config.js",
-        "postcssConfig": "apps/console/postcss.config.js",
-        "standardWebpackConfigFunction": true
-      },
       "configurations": {
-        "production": {
-          "optimization": true,
-          "outputHashing": "all",
-          "sourceMap": false,
-          "namedChunks": false,
-          "extractLicenses": true,
-          "vendorChunk": false
-        },
-        "staging": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "vendorChunk": true
-        }
+        "production": {},
+        "staging": {}
       }
     },
     "serve": {
-      "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "staging",
-      "options": {
-        "buildTarget": "console:build",
-        "hmr": true
-      },
       "configurations": {
-        "production": {
-          "buildTarget": "console:build:production",
-          "hmr": false
-        },
-        "staging": {
-          "buildTarget": "console:build:staging",
-          "hmr": true
-        }
+        "production": {},
+        "staging": {}
       }
     },
     "test": {
