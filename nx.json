@@ -206,6 +206,12 @@
         "serveStaticTargetName": "serve-static",
         "serveTargetName": "serve"
       }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
     }
   ]
 }
