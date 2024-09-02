@@ -1,9 +1,6 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useClusterStatus } from '../hooks/use-cluster-status/use-cluster-status'
 import { ClusterCard } from './cluster-card'
-
-jest.mock('../hooks/use-cluster-status/use-cluster-status')
 
 const mockCluster = {
   id: 'cluster-id',
@@ -19,37 +16,64 @@ const mockCluster = {
 } as Cluster
 
 describe('ClusterCard', () => {
-  beforeEach(() => {
-    useClusterStatus.mockReturnValue({
-      data: {
-        status: 'RUNNING',
-      },
-      isLoading: false,
-    })
-  })
-
   it('should render correctly', () => {
-    const { container } = renderWithProviders(<ClusterCard organizationId="org-id" cluster={mockCluster} />)
+    const { container } = renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterStatus={{
+          status: 'DEPLOYED',
+        }}
+      />
+    )
     expect(container).toMatchSnapshot()
   })
 
   it('should display cluster name', () => {
-    renderWithProviders(<ClusterCard organizationId="org-id" cluster={mockCluster} />)
+    renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterStatus={{
+          status: 'DEPLOYED',
+        }}
+      />
+    )
     expect(screen.getByText('Test Cluster')).toBeInTheDocument()
   })
 
   it('should display cluster status', () => {
-    renderWithProviders(<ClusterCard organizationId="org-id" cluster={mockCluster} />)
-    expect(screen.getByText('Running')).toBeInTheDocument()
+    renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterStatus={{
+          status: 'DEPLOYED',
+        }}
+      />
+    )
+
+    expect(screen.getByText('Deployed')).toBeInTheDocument()
   })
 
   it('should display production badge', () => {
-    renderWithProviders(<ClusterCard organizationId="org-id" cluster={mockCluster} />)
+    renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterStatus={{
+          status: 'DEPLOYED',
+        }}
+      />
+    )
     expect(screen.getByText('Production')).toBeInTheDocument()
   })
 
   it('should display cluster details', () => {
-    renderWithProviders(<ClusterCard organizationId="org-id" cluster={mockCluster} />)
+    renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterStatus={{
+          status: 'DEPLOYED',
+        }}
+      />
+    )
     expect(screen.getByText('Qovery managed')).toBeInTheDocument()
     expect(screen.getByText('us-east-1')).toBeInTheDocument()
     expect(screen.getByText('1.21')).toBeInTheDocument()

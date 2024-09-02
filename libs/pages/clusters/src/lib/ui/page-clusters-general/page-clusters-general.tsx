@@ -1,4 +1,4 @@
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterStatusGet } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { ClusterCard } from '@qovery/domains/clusters/feature'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
@@ -6,11 +6,11 @@ import { EmptyState, Heading, Icon, Link, LoaderSpinner, Section } from '@qovery
 
 export interface PageClustersGeneralProps {
   clusters: Cluster[]
+  clusterStatuses: ClusterStatusGet[]
   loading: boolean
 }
 
-export function PageClustersGeneral(props: PageClustersGeneralProps) {
-  const { loading, clusters } = props
+export function PageClustersGeneral({ loading, clusters, clusterStatuses }: PageClustersGeneralProps) {
   const { organizationId = '' } = useParams()
 
   const goToCreateCluster = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL
@@ -35,7 +35,11 @@ export function PageClustersGeneral(props: PageClustersGeneralProps) {
         ) : clusters && clusters.length > 0 ? (
           <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {clusters.map((cluster) => (
-              <ClusterCard key={cluster.id} cluster={cluster} organizationId={organizationId} />
+              <ClusterCard
+                key={cluster.id}
+                cluster={cluster}
+                clusterStatus={clusterStatuses.find((c) => c.cluster_id === cluster.id)}
+              />
             ))}
           </div>
         ) : (

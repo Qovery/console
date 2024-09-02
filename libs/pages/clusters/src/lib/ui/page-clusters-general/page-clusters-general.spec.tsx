@@ -7,6 +7,11 @@ const clusters = clusterFactoryMock(2)
 describe('PageClustersGeneral', () => {
   const props: PageClustersGeneralProps = {
     clusters,
+    clusterStatuses: [
+      {
+        status: 'BUILDING',
+      },
+    ],
     loading: false,
   }
 
