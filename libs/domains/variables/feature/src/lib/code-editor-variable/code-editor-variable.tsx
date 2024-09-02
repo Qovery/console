@@ -23,7 +23,7 @@ export function CodeEditorVariable({
   })
 
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
-  const formatVariableKey = (key: string) => `{{${key}}}`
+  const formatVariableKey = (key: string) => (language === 'yaml' ? `qovery.env.${key}` : `{{${key}}}`)
 
   const handleEditorDidMount = async (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
     editorRef.current = editor
