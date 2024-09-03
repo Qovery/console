@@ -1,12 +1,22 @@
+import { useNavigate } from 'react-router-dom'
 import selectEvent from 'react-select-event'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import * as servicesDomains from '../hooks/use-clone-service/use-clone-service'
+import { useCloneService } from '../hooks/use-clone-service/use-clone-service'
 import ServiceCloneModal, { type ServiceCloneModalProps } from './service-clone-modal'
 
-const useCloneServiceMockSpy = jest.spyOn(servicesDomains, 'useCloneService') as jest.Mock
-const mockNavigate = jest.fn()
 const mockEnvironments = environmentFactoryMock(3)
+
+jest.mock('../hooks/use-clone-service/use-clone-service', () => {
+  const mock = {
+    // https://github.com/jestjs/jest/issues/10894
+    mutateAsync: jest.fn(),
+  }
+  return {
+    ...jest.requireActual('../hooks/use-clone-service/use-clone-service'),
+    useCloneService: () => mock,
+  }
+})
 
 jest.mock('../hooks/use-service/use-service', () => ({
   ...jest.requireActual('../hooks/use-service/use-service'),
@@ -24,10 +34,13 @@ jest.mock('../hooks/use-environments/use-environments', () => ({
   useEnvironments: () => ({ data: mockEnvironments, isLoading: false }),
 }))
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}))
+jest.mock('react-router-dom', () => {
+  const navigate = jest.fn()
+  return {
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: () => navigate,
+  }
+})
 
 const props: ServiceCloneModalProps = {
   onClose: jest.fn(),
@@ -43,11 +56,8 @@ describe('ServiceCloneModal', () => {
   })
 
   it('should submit form on click on button', async () => {
-    useCloneServiceMockSpy.mockReturnValue({
-      mutateAsync: jest.fn(async () => ({
-        id: 1,
-      })),
-    })
+    // https://github.com/jestjs/jest/issues/10894
+    useCloneService().mutateAsync = jest.fn().mockResolvedValue({ id: 1 })
 
     const { userEvent } = renderWithProviders(<ServiceCloneModal {...props} />)
 
@@ -62,7 +72,7 @@ describe('ServiceCloneModal', () => {
     const submitButton = screen.getByRole('button', { name: /clone/i })
     await userEvent.click(submitButton)
 
-    expect(useCloneServiceMockSpy().mutateAsync).toHaveBeenCalledWith({
+    expect(useCloneService().mutateAsync).toHaveBeenCalledWith({
       serviceId: '1',
       serviceType: 'APPLICATION',
       payload: {
@@ -70,7 +80,7 @@ describe('ServiceCloneModal', () => {
         name: 'test',
       },
     })
-    expect(mockNavigate).toHaveBeenCalledWith(
+    expect(useNavigate()).toHaveBeenCalledWith(
       '/organization/0/project/1/environment/2951580907208704/application/1/general'
     )
   })

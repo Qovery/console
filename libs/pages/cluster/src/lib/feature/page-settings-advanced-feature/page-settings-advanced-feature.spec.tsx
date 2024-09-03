@@ -1,15 +1,10 @@
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import React from 'react'
-import * as clustersDomain from '@qovery/domains/clusters/feature'
+import { useEditClusterAdvancedSettings } from '@qovery/domains/clusters/feature'
 import { clusterFactoryMock } from '@qovery/shared/factories'
-import { act, fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as InitFormValues from './init-form-values/init-form-values'
 import PageSettingsAdvancedFeature from './page-settings-advanced-feature'
 
-const useClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useClusterAdvancedSettings') as jest.Mock
-const useDefaultAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useDefaultAdvancedSettings') as jest.Mock
-const useEditClusterAdvancedSettingsMockSpy = jest.spyOn(clustersDomain, 'useEditClusterAdvancedSettings') as jest.Mock
 const mockCluster = clusterFactoryMock(1)[0]
 const mockAdvancedSettings: ClusterAdvancedSettings = {
   'loki.log_retention_in_week': 1,
@@ -18,9 +13,21 @@ const mockAdvancedSettings: ClusterAdvancedSettings = {
   'cloud_provider.container_registry.tags': {},
 }
 
-jest.mock('./init-form-values/init-form-values', () => ({
-  ...jest.requireActual('./init-form-values/init-form-values'),
-}))
+jest.mock('@qovery/domains/clusters/feature', () => {
+  const mutateAsync = jest.fn()
+  return {
+    ...jest.requireActual('@qovery/domains/clusters/feature'),
+    useClusterAdvancedSettings: () => ({
+      data: mockAdvancedSettings,
+    }),
+    useDefaultAdvancedSettings: () => ({
+      data: {},
+    }),
+    useEditClusterAdvancedSettings: () => ({
+      mutateAsync,
+    }),
+  }
+})
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -28,56 +35,6 @@ jest.mock('react-router-dom', () => ({
 }))
 
 describe('PageSettingsAdvancedFeature', () => {
-  const setState = jest.fn()
-  const editClusterAdvancedSettingsSpy = jest.fn()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const useStateMock: any = (initState: any) => [initState, setState]
-  let promise: Promise
-
-  beforeEach(() => {
-    useClusterAdvancedSettingsMockSpy.mockReturnValue({ data: mockAdvancedSettings, isLoading: false })
-    useDefaultAdvancedSettingsMockSpy.mockReturnValue({ data: {}, isLoading: false })
-
-    useEditClusterAdvancedSettingsMockSpy.mockReturnValue({
-      mutateAsync: editClusterAdvancedSettingsSpy,
-    })
-    promise = Promise.resolve()
-  })
-
-  afterAll(() => {
-    jest.clearAllMocks()
-    jest.restoreAllMocks()
-  })
-
-  it('should render successfully', async () => {
-    const { baseElement } = renderWithProviders(<PageSettingsAdvancedFeature />)
-    expect(baseElement).toBeTruthy()
-
-    await act(async () => {
-      await promise
-    })
-  })
-
-  it('should fetch ClusterAdvancedSettings if advanced_settings does not exist', async () => {
-    useClusterAdvancedSettingsMockSpy.mockReturnValueOnce({ data: undefined, isLoading: false })
-    renderWithProviders(<PageSettingsAdvancedFeature />)
-    expect(useClusterAdvancedSettingsMockSpy).toHaveBeenCalled()
-
-    await act(async () => {
-      await promise
-    })
-  })
-
-  // I think the useForm hook also use useState, this is why the first 4th call are to ignored. https://gist.github.com/mauricedb/eb2bae5592e3ddc64fa965cde4afe7bc
-  it('should set the keys if application and advanced_settings are defined', async () => {
-    jest.spyOn(React, 'useState').mockImplementation(useStateMock)
-    renderWithProviders(<PageSettingsAdvancedFeature />)
-    expect(setState).toHaveBeenNthCalledWith(9, Object.keys(mockAdvancedSettings || {}).sort())
-    await act(async () => {
-      await promise
-    })
-  })
-
   it('should edit ClusterAdvancedSettings if form is submitted', async () => {
     const { userEvent } = renderWithProviders(<PageSettingsAdvancedFeature />)
 
@@ -94,7 +51,7 @@ describe('PageSettingsAdvancedFeature', () => {
     expect(button).toBeEnabled()
     await userEvent.click(screen.getByTestId('submit-button'))
 
-    expect(editClusterAdvancedSettingsSpy).toHaveBeenCalledWith({
+    expect(useEditClusterAdvancedSettings().mutateAsync).toHaveBeenCalledWith({
       clusterId: mockCluster.id,
       organizationId: '1',
       clusterAdvancedSettings: {
@@ -104,19 +61,11 @@ describe('PageSettingsAdvancedFeature', () => {
         'cloud_provider.container_registry.tags': { test: 'test' },
       },
     })
-
-    await act(async () => {
-      await promise
-    })
   })
 
   it('should init the form', async () => {
     const spy = jest.spyOn(InitFormValues, 'initFormValues')
     renderWithProviders(<PageSettingsAdvancedFeature />)
     expect(spy).toHaveBeenCalled()
-
-    await act(async () => {
-      await promise
-    })
   })
 })

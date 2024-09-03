@@ -5,11 +5,6 @@ import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import ClusterResourcesSettingsFeature from './cluster-resources-settings-feature'
 
-const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
-  cloudProvidersDomain,
-  'useCloudProviderInstanceTypes'
-) as jest.Mock
-
 describe('ClusterResourcesSettingsFeature', () => {
   let defaultValues: ClusterResourcesData
   beforeEach(() => {
@@ -104,6 +99,10 @@ describe('ClusterResourcesSettingsFeature', () => {
   })
 
   it('should fetch the availabale Instance types at init and on change', async () => {
+    const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
+      cloudProvidersDomain,
+      'useCloudProviderInstanceTypes'
+    ) as jest.Mock
     const { baseElement } = render(
       wrapWithReactHookForm<ClusterResourcesData>(
         <ClusterResourcesSettingsFeature
