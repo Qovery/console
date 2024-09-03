@@ -1,13 +1,12 @@
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageSettingsResources, { type PageSettingsResourcesProps } from './page-settings-resources'
 
 const props: PageSettingsResourcesProps = {
   loading: false,
-  clusterRegion: 'eu-west-1',
-  cloudProvider: CloudProviderEnum.AWS,
+  cluster: clusterFactoryMock(1)[0],
   onSubmit: jest.fn(),
 }
 
@@ -24,7 +23,7 @@ describe('PageSettingsResources', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(<PageSettingsResources {...props} />, {
         defaultValues,
       })
