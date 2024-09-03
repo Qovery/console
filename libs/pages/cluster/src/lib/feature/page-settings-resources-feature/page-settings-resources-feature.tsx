@@ -21,7 +21,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
 
   const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
 
-  if (data['karpenter'].enabled && !hasKarpenterFeature) {
+  if (data['karpenter']?.enabled && !hasKarpenterFeature) {
     payload.features = [
       ...(cluster.features || []),
       {
