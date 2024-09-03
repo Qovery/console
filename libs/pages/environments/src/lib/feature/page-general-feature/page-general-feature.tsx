@@ -11,7 +11,7 @@ export function PageGeneralFeature() {
   const { data: clusters = [] } = useClusters({ organizationId })
   const { data: project } = useProject({ organizationId, projectId })
 
-  return project && <PageGeneral project={project} clusterAvailable={clusters.length > 0} />
+  return <PageGeneral project={project} clusterAvailable={clusters.length > 0} />
 }
 
 export default PageGeneralFeature

@@ -6,6 +6,14 @@ import { NotFoundPage } from '@qovery/pages/layout'
 import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, SETTINGS_GENERAL_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { LoaderSpinner, ToastEnum, toast } from '@qovery/shared/ui'
 
+function LoadingScreen() {
+  return (
+    <div className="flex min-h-page-container items-center justify-center rounded-t bg-neutral-50">
+      <LoaderSpinner />
+    </div>
+  )
+}
+
 export function RedirectOverview() {
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
@@ -19,12 +27,8 @@ export function RedirectOverview() {
     }
   }, [organizationId, organizations, navigate, projects])
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-page-container items-center justify-center rounded-t bg-neutral-50">
-        <LoaderSpinner />
-      </div>
-    )
+  if (isLoading || !isFetched) {
+    return <LoadingScreen />
   }
 
   if (error) {
@@ -39,7 +43,7 @@ export function RedirectOverview() {
     return <Navigate to={SETTINGS_URL(organizationId) + SETTINGS_GENERAL_URL} />
   }
 
-  return null
+  return <LoadingScreen />
 }
 
 export default RedirectOverview

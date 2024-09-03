@@ -18,7 +18,6 @@ import {
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
   INFRA_LOGS_URL,
-  OVERVIEW_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
   SETTINGS_URL,
@@ -100,7 +99,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         ? projects?.map((project: Project) => ({
             name: project.name,
             link: {
-              url: OVERVIEW_URL(project.organization?.id, project.id),
+              url: ENVIRONMENTS_URL(project.organization?.id, project.id) + ENVIRONMENTS_GENERAL_URL,
             },
             contentLeft: (
               <Icon

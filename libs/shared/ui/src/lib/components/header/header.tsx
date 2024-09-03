@@ -11,7 +11,7 @@ export interface HeaderProps extends PropsWithChildren {
 
 export function Header({ title, buttons, actions, children }: HeaderProps) {
   return (
-    <div className="flex shrink-0 items-center justify-between rounded-t border-b border-neutral-200 bg-white px-5 py-6">
+    <div className="flex min-h-[125px] shrink-0 items-center justify-between rounded-t border-b border-neutral-200 bg-white px-5 py-6">
       <div className="ml-4 flex items-center gap-5">
         {children}
         <div className="flex flex-col gap-3">

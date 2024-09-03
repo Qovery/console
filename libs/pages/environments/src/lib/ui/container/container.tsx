@@ -7,6 +7,7 @@ import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } fro
 import {
   ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
   ENVIRONMENTS_DEPLOYMENT_RULES_URL,
+  ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENTS_VARIABLES_URL,
 } from '@qovery/shared/routes'
@@ -29,8 +30,8 @@ export function Container({ children }: PropsWithChildren) {
     {
       icon: <Icon iconName="layer-group" iconStyle="regular" />,
       name: 'Environments',
-      active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
-      link: `${ENVIRONMENTS_URL(organizationId, projectId)}/general`,
+      active: pathname === `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`,
+      link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_GENERAL_URL}`,
     },
     {
       icon: <Icon iconName="browsers" iconStyle="regular" />,
