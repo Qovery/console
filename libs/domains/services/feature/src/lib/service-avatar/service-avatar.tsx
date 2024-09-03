@@ -9,7 +9,7 @@ export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof
 }
 
 export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatarProps>(function ServiceAvatar(
-  { service, className, ...props },
+  { service, ...props },
   ref
 ) {
   const iconName = match(service)
@@ -25,7 +25,6 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
   return (
     <Avatar
       ref={ref}
-      className={className}
       fallback={
         serviceAvatar ? (
           <img
