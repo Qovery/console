@@ -8,7 +8,7 @@ export interface UseModalConfirmationProps {
   description?: ReactNode
   action: () => void
   name?: string
-  mode?: EnvironmentModeEnum | string | undefined
+  mode?: keyof typeof EnvironmentModeEnum | string | undefined
   warning?: ReactNode
   isDelete?: boolean
   placeholder?: string

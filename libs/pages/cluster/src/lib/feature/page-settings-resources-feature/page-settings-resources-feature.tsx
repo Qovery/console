@@ -1,8 +1,13 @@
-import { type Cluster, type ClusterFeatureKarpenterParametersResponse } from 'qovery-typescript-axios'
+import {
+  type Cluster,
+  type ClusterFeatureKarpenterParametersResponse,
+  type ClusterRequestFeaturesInner,
+} from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import { useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
@@ -14,20 +19,36 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
     instance_type: data['instance_type'],
   }
 
-  payload.features = cluster.features?.map((feature) => {
-    if (feature.id === 'KARPENTER') {
-      return {
-        ...feature,
+  const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
+
+  if (data['karpenter'].enabled && !hasKarpenterFeature) {
+    payload.features = [
+      ...(cluster.features || []),
+      {
+        id: 'KARPENTER',
         value: {
-          spot_enabled: data['karpenter'].spot_enabled,
+          spot_enabled: data['karpenter'].spot_enabled ?? false,
           disk_size_in_gib: parseInt(data['karpenter'].disk_size_in_gib),
           default_service_architecture: data['karpenter'].default_service_architecture,
         },
+      } as ClusterRequestFeaturesInner,
+    ]
+  } else {
+    payload.features = cluster.features?.map((feature) => {
+      if (feature.id === 'KARPENTER') {
+        return {
+          ...feature,
+          value: {
+            spot_enabled: data['karpenter'].spot_enabled ?? false,
+            disk_size_in_gib: parseInt(data['karpenter'].disk_size_in_gib),
+            default_service_architecture: data['karpenter'].default_service_architecture,
+          },
+        }
       }
-    }
 
-    return feature
-  })
+      return feature
+    })
+  }
 
   return payload
 }
@@ -40,6 +61,7 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
   const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
   ) as ClusterFeatureKarpenterParametersResponse
+  const { openModalConfirmation } = useModalConfirmation()
 
   const methods = useForm<ClusterResourcesData>({
     mode: 'onChange',
@@ -63,27 +85,34 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data && cluster) {
+    function requestEditCluster() {
       const cloneCluster = handleSubmit(data, cluster)
-
       editCluster({
         clusterId: cluster.id,
         organizationId: cluster.organization.id,
         clusterRequest: cloneCluster,
       })
     }
+
+    if (data && cluster) {
+      const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
+      if (data.karpenter?.enabled === !hasKarpenterFeature) {
+        openModalConfirmation({
+          mode: 'PRODUCTION',
+          title: 'Confirm update',
+          description: `Karpenter activation is irreversible. If you want to switch back to EKS auto-scaling, you'll need to recreate your cluster and migrate your environment to the new setup.`,
+          name: cluster.name,
+          action: () => requestEditCluster(),
+        })
+      } else {
+        requestEditCluster()
+      }
+    }
   })
 
   return (
     <FormProvider {...methods}>
-      {cluster && (
-        <PageSettingsResources
-          cloudProvider={cluster.cloud_provider}
-          clusterRegion={cluster.region}
-          onSubmit={onSubmit}
-          loading={isEditClusterLoading}
-        />
-      )}
+      {cluster && <PageSettingsResources cluster={cluster} onSubmit={onSubmit} loading={isEditClusterLoading} />}
     </FormProvider>
   )
 }

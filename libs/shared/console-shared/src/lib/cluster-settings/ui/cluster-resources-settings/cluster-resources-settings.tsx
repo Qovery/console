@@ -24,6 +24,7 @@ export interface ClusterResourcesSettingsProps {
   instanceTypeOptions?: Value[]
   cloudProvider?: CloudProviderEnum
   showWarningInstance?: boolean
+  hasAlreadyKarpenter?: boolean
   isProduction?: boolean
 }
 
@@ -82,7 +83,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </div>
         )}
       </BlockContent>
-      {!props.isProduction && props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
+      {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <Controller
           name="karpenter.enabled"
           defaultValue={false}
@@ -97,7 +98,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 title="Reduce your costs by enabling Karpenter (Beta)"
                 description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                 forceAlignTop
-                disabled={props.fromDetail}
+                disabled={props.fromDetail ? props.isProduction || props.hasAlreadyKarpenter : false}
                 small
               />
               <ExternalLink
