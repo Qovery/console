@@ -27,7 +27,13 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
       ref={ref}
       fallback={
         serviceAvatar ? (
-          <img src={serviceAvatar.icon} height="100%" width="100%" className="max-h-full max-w-full" />
+          <img
+            src={serviceAvatar.icon}
+            alt={service.serviceType}
+            height="100%"
+            width="100%"
+            className="max-h-full max-w-full"
+          />
         ) : (
           <Icon name={iconName} height="100%" width="100%" />
         )
