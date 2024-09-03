@@ -3,7 +3,7 @@ import { EnvironmentList } from '@qovery/domains/environments/feature'
 
 export interface PageGeneralProps {
   clusterAvailable: boolean
-  project: Project
+  project?: Project
 }
 
 export function PageGeneral({ clusterAvailable, project }: PageGeneralProps) {

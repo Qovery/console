@@ -4,11 +4,12 @@ import {
   AUDIT_LOGS_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
+  ENVIRONMENTS_GENERAL_URL,
+  ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
   ORGANIZATION_AUDIT_LOGS_URL,
   ORGANIZATION_PROJECT_URL,
   ORGANIZATION_URL,
-  OVERVIEW_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
 import { Icon, Link, Tooltip } from '@qovery/shared/ui'
@@ -55,7 +56,11 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                     'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchOrganizationRoute,
                   }
                 )}
-                to={projectId ? OVERVIEW_URL(organizationId, projectId) : ORGANIZATION_URL(organizationId)}
+                to={
+                  projectId
+                    ? ENVIRONMENTS_URL(organizationId, projectId) + ENVIRONMENTS_GENERAL_URL
+                    : ORGANIZATION_URL(organizationId)
+                }
               >
                 <Icon iconName="layer-group" className="text-[18px]" />
               </Link>
