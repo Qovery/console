@@ -2,6 +2,7 @@
 
 exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
 <body
+  data-scroll-locked="1"
   style="pointer-events: none;"
 >
   <span
@@ -174,6 +175,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
 
 exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
 <body
+  data-scroll-locked="1"
   style="pointer-events: none;"
 >
   <span
@@ -377,6 +379,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
 
 exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
 <body
+  data-scroll-locked="1"
   style="pointer-events: none;"
 >
   <span
