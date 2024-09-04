@@ -151,10 +151,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               control={control}
               rules={{
                 required: 'Please select a disk size',
-                min: {
-                  value: 50,
-                  message: 'Disk size must be at least 50 GB.',
-                },
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
