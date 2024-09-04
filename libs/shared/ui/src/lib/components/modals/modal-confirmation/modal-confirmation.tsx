@@ -64,9 +64,9 @@ export function ModalConfirmation({
               <span
                 data-testid="copy-cta"
                 onClick={copyToClipboard}
-                className="link ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+                className="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
               >
-                {name} <Icon name="icon-solid-copy" />
+                {name} <Icon iconName="copy" />
               </span>
             </Tooltip>
           </>

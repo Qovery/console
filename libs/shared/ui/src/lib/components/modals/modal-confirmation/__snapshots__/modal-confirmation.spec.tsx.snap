@@ -15,15 +15,15 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
     >
       my description
       <span
-        class="link ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
         data-state="closed"
         data-testid="copy-cta"
       >
         staging
          
-        <span
-          class="icon-solid-copy shrink-0 "
-          role="img"
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-copy "
         />
       </span>
     </div>

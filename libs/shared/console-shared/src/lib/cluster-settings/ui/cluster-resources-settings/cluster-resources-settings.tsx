@@ -24,6 +24,7 @@ export interface ClusterResourcesSettingsProps {
   instanceTypeOptions?: Value[]
   cloudProvider?: CloudProviderEnum
   showWarningInstance?: boolean
+  hasAlreadyKarpenter?: boolean
   isProduction?: boolean
 }
 
@@ -34,6 +35,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const [warningClusterNodes, setWarningClusterNodes] = useState(false)
   const watchClusterType = watch('cluster_type')
   const watchInstanceType = watch('instance_type')
+  const watchDiskSize = watch('disk_size')
   const watchKarpenter = watch('karpenter.enabled')
 
   useEffect(() => {
@@ -82,7 +84,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </div>
         )}
       </BlockContent>
-      {!props.isProduction && props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
+      {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <Controller
           name="karpenter.enabled"
           defaultValue={false}
@@ -93,11 +95,20 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 className="max-w-[70%]"
                 name={field.name}
                 value={field.value}
-                onChange={field.onChange}
+                onChange={(e) => {
+                  if (props.fromDetail) {
+                    const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
+                    setValue('karpenter.disk_size_in_gib', diskSize)
+                    const architecture = watchInstanceType.includes('AMD') ? 'AMD64' : 'ARM64'
+                    setValue('karpenter.default_service_architecture', architecture)
+                  }
+
+                  field.onChange(e)
+                }}
                 title="Reduce your costs by enabling Karpenter (Beta)"
                 description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                 forceAlignTop
-                disabled={props.fromDetail}
+                disabled={props.fromDetail ? props.isProduction || props.hasAlreadyKarpenter : false}
                 small
               />
               <ExternalLink

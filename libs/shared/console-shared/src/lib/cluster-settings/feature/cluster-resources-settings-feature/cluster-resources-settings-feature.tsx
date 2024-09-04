@@ -12,6 +12,7 @@ export interface ClusterResourcesSettingsFeatureProps {
   cloudProvider?: CloudProviderEnum
   clusterRegion?: string
   isProduction?: boolean
+  hasAlreadyKarpenter?: boolean
 }
 
 export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsFeatureProps) {
@@ -87,6 +88,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       instanceTypeOptions={instanceTypeOptions}
       cloudProvider={props.cloudProvider}
       isProduction={props.isProduction}
+      hasAlreadyKarpenter={props.hasAlreadyKarpenter}
     />
   )
 }
