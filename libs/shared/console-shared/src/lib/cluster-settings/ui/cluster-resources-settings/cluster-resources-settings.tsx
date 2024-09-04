@@ -99,7 +99,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   if (props.fromDetail) {
                     const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
                     setValue('karpenter.disk_size_in_gib', diskSize)
-
                     const architecture = watchInstanceType.includes('AMD') ? 'AMD64' : 'ARM64'
                     setValue('karpenter.default_service_architecture', architecture)
                   }
@@ -152,6 +151,10 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               control={control}
               rules={{
                 required: 'Please select a disk size',
+                min: {
+                  value: 50,
+                  message: 'Disk size must be at least 50 GB.',
+                },
               }}
               render={({ field, fieldState: { error } }) => (
                 <InputText
