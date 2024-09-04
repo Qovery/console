@@ -1,6 +1,6 @@
 import { DeploymentRestrictionModeEnum, DeploymentRestrictionTypeEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import * as servicesDomains from '@qovery/domains/services/feature'
+import { useCreateDeploymentRestriction, useEditDeploymentRestriction } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { CrudModalFeature } from './crud-modal-feature'
 
@@ -23,14 +23,22 @@ const editProps = {
   serviceType: 'APPLICATION' as const,
 }
 
+jest.mock('@qovery/domains/services/feature', () => {
+  const mutate1 = jest.fn()
+  const mutate2 = jest.fn()
+  return {
+    ...jest.requireActual('@qovery/domains/services/feature'),
+    useCreateDeploymentRestriction: () => ({
+      mutate: mutate1,
+    }),
+    useEditDeploymentRestriction: () => ({
+      mutate: mutate2,
+    }),
+  }
+})
+
 describe('CrudModalFeature', () => {
   it('should create deployment restriction', async () => {
-    const mutate = jest.fn()
-    jest.spyOn(servicesDomains, 'useCreateDeploymentRestriction').mockReturnValue({
-      data: editProps.deploymentRestriction,
-      mutate,
-      isError: false,
-    })
     const { userEvent } = renderWithProviders(<CrudModalFeature {...createProps} />)
 
     const submitButton = await screen.findByRole('button', { name: /create/i })
@@ -48,7 +56,7 @@ describe('CrudModalFeature', () => {
     expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
-    expect(mutate).toHaveBeenCalledWith({
+    expect(useCreateDeploymentRestriction().mutate).toHaveBeenCalledWith({
       payload: {
         mode: 'MATCH',
         type: 'PATH',
@@ -60,12 +68,6 @@ describe('CrudModalFeature', () => {
   })
 
   it('should edit deployment restriction', async () => {
-    const mutate = jest.fn()
-    jest.spyOn(servicesDomains, 'useEditDeploymentRestriction').mockReturnValue({
-      data: editProps.deploymentRestriction,
-      mutate,
-      isError: false,
-    })
     const { userEvent } = renderWithProviders(<CrudModalFeature {...editProps} />)
 
     const submitButton = await screen.findByRole('button', { name: /confirm/i })
@@ -85,7 +87,7 @@ describe('CrudModalFeature', () => {
     expect(submitButton).toBeEnabled()
 
     await userEvent.click(submitButton)
-    expect(mutate).toHaveBeenCalledWith({
+    expect(useEditDeploymentRestriction().mutate).toHaveBeenCalledWith({
       payload: {
         mode: 'MATCH',
         type: 'PATH',

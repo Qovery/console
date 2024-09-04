@@ -3,34 +3,34 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       NODE_ENV: string
-      NX_GIT_SHA: string
-      NX_QOVERY_API: string
-      NX_QOVERY_WS: string
-      NX_OAUTH_DOMAIN: string
-      NX_OAUTH_KEY: string
-      NX_OAUTH_AUDIENCE: string
-      NX_INTERCOM: string
-      NX_POSTHOG: string
-      NX_POSTHOG_APIHOST: string
-      NX_GTM: string
-      NX_INSTATUS_APP_ID: string
-      NX_ALGOLIA_APP_ID: string
-      NX_ALGOLIA_API_KEY: string
+      NX_PUBLIC_GIT_SHA: string
+      NX_PUBLIC_QOVERY_API: string
+      NX_PUBLIC_QOVERY_WS: string
+      NX_PUBLIC_OAUTH_DOMAIN: string
+      NX_PUBLIC_OAUTH_KEY: string
+      NX_PUBLIC_OAUTH_AUDIENCE: string
+      NX_PUBLIC_INTERCOM: string
+      NX_PUBLIC_POSTHOG: string
+      NX_PUBLIC_POSTHOG_APIHOST: string
+      NX_PUBLIC_GTM: string
+      NX_PUBLIC_INSTATUS_APP_ID: string
+      NX_PUBLIC_ALGOLIA_APP_ID: string
+      NX_PUBLIC_ALGOLIA_API_KEY: string
     }
   }
 }
 
 export const NODE_ENV = process.env.NODE_ENV,
-  NX_GIT_SHA = process.env.NX_GIT_SHA,
-  QOVERY_API = process.env.NX_QOVERY_API,
-  QOVERY_WS = process.env.NX_QOVERY_WS,
-  OAUTH_DOMAIN = process.env.NX_OAUTH_DOMAIN,
-  OAUTH_KEY = process.env.NX_OAUTH_KEY,
-  OAUTH_AUDIENCE = process.env.NX_OAUTH_AUDIENCE,
-  INTERCOM = process.env.NX_INTERCOM,
-  POSTHOG = process.env.NX_POSTHOG,
-  POSTHOG_APIHOST = process.env.NX_POSTHOG_APIHOST,
-  GTM = process.env.NX_GTM,
-  INSTATUS_APP_ID = process.env.NX_INSTATUS_APP_ID,
-  ALGOLIA_APP_ID = process.env.NX_ALGOLIA_APP_ID,
-  ALGOLIA_API_KEY = process.env.NX_ALGOLIA_API_KEY
+  GIT_SHA = process.env.NX_PUBLIC_GIT_SHA,
+  QOVERY_API = process.env.NX_PUBLIC_QOVERY_API,
+  QOVERY_WS = process.env.NX_PUBLIC_QOVERY_WS,
+  OAUTH_DOMAIN = process.env.NX_PUBLIC_OAUTH_DOMAIN,
+  OAUTH_KEY = process.env.NX_PUBLIC_OAUTH_KEY,
+  OAUTH_AUDIENCE = process.env.NX_PUBLIC_OAUTH_AUDIENCE,
+  INTERCOM = process.env.NX_PUBLIC_INTERCOM,
+  POSTHOG = process.env.NX_PUBLIC_POSTHOG,
+  POSTHOG_APIHOST = process.env.NX_PUBLIC_POSTHOG_APIHOST,
+  GTM = process.env.NX_PUBLIC_GTM,
+  INSTATUS_APP_ID = process.env.NX_PUBLIC_INSTATUS_APP_ID,
+  ALGOLIA_APP_ID = process.env.NX_PUBLIC_ALGOLIA_APP_ID,
+  ALGOLIA_API_KEY = process.env.NX_PUBLIC_ALGOLIA_API_KEY

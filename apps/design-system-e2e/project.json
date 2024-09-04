@@ -17,10 +17,6 @@
           "devServerTarget": "shared-ui:storybook:ci"
         }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
     }
   }
 }

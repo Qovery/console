@@ -4,10 +4,6 @@
   "sourceRoot": "libs/domains/service-helm/data-access/src",
   "projectType": "library",
   "tags": ["scope:domain", "type:data-access", "slice:services"],
-  "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    }
-  }
+  "// targets": "to see all targets run: nx show project domains-service-helm-data-access --web",
+  "targets": {}
 }

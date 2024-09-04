@@ -15,6 +15,7 @@ export function InstantSearchProvider({ children }: { children: ReactNode }) {
   return (
     <InstantSearch searchClient={searchClient} indexName="qovery">
       <Configure
+        // @ts-expect-error The `<Configure>` component of `react-instantsearch` isn't properly typed. Even documented parameters do not compile. We must ignore those params https://www.algolia.com/doc/guides/building-search-ui/widgets/customize-an-existing-widget/react/#manually-set-search-parameters
         maxValuesPerFacet={10}
         attributesToRetrieve={[
           'hierarchy.lvl0',

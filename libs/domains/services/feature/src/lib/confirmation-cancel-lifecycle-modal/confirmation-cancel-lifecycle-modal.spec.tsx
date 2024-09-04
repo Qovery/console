@@ -1,10 +1,18 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import * as servicesDomains from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
+import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import ConfirmationCancelLifecycleModal, {
   type ConfirmationCancelLifecycleModalProps,
 } from './confirmation-cancel-lifecycle-modal'
 
-const useCancelDeploymentServiceMockSpy = jest.spyOn(servicesDomains, 'useCancelDeploymentService') as jest.Mock
+jest.mock('../hooks/use-cancel-deployment-service/use-cancel-deployment-service', () => {
+  const mutate = jest.fn()
+  return {
+    ...jest.requireActual('../hooks/use-cancel-deployment-service/use-cancel-deployment-service'),
+    useCancelDeploymentService: () => ({
+      mutate,
+    }),
+  }
+})
 
 const props: ConfirmationCancelLifecycleModalProps = {
   onClose: jest.fn(),
@@ -21,10 +29,6 @@ describe('ConfirmationCancelLifecycleModal', () => {
   })
 
   it('should confirm modal with force checked', async () => {
-    useCancelDeploymentServiceMockSpy.mockReturnValue({
-      mutate: jest.fn(),
-    })
-
     const { userEvent } = renderWithProviders(<ConfirmationCancelLifecycleModal {...props} />)
 
     const checkbox = screen.getByLabelText(/force lifecycle/i)
@@ -33,7 +37,7 @@ describe('ConfirmationCancelLifecycleModal', () => {
     const submitButton = screen.getByRole('button', { name: /confirm/i })
     await userEvent.click(submitButton)
 
-    expect(useCancelDeploymentServiceMockSpy().mutate).toHaveBeenCalledWith({
+    expect(useCancelDeploymentService({ projectId: '' }).mutate).toHaveBeenCalledWith({
       environmentId: '1',
       force: true,
     })

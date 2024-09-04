@@ -2,6 +2,7 @@
 
 exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
 <body
+  data-scroll-locked="1"
   style="pointer-events: none;"
 >
   <span
@@ -175,6 +176,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
 
 exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
 <body
+  data-scroll-locked="1"
   style="pointer-events: none;"
 >
   <span

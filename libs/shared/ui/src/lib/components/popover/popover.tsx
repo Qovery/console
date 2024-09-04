@@ -17,7 +17,7 @@ const PopoverTrigger = forwardRef<ElementRef<typeof PopoverPrimitive.Trigger>, P
 )
 
 interface PopoverContentProps extends Omit<ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>, 'asChild'> {
-  container?: PopoverPrimitive.PortalProps['container']
+  container?: PopoverPrimitive.PopoverPortalProps['container']
 }
 const PopoverContent = forwardRef<ElementRef<typeof PopoverPrimitive.Content>, PopoverContentProps>(
   function PopoverContent({ container, forceMount, className, ...props }, forwardedRef) {

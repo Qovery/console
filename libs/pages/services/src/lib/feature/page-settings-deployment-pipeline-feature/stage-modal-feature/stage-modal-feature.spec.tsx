@@ -1,14 +1,22 @@
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
-import * as environmentDomains from '@qovery/domains/environments/feature'
+import { useCreateDeploymentStage, useEditDeploymentStage } from '@qovery/domains/environments/feature'
 import { deploymentStagesFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { StageModalFeature, type StageModalFeatureProps } from './stage-modal-feature'
 
-const useCreateEnvironmentDeploymentStageMockSpy = jest.spyOn(
-  environmentDomains,
-  'useCreateDeploymentStage'
-) as jest.Mock
-const useEditEnvironmentDeploymentStageMockSpy = jest.spyOn(environmentDomains, 'useEditDeploymentStage') as jest.Mock
+jest.mock('@qovery/domains/environments/feature', () => {
+  const mutateAsync1 = jest.fn()
+  const mutateAsync2 = jest.fn()
+  return {
+    ...jest.requireActual('@qovery/domains/environments/feature'),
+    useCreateDeploymentStage: () => ({
+      mutateAsync: mutateAsync1,
+    }),
+    useEditDeploymentStage: () => ({
+      mutateAsync: mutateAsync2,
+    }),
+  }
+})
 
 describe('StageModalFeature', () => {
   const onClose = jest.fn()
@@ -32,11 +40,6 @@ describe('StageModalFeature', () => {
   })
 
   it('should submits the form with createEnvironmentDeploymentStage when no stage is provided', async () => {
-    const mutateAsync = jest.fn()
-    useCreateEnvironmentDeploymentStageMockSpy.mockReturnValue({
-      mutateAsync,
-    })
-
     const { userEvent } = renderWithProviders(<StageModalFeature onClose={onClose} environmentId={environmentId} />)
 
     const inputName = screen.getByTestId('input-name')
@@ -52,18 +55,13 @@ describe('StageModalFeature', () => {
 
     await userEvent.click(submitButton)
 
-    expect(mutateAsync).toHaveBeenCalledWith({
+    expect(useCreateDeploymentStage().mutateAsync).toHaveBeenCalledWith({
       environmentId,
       payload: { name: 'New Stage', description: 'New Stage Description' },
     })
   })
 
   it('should submits the form with editEnvironmentDeploymentStage when a stage is provided', async () => {
-    const mutateAsync = jest.fn()
-    useEditEnvironmentDeploymentStageMockSpy.mockReturnValue({
-      mutateAsync,
-    })
-
     const { userEvent } = renderWithProviders(<StageModalFeature {...props} />)
 
     const inputName = screen.getByTestId('input-name')
@@ -79,7 +77,7 @@ describe('StageModalFeature', () => {
 
     await userEvent.click(submitButton)
 
-    expect(mutateAsync).toHaveBeenCalledWith({
+    expect(useEditDeploymentStage().mutateAsync).toHaveBeenCalledWith({
       stageId: stage.id,
       payload: {
         name: 'Updated Stage',

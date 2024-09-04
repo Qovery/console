@@ -4,10 +4,6 @@
   "sourceRoot": "libs/domains/users-sign-up/data-access/src",
   "projectType": "library",
   "tags": ["scope:domain", "type:data-access"],
-  "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    }
-  }
+  "// targets": "to see all targets run: nx show project domains-service-users-sign-up-data-access --web",
+  "targets": {}
 }

@@ -11,31 +11,31 @@
         "production",
         "^production",
         {
-          "env": "NX_GTM"
+          "env": "NX_PUBLIC_GTM"
         },
         {
-          "env": "NX_INTERCOM"
+          "env": "NX_PUBLIC_INTERCOM"
         },
         {
-          "env": "NX_OAUTH_AUDIENCE"
+          "env": "NX_PUBLIC_OAUTH_AUDIENCE"
         },
         {
-          "env": "NX_OAUTH_DOMAIN"
+          "env": "NX_PUBLIC_OAUTH_DOMAIN"
         },
         {
-          "env": "NX_OAUTH_KEY"
+          "env": "NX_PUBLIC_OAUTH_KEY"
         },
         {
-          "env": "NX_POSTHOG"
+          "env": "NX_PUBLIC_POSTHOG"
         },
         {
-          "env": "NX_POSTHOG_APIHOST"
+          "env": "NX_PUBLIC_POSTHOG_APIHOST"
         },
         {
-          "env": "NX_QOVERY_API"
+          "env": "NX_PUBLIC_QOVERY_API"
         },
         {
-          "env": "NX_QOVERY_WS"
+          "env": "NX_PUBLIC_QOVERY_WS"
         }
       ],
       "cache": true
@@ -124,5 +124,28 @@
   },
   "nxCloudAccessToken": "MzQ5ZWRiNjctYmE2NS00MmYyLTliZDktOWU5MWQ0MGYxNzY4fHJlYWQ=",
   "useInferencePlugins": false,
-  "defaultBase": "staging"
+  "defaultBase": "staging",
+  "plugins": [
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/webpack/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "serveTargetName": "serve"
+      }
+    },
+    {
+      "plugin": "@nx/jest/plugin",
+      "options": {
+        "targetName": "test"
+      }
+    }
+  ]
 }

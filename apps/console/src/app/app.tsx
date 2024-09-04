@@ -24,7 +24,7 @@ import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { GTM, NODE_ENV, NX_GIT_SHA, QOVERY_API } from '@qovery/shared/util-node-env'
+import { GIT_SHA, GTM, NODE_ENV, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 import PreviewCode from './components/preview-code'
 import ScrollToTop from './components/scroll-to-top'
@@ -80,7 +80,7 @@ export function App() {
     // init Sentry
     if (NODE_ENV === 'production') {
       Sentry.init({
-        release: NX_GIT_SHA,
+        release: GIT_SHA,
         dsn: 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024',
         integrations: [
           // See docs for support of different versions of variation of react router
