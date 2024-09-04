@@ -208,12 +208,22 @@ export function HelmRepositoryCreateEditModal({
               rules={{
                 required: 'Please enter a repository url.',
                 validate: (input) => {
-                  const regex = new RegExp(
-                    `^(${
-                      watchKind === 'HTTPS' ? 'http(s)' : 'oci'
-                    }?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
-                    'gm'
-                  )
+                  const regex = match(watchKind)
+                    .with(
+                      'HTTPS',
+                      () =>
+                        new RegExp(
+                          `^(http(s)?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
+                          'gm'
+                        )
+                    )
+                    .otherwise(
+                      () =>
+                        new RegExp(
+                          `^(oci?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$`,
+                          'gm'
+                        )
+                    )
                   return (
                     input?.match(regex) !== null ||
                     `URL must be valid and start with «${watchKind === 'HTTPS' ? 'http(s)' : 'oci'}://»`
@@ -227,6 +237,14 @@ export function HelmRepositoryCreateEditModal({
                   onChange={field.onChange}
                   value={field.value}
                   label="Repository url"
+                  hint={match(watchKind)
+                    .with('OCI_GENERIC_CR', 'OCI_GITHUB_CR', 'OCI_GITLAB_CR', () => undefined)
+                    .with('HTTPS', () => 'Example: https://helm.datadoghq.com or https://grafana.github.io/helm-charts')
+                    .with('OCI_ECR', () => 'Expected format: oci://<aws_account_id>.dkr.ecr.<region>.amazonaws.com')
+                    .with('OCI_SCALEWAY_CR', () => 'Expected format: oci://rg.<region>.scw.cloud')
+                    .with('OCI_DOCKER_HUB', () => 'Expected format: oci://registry-1.docker.io')
+                    .with('OCI_PUBLIC_ECR', () => 'Expected format: oci://public.ecr.aws')
+                    .exhaustive()}
                   error={error?.message}
                 />
               )}

@@ -73,7 +73,7 @@ export function ContainerRegistryForm({
   }
 
   const isEditDirty = isEdit && methods.formState.isDirty
-  const watchKind = methods.watch('kind')
+  const watchKind: undefined | ContainerRegistryKindEnum = methods.watch('kind')
   const watchLoginType = methods.watch('config.login_type')
 
   return (
@@ -141,7 +141,7 @@ export function ContainerRegistryForm({
             required: 'Please enter a registry url.',
             validate: (input) =>
               // eslint-disable-next-line no-useless-escape
-              input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm) !== null ||
+              input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm) !== null ||
               'URL must be valid and start with «http(s)://»',
           }}
           render={({ field, fieldState: { error } }) => (
@@ -152,6 +152,26 @@ export function ContainerRegistryForm({
               value={field.value}
               label="Registry url"
               error={error?.message}
+              hint={match(watchKind)
+                .with(
+                  ContainerRegistryKindEnum.DOCKER_HUB,
+                  ContainerRegistryKindEnum.GITHUB_CR,
+                  ContainerRegistryKindEnum.GITLAB_CR,
+                  ContainerRegistryKindEnum.GENERIC_CR,
+                  ContainerRegistryKindEnum.DOCR,
+                  () => undefined
+                )
+                .with(
+                  ContainerRegistryKindEnum.ECR,
+                  () => 'Expected format: https://<aws_account_id>.dkr.ecr.<region>.amazonaws.com'
+                )
+                .with(ContainerRegistryKindEnum.SCALEWAY_CR, () => 'Expected format: https://rg.<region>.scw.cloud')
+                .with(ContainerRegistryKindEnum.PUBLIC_ECR, () => 'Expected format: https://public.ecr.aws')
+                .with(
+                  ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+                  () => 'Expected format: https://<region>-docker.pkg.dev'
+                )
+                .exhaustive()}
               disabled={
                 isClusterManaged ||
                 match(watchKind)
