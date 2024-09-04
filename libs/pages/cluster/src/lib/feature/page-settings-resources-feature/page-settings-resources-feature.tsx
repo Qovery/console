@@ -100,7 +100,25 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
         openModalConfirmation({
           mode: 'PRODUCTION',
           title: 'Confirm update',
-          description: `Karpenter activation is irreversible. If you want to switch back to EKS auto-scaling, you'll need to recreate your cluster and migrate your environment to the new setup.`,
+          description: (
+            <>
+              <div className="mb-2 flex flex-col gap-2">
+                <p>
+                  <strong>Karpenter activation is irreversible.</strong> To switch back to EKS auto-scaling, you'll need
+                  to recreate your cluster and migrate your environment to the new cluster.
+                </p>
+                <p>
+                  <strong>Downtime may occur.</strong> During the migration, you may experience some downtime on your
+                  services.
+                </p>
+                <p>
+                  After the migration, we recommend <strong>redeploying all environments</strong> operating on this
+                  cluster.
+                </p>
+              </div>
+              Confirm by entering the cluster name:
+            </>
+          ),
           name: cluster.name,
           action: () => requestEditCluster(),
         })
