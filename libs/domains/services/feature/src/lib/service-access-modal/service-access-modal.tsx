@@ -49,7 +49,7 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
     <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
       <span className="font-medium">{title}</span>
       <p className="mb-1.5 text-neutral-350">
-        Now you can copy the connection URI to connect to your database locally{' '}
+        Get the connection URI and connect to the database with your favourite client.
       </p>
       <Button
         className="max-w-max gap-2"
