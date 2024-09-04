@@ -105,7 +105,7 @@
     "@nx/react": "19.6.4",
     "@nx/storybook": "19.6.4",
     "@nx/web": "19.6.4",
-    "@nx/webpack": "19.6.4",
+    "@nx/webpack": "19.6.5",
     "@nx/workspace": "19.6.4",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.7",
     "@semantic-release/github": "^8.0.6",
