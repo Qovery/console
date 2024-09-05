@@ -98,11 +98,11 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
           }}
           render={({ field: { value: provider }, fieldState: { error } }) => (
             <InputSelect
-              label="Git repository"
+              label="Git account"
               options={providerOptions}
               onChange={(value) => onChange(value as string)}
               menuListButton={{
-                title: 'Select repository',
+                title: 'Select account',
                 label: 'New git access',
                 onClick: () => {
                   openModal({

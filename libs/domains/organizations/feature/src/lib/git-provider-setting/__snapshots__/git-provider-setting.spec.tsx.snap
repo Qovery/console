@@ -12,9 +12,9 @@ exports[`GitProviderSetting should match snapshot 1`] = `
       >
         <label
           class="top-1.5 translate-y-2 text-sm"
-          for="Git repository"
+          for="Git account"
         >
-          Git repository
+          Git account
         </label>
         <div
           class=" css-b62m3t-container"
@@ -54,7 +54,7 @@ exports[`GitProviderSetting should match snapshot 1`] = `
                   autocomplete="off"
                   autocorrect="off"
                   class="input-select__input"
-                  id="Git repository"
+                  id="Git account"
                   role="combobox"
                   spellcheck="false"
                   style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
@@ -90,13 +90,13 @@ exports[`GitProviderSetting should match snapshot 1`] = `
             </div>
           </div>
           <input
-            name="Git repository"
+            name="Git account"
             type="hidden"
             value=""
           />
         </div>
         <input
-          name="Git repository"
+          name="Git account"
           type="hidden"
           value=""
         />
