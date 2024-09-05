@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { TimezoneSetting } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { EnableBox, ExternalLink, Heading, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Callout, EnableBox, ExternalLink, Heading, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import EntrypointCmdInputs from '../../entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
 
@@ -20,6 +20,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
 
   const watchSchedule = watch('schedule')
   const watchTimezone = watch('timezone') ?? 'Etc/UTC'
+  const watchMaxDuration = watch('max_duration')
 
   return loading ? (
     <LoaderSpinner />
@@ -168,6 +169,18 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
             />
           )}
         />
+
+        {watchMaxDuration && watchMaxDuration > 50 && (
+          <Callout.Root color="yellow">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              If your job duration exceeds one hour, it may be forced shut down during the cloud provider's maintenance
+              window.
+            </Callout.Text>
+          </Callout.Root>
+        )}
 
         <Controller
           name="port"
