@@ -55,7 +55,7 @@ export function ClusterCard({ cluster, clusterStatus }: ClusterCardProps) {
               <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
               Self managed
             </Badge>
-            <Badge color="neutral">{cluster.region}</Badge>
+            {!cluster.is_demo ? <Badge color="neutral">{cluster.region}</Badge> : <Badge color="neutral">Demo</Badge>}
           </>
         ) : (
           <>
