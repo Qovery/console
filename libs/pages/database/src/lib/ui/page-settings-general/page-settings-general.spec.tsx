@@ -22,7 +22,11 @@ describe('PageSettingsGeneral', () => {
   }
 
   it('should render successfully', async () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
+        defaultValues,
+      })
+    )
     expect(baseElement).toBeTruthy()
   })
 
@@ -31,7 +35,7 @@ describe('PageSettingsGeneral', () => {
     props.onSubmit = spy
     const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: defaultValues,
+        defaultValues,
       })
     )
     // https://react-hook-form.com/advanced-usage#TransformandParse

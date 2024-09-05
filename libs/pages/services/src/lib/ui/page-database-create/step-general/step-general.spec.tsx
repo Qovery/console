@@ -1,5 +1,6 @@
 import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import StepGeneral, { type StepGeneralProps } from './step-general'
 
@@ -10,11 +11,26 @@ const props: StepGeneralProps = {
   databaseVersionOptions: {},
   databaseTypeOptions: [],
   cluster: mockCluster,
+  publicOptionNotAvailable: true,
 }
 
 describe('PageDatabaseCreateGeneral', () => {
+  const defaultValues = {
+    name: 'hello-world',
+    type: DatabaseTypeEnum.POSTGRESQL,
+    mode: DatabaseModeEnum.CONTAINER,
+    accessibility: DatabaseAccessibilityEnum.PUBLIC,
+    version: '12',
+    cpu: 512,
+    memory: 1024,
+  }
+
   it('should render successfully', () => {
-    const { baseElement } = render(wrapWithReactHookForm(<StepGeneral {...props} />))
+    const { baseElement } = render(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues,
+      })
+    )
     expect(baseElement).toBeTruthy()
   })
 })
