@@ -72,15 +72,11 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     <Tooltip
                       disabled={props.isFetchingCheckedCustomDomains}
                       content={
-                        <div className="max-w-56">
+                        <div className="max-w-64">
+                          <span className="text-xs font-medium">Click to check set-up again.</span>
                           {checkedCustomDomain?.error_details && (
-                            <>
-                              {checkedCustomDomain?.error_details}
-                              <br />
-                              <br />
-                            </>
+                            <p className="text-[11px] font-normal">{checkedCustomDomain?.error_details}</p>
                           )}
-                          <strong>Click to check set-up again.</strong>
                         </div>
                       }
                     >
@@ -89,11 +85,11 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                         variant="surface"
                         color="neutral"
                         size="lg"
-                        className="group h-[52px] w-[52px] justify-center"
+                        className="group relative h-[52px] w-[52px] justify-center"
                         onClick={() => props.onCheckCustomDomains()}
                       >
                         {props.isFetchingCheckedCustomDomains ? (
-                          <LoaderSpinner />
+                          <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:hidden" theme="dark" />
                         ) : checkedCustomDomain?.error_details ? (
                           <Icon
                             iconName="circle-exclamation"
