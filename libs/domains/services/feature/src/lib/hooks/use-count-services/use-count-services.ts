@@ -6,10 +6,15 @@ export interface UseCountServicesProps {
 }
 
 export function useCountServices({ environmentId }: UseCountServicesProps) {
-  return useQuery({
+  const queryData = useQuery({
     ...queries.services.list(environmentId!),
     enabled: Boolean(environmentId),
   })
+
+  return {
+    ...queryData,
+    data: queryData.data?.length,
+  }
 }
 
 export default useCountServices

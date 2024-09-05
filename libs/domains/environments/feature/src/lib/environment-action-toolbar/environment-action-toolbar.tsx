@@ -219,9 +219,9 @@ export interface EnvironmentActionToolbarProps {
 
 export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
   const { pathname } = useLocation()
-  const { data: services, isFetched: isFetchedServices } = useCountServices({ environmentId: environment.id })
+  const { data: countServices, isFetched: isFetchedServices } = useCountServices({ environmentId: environment.id })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
-  const hasServices = Boolean(services?.length)
+  const hasServices = Boolean(countServices)
 
   if (!deploymentStatus || !isFetchedServices) return <Skeleton height={36} width={144} />
 
