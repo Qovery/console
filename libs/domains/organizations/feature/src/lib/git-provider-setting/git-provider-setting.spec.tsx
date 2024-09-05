@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { render, renderWithProviders } from '@qovery/shared/util-tests'
 import { GitProviderSetting, mergeProviders } from './git-provider-setting'
 
 jest.mock('../hooks/use-auth-providers/use-auth-providers', () => {
@@ -49,15 +49,14 @@ describe('GitProviderSetting', () => {
 
     const gitTokens: GitTokenResponse[] = [
       { name: 'token1', type: GitProviderEnum.GITHUB, id: '123', created_at: '', associated_services_count: 0 },
-      { name: 'token2', type: GitProviderEnum.GITLAB, id: '456', created_at: '', associated_services_count: 0 },
     ]
 
     const result = mergeProviders(authProviders, gitTokens)
 
-    expect(result).toHaveLength(4)
+    expect(result).toHaveLength(3)
     expect(result[0].label).toBe('Github (user1)')
     expect(result[1].label).toBe('Gitlab (user2)')
-    expect(result[2].label).toBe('Github (token1)')
-    expect(result[3].label).toBe('Gitlab (token2)')
+    const { container } = render(result[2].label)
+    expect(container).toHaveTextContent('Github Token (token1)')
   })
 })

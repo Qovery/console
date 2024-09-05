@@ -19,7 +19,12 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
   }))
 
   const currentGitTokens = gitTokens.map((token) => ({
-    label: `${upperCaseFirstLetter(token.type)} (${token.name})`,
+    label: (
+      <>
+        {upperCaseFirstLetter(token.type)} Token ({token.name})
+        <Icon iconName="key" iconStyle="regular" className="ml-3 text-base" />
+      </>
+    ),
     value: token.id,
     icon: <Icon width={16} height={16} name={token.type} />,
   }))
