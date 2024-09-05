@@ -83,7 +83,7 @@ export function CodeEditorVariable({
         {...props}
       />
       <DropdownVariable environmentId={environmentId} onChange={handleVariableChange}>
-        <Button size="md" type="button" color="neutral" variant="surface" className="absolute right-3 top-3 px-2.5">
+        <Button size="md" type="button" color="neutral" variant="surface" className="absolute right-4 top-4 px-2.5">
           <Icon className="text-sm" iconName="wand-magic-sparkles" />
         </Button>
       </DropdownVariable>

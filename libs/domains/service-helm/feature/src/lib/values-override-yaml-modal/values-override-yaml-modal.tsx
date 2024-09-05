@@ -60,7 +60,7 @@ export function ValuesOverrideYamlModal({
                 <CodeEditorVariable
                   environmentId={environmentId}
                   width="100%"
-                  height="calc(100vh  - 254px)"
+                  height="calc(100vh - 278px)"
                   language="yaml"
                   value={field.value}
                   onChange={field.onChange}
@@ -90,7 +90,7 @@ export function ValuesOverrideYamlModal({
             {!isErrorHelmDefaultValues && !isLoadingHelmDefaultValues && (
               <CodeEditor
                 width="100%"
-                height="calc(100vh  - 254px)"
+                height="calc(100vh - 278px)"
                 language="yaml"
                 defaultValue={helmDefaultValues}
                 readOnly
