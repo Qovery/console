@@ -1,6 +1,6 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
-import { UpdateAllModal, useServices } from '@qovery/domains/services/feature'
+import { UpdateAllModal, useCountServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -219,11 +219,11 @@ export interface EnvironmentActionToolbarProps {
 
 export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
   const { pathname } = useLocation()
-  const { data: services } = useServices({ environmentId: environment.id })
+  const { data: services, isFetched: isFetchedServices } = useCountServices({ environmentId: environment.id })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
   const hasServices = Boolean(services?.length)
 
-  if (!deploymentStatus) return <Skeleton height={32} width={115} />
+  if (!deploymentStatus || !isFetchedServices) return <Skeleton height={36} width={144} />
 
   return (
     <ActionToolbar.Root>
