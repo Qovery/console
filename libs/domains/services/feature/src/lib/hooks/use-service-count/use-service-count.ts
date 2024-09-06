@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UseServicesCountProps {
+export interface useServiceCountProps {
   environmentId?: string
 }
 
-export function useServicesCount({ environmentId }: UseServicesCountProps) {
+export function useServiceCount({ environmentId }: useServiceCountProps) {
   return useQuery({
     ...queries.services.list(environmentId!),
     select: (data) => data.length,
@@ -13,4 +13,4 @@ export function useServicesCount({ environmentId }: UseServicesCountProps) {
   })
 }
 
-export default useServicesCount
+export default useServiceCount
