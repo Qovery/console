@@ -55,14 +55,14 @@ export function ClusterAccessModal({ clusterId }: ClusterAccessModalProps) {
               <span className="select-none">$ </span>
               kubectl
             </div>
-            <CopyButton content={cmdExportKubeConfig} />
+            <CopyButton content="kubectl" />
           </div>
           <div className="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
             <div>
               <span className="select-none">$ </span>
-              kb9s
+              kb9
             </div>
-            <CopyButton content={cmdExportKubeConfig} />
+            <CopyButton content="kb9" />
           </div>
         </li>
       </ul>
