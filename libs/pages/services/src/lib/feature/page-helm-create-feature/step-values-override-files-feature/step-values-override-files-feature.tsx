@@ -74,6 +74,7 @@ export function StepValuesOverrideFilesFeature() {
   }, [setCurrentStep])
 
   const onSubmit = valuesOverrideFileForm.handleSubmit(() => {
+    if (watchFieldIsPublicRepository) generalForm.setValue('auto_deploy', false)
     navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
   })
 
