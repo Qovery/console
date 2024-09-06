@@ -23,8 +23,9 @@ jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
 })
 
 jest.mock('@qovery/domains/services/feature', () => ({
-  useServices: () => ({
+  useServiceCount: () => ({
     data: mockServices,
+    isFetched: true,
   }),
 }))
 

@@ -287,7 +287,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 115px; height: 36px;"
+                    style="width: 184px; height: 36px;"
                   />
                 </div>
               </div>
@@ -642,7 +642,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 115px; height: 36px;"
+                    style="width: 184px; height: 36px;"
                   />
                 </div>
               </div>
@@ -1281,7 +1281,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 115px; height: 36px;"
+                    style="width: 184px; height: 36px;"
                   />
                 </div>
               </div>
@@ -1723,7 +1723,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   <div
                     aria-busy="true"
                     class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] rounded"
-                    style="width: 115px; height: 36px;"
+                    style="width: 184px; height: 36px;"
                   />
                 </div>
               </div>
