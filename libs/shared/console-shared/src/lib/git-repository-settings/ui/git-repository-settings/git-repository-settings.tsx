@@ -6,7 +6,7 @@ import {
   GitPublicRepositorySettings,
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
-import { Button, Icon, useModal } from '@qovery/shared/ui'
+import { Button, Callout, Icon, useModal } from '@qovery/shared/ui'
 import ConfirmationGitModal from '../confirmation-git-modal/confirmation-git-modal'
 
 export interface GitRepositorySettingsProps {
@@ -48,7 +48,17 @@ export function GitRepositorySettings({
     <div className="flex flex-col gap-4">
       <GitProviderSetting disabled={gitDisabled} />
       {watchFieldIsPublicRepository ? (
-        <GitPublicRepositorySettings urlRepository={urlRepository} disabled={gitDisabled} />
+        <>
+          <GitPublicRepositorySettings urlRepository={urlRepository} disabled={gitDisabled} />
+          <Callout.Root color="sky" className="items-center text-xs">
+            <Callout.Icon>
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
+            </Callout.Text>
+          </Callout.Root>
+        </>
       ) : (
         <>
           {watchFieldProvider && (

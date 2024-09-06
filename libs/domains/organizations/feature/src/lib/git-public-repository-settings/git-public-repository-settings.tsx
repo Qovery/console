@@ -1,6 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { ExternalLink, InputText } from '@qovery/shared/ui'
-import { Callout, Icon } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 
 export interface GitPublicRepositorySettingsProps {
@@ -78,37 +77,27 @@ export function GitPublicRepositorySettings({
       />
       {!hideRootPath && (
         <>
-          <div>
-            <Controller
-              name="root_path"
-              control={control}
-              defaultValue="/"
-              rules={{
-                required: 'Value required',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  label="Root service path"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                  disabled={disabled}
-                />
-              )}
-            />
-            <p className="ml-4 mt-1 text-xs text-neutral-350">
-              Provide the path in the repository where the service is located
-            </p>
-          </div>
-          <Callout.Root color="sky" className="items-center text-xs">
-            <Callout.Icon>
-              <Icon iconName="info-circle" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>
-              Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
-            </Callout.Text>
-          </Callout.Root>
+          <Controller
+            name="root_path"
+            control={control}
+            defaultValue="/"
+            rules={{
+              required: 'Value required',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                label="Root service path"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                disabled={disabled}
+              />
+            )}
+          />
+          <p className="ml-4 mt-1 text-xs text-neutral-350">
+            Provide the path in the repository where the service is located
+          </p>
         </>
       )}
     </>

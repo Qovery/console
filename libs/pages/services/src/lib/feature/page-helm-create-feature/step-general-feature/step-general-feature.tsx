@@ -105,7 +105,18 @@ export function StepGeneralFeature() {
                 <div className="flex flex-col gap-3">
                   <GitProviderSetting />
                   {watchFieldIsPublicRepository ? (
-                    <GitPublicRepositorySettings />
+                    <>
+                      <GitPublicRepositorySettings />
+                      <Callout.Root color="sky" className="items-center text-xs">
+                        <Callout.Icon>
+                          <Icon iconName="info-circle" iconStyle="regular" />
+                        </Callout.Icon>
+                        <Callout.Text>
+                          Git automations are disabled when using public repos (auto-deploy, automatic preview
+                          environments)
+                        </Callout.Text>
+                      </Callout.Root>
+                    </>
                   ) : (
                     <>
                       {watchFieldGitProvider && (
