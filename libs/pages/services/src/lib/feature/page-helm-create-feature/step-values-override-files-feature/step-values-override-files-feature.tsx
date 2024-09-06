@@ -124,10 +124,6 @@ export function StepValuesOverrideFilesFeature() {
               {watchFieldGitBranch && <GitPathsSettings methods={valuesOverrideFileForm} />}
             </>
           )}
-        </>
-      )}
-      {!watchFieldIsPublicRepository && (
-        <>
           {generalData.source_provider === 'HELM_REPOSITORY' && watchFieldGitProvider && watchFieldGitRepository && (
             <AutoDeploySetting source="GIT" className="mt-3" />
           )}
