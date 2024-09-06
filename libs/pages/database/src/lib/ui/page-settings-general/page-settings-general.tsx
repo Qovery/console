@@ -204,9 +204,9 @@ export function PageSettingsGeneral({
                             { watchMode: 'CONTAINER', watchAccessibility: undefined },
                             () => (
                               <>
-                                <strong>Private access to your database is ensured</strong>, as it is only accessible
-                                from within your cluster or via our port-forward feature. This setup is recommended for
-                                security reasons.
+                                <span className="font-medium">Private access to your database is ensured</span>, as it
+                                is only accessible from within your cluster or via our port-forward feature. This setup
+                                is recommended for security reasons.
                               </>
                             )
                           )
@@ -215,23 +215,24 @@ export function PageSettingsGeneral({
                             { watchMode: 'MANAGED', watchAccessibility: undefined },
                             () => (
                               <>
-                                <strong>Private access to your database is ensured</strong>, as it is only accessible
-                                from within your cloud network. This configuration is recommended for security reasons.
+                                <span className="font-medium">Private access to your database is ensured</span>, as it
+                                is only accessible from within your cloud network. This configuration is recommended for
+                                security reasons.
                               </>
                             )
                           )
                           .with({ watchMode: 'CONTAINER', watchAccessibility: 'PUBLIC' }, () => (
                             <>
-                              <strong>Public access to your database is enabled</strong>, making it accessible to
-                              authorized users from anywhere, both inside and outside your cluster, allowing for broad
-                              access, collaboration, or testing purposes.
+                              <span className="font-medium">Public access to your database is enabled</span>, making it
+                              accessible to authorized users from anywhere, both inside and outside your cluster,
+                              allowing for broad access, collaboration, or testing purposes.
                             </>
                           ))
                           .with({ watchMode: 'MANAGED', watchAccessibility: 'PUBLIC' }, () => (
                             <>
-                              <strong>Public access to your database is enabled</strong>, making it accessible to
-                              authorized users from anywhere, both inside and outside your cloud network, allowing for
-                              broad access, collaboration, or testing purposes.
+                              <span className="font-medium">Public access to your database is enabled</span>, making it
+                              accessible to authorized users from anywhere, both inside and outside your cloud network,
+                              allowing for broad access, collaboration, or testing purposes.
                             </>
                           ))
                           .exhaustive()}

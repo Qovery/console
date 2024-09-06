@@ -1,7 +1,7 @@
-import { render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import StepGeneral, { type StepGeneralProps } from './step-general'
 
 const mockCluster = clusterFactoryMock(1)[0]
@@ -26,7 +26,7 @@ describe('PageDatabaseCreateGeneral', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
         defaultValues,
       })
