@@ -15,12 +15,19 @@ import {
 import { NetworkingPortSettingModal } from '../networking-port-setting-modal/networking-port-setting-modal'
 
 export interface NetworkingSettingProps extends PropsWithChildren {
+  helmId: string
   ports: HelmPortRequestPortsInner[]
   onUpdatePorts: (ports: HelmPortRequestPortsInner[]) => void
   isSetting?: boolean
 }
 
-export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, children }: NetworkingSettingProps) {
+export function NetworkingSetting({
+  helmId,
+  ports,
+  onUpdatePorts,
+  isSetting = false,
+  children,
+}: NetworkingSettingProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -28,6 +35,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
     openModal({
       content: (
         <NetworkingPortSettingModal
+          helmId={helmId}
           onSubmit={(port) => {
             onUpdatePorts([...ports, port])
             closeModal()
@@ -40,6 +48,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
     openModal({
       content: (
         <NetworkingPortSettingModal
+          helmId={helmId}
           port={originalPort}
           onSubmit={(port) => {
             onUpdatePorts([...ports.filter((p) => p !== originalPort), port])

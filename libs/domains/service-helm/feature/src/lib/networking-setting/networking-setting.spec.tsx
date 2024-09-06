@@ -2,6 +2,14 @@ import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { NetworkingSetting } from './networking-setting'
 
+jest.mock('../hooks/use-kubernetes-services/use-kubernetes-services', () => ({
+  ...jest.requireActual('../hooks/use-kubernetes-services/use-kubernetes-services'),
+  useKubernetesServices: () => ({
+    data: [],
+    isLoading: false,
+  }),
+}))
+
 describe('NetworkingSetting', () => {
   it('should match snapshot in empty state', () => {
     const { baseElement } = renderWithProviders(<NetworkingSetting ports={[]} onUpdatePorts={jest.fn()} />)

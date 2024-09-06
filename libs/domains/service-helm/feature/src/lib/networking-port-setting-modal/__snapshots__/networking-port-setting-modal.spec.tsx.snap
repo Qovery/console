@@ -65,70 +65,6 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
           </div>
           <div
             class=""
-            data-testid="input-text-wrapper"
-          >
-            <div
-              class="relative"
-            >
-              <div
-                aria-label="input-container"
-                class="input     "
-              >
-                <div
-                  class=""
-                >
-                  <label
-                    class="translate-y-2 text-sm"
-                    for="Namespace (optional)"
-                  >
-                    Namespace (optional)
-                  </label>
-                  <input
-                    class="input__value "
-                    data-testid="input-text"
-                    id="Namespace (optional)"
-                    name="namespace"
-                    type="text"
-                    value=""
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class=""
-            data-testid="input-text-wrapper"
-          >
-            <div
-              class="relative"
-            >
-              <div
-                aria-label="input-container"
-                class="input     "
-              >
-                <div
-                  class=""
-                >
-                  <label
-                    class="translate-y-2 text-sm"
-                    for="Service port"
-                  >
-                    Service port
-                  </label>
-                  <input
-                    class="input__value "
-                    data-testid="input-text"
-                    id="Service port"
-                    name="internal_port"
-                    type="number"
-                    value=""
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class=""
           >
             <div
               class="input input--select    "
@@ -251,6 +187,38 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                     name="external_port"
                     type="number"
                     value="443"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input     "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="translate-y-2 text-sm"
+                    for="Namespace (optional)"
+                  >
+                    Namespace (optional)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Namespace (optional)"
+                    name="namespace"
+                    type="text"
+                    value=""
                   />
                 </div>
               </div>
@@ -380,38 +348,6 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     name="service_name"
                     type="text"
                     value="My service"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class=""
-            data-testid="input-text-wrapper"
-          >
-            <div
-              class="relative"
-            >
-              <div
-                aria-label="input-container"
-                class="input    input--label-up "
-              >
-                <div
-                  class=""
-                >
-                  <label
-                    class="translate-y-2 text-sm"
-                    for="Namespace (optional)"
-                  >
-                    Namespace (optional)
-                  </label>
-                  <input
-                    class="input__value "
-                    data-testid="input-text"
-                    id="Namespace (optional)"
-                    name="namespace"
-                    type="text"
-                    value="My namespace"
                   />
                 </div>
               </div>
@@ -573,6 +509,38 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     name="external_port"
                     type="number"
                     value="443"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class=""
+            data-testid="input-text-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input    input--label-up "
+              >
+                <div
+                  class=""
+                >
+                  <label
+                    class="translate-y-2 text-sm"
+                    for="Namespace (optional)"
+                  >
+                    Namespace (optional)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-text"
+                    id="Namespace (optional)"
+                    name="namespace"
+                    type="text"
+                    value="My namespace"
                   />
                 </div>
               </div>

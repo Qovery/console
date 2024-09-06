@@ -2,6 +2,14 @@ import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { NetworkingPortSettingModal } from './networking-port-setting-modal'
 
+jest.mock('../hooks/use-kubernetes-services/use-kubernetes-services', () => ({
+  ...jest.requireActual('../hooks/use-kubernetes-services/use-kubernetes-services'),
+  useKubernetesServices: () => ({
+    data: [],
+    isLoading: false,
+  }),
+}))
+
 describe('NetworkingPortSettingModal', () => {
   it('should match snapshot in create state', () => {
     const { baseElement } = renderWithProviders(<NetworkingPortSettingModal onSubmit={jest.fn()} onClose={jest.fn()} />)
