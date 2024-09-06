@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterAccessModal should match snapshot 1`] = `
+<body>
+  <div>
+    <section
+      class="flex flex-col p-5"
+    >
+      <h1
+        class="text-xl font-bold h4 max-w-sm truncate text-neutral-400"
+      >
+        Access to your cluster
+      </h1>
+      <p
+        class="mb-6 mt-2 text-sm text-neutral-350"
+      >
+        This section explains how to connect to your cluster using kubectl, k9s.
+      </p>
+      <ul
+        class="flex flex-col gap-4"
+      >
+        <li
+          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+        >
+          <span
+            class="font-medium"
+          >
+            1. Download/Update Qovery CLI
+          </span>
+          <p
+            class="text-neutral-350"
+          >
+            Download and install the Qovery CLI (or update its version to the latest version)
+          </p>
+          <a
+            class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+            href="https://hub.qovery.com/docs/using-qovery/interface/cli/#install"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            https://hub.qovery.com/docs/using-qovery/interface/cli/#install
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+            />
+          </a>
+        </li>
+        <li
+          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+        >
+          <span
+            class="font-medium"
+          >
+            2. Get your kubeconfig
+          </span>
+          <div
+            class="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+          >
+            <div>
+              <span
+                class="select-none"
+              >
+                $ 
+              </span>
+              qovery cluster kubeconfig --cluster-id 000
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              type="button"
+            >
+              Copy
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-copy text-xs"
+              />
+            </button>
+          </div>
+        </li>
+        <li
+          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+        >
+          <span
+            class="font-medium"
+          >
+            3. Export your kubeconfig
+          </span>
+          <p
+            class="text-neutral-350"
+          >
+            Replace the path from the previous command's output and run the following command in your terminal.
+          </p>
+          <div
+            class="relative flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+          >
+            <div>
+              <span
+                class="select-none"
+              >
+                $ 
+              </span>
+              export KUBECONFIG=&lt;path&gt;
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              type="button"
+            >
+              Copy
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-copy text-xs"
+              />
+            </button>
+          </div>
+        </li>
+        <li
+          class="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm"
+        >
+          <span
+            class="font-medium"
+          >
+            4. Use your favorite tool to access your cluster. Examples:
+          </span>
+          <div
+            class="relative flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+          >
+            <div>
+              <span
+                class="select-none"
+              >
+                $ 
+              </span>
+              kubectl
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              type="button"
+            >
+              Copy
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-copy text-xs"
+              />
+            </button>
+          </div>
+          <div
+            class="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
+          >
+            <div>
+              <span
+                class="select-none"
+              >
+                $ 
+              </span>
+              k9s
+            </div>
+            <button
+              class="inline-flex items-center shrink-0 transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 cursor-pointer gap-2 font-sans font-medium"
+              type="button"
+            >
+              Copy
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-copy text-xs"
+              />
+            </button>
+          </div>
+        </li>
+      </ul>
+    </section>
+  </div>
+</body>
+`;

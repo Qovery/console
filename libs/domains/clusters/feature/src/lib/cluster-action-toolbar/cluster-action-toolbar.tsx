@@ -17,6 +17,7 @@ import {
   isStopAvailable,
   isUpdateAvailable,
 } from '@qovery/shared/util-js'
+import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
@@ -142,6 +143,15 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
     })
   }
 
+  const openAccessModal = () => {
+    openModal({
+      content: <ClusterAccessModal clusterId={cluster.id} />,
+      options: {
+        width: 680,
+      },
+    })
+  }
+
   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
 
   return (
@@ -156,6 +166,11 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
+        {cluster.kubernetes !== 'SELF_MANAGED' && (
+          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal()}>
+            Access info
+          </DropdownMenu.Item>
+        )}
         <DropdownMenu.Item
           icon={<Icon iconName="clock-rotate-left" />}
           onSelect={() =>
