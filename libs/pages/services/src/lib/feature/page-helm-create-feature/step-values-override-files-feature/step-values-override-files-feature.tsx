@@ -117,29 +117,33 @@ export function StepValuesOverrideFilesFeature() {
           )}
         </>
       )}
-      {generalData.source_provider === 'HELM_REPOSITORY' && <AutoDeploySetting source="GIT" className="mt-3" />}{' '}
-      {generalData.source_provider === 'GIT' && !watchFieldIsPublicRepository && (
+      {!watchFieldIsPublicRepository && (
         <>
-          {generalData.auto_deploy ? (
-            <Callout.Root color="sky" className="mt-3">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
+          {generalData.source_provider === 'HELM_REPOSITORY' && <AutoDeploySetting source="GIT" className="mt-3" />}
+          {generalData.source_provider === 'GIT' && (
+            <>
+              {generalData.auto_deploy ? (
+                <Callout.Root color="sky" className="mt-3">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
 
-              <Callout.Text className="text-xs">
-                <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
-                The service will be automatically updated on every new commit on the branch.
-              </Callout.Text>
-            </Callout.Root>
-          ) : (
-            <Callout.Root color="sky" className="mt-3">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text className="text-xs">
-                <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
-              </Callout.Text>
-            </Callout.Root>
+                  <Callout.Text className="text-xs">
+                    <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
+                    The service will be automatically updated on every new commit on the branch.
+                  </Callout.Text>
+                </Callout.Root>
+              ) : (
+                <Callout.Root color="sky" className="mt-3">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
+                  </Callout.Text>
+                </Callout.Root>
+              )}
+            </>
           )}
         </>
       )}
