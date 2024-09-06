@@ -13,6 +13,7 @@ export interface HelmValuesFileData {
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
   git_token_name?: GitTokenResponse['name']
+  is_public_repository?: boolean
   branch?: string
   paths?: string
   content?: string

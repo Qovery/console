@@ -1,8 +1,13 @@
 import { type HelmRequestAllOfValuesOverrideFile } from 'qovery-typescript-axios'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { Controller, FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitPublicRepositorySettings,
+  GitRepositorySetting,
+} from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
 import { isHelmRepositorySource } from '@qovery/shared/enums'
@@ -10,6 +15,30 @@ import { Button, Callout, Icon, InputText } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
+
+function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileData> }) {
+  return (
+    <div>
+      <Controller
+        name="paths"
+        control={methods.control}
+        rules={{
+          required: 'Value required',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            label="Overrides path"
+            name={field.name}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+          />
+        )}
+      />
+      <p className="ml-4 mt-1 text-xs text-neutral-350">Specify multiple paths by separating them with a semi-colon</p>
+    </div>
+  )
+}
 
 export function PageSettingsValuesOverrideFileFeature() {
   const { environmentId = '', applicationId = '' } = useParams()
@@ -44,10 +73,13 @@ export function PageSettingsValuesOverrideFileFeature() {
   const watchFieldGitProvider = methods.watch('provider')
   const watchFieldGitTokenId = methods.watch('git_token_id')
   const watchFieldGitRepository = methods.watch('repository')
+  const watchFieldIsPublicRepository = methods.watch('is_public_repository')
+  const watchFieldGitBranch = methods.watch('branch')
 
-  const disabledContinueButton = match(watchFieldType)
+  const disabledSaveButton = match(watchFieldType)
     .with('GIT_REPOSITORY', () => {
       const { provider, repository, branch, paths } = methods.watch()
+      console.log(!provider || !repository || !branch || !paths)
       return !provider || !repository || !branch || !paths
     })
     .with('YAML', () => {
@@ -105,33 +137,26 @@ export function PageSettingsValuesOverrideFileFeature() {
   const gitRepositorySettings = (
     <>
       <GitProviderSetting />
-      {watchFieldGitProvider && (
-        <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
-      )}
-      {watchFieldGitProvider && watchFieldGitRepository && (
+      {watchFieldIsPublicRepository ? (
         <>
-          <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
-          <div>
-            <Controller
-              name="paths"
-              control={methods.control}
-              rules={{
-                required: 'Value required',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  label="Overrides path"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                />
-              )}
-            />
-            <p className="ml-4 mt-1 text-xs text-neutral-350">
-              Specify multiple paths by separating them with a semi-colon
-            </p>
-          </div>
+          <GitPublicRepositorySettings hideRootPath />
+          <GitPathsSettings methods={methods} />
+        </>
+      ) : (
+        <>
+          {watchFieldGitProvider && (
+            <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+          )}
+          {watchFieldGitProvider && watchFieldGitRepository && (
+            <>
+              <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
+              {watchFieldGitBranch && <GitPathsSettings methods={methods} />}
+            </>
+          )}
+        </>
+      )}
+      {watchFieldGitProvider && !watchFieldIsPublicRepository && (
+        <>
           {isHelmRepositorySource(service?.source) ? (
             <AutoDeploySetting source="GIT" className="mt-3" />
           ) : service?.auto_deploy ? (
@@ -173,7 +198,7 @@ export function PageSettingsValuesOverrideFileFeature() {
         >
           {methods.watch('type') !== 'YAML' && (
             <div className="mt-10 flex justify-end">
-              <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledContinueButton}>
+              <Button type="submit" size="lg" loading={isLoadingEditService} disabled={disabledSaveButton}>
                 Save
               </Button>
             </div>
