@@ -60,9 +60,9 @@ export function ClusterAccessModal({ clusterId }: ClusterAccessModalProps) {
           <div className="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
             <div>
               <span className="select-none">$ </span>
-              kb9
+              k9s
             </div>
-            <CopyButton content="kb9" />
+            <CopyButton content="k9s" />
           </div>
         </li>
       </ul>
