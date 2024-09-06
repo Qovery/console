@@ -120,7 +120,9 @@ export function StepValuesOverrideFilesFeature() {
       )}
       {!watchFieldIsPublicRepository && (
         <>
-          {generalData.source_provider === 'HELM_REPOSITORY' && <AutoDeploySetting source="GIT" className="mt-3" />}
+          {generalData.source_provider === 'HELM_REPOSITORY' && watchFieldGitProvider && watchFieldGitRepository && (
+            <AutoDeploySetting source="GIT" className="mt-3" />
+          )}
           {generalData.source_provider === 'GIT' && (
             <>
               {generalData.auto_deploy ? (
