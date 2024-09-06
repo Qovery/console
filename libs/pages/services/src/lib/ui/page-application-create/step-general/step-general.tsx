@@ -25,6 +25,7 @@ export function StepGeneral(props: StepGeneralProps) {
 
   const watchServiceType = watch('serviceType')
   const watchBuildMode = watch('build_mode')
+  const watchIsPublicRepository = watch('is_public_repository')
 
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
@@ -112,7 +113,11 @@ export function StepGeneral(props: StepGeneralProps) {
             <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
             {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings />}
             {(watchBuildMode === BuildModeEnum.DOCKER || watchServiceType === 'CONTAINER') && <EntrypointCmdInputs />}
-            <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+            {!watchIsPublicRepository && (
+              <AutoDeploySetting
+                source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'}
+              />
+            )}
           </Section>
         )}
 

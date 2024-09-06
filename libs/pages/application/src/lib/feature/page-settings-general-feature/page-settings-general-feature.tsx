@@ -324,6 +324,10 @@ export function PageSettingsGeneralFeature() {
 
     if (!payload) return null
 
+    if (data.is_public_repository) {
+      payload.auto_deploy = false
+    }
+
     editService({
       serviceId: applicationId,
       payload,

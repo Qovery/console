@@ -81,63 +81,43 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         </div>
       </div>
     </div>
-    <div>
+    <div
+      class=""
+      data-testid="input-text-wrapper"
+    >
       <div
-        class=""
-        data-testid="input-text-wrapper"
+        class="relative"
       >
         <div
-          class="relative"
+          aria-label="input-container"
+          class="input    input--label-up "
         >
           <div
-            aria-label="input-container"
-            class="input    input--label-up "
+            class=""
           >
-            <div
-              class=""
+            <label
+              class="translate-y-2 text-sm"
+              for="Root service path"
             >
-              <label
-                class="translate-y-2 text-sm"
-                for="Root service path"
-              >
-                Root service path
-              </label>
-              <input
-                class="input__value "
-                data-testid="input-text"
-                id="Root service path"
-                name="root_path"
-                type="text"
-                value="/"
-              />
-            </div>
+              Root service path
+            </label>
+            <input
+              class="input__value "
+              data-testid="input-text"
+              id="Root service path"
+              name="root_path"
+              type="text"
+              value="/"
+            />
           </div>
         </div>
       </div>
-      <p
-        class="ml-4 mt-1 text-xs text-neutral-350"
-      >
-        Provide the path in the repository where the service is located
-      </p>
     </div>
-    <div
-      class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 items-center text-xs"
-      data-accent-color="sky"
+    <p
+      class="ml-4 mt-1 text-xs text-neutral-350"
     >
-      <div
-        class="-order-2 text-base leading-6"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-regular fa-info-circle "
-        />
-      </div>
-      <div
-        class="-order-1 mr-auto gap-x-3 text-neutral-400"
-      >
-        Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
-      </div>
-    </div>
+      Provide the path in the repository where the service is located
+    </p>
   </div>
 </body>
 `;

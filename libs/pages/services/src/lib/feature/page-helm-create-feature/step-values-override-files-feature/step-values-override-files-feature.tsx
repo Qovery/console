@@ -1,15 +1,44 @@
 import { useEffect } from 'react'
-import { Controller, FormProvider } from 'react-hook-form'
+import { Controller, FormProvider, type UseFormReturn } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
-import { ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitPublicRepositorySettings,
+  GitRepositorySetting,
+} from '@qovery/domains/organizations/feature'
+import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting } from '@qovery/domains/services/feature'
 import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_VALUES_STEP_2_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
+
+function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileData> }) {
+  return (
+    <div>
+      <Controller
+        name="paths"
+        control={methods.control}
+        rules={{
+          required: 'Value required',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            label="Overrides path"
+            name={field.name}
+            onChange={field.onChange}
+            value={field.value}
+            error={error?.message}
+          />
+        )}
+      />
+      <p className="ml-4 mt-1 text-xs text-neutral-350">Specify multiple paths by separating them with a semi-colon</p>
+    </div>
+  )
+}
 
 export function StepValuesOverrideFilesFeature() {
   useDocumentTitle('General - Values override as file')
@@ -45,6 +74,7 @@ export function StepValuesOverrideFilesFeature() {
   }, [setCurrentStep])
 
   const onSubmit = valuesOverrideFileForm.handleSubmit(() => {
+    if (watchFieldIsPublicRepository) generalForm.setValue('auto_deploy', false)
     navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
   })
 
@@ -52,6 +82,8 @@ export function StepValuesOverrideFilesFeature() {
   const watchFieldGitProvider = valuesOverrideFileForm.watch('provider')
   const watchFieldGitTokenId = valuesOverrideFileForm.watch('git_token_id')
   const watchFieldGitRepository = valuesOverrideFileForm.watch('repository')
+  const watchFieldGitBranch = valuesOverrideFileForm.watch('branch')
+  const watchFieldIsPublicRepository = valuesOverrideFileForm.watch('is_public_repository')
 
   const disabledContinueButton = match(watchFieldType)
     .with('GIT_REPOSITORY', () => {
@@ -68,55 +100,57 @@ export function StepValuesOverrideFilesFeature() {
   const gitRepositorySettings = (
     <>
       <GitProviderSetting />
-      {watchFieldGitProvider && (
-        <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
-      )}
-      {watchFieldGitProvider && watchFieldGitRepository && (
+      {watchFieldIsPublicRepository ? (
         <>
-          <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
-          <div>
-            <Controller
-              name="paths"
-              control={valuesOverrideFileForm.control}
-              rules={{
-                required: 'Value required',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  label="Overrides path"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  error={error?.message}
-                />
-              )}
-            />
-            <p className="ml-4 mt-1 text-xs text-neutral-350">
-              Specify multiple paths by separating them with a semi-colon
-            </p>
-          </div>
-          {generalData.source_provider === 'HELM_REPOSITORY' ? (
+          <GitPublicRepositorySettings hideRootPath />
+          <GitPathsSettings methods={valuesOverrideFileForm} />
+          <Callout.Root color="sky" className="items-center text-xs">
+            <Callout.Icon>
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
+            </Callout.Text>
+          </Callout.Root>
+        </>
+      ) : (
+        <>
+          {watchFieldGitProvider && (
+            <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+          )}
+          {watchFieldGitProvider && watchFieldGitRepository && (
+            <>
+              <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
+              {watchFieldGitBranch && <GitPathsSettings methods={valuesOverrideFileForm} />}
+            </>
+          )}
+          {generalData.source_provider === 'HELM_REPOSITORY' && watchFieldGitProvider && watchFieldGitRepository && (
             <AutoDeploySetting source="GIT" className="mt-3" />
-          ) : generalData.auto_deploy ? (
-            <Callout.Root color="sky" className="mt-3">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
+          )}
+          {generalData.source_provider === 'GIT' && (
+            <>
+              {generalData.auto_deploy ? (
+                <Callout.Root color="sky" className="mt-3">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
 
-              <Callout.Text className="text-xs">
-                <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
-                The service will be automatically updated on every new commit on the branch.
-              </Callout.Text>
-            </Callout.Root>
-          ) : (
-            <Callout.Root color="sky" className="mt-3">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text className="text-xs">
-                <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
-              </Callout.Text>
-            </Callout.Root>
+                  <Callout.Text className="text-xs">
+                    <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
+                    The service will be automatically updated on every new commit on the branch.
+                  </Callout.Text>
+                </Callout.Root>
+              ) : (
+                <Callout.Root color="sky" className="mt-3">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text className="text-xs">
+                    <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
+                  </Callout.Text>
+                </Callout.Root>
+              )}
+            </>
           )}
         </>
       )}

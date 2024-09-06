@@ -42,6 +42,10 @@ export function StepGeneralFeature() {
       ...data,
     }
 
+    if (data.is_public_repository) {
+      data.auto_deploy = false
+    }
+
     if (data.cmd_arguments) {
       cloneData.cmd = parseCmd(data.cmd_arguments)
     }
