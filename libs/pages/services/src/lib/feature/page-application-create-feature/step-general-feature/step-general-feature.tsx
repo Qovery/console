@@ -34,6 +34,10 @@ export function StepGeneralFeature() {
   })
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    if (data.is_public_repository) {
+      data.auto_deploy = false
+    }
+
     function onSubmitForm() {
       const cloneData = {
         ...data,

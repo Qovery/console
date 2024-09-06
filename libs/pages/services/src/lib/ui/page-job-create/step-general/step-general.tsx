@@ -30,6 +30,7 @@ export function StepGeneral(props: StepGeneralProps) {
   const navigate = useNavigate()
   const { formState, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
+  const watchIsPublicRepository = watch('is_public_repository')
 
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
@@ -147,7 +148,11 @@ export function StepGeneral(props: StepGeneralProps) {
               <BuildSettings buildModeDisabled />
             )}
             {props.jobType === ServiceTypeEnum.CRON_JOB && <EntrypointCmdInputs />}
-            <AutoDeploySetting source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'} />
+            {!watchIsPublicRepository && (
+              <AutoDeploySetting
+                source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'}
+              />
+            )}
           </Section>
         )}
 

@@ -119,12 +119,15 @@ export function PageSettingsValuesOverrideFileFeature() {
 
     service.auto_deploy ||= data.auto_deploy ?? false
 
+    if (data.is_public_repository) {
+      service.auto_deploy = false
+    }
+
     editService({
       serviceId: applicationId,
       payload: buildEditServicePayload({
         service,
         request: {
-          auto_deploy: watchFieldIsPublicRepository ? false : service.auto_deploy,
           values_override: {
             ...service?.values_override,
             file: valuesOverrideFile,

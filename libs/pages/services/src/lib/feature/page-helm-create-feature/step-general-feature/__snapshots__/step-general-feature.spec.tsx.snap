@@ -1863,45 +1863,6 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                     </div>
                   </div>
                 </div>
-                <div
-                  class="flex text-sm  items-start  "
-                  data-testid="input-toggle"
-                >
-                  <div
-                    aria-label="toggle-btn"
-                    class="inline-flex items-center justify-between cursor-pointer"
-                    data-testid="input-toggle-button"
-                  >
-                    <input
-                      class="hidden"
-                      type="checkbox"
-                      value="false"
-                    />
-                    <div
-                      aria-label="bg"
-                      class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
-                    >
-                      <div
-                        aria-label="circle"
-                        class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
-                      />
-                    </div>
-                  </div>
-                  <div
-                    class="relative -top-1 ml-3 cursor-pointer flex flex-col gap-1"
-                  >
-                    <p
-                      class="font-medium text-neutral-400"
-                    >
-                      Auto-deploy
-                    </p>
-                    <div
-                      class="text-neutral-350"
-                    >
-                      The service will be automatically updated on every new commit on the branch.
-                    </div>
-                  </div>
-                </div>
               </section>
               <div
                 class="flex justify-between"

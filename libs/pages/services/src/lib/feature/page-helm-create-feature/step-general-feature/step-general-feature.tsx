@@ -10,7 +10,7 @@ import {
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
 import { SERVICES_HELM_CREATION_VALUES_STEP_1_URL, SERVICES_URL } from '@qovery/shared/routes'
-import { Button, Callout, FunnelFlowBody, Heading, Icon, Section, toastError } from '@qovery/shared/ui'
+import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { findTemplateData } from '../../page-job-create-feature/page-job-create-feature'
 import { serviceTemplates } from '../../page-new-feature/service-templates'
@@ -27,7 +27,11 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const onSubmit = generalForm.handleSubmit(() => {
+  const onSubmit = generalForm.handleSubmit((data) => {
+    if (data.is_public_repository) {
+      data.auto_deploy = false
+    }
+
     navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
   })
 
@@ -138,7 +142,7 @@ export function StepGeneralFeature() {
             <Section className="gap-4">
               <Heading>Deploy</Heading>
               <DeploymentSetting />
-              {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" />}
+              {watchFieldProvider === 'GIT' && !watchFieldIsPublicRepository && <AutoDeploySetting source="GIT" />}
               {watchFieldProvider === 'HELM_REPOSITORY' && (
                 <Callout.Root color="sky" className="mt-5 items-center text-xs">
                   <Callout.Icon>
