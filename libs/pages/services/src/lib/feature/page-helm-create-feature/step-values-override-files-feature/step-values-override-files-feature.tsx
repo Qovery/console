@@ -104,6 +104,14 @@ export function StepValuesOverrideFilesFeature() {
         <>
           <GitPublicRepositorySettings hideRootPath />
           <GitPathsSettings methods={valuesOverrideFileForm} />
+          <Callout.Root color="sky" className="items-center text-xs">
+            <Callout.Icon>
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
+            </Callout.Text>
+          </Callout.Root>
         </>
       ) : (
         <>

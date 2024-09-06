@@ -79,7 +79,6 @@ export function PageSettingsValuesOverrideFileFeature() {
   const disabledSaveButton = match(watchFieldType)
     .with('GIT_REPOSITORY', () => {
       const { provider, repository, branch, paths } = methods.watch()
-      console.log(!provider || !repository || !branch || !paths)
       return !provider || !repository || !branch || !paths
     })
     .with('YAML', () => {
@@ -125,6 +124,7 @@ export function PageSettingsValuesOverrideFileFeature() {
       payload: buildEditServicePayload({
         service,
         request: {
+          auto_deploy: watchFieldIsPublicRepository ? false : service.auto_deploy,
           values_override: {
             ...service?.values_override,
             file: valuesOverrideFile,
@@ -141,6 +141,14 @@ export function PageSettingsValuesOverrideFileFeature() {
         <>
           <GitPublicRepositorySettings hideRootPath />
           <GitPathsSettings methods={methods} />
+          <Callout.Root color="sky" className="items-center text-xs">
+            <Callout.Icon>
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
+            </Callout.Text>
+          </Callout.Root>
         </>
       ) : (
         <>
