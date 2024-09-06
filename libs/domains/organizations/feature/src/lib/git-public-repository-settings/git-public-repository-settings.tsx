@@ -54,7 +54,6 @@ export function GitPublicRepositorySettings({
             )}
           </div>
         )}
-        shouldUnregister
       />
       <Controller
         name="branch"
