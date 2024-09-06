@@ -1,12 +1,23 @@
 import { DatabaseAccessibilityEnum, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { type Database } from '@qovery/domains/services/data-access'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type Value } from '@qovery/shared/interfaces'
-import { Button, Callout, ExternalLink, Heading, Icon, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  ExternalLink,
+  Heading,
+  Icon,
+  InputSelect,
+  LoaderSpinner,
+  Section,
+  SegmentedControl,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface PageSettingsGeneralProps {
@@ -37,18 +48,12 @@ export function PageSettingsGeneral({
   databaseVersionOptions,
   databaseVersionLoading,
 }: PageSettingsGeneralProps) {
-  const { control, formState } = useFormContext()
+  const { control, formState, watch } = useFormContext()
 
   const { mode: databaseMode } = database
 
-  const databasesAccessibility = Object.values(DatabaseAccessibilityEnum).map((value) => ({
-    label: upperCaseFirstLetter(value),
-    value: value,
-  }))
-
-  if (publicOptionNotAvailable) {
-    databasesAccessibility.splice(1, 1)
-  }
+  const watchMode: DatabaseModeEnum = watch('mode')
+  const watchAccessibility: DatabaseAccessibilityEnum = watch('accessibility')
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -166,30 +171,76 @@ export function PageSettingsGeneral({
                   )}
                 </>
               )}
-              <Controller
-                name="accessibility"
-                control={control}
-                rules={{ required: true }}
-                render={({ field, fieldState: { error } }) => (
-                  <div>
-                    <InputSelect
-                      dataTestId="input-select-accessibility"
-                      label="Accessibility"
-                      options={databasesAccessibility}
-                      onChange={field.onChange}
-                      value={field.value}
-                      error={error?.message}
-                    />
-                    <ExternalLink
-                      className="ml-4 gap-0.5"
-                      href="https://hub.qovery.com/docs/using-qovery/configuration/database/#accessibility"
-                      size="xs"
-                    >
-                      Learn more
-                    </ExternalLink>
-                  </div>
-                )}
-              />
+              {publicOptionNotAvailable ? (
+                <span>
+                  The access of your database is private, it is only accessible from within your cluster or via our
+                  port-forward feature. Public access to a K3S cluster running a containerized database is not
+                  supported.
+                </span>
+              ) : (
+                <Controller
+                  name="accessibility"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <div>
+                      <SegmentedControl.Root
+                        defaultValue={DatabaseAccessibilityEnum.PRIVATE}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="w-60 text-sm"
+                      >
+                        <SegmentedControl.Item value={DatabaseAccessibilityEnum.PRIVATE}>
+                          Private access
+                        </SegmentedControl.Item>
+                        <SegmentedControl.Item value={DatabaseAccessibilityEnum.PUBLIC}>
+                          Public access
+                        </SegmentedControl.Item>
+                      </SegmentedControl.Root>
+                      <p className="mt-2 text-sm text-neutral-350">
+                        {match({ watchMode, watchAccessibility })
+                          .with(
+                            { watchMode: 'CONTAINER', watchAccessibility: 'PRIVATE' },
+                            { watchMode: 'CONTAINER', watchAccessibility: undefined },
+                            () => (
+                              <>
+                                <span className="font-medium">Private access to your database is ensured</span>, as it
+                                is only accessible from within your cluster or via our port-forward feature. This setup
+                                is recommended for security reasons.
+                              </>
+                            )
+                          )
+                          .with(
+                            { watchMode: 'MANAGED', watchAccessibility: 'PRIVATE' },
+                            { watchMode: 'MANAGED', watchAccessibility: undefined },
+                            () => (
+                              <>
+                                <span className="font-medium">Private access to your database is ensured</span>, as it
+                                is only accessible from within your cloud network. This configuration is recommended for
+                                security reasons.
+                              </>
+                            )
+                          )
+                          .with({ watchMode: 'CONTAINER', watchAccessibility: 'PUBLIC' }, () => (
+                            <>
+                              <span className="font-medium">Public access to your database is enabled</span>, making it
+                              accessible to authorized users from anywhere, both inside and outside your cluster,
+                              allowing for broad access, collaboration, or testing purposes.
+                            </>
+                          ))
+                          .with({ watchMode: 'MANAGED', watchAccessibility: 'PUBLIC' }, () => (
+                            <>
+                              <span className="font-medium">Public access to your database is enabled</span>, making it
+                              accessible to authorized users from anywhere, both inside and outside your cloud network,
+                              allowing for broad access, collaboration, or testing purposes.
+                            </>
+                          ))
+                          .exhaustive()}
+                      </p>
+                    </div>
+                  )}
+                />
+              )}
             </Section>
 
             {databaseMode === DatabaseModeEnum.CONTAINER && (

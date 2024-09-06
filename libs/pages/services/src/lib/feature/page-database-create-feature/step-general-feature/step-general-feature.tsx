@@ -122,6 +122,7 @@ export function StepGeneralFeature() {
   const methods = useForm<GeneralData>({
     defaultValues: {
       ...generalData,
+      accessibility: 'PRIVATE',
       mode: match({ cloudProvider, cluster, generalData })
         // If 'generalData' has 'mode', use it
         .with({ generalData: { mode: 'CONTAINER' } }, () => DatabaseModeEnum.CONTAINER)
