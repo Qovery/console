@@ -1,6 +1,6 @@
 import {
   type Cluster,
-  type ClusterStatusGet,
+  type ClusterStatus,
   EnvironmentModeEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
@@ -24,7 +24,7 @@ import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 
-function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatusGet }) {
+function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
@@ -130,7 +130,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
   ) : null
 }
 
-function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatusGet }) {
+function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { openModal } = useModal()
@@ -213,7 +213,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
 
 export interface ClusterActionToolbarProps {
   cluster: Cluster
-  clusterStatus: ClusterStatusGet
+  clusterStatus: ClusterStatus
   noSettings?: boolean
 }
 
