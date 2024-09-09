@@ -95,176 +95,176 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
             <div className="flex justify-center">
               <LoaderSpinner />
             </div>
-          ) : availableServiceNames.length > 0 ? (
-            <Controller
-              name="service_name"
-              control={control}
-              rules={{
-                required: 'Please enter service name.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputSelect
-                  label="Service name"
-                  value={field.value}
-                  options={availableServiceNames}
-                  error={error?.message}
-                  onChange={(e) => {
-                    const name = `p${watchInternalPort}-${e}`
-                    setValue('name', name.slice(0, namePatternRules.maxLength.value))
-                    field.onChange(e)
-                  }}
-                  portal
-                  isSearchable
-                />
-              )}
-            />
           ) : (
-            <Controller
-              name="service_name"
-              control={control}
-              rules={{
-                required: 'Please enter service name.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  name={field.name}
-                  onChange={(e: FormEvent<HTMLInputElement>) => {
-                    const name = `p${watchInternalPort}-${e.currentTarget.value}`
-                    setValue('name', name.slice(0, namePatternRules.maxLength.value))
-                    field.onChange(e)
+            <>
+              {availableServiceNames.length > 0 ? (
+                <Controller
+                  name="service_name"
+                  control={control}
+                  rules={{
+                    required: 'Please enter service name.',
                   }}
-                  value={field.value}
-                  label="Service name"
-                  error={error?.message}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputSelect
+                      label="Service name"
+                      value={field.value}
+                      options={availableServiceNames}
+                      error={error?.message}
+                      onChange={(e) => {
+                        const name = `p${watchInternalPort}-${e}`
+                        setValue('name', name.slice(0, namePatternRules.maxLength.value))
+                        field.onChange(e)
+                      }}
+                      portal
+                      isSearchable
+                    />
+                  )}
+                />
+              ) : (
+                <Controller
+                  name="service_name"
+                  control={control}
+                  rules={{
+                    required: 'Please enter service name.',
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      name={field.name}
+                      onChange={(e: FormEvent<HTMLInputElement>) => {
+                        const name = `p${watchInternalPort}-${e.currentTarget.value}`
+                        setValue('name', name.slice(0, namePatternRules.maxLength.value))
+                        field.onChange(e)
+                      }}
+                      value={field.value}
+                      label="Service name"
+                      error={error?.message}
+                    />
+                  )}
                 />
               )}
-            />
-          )}
-          {watchServiceName ? (
-            isLoading ? (
-              <div className="flex justify-center">
-                <LoaderSpinner />
-              </div>
-            ) : availableServicePorts && availableServicePorts.length > 0 ? (
+
+              {watchServiceName ? (
+                availableServicePorts && availableServicePorts.length > 0 ? (
+                  <Controller
+                    name="internal_port"
+                    control={control}
+                    rules={{
+                      required: 'Please enter an internal port.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputSelect
+                        label="Service port"
+                        value={field.value}
+                        options={availableServicePorts}
+                        error={error?.message}
+                        onChange={(e) => {
+                          const name = `p${e}-${watchServiceName}`
+                          setValue('name', name.slice(0, namePatternRules.maxLength.value))
+                          field.onChange(e)
+                        }}
+                        portal
+                        isSearchable
+                      />
+                    )}
+                  />
+                ) : (
+                  <Controller
+                    name="internal_port"
+                    control={control}
+                    rules={{
+                      required: 'Please enter an internal port.',
+                      pattern: {
+                        value: /^[0-9]+$/,
+                        message: 'Please enter a number.',
+                      },
+                      max: {
+                        value: 65535,
+                        message: 'Port number must be less than or equal to 65535.',
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        type="number"
+                        name={field.name}
+                        onChange={(e: FormEvent<HTMLInputElement>) => {
+                          const name = `p${e.currentTarget.value}-${watchServiceName}`
+                          setValue('name', name.slice(0, namePatternRules.maxLength.value))
+                          field.onChange(e)
+                        }}
+                        value={field.value}
+                        label="Service port"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                )
+              ) : null}
               <Controller
-                name="internal_port"
+                name="protocol"
                 control={control}
-                rules={{
-                  required: 'Please enter an internal port.',
-                }}
                 render={({ field, fieldState: { error } }) => (
                   <InputSelect
-                    label="Service port"
+                    label="Select protocol"
                     value={field.value}
-                    options={availableServicePorts}
+                    options={availableProtocols}
                     error={error?.message}
-                    onChange={(e) => {
-                      const name = `p${e}-${watchServiceName}`
-                      setValue('name', name.slice(0, namePatternRules.maxLength.value))
-                      field.onChange(e)
-                    }}
+                    onChange={field.onChange}
                     portal
-                    isSearchable
                   />
                 )}
               />
-            ) : (
               <Controller
-                name="internal_port"
+                name="external_port"
                 control={control}
-                rules={{
-                  required: 'Please enter an internal port.',
-                  pattern: {
-                    value: /^[0-9]+$/,
-                    message: 'Please enter a number.',
-                  },
-                  max: {
-                    value: 65535,
-                    message: 'Port number must be less than or equal to 65535.',
-                  },
-                }}
-                render={({ field, fieldState: { error } }) => (
+                render={({ field }) => (
                   <InputText
                     type="number"
                     name={field.name}
-                    onChange={(e: FormEvent<HTMLInputElement>) => {
-                      const name = `p${e.currentTarget.value}-${watchServiceName}`
-                      setValue('name', name.slice(0, namePatternRules.maxLength.value))
-                      field.onChange(e)
-                    }}
+                    onChange={field.onChange}
+                    value="443"
+                    label="External port"
+                    disabled
+                  />
+                )}
+              />
+              <Controller
+                name="namespace"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    name={field.name}
+                    onChange={field.onChange}
                     value={field.value}
-                    label="Service port"
+                    label="Namespace (optional)"
                     error={error?.message}
                   />
                 )}
               />
-            )
-          ) : null}
-
-          <Controller
-            name="protocol"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                label="Select protocol"
-                value={field.value}
-                options={availableProtocols}
-                error={error?.message}
-                onChange={field.onChange}
-                portal
-              />
-            )}
-          />
-          <Controller
-            name="external_port"
-            control={control}
-            render={({ field }) => (
-              <InputText
-                type="number"
-                name={field.name}
-                onChange={field.onChange}
-                value="443"
-                label="External port"
-                disabled
-              />
-            )}
-          />
-          <Controller
-            name="namespace"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Namespace (optional)"
-                error={error?.message}
-              />
-            )}
-          />
-          <div>
-            <Controller
-              name="name"
-              defaultValue={watchInternalPort ? `p${watchInternalPort}-${watchServiceName}` : ''}
-              control={control}
-              rules={{
-                required: 'Please enter a port name.',
-                ...namePatternRules,
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  className="mb-1"
-                  name={field.name}
-                  onChange={field.onChange}
-                  value={field.value}
-                  label="Port name"
-                  error={error?.message}
+              <div>
+                <Controller
+                  name="name"
+                  defaultValue={watchInternalPort ? `p${watchInternalPort}-${watchServiceName}` : ''}
+                  control={control}
+                  rules={{
+                    required: 'Please enter a port name.',
+                    ...namePatternRules,
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      className="mb-1"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Port name"
+                      error={error?.message}
+                    />
+                  )}
                 />
-              )}
-            />
-            <p className="mb-5 ml-4 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application
+                <p className="mb-5 ml-4 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application
 port from the internet. Default value is p<port_number>-<service_name>`}</p>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </ModalCrud>
     </FormProvider>
