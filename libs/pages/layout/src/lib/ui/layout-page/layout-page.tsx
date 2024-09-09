@@ -72,6 +72,11 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       clusterStatuses?.find(({ status }) => status === ClusterStateEnum.INVALID_CREDENTIALS)?.cluster_id === id
   )
 
+  const clusterUpgradeWarning = clusters?.find(
+    ({ id }) =>
+      clusterStatuses?.find(({ next_k8s_available_version }) => next_k8s_available_version !== null)?.cluster_id === id
+  )
+
   const clusterCredentialError = Boolean(!matchLogInfraRoute && invalidCluster)
 
   // Display Qovery admin if we don't have the organization in the token
@@ -95,7 +100,10 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       <main className="bg-neutral-200 dark:h-full dark:bg-neutral-900">
         <div className="flex">
           <div className="sticky top-0 h-full">
-            <Navigation defaultOrganizationId={defaultOrganizationId} clusterNotification={clusterCredentialError} />
+            <Navigation
+              defaultOrganizationId={defaultOrganizationId}
+              clusterNotification={clusterCredentialError ? 'error' : clusterUpgradeWarning ? 'warning' : undefined}
+            />
           </div>
           <div className="flex w-full grow flex-col-reverse">
             <div>
