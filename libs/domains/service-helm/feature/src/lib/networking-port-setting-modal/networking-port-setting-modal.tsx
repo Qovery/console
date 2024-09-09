@@ -24,20 +24,20 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
     },
     mode: 'all',
   })
-  const { data: kubernetesServices, isLoading } = useKubernetesServices({ helmId })
+  const { data: kubernetesServices = [], isLoading } = useKubernetesServices({ helmId })
 
   const { control, watch, setValue } = methods
 
   const watchInternalPort = watch('internal_port')
   const watchServiceName = watch('service_name')
 
-  const availableServiceNames = kubernetesServices?.map(({ metadata: { name } }) => ({
+  const availableServiceNames = kubernetesServices.map(({ metadata: { name } }) => ({
     label: name,
     value: name ?? '',
   }))
 
   const availableServicePorts = kubernetesServices
-    ?.find(({ metadata: { name } }) => name === watchServiceName)
+    .find(({ metadata: { name } }) => name === watchServiceName)
     ?.service_spec.ports?.map(({ port, name }) => ({
       label: `${port}${name ? ` (${name})` : ''}`,
       value: `${port}`,
@@ -95,10 +95,9 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
             <div className="flex justify-center">
               <LoaderSpinner />
             </div>
-          ) : availableServiceNames && availableServiceNames?.length > 0 ? (
+          ) : availableServiceNames.length > 0 ? (
             <Controller
               name="service_name"
-              defaultValue=""
               control={control}
               rules={{
                 required: 'Please enter service name.',
@@ -115,13 +114,13 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
                     field.onChange(e)
                   }}
                   portal
+                  isSearchable
                 />
               )}
             />
           ) : (
             <Controller
               name="service_name"
-              defaultValue=""
               control={control}
               rules={{
                 required: 'Please enter service name.',
@@ -146,10 +145,9 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
               <div className="flex justify-center">
                 <LoaderSpinner />
               </div>
-            ) : availableServicePorts && availableServicePorts?.length > 0 ? (
+            ) : availableServicePorts && availableServicePorts.length > 0 ? (
               <Controller
                 name="internal_port"
-                defaultValue=""
                 control={control}
                 rules={{
                   required: 'Please enter an internal port.',
@@ -166,13 +164,13 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
                       field.onChange(e)
                     }}
                     portal
+                    isSearchable
                   />
                 )}
               />
             ) : (
               <Controller
                 name="internal_port"
-                defaultValue=""
                 control={control}
                 rules={{
                   required: 'Please enter an internal port.',
@@ -233,7 +231,6 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
           />
           <Controller
             name="namespace"
-            defaultValue=""
             control={control}
             render={({ field, fieldState: { error } }) => (
               <InputText
