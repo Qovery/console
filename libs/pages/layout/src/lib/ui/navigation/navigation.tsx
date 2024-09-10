@@ -17,7 +17,7 @@ import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-
 
 export interface NavigationProps {
   defaultOrganizationId: string
-  clusterNotification: 'error' | 'warning' | undefined
+  clusterNotification?: 'error' | 'warning'
 }
 
 export function Navigation({ defaultOrganizationId, clusterNotification }: NavigationProps) {
