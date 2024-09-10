@@ -224,9 +224,6 @@ exports[`NetworkingSetting should match snapshot with ports 1`] = `
                     Protocol: 
                     GRPC
                   </span>
-                  <span>
-                    Namespace: 
-                  </span>
                 </div>
               </div>
               <div

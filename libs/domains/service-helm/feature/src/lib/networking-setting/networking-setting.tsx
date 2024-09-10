@@ -131,7 +131,7 @@ export function NetworkingSetting({
                     <div className="flex flex-row gap-2 text-xs text-neutral-350">
                       <span>Service port: {internal_port}</span>
                       <span>Protocol: {protocol}</span>
-                      <span>Namespace: {namespace}</span>
+                      {namespace && <span>Namespace: {namespace}</span>}
                     </div>
                   </div>
                   <div className="flex gap-2">
