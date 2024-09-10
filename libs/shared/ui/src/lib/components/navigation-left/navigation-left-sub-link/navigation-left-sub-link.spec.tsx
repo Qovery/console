@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import NavigationLeftSubLink, { type NavigationLeftSubLinkProps } from './navigation-left-sub-link'
 
 jest.mock('react-router-dom', () => ({
@@ -10,90 +10,46 @@ jest.mock('react-router-dom', () => ({
 
 describe('NavigationLeftSubLink', () => {
   const props: NavigationLeftSubLinkProps = {
-    linkContent: jest.fn(),
     link: {
       title: 'my-title',
-      icon: 'icon-solid-angle-down',
+      icon: 'icon-solid-play',
       url: '/general',
-      onClick: jest.fn(),
       subLinks: [
         {
           title: 'title',
           url: '/general-second',
-          onClick: jest.fn(),
         },
       ],
     },
-    linkClassName: jest.fn(),
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<NavigationLeftSubLink {...props} />)
+    const { baseElement } = renderWithProviders(<NavigationLeftSubLink {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should open sub links', () => {
-    render(<NavigationLeftSubLink {...props} />)
+  it('should open sub links', async () => {
+    const { userEvent } = renderWithProviders(<NavigationLeftSubLink {...props} />)
 
     const trigger = screen.getByTestId('link')
 
-    fireEvent.click(trigger)
+    await userEvent.click(trigger)
 
     const subLinks = screen.getByTestId('sub-links')
 
     expect(subLinks).toBeInTheDocument()
   })
 
-  it('should have rotate the arrow', () => {
-    render(<NavigationLeftSubLink {...props} />)
+  it('should have rotate the arrow', async () => {
+    const { userEvent } = renderWithProviders(<NavigationLeftSubLink {...props} />)
 
     const trigger = screen.getByTestId('link')
 
-    fireEvent.click(trigger)
-
+    console.log(trigger.querySelector('.icon-solid-angle-down')?.classList.toString())
     expect(trigger.querySelector('.icon-solid-angle-down')?.classList.contains('rotate-180')).toBeTruthy()
-  })
 
-  it('should have a click emitted', () => {
-    const onClick = jest.fn()
+    await userEvent.click(trigger)
 
-    props.link = {
-      title: 'my-title',
-      icon: 'icon-solid-angle-down',
-      url: '/general',
-      subLinks: [
-        {
-          title: 'title',
-          url: '/general-second',
-          onClick: onClick,
-        },
-      ],
-    }
-
-    render(<NavigationLeftSubLink {...props} />)
-
-    const link = screen.getByTestId('sub-link')
-
-    fireEvent.click(link)
-
-    expect(onClick.mock.calls.length).toEqual(1)
-  })
-
-  it('should have a badge for sub link', () => {
-    props.link = {
-      title: 'my-title',
-      url: '/general',
-      subLinks: [
-        {
-          title: 'title',
-          url: '/general-second',
-          badge: 'beta',
-        },
-      ],
-    }
-
-    render(<NavigationLeftSubLink {...props} />)
-
-    expect(screen.getByTestId('sub-link-badge')).toHaveTextContent('beta')
+    expect(trigger.querySelector('.icon-solid-angle-down')?.classList.contains('rotate-180')).toBeFalsy()
   })
 })

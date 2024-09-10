@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { NavigationLeft, type NavigationLeftProps, linkClassName } from './navigation-left'
 
 describe('NavigationLeft', () => {
@@ -6,14 +6,12 @@ describe('NavigationLeft', () => {
     links: [
       {
         title: 'my-title',
-        icon: 'icon-solid-angle-down',
+        icon: 'icon-solid-play',
         url: '/general',
-        onClick: jest.fn(),
         subLinks: [
           {
             title: 'title',
             url: '/general-second',
-            onClick: jest.fn(),
           },
         ],
       },
@@ -21,7 +19,7 @@ describe('NavigationLeft', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<NavigationLeft {...props} />)
+    const { baseElement } = renderWithProviders(<NavigationLeft {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
@@ -30,8 +28,7 @@ describe('NavigationLeft', () => {
       {
         title: 'General',
         url: '/general',
-        onClick: jest.fn(),
-        icon: 'icon-solid-angle-down',
+        icon: 'icon-solid-play',
       },
     ]
 
@@ -44,48 +41,49 @@ describe('NavigationLeft', () => {
     props.links = [
       {
         title: 'General',
-        onClick: jest.fn(),
-        icon: 'icon-solid-angle-down',
+        icon: 'icon-solid-play',
+        url: '/general',
       },
     ]
 
-    render(<NavigationLeft {...props} />)
+    renderWithProviders(<NavigationLeft {...props} />)
 
     const link = screen.getByTestId('link')
 
-    expect(link.querySelector('span')?.classList.contains('icon-solid-angle-down')).toBe(true)
+    expect(link.querySelector('span')?.classList.contains('icon-solid-play')).toBe(true)
   })
 
   it('should have an title', () => {
     props.links = [
       {
         title: 'General',
+        subLinks: [],
       },
     ]
 
-    render(<NavigationLeft {...props} />)
+    renderWithProviders(<NavigationLeft {...props} />)
 
     const link = screen.getByTestId('link')
 
     expect(link).toHaveTextContent(props.links[0].title)
   })
 
-  it('should have a click emitted', () => {
-    const onClick = jest.fn()
-
+  it('should have a badge for sub link', () => {
     props.links = [
       {
-        title: 'General',
-        onClick: onClick,
+        title: 'my-title',
+        subLinks: [
+          {
+            title: 'title',
+            url: '/general-second',
+            badge: 'beta',
+          },
+        ],
       },
     ]
 
-    render(<NavigationLeft {...props} />)
+    renderWithProviders(<NavigationLeft {...props} />)
 
-    const link = screen.getByTestId('link')
-
-    fireEvent.click(link)
-
-    expect(onClick.mock.calls.length).toEqual(1)
+    expect(screen.getByTestId('sub-link-badge')).toHaveTextContent('beta')
   })
 })

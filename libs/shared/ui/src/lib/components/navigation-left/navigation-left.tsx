@@ -48,12 +48,8 @@ export const linkClassName = (pathname: string, url?: string, badge?: string) =>
       : 'text-neutral-350 hover:text-neutral-400 hover:bg-neutral-150'
   } ${badge ? 'justify-between' : ''} `
 
-export function NavigationLeft(props: NavigationLeftProps) {
-  const { title, links, link, className = '' } = props
-
-  const { pathname } = useLocation()
-
-  const linkContent = (link: NavigationLeftLinkProps) => (
+export function LinkContent({ link }: { link: NavigationLeftLinkProps }) {
+  return (
     <>
       {(link.icon || link.iconName) && (
         <div className="mr-4 flex items-center">
@@ -68,6 +64,12 @@ export function NavigationLeft(props: NavigationLeftProps) {
       {link.title}
     </>
   )
+}
+
+export function NavigationLeft(props: NavigationLeftProps) {
+  const { title, links, link, className = '' } = props
+
+  const { pathname } = useLocation()
 
   return (
     <div className={`flex flex-col px-5 ${className}`}>
@@ -80,13 +82,32 @@ export function NavigationLeft(props: NavigationLeftProps) {
           </span>
         )}
       </div>
-      {links.map((link, index) =>
+      {links.map((link) =>
         'url' in link ? (
-          <Link data-testid="link" key={index} to={link.url} className={linkClassName(link.url, pathname)}>
-            {linkContent(link)}
+          <Link data-testid="link" key={link.url} to={link.url} className={linkClassName(link.url, pathname)}>
+            <LinkContent link={link} />
           </Link>
         ) : (
-          <NavigationLeftSubLink key={index} link={link} linkContent={linkContent} />
+          <NavigationLeftSubLink key={link.title} link={link}>
+            {link.subLinks.map((subLink) => (
+              <Link
+                data-testid="sub-link"
+                key={subLink.url}
+                to={subLink.url || ''}
+                className={`flex ${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
+              >
+                {subLink.title}
+                {subLink.badge && (
+                  <span
+                    data-testid="sub-link-badge"
+                    className="rounded-xs rounded-sm bg-brand-500 px-1 text-3xs uppercase text-neutral-50"
+                  >
+                    {subLink.badge}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </NavigationLeftSubLink>
         )
       )}
     </div>
