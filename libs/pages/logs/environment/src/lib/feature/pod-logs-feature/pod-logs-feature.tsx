@@ -8,6 +8,7 @@ import {
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { ListServiceLogs } from '@qovery/domains/service-logs/feature'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { type TableFilterProps } from '@qovery/shared/ui'
 import { useDebounce, useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -101,25 +102,25 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
     [setServiceMessages]
   )
 
-  useReactQueryWsSubscription({
-    url: QOVERY_WS + '/service/logs',
-    urlSearchParams: {
-      organization: organizationId,
-      cluster: clusterId,
-      project: projectId,
-      environment: environmentId,
-      service: serviceId,
-      pod_name: searchParams.get(POD_NAME_KEY) ?? undefined,
-    },
-    enabled:
-      Boolean(organizationId) &&
-      Boolean(clusterId) &&
-      Boolean(projectId) &&
-      Boolean(environmentId) &&
-      Boolean(serviceId) &&
-      enabledLogs,
-    onMessage: serviceMessageHandler,
-  })
+  // useReactQueryWsSubscription({
+  //   url: QOVERY_WS + '/service/logs',
+  //   urlSearchParams: {
+  //     organization: organizationId,
+  //     cluster: clusterId,
+  //     project: projectId,
+  //     environment: environmentId,
+  //     service: serviceId,
+  //     pod_name: searchParams.get(POD_NAME_KEY) ?? undefined,
+  //   },
+  //   enabled:
+  //     Boolean(organizationId) &&
+  //     Boolean(clusterId) &&
+  //     Boolean(projectId) &&
+  //     Boolean(environmentId) &&
+  //     Boolean(serviceId) &&
+  //     enabledLogs,
+  //   onMessage: serviceMessageHandler,
+  // })
 
   const infraMessageHandler = useCallback(
     (_: QueryClient, message: ServiceInfraLogResponseDto) => {
@@ -129,49 +130,50 @@ export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
     [setInfraMessages]
   )
 
-  useReactQueryWsSubscription({
-    url: QOVERY_WS + '/infra/logs',
-    urlSearchParams: {
-      organization: organizationId,
-      cluster: clusterId,
-      project: projectId,
-      environment: environmentId,
-      service: serviceId,
-      infra_component_type: 'NGINX',
-    },
-    enabled:
-      Boolean(organizationId) &&
-      Boolean(clusterId) &&
-      Boolean(projectId) &&
-      Boolean(environmentId) &&
-      Boolean(serviceId) &&
-      enabledLogs &&
-      enabledNginx,
-    onMessage: infraMessageHandler,
-  })
+  // useReactQueryWsSubscription({
+  //   url: QOVERY_WS + '/infra/logs',
+  //   urlSearchParams: {
+  //     organization: organizationId,
+  //     cluster: clusterId,
+  //     project: projectId,
+  //     environment: environmentId,
+  //     service: serviceId,
+  //     infra_component_type: 'NGINX',
+  //   },
+  //   enabled:
+  //     Boolean(organizationId) &&
+  //     Boolean(clusterId) &&
+  //     Boolean(projectId) &&
+  //     Boolean(environmentId) &&
+  //     Boolean(serviceId) &&
+  //     enabledLogs &&
+  //     enabledNginx,
+  //   onMessage: infraMessageHandler,
+  // })
 
   const isProgressing = match(runningStatus?.state)
     .with(ServiceStateDto.RUNNING, ServiceStateDto.WARNING, () => true)
     .otherwise(() => false)
 
   return (
-    <PodLogs
-      service={service}
-      loadingStatus={debouncedLogs.length !== 0 ? 'loaded' : 'loading'}
-      logs={pauseStatusLogs ? pausedLogs : debouncedLogs}
-      pauseStatusLogs={pauseStatusLogs}
-      setPauseStatusLogs={setPauseStatusLogs}
-      enabledNginx={enabledNginx}
-      setEnabledNginx={setEnabledNginx}
-      showPreviousLogs={showPreviousLogs}
-      setShowPreviousLogs={setShowPreviousLogs}
-      countNginx={infraMessages.length}
-      isProgressing={isProgressing}
-      filter={filter}
-      setFilter={setFilter}
-      newMessagesAvailable={newMessagesAvailable}
-      setNewMessagesAvailable={setNewMessagesAvailable}
-    />
+    <ListServiceLogs clusterId={clusterId} />
+    // <PodLogs
+    //   service={service}
+    //   loadingStatus={debouncedLogs.length !== 0 ? 'loaded' : 'loading'}
+    //   logs={pauseStatusLogs ? pausedLogs : debouncedLogs}
+    //   pauseStatusLogs={pauseStatusLogs}
+    //   setPauseStatusLogs={setPauseStatusLogs}
+    //   enabledNginx={enabledNginx}
+    //   setEnabledNginx={setEnabledNginx}
+    //   showPreviousLogs={showPreviousLogs}
+    //   setShowPreviousLogs={setShowPreviousLogs}
+    //   countNginx={infraMessages.length}
+    //   isProgressing={isProgressing}
+    //   filter={filter}
+    //   setFilter={setFilter}
+    //   newMessagesAvailable={newMessagesAvailable}
+    //   setNewMessagesAvailable={setNewMessagesAvailable}
+    // />
   )
 }
 
