@@ -16,11 +16,9 @@ export interface NavigationLeftProps {
 export type NavigationLeftLinkProps = {
   title: string
   url?: string
-  onClick?: () => void
   subLinks?: {
     title: string
     url?: string
-    onClick?: () => void
     badge?: string
   }[]
 } & (
@@ -77,21 +75,12 @@ export function NavigationLeft(props: NavigationLeftProps) {
         )}
       </div>
       {links.map((link, index) =>
-        !link.onClick && !link.subLinks && link.url ? (
+        !link.subLinks && link.url ? (
           <Link data-testid="link" key={index} to={link.url} className={linkClassName(link.url, pathname)}>
             {linkContent(link)}
           </Link>
-        ) : !link.onClick && link.subLinks ? (
-          <NavigationLeftSubLink key={index} link={link} linkClassName={linkClassName} linkContent={linkContent} />
         ) : (
-          <div
-            data-testid="link"
-            key={index}
-            onClick={link.onClick}
-            className={linkClassName(link.url || '', pathname)}
-          >
-            {linkContent(link)}
-          </div>
+          <NavigationLeftSubLink key={index} link={link} linkClassName={linkClassName} linkContent={linkContent} />
         )
       )}
     </div>

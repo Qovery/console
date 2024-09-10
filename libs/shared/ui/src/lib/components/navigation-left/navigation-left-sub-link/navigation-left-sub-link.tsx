@@ -53,29 +53,17 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
           data-testid="sub-links"
           className={`w-full ${open ? 'h-full opacity-100' : 'pointer-events-none hidden opacity-0'}`}
         >
-          {link.subLinks.map((subLink, index) =>
-            subLink.onClick ? (
-              <div
-                data-testid="sub-link"
-                key={index}
-                className={`${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
-                onClick={() => subLink.onClick && subLink.onClick()}
-              >
-                {subLink.title}
-                {subLink.badge && badge(subLink.badge)}
-              </div>
-            ) : (
-              <Link
-                data-testid="sub-link"
-                key={index}
-                to={subLink.url || ''}
-                className={`flex ${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
-              >
-                {subLink.title}
-                {subLink.badge && badge(subLink.badge)}
-              </Link>
-            )
-          )}
+          {link.subLinks.map((subLink, index) => (
+            <Link
+              data-testid="sub-link"
+              key={index}
+              to={subLink.url || ''}
+              className={`flex ${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
+            >
+              {subLink.title}
+              {subLink.badge && badge(subLink.badge)}
+            </Link>
+          ))}
         </div>
       )}
     </>
