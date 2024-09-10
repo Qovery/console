@@ -14,6 +14,9 @@ export function useUpgradeCluster({ organizationId }: UseUpgradeClusterProps) {
       queryClient.invalidateQueries({
         queryKey: queries.clusters.status({ organizationId, clusterId }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.clusters.listStatuses({ organizationId }).queryKey,
+      })
     },
   })
 }
