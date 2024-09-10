@@ -164,7 +164,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
         />
         <NeedRedeployFlag />
         <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
-          <ErrorBoundary>{children}</ErrorBoundary>
+          <ErrorBoundary key={tabsItems.find(({ active }) => active)?.link}>{children}</ErrorBoundary>
         </div>
       </Section>
     </ErrorBoundary>

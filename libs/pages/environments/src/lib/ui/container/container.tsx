@@ -96,7 +96,7 @@ export function Container({ children }: PropsWithChildren) {
           <Header title={project?.name}>{project && <ProjectAvatar project={project} />}</Header>
           <Tabs items={tabsItems} contentRight={!isDeploymentRulesTab && contentTabs} />
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
-            <ErrorBoundary>{children}</ErrorBoundary>
+            <ErrorBoundary key={tabsItems.find(({ active }) => active)?.link}>{children}</ErrorBoundary>
           </div>
         </Section>
       </ErrorBoundary>

@@ -1,6 +1,5 @@
-import { type PropsWithChildren } from 'react'
+import { type Attributes, type PropsWithChildren } from 'react'
 import { ErrorBoundary as ErrorBoundaryRaw, type FallbackProps } from 'react-error-boundary'
-import { useLocation } from 'react-router-dom'
 import { twMerge } from '@qovery/shared/util-js'
 import { Button } from '../button/button'
 import { Heading } from '../heading/heading'
@@ -25,15 +24,11 @@ export function ErrorFallback({ className, error, resetErrorBoundary }: Fallback
   )
 }
 
-export function ErrorBoundary({ children }: PropsWithChildren) {
-  const location = useLocation()
+interface ErrorBoundaryProps extends PropsWithChildren, Attributes {}
 
+export function ErrorBoundary({ key, children }: ErrorBoundaryProps) {
   return (
-    <ErrorBoundaryRaw
-      key={location.pathname}
-      FallbackComponent={ErrorFallback}
-      onReset={() => window.location.reload()}
-    >
+    <ErrorBoundaryRaw key={key} FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
       {children}
     </ErrorBoundaryRaw>
   )
