@@ -1,4 +1,4 @@
-import { type Cluster, type ClusterStatusGet } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
 import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
@@ -10,7 +10,7 @@ import { ClusterType } from '../cluster-type/cluster-type'
 
 export interface ClusterCardProps {
   cluster: Cluster
-  clusterStatus?: ClusterStatusGet
+  clusterStatus?: ClusterStatus
 }
 
 export function ClusterCard({ cluster, clusterStatus }: ClusterCardProps) {

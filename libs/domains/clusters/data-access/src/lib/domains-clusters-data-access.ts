@@ -173,4 +173,8 @@ export const mutations = {
     const response = await clusterApi.getInstallationHelmValues(organizationId, clusterId)
     return response.data
   },
+  async upgradeCluster({ clusterId }: { clusterId: string }) {
+    const response = await clusterApi.upgradeCluster(clusterId)
+    return response.data
+  },
 }

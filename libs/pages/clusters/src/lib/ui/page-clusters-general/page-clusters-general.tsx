@@ -1,4 +1,4 @@
-import { type Cluster, type ClusterStatusGet } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { ClusterCard } from '@qovery/domains/clusters/feature'
 import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
@@ -6,7 +6,7 @@ import { EmptyState, Heading, Icon, Link, LoaderSpinner, Section } from '@qovery
 
 export interface PageClustersGeneralProps {
   clusters: Cluster[]
-  clusterStatuses: ClusterStatusGet[]
+  clusterStatuses: ClusterStatus[]
   loading: boolean
 }
 

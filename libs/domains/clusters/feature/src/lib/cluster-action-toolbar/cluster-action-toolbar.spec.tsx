@@ -1,10 +1,10 @@
-import { ClusterDeploymentStatusEnum, ClusterStateEnum, type ClusterStatusGet } from 'qovery-typescript-axios'
+import { ClusterDeploymentStatusEnum, ClusterStateEnum, type ClusterStatus } from 'qovery-typescript-axios'
 import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterActionToolbar } from './cluster-action-toolbar'
 
 const mockCluster = clusterFactoryMock(1)[0]
-const mockClusterStatus: ClusterStatusGet = {
+const mockClusterStatus: ClusterStatus = {
   cluster_id: mockCluster.id,
   status: ClusterStateEnum.DEPLOYED,
   is_deployed: true,

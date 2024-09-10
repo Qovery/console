@@ -17,7 +17,7 @@ import MenuAccountFeature from '../../feature/menu-account-feature/menu-account-
 
 export interface NavigationProps {
   defaultOrganizationId: string
-  clusterNotification: boolean
+  clusterNotification?: 'error' | 'warning'
 }
 
 export function Navigation({ defaultOrganizationId, clusterNotification }: NavigationProps) {
@@ -82,8 +82,11 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
               >
                 <Icon iconName="cloud-word" className="text-[18px]" />
               </Link>
-              {clusterNotification && (
+              {clusterNotification === 'error' && (
                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-red-500"></span>
+              )}
+              {clusterNotification === 'warning' && (
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-yellow-500"></span>
               )}
             </div>
           </Tooltip>

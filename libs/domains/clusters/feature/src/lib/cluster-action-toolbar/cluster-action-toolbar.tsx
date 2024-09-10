@@ -1,6 +1,6 @@
 import {
   type Cluster,
-  type ClusterStatusGet,
+  type ClusterStatus,
   EnvironmentModeEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
@@ -23,11 +23,13 @@ import { ClusterInstallationGuideModal } from '../cluster-installation-guide-mod
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
+import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
 
-function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatusGet }) {
+function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
+  const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
 
   if (
     !clusterStatus.status ||
@@ -38,10 +40,13 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
     return null
   }
 
-  const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE'
-  const displayYellowColor = clusterNeedUpdate && clusterStatus.status !== 'STOPPED'
+  const k8sUpdateAvailable =
+    clusterStatus.next_k8s_available_version &&
+    clusterStatus.next_k8s_available_version !== null &&
+    clusterStatus.status === 'DEPLOYED'
+  const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
 
-  const tooltipClusterNeedUpdate = displayYellowColor && (
+  const tooltipClusterNeedUpdate = clusterNeedUpdate && (
     <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
       <div className="absolute right-2">
         <Icon iconName="circle-exclamation" iconStyle="regular" />
@@ -80,6 +85,17 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
           clusterId: cluster.id,
         }),
     })
+  const mutationUpgrade = () =>
+    openModalConfirmation({
+      mode: EnvironmentModeEnum.PRODUCTION,
+      title: 'Confirm upgrade',
+      description: 'To confirm the upgrade of your cluster, please type the name:',
+      name: cluster.name,
+      action: () =>
+        upgradeCluster({
+          clusterId: cluster.id,
+        }),
+    })
 
   const entries: ReactNode[] = [
     isDeployAvailable(clusterStatus.status) && (
@@ -88,7 +104,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         icon={<Icon iconName="play" />}
         onSelect={mutationDeploy}
         className="relative"
-        color={displayYellowColor ? 'yellow' : 'brand'}
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
       >
         {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
         {tooltipClusterNeedUpdate}
@@ -100,7 +116,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         icon={<Icon iconName="rotate-right" />}
         onSelect={mutationUpdate}
         className="relative"
-        color={displayYellowColor ? 'yellow' : 'brand'}
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
       >
         Update
         {tooltipClusterNeedUpdate}
@@ -111,12 +127,34 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         Stop
       </DropdownMenu.Item>
     ),
+    k8sUpdateAvailable && (
+      <DropdownMenu.Item
+        key="3"
+        icon={<Icon iconName="rotate-left" />}
+        onSelect={mutationUpgrade}
+        className="relative"
+        color="yellow"
+      >
+        Upgrade to {clusterStatus.next_k8s_available_version}
+        <Tooltip
+          side="bottom"
+          content="Your cluster is out of date. Click here to upgrade it now. The upgrade will be performed automatically after a certain period."
+        >
+          <div className="absolute right-2">
+            <Icon iconName="circle-exclamation" iconStyle="regular" />
+          </div>
+        </Tooltip>
+      </DropdownMenu.Item>
+    ),
   ].filter((e) => !!e)
 
   return entries.length > 0 ? (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Manage Deployment" color={displayYellowColor ? 'yellow' : 'neutral'}>
+        <ActionToolbar.Button
+          aria-label="Manage Deployment"
+          color={clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : 'neutral'}
+        >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="play" className="mr-4" />
@@ -130,7 +168,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
   ) : null
 }
 
-function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatusGet }) {
+function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { openModal } = useModal()
@@ -213,7 +251,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
 
 export interface ClusterActionToolbarProps {
   cluster: Cluster
-  clusterStatus: ClusterStatusGet
+  clusterStatus: ClusterStatus
   noSettings?: boolean
 }
 
