@@ -15,12 +15,19 @@ import {
 import { NetworkingPortSettingModal } from '../networking-port-setting-modal/networking-port-setting-modal'
 
 export interface NetworkingSettingProps extends PropsWithChildren {
+  helmId: string
   ports: HelmPortRequestPortsInner[]
   onUpdatePorts: (ports: HelmPortRequestPortsInner[]) => void
   isSetting?: boolean
 }
 
-export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, children }: NetworkingSettingProps) {
+export function NetworkingSetting({
+  helmId,
+  ports,
+  onUpdatePorts,
+  isSetting = false,
+  children,
+}: NetworkingSettingProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -28,6 +35,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
     openModal({
       content: (
         <NetworkingPortSettingModal
+          helmId={helmId}
           onSubmit={(port) => {
             onUpdatePorts([...ports, port])
             closeModal()
@@ -40,6 +48,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
     openModal({
       content: (
         <NetworkingPortSettingModal
+          helmId={helmId}
           port={originalPort}
           onSubmit={(port) => {
             onUpdatePorts([...ports.filter((p) => p !== originalPort), port])
@@ -122,7 +131,7 @@ export function NetworkingSetting({ ports, onUpdatePorts, isSetting = false, chi
                     <div className="flex flex-row gap-2 text-xs text-neutral-350">
                       <span>Service port: {internal_port}</span>
                       <span>Protocol: {protocol}</span>
-                      <span>Namespace: {namespace}</span>
+                      {namespace && <span>Namespace: {namespace}</span>}
                     </div>
                   </div>
                   <div className="flex gap-2">

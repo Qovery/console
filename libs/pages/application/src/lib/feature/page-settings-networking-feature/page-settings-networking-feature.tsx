@@ -36,6 +36,7 @@ export function PageSettingsNetworkingFeature() {
     <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between p-8">
       <FormProvider {...methods}>
         <NetworkingSetting
+          helmId={applicationId}
           ports={ports}
           onUpdatePorts={(updatedPorts) => {
             methods.setValue('ports', updatedPorts)
