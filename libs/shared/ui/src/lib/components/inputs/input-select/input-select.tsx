@@ -125,7 +125,7 @@ export function InputSelect({
               onClick={menuListButton.onClick}
             >
               {menuListButton.label}
-              <Icon iconName="circle-plus" className="text-xs leading-5" />
+              <Icon iconName="circle-plus" iconStyle="regular" className="text-xs leading-5" />
             </button>
           </div>
         )}

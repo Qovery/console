@@ -221,7 +221,6 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                     }}
                   />
                 )}
-                shouldUnregister
               />
               {watchRepository && (
                 <HelmChartsSetting
