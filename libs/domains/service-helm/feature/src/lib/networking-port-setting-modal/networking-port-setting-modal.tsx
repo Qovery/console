@@ -113,6 +113,7 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
                       onChange={(e) => {
                         const name = `p${watchInternalPort}-${e}`
                         setValue('name', name.slice(0, namePatternRules.maxLength.value))
+                        setValue('internal_port', '')
                         field.onChange(e)
                       }}
                       portal
