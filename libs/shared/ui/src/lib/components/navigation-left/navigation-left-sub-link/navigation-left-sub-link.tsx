@@ -1,23 +1,28 @@
 import { type ReactNode, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Icon from '../../icon/icon'
-import { type NavigationLeftLinkProps } from '../navigation-left'
+import { type NavigationLeftLinkProps, linkClassName } from '../navigation-left'
 
 export interface NavigationLeftSubLinkProps {
   linkContent: (link: NavigationLeftLinkProps) => ReactNode
-  link: NavigationLeftLinkProps
-  linkClassName: (pathname: string, url?: string, badge?: string) => string
+  link: NavigationLeftLinkProps & {
+    subLinks: {
+      title: string
+      url: string
+      badge?: string
+    }[]
+  }
 }
 
 export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
-  const { link, linkClassName, linkContent } = props
+  const { link, linkContent } = props
   const { pathname } = useLocation()
 
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     // default open sub links if is active
-    link.subLinks?.forEach((currentLink) => {
+    link.subLinks.forEach((currentLink) => {
       if (linkClassName(pathname, currentLink.url)?.includes('is-active')) {
         setOpen(true)
       }
@@ -40,7 +45,7 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
       <div
         data-testid="link"
         onClick={() => setOpen(!open)}
-        className={`select-none justify-between ${linkClassName(pathname, link.url)}`}
+        className="mt-0.5 flex cursor-pointer select-none items-center justify-between truncate rounded px-3 py-2 text-ssm font-medium text-neutral-350 transition duration-300 ease-out hover:bg-neutral-150 hover:text-neutral-400"
       >
         <span className="flex truncate">{linkContent(link)}</span>
         <Icon

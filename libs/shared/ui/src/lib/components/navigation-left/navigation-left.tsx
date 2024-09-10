@@ -15,25 +15,31 @@ export interface NavigationLeftProps {
 
 export type NavigationLeftLinkProps = {
   title: string
-  url?: string
-  subLinks?: {
-    title: string
-    url?: string
-    badge?: string
-  }[]
 } & (
   | {
-      /**
-       * @deprecated please use `iconName` instead `icon`
-       */
-      icon?: string
-      iconName?: never
+      url: string
     }
   | {
-      iconName?: IconName
-      icon?: never
+      subLinks: {
+        title: string
+        url: string
+        badge?: string
+      }[]
     }
-)
+) &
+  (
+    | {
+        /**
+         * @deprecated please use `iconName` instead `icon`
+         */
+        icon?: string
+        iconName?: never
+      }
+    | {
+        iconName?: IconName
+        icon?: never
+      }
+  )
 
 export const linkClassName = (pathname: string, url?: string, badge?: string) =>
   `flex items-center py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
@@ -75,12 +81,12 @@ export function NavigationLeft(props: NavigationLeftProps) {
         )}
       </div>
       {links.map((link, index) =>
-        !link.subLinks && link.url ? (
+        'url' in link ? (
           <Link data-testid="link" key={index} to={link.url} className={linkClassName(link.url, pathname)}>
             {linkContent(link)}
           </Link>
         ) : (
-          <NavigationLeftSubLink key={index} link={link} linkClassName={linkClassName} linkContent={linkContent} />
+          <NavigationLeftSubLink key={index} link={link} linkContent={linkContent} />
         )
       )}
     </div>
