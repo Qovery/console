@@ -3,7 +3,7 @@ import ListServiceLogs from './list-service-logs'
 
 describe('ListServiceLogs', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<ListServiceLogs />)
+    const { baseElement } = renderWithProviders(<ListServiceLogs clusterId="000" />)
     expect(baseElement).toBeTruthy()
   })
 })

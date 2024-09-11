@@ -1,13 +1,12 @@
 import { type QueryClient } from '@tanstack/react-query'
-import { useDebounce } from '@uidotdev/usehooks'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { useDebounce } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 
 export interface UseServiceLogsProps {
-  showPreviousLogs: boolean
   organizationId?: string
   clusterId?: string
   projectId?: string
@@ -26,12 +25,12 @@ export function useServiceLogs({
   projectId,
   environmentId,
   serviceId,
-  showPreviousLogs,
   enabled = false,
 }: UseServiceLogsProps) {
   const logCounter = useRef(0)
   const [searchParams] = useSearchParams()
   const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
+  const [showPreviousLogs, setShowPreviousLogs] = useState(false)
   const [serviceMessages, setServiceMessages] = useState<Array<ServiceLogResponseDto & { id: number }>>([])
   const [pauseLogs, setPauseLogs] = useState(false)
   const debouncedServiceMessages = useDebounce(serviceMessages, DEBOUNCE_TIME)
@@ -81,16 +80,18 @@ export function useServiceLogs({
   }, [debouncedServiceMessages])
 
   const debouncedLogs = useDebounce(data, DEBOUNCE_TIME)
-  const pausedLogs = useMemo(() => Boolean(debouncedLogs), [pauseLogs])
+  const pausedDataLogs = useMemo(() => debouncedLogs, [pauseLogs])
 
   return {
-    data,
+    data: pauseLogs ? pausedDataLogs : debouncedLogs,
     isLoading: false,
-    pauseLogs: pausedLogs,
+    pauseLogs,
     setPauseLogs,
     setNewMessagesAvailable,
     newMessagesAvailable,
     serviceMessages,
+    showPreviousLogs,
+    setShowPreviousLogs,
   }
 }
 
