@@ -16,6 +16,7 @@ export interface DatePickerProps {
   maxDate?: Date
   showTimeInput?: boolean
   defaultDates?: [Date, Date]
+  onClickOutside?: () => void
 }
 
 export function DatePicker({
@@ -25,6 +26,7 @@ export function DatePicker({
   maxDate,
   showTimeInput,
   defaultDates,
+  onClickOutside,
   children,
 }: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date>(defaultDates ? defaultDates[0] : new Date())
@@ -119,6 +121,7 @@ export function DatePicker({
             selectsRange
             useWeekdaysShort
             inline
+            onClickOutside={onClickOutside}
           />
         </div>
       )}
