@@ -1,13 +1,13 @@
 import { type Dispatch, type SetStateAction } from 'react'
 import { Button, Icon } from '@qovery/shared/ui'
 
-export interface NewLogsButtonProps {
+export interface ShowNewLogsButtonProps {
   pauseLogs: boolean
   setPauseLogs: Dispatch<SetStateAction<boolean>>
   newMessagesAvailable: boolean
 }
 
-export function NewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailable }: NewLogsButtonProps) {
+export function ShowNewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailable }: ShowNewLogsButtonProps) {
   if (pauseLogs && newMessagesAvailable) {
     return (
       <Button
@@ -27,4 +27,4 @@ export function NewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailable }:
   return null
 }
 
-export default NewLogsButton
+export default ShowNewLogsButton

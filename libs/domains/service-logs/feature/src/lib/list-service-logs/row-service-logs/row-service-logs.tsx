@@ -1,0 +1,89 @@
+import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
+import {
+  Ansi,
+  Button,
+  DescriptionDetails as Dd,
+  DescriptionListRoot as Dl,
+  DescriptionTerm as Dt,
+  Icon,
+  TablePrimitives,
+  Tooltip,
+} from '@qovery/shared/ui'
+import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { type LogType } from '../../hooks/use-service-logs/use-service-logs'
+
+const { Table } = TablePrimitives
+
+export interface RowServiceLogsProps {
+  data: ServiceLogResponseDto & { type: LogType; id: number }
+  expanded: boolean
+  toggleExpandedHandler: () => void
+  colSpanExpanded: number
+}
+
+export function RowServiceLogs({ data, expanded, toggleExpandedHandler, colSpanExpanded }: RowServiceLogsProps) {
+  const utc = 'UTC'
+  const timeZone = ''
+
+  return (
+    <>
+      <Table.Row
+        onClick={toggleExpandedHandler}
+        className="relative mt-0.5 text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-['']"
+      >
+        <Table.Cell className="flex h-9 items-center gap-2 pr-1.5">
+          <span className="flex h-3 w-3 items-center justify-center">
+            <Icon className="text-neutral-300" iconName={expanded ? 'chevron-down' : 'chevron-right'} />
+          </span>
+          <Tooltip content={data.pod_name}>
+            <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1.5 font-code">
+              <span className="block h-1.5 w-1.5 rounded-full bg-blue-500" />
+              {data.pod_name.substring(data.pod_name.length - 5)}
+            </Button>
+          </Tooltip>
+        </Table.Cell>
+        <Table.Cell className="h-9 px-1.5 align-text-top font-code font-bold text-neutral-300">
+          <span title={dateUTCString(data.created_at)} className="inline-block whitespace-nowrap">
+            {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
+          </span>
+        </Table.Cell>
+        <Table.Cell className="flex h-9 items-center gap-2 px-1.5">
+          <Tooltip content={data.container_name}>
+            <Button
+              type="button"
+              variant="surface"
+              color="neutral"
+              size="xs"
+              className="w-full gap-1.5 whitespace-nowrap font-code"
+            >
+              {data.container_name}
+            </Button>
+          </Tooltip>
+        </Table.Cell>
+        <Table.Cell className="h-9 px-1.5 pb-1 pt-2 align-top font-code font-bold text-white">
+          <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
+            {data.message}
+          </Ansi>
+        </Table.Cell>
+      </Table.Row>
+      {expanded && (
+        <Table.Row className="relative text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']">
+          <Table.Cell className="py-4 pl-1" colSpan={colSpanExpanded}>
+            <div className="w-full rounded border border-neutral-500 bg-neutral-550 px-4 py-2">
+              <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
+                <Dt className="col-span-2 mb-1.5 select-none font-code">Podname</Dt>
+                <Dd className="mb-1.5 flex gap-1 text-sm font-medium leading-3">{data.pod_name}</Dd>
+                <Dt className="col-span-2 mb-1.5 select-none font-code">Container</Dt>
+                <Dd className="mb-1.5 flex gap-1 text-sm font-medium leading-3">{data.container_name}</Dd>
+                <Dt className="col-span-2 select-none font-code">Version</Dt>
+                <Dd className="flex gap-1 text-sm font-medium leading-3">{data.version}</Dd>
+              </Dl>
+            </div>
+          </Table.Cell>
+        </Table.Row>
+      )}
+    </>
+  )
+}
+
+export default RowServiceLogs

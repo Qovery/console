@@ -1,20 +1,13 @@
 import { getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
-import { Fragment, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  Ansi,
-  Button,
-  DescriptionDetails as Dd,
-  DescriptionListRoot as Dl,
-  DescriptionTerm as Dt,
-  Icon,
-  TablePrimitives,
-  Tooltip,
-} from '@qovery/shared/ui'
-import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
-import { NewLogsButton } from '../new-logs-button/new-logs-button'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
+import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
+import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
+import RowInfraLogs from './row-infra-logs/row-infra-logs'
+import { RowServiceLogs } from './row-service-logs/row-service-logs'
 
 const { Table } = TablePrimitives
 
@@ -34,6 +27,8 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     setNewMessagesAvailable,
     showPreviousLogs,
     setShowPreviousLogs,
+    enabledNginx,
+    setEnabledNginx,
   } = useServiceLogs({
     organizationId,
     clusterId,
@@ -42,8 +37,6 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     serviceId,
     enabled: true,
   })
-
-  console.log('pauseLogs: ', pauseLogs)
 
   const table = useReactTable({
     data: logs,
@@ -83,106 +76,63 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
   }, [logs, pauseLogs])
 
   return (
-    <div className="relative h-[calc(100vh-4rem)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
-      <div
-        className="h-full w-full overflow-y-scroll bg-neutral-600"
-        ref={refScrollSection}
-        onWheel={(event) => {
-          if (
-            !pauseLogs &&
-            refScrollSection.current &&
-            refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
-            event.deltaY < 0
-          ) {
-            setPauseLogs(true)
-            setNewMessagesAvailable(false)
-          }
-        }}
-      >
-        {!showPreviousLogs && (
-          <button
+    <div className="h-[calc(100vh-4rem)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
+      <div className="relative h-full border border-neutral-500 bg-neutral-600">
+        <div className="h-12 w-full border-b border-neutral-500 px-4 py-2.5">
+          <Button
             type="button"
-            className="block w-full bg-neutral-500 py-1.5 text-center text-sm font-medium text-neutral-250 transition hover:bg-neutral-600"
-            onClick={() => setShowPreviousLogs(true)}
+            variant="surface"
+            color="neutral"
+            className="gap-1"
+            onClick={() => setEnabledNginx(!enabledNginx)}
           >
-            Load previous logs
-            <Icon iconName="arrow-up" className="ml-1.5" />
-          </button>
-        )}
-        <Table.Root className="w-full table-auto text-xs">
-          <Table.Body className="divide-y-0">
-            {table.getRowModel().rows.map((row) => {
-              const data = row.original
-              const expanded = row.getIsExpanded()
-
-              const utc = 'UTC'
-              const timeZone = ''
-
-              return (
-                <Fragment key={row.id}>
-                  <Table.Row
-                    onClick={row.getToggleExpandedHandler()}
-                    className="relative mt-0.5 text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-['']"
-                  >
-                    <Table.Cell className="flex h-9 items-center gap-2 pr-1.5">
-                      <span className="flex h-3 w-3 items-center justify-center">
-                        <Icon className="text-neutral-300" iconName={expanded ? 'chevron-down' : 'chevron-right'} />
-                      </span>
-                      <Tooltip content={row.original.pod_name}>
-                        <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1.5">
-                          <span className="block h-1.5 w-1.5 rounded-full bg-blue-500" />
-                          {data.pod_name.substring(data.pod_name.length - 5)}
-                        </Button>
-                      </Tooltip>
-                    </Table.Cell>
-                    <Table.Cell className="h-9 px-1.5 align-text-top font-code font-bold text-neutral-300">
-                      <span title={dateUTCString(data.created_at)} className="inline-block whitespace-nowrap">
-                        {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
-                      </span>
-                    </Table.Cell>
-                    <Table.Cell className="flex h-9 items-center gap-2 px-1.5">
-                      <Tooltip content={data.container_name}>
-                        <Button
-                          type="button"
-                          variant="surface"
-                          color="neutral"
-                          size="xs"
-                          className="w-full gap-1.5 whitespace-nowrap"
-                        >
-                          {data.container_name}
-                        </Button>
-                      </Tooltip>
-                    </Table.Cell>
-                    <Table.Cell className="h-9 px-1.5 pb-1 pt-2 align-top font-code font-bold text-white">
-                      <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
-                        {data.message}
-                      </Ansi>
-                    </Table.Cell>
-                  </Table.Row>
-                  {expanded && (
-                    <Table.Row className="relative text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']">
-                      <Table.Cell className="py-4 pl-1" colSpan={row.getVisibleCells().length}>
-                        <div className="w-full rounded border border-neutral-500 bg-neutral-550 px-4 py-2">
-                          <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
-                            <Dt className="col-span-2 mb-1.5 select-none font-code">Podname</Dt>
-                            <Dd className="mb-1.5 flex gap-1 text-sm font-medium leading-3">{data.pod_name}</Dd>
-                            <Dt className="col-span-2 mb-1.5 select-none font-code">Container</Dt>
-                            <Dd className="mb-1.5 flex gap-1 text-sm font-medium leading-3">{data.container_name}</Dd>
-                            <Dt className="col-span-2 select-none font-code">Version</Dt>
-                            <Dd className="flex gap-1 text-sm font-medium leading-3">{data.version}</Dd>
-                          </Dl>
-                        </div>
-                      </Table.Cell>
-                    </Table.Row>
-                  )}
-                </Fragment>
-              )
-            })}
-          </Table.Body>
-        </Table.Root>
-        <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
+            Nginx Logs
+            <Icon iconName={enabledNginx ? 'eye-slash' : 'eye'} />
+          </Button>
+        </div>
+        <div
+          className="h-full w-full overflow-y-scroll"
+          ref={refScrollSection}
+          onWheel={(event) => {
+            if (
+              !pauseLogs &&
+              refScrollSection.current &&
+              refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
+              event.deltaY < 0
+            ) {
+              setPauseLogs(true)
+              setNewMessagesAvailable(false)
+            }
+          }}
+        >
+          <ShowPreviousLogsButton showPreviousLogs={showPreviousLogs} setShowPreviousLogs={setShowPreviousLogs} />
+          <Table.Root className="w-full table-auto text-xs">
+            <Table.Body className="divide-y-0">
+              {table.getRowModel().rows.map((row) => {
+                if (row.original.type === 'SERVICE') {
+                  return (
+                    <RowServiceLogs
+                      key={row.id}
+                      data={row.original}
+                      expanded={row.getIsExpanded()}
+                      toggleExpandedHandler={row.getToggleExpandedHandler()}
+                      colSpanExpanded={row.getVisibleCells().length}
+                    />
+                  )
+                } else {
+                  return <RowInfraLogs key={row.id} data={row.original} />
+                }
+              })}
+            </Table.Body>
+          </Table.Root>
+          <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
+        </div>
+        <ShowNewLogsButton
+          pauseLogs={pauseLogs}
+          setPauseLogs={setPauseLogs}
+          newMessagesAvailable={newMessagesAvailable}
+        />
       </div>
-      <NewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} newMessagesAvailable={newMessagesAvailable} />
     </div>
   )
 }

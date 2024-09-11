@@ -1,9 +1,9 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import { NewLogsButton } from './new-logs-button'
+import RowInfraLogs from './row-infra-logs'
 
-describe('NewLogsButton', () => {
+describe('RowInfraLogs', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<NewLogsButton />)
+    const { baseElement } = renderWithProviders(<RowInfraLogs />)
     expect(baseElement).toBeTruthy()
   })
 })

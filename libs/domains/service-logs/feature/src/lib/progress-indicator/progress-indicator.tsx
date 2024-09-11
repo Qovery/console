@@ -7,7 +7,7 @@ export function ProgressIndicator({ pauseLogs, message }: ProgressIndicatorProps
   return (
     <div
       role="progressbar"
-      className="mb-7 flex h-8 items-center border-b border-neutral-500 pl-4 text-sm text-neutral-350"
+      className="mb-7 flex h-8 items-center border-b border-neutral-500 bg-neutral-600 pl-4 text-sm text-neutral-350"
     >
       <span className="mr-1.5">{pauseLogs ? 'Streaming paused' : message}</span>
       {!pauseLogs && (
