@@ -170,7 +170,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           )}
         />
 
-        {watchMaxDuration && watchMaxDuration > 50 && (
+        {watchMaxDuration && watchMaxDuration > 3600 && (
           <Callout.Root color="yellow">
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" iconStyle="regular" />
