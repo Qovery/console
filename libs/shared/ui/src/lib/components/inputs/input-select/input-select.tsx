@@ -261,7 +261,7 @@ export function InputSelect({
               marginTop: `-${document.body.style.marginTop ? document.body.style.marginTop : 0}`,
             }),
           }}
-          menuIsOpen={isFilter ? true : undefined}
+          defaultMenuIsOpen={isFilter ? true : undefined}
           filterOption={match(filterOption)
             .with('fuzzy', () => undefined)
             .with(
