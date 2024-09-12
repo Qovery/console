@@ -24,7 +24,9 @@ export function NavigationLeftSubLink({ link, children }: NavigationLeftSubLinkP
 
   // Auto open the details element, useful when navigating from the home page
   useEffect(() => {
-    setOpen(true)
+    if (isActivePath) {
+      setOpen(true)
+    }
   }, [isActivePath])
 
   return (
