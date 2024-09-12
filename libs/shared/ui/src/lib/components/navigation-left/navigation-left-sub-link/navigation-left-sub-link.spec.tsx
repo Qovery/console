@@ -45,7 +45,6 @@ describe('NavigationLeftSubLink', () => {
 
     const trigger = screen.getByTestId('link')
 
-    console.log(trigger.querySelector('.icon-solid-angle-down')?.classList.toString())
     expect(trigger.querySelector('.icon-solid-angle-down')?.classList.contains('rotate-180')).toBeTruthy()
 
     await userEvent.click(trigger)
