@@ -1,4 +1,4 @@
-import { type Attributes, type PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 import { ErrorBoundary as ErrorBoundaryRaw, type FallbackProps } from 'react-error-boundary'
 import { twMerge } from '@qovery/shared/util-js'
 import { Button } from '../button/button'
@@ -24,11 +24,11 @@ export function ErrorFallback({ className, error, resetErrorBoundary }: Fallback
   )
 }
 
-interface ErrorBoundaryProps extends PropsWithChildren, Attributes {}
+interface ErrorBoundaryProps extends PropsWithChildren {}
 
-export function ErrorBoundary({ key, children }: ErrorBoundaryProps) {
+export function ErrorBoundary({ children }: ErrorBoundaryProps) {
   return (
-    <ErrorBoundaryRaw key={key} FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
+    <ErrorBoundaryRaw FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
       {children}
     </ErrorBoundaryRaw>
   )
