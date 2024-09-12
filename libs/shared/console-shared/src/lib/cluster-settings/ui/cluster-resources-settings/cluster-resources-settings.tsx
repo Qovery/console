@@ -84,44 +84,46 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </div>
         )}
       </BlockContent>
-      {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
-        <Controller
-          name="karpenter.enabled"
-          defaultValue={false}
-          control={control}
-          render={({ field }) => (
-            <div className="relative flex flex-col gap-2 overflow-hidden rounded border border-neutral-250 bg-neutral-100 p-4">
-              <InputToggle
-                className="max-w-[70%]"
-                name={field.name}
-                value={field.value}
-                onChange={(e) => {
-                  if (props.fromDetail) {
-                    const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
-                    setValue('karpenter.disk_size_in_gib', diskSize)
-                    const architecture = watchInstanceType.includes('AMD') ? 'AMD64' : 'ARM64'
-                    setValue('karpenter.default_service_architecture', architecture)
-                  }
+      {((!props.fromDetail && !props.isProduction) || props.fromDetail) &&
+        props.cloudProvider === 'AWS' &&
+        watchClusterType === KubernetesEnum.MANAGED && (
+          <Controller
+            name="karpenter.enabled"
+            defaultValue={false}
+            control={control}
+            render={({ field }) => (
+              <div className="relative flex flex-col gap-2 overflow-hidden rounded border border-neutral-250 bg-neutral-100 p-4">
+                <InputToggle
+                  className="max-w-[70%]"
+                  name={field.name}
+                  value={field.value}
+                  onChange={(e) => {
+                    if (props.fromDetail) {
+                      const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
+                      setValue('karpenter.disk_size_in_gib', diskSize)
+                      const architecture = watchInstanceType.includes('AMD') ? 'AMD64' : 'ARM64'
+                      setValue('karpenter.default_service_architecture', architecture)
+                    }
 
-                  field.onChange(e)
-                }}
-                title="Reduce your costs by enabling Karpenter (Beta)"
-                description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                forceAlignTop
-                disabled={props.fromDetail ? props.isProduction || props.hasAlreadyKarpenter : false}
-                small
-              />
-              <ExternalLink
-                className="ml-11"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
-              >
-                Documentation link
-              </ExternalLink>
-              <KarpenterImage className="absolute right-0 top-0" />
-            </div>
-          )}
-        />
-      )}
+                    field.onChange(e)
+                  }}
+                  title="Reduce your costs by enabling Karpenter (Beta)"
+                  description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                  forceAlignTop
+                  disabled={props.fromDetail ? props.isProduction || props.hasAlreadyKarpenter : false}
+                  small
+                />
+                <ExternalLink
+                  className="ml-11"
+                  href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
+                >
+                  Documentation link
+                </ExternalLink>
+                <KarpenterImage className="absolute right-0 top-0" />
+              </div>
+            )}
+          />
+        )}
 
       {watchKarpenter && (
         <Callout.Root color="yellow">

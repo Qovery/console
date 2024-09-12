@@ -1,5 +1,5 @@
 import { KubernetesEnum } from 'qovery-typescript-axios'
-import { createContext, useContext, useState } from 'react'
+import { type Dispatch, type SetStateAction, createContext, useContext, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -17,17 +17,17 @@ import { ROUTER_CLUSTER_CREATION } from '../../router/router'
 
 export interface ClusterContainerCreateContextInterface {
   currentStep: number
-  setCurrentStep: (step: number) => void
+  setCurrentStep: Dispatch<SetStateAction<number>>
   generalData: ClusterGeneralData | undefined
-  setGeneralData: (data: ClusterGeneralData) => void
+  setGeneralData: Dispatch<SetStateAction<ClusterGeneralData | undefined>>
   resourcesData: ClusterResourcesData | undefined
-  setResourcesData: (data: ClusterResourcesData) => void
+  setResourcesData: Dispatch<SetStateAction<ClusterResourcesData | undefined>>
   featuresData: ClusterFeaturesData | undefined
-  setFeaturesData: (data: ClusterFeaturesData | undefined) => void
+  setFeaturesData: Dispatch<SetStateAction<ClusterFeaturesData | undefined>>
   remoteData: ClusterRemoteData | undefined
-  setRemoteData: (data: ClusterRemoteData) => void
+  setRemoteData: Dispatch<SetStateAction<ClusterRemoteData | undefined>>
   kubeconfigData: ClusterKubeconfigData | undefined
-  setKubeconfigData: (data: ClusterKubeconfigData) => void
+  setKubeconfigData: Dispatch<SetStateAction<ClusterKubeconfigData | undefined>>
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
