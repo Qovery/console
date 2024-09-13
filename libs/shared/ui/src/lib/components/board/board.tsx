@@ -12,38 +12,38 @@ import {
 
 const BoardContext = createContext<null | string>(null)
 
-const BoardRoot = ({ data, setData }: { data: Column[]; setData: Dispatch<SetStateAction<Column[]>> }) => {
+const Board = ({ data, setData }: { data: ColumnType[]; setData: Dispatch<SetStateAction<ColumnType[]>> }) => {
   const instanceId = useId()
 
   return (
     <BoardContext.Provider value={instanceId}>
       <div className="flex h-full w-full gap-3 overflow-scroll p-12">
         {data.map((column) => (
-          <BoardColumn key={column.columnId} column={column} data={data} setData={setData} />
+          <Column key={column.columnId} column={column} data={data} setData={setData} />
         ))}
       </div>
     </BoardContext.Provider>
   )
 }
 
-interface Card {
+interface CardType {
   content: ReactNode
   id: string
 }
 
-export interface Column {
+export interface ColumnType {
   columnId: string
   title: string
-  items: Card[]
+  items: CardType[]
 }
 
-interface BoardColumnProps {
-  column: Column
-  data: Column[]
-  setData: Dispatch<SetStateAction<Column[]>>
+interface ColumnProps {
+  column: ColumnType
+  data: ColumnType[]
+  setData: Dispatch<SetStateAction<ColumnType[]>>
 }
 
-const BoardColumn = ({ column, data, setData }: BoardColumnProps) => {
+const Column = ({ column, data, setData }: ColumnProps) => {
   const [active, setActive] = useState(false)
   const boardId = useContext(BoardContext)
 
@@ -101,7 +101,7 @@ const BoardColumn = ({ column, data, setData }: BoardColumnProps) => {
   /**
    * Card
    */
-  const handleCardDragStart = (e: DragEvent, card: Card, columnId: string) => {
+  const handleCardDragStart = (e: DragEvent, card: CardType, columnId: string) => {
     e.dataTransfer?.setData('cardId', card.id)
     e.dataTransfer?.setData('columnId', columnId)
   }
@@ -126,8 +126,8 @@ const BoardColumn = ({ column, data, setData }: BoardColumnProps) => {
     }
 
     let { columns: copy, cardToTransfer } = structuredClone(data).reduce<{
-      columns: Column[]
-      cardToTransfer: Card | undefined
+      columns: ColumnType[]
+      cardToTransfer: CardType | undefined
     }>(
       (acc, col) => {
         if (col.columnId !== columnId) {
@@ -255,9 +255,7 @@ const BoardColumn = ({ column, data, setData }: BoardColumnProps) => {
       >
         {filteredCards.length > 0 ? (
           filteredCards.map((card) => {
-            return (
-              <BoardCard key={card.id} columnId={column.columnId} {...card} handleDragStart={handleCardDragStart} />
-            )
+            return <Card key={card.id} columnId={column.columnId} {...card} handleDragStart={handleCardDragStart} />
           })
         ) : (
           <div className="px-3 py-6 text-center">
@@ -267,22 +265,22 @@ const BoardColumn = ({ column, data, setData }: BoardColumnProps) => {
             </p>
           </div>
         )}
-        <BoardDropIndicator columnId={column.columnId} />
+        <CardDropIndicator columnId={column.columnId} />
       </div>
     </div>
   )
 }
 
-interface BoardCardProps extends Card {
+interface CardProps extends CardType {
   columnId: string
-  handleDragStart: (e: DragEvent, card: Card, columnId: string) => void
+  handleDragStart: (e: DragEvent, card: CardType, columnId: string) => void
 }
 
-const BoardCard = ({ columnId, handleDragStart, ...card }: BoardCardProps) => {
+const Card = ({ columnId, handleDragStart, ...card }: CardProps) => {
   const { id, content } = card
   return (
     <>
-      <BoardDropIndicator beforeId={id} columnId={columnId} />
+      <CardDropIndicator beforeId={id} columnId={columnId} />
 
       <motion.div
         layout
@@ -297,12 +295,12 @@ const BoardCard = ({ columnId, handleDragStart, ...card }: BoardCardProps) => {
   )
 }
 
-interface BoardDropIndicatorProps {
+interface CardDropIndicatorProps {
   beforeId?: string
   columnId: string
 }
 
-const BoardDropIndicator = ({ beforeId, columnId }: BoardDropIndicatorProps) => {
+const CardDropIndicator = ({ beforeId, columnId }: CardDropIndicatorProps) => {
   const boardId = useContext(BoardContext)
   return (
     <div
@@ -314,14 +312,5 @@ const BoardDropIndicator = ({ beforeId, columnId }: BoardDropIndicatorProps) => 
   )
 }
 
-const Board = Object.assign(
-  {},
-  {
-    Root: BoardRoot,
-    Column: BoardColumn,
-    Card: BoardCard,
-    Board: BoardDropIndicator,
-  }
-)
-
 export { Board }
+export default Board

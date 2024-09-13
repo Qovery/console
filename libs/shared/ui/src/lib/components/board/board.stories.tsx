@@ -1,9 +1,9 @@
 import type { Meta } from '@storybook/react'
 import { useState } from 'react'
-import { Board, type Column } from './board'
+import { Board, type ColumnType } from './board'
 
-const Story: Meta<typeof Board.Root> = {
-  component: Board.Root,
+const Story: Meta<typeof Board> = {
+  component: Board,
   title: 'Board',
   decorators: [
     (Story) => (
@@ -14,7 +14,7 @@ const Story: Meta<typeof Board.Root> = {
   ],
 }
 
-const DEFAULT_DATA: Column[] = [
+const DEFAULT_DATA: ColumnType[] = [
   {
     columnId: 'backlog',
     title: 'Backlog',
@@ -62,7 +62,7 @@ const DEFAULT_DATA: Column[] = [
 export const Primary = {
   render: () => {
     const [data, setData] = useState(DEFAULT_DATA)
-    return <Board.Root data={data} setData={setData} />
+    return <Board data={data} setData={setData} />
   },
 }
 
