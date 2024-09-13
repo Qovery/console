@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react'
-import { ReactNode, useState } from 'react'
-import { Board } from './board'
+import { useState } from 'react'
+import { Board, type Column } from './board'
 
 const Story: Meta<typeof Board.Root> = {
   component: Board.Root,
@@ -14,68 +14,55 @@ const Story: Meta<typeof Board.Root> = {
   ],
 }
 
-const DEFAULT_CARDS: {
-  content: ReactNode
-  id: string
-  column: string
-}[] = [
-  // BACKLOG
-
-  { content: 'Look into render bug in dashboard', id: '1', column: 'backlog' },
-
-  { content: 'SOX compliance checklist', id: '2', column: 'backlog' },
-
-  { content: '[SPIKE] Migrate to Azure', id: '3', column: 'backlog' },
-
-  { content: 'Document Notifications service', id: '4', column: 'backlog' },
-
-  // TODO
-
+const DEFAULT_DATA: Column[] = [
   {
-    content: 'Research DB options for new microservice',
-
-    id: '5',
-
-    column: 'todo',
+    columnId: 'backlog',
+    title: 'Backlog',
+    items: [
+      { content: 'Look into render bug in dashboard', id: '1' },
+      { content: 'SOX compliance checklist', id: '2' },
+      { content: '[SPIKE] Migrate to Azure', id: '3' },
+      { content: 'Document Notifications service', id: '4' },
+    ],
   },
-
-  { content: 'Postmortem for outage', id: '6', column: 'todo' },
-
-  { content: 'Sync with product on Q3 roadmap', id: '7', column: 'todo' },
-
-  // DOING
-
   {
-    content: 'Refactor context providers to use Zustand',
-
-    id: '8',
-
-    column: 'doing',
+    columnId: 'todo',
+    title: 'TODO',
+    items: [
+      {
+        content: 'Research DB options for new microservice',
+        id: '5',
+      },
+      { content: 'Postmortem for outage', id: '6' },
+      { content: 'Sync with product on Q3 roadmap', id: '7' },
+    ],
   },
-
-  { content: 'Add logging to daily CRON', id: '9', column: 'doing' },
-
-  // DONE
-
   {
-    content: 'Set up DD dashboards for Lambda listener',
-
-    id: '10',
-
-    column: 'done',
+    columnId: 'doing',
+    title: 'In progress',
+    items: [
+      {
+        content: 'Refactor context providers to use Zustand',
+        id: '8',
+      },
+      { content: 'Add logging to daily CRON', id: '9' },
+    ],
+  },
+  {
+    columnId: 'done',
+    title: 'Complete',
+    items: [
+      {
+        content: 'Set up DD dashboards for Lambda listener',
+        id: '10',
+      },
+    ],
   },
 ]
 export const Primary = {
   render: () => {
-    const [cards, setCards] = useState(DEFAULT_CARDS)
-    return (
-      <Board.Root>
-        <Board.Column title="Backlog" column="backlog" cards={cards} setCards={setCards} />
-        <Board.Column title="TODO" column="todo" cards={cards} setCards={setCards} />
-        <Board.Column title="In progress" column="doing" cards={cards} setCards={setCards} />
-        <Board.Column title="Complete" column="done" cards={cards} setCards={setCards} />
-      </Board.Root>
-    )
+    const [data, setData] = useState(DEFAULT_DATA)
+    return <Board.Root data={data} setData={setData} />
   },
 }
 
