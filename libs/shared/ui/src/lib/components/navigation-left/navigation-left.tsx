@@ -15,27 +15,31 @@ export interface NavigationLeftProps {
 
 export type NavigationLeftLinkProps = {
   title: string
-  url?: string
-  onClick?: () => void
-  subLinks?: {
-    title: string
-    url?: string
-    onClick?: () => void
-    badge?: string
-  }[]
 } & (
   | {
-      /**
-       * @deprecated please use `iconName` instead `icon`
-       */
-      icon?: string
-      iconName?: never
+      url: string
     }
   | {
-      iconName?: IconName
-      icon?: never
+      subLinks: {
+        title: string
+        url: string
+        badge?: string
+      }[]
     }
-)
+) &
+  (
+    | {
+        /**
+         * @deprecated please use `iconName` instead `icon`
+         */
+        icon?: string
+        iconName?: never
+      }
+    | {
+        iconName?: IconName
+        icon?: never
+      }
+  )
 
 export const linkClassName = (pathname: string, url?: string, badge?: string) =>
   `flex items-center py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
@@ -44,12 +48,8 @@ export const linkClassName = (pathname: string, url?: string, badge?: string) =>
       : 'text-neutral-350 hover:text-neutral-400 hover:bg-neutral-150'
   } ${badge ? 'justify-between' : ''} `
 
-export function NavigationLeft(props: NavigationLeftProps) {
-  const { title, links, link, className = '' } = props
-
-  const { pathname } = useLocation()
-
-  const linkContent = (link: NavigationLeftLinkProps) => (
+export function LinkContent({ link }: { link: NavigationLeftLinkProps }) {
+  return (
     <>
       {(link.icon || link.iconName) && (
         <div className="mr-4 flex items-center">
@@ -64,6 +64,12 @@ export function NavigationLeft(props: NavigationLeftProps) {
       {link.title}
     </>
   )
+}
+
+export function NavigationLeft(props: NavigationLeftProps) {
+  const { title, links, link, className = '' } = props
+
+  const { pathname } = useLocation()
 
   return (
     <div className={`flex flex-col px-5 ${className}`}>
@@ -76,22 +82,32 @@ export function NavigationLeft(props: NavigationLeftProps) {
           </span>
         )}
       </div>
-      {links.map((link, index) =>
-        !link.onClick && !link.subLinks && link.url ? (
-          <Link data-testid="link" key={index} to={link.url} className={linkClassName(link.url, pathname)}>
-            {linkContent(link)}
+      {links.map((link) =>
+        'url' in link ? (
+          <Link data-testid="link" key={link.url} to={link.url} className={linkClassName(link.url, pathname)}>
+            <LinkContent link={link} />
           </Link>
-        ) : !link.onClick && link.subLinks ? (
-          <NavigationLeftSubLink key={index} link={link} linkClassName={linkClassName} linkContent={linkContent} />
         ) : (
-          <div
-            data-testid="link"
-            key={index}
-            onClick={link.onClick}
-            className={linkClassName(link.url || '', pathname)}
-          >
-            {linkContent(link)}
-          </div>
+          <NavigationLeftSubLink key={link.title} link={link}>
+            {link.subLinks.map((subLink) => (
+              <Link
+                data-testid="sub-link"
+                key={subLink.url}
+                to={subLink.url || ''}
+                className={`flex ${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
+              >
+                {subLink.title}
+                {subLink.badge && (
+                  <span
+                    data-testid="sub-link-badge"
+                    className="rounded-xs rounded-sm bg-brand-500 px-1 text-3xs uppercase text-neutral-50"
+                  >
+                    {subLink.badge}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </NavigationLeftSubLink>
         )
       )}
     </div>

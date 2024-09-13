@@ -19,7 +19,7 @@ import {
   SETTINGS_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
-import { IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
+import { ErrorBoundary, IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { ROUTER_SETTINGS } from './router/router'
 import { Container } from './ui/container/container'
 
@@ -118,7 +118,11 @@ export function PageSettings() {
     <Container organizationLinks={organizationLinks} projectLinks={projectLinks}>
       <Routes>
         {ROUTER_SETTINGS.map((route) => (
-          <Route key={route.path} path={route.path} element={route.component} />
+          <Route
+            key={route.path}
+            path={route.path}
+            element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
+          />
         ))}
         <Route path="*" element={<Navigate replace to={pathSettings + SETTINGS_GENERAL_URL} />} />
       </Routes>

@@ -1,7 +1,7 @@
-import { type Meta, type Story } from '@storybook/react'
-import { NavigationLeft, type NavigationLeftProps } from './navigation-left'
+import { type Meta } from '@storybook/react'
+import { NavigationLeft } from './navigation-left'
 
-export default {
+const Story: Meta<typeof NavigationLeft> = {
   component: NavigationLeft,
   title: 'NavigationLeft',
   parameters: {
@@ -12,51 +12,55 @@ export default {
   },
 } as Meta
 
-const Template: Story<NavigationLeftProps> = (args) => <NavigationLeft {...args} />
-
-export const Primary = Template.bind({})
-
-Primary.args = {
-  title: 'Navigation',
-  link: {
-    title: 'New',
-    onClick: () => console.log('on click'),
+export const Primary = {
+  args: {
+    title: 'Navigation',
+    link: {
+      title: 'New',
+      onClick: () => console.log('on click'),
+    },
+    links: [
+      {
+        title: 'General',
+        url: '/general',
+        icon: 'icon-solid-wheel',
+      },
+      {
+        title: 'Deployment',
+        icon: 'icon-solid-wheel',
+        subLinks: [
+          {
+            title: 'General',
+            url: '/deployment-general',
+          },
+          {
+            title: 'Dependencies',
+            url: '/dependencies',
+          },
+          {
+            title: 'Restrictions',
+            badge: 'beta',
+            url: '/restrictions',
+          },
+        ],
+      },
+      {
+        title: 'Preview Environments',
+        icon: 'icon-solid-wheel',
+        url: '/preview-env',
+      },
+      {
+        title: 'Advanced settings',
+        icon: 'icon-solid-wheel',
+        subLinks: [
+          {
+            title: 'General',
+            url: '/advanced-settings-general',
+          },
+        ],
+      },
+    ],
   },
-  links: [
-    {
-      title: 'General',
-      url: '/',
-      icon: 'icon-solid-wheel',
-    },
-    {
-      title: 'Deployment',
-      icon: 'icon-solid-wheel',
-      subLinks: [
-        {
-          title: 'General',
-        },
-        {
-          title: 'Dependencies',
-          url: '/',
-        },
-        {
-          title: 'Restrictions',
-          badge: 'beta',
-        },
-      ],
-    },
-    {
-      title: 'Preview Environments',
-      icon: 'icon-solid-wheel',
-    },
-    {
-      title: 'Advanced settings',
-      icon: 'icon-solid-wheel',
-      subLinks: [
-        {
-          title: 'General',
-        },
-      ],
-    },
-  ],
 }
+
+export default Story

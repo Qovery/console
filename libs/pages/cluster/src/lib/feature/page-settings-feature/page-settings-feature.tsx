@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import { P, match } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
@@ -15,7 +15,7 @@ import {
   CLUSTER_SETTINGS_URL,
   CLUSTER_URL,
 } from '@qovery/shared/routes'
-import { IconAwesomeEnum } from '@qovery/shared/ui'
+import { ErrorBoundary, IconAwesomeEnum } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_CLUSTER_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
@@ -133,7 +133,11 @@ export function PageSettingsFeature() {
     <PageSettings links={links}>
       <Routes>
         {ROUTER_CLUSTER_SETTINGS.map((route) => (
-          <Route key={route.path} path={route.path} element={route.component} />
+          <Route
+            key={route.path}
+            path={route.path}
+            element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
+          />
         ))}
         <Route path="*" element={<Navigate replace to={pathSettings + CLUSTER_SETTINGS_GENERAL_URL} />} />
       </Routes>

@@ -1,48 +1,44 @@
 import { type ReactNode, useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Icon from '../../icon/icon'
-import { type NavigationLeftLinkProps } from '../navigation-left'
+import { LinkContent, type NavigationLeftLinkProps, linkClassName } from '../navigation-left'
 
 export interface NavigationLeftSubLinkProps {
-  linkContent: (link: NavigationLeftLinkProps) => ReactNode
-  link: NavigationLeftLinkProps
-  linkClassName: (pathname: string, url?: string, badge?: string) => string
+  link: NavigationLeftLinkProps & {
+    subLinks: {
+      title: string
+      url: string
+      badge?: string
+    }[]
+  }
+  children: ReactNode
 }
 
-export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
-  const { link, linkClassName, linkContent } = props
+export function NavigationLeftSubLink({ link, children }: NavigationLeftSubLinkProps) {
   const { pathname } = useLocation()
+  const isActivePath = link.subLinks.some((currentLink) =>
+    linkClassName(pathname, currentLink.url)?.includes('is-active')
+  )
+  // By default only the active path is open
+  const [open, setOpen] = useState(isActivePath)
 
-  const [open, setOpen] = useState(false)
-
+  // Auto open the details element, useful when navigating from the home page
   useEffect(() => {
-    // default open sub links if is active
-    link.subLinks?.forEach((currentLink) => {
-      if (linkClassName(pathname, currentLink.url)?.includes('is-active')) {
-        setOpen(true)
-      }
-    })
-  }, [])
-
-  const badge = (text: string) => {
-    return (
-      <span
-        data-testid="sub-link-badge"
-        className="rounded-xs rounded-sm bg-brand-500 px-1 text-3xs uppercase text-neutral-50"
-      >
-        {text}
-      </span>
-    )
-  }
+    if (isActivePath) {
+      setOpen(true)
+    }
+  }, [isActivePath])
 
   return (
     <>
       <div
         data-testid="link"
         onClick={() => setOpen(!open)}
-        className={`select-none justify-between ${linkClassName(pathname, link.url)}`}
+        className="mt-0.5 flex cursor-pointer select-none items-center justify-between truncate rounded px-3 py-2 text-ssm font-medium text-neutral-350 transition duration-300 ease-out hover:bg-neutral-150 hover:text-neutral-400"
       >
-        <span className="flex truncate">{linkContent(link)}</span>
+        <span className="flex truncate">
+          <LinkContent link={link} />
+        </span>
         <Icon
           name="icon-solid-angle-down"
           className={`transition-transform duration-200 ease-out ${open ? 'rotate-180' : ''}`}
@@ -53,29 +49,7 @@ export function NavigationLeftSubLink(props: NavigationLeftSubLinkProps) {
           data-testid="sub-links"
           className={`w-full ${open ? 'h-full opacity-100' : 'pointer-events-none hidden opacity-0'}`}
         >
-          {link.subLinks.map((subLink, index) =>
-            subLink.onClick ? (
-              <div
-                data-testid="sub-link"
-                key={index}
-                className={`${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
-                onClick={() => subLink.onClick && subLink.onClick()}
-              >
-                {subLink.title}
-                {subLink.badge && badge(subLink.badge)}
-              </div>
-            ) : (
-              <Link
-                data-testid="sub-link"
-                key={index}
-                to={subLink.url || ''}
-                className={`flex ${linkClassName(pathname, subLink.url, subLink.badge)} pl-[37px]`}
-              >
-                {subLink.title}
-                {subLink.badge && badge(subLink.badge)}
-              </Link>
-            )
-          )}
+          {children}
         </div>
       )}
     </>

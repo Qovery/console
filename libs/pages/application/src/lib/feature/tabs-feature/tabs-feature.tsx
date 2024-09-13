@@ -2,21 +2,9 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import {
-  ServiceAccessModal,
-  ServiceLinksPopover,
-  ServiceStateChip,
-  useDeployService,
-  useService,
-} from '@qovery/domains/services/feature'
+import { ServiceAccessModal, ServiceLinksPopover, useDeployService, useService } from '@qovery/domains/services/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar } from '@qovery/domains/variables/feature'
-import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_GENERAL_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-  APPLICATION_VARIABLES_URL,
-} from '@qovery/shared/routes'
+import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
 import { Button, Icon, Tabs, type TabsItem, toast, useModal } from '@qovery/shared/ui'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
@@ -82,46 +70,15 @@ function ContentRightEnvVariable({ projectId, service }: { projectId: string; se
   )
 }
 
-export function TabsFeature() {
+interface TabsFeatureProps {
+  items: TabsItem[]
+}
+
+export function TabsFeature({ items }: TabsFeatureProps) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { closeModal, openModal } = useModal()
   const location = useLocation()
-
-  const items: TabsItem[] = [
-    {
-      icon: <ServiceStateChip mode="running" environmentId={service?.environment?.id} serviceId={service?.id} />,
-      name: 'Overview',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
-    },
-    {
-      icon: <ServiceStateChip mode="deployment" environmentId={service?.environment?.id} serviceId={service?.id} />,
-      name: 'Deployments',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-    },
-    {
-      icon: <Icon iconName="key" iconStyle="regular" />,
-      name: 'Variables',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_VARIABLES_URL,
-    },
-    {
-      icon: <Icon iconName="gear" iconStyle="regular" />,
-      name: 'Settings',
-      active: location.pathname.includes(
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL
-      ),
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_SETTINGS_URL,
-    },
-  ]
 
   const matchEnvVariableRoute = matchPath(
     location.pathname || '',

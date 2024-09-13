@@ -20,7 +20,7 @@ import {
   APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
   APPLICATION_URL,
 } from '@qovery/shared/routes'
-import { IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
+import { ErrorBoundary, IconAwesomeEnum, type NavigationLeftLinkProps } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_APPLICATION_SETTINGS } from '../../router/router'
 import PageSettings from '../../ui/page-settings/page-settings'
@@ -175,7 +175,11 @@ export function PageSettingsFeature() {
     <PageSettings links={links}>
       <Routes>
         {ROUTER_APPLICATION_SETTINGS.map((route) => (
-          <Route key={route.path} path={route.path} element={route.component} />
+          <Route
+            key={route.path}
+            path={route.path}
+            element={<ErrorBoundary key={route.path}>{route.component}</ErrorBoundary>}
+          />
         ))}
         <Route path="*" element={<Navigate replace to={pathSettings + APPLICATION_SETTINGS_GENERAL_URL} />} />
       </Routes>
