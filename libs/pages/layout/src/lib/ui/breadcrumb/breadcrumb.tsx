@@ -330,8 +330,15 @@ export function Breadcrumb(props: BreadcrumbProps) {
       </div>
       {(locationIsApplicationLogs || locationIsDeploymentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
-          <Button className="gap-2" type="button" color="neutral" size="md" onClick={() => handleCloseLogs()}>
-            Close
+          <Button
+            className="gap-2"
+            type="button"
+            color="neutral"
+            variant="surface"
+            size="md"
+            onClick={() => handleCloseLogs()}
+          >
+            Close logs
             <Icon iconName="xmark" className="text-sm" />
           </Button>
         </div>

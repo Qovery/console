@@ -1,5 +1,5 @@
-import { fireEvent, getByRole, render } from '__tests__/utils/setup-jest'
 import { useContext } from 'react'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { UpdateTimeContext } from './update-time-context'
 
 const setUpdateTime = jest.fn()
@@ -18,7 +18,7 @@ function Content() {
 
 describe('UpdateTimeContext', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <UpdateTimeContext.Provider
         value={{
           ...{ utc: false },
@@ -32,7 +32,7 @@ describe('UpdateTimeContext', () => {
   })
 
   it('should change context UTC boolean', async () => {
-    const { baseElement } = render(
+    const { userEvent, baseElement } = renderWithProviders(
       <UpdateTimeContext.Provider
         value={{
           ...{ utc: false },
@@ -43,8 +43,8 @@ describe('UpdateTimeContext', () => {
       </UpdateTimeContext.Provider>
     )
 
-    const button = getByRole(baseElement, 'button')
-    fireEvent.click(button)
+    const button = screen.getByRole('button')
+    await userEvent.click(button)
 
     expect(baseElement).toHaveTextContent('Click false')
   })

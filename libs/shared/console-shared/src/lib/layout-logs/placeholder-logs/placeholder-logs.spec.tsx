@@ -1,4 +1,4 @@
-import { DatabaseModeEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PlaceholderLogs, { type PlaceholderLogsProps } from './placeholder-logs'
 
@@ -37,27 +37,6 @@ describe('PlaceholderLogs', () => {
 
     screen.getByText(props.serviceName as string)
     screen.getByText(/No logs on this execution for/i)
-  })
-
-  it('Live - should render a placeholder with spinner if logs not loaded', () => {
-    props.type = 'live'
-    props.loadingStatus = 'not loaded'
-    renderWithProviders(<PlaceholderLogs {...props} />)
-
-    screen.getByTestId('spinner')
-  })
-
-  it('Live - should render a no log placeholder for Managed DB', () => {
-    props.type = 'live'
-    props.loadingStatus = 'loaded'
-    props.databaseMode = DatabaseModeEnum.MANAGED
-    renderWithProviders(<PlaceholderLogs {...props} />)
-
-    screen.getByText(props.serviceName as string)
-    screen.getByText(/No logs are available for/i)
-    screen.getByText(
-      /Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider console./i
-    )
   })
 
   it('Infra - should render a placeholder with spinner if logs not loaded', () => {

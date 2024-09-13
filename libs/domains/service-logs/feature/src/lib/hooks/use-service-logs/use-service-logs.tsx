@@ -102,7 +102,7 @@ export function useServiceLogs({
       Boolean(projectId) &&
       Boolean(environmentId) &&
       Boolean(serviceId) &&
-      // enabledLogs &&
+      enabled &&
       enabledNginx,
     onMessage: infraMessageHandler,
   })

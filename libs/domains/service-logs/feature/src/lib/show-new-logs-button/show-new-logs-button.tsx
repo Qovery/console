@@ -11,7 +11,7 @@ export function ShowNewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailabl
   if (pauseLogs && newMessagesAvailable) {
     return (
       <Button
-        className="absolute bottom-4 left-1/2 flex w-72 -translate-x-1/2 items-center justify-center gap-2 text-sm"
+        className="absolute bottom-[7px] left-1/2 flex w-72 -translate-x-1/2 items-center justify-center gap-2 text-sm"
         variant="solid"
         radius="full"
         size="md"

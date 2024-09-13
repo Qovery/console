@@ -1,15 +1,11 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import LivePlaceholder from './live-placeholder'
+import { ServiceLogsPlaceholder } from './service-logs-placeholder'
 
-jest.mock('../loader-placeholder/loader-placeholder', () => ({
-  LoaderPlaceholder: () => <div>Loading...</div>,
-}))
-
-describe('LivePlaceholder', () => {
+describe('ServiceLogsPlaceholder', () => {
   it('renders LoaderPlaceholder when loadingStatus is not "loaded" and itemsLength is 0', () => {
     renderWithProviders(
-      <LivePlaceholder
+      <ServiceLogsPlaceholder
         serviceName="my-app"
         databaseMode={DatabaseModeEnum.CONTAINER}
         loadingStatus="loading"
@@ -22,7 +18,7 @@ describe('LivePlaceholder', () => {
 
   it('render default placeholder', () => {
     renderWithProviders(
-      <LivePlaceholder
+      <ServiceLogsPlaceholder
         serviceName="my-app"
         databaseMode={DatabaseModeEnum.CONTAINER}
         loadingStatus="loaded"

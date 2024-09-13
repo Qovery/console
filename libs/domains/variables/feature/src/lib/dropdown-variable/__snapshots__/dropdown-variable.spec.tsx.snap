@@ -39,7 +39,7 @@ exports[`DropdownVariable should render dropdown content when clicked 1`] = `
     class="overflow-y-auto"
   >
     <div
-      class="flex text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5"
+      class="flex text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5"
       data-orientation="vertical"
       data-radix-collection-item=""
       role="menuitem"

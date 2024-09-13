@@ -18,10 +18,8 @@ import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qo
 import { Button, Checkbox, Icon, Tooltip } from '@qovery/shared/ui'
 import { scrollParentToChild } from '@qovery/shared/util-js'
 import ButtonsActionsLogs from './buttons-actions-logs/buttons-actions-logs'
-import MenuTimeFormat from './menu-time-format/menu-time-format'
 import { PlaceholderLogs } from './placeholder-logs/placeholder-logs'
 import TabsClusterLogs from './tabs-cluster-logs/tabs-cluster-logs'
-import { UpdateTimeContext, defaultUpdateTimeContext } from './update-time-context/update-time-context'
 
 export interface LayoutLogsDataProps {
   loadingStatus: LoadingStatus
@@ -86,7 +84,6 @@ export function LayoutLogs({
 }: PropsWithChildren<LayoutLogsProps>) {
   const location = useLocation()
   const refScrollSection = useRef<HTMLDivElement>(null)
-  const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
 
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
 
@@ -139,7 +136,7 @@ export function LayoutLogs({
             false
           )}
           {LinkNavigation(
-            'Live logs',
+            'Service logs',
             ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
             environmentId,
             serviceId,
@@ -152,7 +149,6 @@ export function LayoutLogs({
           type={type}
           serviceDeploymentStatus={serviceDeploymentStatus}
           serviceName={service?.name}
-          databaseMode={(service as Database)?.mode}
           loadingStatus={data?.loadingStatus}
           itemsLength={data?.items?.length}
           customPlaceholder={customPlaceholder}
@@ -206,14 +202,6 @@ export function LayoutLogs({
               )}
             </div>
             <div className="flex">
-              {location.pathname.includes(
-                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)
-              ) && (
-                <MenuTimeFormat
-                  updateTimeContextValue={updateTimeContextValue}
-                  setUpdateTimeContext={setUpdateTimeContext}
-                />
-              )}
               <ButtonsActionsLogs data={data} refScrollSection={refScrollSection} pauseLogs={pauseLogs} />
             </div>
           </div>
@@ -237,31 +225,24 @@ export function LayoutLogs({
                 : ''
             } ${withLogsNavigation ? 'mt-[88px]' : 'mt-11'}`}
           >
-            <UpdateTimeContext.Provider
-              value={{
-                ...updateTimeContextValue,
-                setUpdateTimeContext,
-              }}
-            >
-              <div className="relative">
-                {children}
-                {isProgressing && (
-                  <div
-                    role="progressbar"
-                    className="relative -top-8 flex h-8 items-center border-b border-neutral-500 pl-3 text-sm text-neutral-350"
-                  >
-                    <span className="mr-1.5">{pauseLogs ? 'Streaming paused' : progressingMsg}</span>
-                    {!pauseLogs && (
-                      <>
-                        <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px] bg-neutral-350" />
-                        <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]  rounded-[0.5px] bg-neutral-350" />
-                        <span className="h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px] bg-neutral-350" />
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            </UpdateTimeContext.Provider>
+            <div className="relative">
+              {children}
+              {isProgressing && (
+                <div
+                  role="progressbar"
+                  className="relative -top-8 flex h-8 items-center border-b border-neutral-500 pl-3 text-sm text-neutral-350"
+                >
+                  <span className="mr-1.5">{pauseLogs ? 'Streaming paused' : progressingMsg}</span>
+                  {!pauseLogs && (
+                    <>
+                      <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px] bg-neutral-350" />
+                      <span className="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]  rounded-[0.5px] bg-neutral-350" />
+                      <span className="h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px] bg-neutral-350" />
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           {tabInformation && (
             <TabsClusterLogs scrollToError={scrollToError} tabInformation={tabInformation} errors={errors} />
