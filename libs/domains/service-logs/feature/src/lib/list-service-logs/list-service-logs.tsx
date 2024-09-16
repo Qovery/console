@@ -46,11 +46,11 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     enabled: service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true,
   })
 
-  const detectSeveralContainer = new Set(logs?.map((i) => i.container_name)).size > 1
+  const hasMultipleContainers = new Set(logs?.map((i) => i.container_name)).size > 1
 
   const table = useReactTable({
     data: logs,
-    columns: detectSeveralContainer
+    columns: hasMultipleContainers
       ? [
           {
             accessorKey: 'pod_name',
@@ -219,7 +219,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                       <RowInfraLogs
                         key={row.id}
                         data={row.original}
-                        detectSeveralContainer={detectSeveralContainer}
+                        hasMultipleContainers={hasMultipleContainers}
                         enabled={enabledNginx}
                       />
                     )
@@ -227,7 +227,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                     return (
                       <RowServiceLogs
                         key={row.id}
-                        detectSeveralContainer={detectSeveralContainer}
+                        hasMultipleContainers={hasMultipleContainers}
                         podNameColor={podNameColor}
                         {...row}
                       />

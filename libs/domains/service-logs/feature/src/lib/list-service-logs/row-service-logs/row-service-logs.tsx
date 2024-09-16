@@ -20,14 +20,14 @@ const { Table } = TablePrimitives
 
 export interface RowServiceLogsProps extends Row<ServiceLogResponseDto & { type: LogType; id: number }> {
   podNameColor: Map<string, string>
-  detectSeveralContainer: boolean
+  hasMultipleContainers: boolean
 }
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export function RowServiceLogs({
   podNameColor,
-  detectSeveralContainer,
+  hasMultipleContainers,
   getVisibleCells,
   toggleExpanded,
   getIsExpanded,
@@ -66,7 +66,7 @@ export function RowServiceLogs({
             {dateFullFormat(original.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>
-        {detectSeveralContainer && (
+        {hasMultipleContainers && (
           <Table.Cell className="flex h-9 items-center gap-2 px-1.5">
             <Tooltip content={original.container_name}>
               <Button
