@@ -5,7 +5,8 @@ import {
 } from 'qovery-typescript-axios'
 import { type Dispatch, Fragment, type SetStateAction, useMemo } from 'react'
 import { DragDropContext, Draggable, type DropResult, Droppable } from 'react-beautiful-dnd'
-import { useMoveDeploymentStage } from '@qovery/domains/environments/feature'
+import { useParams } from 'react-router-dom'
+import { useDeleteDeploymentStage, useMoveDeploymentStage } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -14,6 +15,7 @@ import {
   Board,
   Button,
   type ColumnType,
+  DropdownMenu,
   Icon,
   LoaderSpinner,
   Menu,
@@ -22,9 +24,12 @@ import {
   Section,
   Tooltip,
   Truncate,
+  useModal,
+  useModalConfirmation,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type StageRequest } from '../../feature/page-settings-deployment-pipeline-feature/page-settings-deployment-pipeline-feature'
+import { StageModalFeature } from '../../feature/page-settings-deployment-pipeline-feature/stage-modal-feature/stage-modal-feature'
 import { move, reorderService } from '../../feature/page-settings-deployment-pipeline-feature/utils/utils'
 import DraggableItem from './draggable-item/draggable-item'
 
@@ -41,7 +46,11 @@ export interface PageSettingsDeploymentPipelineProps {
 export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipelineProps) {
   const { stages, setStages, onSubmit, services, cloudProvider, onAddStage, menuStage } = props
 
+  const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
+  const { environmentId = '' } = useParams()
   const { mutateAsync: moveDeploymentStageRequested } = useMoveDeploymentStage()
+  const { mutate: deleteEnvironmentDeploymentStage } = useDeleteDeploymentStage({ environmentId })
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result
@@ -90,7 +99,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           ...stage,
           columnId: stage.id,
           heading: (
-            <div className="flex items-center">
+            <div className="flex grow items-center">
               <BadgeDeploymentOrder order={stage.deployment_order} />
               <span className="block truncate text-2xs font-bold text-neutral-400">
                 <Truncate truncateLimit={28} text={stage.name || ''} />
@@ -106,6 +115,40 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                   </div>
                 </Tooltip>
               )}
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <Button data-testid="btn-more-menu" color="neutral" variant="plain" className="ml-auto">
+                    <Icon iconName="ellipsis" />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item
+                    icon={<Icon iconName="pen" />}
+                    onSelect={() =>
+                      openModal({
+                        content: <StageModalFeature onClose={closeModal} environmentId={environmentId} stage={stage} />,
+                      })
+                    }
+                  >
+                    Edit stage
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator />
+                  <DropdownMenu.Item
+                    color="red"
+                    icon={<Icon iconName="trash" />}
+                    onSelect={() =>
+                      openModalConfirmation({
+                        title: 'Delete this stage',
+                        isDelete: true,
+                        name: stage.name,
+                        action: () => deleteEnvironmentDeploymentStage({ stageId: stage.id }),
+                      })
+                    }
+                  >
+                    Delete stage
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
             </div>
           ),
           items:
