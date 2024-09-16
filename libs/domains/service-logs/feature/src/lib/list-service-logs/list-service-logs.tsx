@@ -105,11 +105,12 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
   const toggleColumnFilter = (id: string, value: string) => {
     setColumnFilters((prevFilters) => {
       const existingFilter = prevFilters.find((f) => f.id === id)
-      if (existingFilter) {
-        return prevFilters.filter((f) => f.id !== id)
-      } else {
-        return [...prevFilters, { id, value }]
+      const updatedFilters = existingFilter ? prevFilters.filter((f) => f.id !== id) : [...prevFilters, { id, value }]
+      if (id === 'pod_name') {
+        existingFilter ? searchParams.delete(id) : searchParams.append(id, value)
+        setSearchParams(searchParams)
       }
+      return updatedFilters
     })
   }
 
