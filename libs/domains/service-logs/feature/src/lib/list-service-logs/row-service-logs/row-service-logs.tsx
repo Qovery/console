@@ -1,7 +1,6 @@
 import { type Row } from '@tanstack/react-table'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
-import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   Ansi,
   Button,
@@ -21,14 +20,14 @@ const { Table } = TablePrimitives
 
 export interface RowServiceLogsProps extends Row<ServiceLogResponseDto & { type: LogType; id: number }> {
   podNameColor: Map<string, string>
-  serviceType?: ServiceType
+  detectSeveralContainer: boolean
 }
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export function RowServiceLogs({
-  serviceType,
   podNameColor,
+  detectSeveralContainer,
   getVisibleCells,
   toggleExpanded,
   getIsExpanded,
@@ -67,7 +66,7 @@ export function RowServiceLogs({
             {dateFullFormat(original.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>
-        {serviceType === 'HELM' && (
+        {detectSeveralContainer && (
           <Table.Cell className="flex h-9 items-center gap-2 px-1.5">
             <Tooltip content={original.container_name}>
               <Button

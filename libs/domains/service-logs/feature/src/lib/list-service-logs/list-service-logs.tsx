@@ -46,42 +46,43 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     enabled: service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true,
   })
 
+  const detectSeveralContainer = new Set(logs?.map((i) => i.container_name)).size > 0
+
   const table = useReactTable({
     data: logs,
-    columns:
-      service?.serviceType === 'HELM'
-        ? [
-            {
-              accessorKey: 'pod_name',
-              header: 'Pods',
-            },
-            {
-              accessorKey: 'created_at',
-              header: () => 'Date',
-            },
-            {
-              accessorKey: 'container_name',
-              header: () => 'Container',
-            },
-            {
-              accessorKey: 'message',
-              header: () => 'Message',
-            },
-          ]
-        : [
-            {
-              accessorKey: 'pod_name',
-              header: 'Pods',
-            },
-            {
-              accessorKey: 'created_at',
-              header: () => 'Date',
-            },
-            {
-              accessorKey: 'message',
-              header: () => 'Message',
-            },
-          ],
+    columns: detectSeveralContainer
+      ? [
+          {
+            accessorKey: 'pod_name',
+            header: 'Pods',
+          },
+          {
+            accessorKey: 'created_at',
+            header: () => 'Date',
+          },
+          {
+            accessorKey: 'container_name',
+            header: () => 'Container',
+          },
+          {
+            accessorKey: 'message',
+            header: () => 'Message',
+          },
+        ]
+      : [
+          {
+            accessorKey: 'pod_name',
+            header: 'Pods',
+          },
+          {
+            accessorKey: 'created_at',
+            header: () => 'Date',
+          },
+          {
+            accessorKey: 'message',
+            header: () => 'Message',
+          },
+        ],
     getCoreRowModel: getCoreRowModel(),
     getRowCanExpand: () => true,
     getExpandedRowModel: getExpandedRowModel(),
@@ -218,7 +219,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                       <RowInfraLogs
                         key={row.id}
                         data={row.original}
-                        serviceType={service?.serviceType}
+                        detectSeveralContainer={detectSeveralContainer}
                         enabled={enabledNginx}
                       />
                     )
@@ -226,7 +227,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                     return (
                       <RowServiceLogs
                         key={row.id}
-                        serviceType={service?.serviceType}
+                        detectSeveralContainer={detectSeveralContainer}
                         podNameColor={podNameColor}
                         {...row}
                       />

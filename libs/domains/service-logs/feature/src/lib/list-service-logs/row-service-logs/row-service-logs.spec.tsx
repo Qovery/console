@@ -13,7 +13,7 @@ describe('RowServiceLogs', () => {
       version: '1.0.0',
     },
     podNameColor: new Map([['test-pod-12345', '#ff0000']]),
-    serviceType: 'CONTAINER',
+    detectSeveralContainer: false,
     getVisibleCells: jest.fn(() => []),
     toggleExpanded: jest.fn(),
     getIsExpanded: jest.fn(() => false),
@@ -38,10 +38,10 @@ describe('RowServiceLogs', () => {
     expect(mockProps.toggleExpanded).toHaveBeenCalledWith(true)
   })
 
-  it('renders HELM specific content for HELM service type', () => {
+  it('renders cell has more than two container', () => {
     const helmProps = {
       ...mockProps,
-      serviceType: 'HELM',
+      detectSeveralContainer: true,
     }
 
     renderWithProviders(<RowServiceLogs {...helmProps} />)

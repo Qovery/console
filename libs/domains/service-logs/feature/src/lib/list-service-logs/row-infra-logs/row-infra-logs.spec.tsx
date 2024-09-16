@@ -12,7 +12,7 @@ describe('RowInfraLogs', () => {
   const defaultProps: RowInfraLogsProps = {
     data: mockData,
     enabled: true,
-    serviceType: 'CONTAINER' as const,
+    detectSeveralContainer: true,
   }
 
   it('should render successfully', () => {

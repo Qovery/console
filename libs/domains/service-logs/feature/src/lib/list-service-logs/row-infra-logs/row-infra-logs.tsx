@@ -11,12 +11,12 @@ const { Table } = TablePrimitives
 export interface RowInfraLogsProps {
   data: ServiceInfraLogResponseDto & { type: LogType; id: number }
   enabled: boolean
-  serviceType?: ServiceType
+  detectSeveralContainer: boolean
 }
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
-export function RowInfraLogs({ data, enabled, serviceType }: RowInfraLogsProps) {
+export function RowInfraLogs({ data, enabled, detectSeveralContainer }: RowInfraLogsProps) {
   const { utc } = useContext(UpdateTimeContext)
 
   if (!enabled) return null
@@ -34,7 +34,7 @@ export function RowInfraLogs({ data, enabled, serviceType }: RowInfraLogsProps) 
         </span>
       </Table.Cell>
       {/* Cell is necessary to avoid unesthetic margins */}
-      {serviceType === 'HELM' && <Table.Cell className="flex h-0 w-0 p-0"></Table.Cell>}
+      {detectSeveralContainer && <Table.Cell className="flex h-0 w-0 p-0"></Table.Cell>}
       <Table.Cell className="h-9 px-1.5 pb-1 pt-2.5 align-top font-code font-bold text-white">
         <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
           {data.message}
