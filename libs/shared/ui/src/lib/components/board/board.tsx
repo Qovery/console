@@ -328,17 +328,19 @@ const Column = <T extends ColumnType>({ column, data, setData }: ColumnProps<T>)
       <ColumnDropIndicator beforeId={column.columnId} />
 
       <div className="relative flex w-60 shrink-0 flex-col rounded">
-        <svg
-          data-testid={`arrow-${column.columnId}`}
-          className="absolute left-full shrink-0"
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="43"
-          fill="none"
-          viewBox="0 0 16 43"
-        >
-          <path fill="#C6D3E7" d="M16 21.5l-7.5-4.33v8.66L16 21.5zm-16 .75h9.25v-1.5H0v1.5z"></path>
-        </svg>
+        {column !== data[data.length - 1] && (
+          <svg
+            data-testid={`arrow-${column.columnId}`}
+            className="absolute left-full shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="43"
+            fill="none"
+            viewBox="0 0 16 43"
+          >
+            <path fill="#C6D3E7" d="M16 21.5l-7.5-4.33v8.66L16 21.5zm-16 .75h9.25v-1.5H0v1.5z"></path>
+          </svg>
+        )}
         <div
           draggable
           className="flex h-11 cursor-grab items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2 active:cursor-grabbing"
