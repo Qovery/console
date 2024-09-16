@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListServiceLogs should render successfully 1`] = `
+<body>
+  <div>
+    <div
+      class="h-[calc(100vh-112px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 pt-0"
+    >
+      <div
+        class="relative h-full border border-neutral-500 bg-neutral-600"
+      >
+        <div
+          class="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5"
+        >
+          <div
+            class="flex gap-3"
+          >
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1.5"
+              type="button"
+            >
+              Nginx Logs
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-eye-slash "
+              />
+            </button>
+          </div>
+          <div
+            class="flex gap-3"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1.5"
+              data-state="closed"
+              id="radix-:r6:"
+              type="button"
+            >
+              Time format
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-chevron-down "
+              />
+            </button>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-regular fa-file-arrow-down "
+              />
+            </button>
+          </div>
+        </div>
+        <div
+          class="h-full w-full overflow-y-scroll pb-8"
+        >
+          <button
+            class="block w-full bg-neutral-500 py-1.5 text-center text-sm font-medium text-neutral-250 transition hover:bg-neutral-550"
+            type="button"
+          >
+            Load previous logs
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-arrow-up ml-1.5"
+            />
+          </button>
+          <table
+            class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full table-auto text-xs"
+          >
+            <tbody
+              class="divide-neutral-200 divide-y-0"
+            >
+              <tr
+                class="sl-row relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-['']"
+              >
+                <td
+                  class="px-4 py-0 flex h-9 items-center gap-2 pr-1.5"
+                >
+                  <span
+                    class="flex h-3 w-3 items-center justify-center"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-chevron-right text-neutral-300"
+                    />
+                  </span>
+                  <button
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1.5 font-code"
+                    data-state="closed"
+                    type="button"
+                  >
+                    <span
+                      class="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
+                      style="background-color: rgb(255, 51, 153);"
+                    />
+                    12345
+                  </button>
+                </td>
+                <td
+                  class="py-0 h-9 px-1.5 align-text-top font-code font-bold text-neutral-300"
+                >
+                  <span
+                    class="inline-block whitespace-nowrap"
+                    title="Sat, 01 Apr 2023 12:00:00 GMT"
+                  >
+                    01 Apr, 14:00:00.00
+                  </span>
+                </td>
+                <td
+                  class="py-0 h-9 px-1.5 pb-1 pt-2.5 align-top font-code font-bold text-white"
+                >
+                  <code
+                    class="code-ansi relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50"
+                  >
+                    <span>
+                      Test log message
+                    </span>
+                  </code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div
+            class="mb-10 flex h-8 items-center border-b border-neutral-500 bg-neutral-600 pl-4 text-sm text-neutral-350"
+            role="progressbar"
+          >
+            <span
+              class="mr-1.5"
+            >
+              Streaming service logs
+            </span>
+            <span
+              class="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_100ms_infinite] rounded-[0.5px] bg-neutral-350"
+            />
+            <span
+              class="mr-[2px] h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_300ms_infinite]  rounded-[0.5px] bg-neutral-350"
+            />
+            <span
+              class="h-[3px] w-[3px] animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_600ms_infinite] rounded-[0.5px] bg-neutral-350"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

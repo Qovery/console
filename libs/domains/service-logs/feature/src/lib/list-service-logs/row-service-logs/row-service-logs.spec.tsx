@@ -17,6 +17,7 @@ describe('RowServiceLogs', () => {
     getVisibleCells: jest.fn(() => []),
     toggleExpanded: jest.fn(),
     getIsExpanded: jest.fn(() => false),
+    isFilterActive: jest.fn(),
   }
 
   it('should render successfully', () => {
@@ -34,7 +35,7 @@ describe('RowServiceLogs', () => {
   it('toggles expanded state on click', async () => {
     const { userEvent } = renderWithProviders(<RowServiceLogs {...mockProps} />)
 
-    await userEvent.click(screen.getByText('12345'))
+    await userEvent.click(screen.getByText('Test log message'))
     expect(mockProps.toggleExpanded).toHaveBeenCalledWith(true)
   })
 
