@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { LoaderSpinner } from '@qovery/shared/ui'
 
 export function LoaderPlaceholder() {

@@ -5,25 +5,15 @@ import { ServiceLogsPlaceholder } from './service-logs-placeholder'
 describe('ServiceLogsPlaceholder', () => {
   it('renders LoaderPlaceholder when loadingStatus is not "loaded" and itemsLength is 0', () => {
     renderWithProviders(
-      <ServiceLogsPlaceholder
-        serviceName="my-app"
-        databaseMode={DatabaseModeEnum.CONTAINER}
-        loadingStatus="loading"
-        itemsLength={0}
-      />
+      <ServiceLogsPlaceholder serviceName="my-app" databaseMode={DatabaseModeEnum.CONTAINER} itemsLength={0} />
     )
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    expect(screen.getByTestId('spinner')).toBeInTheDocument()
   })
 
   it('render default placeholder', () => {
     renderWithProviders(
-      <ServiceLogsPlaceholder
-        serviceName="my-app"
-        databaseMode={DatabaseModeEnum.CONTAINER}
-        loadingStatus="loaded"
-        itemsLength={10}
-      />
+      <ServiceLogsPlaceholder serviceName="my-app" databaseMode={DatabaseModeEnum.CONTAINER} itemsLength={10} />
     )
 
     expect(screen.getByText(/No logs are available for/)).toBeInTheDocument()

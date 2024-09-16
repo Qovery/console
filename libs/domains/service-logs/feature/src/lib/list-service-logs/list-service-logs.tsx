@@ -1,4 +1,5 @@
 import { getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
+import download from 'downloadjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -6,8 +7,7 @@ import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { Button, DropdownMenu, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
-import ServiceLogsPlaceholder from '../service-logs-placeholder/service-logs-placeholder'
-import ServiceLogsToolbar from '../service-logs-toolbar/service-logs-toolbar'
+import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs-placeholder'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { UpdateTimeContext, defaultUpdateTimeContext } from '../update-time-context/update-time-context'
@@ -183,7 +183,15 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
-              <ServiceLogsToolbar refScrollSection={refScrollSection} logsStringify={JSON.stringify(logs)} />
+              <Button
+                onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
+                size="sm"
+                variant="surface"
+                color="neutral"
+                className="w-7 justify-center"
+              >
+                <Icon iconName="file-arrow-down" iconStyle="regular" />
+              </Button>
             </div>
           </div>
           <div
@@ -209,9 +217,9 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                     return (
                       <RowInfraLogs
                         key={row.id}
+                        data={row.original}
                         serviceType={service?.serviceType}
                         enabled={enabledNginx}
-                        data={row.original}
                       />
                     )
                   } else {
