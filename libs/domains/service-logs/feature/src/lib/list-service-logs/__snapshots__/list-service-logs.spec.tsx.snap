@@ -101,7 +101,7 @@ exports[`ListServiceLogs should render successfully 1`] = `
                     class="inline-block whitespace-nowrap"
                     title="Sat, 01 Apr 2023 12:00:00 GMT"
                   >
-                    01 Apr, 14:00:00.00
+                    01 Apr, 12:00:00.00
                   </span>
                 </td>
                 <td
