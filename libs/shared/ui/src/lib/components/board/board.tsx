@@ -286,7 +286,10 @@ const Card = ({ columnId, handleDragStart, ...card }: CardProps) => {
         layout
         layoutId={id}
         draggable
-        onDragStart={(e) => handleDragStart(e as unknown as DragEvent, card, columnId)}
+        onDragStart={(e) => {
+          // Force cast "e" to DragEvent due to wrong typing in framer-motion
+          handleDragStart(e as unknown as DragEvent, card, columnId)
+        }}
         className="cursor-grab rounded border border-neutral-200 bg-neutral-50 px-2 py-3 active:cursor-grabbing"
       >
         {content}
