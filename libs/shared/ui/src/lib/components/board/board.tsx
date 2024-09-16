@@ -166,7 +166,7 @@ const Column = ({ column, data, setData }: ColumnProps) => {
       return
     }
 
-    let { columns: copy, cardToTransfer } = structuredClone(data).reduce<{
+    const { columns: copy, cardToTransfer } = structuredClone(data).reduce<{
       columns: ColumnType[]
       cardToTransfer: CardType | undefined
     }>(
@@ -296,7 +296,7 @@ const Column = ({ column, data, setData }: ColumnProps) => {
 
       <div className="relative flex w-60 shrink-0 flex-col rounded">
         <svg
-          data-testid={`arrow`}
+          data-testid={`arrow-${column.columnId}`}
           className="absolute left-full shrink-0"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
