@@ -17,7 +17,7 @@ const Story: Meta<typeof Board> = {
 const DEFAULT_DATA: ColumnType[] = [
   {
     columnId: 'backlog',
-    title: 'Backlog',
+    heading: 'Backlog',
     items: [
       { content: 'Look into render bug in dashboard', id: '1' },
       { content: 'SOX compliance checklist', id: '2' },
@@ -27,7 +27,7 @@ const DEFAULT_DATA: ColumnType[] = [
   },
   {
     columnId: 'todo',
-    title: 'TODO',
+    heading: 'TODO',
     items: [
       {
         content: 'Research DB options for new microservice',
@@ -39,7 +39,7 @@ const DEFAULT_DATA: ColumnType[] = [
   },
   {
     columnId: 'doing',
-    title: 'In progress',
+    heading: 'In progress',
     items: [
       {
         content: 'Refactor context providers to use Zustand',
@@ -50,7 +50,7 @@ const DEFAULT_DATA: ColumnType[] = [
   },
   {
     columnId: 'done',
-    title: 'Complete',
+    heading: 'Complete',
     items: [
       {
         content: 'Set up DD dashboards for Lambda listener',

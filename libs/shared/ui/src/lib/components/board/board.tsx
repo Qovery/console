@@ -17,7 +17,7 @@ const Board = ({ data, setData }: { data: ColumnType[]; setData: Dispatch<SetSta
 
   return (
     <BoardContext.Provider value={instanceId}>
-      <div className="flex h-full w-full overflow-scroll p-12">
+      <div className="flex h-full w-full overflow-scroll">
         {data.map((column) => (
           <Column key={column.columnId} column={column} data={data} setData={setData} />
         ))}
@@ -34,7 +34,7 @@ interface CardType {
 
 export interface ColumnType {
   columnId: string
-  title: string
+  heading: ReactNode
   items: CardType[]
 }
 
@@ -64,7 +64,7 @@ const Column = ({ column, data, setData }: ColumnProps) => {
 
     const { element } = getNearestColumnIndicator(e, indicators)
 
-    const before = element.dataset.before || '-1'
+    const before = element.dataset['before'] || '-1'
 
     if (before !== columnId) {
       let copy = [...data]
@@ -159,14 +159,24 @@ const Column = ({ column, data, setData }: ColumnProps) => {
 
     const { element } = getNearestCardIndicator(e, indicators)
 
-    const before = element.dataset.before || '-1'
+    const before = element.dataset['before'] || '-1'
 
     if (columnId === targetColumnId && before === cardId) {
       // drag without move
       return
     }
 
-    const { columns: copy, cardToTransfer } = structuredClone(data).reduce<{
+    const { columns: copy, cardToTransfer } = structuredClone(
+      // Remove JSX before cloning the data
+      data.map(({ heading, items, ...column }) => ({
+        ...column,
+        heading: null,
+        items: items.map(({ content, ...item }) => ({
+          content: null,
+          ...item,
+        })),
+      }))
+    ).reduce<{
       columns: ColumnType[]
       cardToTransfer: CardType | undefined
     }>(
@@ -314,16 +324,14 @@ const Column = ({ column, data, setData }: ColumnProps) => {
             handleColumnDragStart(e as unknown as DragEvent, column.columnId)
           }}
         >
-          <h3 className="block truncate text-2xs font-bold text-neutral-400">{column.title}</h3>
-
-          <span className="rounded text-sm text-neutral-400">{filteredCards.length}</span>
+          {column.heading}
         </div>
 
         <div
           onDrop={(e) => handleCardDragEnd(e, column.columnId)}
           onDragOver={handleCardDragOver}
           onDragLeave={handleCardDragLeave}
-          className={`h-full w-full rounded-b border border-t-0 border-neutral-250 p-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
+          className={`h-full w-full rounded-b border border-t-0 border-neutral-250 px-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
         >
           {filteredCards.length > 0 ? (
             filteredCards.map((card) => {
