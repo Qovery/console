@@ -17,10 +17,11 @@ const Board = ({ data, setData }: { data: ColumnType[]; setData: Dispatch<SetSta
 
   return (
     <BoardContext.Provider value={instanceId}>
-      <div className="flex h-full w-full gap-3 overflow-scroll p-12">
+      <div className="flex h-full w-full overflow-scroll p-12">
         {data.map((column) => (
           <Column key={column.columnId} column={column} data={data} setData={setData} />
         ))}
+        <ColumnDropIndicator />
       </div>
     </BoardContext.Provider>
   )
@@ -66,22 +67,22 @@ const Column = ({ column, data, setData }: ColumnProps) => {
     const before = element.dataset.before || '-1'
 
     if (before !== columnId) {
-      let copy = [...cards]
+      let copy = [...data]
 
-      let columnToTransfer = copy.find((c) => c.id === columnId)
+      let columnToTransfer = copy.find((c) => c.columnId === columnId)
 
       if (!columnToTransfer) return
 
-      columnToTransfer = { ...columnToTransfer, column }
+      columnToTransfer = { ...columnToTransfer }
 
-      copy = copy.filter((c) => c.id !== columnId)
+      copy = copy.filter((c) => c.columnId !== columnId)
 
       const moveToBack = before === '-1'
 
       if (moveToBack) {
         copy.push(columnToTransfer)
       } else {
-        const insertAtIndex = copy.findIndex((el) => el.id === before)
+        const insertAtIndex = copy.findIndex((el) => el.columnId === before)
 
         if (insertAtIndex === undefined) return
 
@@ -93,10 +94,44 @@ const Column = ({ column, data, setData }: ColumnProps) => {
   }
 
   const getColumnIndicators = (): HTMLElement[] => {
-    return Array.from(document.querySelectorAll(`[data-board="${boardId}"]`))
+    return Array.from(document.querySelectorAll(`[data-board="${boardId}"]:not([data-column])`))
   }
 
-  const getNearestColumnIndicator = (e: DragEvent, indicators: HTMLElement[]) => {}
+  const getNearestColumnIndicator = (e: DragEvent, indicators: HTMLElement[]) => {
+    const DISTANCE_OFFSET = 50
+
+    const el = indicators.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect()
+
+        const offset = e.clientX - (box.left + DISTANCE_OFFSET)
+
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: child }
+        } else {
+          return closest
+        }
+      },
+
+      {
+        offset: Number.NEGATIVE_INFINITY,
+
+        element: indicators[indicators.length - 1],
+      }
+    )
+
+    return el
+  }
+
+  const highlightColumnIndicator = (e: DragEvent) => {
+    const indicators = getColumnIndicators()
+
+    clearHighlights(indicators)
+
+    const el = getNearestColumnIndicator(e, indicators)
+
+    el.element.style.opacity = '1'
+  }
 
   /**
    * Card
@@ -107,6 +142,8 @@ const Column = ({ column, data, setData }: ColumnProps) => {
   }
 
   const handleCardDragEnd = (e: DragEvent, targetColumnId: string) => {
+    e.stopPropagation()
+
     const cardId = e.dataTransfer?.getData('cardId')
     const columnId = e.dataTransfer?.getData('columnId')
 
@@ -115,6 +152,10 @@ const Column = ({ column, data, setData }: ColumnProps) => {
     const indicators = getCardIndicators()
 
     clearHighlights(indicators)
+
+    if (!cardId) {
+      return
+    }
 
     const { element } = getNearestCardIndicator(e, indicators)
 
@@ -173,9 +214,17 @@ const Column = ({ column, data, setData }: ColumnProps) => {
   const handleCardDragOver = (e: DragEvent) => {
     e.preventDefault()
 
-    highlightCardIndicator(e)
+    const cardId = e.dataTransfer?.getData('cardId')
+    const columnId = e.dataTransfer?.getData('columnId')
 
-    setActive(true)
+    if (columnId) {
+      if (cardId) {
+        highlightCardIndicator(e)
+        setActive(true)
+      } else {
+        highlightColumnIndicator(e)
+      }
+    }
   }
 
   const clearHighlights = (els?: HTMLElement[]) => {
@@ -235,39 +284,63 @@ const Column = ({ column, data, setData }: ColumnProps) => {
   const filteredCards = column.items
 
   return (
-    <div className="flex w-60 shrink-0 flex-col rounded">
-      <motion.div
-        layout
-        layoutId={column.columnId}
-        draggable
-        className="flex h-11 cursor-grab items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2 active:cursor-grabbing"
-      >
-        <h3 className="block truncate text-2xs font-bold text-neutral-400">{column.title}</h3>
+    <motion.div
+      layout
+      layoutId={column.columnId}
+      className="flex flex-row"
+      onDrop={(e) => handleColumnDragEnd(e)}
+      onDragOver={handleCardDragOver}
+      onDragLeave={handleCardDragLeave}
+    >
+      <ColumnDropIndicator beforeId={column.columnId} />
 
-        <span className="rounded text-sm text-neutral-400">{filteredCards.length}</span>
-      </motion.div>
+      <div className="relative flex w-60 shrink-0 flex-col rounded">
+        <svg
+          data-testid={`arrow`}
+          className="absolute left-full shrink-0"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="43"
+          fill="none"
+          viewBox="0 0 16 43"
+        >
+          <path fill="#C6D3E7" d="M16 21.5l-7.5-4.33v8.66L16 21.5zm-16 .75h9.25v-1.5H0v1.5z"></path>
+        </svg>
+        <div
+          draggable
+          className="flex h-11 cursor-grab items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2 active:cursor-grabbing"
+          onDragStart={(e) => {
+            // Force cast "e" to DragEvent due to wrong typing in framer-motion
+            handleColumnDragStart(e as unknown as DragEvent, column.columnId)
+          }}
+        >
+          <h3 className="block truncate text-2xs font-bold text-neutral-400">{column.title}</h3>
 
-      <div
-        onDrop={(e) => handleCardDragEnd(e, column.columnId)}
-        onDragOver={handleCardDragOver}
-        onDragLeave={handleCardDragLeave}
-        className={`h-full w-full rounded-b border border-t-0 border-neutral-250 p-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
-      >
-        {filteredCards.length > 0 ? (
-          filteredCards.map((card) => {
-            return <Card key={card.id} columnId={column.columnId} {...card} handleDragStart={handleCardDragStart} />
-          })
-        ) : (
-          <div className="px-3 py-6 text-center">
-            <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
-            <p className="mt-1 text-xs font-medium text-neutral-350">
-              No service for this stage. <br /> Please drag and drop a service.
-            </p>
-          </div>
-        )}
-        <CardDropIndicator columnId={column.columnId} />
+          <span className="rounded text-sm text-neutral-400">{filteredCards.length}</span>
+        </div>
+
+        <div
+          onDrop={(e) => handleCardDragEnd(e, column.columnId)}
+          onDragOver={handleCardDragOver}
+          onDragLeave={handleCardDragLeave}
+          className={`h-full w-full rounded-b border border-t-0 border-neutral-250 p-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
+        >
+          {filteredCards.length > 0 ? (
+            filteredCards.map((card) => {
+              return <Card key={card.id} columnId={column.columnId} {...card} handleDragStart={handleCardDragStart} />
+            })
+          ) : (
+            <div className="px-3 py-6 text-center">
+              <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
+              <p className="mt-1 text-xs font-medium text-neutral-350">
+                No service for this stage. <br /> Please drag and drop a service.
+              </p>
+            </div>
+          )}
+          <CardDropIndicator columnId={column.columnId} />
+        </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -312,6 +385,17 @@ const CardDropIndicator = ({ beforeId, columnId }: CardDropIndicatorProps) => {
       data-column={columnId}
       className="my-0.5 h-0.5 w-full bg-violet-400 opacity-0"
     />
+  )
+}
+
+interface ColumnDropIndicatorProps {
+  beforeId?: string
+}
+
+const ColumnDropIndicator = ({ beforeId }: ColumnDropIndicatorProps) => {
+  const boardId = useContext(BoardContext)
+  return (
+    <div data-before={beforeId ?? '-1'} data-board={boardId} className="mx-2 h-full w-0.5 bg-brand-500 opacity-0" />
   )
 }
 
