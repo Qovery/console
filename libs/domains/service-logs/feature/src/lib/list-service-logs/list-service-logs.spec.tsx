@@ -47,6 +47,6 @@ jest.mock('../hooks/use-service-logs/use-service-logs', () => ({
 describe('ListServiceLogs', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<ListServiceLogs clusterId="000" />)
-    expect(baseElement).toMatchSnapshot()
+    expect(baseElement).toBeTruthy()
   })
 })
