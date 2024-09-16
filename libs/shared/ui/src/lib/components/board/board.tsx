@@ -1,18 +1,25 @@
 import { motion } from 'framer-motion'
-import {
-  type Dispatch,
-  type DragEvent,
-  type ReactNode,
-  type SetStateAction,
-  createContext,
-  useContext,
-  useId,
-  useState,
-} from 'react'
+import { type DragEvent, type ReactNode, createContext, useContext, useId, useState } from 'react'
+
+type SetData<T extends ColumnType> = ({
+  sourceColumnId,
+  sourceCardId,
+  targetColumnId,
+  targetCardId,
+  after,
+  newData,
+}: {
+  sourceColumnId: string
+  sourceCardId?: string
+  targetColumnId: string
+  targetCardId?: string
+  after?: boolean
+  newData: T[]
+}) => void
 
 const BoardContext = createContext<null | string>(null)
 
-const Board = ({ data, setData }: { data: ColumnType[]; setData: Dispatch<SetStateAction<ColumnType[]>> }) => {
+const Board = <T extends ColumnType>({ data, setData }: { data: T[]; setData: SetData<T> }) => {
   const instanceId = useId()
 
   return (
@@ -38,13 +45,13 @@ export interface ColumnType {
   items: CardType[]
 }
 
-interface ColumnProps {
-  column: ColumnType
-  data: ColumnType[]
-  setData: Dispatch<SetStateAction<ColumnType[]>>
+interface ColumnProps<T extends ColumnType> {
+  column: T
+  data: T[]
+  setData: SetData<T>
 }
 
-const Column = ({ column, data, setData }: ColumnProps) => {
+const Column = <T extends ColumnType>({ column, data, setData }: ColumnProps<T>) => {
   const [active, setActive] = useState(false)
   const boardId = useContext(BoardContext)
 
@@ -80,16 +87,24 @@ const Column = ({ column, data, setData }: ColumnProps) => {
       const moveToBack = before === '-1'
 
       if (moveToBack) {
+        const targetColumnId = copy[copy.length - 1].columnId
         copy.push(columnToTransfer)
+
+        setData({
+          targetColumnId,
+          sourceColumnId: columnToTransfer.columnId,
+          newData: copy,
+          after: true,
+        })
       } else {
         const insertAtIndex = copy.findIndex((el) => el.columnId === before)
 
         if (insertAtIndex === undefined) return
 
         copy.splice(insertAtIndex, 0, columnToTransfer)
-      }
 
-      setData(copy)
+        setData({ targetColumnId: before, sourceColumnId: columnToTransfer.columnId, newData: copy, after: false })
+      }
     }
   }
 
@@ -177,17 +192,17 @@ const Column = ({ column, data, setData }: ColumnProps) => {
         })),
       }))
     ).reduce<{
-      columns: ColumnType[]
+      columns: T[]
       cardToTransfer: CardType | undefined
     }>(
       (acc, col) => {
         if (col.columnId !== columnId) {
-          acc.columns.push(col)
+          acc.columns.push(col as T)
           return acc
         }
         acc.cardToTransfer = col.items.find((c) => c.id === cardId)
         col.items = col.items.filter((c) => c.id !== cardId)
-        acc.columns.push(col)
+        acc.columns.push(col as T)
         return acc
       },
       { columns: [], cardToTransfer: undefined }
@@ -197,28 +212,36 @@ const Column = ({ column, data, setData }: ColumnProps) => {
       throw Error('Unknown cardId')
     }
 
-    setData(
-      copy.map((col) => {
-        if (col.columnId !== targetColumnId) {
-          return col
-        }
-
-        const moveToBack = before === '-1'
-
-        if (moveToBack) {
-          col.items.push(cardToTransfer)
-        } else {
-          const insertAtIndex = col.items.findIndex((el) => el.id === before)
-
-          if (insertAtIndex === undefined) {
-            throw Error('Unknown insert index')
-          }
-
-          col.items.splice(insertAtIndex, 0, cardToTransfer)
-        }
+    const newData = copy.map((col) => {
+      if (col.columnId !== targetColumnId) {
         return col
-      })
-    )
+      }
+
+      const moveToBack = before === '-1'
+
+      if (moveToBack) {
+        col.items.push(cardToTransfer)
+      } else {
+        const insertAtIndex = col.items.findIndex((el) => el.id === before)
+
+        if (insertAtIndex === undefined) {
+          throw Error('Unknown insert index')
+        }
+
+        col.items.splice(insertAtIndex, 0, cardToTransfer)
+      }
+      return col
+    })
+
+    const targetColumnItems = copy.find(({ columnId }) => columnId === targetColumnId)?.items ?? []
+    setData({
+      sourceColumnId: columnId,
+      sourceCardId: cardId,
+      targetColumnId,
+      targetCardId: before === '-1' ? targetColumnItems[targetColumnItems.length - 1].id : before,
+      after: before === '-1',
+      newData,
+    })
   }
 
   const handleCardDragOver = (e: DragEvent) => {

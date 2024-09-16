@@ -31,7 +31,7 @@ export function PageSettingsDeploymentPipelineFeature() {
   const [stages, setStages] = useState<DeploymentStageResponse[] | undefined>()
 
   const { data: deploymentStageList } = useListDeploymentStages({ environmentId })
-  const { mutate: addServiceToDeploymentStage } = useAttachServiceToDeploymentStage()
+  const { mutateAsync: addServiceToDeploymentStage } = useAttachServiceToDeploymentStage()
   const { mutate: deleteEnvironmentDeploymentStage } = useDeleteDeploymentStage({ environmentId })
 
   useEffect(() => {

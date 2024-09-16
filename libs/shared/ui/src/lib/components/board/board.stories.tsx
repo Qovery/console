@@ -62,7 +62,7 @@ const DEFAULT_DATA: ColumnType[] = [
 export const Primary = {
   render: () => {
     const [data, setData] = useState(DEFAULT_DATA)
-    return <Board data={data} setData={setData} />
+    return <Board data={data} setData={({ newData }) => setData(newData)} />
   },
 }
 
