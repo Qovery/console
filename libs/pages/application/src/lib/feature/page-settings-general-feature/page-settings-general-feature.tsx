@@ -154,6 +154,7 @@ export const handleJobSubmit = (
       annotations_groups: annotationsGroups.filter((annotationsGroups) =>
         data.annotations_groups?.includes(annotationsGroups.id)
       ),
+      labels_groups: labelsGroups.filter((labelsGroups) => data.labels_groups?.includes(labelsGroups.id)),
       source: {
         image: {
           tag: data.image_tag || '',
