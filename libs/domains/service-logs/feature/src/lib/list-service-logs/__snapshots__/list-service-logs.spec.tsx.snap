@@ -105,17 +105,6 @@ exports[`ListServiceLogs should render successfully 1`] = `
                   </span>
                 </td>
                 <td
-                  class="py-0 flex h-9 items-center gap-2 px-1.5"
-                >
-                  <button
-                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-full gap-1.5 whitespace-nowrap font-code"
-                    data-state="closed"
-                    type="button"
-                  >
-                    test-container
-                  </button>
-                </td>
-                <td
                   class="py-0 h-9 px-1.5 pb-1 pt-2.5 align-top font-code font-bold text-white"
                 >
                   <code
