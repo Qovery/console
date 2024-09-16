@@ -104,7 +104,7 @@
     "@nx/eslint-plugin": "19.6.4",
     "@nx/jest": "19.6.4",
     "@nx/js": "19.6.4",
-    "@nx/react": "19.6.4",
+    "@nx/react": "19.7.3",
     "@nx/storybook": "19.6.4",
     "@nx/web": "19.6.4",
     "@nx/webpack": "19.6.4",
