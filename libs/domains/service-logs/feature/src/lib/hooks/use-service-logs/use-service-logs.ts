@@ -127,7 +127,6 @@ export function useServiceLogs({
 
   return {
     data: pauseLogs ? pausedDataLogs : debouncedLogs,
-    isLoading: false,
     pauseLogs,
     setPauseLogs,
     setNewMessagesAvailable,
