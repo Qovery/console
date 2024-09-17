@@ -71,6 +71,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                   <DropdownMenu.Item
+                    data-testid="menuItem"
                     icon={<Icon iconName="pen" />}
                     onSelect={() =>
                       openModal({
@@ -82,6 +83,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator />
                   <DropdownMenu.Item
+                    data-testid="menuItem"
                     color="red"
                     icon={<Icon iconName="trash" />}
                     onSelect={() =>
@@ -121,7 +123,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
               }
             }) ?? [],
         } satisfies ColumnType
-      }) ?? [],
+      }),
     [services, stages]
   )
 
@@ -162,7 +164,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             <div className="flex pb-5">
               <Board
                 emptyState={
-                  <div className="px-3 py-6 text-center">
+                  <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
                     <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
                     <p className="mt-1 text-xs font-medium text-neutral-350">
                       No service for this stage. <br /> Please drag and drop a service.

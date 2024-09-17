@@ -8,33 +8,6 @@ const onSubmit = jest.fn()
 const setStages = jest.fn()
 const onAddStage = jest.fn()
 
-const menuEditStage = jest.fn()
-const menuOrderStage = jest.fn()
-const menuDeleteStage = jest.fn()
-
-const menuStage = (stage: DeploymentStageResponse) => [
-  {
-    items: [
-      {
-        name: 'Edit stage',
-        onClick: menuEditStage,
-      },
-      {
-        name: 'Order stage',
-        onClick: menuOrderStage,
-      },
-    ],
-  },
-  {
-    items: [
-      {
-        name: 'Delete stage',
-        onClick: menuDeleteStage,
-      },
-    ],
-  },
-]
-
 const stages: DeploymentStageResponse[] = [
   {
     id: '1',
@@ -74,7 +47,6 @@ const defaultProps: PageSettingsDeploymentPipelineProps = {
   services,
   onAddStage,
   cloudProvider: CloudProviderEnum.AWS,
-  menuStage: (stage: DeploymentStageResponse) => menuStage(stage),
 }
 
 describe('PageSettingsDeploymentPipeline', () => {
@@ -99,12 +71,7 @@ describe('PageSettingsDeploymentPipeline', () => {
 
   it('should have loading component', () => {
     renderWithProviders(
-      <PageSettingsDeploymentPipeline
-        onSubmit={onSubmit}
-        setStages={setStages}
-        onAddStage={onAddStage}
-        menuStage={(stage: DeploymentStageResponse) => menuStage(stage)}
-      />
+      <PageSettingsDeploymentPipeline onSubmit={onSubmit} setStages={setStages} onAddStage={onAddStage} />
     )
     screen.getByTestId('stages-loader')
   })
@@ -130,21 +97,7 @@ describe('PageSettingsDeploymentPipeline', () => {
 
     const items = screen.getAllByTestId('menuItem')
 
-    // edit stage
-    await userEvent.click(items[0])
-
-    // order stage
-    await userEvent.click(items[1])
-
-    await userEvent.click(actions[1])
-
-    const items2 = screen.getAllByTestId('menuItem')
-    // delete stage
-    await userEvent.click(items2[2])
-
-    expect(menuEditStage).toHaveBeenCalled()
-    expect(menuOrderStage).toHaveBeenCalled()
-    expect(menuDeleteStage).toHaveBeenCalled()
+    expect(items).toHaveLength(2)
   })
 
   it('should have placeholder for stage', () => {
