@@ -1,13 +1,6 @@
+import { Reorder } from 'framer-motion'
 import { type Cluster, type ProjectDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import {
-  DragDropContext,
-  Draggable,
-  type DraggableProvided,
-  type DropResult,
-  Droppable,
-  type DroppableProvided,
-} from 'react-beautiful-dnd'
 import { useNavigate } from 'react-router-dom'
 import { Button, Icon } from '@qovery/shared/ui'
 import DeploymentRuleItem from '../deployment-rule-item/deployment-rule-item'
@@ -35,20 +28,9 @@ export function PageDeploymentRules({
   const navigate = useNavigate()
   const [listRules, setListRules] = useState<ProjectDeploymentRule[]>(deploymentRules || [])
 
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result
-
-    if (!destination) return
-
-    if (destination.droppableId === source.droppableId && destination.index === source.index) return
-
-    const currentList = [...listRules]
-    const ruleToMove = currentList[source.index]
-    currentList.splice(source.index, 1)
-    currentList.splice(destination.index, 0, ruleToMove)
-
-    setListRules(currentList)
-    updateDeploymentRulesOrder(currentList)
+  const handleReorder = (deploymentRules: ProjectDeploymentRule[]) => {
+    setListRules(deploymentRules)
+    updateDeploymentRulesOrder(deploymentRules)
   }
 
   useEffect(() => {
@@ -82,37 +64,22 @@ export function PageDeploymentRules({
                 Deployment Rules
               </h2>
             </div>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="rules-list">
-                {(provided: DroppableProvided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {listRules?.map((rule: ProjectDeploymentRule, index) => (
-                      <Draggable draggableId={index.toString()} key={index} index={index}>
-                        {(providedDraggble: DraggableProvided) => (
-                          <div
-                            {...providedDraggble.draggableProps}
-                            {...providedDraggble.dragHandleProps}
-                            ref={providedDraggble.innerRef}
-                          >
-                            <DeploymentRuleItem
-                              id={rule.id}
-                              name={rule.name}
-                              startTime={rule.start_time}
-                              stopTime={rule.stop_time}
-                              weekDays={rule.weekdays}
-                              isLast={index === listRules.length - 1 ? true : false}
-                              isLoading={isLoading}
-                              removeDeploymentRule={deleteDeploymentRule}
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+            <Reorder.Group axis="y" values={listRules} onReorder={handleReorder}>
+              {listRules.map((rule, index) => (
+                <Reorder.Item key={rule.id} value={rule}>
+                  <DeploymentRuleItem
+                    id={rule.id}
+                    name={rule.name}
+                    startTime={rule.start_time}
+                    stopTime={rule.stop_time}
+                    weekDays={rule.weekdays}
+                    isLast={index === listRules.length - 1 ? true : false}
+                    isLoading={isLoading}
+                    removeDeploymentRule={deleteDeploymentRule}
+                  />
+                </Reorder.Item>
+              ))}
+            </Reorder.Group>
           </div>
         </div>
       )}
