@@ -1,6 +1,12 @@
 import { motion } from 'framer-motion'
 import { type DragEvent, type ReactNode, createContext, useContext, useId, useState } from 'react'
 
+/**
+ * Inspired by https://www.youtube.com/watch?v=O5lZqqy7VQE
+ * https://www.hover.dev/components/boards
+ * https://codesandbox.io/p/sandbox/fvy4m4
+ */
+
 type SetData<T extends ColumnType> = ({
   sourceColumnId,
   sourceCardId,
