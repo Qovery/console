@@ -101,9 +101,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     if (props.fromDetail) {
                       const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
                       setValue('karpenter.disk_size_in_gib', diskSize)
-                      const architecture = watchInstanceType.includes('AMD') ? 'AMD64' : 'ARM64'
-                      setValue('karpenter.default_service_architecture', architecture)
                     }
+
+                    const instanceTypeLabel: string | undefined = props.instanceTypeOptions
+                      ?.find((option) => option.value === watchInstanceType)
+                      ?.label?.toString()
+                    const architecture = instanceTypeLabel?.includes('AMD') ? 'AMD64' : 'ARM64'
+                    setValue('karpenter.default_service_architecture', architecture)
 
                     field.onChange(e)
                   }}
