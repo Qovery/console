@@ -23,13 +23,28 @@ type SetData<T extends ColumnType> = ({
   newData: T[]
 }) => void
 
-const Board = <T extends ColumnType>({ data, setData }: { data: T[]; setData: SetData<T> }) => {
+const Board = <T extends ColumnType>({
+  data,
+  setData,
+  showCardIndicator = true,
+}: {
+  data: T[]
+  setData: SetData<T>
+  showCardIndicator?: boolean
+}) => {
   const instanceId = useId()
 
   return (
     <div className="flex h-full w-full overflow-scroll">
       {data.map((column) => (
-        <Column key={column.columnId} column={column} data={data} setData={setData} boardId={instanceId} />
+        <Column
+          key={column.columnId}
+          column={column}
+          data={data}
+          setData={setData}
+          boardId={instanceId}
+          showCardIndicator={showCardIndicator}
+        />
       ))}
       <ColumnDropIndicator boardId={instanceId} />
     </div>
@@ -52,9 +67,10 @@ interface ColumnProps<T extends ColumnType> {
   data: T[]
   setData: SetData<T>
   boardId: string
+  showCardIndicator: boolean
 }
 
-const Column = <T extends ColumnType>({ column, data, setData, boardId }: ColumnProps<T>) => {
+const Column = <T extends ColumnType>({ column, data, setData, boardId, showCardIndicator }: ColumnProps<T>) => {
   const [active, setActive] = useState(false)
 
   /**
@@ -275,9 +291,11 @@ const Column = <T extends ColumnType>({ column, data, setData, boardId }: Column
 
     clearHighlights(indicators)
 
-    const el = getNearestCardIndicator(e, indicators)
+    if (showCardIndicator) {
+      const el = getNearestCardIndicator(e, indicators)
 
-    el.element.style.opacity = '1'
+      el.element.style.opacity = '1'
+    }
   }
 
   const getNearestCardIndicator = (e: DragEvent, indicators: HTMLElement[]) => {

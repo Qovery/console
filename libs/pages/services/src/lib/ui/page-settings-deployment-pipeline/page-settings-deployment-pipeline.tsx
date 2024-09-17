@@ -161,6 +161,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           ) : (
             <div className="flex pb-5">
               <Board
+                showCardIndicator={false}
                 data={boardData}
                 setData={async ({ sourceColumnId, targetColumnId, sourceCardId, after = false, newData }) => {
                   if (!sourceCardId) {
