@@ -27,7 +27,7 @@ export function RowInfraLogs({ data, enabled, hasMultipleContainers }: RowInfraL
           NGINX
         </Badge>
       </Table.Cell>
-      <Table.Cell className="h-9 px-1.5 align-text-top font-code font-bold text-neutral-300">
+      <Table.Cell className="h-9 px-1.5 align-baseline font-code font-bold text-neutral-300">
         <span title={dateUTCString(data.created_at)} className="inline-block whitespace-nowrap">
           {dateFullFormat(data.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
         </span>

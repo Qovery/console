@@ -111,7 +111,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
         return updatedFilters
       })
     },
-    [searchParams, setSearchParams]
+    [searchParams, setSearchParams, setColumnFilters]
   )
 
   const isFilterActive = useMemo(
@@ -135,7 +135,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
       if (!res.has(pod_name)) res.set(pod_name, getColorByPod(pod_name))
     }
     return res
-  }, [logs.map((log) => log.pod_name).join(',')]) // Only recalculate when pod names change
+  }, [[...logs].map((log) => log.pod_name)]) // Only recalculate when pod names change
 
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
