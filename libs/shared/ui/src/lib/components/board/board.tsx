@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { type DragEvent, type ReactNode, createContext, useContext, useId, useState } from 'react'
+import { type DragEvent, type ReactNode, useId, useState } from 'react'
 
 /**
  * Inspired by https://www.youtube.com/watch?v=O5lZqqy7VQE
@@ -23,20 +23,16 @@ type SetData<T extends ColumnType> = ({
   newData: T[]
 }) => void
 
-const BoardContext = createContext<null | string>(null)
-
 const Board = <T extends ColumnType>({ data, setData }: { data: T[]; setData: SetData<T> }) => {
   const instanceId = useId()
 
   return (
-    <BoardContext.Provider value={instanceId}>
-      <div className="flex h-full w-full overflow-scroll">
-        {data.map((column) => (
-          <Column key={column.columnId} column={column} data={data} setData={setData} />
-        ))}
-        <ColumnDropIndicator />
-      </div>
-    </BoardContext.Provider>
+    <div className="flex h-full w-full overflow-scroll">
+      {data.map((column) => (
+        <Column key={column.columnId} column={column} data={data} setData={setData} boardId={instanceId} />
+      ))}
+      <ColumnDropIndicator boardId={instanceId} />
+    </div>
   )
 }
 
@@ -55,11 +51,11 @@ interface ColumnProps<T extends ColumnType> {
   column: T
   data: T[]
   setData: SetData<T>
+  boardId: string
 }
 
-const Column = <T extends ColumnType>({ column, data, setData }: ColumnProps<T>) => {
+const Column = <T extends ColumnType>({ column, data, setData, boardId }: ColumnProps<T>) => {
   const [active, setActive] = useState(false)
-  const boardId = useContext(BoardContext)
 
   /**
    * Column
@@ -331,7 +327,7 @@ const Column = <T extends ColumnType>({ column, data, setData }: ColumnProps<T>)
       onDragOver={handleCardDragOver}
       onDragLeave={handleCardDragLeave}
     >
-      <ColumnDropIndicator beforeId={column.columnId} />
+      <ColumnDropIndicator beforeId={column.columnId} boardId={boardId} />
 
       <div className="relative flex w-60 shrink-0 flex-col rounded">
         {column !== data[data.length - 1] && (
@@ -362,11 +358,19 @@ const Column = <T extends ColumnType>({ column, data, setData }: ColumnProps<T>)
           onDrop={(e) => handleCardDragEnd(e, column.columnId)}
           onDragOver={handleCardDragOver}
           onDragLeave={handleCardDragLeave}
-          className={`h-full w-full rounded-b border border-t-0 border-neutral-250 px-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
+          className={`w-full rounded-b border border-t-0 border-neutral-250 px-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
         >
           {filteredCards.length > 0 ? (
             filteredCards.map((card) => {
-              return <Card key={card.id} columnId={column.columnId} {...card} handleDragStart={handleCardDragStart} />
+              return (
+                <Card
+                  key={card.id}
+                  columnId={column.columnId}
+                  boardId={boardId}
+                  {...card}
+                  handleDragStart={handleCardDragStart}
+                />
+              )
             })
           ) : (
             <div className="px-3 py-6 text-center">
@@ -376,7 +380,7 @@ const Column = <T extends ColumnType>({ column, data, setData }: ColumnProps<T>)
               </p>
             </div>
           )}
-          <CardDropIndicator columnId={column.columnId} />
+          <CardDropIndicator columnId={column.columnId} boardId={boardId} />
         </div>
       </div>
     </motion.div>
@@ -385,14 +389,15 @@ const Column = <T extends ColumnType>({ column, data, setData }: ColumnProps<T>)
 
 interface CardProps extends CardType {
   columnId: string
+  boardId: string
   handleDragStart: (e: DragEvent, card: CardType, columnId: string) => void
 }
 
-const Card = ({ columnId, handleDragStart, ...card }: CardProps) => {
+const Card = ({ columnId, handleDragStart, boardId, ...card }: CardProps) => {
   const { id, content } = card
   return (
     <>
-      <CardDropIndicator beforeId={id} columnId={columnId} />
+      <CardDropIndicator beforeId={id} columnId={columnId} boardId={boardId} />
 
       <motion.div
         layout
@@ -413,10 +418,10 @@ const Card = ({ columnId, handleDragStart, ...card }: CardProps) => {
 interface CardDropIndicatorProps {
   beforeId?: string
   columnId: string
+  boardId: string
 }
 
-const CardDropIndicator = ({ beforeId, columnId }: CardDropIndicatorProps) => {
-  const boardId = useContext(BoardContext)
+const CardDropIndicator = ({ beforeId, columnId, boardId }: CardDropIndicatorProps) => {
   return (
     <div
       data-before={beforeId ?? '-1'}
@@ -429,10 +434,10 @@ const CardDropIndicator = ({ beforeId, columnId }: CardDropIndicatorProps) => {
 
 interface ColumnDropIndicatorProps {
   beforeId?: string
+  boardId: string
 }
 
-const ColumnDropIndicator = ({ beforeId }: ColumnDropIndicatorProps) => {
-  const boardId = useContext(BoardContext)
+const ColumnDropIndicator = ({ beforeId, boardId }: ColumnDropIndicatorProps) => {
   return (
     <div data-before={beforeId ?? '-1'} data-board={boardId} className="mx-2 h-full w-0.5 bg-brand-500 opacity-0" />
   )
