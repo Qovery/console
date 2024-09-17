@@ -161,6 +161,14 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
           ) : (
             <div className="flex pb-5">
               <Board
+                emptyState={
+                  <div className="px-3 py-6 text-center">
+                    <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
+                    <p className="mt-1 text-xs font-medium text-neutral-350">
+                      No service for this stage. <br /> Please drag and drop a service.
+                    </p>
+                  </div>
+                }
                 showCardIndicator={false}
                 data={boardData}
                 setData={async ({ sourceColumnId, targetColumnId, sourceCardId, after = false, newData }) => {

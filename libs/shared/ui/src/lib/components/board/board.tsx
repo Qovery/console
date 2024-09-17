@@ -27,10 +27,12 @@ const Board = <T extends ColumnType>({
   data,
   setData,
   showCardIndicator = true,
+  emptyState = null,
 }: {
   data: T[]
   setData: SetData<T>
   showCardIndicator?: boolean
+  emptyState?: ReactNode
 }) => {
   const instanceId = useId()
 
@@ -44,6 +46,7 @@ const Board = <T extends ColumnType>({
           setData={setData}
           boardId={instanceId}
           showCardIndicator={showCardIndicator}
+          emptyState={emptyState}
         />
       ))}
       <ColumnDropIndicator boardId={instanceId} />
@@ -68,9 +71,17 @@ interface ColumnProps<T extends ColumnType> {
   setData: SetData<T>
   boardId: string
   showCardIndicator: boolean
+  emptyState: ReactNode
 }
 
-const Column = <T extends ColumnType>({ column, data, setData, boardId, showCardIndicator }: ColumnProps<T>) => {
+const Column = <T extends ColumnType>({
+  column,
+  data,
+  setData,
+  boardId,
+  showCardIndicator,
+  emptyState,
+}: ColumnProps<T>) => {
   const [active, setActive] = useState(false)
 
   /**
@@ -363,42 +374,36 @@ const Column = <T extends ColumnType>({ column, data, setData, boardId, showCard
         )}
         <div
           draggable
-          className="flex h-11 cursor-grab items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2 active:cursor-grabbing"
           onDragStart={(e) => {
             // Force cast "e" to DragEvent due to wrong typing in framer-motion
             handleColumnDragStart(e as unknown as DragEvent, column.columnId)
           }}
         >
-          {column.heading}
-        </div>
+          <div className="flex h-11 cursor-grab items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2 active:cursor-grabbing">
+            {column.heading}
+          </div>
 
-        <div
-          onDrop={(e) => handleCardDragEnd(e, column.columnId)}
-          onDragOver={handleCardDragOver}
-          onDragLeave={handleCardDragLeave}
-          className={`w-full rounded-b border border-t-0 border-neutral-250 px-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
-        >
-          {filteredCards.length > 0 ? (
-            filteredCards.map((card) => {
-              return (
-                <Card
-                  key={card.id}
-                  columnId={column.columnId}
-                  boardId={boardId}
-                  {...card}
-                  handleDragStart={handleCardDragStart}
-                />
-              )
-            })
-          ) : (
-            <div className="px-3 py-6 text-center">
-              <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
-              <p className="mt-1 text-xs font-medium text-neutral-350">
-                No service for this stage. <br /> Please drag and drop a service.
-              </p>
-            </div>
-          )}
-          <CardDropIndicator columnId={column.columnId} boardId={boardId} />
+          <div
+            onDrop={(e) => handleCardDragEnd(e, column.columnId)}
+            onDragOver={handleCardDragOver}
+            onDragLeave={handleCardDragLeave}
+            className={`w-full rounded-b border border-t-0 border-neutral-250 px-1 transition-colors ${active ? 'bg-green-100' : 'bg-neutral-200'}`}
+          >
+            {filteredCards.length > 0
+              ? filteredCards.map((card) => {
+                  return (
+                    <Card
+                      key={card.id}
+                      columnId={column.columnId}
+                      boardId={boardId}
+                      {...card}
+                      handleDragStart={handleCardDragStart}
+                    />
+                  )
+                })
+              : emptyState}
+            <CardDropIndicator columnId={column.columnId} boardId={boardId} />
+          </div>
         </div>
       </div>
     </motion.div>
