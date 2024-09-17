@@ -54,7 +54,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      href="/organization/123/project/456/environment/789/logs/0/live-logs"
+      href="/organization/123/project/456/environment/789/logs/0/service-logs"
       tabindex="-1"
       type="button"
     >
@@ -227,7 +227,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      href="/organization/123/project/456/environment/789/logs/0/live-logs"
+      href="/organization/123/project/456/environment/789/logs/0/service-logs"
       tabindex="-1"
       type="button"
     >
@@ -300,7 +300,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
-        href="/organization/123/project/456/environment/789/logs/0/live-logs"
+        href="/organization/123/project/456/environment/789/logs/0/service-logs"
         role="menuitem"
         tabindex="-1"
       >
