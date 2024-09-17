@@ -1,6 +1,5 @@
 import { type ServiceInfraLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
-import { type ServiceType } from '@qovery/domains/services/data-access'
 import { Ansi, Badge, TablePrimitives } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { type LogType } from '../../hooks/use-service-logs/use-service-logs'

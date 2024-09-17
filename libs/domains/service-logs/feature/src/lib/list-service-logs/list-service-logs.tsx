@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table'
 import download from 'downloadjs'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
@@ -24,6 +24,9 @@ import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
 
 const { Table } = TablePrimitives
+
+const MemoizedRowInfraLogs = memo(RowInfraLogs)
+const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
 export interface ListServiceLogsProps {
   clusterId: string
@@ -96,19 +99,25 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     getFilteredRowModel: getFilteredRowModel(),
   })
 
-  const toggleColumnFilter = (id: string, value: string) => {
-    setColumnFilters((prevFilters) => {
-      const existingFilter = prevFilters.find((f) => f.id === id)
-      const updatedFilters = existingFilter ? prevFilters.filter((f) => f.id !== id) : [...prevFilters, { id, value }]
-      if (id === 'pod_name') {
-        existingFilter ? searchParams.delete(id) : searchParams.append(id, value)
-        setSearchParams(searchParams)
-      }
-      return updatedFilters
-    })
-  }
+  const toggleColumnFilter = useCallback(
+    (id: string, value: string) => {
+      setColumnFilters((prevFilters) => {
+        const existingFilter = prevFilters.find((f) => f.id === id)
+        const updatedFilters = existingFilter ? prevFilters.filter((f) => f.id !== id) : [...prevFilters, { id, value }]
+        if (id === 'pod_name') {
+          existingFilter ? searchParams.delete(id) : searchParams.append(id, value)
+          setSearchParams(searchParams)
+        }
+        return updatedFilters
+      })
+    },
+    [searchParams, setSearchParams]
+  )
 
-  const isFilterActive = (id: string, value: string) => columnFilters.some((f) => f.id === id && f.value === value)
+  const isFilterActive = useMemo(
+    () => (id: string, value: string) => columnFilters.some((f) => f.id === id && f.value === value),
+    [columnFilters]
+  )
 
   const [updateTimeContextValue, setUpdateTimeContext] = useState(defaultUpdateTimeContext)
 
@@ -126,7 +135,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
       if (!res.has(pod_name)) res.set(pod_name, getColorByPod(pod_name))
     }
     return res
-  }, [logs])
+  }, [logs.map((log) => log.pod_name).join(',')]) // Only recalculate when pod names change
 
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
@@ -264,7 +273,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                 {table.getRowModel().rows.map((row) => {
                   if (row.original.type === 'INFRA') {
                     return (
-                      <RowInfraLogs
+                      <MemoizedRowInfraLogs
                         key={row.id}
                         data={row.original}
                         hasMultipleContainers={hasMultipleContainers}
@@ -273,7 +282,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                     )
                   } else {
                     return (
-                      <RowServiceLogs
+                      <MemoizedRowServiceLogs
                         key={row.id}
                         hasMultipleContainers={hasMultipleContainers}
                         podNameColor={podNameColor}
