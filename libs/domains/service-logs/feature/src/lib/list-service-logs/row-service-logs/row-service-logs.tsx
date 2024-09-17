@@ -1,4 +1,5 @@
 import { type Row } from '@tanstack/react-table'
+import clsx from 'clsx'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useContext } from 'react'
 import {
@@ -12,6 +13,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { twMerge } from '@qovery/shared/util-js'
 import { type LogType } from '../../hooks/use-service-logs/use-service-logs'
 import { UpdateTimeContext } from '../../update-time-context/update-time-context'
 import './style.scss'
@@ -21,6 +23,8 @@ const { Table } = TablePrimitives
 export interface RowServiceLogsProps extends Row<ServiceLogResponseDto & { type: LogType; id: number }> {
   podNameColor: Map<string, string>
   hasMultipleContainers: boolean
+  toggleColumnFilter: (id: string, value: string) => void
+  isFilterActive: (id: string, value: string) => boolean
 }
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -28,6 +32,8 @@ const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 export function RowServiceLogs({
   podNameColor,
   hasMultipleContainers,
+  toggleColumnFilter,
+  isFilterActive,
   getVisibleCells,
   toggleExpanded,
   getIsExpanded,
@@ -52,16 +58,33 @@ export function RowServiceLogs({
             <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
           </span>
           <Tooltip content={original.pod_name}>
-            <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1.5 font-code">
+            <Button
+              type="button"
+              variant="surface"
+              color="neutral"
+              size="xs"
+              className={twMerge(
+                clsx('gap-1.5 font-code', {
+                  'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400': isFilterActive(
+                    'pod_name',
+                    original.pod_name
+                  ),
+                })
+              )}
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleColumnFilter('pod_name', original.pod_name)
+              }}
+            >
               <span
-                className="block h-1.5 w-1.5 min-w-1.5 rounded-full"
+                className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
                 style={{ backgroundColor: podNameColor.get(original.pod_name) }}
               />
               {original.pod_name.substring(original.pod_name.length - 5)}
             </Button>
           </Tooltip>
         </Table.Cell>
-        <Table.Cell className="h-9 px-1.5 align-text-top font-code font-bold text-neutral-300">
+        <Table.Cell className="h-9 px-1.5 font-code font-bold text-neutral-300">
           <span title={dateUTCString(original.created_at)} className="inline-block whitespace-nowrap">
             {dateFullFormat(original.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
@@ -74,7 +97,18 @@ export function RowServiceLogs({
                 variant="surface"
                 color="neutral"
                 size="xs"
-                className="w-full gap-1.5 whitespace-nowrap font-code"
+                className={twMerge(
+                  clsx('max-h-fit gap-1.5 whitespace-nowrap font-code', {
+                    'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400': isFilterActive(
+                      'container_name',
+                      original.container_name
+                    ),
+                  })
+                )}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleColumnFilter('container_name', original.container_name)
+                }}
               >
                 {original.container_name}
               </Button>
