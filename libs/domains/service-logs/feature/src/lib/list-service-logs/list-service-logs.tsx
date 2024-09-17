@@ -1,5 +1,6 @@
 import {
   type ColumnFiltersState,
+  type FilterFn,
   createColumnHelper,
   getCoreRowModel,
   getExpandedRowModel,
@@ -67,28 +68,55 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     }
   >()
 
-  const columns = [
-    columnHelper.accessor('pod_name', {}),
-    columnHelper.accessor('created_at', {}),
-    ...(hasMultipleContainers ? [columnHelper.accessor('container_name', {})] : []),
-    columnHelper.accessor('message', {}),
-  ]
+  const customFilter: FilterFn<ServiceLogResponseDto & { type: LogType; id: number }> = (
+    row,
+    columnId,
+    filterValue
+  ) => {
+    // Always return true for `INFRA` type logs to ensure they are always visible
+    if (row.original.type === 'INFRA') return true
 
-  const initialStateColumnFilters = [
-    {
-      id: 'pod_name',
-      value: searchParams.get('pod_name'),
-    },
-  ]
+    const rowValue = row.getValue(columnId)
+    if (typeof rowValue === 'string') {
+      return rowValue.toLowerCase().includes(filterValue.toLowerCase())
+    }
+    return false
+  }
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor('pod_name', {
+        filterFn: customFilter,
+      }),
+      columnHelper.accessor('created_at', {}),
+      ...(hasMultipleContainers
+        ? [
+            columnHelper.accessor('container_name', {
+              filterFn: customFilter,
+            }),
+          ]
+        : []),
+      columnHelper.accessor('version', {
+        filterFn: customFilter,
+      }),
+      columnHelper.accessor('message', {}),
+    ],
+    [columnHelper, hasMultipleContainers]
+  )
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    searchParams.get('pod_name') ? initialStateColumnFilters : []
+    searchParams.get('pod_name')
+      ? [
+          {
+            id: 'pod_name',
+            value: searchParams.get('pod_name'),
+          },
+        ]
+      : []
   )
 
   const table = useReactTable({
     data: logs,
-    initialState: {
-      columnFilters: initialStateColumnFilters,
-    },
     state: { columnFilters },
     onColumnFiltersChange: setColumnFilters,
     columns,
@@ -135,7 +163,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
       if (!res.has(pod_name)) res.set(pod_name, getColorByPod(pod_name))
     }
     return res
-  }, [[...logs].map((log) => log.pod_name)]) // Only recalculate when pod names change
+  }, [logs.map((log) => log.pod_name).join(',')]) // Only recalculate when pod names change
 
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
@@ -268,7 +296,10 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
               setShowPreviousLogs={setShowPreviousLogs}
               setPauseLogs={setPauseLogs}
             />
-            <Table.Root className="w-full table-auto text-xs">
+            <Table.Root
+              className="o
+            w-full text-xs"
+            >
               <Table.Body className="divide-y-0">
                 {table.getRowModel().rows.map((row) => {
                   if (row.original.type === 'INFRA') {

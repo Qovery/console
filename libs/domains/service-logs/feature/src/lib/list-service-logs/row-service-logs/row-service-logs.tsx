@@ -53,7 +53,7 @@ export function RowServiceLogs({
         onClick={() => toggleExpanded(!isExpanded)}
         className="sl-row relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-['']"
       >
-        <Table.Cell className="flex h-9 items-center gap-2 pr-1.5">
+        <Table.Cell className="flex h-9 select-none items-center gap-2 whitespace-nowrap pr-1.5">
           <span className="flex h-3 w-3 items-center justify-center">
             <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
           </span>
@@ -84,13 +84,13 @@ export function RowServiceLogs({
             </Button>
           </Tooltip>
         </Table.Cell>
-        <Table.Cell className="h-9 px-1.5 align-baseline font-code font-bold text-neutral-300">
+        <Table.Cell className="h-9 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
           <span title={dateUTCString(original.created_at)} className="inline-block whitespace-nowrap">
             {dateFullFormat(original.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>
         {hasMultipleContainers && (
-          <Table.Cell className="flex h-9 items-center gap-2 px-1.5">
+          <Table.Cell className="flex h-9 select-none items-center gap-2 whitespace-nowrap px-1.5">
             <Tooltip content={original.container_name}>
               <Button
                 type="button"
@@ -115,7 +115,7 @@ export function RowServiceLogs({
             </Tooltip>
           </Table.Cell>
         )}
-        <Table.Cell className="h-9 px-1.5 pb-1 pt-2.5 align-top font-code font-bold text-white">
+        <Table.Cell className="h-9 w-full px-1.5 pb-1 pt-2.5 align-top font-code font-bold">
           <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
             {original.message}
           </Ansi>
@@ -127,13 +127,35 @@ export function RowServiceLogs({
             <div className="w-full rounded border border-neutral-500 bg-neutral-550 px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
                 <Dt className="col-span-2 select-none font-code">Podname</Dt>
-                <Dd className="flex gap-1 text-sm font-medium leading-3">{original.pod_name}</Dd>
-                <Dt className="col-span-2 mt-1.5 select-none font-code">Container</Dt>
-                <Dd className="mt-1.5 flex gap-1 text-sm font-medium leading-3">{original.container_name}</Dd>
+                <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">{original.pod_name}</Dd>
+                <Dt className="col-span-2 mt-2 select-none font-code">Container</Dt>
+                <Dd className="mt-2 flex gap-1 text-sm leading-3 dark:font-medium">{original.container_name}</Dd>
                 {original.version && (
                   <>
-                    <Dt className="col-span-2 mt-1.5 select-none font-code">Version</Dt>
-                    <Dd className="mt-1.5 flex gap-1 text-sm font-medium leading-3">{original.version}</Dd>
+                    <Dt className="col-span-2 mt-2 select-none font-code">Version</Dt>
+                    <Dd className="mt-2 flex select-none gap-1 text-sm leading-3 dark:font-medium">
+                      <Tooltip content={original.version}>
+                        <Button
+                          type="button"
+                          variant="surface"
+                          color="neutral"
+                          size="xs"
+                          className={twMerge(
+                            clsx('gap-1.5', {
+                              'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
+                                isFilterActive('version', original.version),
+                            })
+                          )}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleColumnFilter('version', original.version)
+                          }}
+                        >
+                          <Icon iconName="code-commit" iconStyle="regular" />
+                          {original.version.substring(0, 7)}
+                        </Button>
+                      </Tooltip>
+                    </Dd>
                   </>
                 )}
               </Dl>
