@@ -18,7 +18,7 @@ export function ShowPreviousLogsButton({
         type="button"
         className="block w-full bg-neutral-500 py-1.5 text-center text-sm font-medium text-neutral-250 transition hover:bg-neutral-550"
         onClick={() => {
-          setPauseLogs(true)
+          setPauseLogs(false)
           setShowPreviousLogs(true)
         }}
       >
