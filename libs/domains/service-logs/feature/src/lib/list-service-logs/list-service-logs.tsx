@@ -1,11 +1,12 @@
-import { getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, getExpandedRowModel, useReactTable } from '@tanstack/react-table'
 import download from 'downloadjs'
+import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { Button, DropdownMenu, Icon, TablePrimitives } from '@qovery/shared/ui'
-import { useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
+import { type LogType, useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs-placeholder'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
@@ -48,41 +49,29 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
 
   const hasMultipleContainers = new Set(logs?.map((i) => i.container_name)).size > 1
 
+  const columnHelper = createColumnHelper<
+    ServiceLogResponseDto & {
+      type: LogType
+      id: number
+    }
+  >()
+
+  const columns = hasMultipleContainers
+    ? [
+        columnHelper.accessor('pod_name', {}),
+        columnHelper.accessor('created_at', {}),
+        columnHelper.accessor('container_name', {}),
+        columnHelper.accessor('message', {}),
+      ]
+    : [
+        columnHelper.accessor('pod_name', {}),
+        columnHelper.accessor('created_at', {}),
+        columnHelper.accessor('message', {}),
+      ]
+
   const table = useReactTable({
     data: logs,
-    columns: hasMultipleContainers
-      ? [
-          {
-            accessorKey: 'pod_name',
-            header: 'Pods',
-          },
-          {
-            accessorKey: 'created_at',
-            header: () => 'Date',
-          },
-          {
-            accessorKey: 'container_name',
-            header: () => 'Container',
-          },
-          {
-            accessorKey: 'message',
-            header: () => 'Message',
-          },
-        ]
-      : [
-          {
-            accessorKey: 'pod_name',
-            header: 'Pods',
-          },
-          {
-            accessorKey: 'created_at',
-            header: () => 'Date',
-          },
-          {
-            accessorKey: 'message',
-            header: () => 'Message',
-          },
-        ],
+    columns,
     getCoreRowModel: getCoreRowModel(),
     getRowCanExpand: () => true,
     getExpandedRowModel: getExpandedRowModel(),
