@@ -1,6 +1,7 @@
 import {
   type ApplicationEditRequest,
   BuildModeEnum,
+  type BuildPackLanguageEnum,
   type ContainerRequest,
   type HelmRequest,
   type HelmRequestAllOfSource,
@@ -23,7 +24,11 @@ import { buildGitRepoUrl, joinArgsWithQuotes, parseCmd } from '@qovery/shared/ut
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
-  data: ApplicationGeneralData,
+  data: ApplicationGeneralData & {
+    // XXX: Keeps compatibility with legacy buildpacks apps
+    build_mode?: keyof typeof BuildModeEnum
+    buildpack_language?: keyof typeof BuildPackLanguageEnum
+  },
   application: Application,
   labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]

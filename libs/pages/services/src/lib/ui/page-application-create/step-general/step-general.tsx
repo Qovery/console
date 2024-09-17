@@ -1,4 +1,4 @@
-import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -24,7 +24,6 @@ export function StepGeneral(props: StepGeneralProps) {
   const navigate = useNavigate()
 
   const watchServiceType = watch('serviceType')
-  const watchBuildMode = watch('build_mode')
   const watchIsPublicRepository = watch('is_public_repository')
 
   // NOTE: Validation corner case where git settings can be in loading state
@@ -112,7 +111,7 @@ export function StepGeneral(props: StepGeneralProps) {
           <Section className="gap-4">
             <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
             {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings />}
-            {(watchBuildMode === BuildModeEnum.DOCKER || watchServiceType === 'CONTAINER') && <EntrypointCmdInputs />}
+            <EntrypointCmdInputs />
             {!watchIsPublicRepository && (
               <AutoDeploySetting
                 source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'}

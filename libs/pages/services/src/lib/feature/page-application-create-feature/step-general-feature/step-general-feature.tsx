@@ -51,7 +51,7 @@ export function StepGeneralFeature() {
       navigate(creationFlowUrl + SERVICES_CREATION_RESOURCES_URL)
     }
 
-    if (data.serviceType !== ServiceTypeEnum.CONTAINER && data.build_mode === 'DOCKER') {
+    if (data.serviceType !== ServiceTypeEnum.CONTAINER) {
       try {
         await mutateCheckDockerfile({
           environmentId,
