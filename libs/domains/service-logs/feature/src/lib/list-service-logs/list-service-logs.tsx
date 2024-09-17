@@ -64,18 +64,12 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     }
   >()
 
-  const columns = hasMultipleContainers
-    ? [
-        columnHelper.accessor('pod_name', {}),
-        columnHelper.accessor('created_at', {}),
-        columnHelper.accessor('container_name', {}),
-        columnHelper.accessor('message', {}),
-      ]
-    : [
-        columnHelper.accessor('pod_name', {}),
-        columnHelper.accessor('created_at', {}),
-        columnHelper.accessor('message', {}),
-      ]
+  const columns = [
+    columnHelper.accessor('pod_name', {}),
+    columnHelper.accessor('created_at', {}),
+    ...(hasMultipleContainers ? [columnHelper.accessor('container_name', {})] : []),
+    columnHelper.accessor('message', {}),
+  ]
 
   const initialStateColumnFilters = [
     {
