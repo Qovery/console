@@ -132,7 +132,8 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     .with('RUNNING', 'WARNING', () => true)
     .otherwise(() => false)
 
-  if (!logs || logs.length === 0) {
+  // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
+  if (!logs || logs.length === 0 || logs[0].message.includes('No pods found')) {
     return (
       <div className="px-1 pb-1">
         <div className="h-[calc(100vh-116px)] bg-neutral-650 pt-11">
