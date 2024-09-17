@@ -21,7 +21,7 @@ export function RowInfraLogs({ data, enabled, hasMultipleContainers }: RowInfraL
   if (!enabled) return null
 
   return (
-    <Table.Row className="relative mt-0.5 text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-['']">
+    <Table.Row className="relative mt-0.5 text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-[''] hover:bg-neutral-700">
       <Table.Cell className="flex h-9 select-none items-center gap-2 pl-9 pr-1.5 align-top">
         <Badge variant="outline" color="neutral" className="font-code">
           NGINX
