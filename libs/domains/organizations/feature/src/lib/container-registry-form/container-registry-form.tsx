@@ -140,9 +140,15 @@ export function ContainerRegistryForm({
           rules={{
             required: 'Please enter a registry url.',
             validate: (input) =>
-              // eslint-disable-next-line no-useless-escape
-              input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm) !== null ||
-              'URL must be valid and start with «http(s)://»',
+              match(watchKind)
+                .with('GENERIC_CR', () =>
+                  // eslint-disable-next-line no-useless-escape
+                  input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                )
+                .otherwise(() =>
+                  // eslint-disable-next-line no-useless-escape
+                  input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                ) !== null || 'URL must be valid and start with «http(s)://»',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
