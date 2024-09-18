@@ -70,7 +70,7 @@ export function PageDatabaseCreateFeature() {
         ...(generalData ?? {}),
         description: '',
         name: templateData.slug ?? '',
-        type: templateData.slug?.toUpperCase() as DatabaseTypeEnum,
+        type: slug?.toUpperCase() as DatabaseTypeEnum,
         mode: templateData.slug === 'managed' ? 'MANAGED' : 'CONTAINER',
         version: '',
         icon_uri: templateData.icon_uri,
