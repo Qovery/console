@@ -27,14 +27,12 @@ export interface ApplicationGeneralData {
   cmd?: string[]
 
   // application
-  build_mode?: keyof typeof BuildModeEnum
   branch?: string
   repository?: string
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
   root_path?: string
-  buildpack_language?: keyof typeof BuildPackLanguageEnum
   dockerfile_path?: string | null
 }
 

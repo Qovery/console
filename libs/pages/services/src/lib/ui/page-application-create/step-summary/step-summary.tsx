@@ -96,18 +96,8 @@ export function StepSummary({
                     <strong className="font-medium">Root application path:</strong> {generalData.root_path}
                   </li>
                   <li>
-                    <strong className="font-medium">Build mode:</strong> {upperCaseFirstLetter(generalData.build_mode)}
+                    <strong className="font-medium">Dockerfile path:</strong> {generalData.dockerfile_path}
                   </li>
-                  {generalData.build_mode === BuildModeEnum.BUILDPACKS && (
-                    <li>
-                      <strong className="font-medium">Buildpack language:</strong> {generalData.buildpack_language}
-                    </li>
-                  )}
-                  {generalData.build_mode === BuildModeEnum.DOCKER && (
-                    <li>
-                      <strong className="font-medium">Dockerfile path:</strong> {generalData.dockerfile_path}
-                    </li>
-                  )}
                 </>
               )}
               {generalData.serviceType === 'CONTAINER' && (

@@ -145,7 +145,7 @@ export function StepGeneral(props: StepGeneralProps) {
           <Section className="gap-4">
             <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
             {watchServiceType === ServiceTypeEnum.APPLICATION && props.jobType === ServiceTypeEnum.CRON_JOB && (
-              <BuildSettings buildModeDisabled />
+              <BuildSettings />
             )}
             {props.jobType === ServiceTypeEnum.CRON_JOB && <EntrypointCmdInputs />}
             {!watchIsPublicRepository && (

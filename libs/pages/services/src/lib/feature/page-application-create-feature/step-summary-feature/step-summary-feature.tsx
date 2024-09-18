@@ -3,7 +3,6 @@ import {
   APIVariableScopeEnum,
   type ApplicationRequest,
   BuildModeEnum,
-  type BuildPackLanguageEnum,
   type ContainerRequest,
   type VariableImportRequest,
 } from 'qovery-typescript-axios'
@@ -118,7 +117,7 @@ export function StepSummaryFeature() {
           memory: memory,
           min_running_instances: resourcesData.min_running_instances,
           max_running_instances: resourcesData.max_running_instances,
-          build_mode: generalData.build_mode as BuildModeEnum,
+          build_mode: BuildModeEnum.DOCKER,
           git_repository: {
             url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository || ''),
             root_path: generalData.root_path,
@@ -133,11 +132,7 @@ export function StepSummaryFeature() {
           labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
         }
 
-        if (generalData.build_mode === BuildModeEnum.DOCKER) {
-          applicationRequest.dockerfile_path = generalData.dockerfile_path
-        } else {
-          applicationRequest.buildpack_language = generalData.buildpack_language as BuildPackLanguageEnum
-        }
+        applicationRequest.dockerfile_path = generalData.dockerfile_path
 
         try {
           const service = await createService({
