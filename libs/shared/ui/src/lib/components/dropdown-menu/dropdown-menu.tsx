@@ -9,7 +9,13 @@ const dropdownMenuItemVariants = cva(
   {
     variants: {
       color: {
-        brand: ['dark:text-neutral-100', 'data-[highlighted]:bg-brand-50', 'data-[highlighted]:text-brand-500'],
+        brand: [
+          'dark:text-neutral-100',
+          'data-[highlighted]:bg-brand-50',
+          'dark:data-[highlighted]:bg-neutral-550',
+          'data-[highlighted]:text-brand-500',
+          'dark:data-[highlighted]:bg-neutral-550',
+        ],
         red: ['data-[highlighted]:bg-red-50', 'data-[highlighted]:text-red-600'],
         yellow: ['data-[highlighted]:bg-neutral-150'],
       },
@@ -130,7 +136,7 @@ const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.C
           sideOffset={sideOffset}
           align={align}
           className={twMerge(
-            'flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded',
+            'flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:bg-neutral-700',
             className
           )}
           ref={ref}
@@ -167,7 +173,7 @@ const DropdownMenuArrow = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Arr
         {...props}
         width={width}
         height={height}
-        className={twMerge('fill-white', className)}
+        className={twMerge('fill-white dark:fill-neutral-700', className)}
         ref={ref}
       />
     )

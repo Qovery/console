@@ -1,0 +1,9 @@
+// To mitigate performance issues due to a large number of rows, and avoid unnecessary re-renders,
+// caused by a special state that updates on mouse enter and mouse leave.
+// We prefer to use CSS to manage hovers.
+.sl-row:hover,
+.sl-row:hover + .sl-expanded,
+.sl-expanded:hover,
+.sl-row:has(+ .sl-expanded:hover) {
+  background-color: theme('colors.neutral.700');
+}

@@ -3,17 +3,23 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { type LoadingStatus } from '@qovery/shared/interfaces'
-import { LoaderPlaceholder } from '../loader-placeholder/loader-placeholder'
+import { LoaderSpinner } from '@qovery/shared/ui'
 
-export interface LivePlaceholderProps {
+export function LoaderPlaceholder() {
+  return (
+    <div className="flex w-full justify-center text-center">
+      <LoaderSpinner className="h-6 w-6" theme="dark" />
+    </div>
+  )
+}
+
+export interface ServiceLogsPlaceholderProps {
   serviceName?: string
-  loadingStatus?: LoadingStatus
   databaseMode?: DatabaseModeEnum
   itemsLength?: number
 }
 
-export function LivePlaceholder({ serviceName, databaseMode, loadingStatus, itemsLength }: LivePlaceholderProps) {
+export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength }: ServiceLogsPlaceholderProps) {
   const { environmentId, serviceId } = useParams()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { state: deploymentState } = deploymentStatus ?? {}
@@ -26,11 +32,10 @@ export function LivePlaceholder({ serviceName, databaseMode, loadingStatus, item
     return () => clearTimeout(timer)
   }, [])
 
-  return match({ databaseMode, loadingStatus, itemsLength, deploymentState })
+  return match({ databaseMode, itemsLength, deploymentState })
     .with(
       {
         databaseMode: P.not(DatabaseModeEnum.MANAGED),
-        loadingStatus: P.not('loaded'),
         itemsLength: 0,
         deploymentState: P.when((state) => state !== 'READY' && state !== 'STOPPED'),
       },
@@ -63,4 +68,4 @@ export function LivePlaceholder({ serviceName, databaseMode, loadingStatus, item
     ))
 }
 
-export default LivePlaceholder
+export default ServiceLogsPlaceholder

@@ -1,0 +1,9 @@
+{
+  "name": "domains-service-logs-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/service-logs/feature/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:feature", "slice:service-logs"],
+  "// targets": "to see all targets run: nx show project domains-service-logs-feature --web",
+  "targets": {}
+}

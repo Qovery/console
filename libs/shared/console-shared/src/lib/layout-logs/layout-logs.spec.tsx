@@ -106,7 +106,7 @@ describe('LayoutLogs', () => {
     const { getByText } = renderWithProviders(<LayoutLogs {...props} />)
 
     getByText('Deployment logs')
-    getByText('Live logs')
+    getByText('Service logs')
   })
 
   it('should have debug checkbox when debug is true', () => {

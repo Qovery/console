@@ -1,16 +1,14 @@
-import { type DatabaseModeEnum, ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { P, match } from 'ts-pattern'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
 import { type logsType } from '../layout-logs'
-import LivePlaceholder from './live-placeholder/live-placeholder'
 import { LoaderPlaceholder } from './loader-placeholder/loader-placeholder'
 
 export interface PlaceholderLogsProps {
   type: logsType
   serviceName?: string
   loadingStatus?: LoadingStatus
-  databaseMode?: DatabaseModeEnum
   customPlaceholder?: string | ReactNode
   serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   itemsLength?: number
@@ -21,7 +19,6 @@ export function PlaceholderLogs({
   type,
   serviceName,
   loadingStatus,
-  databaseMode,
   customPlaceholder,
   serviceDeploymentStatus,
   itemsLength,
@@ -81,15 +78,6 @@ export function PlaceholderLogs({
   return (
     <div data-testid="placeholder-screen" className="h-full w-full bg-neutral-650 pt-[88px] text-center">
       {type === 'deployment' && deploymentPlaceholder()}
-
-      {type === 'live' && (
-        <LivePlaceholder
-          serviceName={serviceName}
-          databaseMode={databaseMode}
-          loadingStatus={loadingStatus}
-          itemsLength={itemsLength}
-        />
-      )}
 
       {type === 'infra' && (
         <div>

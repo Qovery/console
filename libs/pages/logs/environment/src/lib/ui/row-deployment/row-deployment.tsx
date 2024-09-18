@@ -1,6 +1,6 @@
 import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useContext } from 'react'
-import { UpdateTimeContext } from '@qovery/shared/console-shared'
+import { UpdateTimeContext } from '@qovery/domains/service-logs/feature'
 import { LogsType } from '@qovery/shared/enums'
 import { Ansi, CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'

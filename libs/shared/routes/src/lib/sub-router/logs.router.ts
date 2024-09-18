@@ -10,7 +10,7 @@ export const ENVIRONMENT_LOGS_URL = (
 ) => `${SERVICES_URL(organizationId, projectId, environmentId)}/logs`
 
 export const SERVICE_LOGS_URL = (serviceId = ':serviceId', podName = '') =>
-  `/${serviceId}/live-logs${podName ? `?pod_name=${podName}` : ''}`
+  `/${serviceId}/service-logs${podName ? `?pod_name=${podName}` : ''}`
 
 export const DEPLOYMENT_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/deployment-logs`
 

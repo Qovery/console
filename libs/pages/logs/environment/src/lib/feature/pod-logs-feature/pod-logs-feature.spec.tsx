@@ -18,7 +18,7 @@ describe('PodLogsFeature', () => {
     const { baseElement } = render(
       <Routes location="/organization/1/project/2/environment/3/logs/">
         <Route
-          path="/organization/1/project/2/environment/3/logs/4/live-logs"
+          path="/organization/1/project/2/environment/3/logs/4/service-logs"
           element={<PodLogsFeature {...props} />}
         />
       </Routes>
