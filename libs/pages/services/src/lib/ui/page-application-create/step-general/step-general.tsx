@@ -1,5 +1,6 @@
+import * as Collapsible from '@radix-ui/react-collapsible'
 import { type Organization } from 'qovery-typescript-axios'
-import { type FormEventHandler } from 'react'
+import { type FormEventHandler, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
@@ -22,6 +23,7 @@ export function StepGeneral(props: StepGeneralProps) {
   const { control, watch, formState } = useFormContext<ApplicationGeneralData>()
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
+  const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
 
   const watchServiceType = watch('serviceType')
   const watchIsPublicRepository = watch('is_public_repository')
@@ -120,11 +122,28 @@ export function StepGeneral(props: StepGeneralProps) {
           </Section>
         )}
 
-        <Section className="gap-4">
-          <Heading>Extra labels/annotations</Heading>
-          <LabelSetting />
-          <AnnotationSetting />
-        </Section>
+        <Collapsible.Root open={openExtraAttributes} onOpenChange={setOpenExtraAttributes} asChild>
+          <Section className="gap-4">
+            <div className="flex justify-between">
+              <Heading>Extra labels/annotations</Heading>
+              <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
+                {openExtraAttributes ? (
+                  <>
+                    Hide <Icon iconName="chevron-up" />
+                  </>
+                ) : (
+                  <>
+                    Show <Icon iconName="chevron-down" />
+                  </>
+                )}
+              </Collapsible.Trigger>
+            </div>
+            <Collapsible.Content className="flex flex-col gap-4">
+              <LabelSetting />
+              <AnnotationSetting />
+            </Collapsible.Content>
+          </Section>
+        </Collapsible.Root>
 
         <div className="flex justify-between">
           <Button
