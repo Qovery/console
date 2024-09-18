@@ -208,7 +208,14 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
               </Button>
               {table.getState().columnFilters.map((c) => (
                 <div key={c.id} className="flex items-center gap-2">
-                  <span className="text-xs text-neutral-250">{upperCaseFirstLetter(c.id).replace('_', '')}: </span>
+                  <span className="text-xs text-neutral-250">
+                    {match(c.id)
+                      .with('pod_name', () => 'Podname')
+                      .with('version', () => 'Version')
+                      .with('container_name', () => 'Container')
+                      .otherwise(() => '')}
+                    :{' '}
+                  </span>
                   <Button
                     key={c.id}
                     type="button"
