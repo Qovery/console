@@ -14,6 +14,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { Button, DropdownMenu, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type LogType, useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs-placeholder'
@@ -194,7 +195,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
       <div className="h-[calc(100vh-112px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 pt-0">
         <div className="relative h-full border border-neutral-500 bg-neutral-600">
           <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
-            <div className="flex gap-3">
+            <div className="flex items-center gap-3">
               <Button
                 type="button"
                 variant="surface"
@@ -206,22 +207,25 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
                 <Icon iconName={enabledNginx ? 'eye-slash' : 'eye'} iconStyle="regular" />
               </Button>
               {table.getState().columnFilters.map((c) => (
-                <Button
-                  key={c.id}
-                  type="button"
-                  variant="surface"
-                  color="neutral"
-                  className="gap-1.5"
-                  radius="full"
-                  onClick={() => {
-                    searchParams.delete(c.id)
-                    setSearchParams(searchParams)
-                    setColumnFilters((prevFilters) => prevFilters.filter((f) => f.id !== c.id))
-                  }}
-                >
-                  <span>{c.value?.toString()}</span>
-                  <Icon iconName="xmark" iconStyle="regular" />
-                </Button>
+                <div key={c.id} className="flex items-center gap-2">
+                  <span className="text-xs text-neutral-250">{upperCaseFirstLetter(c.id).replace('_', '')}: </span>
+                  <Button
+                    key={c.id}
+                    type="button"
+                    variant="surface"
+                    color="neutral"
+                    className="gap-1.5"
+                    radius="full"
+                    onClick={() => {
+                      searchParams.delete(c.id)
+                      setSearchParams(searchParams)
+                      setColumnFilters((prevFilters) => prevFilters.filter((f) => f.id !== c.id))
+                    }}
+                  >
+                    <span>{c.value?.toString()}</span>
+                    <Icon iconName="xmark" iconStyle="regular" />
+                  </Button>
+                </div>
               ))}
             </div>
             <div className="flex gap-3">
