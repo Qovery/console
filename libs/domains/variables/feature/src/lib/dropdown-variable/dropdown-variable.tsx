@@ -1,6 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { type PropsWithChildren, useState } from 'react'
-import { Icon, InputSearch, Popover, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
+import { Icon, InputSearch, Popover, Tooltip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
@@ -32,7 +32,7 @@ export function DropdownVariable({ environmentId, onChange, children }: Dropdown
       <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
         <Popover.Trigger>{children}</Popover.Trigger>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="flex max-h-60 w-[256px] flex-col p-2">
+          <Popover.Content className="flex max-h-60 w-[248px] min-w-[248px] flex-col p-2">
             {/* 
                 `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                 fix issue with item focus if we use input search
@@ -53,18 +53,29 @@ export function DropdownVariable({ environmentId, onChange, children }: Dropdown
                     <DropdownMenu.Item
                       className={twMerge(
                         dropdownMenuItemVariants({ color: 'brand' }),
-                        'h-[52px] flex-col items-start justify-center gap-1 px-2 py-1.5'
+                        'flex h-[52px] items-center justify-between gap-1 px-2 py-1.5'
                       )}
                       onClick={() => onChange(variable.key)}
                     >
-                      <span className="text-sm font-medium">
-                        <Truncate text={variable.key} truncateLimit={24} />
-                      </span>
-
-                      {variable.description && (
-                        <span className="truncate text-xs font-normal">
-                          <Truncate text={variable.description} truncateLimit={34} />
+                      <div className="flex flex-col items-start justify-center gap-1">
+                        <span className="text-sm font-medium">
+                          <Truncate text={variable.key} truncateLimit={21} />
                         </span>
+
+                        {variable.service_name ? (
+                          <span className="truncate text-xs font-normal">
+                            <Truncate text={variable.service_name} truncateLimit={30} />
+                          </span>
+                        ) : (
+                          <span className="text-xs font-normal text-neutral-300">no service</span>
+                        )}
+                      </div>
+                      {variable.description && (
+                        <Tooltip content={variable.description} side="bottom">
+                          <span>
+                            <Icon iconName="info-circle" iconStyle="regular" className="text-neutral-400" />
+                          </span>
+                        </Tooltip>
                       )}
                     </DropdownMenu.Item>
                   </Popover.Close>
