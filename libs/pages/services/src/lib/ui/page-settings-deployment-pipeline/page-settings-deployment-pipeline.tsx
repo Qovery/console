@@ -124,7 +124,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             }) ?? [],
         } satisfies ColumnType
       }),
-    [services, stages]
+    [services, stages, closeModal, deleteEnvironmentDeploymentStage, environmentId, openModal, openModalConfirmation]
   )
 
   return (
