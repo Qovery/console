@@ -164,7 +164,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             <Board
               emptyState={
                 <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
-                  <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
+                  <Icon iconName="wave-pulse" className="text-neutral-350" />
                   <p className="mt-1 text-xs font-medium text-neutral-350">
                     No service for this stage. <br /> Please drag and drop a service.
                   </p>
