@@ -84,7 +84,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
     onChange(newValue)
     // setTimeout is required to refocus the textarea after a potential re-render caused by the value update.
-    setTimeout(() => textarea.focus(), 50)
+    setTimeout(() => textarea?.focus(), 50)
   }
 
   const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
