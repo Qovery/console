@@ -1,5 +1,5 @@
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { toast as toastAction } from 'react-hot-toast'
 import { useParams } from 'react-router-dom'
 import { useAttachServiceToDeploymentStage, useListDeploymentStages } from '@qovery/domains/environments/feature'
@@ -7,6 +7,8 @@ import { useServices } from '@qovery/domains/services/feature'
 import { useModal } from '@qovery/shared/ui'
 import PageSettingsDeploymentPipeline from '../../ui/page-settings-deployment-pipeline/page-settings-deployment-pipeline'
 import StageModalFeature from './stage-modal-feature/stage-modal-feature'
+
+const PageSettingsDeploymentPipelineMemo = memo(PageSettingsDeploymentPipeline)
 
 export interface StageRequest {
   stageId: string
@@ -27,30 +29,37 @@ export function PageSettingsDeploymentPipelineFeature() {
     }
   }, [deploymentStageList])
 
-  const onSubmit = (newStage: StageRequest, prevStage: StageRequest) => {
-    if (deploymentStageList) {
-      // remove current toast to avoid flood of multiple toasts
-      toastAction.remove()
-      // mutate action
-      addServiceToDeploymentStage({
-        stageId: newStage.stageId,
-        serviceId: newStage.serviceId,
-        prevStage,
-      })
-    }
-  }
+  const onSubmit = useCallback(
+    (newStage: StageRequest, prevStage: StageRequest) => {
+      if (deploymentStageList) {
+        // remove current toast to avoid flood of multiple toasts
+        toastAction.remove()
+        // mutate action
+        addServiceToDeploymentStage({
+          stageId: newStage.stageId,
+          serviceId: newStage.serviceId,
+          prevStage,
+        })
+      }
+    },
+    [addServiceToDeploymentStage, toastAction]
+  )
+
+  const onAddStage = useCallback(
+    () =>
+      openModal({
+        content: <StageModalFeature onClose={closeModal} environmentId={environmentId} />,
+      }),
+    [openModal, closeModal, environmentId]
+  )
 
   return (
-    <PageSettingsDeploymentPipeline
+    <PageSettingsDeploymentPipelineMemo
       stages={stages}
       setStages={setStages}
       onSubmit={onSubmit}
       services={services}
-      onAddStage={() => {
-        openModal({
-          content: <StageModalFeature onClose={closeModal} environmentId={environmentId} />,
-        })
-      }}
+      onAddStage={onAddStage}
     />
   )
 }

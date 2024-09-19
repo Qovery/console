@@ -155,7 +155,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             Add stage <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
-        {!boardData ? (
+        {!boardData || !services || services.length === 0 || !stages || stages.length === 0 ? (
           <div data-testid="stages-loader" className="flex max-w-4xl justify-center">
             <LoaderSpinner className="mt-5 w-4" />
           </div>
