@@ -47,7 +47,7 @@ const Board = <T extends ColumnType>({
   const dataTransfer = useRef<{ columnId?: string; cardId?: string } | null>(null)
 
   return (
-    <div className="flex h-full w-full overflow-scroll pb-5">
+    <div className="flex h-full w-full overflow-x-scroll pb-5">
       {data.map((column) => (
         <Column
           key={column.columnId}
@@ -367,7 +367,7 @@ const Column = <T extends ColumnType>({
 
   return (
     <motion.div
-      layout
+      layout="position"
       layoutId={column.columnId}
       className="flex flex-row"
       onDrop={(e) => handleColumnDragEnd(e)}
@@ -435,7 +435,7 @@ const Card = ({ columnId, handleDragStart, boardId, ...card }: CardProps) => {
       <CardDropIndicator beforeId={id} columnId={columnId} boardId={boardId} />
 
       <motion.div
-        layout
+        layout="position"
         layoutId={id}
         draggable
         onDragStart={(e) => {
