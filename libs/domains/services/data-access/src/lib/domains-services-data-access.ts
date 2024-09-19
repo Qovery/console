@@ -3,6 +3,7 @@ import {
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
+  ApplicationCustomDomainApi,
   type DeployRequest as ApplicationDeployRequest,
   ApplicationDeploymentHistoryApi,
   ApplicationDeploymentRestrictionApi,
@@ -105,7 +106,8 @@ const containerConfigurationApi = new ContainerConfigurationApi()
 const helmConfigurationApi = new HelmConfigurationApi()
 const jobConfigurationApi = new JobConfigurationApi()
 
-const customDomainApplicationApi = new CustomDomainApi()
+const customDomainApi = new CustomDomainApi()
+const customDomainApplicationApi = new ApplicationCustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
@@ -480,11 +482,11 @@ export const services = createQueryKeys('services', {
           serviceType,
         }))
         .with('CONTAINER', (serviceType) => ({
-          query: customDomainApplicationApi.checkContainerCustomDomain.bind(customDomainApplicationApi),
+          query: customDomainApi.checkContainerCustomDomain.bind(customDomainApi),
           serviceType,
         }))
         .with('HELM', (serviceType) => ({
-          query: customDomainApplicationApi.checkHelmCustomDomain.bind(customDomainApplicationApi),
+          query: customDomainApi.checkHelmCustomDomain.bind(customDomainApi),
           serviceType,
         }))
         .exhaustive()

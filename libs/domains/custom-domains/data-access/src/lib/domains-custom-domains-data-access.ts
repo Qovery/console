@@ -1,14 +1,14 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  ApplicationCustomDomainApi,
   ContainerCustomDomainApi,
-  CustomDomainApi,
   type CustomDomainRequest,
   HelmCustomDomainApi,
 } from 'qovery-typescript-axios'
 import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 
-const customDomainApplicationApi = new CustomDomainApi()
+const customDomainApplicationApi = new ApplicationCustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
