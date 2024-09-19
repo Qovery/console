@@ -24,7 +24,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
             dataTestId="input-name"
             name={field.name}
             onChange={(e) => {
-              if (e.target.value.toLowerCase().includes('prod')) {
+              if (!fromDetail && e.target.value.toLowerCase().includes('prod')) {
                 setValue('production', true)
               }
               field.onChange(e)
