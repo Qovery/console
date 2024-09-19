@@ -1,8 +1,9 @@
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
+  Button,
   Icon,
   InputSelect,
   InputText,
@@ -18,6 +19,7 @@ import {
   generateScopeLabel,
   getEnvironmentVariableFileMountPath,
 } from '@qovery/shared/util-js'
+import DropdownVariable from '../dropdown-variable/dropdown-variable'
 import { useCreateVariableAlias } from '../hooks/use-create-variable-alias/use-create-variable-alias'
 import { useCreateVariableOverride } from '../hooks/use-create-variable-override/use-create-variable-override'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
@@ -60,6 +62,30 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
   const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
   const { mutateAsync: editVariable } = useEditVariable()
+
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+
+  const handleInsertVariable = ({
+    variableKey,
+    value,
+    onChange,
+  }: {
+    variableKey: string
+    value: string
+    onChange: (value: string) => void
+  }) => {
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const startPos = textarea.selectionStart ?? 0
+    const endPos = textarea.selectionEnd ?? 0
+
+    const newValue = value.substring(0, startPos) + `{{${variableKey}}}` + value.substring(endPos)
+
+    onChange(newValue)
+    // setTimeout is required to refocus the textarea after a potential re-render caused by the value update.
+    setTimeout(() => textarea?.focus(), 50)
+  }
 
   const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
 
@@ -217,7 +243,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     .with(
       { _isFile: true },
       () =>
-        'The content of the Value field will be mounted as a file in the specified “Path”. Accessing the environment variable at runtime will return the “Path” of the file.'
+        'The content of the Value field will be mounted as a file in the specified "Path". Accessing the environment variable at runtime will return the "Path" of the file.'
     )
     .otherwise(
       () =>
@@ -329,15 +355,34 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           <Controller
             name="value"
             control={methods.control}
-            render={({ field, fieldState: { error } }) => (
-              <InputTextArea
-                className="mb-3"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Value"
-                error={error?.message}
-              />
+            render={({ field: { name, onChange, value }, fieldState: { error } }) => (
+              <div className="relative">
+                <InputTextArea
+                  ref={textareaRef}
+                  className="mb-3"
+                  name={name}
+                  onChange={onChange}
+                  value={value}
+                  label="Value"
+                  error={error?.message}
+                />
+                {'environmentId' in props && (
+                  <DropdownVariable
+                    environmentId={props.environmentId}
+                    onChange={(variableKey) => handleInsertVariable({ variableKey, value, onChange })}
+                  >
+                    <Button
+                      size="md"
+                      type="button"
+                      color="neutral"
+                      variant="surface"
+                      className="absolute bottom-1.5 right-1.5 w-9 justify-center"
+                    >
+                      <Icon className="text-sm" iconName="wand-magic-sparkles" />
+                    </Button>
+                  </DropdownVariable>
+                )}
+              </div>
             )}
           />
         )}
@@ -374,7 +419,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 value={generateScopeLabel(field.value)}
                 label="Scope"
                 rightElement={
-                  <Tooltip content="Scope can’t be changed. Re-create the var with the right scope." side="left">
+                  <Tooltip content="Scope can't be changed. Re-create the var with the right scope." side="left">
                     <div>
                       <Icon iconName="circle-info" className="text-sm text-neutral-350" />
                     </div>
