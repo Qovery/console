@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react'
-import { useState } from 'react'
-import { Board, type ColumnType } from './board'
+import { useMemo, useState } from 'react'
+import { Board } from './board'
 
 const Story: Meta<typeof Board> = {
   component: Board,
@@ -14,46 +14,46 @@ const Story: Meta<typeof Board> = {
   ],
 }
 
-const DEFAULT_DATA: ColumnType[] = [
+const DEFAULT_DATA = [
   {
-    columnId: 'backlog',
-    heading: 'Backlog',
-    items: [
-      { content: 'Look into render bug in dashboard', id: '1' },
-      { content: 'SOX compliance checklist', id: '2' },
-      { content: '[SPIKE] Migrate to Azure', id: '3' },
-      { content: 'Document Notifications service', id: '4' },
+    id: 'backlog',
+    title: 'Backlog',
+    rawItems: [
+      { title: 'Look into render bug in dashboard', id: '1' },
+      { title: 'SOX compliance checklist', id: '2' },
+      { title: '[SPIKE] Migrate to Azure', id: '3' },
+      { title: 'Document Notifications service', id: '4' },
     ],
   },
   {
-    columnId: 'todo',
-    heading: 'TODO',
-    items: [
+    id: 'todo',
+    title: 'TODO',
+    rawItems: [
       {
-        content: 'Research DB options for new microservice',
+        title: 'Research DB options for new microservice',
         id: '5',
       },
-      { content: 'Postmortem for outage', id: '6' },
-      { content: 'Sync with product on Q3 roadmap', id: '7' },
+      { title: 'Postmortem for outage', id: '6' },
+      { title: 'Sync with product on Q3 roadmap', id: '7' },
     ],
   },
   {
-    columnId: 'doing',
-    heading: 'In progress',
-    items: [
+    id: 'doing',
+    title: 'In progress',
+    rawItems: [
       {
-        content: 'Refactor context providers to use Zustand',
+        title: 'Refactor context providers to use Zustand',
         id: '8',
       },
-      { content: 'Add logging to daily CRON', id: '9' },
+      { title: 'Add logging to daily CRON', id: '9' },
     ],
   },
   {
-    columnId: 'done',
-    heading: 'Complete',
-    items: [
+    id: 'done',
+    title: 'Complete',
+    rawItems: [
       {
-        content: 'Set up DD dashboards for Lambda listener',
+        title: 'Set up DD dashboards for Lambda listener',
         id: '10',
       },
     ],
@@ -62,7 +62,38 @@ const DEFAULT_DATA: ColumnType[] = [
 export const Primary = {
   render: () => {
     const [data, setData] = useState(DEFAULT_DATA)
-    return <Board data={data} setData={({ newData }) => setData(newData)} />
+    const boardData = useMemo(
+      () =>
+        data.map((c) => ({
+          ...c,
+          columnId: c.id,
+          heading: c.title,
+          items: c.rawItems.map((i) => ({
+            ...i,
+            id: i.id,
+            content: i.title,
+          })),
+        })),
+      [data]
+    )
+    return (
+      <Board
+        data={boardData}
+        setData={({ newData }) =>
+          setData(
+            newData.map((column) => ({
+              ...column,
+              // As Board component only work in ColumnType props,
+              // we must reconcile `items` and `services`
+              rawItems: column.items.map(({ id, title }) => ({
+                id,
+                title,
+              })),
+            }))
+          )
+        }
+      />
+    )
   },
 }
 
