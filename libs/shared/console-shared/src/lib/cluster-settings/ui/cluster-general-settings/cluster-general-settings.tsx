@@ -8,7 +8,7 @@ export interface ClusterGeneralSettingsProps {
 
 export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
   const { fromDetail } = props
-  const { control } = useFormContext<ClusterGeneralData>()
+  const { control, setValue } = useFormContext<ClusterGeneralData>()
 
   return (
     <div>
@@ -23,7 +23,12 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
             className="mb-3"
             dataTestId="input-name"
             name={field.name}
-            onChange={field.onChange}
+            onChange={(e) => {
+              if (!fromDetail && e.target.value.toLowerCase().includes('prod')) {
+                setValue('production', true)
+              }
+              field.onChange(e)
+            }}
             value={field.value}
             label="Cluster name"
             error={error?.message}
