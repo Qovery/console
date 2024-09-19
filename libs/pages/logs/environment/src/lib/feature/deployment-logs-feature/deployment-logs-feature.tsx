@@ -99,6 +99,27 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       />
     </div>
   )
+
+  // return (
+  //   serviceStatus && (
+  //     <DeploymentLogs
+  //       loadingStatus={loadingStatusDeploymentLogs}
+  //       logs={logsByServiceId}
+  //       errors={errors}
+  //       pauseStatusLogs={pauseStatusLogs}
+  //       setPauseStatusLogs={setPauseStatusLogs}
+  //       service={service}
+  //       serviceStatus={serviceStatus as Status}
+  //       hideDeploymentLogs={hideDeploymentLogsBoolean}
+  //       dataDeploymentHistory={deploymentHistory}
+  //       isDeploymentProgressing={isDeploymentProgressing}
+  //       showPreviousLogs={showPreviousLogs}
+  //       setShowPreviousLogs={setShowPreviousLogs}
+  //       newMessagesAvailable={newMessagesAvailable}
+  //       setNewMessagesAvailable={setNewMessagesAvailable}
+  //     />
+  //   )
+  // )
 }
 
 export default DeploymentLogsFeature
