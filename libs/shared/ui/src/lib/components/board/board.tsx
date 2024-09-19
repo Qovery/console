@@ -43,7 +43,7 @@ const Board = <T extends ColumnType>({
   const instanceId = useId()
 
   return (
-    <div className="flex h-full w-full overflow-scroll">
+    <div className="flex h-full w-full overflow-scroll pb-5">
       {data.map((column) => (
         <Column
           key={column.columnId}
@@ -384,6 +384,7 @@ const Column = <T extends ColumnType>({
             // Force cast "e" to DragEvent due to wrong typing in framer-motion
             handleColumnDragStart(e as unknown as DragEvent, column.columnId)
           }}
+          className="flex flex-col"
         >
           <div className="flex h-11 cursor-grab items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2 active:cursor-grabbing">
             {column.heading}

@@ -155,73 +155,71 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             Add stage <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
-        <div className="h-full overflow-x-auto">
-          {!boardData ? (
-            <div data-testid="stages-loader" className="flex max-w-4xl justify-center">
-              <LoaderSpinner className="mt-5 w-4" />
-            </div>
-          ) : (
-            <div className="flex pb-5">
-              <Board
-                emptyState={
-                  <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
-                    <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
-                    <p className="mt-1 text-xs font-medium text-neutral-350">
-                      No service for this stage. <br /> Please drag and drop a service.
-                    </p>
-                  </div>
-                }
-                showCardIndicator={false}
-                data={boardData}
-                setData={async ({ sourceColumnId, targetColumnId, sourceCardId, after = false, newData }) => {
-                  if (!sourceCardId) {
-                    // Move column
-                    const result = await moveDeploymentStageRequested({
-                      stageId: sourceColumnId,
-                      targetStageId: targetColumnId,
-                      after,
-                    })
-                    setStages(result)
-                  } else {
-                    // Move card
-                    setStages(
-                      newData.map((stage) => ({
-                        ...stage,
-                        // As Board component only work in ColumnType props,
-                        // we must reconcile `items` and `services`
-                        services: stage.items.map((item) => ({
-                          ...item,
-                        })),
-                      }))
-                    )
+        {!boardData ? (
+          <div data-testid="stages-loader" className="flex max-w-4xl justify-center">
+            <LoaderSpinner className="mt-5 w-4" />
+          </div>
+        ) : (
+          <div className="flex pb-5">
+            <Board
+              emptyState={
+                <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
+                  <i aria-hidden="true" className="fa-solid fa-wave-pulse text-neutral-350"></i>
+                  <p className="mt-1 text-xs font-medium text-neutral-350">
+                    No service for this stage. <br /> Please drag and drop a service.
+                  </p>
+                </div>
+              }
+              showCardIndicator={false}
+              data={boardData}
+              setData={async ({ sourceColumnId, targetColumnId, sourceCardId, after = false, newData }) => {
+                if (!sourceCardId) {
+                  // Move column
+                  const result = await moveDeploymentStageRequested({
+                    stageId: sourceColumnId,
+                    targetStageId: targetColumnId,
+                    after,
+                  })
+                  setStages(result)
+                } else {
+                  // Move card
+                  setStages(
+                    newData.map((stage) => ({
+                      ...stage,
+                      // As Board component only work in ColumnType props,
+                      // we must reconcile `items` and `services`
+                      services: stage.items.map((item) => ({
+                        ...item,
+                      })),
+                    }))
+                  )
 
-                    const serviceId = stages?.reduce<string | undefined>((serviceId, stage) => {
-                      if (serviceId) {
-                        return serviceId
-                      }
-                      return stage.services?.find(({ id }) => sourceCardId === id)?.service_id
-                    }, undefined)
-
+                  const serviceId = stages?.reduce<string | undefined>((serviceId, stage) => {
                     if (serviceId) {
-                      // new stage for final request
-                      const newStageRequest: StageRequest = {
-                        stageId: targetColumnId,
-                        serviceId,
-                      }
-                      // previous stage for final request if undo
-                      const prevStageRequest: StageRequest = {
-                        stageId: sourceColumnId,
-                        serviceId,
-                      }
-                      // submit change
-                      onSubmit(newStageRequest, prevStageRequest)
+                      return serviceId
                     }
+                    return stage.services?.find(({ id }) => sourceCardId === id)?.service_id
+                  }, undefined)
+
+                  if (serviceId) {
+                    // new stage for final request
+                    const newStageRequest: StageRequest = {
+                      stageId: targetColumnId,
+                      serviceId,
+                    }
+                    // previous stage for final request if undo
+                    const prevStageRequest: StageRequest = {
+                      stageId: sourceColumnId,
+                      serviceId,
+                    }
+                    // submit change
+                    onSubmit(newStageRequest, prevStageRequest)
                   }
-                }}
-              />
-            </div>
-          )}
-        </div>
+                }
+              }}
+            />
+          </div>
+        )}
       </Section>
     </div>
   )
