@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { type DragEvent, type ReactNode, useId, useState } from 'react'
+import { type DragEvent, type MutableRefObject, type ReactNode, useId, useRef, useState } from 'react'
 
 /**
  * Inspired by https://www.youtube.com/watch?v=O5lZqqy7VQE
@@ -41,6 +41,10 @@ const Board = <T extends ColumnType>({
   emptyState?: ReactNode
 }) => {
   const instanceId = useId()
+  // Here we need a custom dataTransfer object as the event.dataTransfer are not always
+  // propagated to all event listeners depending on browsers
+  // https://stackoverflow.com/a/71900807
+  const dataTransfer = useRef<{ columnId?: string; cardId?: string } | null>(null)
 
   return (
     <div className="flex h-full w-full overflow-scroll pb-5">
@@ -53,6 +57,7 @@ const Board = <T extends ColumnType>({
           boardId={instanceId}
           showCardIndicator={showCardIndicator}
           emptyState={emptyState}
+          dataTransfer={dataTransfer}
         />
       ))}
       <ColumnDropIndicator boardId={instanceId} />
@@ -78,6 +83,10 @@ interface ColumnProps<T extends ColumnType> {
   boardId: string
   showCardIndicator: boolean
   emptyState: ReactNode
+  dataTransfer: MutableRefObject<{
+    columnId?: string
+    cardId?: string
+  } | null>
 }
 
 const Column = <T extends ColumnType>({
@@ -87,22 +96,24 @@ const Column = <T extends ColumnType>({
   boardId,
   showCardIndicator,
   emptyState,
+  dataTransfer,
 }: ColumnProps<T>) => {
   const [active, setActive] = useState(false)
 
   /**
    * Column
    */
-  const handleColumnDragStart = (e: DragEvent, columnId: string) => {
-    e.dataTransfer?.setData('columnId', columnId)
+  const handleColumnDragStart = (columnId: string) => {
+    dataTransfer.current = { columnId, cardId: undefined }
   }
 
   const handleColumnDragEnd = (e: DragEvent) => {
-    const columnId = e.dataTransfer?.getData('columnId')
+    const columnId = dataTransfer.current?.columnId
 
     const indicators = getColumnIndicators()
 
     clearHighlights(indicators)
+    dataTransfer.current = null
 
     const { element } = getNearestColumnIndicator(e, indicators)
 
@@ -187,23 +198,24 @@ const Column = <T extends ColumnType>({
    * Card
    */
   const handleCardDragStart = (e: DragEvent, card: CardType, columnId: string) => {
-    e.dataTransfer?.setData('cardId', card.id)
-    e.dataTransfer?.setData('columnId', columnId)
+    e.stopPropagation()
+    dataTransfer.current = { columnId, cardId: card.id }
   }
 
   const handleCardDragEnd = (e: DragEvent, targetColumnId: string) => {
     e.stopPropagation()
 
-    const cardId = e.dataTransfer?.getData('cardId')
-    const columnId = e.dataTransfer?.getData('columnId')
+    const cardId = dataTransfer.current?.cardId
+    const columnId = dataTransfer.current?.columnId
 
     setActive(false)
 
     const indicators = getCardIndicators()
 
     clearHighlights(indicators)
+    dataTransfer.current = null
 
-    if (!cardId) {
+    if (!cardId || !columnId) {
       return
     }
 
@@ -282,8 +294,8 @@ const Column = <T extends ColumnType>({
   const handleCardDragOver = (e: DragEvent) => {
     e.preventDefault()
 
-    const cardId = e.dataTransfer?.getData('cardId')
-    const columnId = e.dataTransfer?.getData('columnId')
+    const cardId = dataTransfer.current?.cardId
+    const columnId = dataTransfer.current?.columnId
 
     if (columnId) {
       if (cardId) {
@@ -378,14 +390,7 @@ const Column = <T extends ColumnType>({
             <path fill="#C6D3E7" d="M16 21.5l-7.5-4.33v8.66L16 21.5zm-16 .75h9.25v-1.5H0v1.5z"></path>
           </svg>
         )}
-        <div
-          draggable
-          onDragStart={(e) => {
-            // Force cast "e" to DragEvent due to wrong typing in framer-motion
-            handleColumnDragStart(e as unknown as DragEvent, column.columnId)
-          }}
-          className="flex flex-col"
-        >
+        <div draggable onDragStart={() => handleColumnDragStart(column.columnId)} className="flex flex-col">
           <div className="flex h-11 cursor-grab items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2 active:cursor-grabbing">
             {column.heading}
           </div>
