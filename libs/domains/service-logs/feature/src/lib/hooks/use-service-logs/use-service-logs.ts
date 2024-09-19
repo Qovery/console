@@ -1,6 +1,6 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { type ServiceInfraLogResponseDto, type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
@@ -33,6 +33,8 @@ export function useServiceLogs({
   const logCounter = useRef(0)
   const [searchParams] = useSearchParams()
 
+  const serviceMessagesMap = useRef<Map<string, ServiceLogResponseDto & { type: LogType; id: number }>>(new Map())
+
   // States for controlling log actions, showing new, previous or paused logs
   const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
   const [showPreviousLogs, setShowPreviousLogs] = useState(false)
@@ -42,10 +44,20 @@ export function useServiceLogs({
   const [infraMessages, setInfraMessages] = useState<Array<ServiceInfraLogResponseDto & { type: LogType; id: number }>>(
     []
   )
-  const [serviceMessages, setServiceMessages] = useState<Array<ServiceLogResponseDto & { type: LogType; id: number }>>(
-    []
-  )
-  const debouncedServiceMessages = useDebounce(serviceMessages, DEBOUNCE_TIME)
+  const [debouncedServiceMessages, setDebouncedServiceMessages] = useState<
+    (ServiceLogResponseDto & { type: LogType; id: number })[]
+  >([])
+
+  // XXX: Need to use custom useDebounce like method due to ref usage
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedServiceMessages([...serviceMessagesMap.current.values()])
+    }, DEBOUNCE_TIME)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [serviceMessagesMap.current.size, DEBOUNCE_TIME])
   const now = useMemo(() => Date.now(), [])
 
   const infraMessageHandler = useCallback(
@@ -59,9 +71,10 @@ export function useServiceLogs({
   const serviceMessageHandler = useCallback(
     (_: QueryClient, message: ServiceLogResponseDto) => {
       setNewMessagesAvailable(true)
-      setServiceMessages((prevMessages) => [...prevMessages, { ...message, type: 'SERVICE', id: logCounter.current++ }])
+      const msgKey = `SERVICE-${message.created_at}-${message.container_name}-${message.pod_name}-${message.message}`
+      serviceMessagesMap.current.set(msgKey, { ...message, type: 'SERVICE', id: logCounter.current++ })
     },
-    [setServiceMessages]
+    [serviceMessagesMap]
   )
 
   // Websocket subscription for service logs based on `pod_name`
@@ -131,7 +144,6 @@ export function useServiceLogs({
     setPauseLogs,
     setNewMessagesAvailable,
     newMessagesAvailable,
-    serviceMessages,
     showPreviousLogs,
     setShowPreviousLogs,
     enabledNginx,
