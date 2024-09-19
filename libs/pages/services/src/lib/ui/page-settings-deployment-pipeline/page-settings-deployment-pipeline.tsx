@@ -194,12 +194,9 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                     }))
                   )
 
-                  const serviceId = stages?.reduce<string | undefined>((serviceId, stage) => {
-                    if (serviceId) {
-                      return serviceId
-                    }
-                    return stage.services?.find(({ id }) => sourceCardId === id)?.service_id
-                  }, undefined)
+                  const serviceId = stages
+                    ?.flatMap((stage) => stage.services ?? [])
+                    .find((service) => service.id === sourceCardId)?.service_id
 
                   if (serviceId) {
                     // new stage for final request
