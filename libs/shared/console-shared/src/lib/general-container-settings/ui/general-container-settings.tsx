@@ -59,7 +59,7 @@ function ImageTag({
     <div className="flex justify-center">
       <LoaderSpinner />
     </div>
-  ) : options.length > 0 && versionKnown ? (
+  ) : options.length > 0 && (imageTag ? versionKnown : true) ? (
     <Controller
       name="image_tag"
       control={control}
