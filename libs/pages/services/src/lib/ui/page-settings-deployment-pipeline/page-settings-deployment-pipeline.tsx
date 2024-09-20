@@ -160,7 +160,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
             <LoaderSpinner className="mt-5 w-4" />
           </div>
         ) : (
-          <div className="flex pb-5">
+          <div className="-ml-[18px] flex pb-5">
             <Board
               emptyState={
                 <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
