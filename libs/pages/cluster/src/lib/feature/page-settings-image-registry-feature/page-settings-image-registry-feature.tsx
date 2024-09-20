@@ -8,7 +8,7 @@ import {
   useEditContainerRegistry,
 } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, Callout, Icon, Section } from '@qovery/shared/ui'
 
 export function SettingsImageRegistryFeature({ containerRegistry }: { containerRegistry: ContainerRegistryResponse }) {
   const { organizationId = '', clusterId = '' } = useParams()
@@ -39,7 +39,17 @@ export function SettingsImageRegistryFeature({ containerRegistry }: { containerR
         />
         <FormProvider {...methods}>
           <form className="flex flex-col" onSubmit={onSubmit}>
-            <ContainerRegistryForm disabledFieldsExceptConfig isClusterManaged={cluster?.kubernetes === 'MANAGED'} />
+            <ContainerRegistryForm fromEditClusterSettings cluster={cluster} />
+            {(methods.formState.dirtyFields.kind || methods.formState.dirtyFields.url) && (
+              <Callout.Root className="mt-4" color="yellow">
+                <Callout.Icon>
+                  <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  You will have to delete any image stored in the previous container registry manually
+                </Callout.Text>
+              </Callout.Root>
+            )}
             <div className="mt-2 flex justify-end">
               <Button
                 type="submit"
