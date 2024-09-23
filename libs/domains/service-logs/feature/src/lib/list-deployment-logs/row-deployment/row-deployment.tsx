@@ -11,7 +11,7 @@ const { Table } = TablePrimitives
 
 export interface RowDeploymentProps extends Row<EnvironmentLogs> {}
 
-export function RowDeployment({ id, original }: RowDeploymentProps) {
+export function RowDeployment({ index, original }: RowDeploymentProps) {
   const { utc } = useContext(UpdateTimeContext)
 
   const step = original.details?.stage?.step
@@ -20,36 +20,33 @@ export function RowDeployment({ id, original }: RowDeploymentProps) {
   const success = step === 'Deployed'
   const error = type === LogsType.ERROR || step === 'DeployedError'
 
-  const cellColors = (date = false) => {
+  const cellColors = (hasMessage = false) => {
     if (error) return 'text-red-500'
     if (success) return 'text-green-500'
-    return date ? 'text-neutral-100' : 'text-neutral-350'
+    return hasMessage ? 'text-white' : 'text-neutral-300'
   }
 
   return (
-    <Table.Row
-      className={clsx('group flex min-h-6 select-none text-xs', {
-        'bg-neutral-550 hover:bg-neutral-600': error || success,
-        'bg-neutral-700 hover:bg-neutral-650': !error && !success,
-      })}
-    >
+    <Table.Row className="group mb-0.5 flex min-h-6 select-none bg-neutral-600 text-xs hover:bg-neutral-550">
       <Table.Cell
         className={clsx(
-          'h-6 w-10  bg-neutral-700 px-2 py-1 text-right font-code text-neutral-400 group-hover:bg-neutral-550',
+          'h-6 w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-300 group-hover:bg-neutral-550',
           {
-            'bg-neutral-550 text-red-500 group-hover:bg-neutral-650': error,
-            'bg-neutral-550 text-green-500 group-hover:bg-neutral-650': success,
+            'text-red-500': error,
+            'text-green-500': success,
           }
         )}
       >
-        {id + 1}
+        {index + 1}
       </Table.Cell>
-      <Table.Cell className={`h-fit w-[158px] shrink-0 py-1 pl-2 pr-3 font-code ${cellColors()}`}>
+      <Table.Cell className={`h-fit shrink-0 py-1 pl-2 pr-3 font-code font-bold ${cellColors()}`}>
         <span title={dateUTCString(original.timestamp)}>
           {dateFullFormat(original.timestamp, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss.SS')}
         </span>
       </Table.Cell>
-      <Table.Cell className={`relative h-6 w-full select-text overflow-hidden py-1 pr-6 font-code ${cellColors(true)}`}>
+      <Table.Cell
+        className={`relative h-fit w-full select-text overflow-hidden py-1 pl-3 pr-6 font-code font-bold ${cellColors(true)}`}
+      >
         <span className="truncate whitespace-pre-wrap break-all">
           {type === LogsType.ERROR ? (
             <Ansi>{original.error?.user_log_message}</Ansi>

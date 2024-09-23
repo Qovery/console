@@ -1,20 +1,25 @@
 import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import download from 'downloadjs'
-import { type EnvironmentLogs } from 'qovery-typescript-axios'
+import { type EnvironmentLogs, type Status } from 'qovery-typescript-axios'
 import { memo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
-import useDeploymentLogs from '../hooks/use-deployment-logs/use-deployment-logs'
-import ProgressIndicator from '../progress-indicator/progress-indicator'
-import ShowNewLogsButton from '../show-new-logs-button/show-new-logs-button'
-import ShowPreviousLogsButton from '../show-previous-logs-button/show-previous-logs-button'
-import RowDeployment from './row-deployment/row-deployment'
+import { DeploymentStagePreview } from '../deployment-stage-preview/deployment-stage-preview'
+import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { ProgressIndicator } from '../progress-indicator/progress-indicator'
+import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
+import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
+import { RowDeployment } from './row-deployment/row-deployment'
 
 const { Table } = TablePrimitives
 
 const MemoizedRowDeployment = memo(RowDeployment)
 
-export function ListDeploymentLogs() {
+export interface ListDeploymentLogsInterface {
+  serviceStatus: Status
+}
+
+export function ListDeploymentLogs({ serviceStatus }: ListDeploymentLogsInterface) {
   const { organizationId, projectId, environmentId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -46,7 +51,7 @@ export function ListDeploymentLogs() {
     <div className="h-[calc(100vh-112px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 pt-0">
       <div className="relative h-full border border-neutral-500 bg-neutral-600">
         <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
-          <div></div>
+          <DeploymentStagePreview serviceStatus={serviceStatus} />
           <Button
             onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
             size="sm"
@@ -84,7 +89,7 @@ export function ListDeploymentLogs() {
               ))}
             </Table.Body>
           </Table.Root>
-          <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
+          <ProgressIndicator className="pl-2" pauseLogs={pauseLogs} message="Streaming service logs" />
         </div>
         <ShowNewLogsButton
           pauseLogs={pauseLogs}

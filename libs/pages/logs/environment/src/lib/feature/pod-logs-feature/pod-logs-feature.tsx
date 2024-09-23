@@ -10,7 +10,7 @@ export interface PodLogsFeatureProps {
   clusterId: string
 }
 
-function LinkLogs({ title, url, statusChip = true }: { title: string; url: string; statusChip?: boolean }) {
+export function LinkLogs({ title, url, statusChip = true }: { title: string; url: string; statusChip?: boolean }) {
   const { environmentId = '', serviceId = '' } = useParams()
   const location = useLocation()
 

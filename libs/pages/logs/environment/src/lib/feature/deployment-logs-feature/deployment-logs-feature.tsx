@@ -1,28 +1,27 @@
-import { type QueryClient } from '@tanstack/react-query'
 import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentLogs,
   type Status,
 } from 'qovery-typescript-axios'
-import { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { ListDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { type LoadingStatus } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { QOVERY_WS } from '@qovery/shared/util-node-env'
-import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import _DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
+// import _DeploymentLogs from '../../ui/deployment-logs/deployment-logs'
+import { LinkLogs } from '../pod-logs-feature/pod-logs-feature'
 
 export interface DeploymentLogsFeatureProps {
   environment: Environment
   statusStages?: DeploymentStageWithServicesStatuses[]
 }
 
-const DeploymentLogs = memo(_DeploymentLogs)
+// const DeploymentLogs = memo(_DeploymentLogs)
 
 export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
   if (services) {
@@ -145,7 +144,8 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
     }
   }, [messageChunks, pauseStatusLogs])
 
-  const serviceStatus = getServiceStatusesById(statusStages, serviceId)
+  // @TODO: fix `as`
+  const serviceStatus = getServiceStatusesById(statusStages, serviceId) as Status
   const hideDeploymentLogsBoolean = !(serviceStatus as Status)?.is_part_last_deployment
 
   // // Filter deployment logs by serviceId and stageId
@@ -198,9 +198,25 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   //       .otherwise(() => false)
   //   : false
 
+  if (!serviceStatus) return null
+
   return (
-    <div className="mt-[47px] w-full">
-      <ListDeploymentLogs />
+    <div className="w-full">
+      <div className="flex w-full items-center overflow-y-auto bg-neutral-900 px-1 pt-1">
+        <LinkLogs
+          title="Deployment logs"
+          url={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
+          statusChip={false}
+        />
+        <LinkLogs
+          title="Service logs"
+          url={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)}
+          statusChip={match(service)
+            .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+            .otherwise(() => true)}
+        />
+      </div>
+      <ListDeploymentLogs serviceStatus={serviceStatus} />
     </div>
   )
 
