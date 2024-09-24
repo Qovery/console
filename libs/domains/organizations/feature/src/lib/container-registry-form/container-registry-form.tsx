@@ -1,4 +1,8 @@
-import { type AvailableContainerRegistryResponse, ContainerRegistryKindEnum } from 'qovery-typescript-axios'
+import {
+  type AvailableContainerRegistryResponse,
+  type Cluster,
+  ContainerRegistryKindEnum,
+} from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -9,8 +13,8 @@ import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
 
 export interface ContainerRegistryFormProps {
-  disabledFieldsExceptConfig?: boolean
-  isClusterManaged?: boolean
+  fromEditClusterSettings?: boolean
+  cluster?: Cluster
   isEdit?: boolean
 }
 
@@ -30,8 +34,8 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
     .filter(Boolean)
 
 export function ContainerRegistryForm({
-  disabledFieldsExceptConfig = false,
-  isClusterManaged = false,
+  fromEditClusterSettings = false,
+  cluster,
   isEdit = false,
 }: ContainerRegistryFormProps) {
   const methods = useFormContext()
@@ -75,6 +79,9 @@ export function ContainerRegistryForm({
   const isEditDirty = isEdit && methods.formState.isDirty
   const watchKind: undefined | ContainerRegistryKindEnum = methods.watch('kind')
   const watchLoginType = methods.watch('config.login_type')
+  const isClusterManaged = cluster?.kubernetes === 'MANAGED'
+  const isClusterSelfManaged = cluster?.kubernetes === 'SELF_MANAGED'
+  const isClusterDemo = cluster?.is_demo
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -87,7 +94,7 @@ export function ContainerRegistryForm({
         render={({ field, fieldState: { error } }) => (
           <InputText
             dataTestId="input-name"
-            disabled={disabledFieldsExceptConfig}
+            disabled={fromEditClusterSettings}
             name={field.name}
             onChange={field.onChange}
             value={field.value}
@@ -101,7 +108,7 @@ export function ContainerRegistryForm({
         control={methods.control}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
-            disabled={disabledFieldsExceptConfig}
+            disabled={fromEditClusterSettings}
             name={field.name}
             onChange={field.onChange}
             value={field.value}
@@ -118,7 +125,7 @@ export function ContainerRegistryForm({
         }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
-            disabled={disabledFieldsExceptConfig}
+            disabled={fromEditClusterSettings ? !(isClusterSelfManaged && !isClusterDemo) : false}
             onChange={(value) => {
               methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
               methods.resetField('config')
@@ -127,7 +134,11 @@ export function ContainerRegistryForm({
             value={field.value}
             label="Type"
             error={error?.message}
-            options={getOptionsContainerRegistry(availableContainerRegistries)}
+            options={getOptionsContainerRegistry(
+              availableContainerRegistries.filter(({ kind }) =>
+                fromEditClusterSettings ? kind === 'GITHUB_CR' || kind === 'GENERIC_CR' : true
+              )
+            )}
             isSearchable
             portal
           />
