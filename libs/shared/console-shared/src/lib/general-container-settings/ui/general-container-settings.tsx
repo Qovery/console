@@ -77,6 +77,7 @@ function ImageTag({
           dataTestId="input-text-image-tag"
           isSearchable
           filterOption="startsWith"
+          isCreatable
         />
       )}
     />

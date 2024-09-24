@@ -109,7 +109,7 @@ function SelectImageVersion({
       filterOption="startsWith"
       isSearchable
       portal
-      onChange={(value) => onChange(value as any)}
+      onChange={(value) => onChange(value as string)}
       value={value}
       hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
     />
