@@ -25,20 +25,6 @@ export const reorderService = (
   return result
 }
 
-export const reorderStage = (
-  stages: DeploymentStageResponse[],
-  startIndex: number,
-  endIndex: number
-): DeploymentStageResponse[] => {
-  const cloneStages = [...stages]
-  const currentStage = [...cloneStages]
-
-  const [removed] = currentStage.splice(startIndex, 1)
-  currentStage.splice(endIndex, 0, removed)
-
-  return currentStage
-}
-
 export const move = (
   stages: DeploymentStageResponse[],
   droppableSource: DraggableLocation,

@@ -16,16 +16,10 @@ export function StageOrderModalFeature(props: StageOrderModalFeatureProps) {
   const onSubmit = async (stageId: string, targetStageId: string, after: boolean) => {
     const result = await moveDeploymentStageRequested({ stageId, targetStageId, after })
     setCurrentStages(result)
+    return result
   }
 
-  return (
-    <StageOrderModal
-      currentStages={currentStages}
-      setCurrentStages={setCurrentStages}
-      onClose={props.onClose}
-      onSubmit={onSubmit}
-    />
-  )
+  return <StageOrderModal currentStages={currentStages} onClose={props.onClose} onSubmit={onSubmit} />
 }
 
 export default StageOrderModalFeature
