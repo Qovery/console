@@ -77,6 +77,7 @@ function ImageTag({
           dataTestId="input-text-image-tag"
           isSearchable
           filterOption="startsWith"
+          isCreatable
         />
       )}
     />
@@ -98,8 +99,10 @@ function ImageTag({
           hint={
             <>
               <span className="text-orange-500">
-                No tag found. Please verify that the container registry and the image name is correct. You can still
-                enter your image tag manually.
+                Tag not found. Please verify that the container registry and the image name are correct. You can
+                manually enter it.
+                <br />
+                Note: If you have more than 500 tags for this image, only the first 500 are displayed.
               </span>
               <br />
               Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)

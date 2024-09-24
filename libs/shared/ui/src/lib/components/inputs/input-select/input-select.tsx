@@ -7,10 +7,12 @@ import Select, {
   type MultiValueProps,
   type NoticeProps,
   type OptionProps,
+  type Props as SelectProps,
   type SingleValue,
   type SingleValueProps,
   components,
 } from 'react-select'
+import CreatableSelect from 'react-select/creatable'
 import { match } from 'ts-pattern'
 import { type Value } from '@qovery/shared/interfaces'
 import { Icon } from '../../icon/icon'
@@ -40,6 +42,7 @@ export interface InputSelectProps {
   placeholder?: string
   menuPlacement?: MenuPlacement
   filterOption?: 'fuzzy' | 'startsWith'
+  isCreatable?: boolean
 }
 
 export function InputSelect({
@@ -62,6 +65,7 @@ export function InputSelect({
   menuListButton,
   menuPlacement = 'auto',
   filterOption = 'fuzzy',
+  isCreatable = false,
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -198,6 +202,53 @@ export function InputSelect({
     setHasLabelUp(hasFocus || selectedValue.length !== 0 ? 'input--label-up' : '')
   }, [hasFocus, selectedValue, setHasLabelUp])
 
+  const selectProps: SelectProps<Value, true, GroupBase<Value>> = {
+    autoFocus,
+    options,
+    isMulti,
+    components: {
+      Option,
+      MultiValue,
+      SingleValue,
+      NoOptionsMessage,
+      MenuList,
+    },
+    name: label,
+    inputId: label,
+    menuPlacement,
+    closeMenuOnSelect: !isMulti,
+    onChange: handleChange,
+    classNamePrefix: 'input-select',
+    hideSelectedOptions: false,
+    isSearchable,
+    placeholder,
+    isClearable,
+    isDisabled: disabled,
+    value: selectedItems,
+    menuPortalTarget: portal ? document.body : undefined,
+    onFocus: () => setFocused(true),
+    onBlur: () => setFocused(false),
+    styles: {
+      menuPortal: (base) => ({
+        ...base,
+        pointerEvents: 'auto',
+        marginTop: `-${document.body.style.marginTop ? document.body.style.marginTop : 0}`,
+      }),
+    },
+    defaultMenuIsOpen: isFilter ? true : undefined,
+    filterOption: match(filterOption)
+      .with('fuzzy', () => undefined)
+      .with(
+        'startsWith',
+        () =>
+          ({ value }: Value, inputValue: string) =>
+            value?.startsWith(inputValue) ?? false
+      )
+      .exhaustive(),
+  }
+
+  const SelectComponent = isCreatable ? CreatableSelect : Select
+
   return (
     <div className={className}>
       <div
@@ -226,51 +277,10 @@ export function InputSelect({
             {label}
           </label>
         )}
-        <Select
-          autoFocus={autoFocus}
-          options={options}
-          isMulti={isMulti}
+        <SelectComponent
           data-testid="select-react-select"
-          components={{
-            Option,
-            MultiValue,
-            SingleValue,
-            NoOptionsMessage,
-            MenuList,
-          }}
-          name={label}
-          inputId={label}
-          menuPlacement={menuPlacement}
-          closeMenuOnSelect={!isMulti}
-          onChange={handleChange}
-          classNamePrefix="input-select"
-          hideSelectedOptions={false}
-          isSearchable={isSearchable}
-          placeholder={placeholder}
-          isClearable={isClearable}
-          isDisabled={disabled}
-          value={selectedItems}
-          menuPortalTarget={portal ? document.body : undefined}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          styles={{
-            menuPortal: (base) => ({
-              ...base,
-              pointerEvents: 'auto',
-              // Prevent misplacement with intercom banner
-              marginTop: `-${document.body.style.marginTop ? document.body.style.marginTop : 0}`,
-            }),
-          }}
-          defaultMenuIsOpen={isFilter ? true : undefined}
-          filterOption={match(filterOption)
-            .with('fuzzy', () => undefined)
-            .with(
-              'startsWith',
-              () =>
-                ({ value }: Value, inputValue: string) =>
-                  value?.startsWith(inputValue) ?? false
-            )
-            .exhaustive()}
+          {...selectProps}
+          formatCreateLabel={(value) => `Select "${value}"`}
         />
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
