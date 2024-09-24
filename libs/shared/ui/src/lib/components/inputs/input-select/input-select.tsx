@@ -277,7 +277,11 @@ export function InputSelect({
             {label}
           </label>
         )}
-        <SelectComponent data-testid="select-react-select" {...selectProps} />
+        <SelectComponent
+          data-testid="select-react-select"
+          {...selectProps}
+          formatCreateLabel={(value) => `Select "${value}"`}
+        />
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
