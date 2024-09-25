@@ -82,6 +82,7 @@ export function ContainerRegistryForm({
   const isClusterManaged = cluster?.kubernetes === 'MANAGED'
   const isClusterSelfManaged = cluster?.kubernetes === 'SELF_MANAGED'
   const isClusterDemo = cluster?.is_demo
+  const isClusterOnPremise = cluster?.cloud_provider === 'ON_PREMISE'
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -125,7 +126,7 @@ export function ContainerRegistryForm({
         }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
-            disabled={fromEditClusterSettings ? !(isClusterSelfManaged && !isClusterDemo) : false}
+            disabled={fromEditClusterSettings ? !(isClusterSelfManaged && !isClusterDemo && isClusterOnPremise) : false}
             onChange={(value) => {
               methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
               methods.resetField('config')
