@@ -85,7 +85,7 @@ export function StatusChip(props: StatusChipProps) {
       'INVALID_CREDENTIALS',
       'RECAP',
       () => (
-        <span className="relative">
+        <span className="relative flex">
           <span className="absolute inline-flex h-full w-full animate-ping-small rounded-full bg-red-500 opacity-75" />
           <ErrorIcon className="relative rounded-full bg-white" />
         </span>

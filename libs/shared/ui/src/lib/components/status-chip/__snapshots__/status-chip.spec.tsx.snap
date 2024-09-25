@@ -44,7 +44,7 @@ exports[`StatusChip should match snapshot for ERROR status 1`] = `
     data-state="closed"
   >
     <span
-      class="relative"
+      class="relative flex"
     >
       <span
         class="absolute inline-flex h-full w-full animate-ping-small rounded-full bg-red-500 opacity-75"

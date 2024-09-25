@@ -22,7 +22,6 @@ export interface DeploymentLogsProps {
   setPauseStatusLogs: (pause: boolean) => void
   errors: ErrorLogsProps[]
   hideDeploymentLogs?: boolean
-  serviceDeploymentStatus?: ServiceDeploymentStatusEnum
   dataDeploymentHistory?: DeploymentHistoryEnvironment[]
   service?: AnyService
   serviceStatus: Status
@@ -64,54 +63,54 @@ export function DeploymentLogs({
     [logs, serviceDeploymentStatus]
   )
 
-  const deploymentsByServiceId = mergeDeploymentServices(dataDeploymentHistory).filter(
-    (deploymentHistory) => deploymentHistory.id === serviceId
-  )
+  // const deploymentsByServiceId = mergeDeploymentServices(dataDeploymentHistory).filter(
+  //   (deploymentHistory) => deploymentHistory.id === serviceId
+  // )
 
-  const placeholderDeploymentHistory = deploymentsByServiceId.length !== 0 && (
-    <div className="flex flex-col items-center text-center">
-      <div>
-        <p className="font-text-neutral-50 mb-1 font-medium text-neutral-50">
-          <span className="text-brand-400">{service?.name}</span> service was not deployed within this deployment
-          execution.
-        </p>
-        <p className="mb-10 text-sm font-normal text-neutral-300">
-          Below the list of executions where this service was deployed.
-        </p>
-      </div>
-      <div className="w-[484px] overflow-hidden rounded-lg border border-neutral-500 bg-neutral-700">
-        <div className="border-b border-neutral-500 bg-neutral-600 py-3 font-medium text-neutral-50">
-          Last deployment logs
-        </div>
-        <div className="max-h-96 overflow-y-auto p-2">
-          {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
-            <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
-              <Link
-                className={`flex w-full justify-between rounded bg-neutral-550 p-3 transition hover:bg-neutral-600 ${
-                  versionId === deploymentHistory.execution_id ? 'bg-neutral-600' : ''
-                }`}
-                to={
-                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                  DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentHistory.execution_id)
-                }
-              >
-                <span className="flex">
-                  <StatusChip className="relative top-[2px] mr-3" status={deploymentHistory.status} />
-                  <span className="text-ssm text-brand-300">{trimId(deploymentHistory.execution_id || '')}</span>
-                </span>
-                <span className="text-ssm text-neutral-300">{dateFullFormat(deploymentHistory.created_at)}</span>
-              </Link>
-            </div>
-          ))}
-        </div>
-        <div className="flex h-9 items-center justify-center border-t border-neutral-500 bg-neutral-600">
-          <p className="text-xs font-normal text-neutral-350">
-            Only the last 20 deployments of the environment over the last 30 days are available.
-          </p>
-        </div>
-      </div>
-    </div>
-  )
+  // const placeholderDeploymentHistory = deploymentsByServiceId.length !== 0 && (
+  //   <div className="flex flex-col items-center text-center">
+  //     <div>
+  //       <p className="font-text-neutral-50 mb-1 font-medium text-neutral-50">
+  //         <span className="text-brand-400">{service?.name}</span> service was not deployed within this deployment
+  //         execution.
+  //       </p>
+  //       <p className="mb-10 text-sm font-normal text-neutral-300">
+  //         Below the list of executions where this service was deployed.
+  //       </p>
+  //     </div>
+  //     <div className="w-[484px] overflow-hidden rounded-lg border border-neutral-500 bg-neutral-700">
+  //       <div className="border-b border-neutral-500 bg-neutral-600 py-3 font-medium text-neutral-50">
+  //         Last deployment logs
+  //       </div>
+  //       <div className="max-h-96 overflow-y-auto p-2">
+  //         {deploymentsByServiceId?.map((deploymentHistory: DeploymentService) => (
+  //           <div key={deploymentHistory.execution_id} className="flex items-center pb-2 last:pb-0">
+  //             <Link
+  //               className={`flex w-full justify-between rounded bg-neutral-550 p-3 transition hover:bg-neutral-600 ${
+  //                 versionId === deploymentHistory.execution_id ? 'bg-neutral-600' : ''
+  //               }`}
+  //               to={
+  //                 ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+  //                 DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentHistory.execution_id)
+  //               }
+  //             >
+  //               <span className="flex">
+  //                 <StatusChip className="relative top-[2px] mr-3" status={deploymentHistory.status} />
+  //                 <span className="text-ssm text-brand-300">{trimId(deploymentHistory.execution_id || '')}</span>
+  //               </span>
+  //               <span className="text-ssm text-neutral-300">{dateFullFormat(deploymentHistory.created_at)}</span>
+  //             </Link>
+  //           </div>
+  //         ))}
+  //       </div>
+  //       <div className="flex h-9 items-center justify-center border-t border-neutral-500 bg-neutral-600">
+  //         <p className="text-xs font-normal text-neutral-350">
+  //           Only the last 20 deployments of the environment over the last 30 days are available.
+  //         </p>
+  //       </div>
+  //     </div>
+  //   </div>
+  // )
 
   return (
     <LayoutLogs
