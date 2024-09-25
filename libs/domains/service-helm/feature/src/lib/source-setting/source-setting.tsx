@@ -135,7 +135,7 @@ export function HelmChartsSetting({
 export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
   const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
-  const { control, watch } = useFormContext()
+  const { control, watch, resetField } = useFormContext()
   const watchFieldProvider = watch('source_provider')
   const watchRepository = watch('repository')
 
@@ -170,7 +170,10 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                 value: 'HELM_REPOSITORY',
               },
             ]}
-            onChange={field.onChange}
+            onChange={(value) => {
+              resetField('repository')
+              field.onChange(value)
+            }}
             value={field.value}
             error={error?.message}
           />
@@ -189,6 +192,7 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                 control={control}
                 rules={{
                   required: 'Please select a repository.',
+                  validate: () => true,
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <InputSelect
