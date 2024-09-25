@@ -28,7 +28,6 @@ export interface LayoutLogsProps {
   errors?: ErrorLogsProps[]
   tabInformation?: ReactNode
   withLogsNavigation?: boolean
-  pauseLogs?: boolean
   lineNumbers?: boolean
   clusterBanner?: boolean
 }
@@ -47,7 +46,6 @@ export function LayoutLogs({
   children,
   errors,
   withLogsNavigation,
-  pauseLogs,
   lineNumbers,
   clusterBanner,
 }: PropsWithChildren<LayoutLogsProps>) {
@@ -90,7 +88,7 @@ export function LayoutLogs({
               )}
             </div>
             <div className="flex">
-              <ButtonsActionsLogs data={data} refScrollSection={refScrollSection} pauseLogs={pauseLogs} />
+              <ButtonsActionsLogs data={data} refScrollSection={refScrollSection} />
             </div>
           </div>
           <div

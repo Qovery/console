@@ -6,11 +6,10 @@ import { type LayoutLogsDataProps } from '../layout-logs'
 export interface ButtonsActionsLogsProps {
   refScrollSection: RefObject<HTMLDivElement>
   data: LayoutLogsDataProps
-  pauseLogs?: boolean
 }
 
 export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
-  const { refScrollSection, data, pauseLogs } = props
+  const { refScrollSection, data } = props
 
   const downloadJSON = () => {
     download(JSON.stringify(data?.items), `data-${Date.now()}.json`, 'text/json;charset=utf-8')
@@ -29,7 +28,7 @@ export function ButtonsActionsLogs(props: ButtonsActionsLogsProps) {
 
   useEffect(() => {
     // auto scroll when we add data
-    !pauseLogs && forcedScroll && forcedScroll(true)
+    forcedScroll && forcedScroll(true)
   }, [data])
 
   return (
