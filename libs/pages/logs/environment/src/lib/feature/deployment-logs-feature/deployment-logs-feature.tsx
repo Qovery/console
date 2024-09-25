@@ -72,11 +72,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
   if (!serviceStatus && isFetchedService)
     return (
       <div className="flex h-full w-full items-center overflow-y-auto bg-neutral-900 px-1 pt-1">
-        <div className="h-full w-full border border-neutral-500 bg-neutral-650">
-          <div className="pt-11 text-center">
-            <p className="text-sm font-normal text-neutral-300">No history for this deployment.</p>
-          </div>
-        </div>
+        <div className="h-full w-full border border-neutral-500 bg-neutral-650"></div>
       </div>
     )
 
