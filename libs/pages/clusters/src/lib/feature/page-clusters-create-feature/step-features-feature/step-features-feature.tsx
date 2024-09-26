@@ -1,7 +1,7 @@
 import { KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCloudProviderFeatures } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterFeaturesData, type Subnets } from '@qovery/shared/interfaces'
@@ -10,8 +10,6 @@ import {
   CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_SUMMARY_URL,
-  CLUSTERS_CREATION_URL,
-  CLUSTERS_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -23,8 +21,7 @@ export const removeEmptySubnet = (objects?: Subnets[]) =>
 
 export function StepFeaturesFeature() {
   useDocumentTitle('Features - Create Cluster')
-  const { organizationId = '' } = useParams()
-  const { setFeaturesData, generalData, featuresData, resourcesData, setCurrentStep } =
+  const { setFeaturesData, generalData, featuresData, resourcesData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const { data: features } = useCloudProviderFeatures({
     cloudProvider: generalData?.cloud_provider ?? 'AWS',
@@ -32,15 +29,13 @@ export function StepFeaturesFeature() {
   const navigate = useNavigate()
 
   const goToBack = () => {
-    const path = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL
-
     match(generalData?.cloud_provider)
-      .with('GCP', () => navigate(path + CLUSTERS_CREATION_GENERAL_URL))
+      .with('GCP', () => navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL))
       .otherwise(() => {
         if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
-          navigate(path + CLUSTERS_CREATION_REMOTE_URL)
+          navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
         } else {
-          navigate(path + CLUSTERS_CREATION_RESOURCES_URL)
+          navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
         }
       })
   }
@@ -52,8 +47,8 @@ export function StepFeaturesFeature() {
   useEffect(() => {
     generalData?.cloud_provider !== 'GCP' &&
       !resourcesData?.cluster_type &&
-      navigate(CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
-  }, [generalData?.cloud_provider, resourcesData?.cluster_type, navigate, organizationId])
+      navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL)
+  }, [generalData?.cloud_provider, resourcesData?.cluster_type, navigate, creationFlowUrl])
 
   const methods = useForm<ClusterFeaturesData>({
     defaultValues: featuresData,
@@ -122,8 +117,7 @@ export function StepFeaturesFeature() {
       }
     }
 
-    const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-    navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+    navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
   })
 
   useEffect(() => {

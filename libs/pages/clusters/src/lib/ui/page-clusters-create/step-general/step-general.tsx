@@ -1,5 +1,5 @@
 import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qovery-typescript-axios'
-import { type FormEventHandler, useMemo, useState } from 'react'
+import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -60,6 +60,15 @@ export function StepGeneral(props: StepGeneralProps) {
       })) || [],
     [currentProvider?.regions]
   )
+
+  const watchCloudProvider = watch('cloud_provider')
+
+  useEffect(() => {
+    const currentProvider = cloudProviders?.filter(
+      (cloud) => cloud.short_name === watchCloudProvider && cloud.regions
+    )[0]
+    setCurrentProvider(currentProvider as CloudProvider)
+  }, [cloudProviders, watchCloudProvider])
 
   return (
     <Section>
@@ -206,10 +215,6 @@ export function StepGeneral(props: StepGeneralProps) {
                         className="mb-3"
                         options={buildCloudProviders}
                         onChange={(value) => {
-                          const currentProvider = cloudProviders?.filter(
-                            (cloud) => cloud.short_name === value && cloud.regions
-                          )[0]
-                          setCurrentProvider(currentProvider as CloudProvider)
                           field.onChange(value)
                           setResourcesData && setResourcesData(defaultResourcesData)
                         }}
