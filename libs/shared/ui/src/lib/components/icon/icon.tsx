@@ -12,6 +12,7 @@ import AWSGrayIcon from './icons/aws-gray'
 import AzureIcon from './icons/azure'
 import BuildpacksIcon from './icons/buildpacks'
 import ChildrenArrow from './icons/children-arrow'
+import CivoIcon from './icons/civo'
 import CloudformationIcon from './icons/cloudformationIcon'
 import { ContainerIcon } from './icons/container'
 import CronJobIcon from './icons/cron-job'
@@ -30,6 +31,8 @@ import GitIcon from './icons/git'
 import GoogleIcon from './icons/google'
 import HelmOfficialIcon from './icons/helm-official'
 import HelmServiceIcon from './icons/helm-service'
+import HetznerIcon from './icons/hetzner'
+import IbmCloudIcon from './icons/ibm-cloud'
 import InformationIcon from './icons/information'
 import KubernetesIcon from './icons/kubernetes'
 import LifecycleJobIcon from './icons/lifecycle-job'
@@ -37,6 +40,8 @@ import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
 import MicrosoftIcon from './icons/microsoft'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
+import OracleCloudIcon from './icons/oracle-cloud'
+import OvhCloudIcon from './icons/ovh-cloud'
 import PostgresqlIcon from './icons/postgresql'
 import QoveryIcon from './icons/qovery'
 import RedisIcon from './icons/redis'
@@ -162,6 +167,16 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
       return <KubernetesIcon {...formattedProps} />
     case IconEnum.CLOUDFORMATION:
       return <CloudformationIcon {...formattedProps} />
+    case IconEnum.IBM_CLOUD:
+      return <IbmCloudIcon {...formattedProps} />
+    case IconEnum.HETZNER:
+      return <HetznerIcon {...formattedProps} />
+    case IconEnum.OVH_CLOUD:
+      return <OvhCloudIcon {...formattedProps} />
+    case IconEnum.ORACLE_CLOUD:
+      return <OracleCloudIcon {...formattedProps} />
+    case IconEnum.CIVO:
+      return <CivoIcon {...formattedProps} />
     default:
       return <IconFa {...formattedProps} />
   }
