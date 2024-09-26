@@ -41,8 +41,8 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
     {
       'text-white hover:border-green-500': status === 'SUCCESS',
       'text-white hover:border-red-500': status === 'ERROR',
-      'border-brand-500 bg-neutral-500 text-white hover:border-brand-500': isBuildingOrDeploying,
-      'border-neutral-300 bg-neutral-500': !isBuildingOrDeploying && isFilterActive(type),
+      'text-white hover:border-brand-500': isBuildingOrDeploying,
+      'border-brand-500 bg-neutral-500': isBuildingOrDeploying && isFilterActive(type),
       'border-green-500': status === 'SUCCESS' && isFilterActive(type),
       'border-red-500 bg-neutral-500': status === 'ERROR' && isFilterActive(type),
     }

@@ -68,7 +68,7 @@ describe('FiltersStageStep', () => {
     const buildButton = screen.getByText('Build').closest('button')
     const deployButton = screen.getByText('Deploy').closest('button')
 
-    expect(buildButton).toHaveClass('border-brand-500', 'bg-neutral-500')
+    expect(buildButton).toHaveClass('border-neutral-500', 'bg-neutral-650')
     expect(deployButton).not.toHaveClass('border-brand-500', 'bg-neutral-500')
   })
 })

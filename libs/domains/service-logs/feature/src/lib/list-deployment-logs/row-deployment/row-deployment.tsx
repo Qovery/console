@@ -20,32 +20,22 @@ export function RowDeployment({ index, original }: RowDeploymentProps) {
   const success = step === 'Deployed'
   const error = type === LogsType.ERROR || step === 'DeployedError'
 
-  const cellColors = (hasMessage = false) => {
-    if (error) return 'text-red-500'
-    if (success) return 'text-green-500'
-    return hasMessage ? 'text-white' : 'text-neutral-300'
-  }
-
   return (
     <Table.Row className="group mb-0.5 flex min-h-6 select-none bg-neutral-600 text-xs hover:bg-neutral-550">
-      <Table.Cell
-        className={clsx(
-          'h-6 w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-300 group-hover:bg-neutral-550',
-          {
-            'text-red-500': error,
-            'text-green-500': success,
-          }
-        )}
-      >
+      <Table.Cell className="h-6 w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-300 group-hover:bg-neutral-550">
         {index + 1}
       </Table.Cell>
-      <Table.Cell className={`h-fit shrink-0 py-1 pl-2 pr-3 font-code font-bold ${cellColors()}`}>
+      <Table.Cell className="h-fit shrink-0 py-1 pl-2 pr-3 font-code font-bold text-neutral-300">
         <span title={dateUTCString(original.timestamp)}>
           {dateFullFormat(original.timestamp, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss.SS')}
         </span>
       </Table.Cell>
       <Table.Cell
-        className={`relative h-fit w-full select-text overflow-hidden py-1 pl-3 pr-6 font-code font-bold ${cellColors(true)}`}
+        className={clsx('relative h-fit w-full select-text overflow-hidden py-1 pl-3 pr-6 font-code font-bold', {
+          'text-red-500': error,
+          'text-green-500': success,
+          'text-white': !error && !success,
+        })}
       >
         <span className="truncate whitespace-pre-wrap break-all">
           {type === LogsType.ERROR ? (
