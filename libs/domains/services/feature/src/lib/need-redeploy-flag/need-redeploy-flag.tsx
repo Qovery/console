@@ -17,6 +17,8 @@ export function NeedRedeployFlag() {
   })
   const { mutate: deployService } = useDeployService({ environmentId })
 
+  if (!serviceDeploymentStatus) return null
+
   const serviceDeploymentStatusState =
     serviceDeploymentStatus?.service_deployment_status ?? ServiceDeploymentStatusEnum.NEVER_DEPLOYED
 
