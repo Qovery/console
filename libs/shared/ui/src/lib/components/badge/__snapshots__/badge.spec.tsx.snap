@@ -17,7 +17,7 @@ exports[`Badge shoud match size snapshot 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+      class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
     >
       Foobar
     </span>
