@@ -24,6 +24,7 @@ import {
   APPLICATION_URL,
   AUDIT_LOGS_URL,
   CLUSTERS_CREATION_URL,
+  CLUSTERS_TEMPLATE_CREATION_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
   DATABASE_URL,
@@ -198,6 +199,12 @@ export const ROUTER: RouterProps[] = [
   },
   {
     path: `${CLUSTERS_URL()}${CLUSTERS_CREATION_URL}/*`,
+    component: <PageClusterCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${CLUSTERS_URL()}${CLUSTERS_TEMPLATE_CREATION_URL()}/*`,
     component: <PageClusterCreateFeature />,
     protected: true,
     layout: false,

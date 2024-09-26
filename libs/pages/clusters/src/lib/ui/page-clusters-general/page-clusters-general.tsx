@@ -1,7 +1,7 @@
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { ClusterCard } from '@qovery/domains/clusters/feature'
-import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { EmptyState, Heading, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export interface PageClustersGeneralProps {
@@ -13,7 +13,7 @@ export interface PageClustersGeneralProps {
 export function PageClustersGeneral({ loading, clusters, clusterStatuses }: PageClustersGeneralProps) {
   const { organizationId = '' } = useParams()
 
-  const goToCreateCluster = CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL
+  const goToCreateCluster = CLUSTERS_URL(organizationId) + CLUSTERS_NEW_URL
 
   return (
     <div className="flex w-full flex-1 flex-col justify-between">
