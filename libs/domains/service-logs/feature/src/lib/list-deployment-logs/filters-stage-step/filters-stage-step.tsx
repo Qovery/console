@@ -1,5 +1,7 @@
 import clsx from 'clsx'
 import { type ServiceStepMetric, type StateEnum, type Status } from 'qovery-typescript-axios'
+import { type ServiceType } from 'qovery-ws-typescript-axios'
+import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { StatusChip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -32,6 +34,20 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
       return deployStep?.status
     })
     .exhaustive()
+
+  const [isFirstLoad, setIsFirstLoad] = useState(true)
+  useEffect(() => {
+    if (isFirstLoad) {
+      if (status === 'ERROR') {
+        toggleColumnFilter(type)
+      }
+      setIsFirstLoad(false)
+    } else {
+      toggleColumnFilter(type)
+    }
+    // On the first load, if status is 'ERROR', the column filter is toggled.
+    // For all subsequent renders, the column filter is toggled regardless of the status.
+  }, [status, toggleColumnFilter, isFirstLoad])
 
   const isBuildingOrDeploying =
     (type === 'BUILD' && status === 'BUILDING') || (type === 'DEPLOY' && status === 'DEPLOYING')
@@ -70,12 +86,14 @@ export interface FiltersStageStepProps {
   serviceStatus: Status
   toggleColumnFilter: (type: FilterType) => void
   isFilterActive: (type: FilterType) => boolean
+  serviceType?: ServiceType
 }
 
 export function FiltersStageStep({
   serviceStatus: { steps, state },
   toggleColumnFilter,
   isFilterActive,
+  serviceType,
 }: FiltersStageStepProps) {
   if (!steps?.details) return <div />
 
@@ -95,18 +113,22 @@ export function FiltersStageStep({
 
   return (
     <div className="flex items-center">
-      <StageStep
-        type="BUILD"
-        state={state}
-        steps={categorizedSteps.build}
-        isFilterActive={isFilterActive}
-        toggleColumnFilter={toggleColumnFilter}
-      />
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="8" fill="none" viewBox="0 0 16 8">
-        <path fill="#383E50" d="M0 8a4 4 0 000-8v8z"></path>
-        <path fill="#383E50" d="M2 3H14V5H2z"></path>
-        <path fill="#383E50" d="M16 8a4 4 0 110-8v8z"></path>
-      </svg>
+      {serviceType !== 'CONTAINER' && (
+        <>
+          <StageStep
+            type="BUILD"
+            state={state}
+            steps={categorizedSteps.build}
+            isFilterActive={isFilterActive}
+            toggleColumnFilter={toggleColumnFilter}
+          />
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="8" fill="none" viewBox="0 0 16 8">
+            <path fill="#383E50" d="M0 8a4 4 0 000-8v8z"></path>
+            <path fill="#383E50" d="M2 3H14V5H2z"></path>
+            <path fill="#383E50" d="M16 8a4 4 0 110-8v8z"></path>
+          </svg>
+        </>
+      )}
       <StageStep
         type="DEPLOY"
         state={state}

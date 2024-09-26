@@ -16,7 +16,7 @@ import {
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
+import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
 import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -43,9 +43,10 @@ export function ListDeploymentLogs({
   deploymentHistoryEnvironment,
   serviceStatus,
 }: ListDeploymentLogsProps) {
-  const { organizationId, projectId, environmentId, serviceId, versionId } = useParams()
+  const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
+  const { data: serviceType } = useServiceType({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
   const {
     data: logs = [],
@@ -58,7 +59,7 @@ export function ListDeploymentLogs({
   } = useDeploymentLogs({
     organizationId,
     projectId,
-    environmentId,
+    environmentId: environment.id,
     serviceId,
     versionId,
   })
@@ -188,6 +189,7 @@ export function ListDeploymentLogs({
         <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
           <FiltersStageStep
             serviceStatus={serviceStatus}
+            serviceType={serviceType}
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
