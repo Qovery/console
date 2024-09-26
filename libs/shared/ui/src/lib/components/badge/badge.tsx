@@ -31,7 +31,7 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
     {
       variant: 'outline',
       color: 'neutral',
-      className: ['border-neutral-250', 'text-neutral-350', 'dark:border-neutral-350'],
+      className: ['border-neutral-250', 'text-neutral-350', 'dark:border-neutral-350', 'dark:text-neutral-300'],
     },
     /*
     // Generate all colors

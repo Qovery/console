@@ -179,7 +179,7 @@ exports[`ClusterCard should render correctly 1`] = `
         Production
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
         data-accent-color="neutral"
       >
         <svg
@@ -266,25 +266,25 @@ exports[`ClusterCard should render correctly 1`] = `
         Qovery managed
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
         data-accent-color="neutral"
       >
         EKS
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
         data-accent-color="neutral"
       >
         us-east-1
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
         data-accent-color="neutral"
       >
         1.21
       </span>
       <span
-        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
         data-accent-color="neutral"
       >
         t3.medium

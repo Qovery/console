@@ -98,7 +98,7 @@ export function RowServiceLogs({
                 color="neutral"
                 size="xs"
                 className={twMerge(
-                  clsx('max-h-fit gap-1.5 whitespace-nowrap font-code', {
+                  clsx('gap-1.5 whitespace-nowrap font-code', {
                     'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400': isFilterActive(
                       'container_name',
                       original.container_name
