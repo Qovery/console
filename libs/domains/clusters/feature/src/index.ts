@@ -1,5 +1,6 @@
 export * from './lib/cluster-type/cluster-type'
 export * from './lib/cluster-delete-modal/cluster-delete-modal'
+export * from './lib/cluster-installation-guide-modal/cluster-installation-guide-modal'
 export * from './lib/cluster-action-toolbar/cluster-action-toolbar'
 export * from './lib/cluster-avatar/cluster-avatar'
 export * from './lib/kubeconfig-preview/kubeconfig-preview'
