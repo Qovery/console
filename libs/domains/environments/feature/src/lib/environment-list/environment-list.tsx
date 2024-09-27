@@ -14,8 +14,7 @@ import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
-  CLUSTERS_CREATION_GENERAL_URL,
-  CLUSTERS_CREATION_URL,
+  CLUSTERS_NEW_URL,
   CLUSTERS_URL,
   CLUSTER_URL,
   ENVIRONMENT_LOGS_URL,
@@ -270,7 +269,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                     />
                   ),
                 })
-              : navigate(CLUSTERS_URL(project.organization?.id) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
+              : navigate(CLUSTERS_URL(project.organization?.id) + CLUSTERS_NEW_URL)
           }}
         >
           {clusterAvailable ? 'New environment' : 'Create a Cluster'} <Icon className="ml-2" iconName="circle-plus" />
