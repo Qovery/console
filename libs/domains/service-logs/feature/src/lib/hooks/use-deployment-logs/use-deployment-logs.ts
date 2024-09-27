@@ -1,6 +1,7 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -24,6 +25,8 @@ export function useDeploymentLogs({
   serviceId,
   versionId,
 }: UseDeploymentLogsProps) {
+  const { hash, pathname, search } = useLocation()
+  const navigate = useNavigate()
   const { data: environment } = useEnvironment({ environmentId })
 
   // States for controlling log actions, showing new, previous or paused logs
@@ -92,29 +95,55 @@ export function useDeploymentLogs({
   // Filter deployment logs by serviceId and stageId
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId
   // Filter by the same transmitter ID and "Environment" or "TaskManager" type
-  const logsByServiceId = useMemo(
-    () =>
-      logs
-        .filter((currentData: EnvironmentLogs) => {
-          const { stage, transmitter } = currentData.details
-          const isDeleteStage = stage?.name === 'delete'
-          const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
-          const isMatchingTransmitter =
-            transmitter?.type === 'Environment' || transmitter?.type === 'TaskManager' || transmitter?.id === serviceId
+  const logsByServiceId = useMemo(() => {
+    let filteredLogs = logs.filter((currentData: EnvironmentLogs) => {
+      const { stage, transmitter } = currentData.details
+      const isDeleteStage = stage?.name === 'delete'
+      const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
+      const isMatchingTransmitter =
+        transmitter?.type === 'Environment' || transmitter?.type === 'TaskManager' || transmitter?.id === serviceId
 
-          // Include the entry if any of the following conditions are true:
-          // 1. The stage name is "delete".
-          // 2. stageId is empty or equal with current stageId.
-          // 3. The transmitter matches serviceId and has a type of "Environment" or "TaskManager".
-          return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter
-        })
-        .filter((log, index, array) => (showPreviousLogs || index >= array.length - 500 ? true : +log.timestamp > now)),
-    [logs, stageId, serviceId, now, showPreviousLogs]
-  )
+      // Include the entry if any of the following conditions are true:
+      // 1. The stage name is "delete".
+      // 2. stageId is empty or equal with current stageId.
+      // 3. The transmitter matches serviceId and has a type of "Environment" or "TaskManager".
+      return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter
+    })
+
+    // Apply hash filtering if available
+    if (hash) {
+      const hashIndex = filteredLogs.findIndex((log) => {
+        const key = encodeURIComponent(log.timestamp)
+        return hash.includes(key)
+      })
+
+      if (hashIndex !== -1) {
+        const startIndex = Math.max(0, hashIndex - 249)
+        const endIndex = Math.min(filteredLogs.length, hashIndex + 251)
+        filteredLogs = filteredLogs.slice(startIndex, endIndex)
+      } else {
+        // If hash is not found, apply non-hash case filtering
+        filteredLogs = filteredLogs.filter((log, index, array) =>
+          showPreviousLogs || index >= array.length - CHUNK_SIZE ? true : +log.timestamp > now
+        )
+      }
+    } else {
+      // Keep the non-hash cases
+      filteredLogs = filteredLogs.filter((log, index, array) =>
+        showPreviousLogs || index >= array.length - CHUNK_SIZE ? true : +log.timestamp > now
+      )
+    }
+
+    return filteredLogs
+  }, [logs, stageId, serviceId, now, showPreviousLogs, hash])
 
   return {
     data: logsByServiceId,
-    setNewMessagesAvailable,
+    setNewMessagesAvailable: (newMessagesAvailable: boolean) => {
+      setNewMessagesAvailable(newMessagesAvailable)
+      // Remove hash from the url
+      navigate(pathname + search, { replace: true })
+    },
     newMessagesAvailable,
     pauseLogs,
     setPauseLogs,

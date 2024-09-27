@@ -14,7 +14,7 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
 import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
@@ -43,6 +43,7 @@ export function ListDeploymentLogs({
   deploymentHistoryEnvironment,
   serviceStatus,
 }: ListDeploymentLogsProps) {
+  const { hash } = useLocation()
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -71,6 +72,20 @@ export function ListDeploymentLogs({
 
     !pauseLogs && section.scroll(0, section.scrollHeight)
   }, [logs, pauseLogs])
+
+  // `useEffect` used to scroll to the hash id
+  useEffect(() => {
+    const section = refScrollSection.current
+    if (hash && section) {
+      setPauseLogs(true)
+      const row = document.getElementById(hash.substring(1)) // Remove the '#' from the hash
+      if (row) {
+        // Scroll the section to the row's position
+        const rowPosition = row.getBoundingClientRect().top + section.scrollTop - 200
+        section.scrollTo({ top: rowPosition, behavior: 'smooth' })
+      }
+    }
+  }, [logs, setPauseLogs, setShowPreviousLogs, hash])
 
   const columnHelper = createColumnHelper<EnvironmentLogs>()
 
