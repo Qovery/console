@@ -78,7 +78,7 @@ export function StepGeneral(props: StepGeneralProps) {
       </div>
 
       <form onSubmit={onSubmit}>
-        <div className="mb-10 text-sm">
+        <div className="mb-10 hidden text-sm">
           <Controller
             name="installation_type"
             control={control}
