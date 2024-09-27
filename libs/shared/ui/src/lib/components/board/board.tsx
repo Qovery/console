@@ -227,7 +227,7 @@ const BoardCard = ({ children, cardId, columnId }: BoardCardProps) => {
         layoutId={cardId}
         draggable="true"
         onDragStart={(e) => handleDragStart(e as unknown as DragEvent)}
-        className="cursor-grab rounded border border-neutral-200 bg-neutral-50 px-2 py-3 active:cursor-grabbing"
+        className={`cursor-grab rounded border border-neutral-200 bg-neutral-50 px-2 py-3 active:cursor-grabbing active:outline active:outline-green-500`}
       >
         {children}
       </motion.div>
