@@ -10,6 +10,18 @@ import {
 } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
+/**
+ * Inspired by https://www.youtube.com/watch?v=O5lZqqy7VQE
+ * https://www.hover.dev/components/boards
+ * https://codesandbox.io/p/sandbox/fvy4m4
+ *
+ * NOTE: This component doesn't fully follow the "compound pattern" as
+ * - it requires complex typing
+ * - it needs to pass props to child components like drag n drop handles
+ * - it is rarely used so no big of a need to be highly configurable
+ * However in the future it can be turn into a compound pattern using a react context
+ */
+
 interface BoardContextType {
   boardId: string
 }
