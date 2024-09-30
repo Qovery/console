@@ -246,6 +246,144 @@ export function PageNewFeature() {
       ),
     })
 
+  const cloudProviders: CardClusterProps[] = [
+    {
+      title: 'Local machine (demo)',
+      icon: Kubernetes,
+      selectedCloudProvider: 'OTHER',
+      selectedInstallationType: 'demo',
+      openInstallationGuideModal: () => openInstallationGuideModal({ isDemo: true }),
+    },
+    {
+      title: 'Amazon Web Services',
+      options: [
+        {
+          title: 'Qovery Managed',
+          description:
+            'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
+          icon: Qovery,
+          recommended: true,
+          selectedCloudProvider: 'AWS',
+          selectedInstallationType: 'managed',
+        },
+        {
+          title: 'Self-managed',
+          description:
+            'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
+          icon: AWS,
+          selectedCloudProvider: 'AWS',
+          selectedInstallationType: 'self-managed',
+          openInstallationGuideModal,
+        },
+      ],
+      icon: AWS,
+    },
+    {
+      title: 'Google Cloud Platform',
+      options: [
+        {
+          title: 'Qovery Managed',
+          description:
+            'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
+          icon: Qovery,
+          recommended: true,
+          selectedCloudProvider: 'GCP',
+          selectedInstallationType: 'managed',
+        },
+        {
+          title: 'Self-managed',
+          description:
+            'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
+          icon: <Icon name="GCP" />,
+          selectedCloudProvider: 'GCP',
+          selectedInstallationType: 'self-managed',
+          openInstallationGuideModal,
+        },
+      ],
+      icon: GCP,
+    },
+    {
+      title: 'Scaleway',
+      options: [
+        {
+          title: 'Qovery Managed',
+          description:
+            'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
+          icon: Qovery,
+          recommended: true,
+          selectedCloudProvider: 'SCW',
+          selectedInstallationType: 'managed',
+        },
+        {
+          title: 'Self-managed',
+          description:
+            'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
+          icon: <Icon name="SCW" />,
+          selectedCloudProvider: 'SCW',
+          selectedInstallationType: 'self-managed',
+          openInstallationGuideModal,
+        },
+      ],
+      icon: <Icon name="SCW" />,
+    },
+    {
+      title: 'Microsoft Azure',
+      selectedCloudProvider: 'AZURE',
+      selectedInstallationType: 'self-managed',
+      icon: Azure,
+      openInstallationGuideModal,
+    },
+    {
+      title: 'OVH Cloud',
+      selectedCloudProvider: 'OVH_CLOUD',
+      selectedInstallationType: 'self-managed',
+      icon: <Icon name="OVH_CLOUD" />,
+      openInstallationGuideModal,
+    },
+    {
+      title: 'Digital Ocean',
+      selectedCloudProvider: 'DIGITAL_OCEAN',
+      selectedInstallationType: 'self-managed',
+      icon: DigitalOcean,
+      openInstallationGuideModal,
+    },
+    {
+      title: 'Oracle Cloud Infrastructure',
+      selectedCloudProvider: 'ORACLE_CLOUD',
+      selectedInstallationType: 'self-managed',
+      icon: <Icon name="ORACLE_CLOUD" />,
+      openInstallationGuideModal,
+    },
+    {
+      title: 'Hetzner',
+      selectedCloudProvider: 'HETZNER',
+      selectedInstallationType: 'self-managed',
+      icon: <Icon name="HETZNER" />,
+      openInstallationGuideModal,
+    },
+    {
+      title: 'IBM Cloud',
+      selectedCloudProvider: 'IBM_CLOUD',
+      selectedInstallationType: 'self-managed',
+      icon: <Icon name="IBM_CLOUD" />,
+      openInstallationGuideModal,
+    },
+    {
+      title: 'Civo',
+      selectedCloudProvider: 'CIVO',
+      selectedInstallationType: 'self-managed',
+      icon: <Icon name="CIVO" />,
+      openInstallationGuideModal,
+    },
+    {
+      title: 'Other',
+      selectedCloudProvider: 'OTHER',
+      selectedInstallationType: 'self-managed',
+      icon: Kubernetes,
+      openInstallationGuideModal,
+    },
+  ]
+
   return (
     <Section className="flex w-full flex-1 flex-col gap-8 rounded-t bg-white p-8 pb-24">
       <Link color="brand" to={CLUSTERS_URL(organizationId)} className="text-sm">
@@ -259,147 +397,16 @@ export function PageNewFeature() {
             <Heading>Qovery on your local machine</Heading>
             <p className="text-xs text-neutral-350">Quickly test and validate the Qovery solution on your computer.</p>
           </div>
-          <CardCluster
-            title="Local machine (demo)"
-            icon={Kubernetes}
-            selectedCloudProvider="OTHER"
-            selectedInstallationType="demo"
-            openInstallationGuideModal={() => openInstallationGuideModal({ isDemo: true })}
-          />
+          <CardCluster {...cloudProviders[0]} />
         </Section>
         <Section className="grid grid-cols-3 gap-4">
           <div className="col-span-3 gap-2">
             <Heading>Or choose your hosting mode</Heading>
             <p className="text-xs text-neutral-350">Manage your infrastructure across different hosting mode.</p>
           </div>
-          <CardCluster
-            title="Amazon Web Services"
-            options={[
-              {
-                title: 'Qovery Managed',
-                description:
-                  'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
-                icon: Qovery,
-                recommended: true,
-                selectedCloudProvider: 'AWS',
-                selectedInstallationType: 'managed',
-              },
-              {
-                title: 'Self-managed',
-                description:
-                  'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
-                icon: AWS,
-                selectedCloudProvider: 'AWS',
-                selectedInstallationType: 'self-managed',
-                openInstallationGuideModal,
-              },
-            ]}
-            icon={AWS}
-          />
-          <CardCluster
-            title="Google Cloud Platform"
-            options={[
-              {
-                title: 'Qovery Managed',
-                description:
-                  'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
-                icon: Qovery,
-                recommended: true,
-                selectedCloudProvider: 'GCP',
-                selectedInstallationType: 'managed',
-              },
-              {
-                title: 'Self-managed',
-                description:
-                  'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
-                icon: <Icon name="GCP" />,
-                selectedCloudProvider: 'GCP',
-                selectedInstallationType: 'self-managed',
-                openInstallationGuideModal,
-              },
-            ]}
-            icon={GCP}
-          />
-          <CardCluster
-            title="Scaleway"
-            options={[
-              {
-                title: 'Qovery Managed',
-                description:
-                  'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
-                icon: Qovery,
-                recommended: true,
-                selectedCloudProvider: 'SCW',
-                selectedInstallationType: 'managed',
-              },
-              {
-                title: 'Self-managed',
-                description:
-                  'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
-                icon: <Icon name="SCW" />,
-                selectedCloudProvider: 'SCW',
-                selectedInstallationType: 'self-managed',
-                openInstallationGuideModal,
-              },
-            ]}
-            icon={<Icon name="SCW" />}
-          />
-          <CardCluster
-            title="Microsoft Azure"
-            selectedCloudProvider="AZURE"
-            selectedInstallationType="self-managed"
-            icon={Azure}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
-          <CardCluster
-            title="OVH Cloud"
-            selectedCloudProvider="OVH_CLOUD"
-            selectedInstallationType="self-managed"
-            icon={<Icon name="OVH_CLOUD" />}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
-          <CardCluster
-            title="Digital Ocean"
-            selectedCloudProvider="DIGITAL_OCEAN"
-            selectedInstallationType="self-managed"
-            icon={DigitalOcean}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
-          <CardCluster
-            title="Oracle Cloud Infrastructure"
-            selectedCloudProvider="ORACLE_CLOUD"
-            selectedInstallationType="self-managed"
-            icon={<Icon name="ORACLE_CLOUD" />}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
-          <CardCluster
-            title="Hetzner"
-            selectedCloudProvider="HETZNER"
-            selectedInstallationType="self-managed"
-            icon={<Icon name="HETZNER" />}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
-          <CardCluster
-            title="IBM Cloud"
-            selectedCloudProvider="IBM_CLOUD"
-            selectedInstallationType="self-managed"
-            icon={<Icon name="IBM_CLOUD" />}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
-          <CardCluster
-            title="Civo"
-            selectedCloudProvider="CIVO"
-            selectedInstallationType="self-managed"
-            icon={<Icon name="CIVO" />}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
-          <CardCluster
-            title="Other"
-            selectedCloudProvider="OTHER"
-            selectedInstallationType="self-managed"
-            icon={Kubernetes}
-            openInstallationGuideModal={openInstallationGuideModal}
-          />
+          {cloudProviders.slice(1).map((props) => (
+            <CardCluster key={props.title} {...props} />
+          ))}
         </Section>
       </div>
     </Section>
