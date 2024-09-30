@@ -4,7 +4,6 @@
   "sourceRoot": "libs/domains/service-logs/feature/src",
   "projectType": "library",
   "tags": ["scope:domain", "type:feature", "slice:service-logs"],
-  "implicitDependencies": ["!shared-console-shared"],
   "// targets": "to see all targets run: nx show project domains-service-logs-feature --web",
   "targets": {}
 }
