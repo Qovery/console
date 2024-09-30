@@ -1,11 +1,11 @@
-import { render } from '__tests__/utils/setup-jest'
 import {
   type DeploymentStageWithServicesStatuses,
   ServiceDeploymentStatusEnum,
   StateEnum,
 } from 'qovery-typescript-axios'
 import { Route, Routes } from 'react-router-dom'
-import { LogsType } from '@qovery/shared/enums'
+import { environmentFactoryMock } from '@qovery/shared/factories'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import DeploymentLogsFeature, {
   type DeploymentLogsFeatureProps,
   getServiceStatusesById,
@@ -44,25 +44,12 @@ const services: DeploymentStageWithServicesStatuses[] = [
 
 describe('DeploymentLogsFeature', () => {
   const props: DeploymentLogsFeatureProps = {
-    logs: [
-      {
-        type: LogsType.INFO,
-        timestamp: new Date().toString(),
-        details: {
-          stage: {
-            step: 'Deployed',
-          },
-        },
-        message: {
-          safe_message: 'Log 1',
-        },
-      },
-    ],
+    environment: environmentFactoryMock(1)[0],
     statusStages: services,
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       <Routes location="/organization/1/project/2/environment/3/logs/">
         <Route
           path="/organization/1/project/2/environment/3/logs/4/deployment-logs"

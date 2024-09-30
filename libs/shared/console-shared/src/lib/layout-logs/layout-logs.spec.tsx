@@ -5,7 +5,7 @@ import { LayoutLogs, type LayoutLogsProps } from './layout-logs'
 
 describe('LayoutLogs', () => {
   const props: LayoutLogsProps = {
-    type: 'deployment',
+    type: 'infra',
     data: {
       loadingStatus: 'loaded',
       items: clusterLogFactoryMock(2, true),
@@ -87,56 +87,5 @@ describe('LayoutLogs', () => {
     const tabsLogs = screen.getByTestId('tabs-logs')
 
     expect(tabsLogs).toBeInTheDocument()
-  })
-
-  it('should have a navigation', () => {
-    props.data = {
-      loadingStatus: 'loaded',
-      items: [
-        {
-          created_at: 1667834316521,
-          message: 'message',
-          pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
-          version: '53deb16f853aef759b8be84fbeec96e9727',
-        },
-      ],
-    }
-    props.withLogsNavigation = true
-
-    const { getByText } = renderWithProviders(<LayoutLogs {...props} />)
-
-    getByText('Deployment logs')
-    getByText('Service logs')
-  })
-
-  it('should have debug checkbox when debug is true', () => {
-    props.data = {
-      loadingStatus: 'loaded',
-      items: [
-        {
-          created_at: 1667834316521,
-          message: 'message',
-          pod_name: 'app-z9d11ee4f-7d754477b6-k9sl7',
-          version: '53deb16f853aef759b8be84fbeec96e9727',
-        },
-        {
-          created_at: 1667834316521,
-          message: 'message',
-          pod_name: ' NGINX',
-          version: '53deb16f853aef759b8be84fbeec96e9722',
-        },
-      ],
-    }
-    props.enabledNginx = true
-    props.setEnabledNginx = jest.fn()
-
-    renderWithProviders(<LayoutLogs {...props} />)
-
-    screen.getByTestId('checkbox-debug')
-  })
-
-  it('should have progressing bar', () => {
-    renderWithProviders(<LayoutLogs isProgressing={true} {...props} />)
-    screen.getByRole('progressbar')
   })
 })

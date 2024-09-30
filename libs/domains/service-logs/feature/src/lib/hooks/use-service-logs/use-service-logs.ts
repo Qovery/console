@@ -57,7 +57,7 @@ export function useServiceLogs({
     return () => {
       clearTimeout(handler)
     }
-  }, [serviceMessagesMap.current.size, DEBOUNCE_TIME])
+  }, [serviceMessagesMap.current.size])
   const now = useMemo(() => Date.now(), [])
 
   const infraMessageHandler = useCallback(

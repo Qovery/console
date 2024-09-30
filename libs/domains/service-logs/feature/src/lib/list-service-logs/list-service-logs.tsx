@@ -306,10 +306,7 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
               setShowPreviousLogs={setShowPreviousLogs}
               setPauseLogs={setPauseLogs}
             />
-            <Table.Root
-              className="o
-            w-full text-xs"
-            >
+            <Table.Root className="w-full text-xs">
               <Table.Body className="divide-y-0">
                 {table.getRowModel().rows.map((row) => {
                   if (row.original.type === 'INFRA') {
