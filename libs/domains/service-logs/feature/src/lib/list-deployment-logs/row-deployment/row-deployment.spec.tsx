@@ -5,6 +5,7 @@ describe('RowDeployment', () => {
   const mockProps = {
     index: 0,
     original: {
+      id: 1,
       timestamp: '2023-04-01T12:00:00Z',
       message: {
         safe_message: 'Test log message',

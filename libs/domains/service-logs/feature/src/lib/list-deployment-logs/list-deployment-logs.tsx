@@ -14,7 +14,7 @@ import { match } from 'ts-pattern'
 import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
 import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
-import { type EnvironmentLogsIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { type EnvironmentLogsId, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
@@ -72,20 +72,20 @@ export function ListDeploymentLogs({
   useEffect(() => {
     const section = refScrollSection.current
     if (hash && section) {
-      setShowPreviousLogs(true)
       setPauseLogs(true)
+      setShowPreviousLogs(true)
       const row = document.getElementById(hash.substring(1)) // Remove the '#' from the hash
       if (row) {
         // Scroll the section to the row's position
-        const rowPosition = row.getBoundingClientRect().top + section.scrollTop - 200
+        const rowPosition = row.getBoundingClientRect().top + section.scrollTop - 160
         section.scrollTo({ top: rowPosition, behavior: 'smooth' })
       }
     }
-  }, [logs, setPauseLogs, setShowPreviousLogs, hash])
+  }, [logs, setPauseLogs, setNewMessagesAvailable, setShowPreviousLogs, hash])
 
-  const columnHelper = createColumnHelper<EnvironmentLogsIds>()
+  const columnHelper = createColumnHelper<EnvironmentLogsId>()
 
-  const customFilter: FilterFn<EnvironmentLogsIds> = (row, columnId, filterValue) => {
+  const customFilter: FilterFn<EnvironmentLogsId> = (row, columnId, filterValue) => {
     if (filterValue === 'ALL') return true
 
     const rowValue = row.getValue(columnId)
@@ -236,7 +236,7 @@ export function ListDeploymentLogs({
               setPauseLogs={setPauseLogs}
             />
           )}
-          <Table.Root className="w-full text-xs">
+          <Table.Root className="h-full w-full text-xs">
             <Table.Body className="divide-y-0">
               {table.getRowModel().rows.map((row) => (
                 <MemoizedRowDeployment key={row.id} {...row} />

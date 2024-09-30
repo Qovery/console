@@ -8,12 +8,12 @@ import { Ansi, Icon, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { type EnvironmentLogsIds } from '../../hooks/use-deployment-logs/use-deployment-logs'
+import { type EnvironmentLogsId } from '../../hooks/use-deployment-logs/use-deployment-logs'
 import { UpdateTimeContext } from '../../update-time-context/update-time-context'
 
 const { Table } = TablePrimitives
 
-export interface RowDeploymentProps extends Row<EnvironmentLogsIds> {}
+export interface RowDeploymentProps extends Row<EnvironmentLogsId> {}
 
 export function RowDeployment({ original }: RowDeploymentProps) {
   const { utc } = useContext(UpdateTimeContext)
@@ -30,8 +30,7 @@ export function RowDeployment({ original }: RowDeploymentProps) {
   const success = step === 'Deployed'
   const error = type === LogsType.ERROR || step === 'DeployedError'
 
-  const rowId = `${original.id}-${original.timestamp}`
-  const encodedRowId = encodeURIComponent(rowId)
+  const rowId = `${original.id}`
 
   useEffect(() => {
     const cleanHash = decodeURIComponent(hash.replace('#', ''))
@@ -46,7 +45,7 @@ export function RowDeployment({ original }: RowDeploymentProps) {
 
   return (
     <Table.Row
-      id={encodedRowId}
+      id={rowId}
       className={twMerge(
         clsx('group mb-0.5 flex min-h-6 select-none bg-neutral-600 text-xs', {
           'hover:bg-neutral-550': !isHighlighted,
@@ -54,7 +53,7 @@ export function RowDeployment({ original }: RowDeploymentProps) {
         })
       )}
     >
-      <Table.Cell className="h-6 w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-300 group-hover:bg-neutral-550 group-hover:delay-1000">
+      <Table.Cell className="h-6 min-w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-300 group-hover:bg-neutral-550 group-hover:delay-1000">
         <Tooltip content="Copy row URL">
           <span className="relative block">
             <span className={`group-hover:opacity-0 ${isHighlighted ? 'opacity-0' : ''}`}>{original.id}</span>
@@ -66,7 +65,7 @@ export function RowDeployment({ original }: RowDeploymentProps) {
               })}
               onClick={() => {
                 setCopyLinkIcon('check')
-                copyToClipboard(`${currentUrl}#${encodedRowId}`)
+                copyToClipboard(`${currentUrl}#${rowId}`)
                 setTimeout(() => setCopyLinkIcon('link'), 1000)
                 if (isHighlighted) navigate(pathname)
               }}
