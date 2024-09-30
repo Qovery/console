@@ -34,10 +34,6 @@ export function RowDeployment({ original }: RowDeploymentProps) {
 
   useEffect(() => {
     const cleanHash = decodeURIComponent(hash.replace('#', ''))
-    if (cleanHash === rowId) {
-      console.log('cleanHash: ', cleanHash)
-      console.log('rowId: ', rowId)
-    }
     setIsHighlighted(cleanHash === rowId)
   }, [hash, rowId])
 
