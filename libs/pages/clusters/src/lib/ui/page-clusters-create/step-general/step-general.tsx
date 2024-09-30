@@ -8,7 +8,6 @@ import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qove
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
 import {
-  BlockContent,
   Button,
   Callout,
   ExternalLink,
@@ -17,8 +16,6 @@ import {
   IconFlag,
   InputSelect,
   LoaderSpinner,
-  Popover,
-  RadioGroup,
   Section,
 } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -78,95 +75,6 @@ export function StepGeneral(props: StepGeneralProps) {
       </div>
 
       <form onSubmit={onSubmit}>
-        <div className="mb-10 hidden text-sm">
-          <Controller
-            name="installation_type"
-            control={control}
-            rules={{
-              required: 'Please select an installation type.',
-            }}
-            render={({ field }) => (
-              <BlockContent title="Installation type">
-                <Popover.Root>
-                  <Popover.Trigger>
-                    <span className="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600">
-                      Which should I choose? <Icon className="text-xs" name="circle-question" />
-                    </span>
-                  </Popover.Trigger>
-                  <Popover.Content side="left" className="relative text-sm text-neutral-350" style={{ width: 440 }}>
-                    <span className="mb-2 font-medium text-neutral-400">How to choose the installation type</span>
-                    <p>
-                      <ul className="list-disc pl-4">
-                        <li>
-                          Choose Qovery Managed if you are not familiar with Kubernetes or you don't want to bother with
-                          it and delegate infrastructure management to Qovery. Additional Qovery Managed clusters have
-                          an impact to your bill (depending on your contract type).
-                        </li>
-                        <li>
-                          Choose Self-Managed otherwise. Note that you will have to manage any upgrade on your
-                          Kubernetes cluster and the Helm charts deployed within it (including the Qovery applications).{' '}
-                        </li>
-                        <li>Choose Local Demo if you want to install Qovery on your local machine for demo/testing.</li>
-                      </ul>
-                    </p>
-                    <Popover.Close className="absolute right-4 top-4">
-                      <button type="button">
-                        <Icon name="icon-solid-xmark text-lg leading-4 font-thin text-neutral-400" />
-                      </button>
-                    </Popover.Close>
-                  </Popover.Content>
-                </Popover.Root>
-                <RadioGroup.Root
-                  className="mt-3 flex flex-col gap-4"
-                  defaultValue={field.value}
-                  onValueChange={field.onChange}
-                >
-                  <label className="flex gap-3">
-                    <span>
-                      <RadioGroup.Item value="LOCAL_DEMO" />
-                    </span>
-                    <span>
-                      <span className="font-medium text-neutral-400">
-                        Local Demo{' '}
-                        <span className="ml-0.5 inline-block rounded bg-brand-500 px-1 text-xs font-normal text-neutral-50">
-                          3min to setup
-                        </span>
-                      </span>
-                      <p className="text-neutral-350">
-                        You will install Qovery on your local machine. Only for demo/testing purposes.
-                      </p>
-                    </span>
-                  </label>
-                  <label className="flex gap-3">
-                    <span>
-                      <RadioGroup.Item value="MANAGED" />
-                    </span>
-                    <span>
-                      <span className="font-medium text-neutral-400">Qovery Managed</span>
-                      <p className="text-neutral-350">
-                        Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your
-                        cloud provider account.
-                      </p>
-                    </span>
-                  </label>
-                  <label className="flex gap-3">
-                    <span>
-                      <RadioGroup.Item value="SELF_MANAGED" />
-                    </span>
-                    <span>
-                      <span className="font-medium text-neutral-400">Self-Managed</span>
-                      <p className="text-neutral-350">
-                        You will manage the infrastructure, including any update/ upgrade. <br /> Advanced Kubernetes
-                        knowledge required.
-                      </p>
-                    </span>
-                  </label>
-                </RadioGroup.Root>
-              </BlockContent>
-            )}
-          />
-        </div>
-
         {watch('installation_type') === 'MANAGED' && (
           <>
             <div className="mb-10">
