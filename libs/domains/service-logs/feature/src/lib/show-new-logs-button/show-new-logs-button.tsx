@@ -1,4 +1,5 @@
 import { type Dispatch, type SetStateAction } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Icon } from '@qovery/shared/ui'
 
 export interface ShowNewLogsButtonProps {
@@ -8,6 +9,9 @@ export interface ShowNewLogsButtonProps {
 }
 
 export function ShowNewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailable }: ShowNewLogsButtonProps) {
+  const navigate = useNavigate()
+  const { hash, pathname, search } = useLocation()
+
   if (pauseLogs && newMessagesAvailable) {
     return (
       <Button
@@ -16,7 +20,10 @@ export function ShowNewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailabl
         radius="full"
         size="md"
         type="button"
-        onClick={() => setPauseLogs(false)}
+        onClick={() => {
+          setPauseLogs(false)
+          if (hash) navigate(pathname + search)
+        }}
       >
         New logs
         <Icon iconName="arrow-down-to-line" />

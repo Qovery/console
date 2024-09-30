@@ -1,7 +1,7 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -30,8 +30,7 @@ export function useDeploymentLogs({
   serviceId,
   versionId,
 }: UseDeploymentLogsProps) {
-  const navigate = useNavigate()
-  const { hash, pathname, search } = useLocation()
+  const { hash } = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
 
   // States for controlling log actions, showing new, previous or paused logs
@@ -41,7 +40,7 @@ export function useDeploymentLogs({
   const [debounceTime, setDebounceTime] = useState(1000)
 
   const [logs, setLogs] = useState<EnvironmentLogIds[]>([])
-  const [messageChunks, setMessageChunks] = useState<EnvironmentLogIds[][]>([])
+  const [messageChunks, setMessageChunks] = useState<EnvironmentLogs[][]>([])
 
   const { stageId } = useContext(ServiceStageIdsContext)
   const now = useMemo(() => Date.now(), [])
@@ -51,11 +50,10 @@ export function useDeploymentLogs({
       setNewMessagesAvailable(true)
       setMessageChunks((prevChunks) => {
         const lastChunk = prevChunks[prevChunks.length - 1] || []
-        const newChunk = message.map((log, index) => ({ ...log, id: lastChunk.length + index + 1 }))
         if (lastChunk.length < CHUNK_SIZE) {
-          return [...prevChunks.slice(0, -1), [...lastChunk, ...newChunk]]
+          return [...prevChunks.slice(0, -1), [...lastChunk, ...message]]
         } else {
-          return [...prevChunks, newChunk]
+          return [...prevChunks, [...message]]
         }
       })
     },
@@ -84,10 +82,11 @@ export function useDeploymentLogs({
         setMessageChunks((prevChunks) => prevChunks.slice(1))
         setLogs((prevLogs) => {
           const combinedLogs = [...prevLogs, ...messageChunks[0]]
-          return [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
+          const uniqueLogs = [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
+          return uniqueLogs.map((log, index) => ({ ...log, id: index + 1 }))
         })
 
-        if (logs.length > 1000) {
+        if (!hash && logs.length > 1000) {
           setDebounceTime(100)
         }
       }
@@ -96,7 +95,7 @@ export function useDeploymentLogs({
     return () => {
       clearTimeout(timerId)
     }
-  }, [messageChunks, pauseLogs])
+  }, [messageChunks, pauseLogs, hash])
 
   // Filter deployment logs by serviceId and stageId
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId

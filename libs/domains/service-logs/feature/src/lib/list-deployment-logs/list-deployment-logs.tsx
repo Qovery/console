@@ -74,14 +74,16 @@ export function ListDeploymentLogs({
     if (hash && section) {
       setPauseLogs(true)
       setShowPreviousLogs(true)
-      const row = document.getElementById(hash.substring(1)) // Remove the '#' from the hash
+      const row = document.getElementById(hash.substring(1)) // remove the '#' from the hash
       if (row) {
-        // Scroll the section to the row's position
-        const rowPosition = row.getBoundingClientRect().top + section.scrollTop - 160
-        section.scrollTo({ top: rowPosition, behavior: 'smooth' })
+        // scroll the section to the row's position
+        setTimeout(() => {
+          const rowPosition = row.getBoundingClientRect().top + section.scrollTop - 160
+          section.scrollTo({ top: rowPosition, behavior: 'smooth' })
+        }, 50)
       }
     }
-  }, [logs, setPauseLogs, setNewMessagesAvailable, setShowPreviousLogs, hash])
+  }, [logs, setPauseLogs, setShowPreviousLogs, hash])
 
   const columnHelper = createColumnHelper<EnvironmentLogIds>()
 

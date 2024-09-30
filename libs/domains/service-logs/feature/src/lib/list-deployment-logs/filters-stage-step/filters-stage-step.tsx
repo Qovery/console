@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { type ServiceStepMetric, type StateEnum, type Status } from 'qovery-typescript-axios'
 import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { StatusChip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -18,6 +19,7 @@ interface StageStepProps {
 }
 
 function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: StageStepProps) {
+  const { hash } = useLocation()
   const totalDurationSec = steps.reduce((acc, step) => acc + (step.duration_sec || 0), 0)
 
   const buildStep = steps.find((s) => s.step_name === 'BUILD')
@@ -37,6 +39,8 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
 
   const [isFirstLoad, setIsFirstLoad] = useState(true)
   useEffect(() => {
+    if (hash) return
+
     if (isFirstLoad) {
       if (status === 'ERROR') {
         toggleColumnFilter(type)
@@ -48,7 +52,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
     }
     // On the first load, if status is 'ERROR', the column filter is toggled
     // For all subsequent renders, the column filter is toggled only if the status is 'ERROR'
-  }, [status, toggleColumnFilter, isFirstLoad])
+  }, [status, toggleColumnFilter, isFirstLoad, hash])
 
   const isBuildingOrDeploying =
     (type === 'BUILD' && status === 'BUILDING') || (type === 'DEPLOY' && status === 'DEPLOYING')
