@@ -7,19 +7,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
-import {
-  type DeploymentHistoryEnvironment,
-  type Environment,
-  type EnvironmentLogs,
-  type Status,
-} from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironment, type Environment, type Status } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
 import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
-import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { type EnvironmentLogsIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
@@ -77,6 +72,7 @@ export function ListDeploymentLogs({
   useEffect(() => {
     const section = refScrollSection.current
     if (hash && section) {
+      setShowPreviousLogs(true)
       setPauseLogs(true)
       const row = document.getElementById(hash.substring(1)) // Remove the '#' from the hash
       if (row) {
@@ -87,9 +83,9 @@ export function ListDeploymentLogs({
     }
   }, [logs, setPauseLogs, setShowPreviousLogs, hash])
 
-  const columnHelper = createColumnHelper<EnvironmentLogs>()
+  const columnHelper = createColumnHelper<EnvironmentLogsIds>()
 
-  const customFilter: FilterFn<EnvironmentLogs> = (row, columnId, filterValue) => {
+  const customFilter: FilterFn<EnvironmentLogsIds> = (row, columnId, filterValue) => {
     if (filterValue === 'ALL') return true
 
     const rowValue = row.getValue(columnId)

@@ -1,24 +1,25 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type Row } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { LogsType } from '@qovery/shared/enums'
 import { Ansi, Icon, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
+import { type EnvironmentLogsIds } from '../../hooks/use-deployment-logs/use-deployment-logs'
 import { UpdateTimeContext } from '../../update-time-context/update-time-context'
 
 const { Table } = TablePrimitives
 
-export interface RowDeploymentProps extends Row<EnvironmentLogs> {}
+export interface RowDeploymentProps extends Row<EnvironmentLogsIds> {}
 
-export function RowDeployment({ index, original, id }: RowDeploymentProps) {
+export function RowDeployment({ original }: RowDeploymentProps) {
   const { utc } = useContext(UpdateTimeContext)
   const [, copyToClipboard] = useCopyToClipboard()
-  const { hash } = useLocation()
+  const navigate = useNavigate()
+  const { pathname, hash } = useLocation()
 
   const [isHighlighted, setIsHighlighted] = useState(false)
   const [copyLinkIcon, setCopyLinkIcon] = useState<IconName>('link')
@@ -29,11 +30,15 @@ export function RowDeployment({ index, original, id }: RowDeploymentProps) {
   const success = step === 'Deployed'
   const error = type === LogsType.ERROR || step === 'DeployedError'
 
-  const rowId = `${index + 1}-${original.timestamp}`
+  const rowId = `${original.id}-${original.timestamp}`
   const encodedRowId = encodeURIComponent(rowId)
 
   useEffect(() => {
     const cleanHash = decodeURIComponent(hash.replace('#', ''))
+    if (cleanHash === rowId) {
+      console.log('cleanHash: ', cleanHash)
+      console.log('rowId: ', rowId)
+    }
     setIsHighlighted(cleanHash === rowId)
   }, [hash, rowId])
 
@@ -51,11 +56,11 @@ export function RowDeployment({ index, original, id }: RowDeploymentProps) {
     >
       <Table.Cell className="h-6 w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-300 group-hover:bg-neutral-550 group-hover:delay-1000">
         <Tooltip content="Copy row URL">
-          <span>
-            <span className={`group-hover:hidden ${isHighlighted ? 'hidden' : ''}`}>{index + 1}</span>
+          <span className="relative block">
+            <span className={`group-hover:opacity-0 ${isHighlighted ? 'opacity-0' : ''}`}>{original.id}</span>
             <button
-              className={clsx('block text-sm text-neutral-50', {
-                'hidden group-hover:block': !isHighlighted,
+              className={clsx('absolute left-0 top-0 text-sm text-neutral-50', {
+                'opacity-0 group-hover:opacity-100': !isHighlighted,
                 'text-purple-400': isHighlighted,
                 'hover:text-purple-400': !isHighlighted,
               })}
@@ -63,6 +68,7 @@ export function RowDeployment({ index, original, id }: RowDeploymentProps) {
                 setCopyLinkIcon('check')
                 copyToClipboard(`${currentUrl}#${encodedRowId}`)
                 setTimeout(() => setCopyLinkIcon('link'), 1000)
+                if (isHighlighted) navigate(pathname)
               }}
             >
               <Icon iconName={copyLinkIcon} iconStyle="regular" />

@@ -15,6 +15,11 @@ export interface UseDeploymentLogsProps {
   versionId?: string
 }
 
+export interface EnvironmentLogsIds extends EnvironmentLogs {
+  // Needed for row UI indicator
+  id: number
+}
+
 const CHUNK_SIZE = 500
 
 // This hook simplifies the process of fetching and managing deployment logs data
@@ -35,8 +40,8 @@ export function useDeploymentLogs({
   const [pauseLogs, setPauseLogs] = useState(false)
   const [debounceTime, setDebounceTime] = useState(1000)
 
-  const [logs, setLogs] = useState<EnvironmentLogs[]>([])
-  const [messageChunks, setMessageChunks] = useState<EnvironmentLogs[][]>([])
+  const [logs, setLogs] = useState<EnvironmentLogsIds[]>([])
+  const [messageChunks, setMessageChunks] = useState<EnvironmentLogsIds[][]>([])
 
   const { stageId } = useContext(ServiceStageIdsContext)
   const now = useMemo(() => Date.now(), [])
@@ -46,10 +51,11 @@ export function useDeploymentLogs({
       setNewMessagesAvailable(true)
       setMessageChunks((prevChunks) => {
         const lastChunk = prevChunks[prevChunks.length - 1] || []
+        const newChunk = message.map((log, index) => ({ ...log, id: lastChunk.length + index + 1 }))
         if (lastChunk.length < CHUNK_SIZE) {
-          return [...prevChunks.slice(0, -1), [...lastChunk, ...message]]
+          return [...prevChunks.slice(0, -1), [...lastChunk, ...newChunk]]
         } else {
-          return [...prevChunks, [...message]]
+          return [...prevChunks, newChunk]
         }
       })
     },
@@ -96,7 +102,7 @@ export function useDeploymentLogs({
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId
   // Filter by the same transmitter ID and "Environment" or "TaskManager" type
   const logsByServiceId = useMemo(() => {
-    let filteredLogs = logs.filter((currentData: EnvironmentLogs) => {
+    let filteredLogs = logs.filter((currentData: EnvironmentLogsIds) => {
       const { stage, transmitter } = currentData.details
       const isDeleteStage = stage?.name === 'delete'
       const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
@@ -123,14 +129,14 @@ export function useDeploymentLogs({
         filteredLogs = filteredLogs.slice(startIndex, endIndex)
       } else {
         // If hash is not found, apply non-hash case filtering
-        filteredLogs = filteredLogs.filter((log, index, array) =>
-          showPreviousLogs || index >= array.length - CHUNK_SIZE ? true : +log.timestamp > now
+        filteredLogs = filteredLogs.filter((log) =>
+          showPreviousLogs || log.id >= logs.length - CHUNK_SIZE ? true : +log.timestamp > now
         )
       }
     } else {
       // Keep the non-hash cases
-      filteredLogs = filteredLogs.filter((log, index, array) =>
-        showPreviousLogs || index >= array.length - CHUNK_SIZE ? true : +log.timestamp > now
+      filteredLogs = filteredLogs.filter((log) =>
+        showPreviousLogs || log.id >= logs.length - CHUNK_SIZE ? true : +log.timestamp > now
       )
     }
 
