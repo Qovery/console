@@ -14,7 +14,7 @@ import { match } from 'ts-pattern'
 import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
 import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
-import { type EnvironmentLogsId, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
@@ -83,9 +83,9 @@ export function ListDeploymentLogs({
     }
   }, [logs, setPauseLogs, setNewMessagesAvailable, setShowPreviousLogs, hash])
 
-  const columnHelper = createColumnHelper<EnvironmentLogsId>()
+  const columnHelper = createColumnHelper<EnvironmentLogIds>()
 
-  const customFilter: FilterFn<EnvironmentLogsId> = (row, columnId, filterValue) => {
+  const customFilter: FilterFn<EnvironmentLogIds> = (row, columnId, filterValue) => {
     if (filterValue === 'ALL') return true
 
     const rowValue = row.getValue(columnId)

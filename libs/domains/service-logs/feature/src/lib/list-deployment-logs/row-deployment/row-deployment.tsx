@@ -8,12 +8,12 @@ import { Ansi, Icon, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { type EnvironmentLogsId } from '../../hooks/use-deployment-logs/use-deployment-logs'
+import { type EnvironmentLogIds } from '../../hooks/use-deployment-logs/use-deployment-logs'
 import { UpdateTimeContext } from '../../update-time-context/update-time-context'
 
 const { Table } = TablePrimitives
 
-export interface RowDeploymentProps extends Row<EnvironmentLogsId> {}
+export interface RowDeploymentProps extends Row<EnvironmentLogIds> {}
 
 export function RowDeployment({ original }: RowDeploymentProps) {
   const { utc } = useContext(UpdateTimeContext)

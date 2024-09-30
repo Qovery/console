@@ -15,7 +15,7 @@ export interface UseDeploymentLogsProps {
   versionId?: string
 }
 
-export interface EnvironmentLogsId extends EnvironmentLogs {
+export interface EnvironmentLogIds extends EnvironmentLogs {
   // Needed for row UI indicator
   id: number
 }
@@ -40,8 +40,8 @@ export function useDeploymentLogs({
   const [pauseLogs, setPauseLogs] = useState(false)
   const [debounceTime, setDebounceTime] = useState(1000)
 
-  const [logs, setLogs] = useState<EnvironmentLogsId[]>([])
-  const [messageChunks, setMessageChunks] = useState<EnvironmentLogsId[][]>([])
+  const [logs, setLogs] = useState<EnvironmentLogIds[]>([])
+  const [messageChunks, setMessageChunks] = useState<EnvironmentLogIds[][]>([])
 
   const { stageId } = useContext(ServiceStageIdsContext)
   const now = useMemo(() => Date.now(), [])
@@ -103,7 +103,7 @@ export function useDeploymentLogs({
   // Filter by the same transmitter ID and "Environment" or "TaskManager" type
   const logsByServiceId = useMemo(() => {
     return logs
-      .filter((currentData: EnvironmentLogsId) => {
+      .filter((currentData: EnvironmentLogIds) => {
         const { stage, transmitter } = currentData.details
         const isDeleteStage = stage?.name === 'delete'
         const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
