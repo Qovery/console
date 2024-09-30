@@ -140,11 +140,13 @@ function CardCluster({ title, description, icon, ...props }: CardClusterProps) {
         {expanded ? (
           <div className="flex w-full flex-col gap-8">
             <div className="relative flex gap-6">
-              {typeof icon === 'string' ? (
-                <img className="select-none" width={52} height={52} src={icon} alt={title} />
-              ) : (
-                cloneElement(icon as ReactElement, { className: 'w-[52px]' })
-              )}
+              <div className="flex w-14 items-center justify-center">
+                {typeof icon === 'string' ? (
+                  <img className="select-none" width={52} height={52} src={icon} alt={title} />
+                ) : (
+                  cloneElement(icon as ReactElement, { className: 'w-[52px]' })
+                )}
+              </div>
               <div>
                 <h3 className="mb-1 text-base font-medium">{title}</h3>
                 <p className="max-w-96 text-ssm text-neutral-350">{description}</p>
@@ -169,7 +171,7 @@ function CardCluster({ title, description, icon, ...props }: CardClusterProps) {
           </div>
         ) : (
           <>
-            <span className="relative">
+            <span className="relative flex w-14 items-center justify-center">
               {typeof icon === 'string' ? (
                 <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
               ) : (
@@ -202,7 +204,7 @@ function CardCluster({ title, description, icon, ...props }: CardClusterProps) {
           openInstallationGuideModal()
         }}
       >
-        <div className="flex items-center">
+        <div className="flex w-14 items-center justify-center">
           {typeof icon === 'string' ? (
             <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
           ) : (
