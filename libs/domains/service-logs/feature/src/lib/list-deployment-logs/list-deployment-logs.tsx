@@ -7,19 +7,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
-import {
-  type DeploymentHistoryEnvironment,
-  type Environment,
-  type EnvironmentLogs,
-  type Status,
-} from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironment, type Environment, type Status } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
 import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
-import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
+import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
@@ -43,6 +38,7 @@ export function ListDeploymentLogs({
   deploymentHistoryEnvironment,
   serviceStatus,
 }: ListDeploymentLogsProps) {
+  const { hash } = useLocation()
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
@@ -72,9 +68,26 @@ export function ListDeploymentLogs({
     !pauseLogs && section.scroll(0, section.scrollHeight)
   }, [logs, pauseLogs])
 
-  const columnHelper = createColumnHelper<EnvironmentLogs>()
+  // `useEffect` used to scroll to the hash id
+  useEffect(() => {
+    const section = refScrollSection.current
+    if (hash && section) {
+      setPauseLogs(true)
+      setShowPreviousLogs(true)
+      const row = document.getElementById(hash.substring(1)) // remove the '#' from the hash
+      if (row) {
+        // scroll the section to the row's position
+        setTimeout(() => {
+          const rowPosition = row.getBoundingClientRect().top + section.scrollTop - 160
+          section.scrollTo({ top: rowPosition, behavior: 'smooth' })
+        }, 50)
+      }
+    }
+  }, [logs, setPauseLogs, setShowPreviousLogs, hash])
 
-  const customFilter: FilterFn<EnvironmentLogs> = (row, columnId, filterValue) => {
+  const columnHelper = createColumnHelper<EnvironmentLogIds>()
+
+  const customFilter: FilterFn<EnvironmentLogIds> = (row, columnId, filterValue) => {
     if (filterValue === 'ALL') return true
 
     const rowValue = row.getValue(columnId)

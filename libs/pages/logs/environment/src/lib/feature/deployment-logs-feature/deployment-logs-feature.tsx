@@ -76,6 +76,8 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       </div>
     )
 
+  if (!serviceStatus) return null
+
   return (
     <div className="w-full">
       <div className="flex w-full items-center overflow-y-auto bg-neutral-900 px-1 pt-1">
