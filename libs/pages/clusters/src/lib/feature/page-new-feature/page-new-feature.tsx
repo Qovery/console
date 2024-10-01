@@ -53,14 +53,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
           cloneElement(icon as ReactElement, { className: 'w-[24px] mt-1 select-none' })
         )}
         <span className="text-start">
-          <span className="inline-block text-ssm font-medium text-neutral-400">
-            {title}
-            {recommended && (
-              <span className="relative -top-0.5 ml-1 inline-block rounded bg-brand-500 px-1 text-2xs text-neutral-50">
-                Recommended
-              </span>
-            )}
-          </span>
+          <span className="inline-block items-center text-ssm font-medium text-neutral-400">{title}</span>
           <span className="inline-block text-xs text-neutral-350">{description}</span>
         </span>
       </button>
@@ -82,10 +75,10 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
           cloneElement(icon as ReactElement, { className: 'w-[24px] mt-1 select-none' })
         )}
         <span className="text-start">
-          <span className="inline-block text-ssm font-medium text-neutral-400">
+          <span className="inline-flex items-center text-ssm font-medium text-neutral-400">
             {title}
             {recommended && (
-              <span className="relative -top-0.5 ml-1 inline-block rounded bg-brand-500 px-1 text-2xs text-neutral-50">
+              <span className="relative ml-1.5 inline-block rounded bg-brand-500 px-1 text-2xs text-neutral-50">
                 Recommended
               </span>
             )}
@@ -391,7 +384,12 @@ export function PageNewFeature() {
         Back to clusters
       </Link>
       <div className="mx-auto flex w-[1024px] flex-col gap-10">
-        <Heading className="mb-2 text-center text-2xl">Install cluster</Heading>
+        <div className="flex flex-col text-center">
+          <Heading className="mb-2 text-2xl">Install new cluster</Heading>
+          <p className="mb-4 text-sm text-neutral-350">
+            Configure your Qovery cluster to run on your chosen cloud provider.
+          </p>
+        </div>
         <Section className="grid grid-cols-3 gap-4">
           <div className="col-span-3 gap-2">
             <Heading>Qovery on your local machine</Heading>
