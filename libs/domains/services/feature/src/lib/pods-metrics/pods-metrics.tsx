@@ -84,7 +84,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
 
   const columns = useMemo(() => {
     const podsColumn = columnHelper.accessor('podName', {
-      header: 'Pods',
+      header: () => `Pods (${pods.length})`,
       cell: (info) => {
         const podName = info.getValue()
         return podName.length > 23 ? (
