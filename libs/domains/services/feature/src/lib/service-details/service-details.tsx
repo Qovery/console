@@ -186,7 +186,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           </>
         )}
         <ResourceUnit value={storage && formatMetric({ current: storage, unit: 'GiB' })} description="Storage (max)" />
-        <ResourceUnit value={instance_type} description="Instance type" />
+        {mode !== 'CONTAINER' && <ResourceUnit value={instance_type} description="Instance type" />}
       </>
     ))
     .with({ serviceType: ServiceTypeEnum.JOB }, (job) => {
