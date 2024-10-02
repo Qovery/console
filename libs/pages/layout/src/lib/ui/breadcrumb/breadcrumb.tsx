@@ -4,6 +4,7 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { EnvironmentMode } from '@qovery/domains/environments/feature'
+import { BreadcrumbDeploymentHistory, BreadcrumbDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -14,12 +15,14 @@ import {
   CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
+  DEPLOYMENT_LOGS_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
   INFRA_LOGS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
+  SERVICE_LOGS_URL,
   SETTINGS_URL,
 } from '@qovery/shared/routes'
 import { Button, Icon, type MenuData, type MenuItemProps, Tooltip } from '@qovery/shared/ui'
@@ -40,23 +43,17 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
   const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
   const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
+  const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })
+  const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(), end: false })
+
   const location = useLocation()
   const navigate = useNavigate()
   const currentOrganization = organizations?.find((organization) => organizationId === organization.id)
 
-  const locationIsApplicationLogs = location.pathname.includes(
-    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
-  )
-  const locationIsDeploymentLogs = location.pathname.includes(
-    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
-  )
-
   const locationIsClusterLogs = location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
 
   const matchLogsRoute =
-    location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) ||
-    locationIsApplicationLogs ||
-    locationIsDeploymentLogs
+    location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) || matchServiceLogs || matchDeploymentLogs
 
   const clustersMenu: MenuData = [
     {
@@ -172,6 +169,38 @@ export function Breadcrumb(props: BreadcrumbProps) {
     },
   ]
 
+  const servicesMenu = (deploymentLogs = false): MenuData => [
+    {
+      title: deploymentLogs ? 'Deployment logs' : 'Service logs',
+      search: true,
+      sortAlphabetically: true,
+      items: services.map((service) => ({
+        name: service.name,
+        link: {
+          url: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id),
+        },
+        contentLeft: (
+          <div className="flex items-center">
+            <ServiceStateChip mode="deployment" environmentId={service.environment?.id} serviceId={service.id} />
+            <div className="ml-3 mt-[1px]">
+              <Icon
+                name={match(service)
+                  .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
+                  .with({ serviceType: 'DATABASE' }, () => IconEnum.DATABASE)
+                  .with({ serviceType: 'JOB' }, (s) =>
+                    s.job_type === 'LIFECYCLE' ? IconEnum.LIFECYCLE_JOB : IconEnum.CRON_JOB
+                  )
+                  .otherwise(() => IconEnum.APPLICATION)}
+                width="16"
+              />
+            </div>
+          </div>
+        ),
+        isActive: applicationId === service.id,
+      })) as MenuItemProps[],
+    },
+  ]
+
   const squareContent = (text: string | undefined, margin = 'mr-2 mt-0.5') => (
     <div
       className={`h-4.5 flex w-4 items-center justify-center rounded-sm bg-neutral-200 text-center text-xs font-bold uppercase text-neutral-350 ${margin}`}
@@ -257,7 +286,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
               {environmentId && (
                 <>
                   <BreadcrumbItem
-                    isLast={!(applicationId || databaseId)}
+                    isLast={!(applicationId || databaseId || matchServiceLogs || matchDeploymentLogs)}
                     label="Environment"
                     data={environments}
                     menuItems={environmentMenu}
@@ -290,13 +319,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
             </div>
           </>
         )}
-        {matchLogsRoute && (
-          <div className="flex">
-            <div className="ml-3 mt-2 flex h-6 items-center rounded-[3px] bg-purple-800 px-1.5 text-ssm font-medium text-purple-300">
-              LOGS
-            </div>
-          </div>
-        )}
         {matchAuditLogs && (
           <BreadcrumbItem
             label={organizations.find(({ id }) => id === organizationId)?.name}
@@ -327,8 +349,36 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link=""
           />
         )}
+        {matchDeploymentLogs && (
+          <>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+            <div className="flex items-center">
+              <BreadcrumbDeploymentLogs serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''} />
+            </div>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+            <BreadcrumbDeploymentHistory serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''} />
+          </>
+        )}
+        {matchServiceLogs && (
+          <>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+            <div className="flex items-center">
+              <BreadcrumbItem
+                isLast
+                label="Service logs"
+                data={services}
+                menuItems={servicesMenu()}
+                paramId={matchServiceLogs?.params['serviceId'] ?? ''}
+                link={
+                  ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                  SERVICE_LOGS_URL(matchServiceLogs?.params['serviceId'])
+                }
+              />
+            </div>
+          </>
+        )}
       </div>
-      {(locationIsApplicationLogs || locationIsDeploymentLogs || locationIsClusterLogs) && (
+      {(matchServiceLogs || matchDeploymentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
           <Button
             className="gap-2"
