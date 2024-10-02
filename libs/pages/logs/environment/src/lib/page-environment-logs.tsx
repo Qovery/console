@@ -17,7 +17,8 @@ import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
-import Sidebar from './ui/sidebar/sidebar'
+
+// import Sidebar from './ui/sidebar/sidebar'
 
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
@@ -80,13 +81,13 @@ export function PageEnvironmentLogs() {
   return (
     <div className="flex h-full">
       <ServiceStageIdsProvider>
-        <Sidebar
+        {/* <Sidebar
           services={services}
           statusStages={statusStages}
           environmentStatus={environmentStatus}
           versionId={versionId}
           serviceId={serviceId}
-        />
+        /> */}
         <Routes>
           <Route
             path={DEPLOYMENT_LOGS_URL()}
