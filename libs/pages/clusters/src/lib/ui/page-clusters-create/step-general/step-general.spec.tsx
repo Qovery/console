@@ -60,7 +60,6 @@ describe('StepGeneral', () => {
     )
 
     await userEvent.type(screen.getByTestId('input-name'), 'text')
-    await userEvent.click(screen.getByLabelText(/Qovery Managed/i))
 
     const button = screen.getByTestId('button-submit')
     await userEvent.click(button)

@@ -34,6 +34,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
           installation_type: 'MANAGED',
         },
         setGeneralData: mockSetGeneralData,
+        creationFlowUrl: '/organization/1/clusters/create',
       }}
     >
       <StepGeneralFeature />

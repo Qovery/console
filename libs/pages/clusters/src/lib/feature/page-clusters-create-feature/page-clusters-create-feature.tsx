@@ -1,5 +1,5 @@
 import { KubernetesEnum } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, createContext, useContext, useState } from 'react'
+import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -10,7 +10,12 @@ import {
   type ClusterRemoteData,
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
-import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import {
+  CLUSTERS_CREATION_GENERAL_URL,
+  CLUSTERS_CREATION_URL,
+  CLUSTERS_TEMPLATE_CREATION_URL,
+  CLUSTERS_URL,
+} from '@qovery/shared/routes'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_CLUSTER_CREATION } from '../../router/router'
@@ -28,6 +33,7 @@ export interface ClusterContainerCreateContextInterface {
   setRemoteData: Dispatch<SetStateAction<ClusterRemoteData | undefined>>
   kubeconfigData: ClusterKubeconfigData | undefined
   setKubeconfigData: Dispatch<SetStateAction<ClusterKubeconfigData | undefined>>
+  creationFlowUrl: string
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
@@ -93,7 +99,7 @@ export const defaultResourcesData: ClusterResourcesData = {
 }
 
 export function PageClusterCreateFeature() {
-  const { organizationId = '' } = useParams()
+  const { organizationId = '', slug } = useParams()
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -112,7 +118,23 @@ export function PageClusterCreateFeature() {
 
   useDocumentTitle('Creation - Cluster')
 
-  const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
+  const pathCreate = slug ? CLUSTERS_TEMPLATE_CREATION_URL(slug) : CLUSTERS_CREATION_URL
+  const creationFlowUrl = CLUSTERS_URL(organizationId) + pathCreate
+
+  useEffect(() => {
+    if (slug) {
+      const defaultOptions = match(slug)
+        .with('AWS', () => ({ installation_type: 'MANAGED', cloud_provider: 'AWS' }))
+        .with('SCW', () => ({ installation_type: 'MANAGED', cloud_provider: 'SCW' }))
+        .with('GCP', () => ({ installation_type: 'MANAGED', cloud_provider: 'GCP' }))
+        .otherwise(() => undefined)
+      if (defaultOptions) {
+        setGeneralData({
+          ...(defaultOptions as ClusterGeneralData),
+        })
+      }
+    }
+  }, [setGeneralData, slug])
 
   return (
     <ClusterContainerCreateContext.Provider
@@ -129,6 +151,7 @@ export function PageClusterCreateFeature() {
         setFeaturesData,
         kubeconfigData,
         setKubeconfigData,
+        creationFlowUrl,
       }}
     >
       <FunnelFlow
@@ -145,7 +168,7 @@ export function PageClusterCreateFeature() {
           {ROUTER_CLUSTER_CREATION.map((route) => (
             <Route key={route.path} path={route.path} element={route.component} />
           ))}
-          <Route path="*" element={<Navigate replace to={pathCreate + CLUSTERS_CREATION_GENERAL_URL} />} />
+          <Route path="*" element={<Navigate replace to={creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL} />} />
         </Routes>
         <AssistantTrigger defaultOpen />
       </FunnelFlow>

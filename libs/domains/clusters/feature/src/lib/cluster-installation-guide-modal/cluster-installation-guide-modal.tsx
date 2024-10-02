@@ -1,23 +1,35 @@
 import download from 'downloadjs'
 import { type Cluster } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { Button, Callout, ExternalLink, Icon } from '@qovery/shared/ui'
 import { ClusterSetup } from '../cluster-setup/cluster-setup'
 import { useInstallationHelmValues } from '../hooks/use-installation-helm-values/use-installation-helm-values'
 
-export interface ClusterInstallationGuideModalProps {
-  cluster: Cluster
+export type ClusterInstallationGuideModalProps = {
   type: 'MANAGED' | 'ON_PREMISE'
   onClose: () => void
-}
+} & (
+  | {
+      mode: 'EDIT'
+      cluster: Cluster
+    }
+  | {
+      mode: 'CREATE'
+      isDemo: boolean
+    }
+)
 
-export function ClusterInstallationGuideModal({ cluster, type, onClose }: ClusterInstallationGuideModalProps) {
+export function ClusterInstallationGuideModal({ type, onClose, ...props }: ClusterInstallationGuideModalProps) {
   const { mutateAsync: getInstallationHelmValues, isLoading } = useInstallationHelmValues()
   const downloadInstallationValues = async () => {
+    if (props.mode === 'CREATE') {
+      return
+    }
     const installationHelmValues = await getInstallationHelmValues({
-      organizationId: cluster.organization.id,
-      clusterId: cluster.id,
+      organizationId: props.cluster.organization.id,
+      clusterId: props.cluster.id,
     })
-    download(installationHelmValues ?? '', `cluster-installation-guide-${cluster.id}.yaml`, 'text/plain')
+    download(installationHelmValues ?? '', `cluster-installation-guide-${props.cluster.id}.yaml`, 'text/plain')
   }
 
   return (
@@ -25,7 +37,7 @@ export function ClusterInstallationGuideModal({ cluster, type, onClose }: Cluste
       <h2 className="h4 text-neutral-400">Installation guide</h2>
 
       <div className="flex flex-col gap-4">
-        {type === 'ON_PREMISE' && (
+        {props.mode === 'EDIT' && type === 'ON_PREMISE' && (
           <Callout.Root color="sky">
             <Callout.Icon>
               <Icon iconName="circle-info" iconStyle="regular" />
@@ -70,7 +82,11 @@ export function ClusterInstallationGuideModal({ cluster, type, onClose }: Cluste
           </ol>
         )}
 
-        {type === 'ON_PREMISE' && <ClusterSetup type={cluster.is_demo ? 'LOCAL_DEMO' : 'SELF_MANAGED'} />}
+        {type === 'ON_PREMISE' && (
+          <ClusterSetup
+            type={(props.mode === 'CREATE' ? props.isDemo : props.cluster.is_demo) ? 'LOCAL_DEMO' : 'SELF_MANAGED'}
+          />
+        )}
       </div>
 
       {type === 'MANAGED' && (

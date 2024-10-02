@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { CLUSTERS_CREATION_GENERAL_URL, CLUSTERS_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, EmptyState, Icon } from '@qovery/shared/ui'
 
 export interface PlaceholderNoRulesProps {
@@ -24,9 +24,7 @@ export function PlaceholderNoRules({ clusterAvailable, linkNewRule, organization
         className="mt-5 gap-2"
         size="lg"
         onClick={() =>
-          clusterAvailable
-            ? navigate(linkNewRule)
-            : navigate(CLUSTERS_URL(organizationId) + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
+          clusterAvailable ? navigate(linkNewRule) : navigate(CLUSTERS_URL(organizationId) + CLUSTERS_NEW_URL)
         }
       >
         {clusterAvailable ? 'Create Deployment Rule' : 'Create a Cluster'}

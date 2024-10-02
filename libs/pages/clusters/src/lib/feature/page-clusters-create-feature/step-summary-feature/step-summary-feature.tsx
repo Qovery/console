@@ -15,7 +15,6 @@ import {
   CLUSTERS_CREATION_KUBECONFIG_URL,
   CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
-  CLUSTERS_CREATION_URL,
   CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
@@ -33,12 +32,10 @@ export function getValueByKey(key: string, data: { [key: string]: string }[] = [
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Cluster')
-  const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep } =
+  const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
-
-  const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
 
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
@@ -64,23 +61,23 @@ export function StepSummaryFeature() {
   const detailInstanceType = cloudProviderInstanceTypes?.find(({ type }) => type === resourcesData?.instance_type)
 
   const goToKubeconfig = useCallback(() => {
-    navigate(pathCreate + CLUSTERS_CREATION_KUBECONFIG_URL)
-  }, [navigate, pathCreate])
+    navigate(creationFlowUrl + CLUSTERS_CREATION_KUBECONFIG_URL)
+  }, [navigate, creationFlowUrl])
 
   const goToFeatures = useCallback(() => {
-    navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
-  }, [navigate, pathCreate])
+    navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
+  }, [navigate, creationFlowUrl])
 
   const goToGeneral = () => {
-    navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
+    navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL)
   }
 
   const goToResources = () => {
-    navigate(pathCreate + CLUSTERS_CREATION_RESOURCES_URL)
+    navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
   }
 
   const goToRemote = () => {
-    navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
+    navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
   }
 
   const onBack = () => {
@@ -101,8 +98,8 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    !generalData?.name && navigate(pathCreate + CLUSTERS_CREATION_GENERAL_URL)
-  }, [pathCreate, generalData, navigate, organizationId])
+    !generalData?.name && navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL)
+  }, [creationFlowUrl, generalData, navigate])
 
   const onSubmit = async (withDeploy: boolean) => {
     if (!generalData) {
@@ -139,7 +136,7 @@ export function StepSummaryFeature() {
           cloudProviderInfoRequest: cloud_provider_credentials,
         })
         navigate({
-          pathname: CLUSTERS_URL(organizationId) + CLUSTERS_GENERAL_URL,
+          pathname: creationFlowUrl + CLUSTERS_GENERAL_URL,
           search: '?show-self-managed-guide',
         })
       } catch (e) {

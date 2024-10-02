@@ -1,14 +1,12 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_SUMMARY_URL,
-  CLUSTERS_CREATION_URL,
-  CLUSTERS_URL,
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -17,10 +15,16 @@ import { steps, useClusterContainerCreateContext } from '../page-clusters-create
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Cluster')
-  const { setResourcesData, resourcesData, setRemoteData, setFeaturesData, setCurrentStep, generalData } =
-    useClusterContainerCreateContext()
+  const {
+    setResourcesData,
+    resourcesData,
+    setRemoteData,
+    setFeaturesData,
+    setCurrentStep,
+    generalData,
+    creationFlowUrl,
+  } = useClusterContainerCreateContext()
   const navigate = useNavigate()
-  const { organizationId = '' } = useParams()
 
   useEffect(() => {
     setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'resources') + 1)
@@ -39,20 +43,18 @@ export function StepResourcesFeature() {
       setResourcesData(data)
     }
 
-    const pathCreate = `${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}`
-
     if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
       if (data.cluster_type === KubernetesEnum.K3_S) {
-        navigate(pathCreate + CLUSTERS_CREATION_REMOTE_URL)
+        navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
         setFeaturesData(undefined)
       } else {
-        navigate(pathCreate + CLUSTERS_CREATION_FEATURES_URL)
+        navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
         setRemoteData({
           ssh_key: '',
         })
       }
     } else {
-      navigate(pathCreate + CLUSTERS_CREATION_SUMMARY_URL)
+      navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
       setRemoteData({
         ssh_key: '',
       })

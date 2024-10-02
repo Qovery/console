@@ -55,6 +55,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         setResourcesData: jest.fn(),
         remoteData: undefined,
         setRemoteData: jest.fn(),
+        creationFlowUrl: '/organization/1/clusters/create',
       }}
     >
       <StepFeaturesFeature />

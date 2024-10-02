@@ -269,6 +269,7 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
       },
       content: (
         <ClusterInstallationGuideModal
+          mode="EDIT"
           cluster={cluster}
           type={type}
           onClose={() => {
