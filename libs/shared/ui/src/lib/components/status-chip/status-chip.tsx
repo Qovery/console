@@ -15,6 +15,7 @@ import {
   QueuedIcon,
   RestartedIcon,
   RestartingIcon,
+  SkipIcon,
   StoppedIcon,
   StoppingIcon,
   UnknownIcon,
@@ -70,7 +71,8 @@ export function StatusChip(props: StatusChipProps) {
     .with('DELETING', () => <DeletingIcon />)
     // stopped
     .with('STOPPED', () => <StoppedIcon />)
-    .with('CANCELED', 'CANCEL', 'SKIP', () => <CanceledIcon />)
+    .with('CANCELED', 'CANCEL', () => <CanceledIcon />)
+    .with('SKIP', () => <SkipIcon />)
     .with('DELETED', () => <DeletedIcon />)
     // unknow / error / warning
     .with('UNKNOWN', () => <UnknownIcon />)
