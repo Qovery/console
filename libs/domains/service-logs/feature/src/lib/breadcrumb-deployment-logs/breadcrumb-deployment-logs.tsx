@@ -1,27 +1,88 @@
-import clsx from 'clsx'
-import { useState } from 'react'
-import { Link, useMatch, useParams } from 'react-router-dom'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Button, DropdownMenu, Icon, InputSearch, Popover, StatusChip, Tooltip } from '@qovery/shared/ui'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { type DeploymentStageWithServicesStatuses, type Stage, type Status } from 'qovery-typescript-axios'
+import { useMemo, useState } from 'react'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { BadgeDeploymentOrder, Button, Icon, InputSearch, Popover } from '@qovery/shared/ui'
+import { StageItem } from './stage-item/stage-item'
 
+export function mergeServices(
+  applications?: Status[],
+  databases?: Status[],
+  containers?: Status[],
+  jobs?: Status[],
+  helms?: Status[]
+) {
+  return (
+    (applications &&
+      databases &&
+      containers &&
+      jobs &&
+      helms && [...applications, ...databases, ...containers, ...jobs, ...helms]) ||
+    []
+  )
+}
 export interface BreadcrumbDeploymentLogsProps {
   serviceId: string
+  versionId: string
+  services: AnyService[]
+  statusStages: DeploymentStageWithServicesStatuses[]
 }
 
-export function BreadcrumbDeploymentLogs({ serviceId }: BreadcrumbDeploymentLogsProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-
-  const matchDeploymentLogs = useMatch({
-    path: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_VERSION_URL(serviceId),
-    end: false,
-  })
-
+export function BreadcrumbDeploymentLogs({
+  serviceId,
+  versionId,
+  services,
+  statusStages,
+}: BreadcrumbDeploymentLogsProps) {
   const [open, setOpen] = useState(false)
-
   const [searchTerm, setSearchTerm] = useState('')
-  // const filteredVariables = variables.filter((variable) =>
-  //   variable.key.toLowerCase().includes(searchTerm.toLowerCase())
-  // )
+
+  const getService = (serviceId: string) => services.find((service: AnyService) => service.id === serviceId)
+  const currentService = getService(serviceId)
+
+  const findStageIndex = (serviceId: string): number => {
+    for (let i = 0; i < statusStages.length; i++) {
+      const stage = statusStages[i]
+      const mergedServices = mergeServices(
+        stage.applications,
+        stage.databases,
+        stage.containers,
+        stage.jobs,
+        stage.helms
+      )
+      if (mergedServices.some((service) => service.id === serviceId)) {
+        return i + 1
+      }
+    }
+    return -1
+  }
+
+  const currentFindStageIndex = findStageIndex(serviceId)
+
+  const stagesWithMergedServices = useMemo(
+    () =>
+      statusStages.map((stage) => ({
+        ...stage,
+        mergedServices: mergeServices(stage.applications, stage.databases, stage.containers, stage.jobs, stage.helms),
+      })),
+    [statusStages]
+  )
+
+  const filteredStages = useMemo(
+    () =>
+      stagesWithMergedServices
+        .map((stage) => ({
+          ...stage,
+          mergedServices: stage.mergedServices.filter((service) => {
+            const fullService = getService(service.id)
+            return fullService?.name.toLowerCase().includes(searchTerm.toLowerCase())
+          }),
+        }))
+        .filter((stage) => stage.mergedServices.length > 0),
+    [stagesWithMergedServices, searchTerm, services]
+  )
+
+  if (currentFindStageIndex === -1) return null
 
   // XXX: https://github.com/radix-ui/primitives/issues/1342
   // We are waiting for radix combobox primitives
@@ -32,26 +93,27 @@ export function BreadcrumbDeploymentLogs({ serviceId }: BreadcrumbDeploymentLogs
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
-        <span className="ml-2 text-xs font-medium text-neutral-350 dark:text-neutral-300">History</span>
+        <span className="ml-2 text-xs font-medium text-neutral-350 dark:text-neutral-300">Deployment logs</span>
         <div className="flex items-center gap-1">
           <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
             <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
               <Popover.Trigger>
-                <span className="flex items-center">
-                  <span>hello</span>
+                <span className="flex items-center justify-between pl-2">
+                  <BadgeDeploymentOrder className="mr-1.5" order={findStageIndex(serviceId)} />
+                  <span className="mr-3 text-sm font-medium text-neutral-50">{currentService?.name}</span>
                   <Button type="button" variant="plain" radius="full">
                     <Icon iconName="angle-down" />
                   </Button>
                 </span>
               </Popover.Trigger>
               <DropdownMenu.Content asChild>
-                <Popover.Content className="flex max-h-60 w-[248px] min-w-[248px] flex-col p-2">
+                <Popover.Content className="flex min-w-[406px] flex-col gap-1 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
                   {/* 
-                `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
-                fix issue with item focus if we use input search
-                https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
-              */}
-                  <div className="bg-white dark:bg-neutral-700" onKeyDown={(e) => e.stopPropagation()}>
+                    `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
+                    fix issue with item focus if we use input search
+                    https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
+                  */}
+                  <div onKeyDown={(e) => e.stopPropagation()}>
                     <InputSearch
                       placeholder="Search..."
                       className="mb-1"
@@ -60,26 +122,23 @@ export function BreadcrumbDeploymentLogs({ serviceId }: BreadcrumbDeploymentLogs
                     />
                   </div>
                   <div className="overflow-y-auto">
-                    {/* {filteredVariables.length > 0 ? (
-                      filteredVariables.map((variable) => (
-                        <Popover.Close key={variable.key} onClick={() => setSearchTerm('')}>
-                          <DropdownMenu.Item
-                            className={twMerge(
-                              dropdownMenuItemVariants({ color: 'brand' }),
-                              'flex h-[52px] items-center justify-between gap-1 px-2 py-1.5'
-                            )}
-                            onClick={() => onChange(variable.key)}
-                          >
-                            <div className="flex flex-col items-start justify-center gap-1">hello</div>
-                          </DropdownMenu.Item>
-                        </Popover.Close>
+                    {filteredStages.length > 0 ? (
+                      filteredStages.map((stage, index) => (
+                        <StageItem
+                          key={index}
+                          stage={stage}
+                          index={index}
+                          getService={getService}
+                          versionId={versionId}
+                          searchTerm={searchTerm}
+                        />
                       ))
                     ) : (
                       <div className="px-3 py-6 text-center">
                         <Icon iconName="wave-pulse" className="text-neutral-350" />
                         <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
                       </div>
-                    )} */}
+                    )}
                   </div>
                 </Popover.Content>
               </DropdownMenu.Content>

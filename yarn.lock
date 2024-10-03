@@ -4112,7 +4112,7 @@ __metadata:
     jest: 29.7.0
     jest-canvas-mock: ^2.5.2
     jest-environment-jsdom: 29.7.0
-    jest-environment-node: ^29.4.1
+    jest-environment-node: ^29.7.0
     jest-websocket-mock: ^2.4.1
     jwt-decode: ^4.0.0
     lint-staged: ^13.0.3
@@ -15069,7 +15069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-node@npm:^29.4.1, jest-environment-node@npm:^29.7.0":
+"jest-environment-node@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-environment-node@npm:29.7.0"
   dependencies:

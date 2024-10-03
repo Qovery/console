@@ -33,13 +33,13 @@ export function BreadcrumbDeploymentHistory({ serviceId }: BreadcrumbDeploymentH
               <span className="flex items-center">
                 {!versionIdUrl || versionIdUrl === deploymentHistory[0]?.id ? (
                   <Tooltip content={dateFullFormat(deploymentHistory[0].created_at)} side="bottom">
-                    <span className="mr-2 flex h-4 items-center gap-0.5 rounded bg-purple-500 px-1 text-xs font-medium text-neutral-50">
+                    <span className="mr-2 flex h-5 items-center gap-0.5 rounded bg-purple-500 px-1 text-xs font-medium text-neutral-50">
                       Latest
-                      <Icon iconName="circle-info" className="text-2xs" />
+                      <Icon iconName="circle-info" className="text-xs" />
                     </span>
                   </Tooltip>
                 ) : (
-                  <span className="mr-2 text-sm font-medium text-neutral-50">
+                  <span className="mr-2.5 text-sm font-medium text-neutral-50">
                     {dateFullFormat(deploymentHistory.find((h) => h.id === versionIdUrl)?.created_at ?? 0)}
                   </span>
                 )}
