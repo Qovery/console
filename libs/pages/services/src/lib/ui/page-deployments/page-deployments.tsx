@@ -83,7 +83,14 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
     )
 
   return (
-    <Table dataHead={tableHead} data={deployments} setFilter={setFilter} filter={filter} setDataSort={setData}>
+    <Table
+      dataHead={tableHead}
+      data={deployments}
+      setFilter={setFilter}
+      filter={filter}
+      setDataSort={setData}
+      defaultSortingKey="updated_at"
+    >
       <div className="bg-neutral-200">
         {data?.map((currentData, index) => (
           <TableRowDeployment

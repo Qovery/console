@@ -50,5 +50,17 @@ export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnv
       merged.push(h)
     })
   })
-  return merged
+
+  const dataSorted = merged.sort(
+    (
+      { execution_id: executionIdA = '', name: nameA = '', updated_at: updatedAtA = '' },
+      { execution_id: executionIdB = '', name: nameB = '', updated_at: updatedAtB = '' }
+    ) => {
+      if (executionIdA !== executionIdB) {
+        return updatedAtB.localeCompare(updatedAtA)
+      }
+      return nameA.localeCompare(nameB)
+    }
+  )
+  return dataSorted
 }
