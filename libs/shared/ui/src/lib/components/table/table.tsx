@@ -61,7 +61,7 @@ export function Table<T>({
   useEffect(() => {
     if (!isSorted && defaultSortingKey && data && setDataSort) {
       const sortedData = data.sort((a, b) =>
-        (a[defaultSortingKey] as string).toLowerCase() > (b[defaultSortingKey] as string).toLowerCase() ? 1 : -1
+        (a[defaultSortingKey] as string).toLowerCase() < (b[defaultSortingKey] as string).toLowerCase() ? 1 : -1
       )
       setDataSort(sortedData)
     }
