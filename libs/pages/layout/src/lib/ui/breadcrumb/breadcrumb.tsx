@@ -3,7 +3,7 @@ import { type Cluster, type Environment, type Organization, type Project } from 
 import { memo, useCallback, useEffect, useState } from 'react'
 import { useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { EnvironmentMode } from '@qovery/domains/environments/feature'
+import { EnvironmentMode, useDeploymentStages } from '@qovery/domains/environments/feature'
 import { BreadcrumbDeploymentHistory, BreadcrumbDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -39,6 +39,9 @@ export interface BreadcrumbProps {
 export function Breadcrumb(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
+
+  const { data: statusStages = [] } = useDeploymentStages({ environmentId })
+  const { data: services = [] } = useServices({ environmentId })
 
   const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
   const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
@@ -132,8 +135,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
     },
   ]
 
-  const { data: services = [] } = useServices({ environmentId })
-
   const applicationMenu: MenuData = [
     {
       title: 'Services',
@@ -169,19 +170,19 @@ export function Breadcrumb(props: BreadcrumbProps) {
     },
   ]
 
-  const servicesMenu = (deploymentLogs = false): MenuData => [
+  const servicesLogsMenu: MenuData = [
     {
-      title: deploymentLogs ? 'Deployment logs' : 'Service logs',
+      title: 'Service logs',
       search: true,
       sortAlphabetically: true,
       items: services.map((service) => ({
         name: service.name,
         link: {
-          url: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id),
+          url: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(service.id),
         },
         contentLeft: (
           <div className="flex items-center">
-            <ServiceStateChip mode="deployment" environmentId={service.environment?.id} serviceId={service.id} />
+            <ServiceStateChip mode="running" environmentId={service.environment?.id} serviceId={service.id} />
             <div className="ml-3 mt-[1px]">
               <Icon
                 name={match(service)
@@ -196,7 +197,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             </div>
           </div>
         ),
-        isActive: applicationId === service.id,
+        isActive: matchServiceLogs?.params['serviceId'] === service.id,
       })) as MenuItemProps[],
     },
   ]
@@ -349,11 +350,16 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link=""
           />
         )}
-        {matchDeploymentLogs && (
+        {matchDeploymentLogs && statusStages && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
             <div className="flex items-center">
-              <BreadcrumbDeploymentLogs serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''} />
+              <BreadcrumbDeploymentLogs
+                serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''}
+                versionId={matchDeploymentLogs?.params['versionId'] ?? ''}
+                services={services}
+                statusStages={statusStages}
+              />
             </div>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
             <BreadcrumbDeploymentHistory serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''} />
@@ -367,7 +373,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                 isLast
                 label="Service logs"
                 data={services}
-                menuItems={servicesMenu()}
+                menuItems={servicesLogsMenu}
                 paramId={matchServiceLogs?.params['serviceId'] ?? ''}
                 link={
                   ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +

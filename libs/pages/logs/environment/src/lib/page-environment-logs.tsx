@@ -3,8 +3,8 @@ import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from
 import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
-import { useServices } from '@qovery/domains/services/feature'
+// import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+// import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -28,29 +28,29 @@ export function PageEnvironmentLogs() {
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
   const location = useLocation()
-  const matchDeployment = matchPath<'serviceId', string>(
-    ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(),
-    location.pathname
-  )
+  // const matchDeployment = matchPath<'serviceId', string>(
+  //   ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(),
+  //   location.pathname
+  // )
   const matchDeploymentVersion = matchPath<'versionId' | 'serviceId', string>(
     ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
     location.pathname
   )
-  const matchServiceLogs = matchPath<'serviceId', string>(
-    ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(),
-    location.pathname
-  )
+  // const matchServiceLogs = matchPath<'serviceId', string>(
+  //   ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(),
+  //   location.pathname
+  // )
 
   const versionId =
     matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
 
-  const matchServiceId = matchDeploymentVersion || matchServiceLogs || matchDeployment
-  const serviceId = matchServiceId?.params.serviceId !== ':serviceId' ? matchServiceId?.params.serviceId : undefined
+  // const matchServiceId = matchDeploymentVersion || matchServiceLogs || matchDeployment
+  // const serviceId = matchServiceId?.params.serviceId !== ':serviceId' ? matchServiceId?.params.serviceId : undefined
 
-  const { data: services } = useServices({ environmentId })
+  // const { data: services } = useServices({ environmentId })
 
   const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
-  const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
+  // const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
 
   const messageHandler = useCallback(
     (
@@ -58,9 +58,9 @@ export function PageEnvironmentLogs() {
       { stages, environment }: { stages: DeploymentStageWithServicesStatuses[]; environment: EnvironmentStatus }
     ) => {
       setStatusStages(stages)
-      setEnvironmentStatus(environment)
+      // setEnvironmentStatus(environment)
     },
-    [setStatusStages, setEnvironmentStatus]
+    [setStatusStages]
   )
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
@@ -80,28 +80,28 @@ export function PageEnvironmentLogs() {
 
   return (
     <div className="flex h-full">
-      <ServiceStageIdsProvider>
-        {/* <Sidebar
+      {/* <ServiceStageIdsProvider> */}
+      {/* <Sidebar
           services={services}
           statusStages={statusStages}
           environmentStatus={environmentStatus}
           versionId={versionId}
           serviceId={serviceId}
         /> */}
-        <Routes>
-          <Route
-            path={DEPLOYMENT_LOGS_URL()}
-            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
-          />
-          <Route
-            path={DEPLOYMENT_LOGS_VERSION_URL()}
-            element={
-              <DeploymentLogsFeature key={location.pathname} environment={environment} statusStages={statusStages} />
-            }
-          />
-          <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
-        </Routes>
-      </ServiceStageIdsProvider>
+      <Routes>
+        <Route
+          path={DEPLOYMENT_LOGS_URL()}
+          element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
+        />
+        <Route
+          path={DEPLOYMENT_LOGS_VERSION_URL()}
+          element={
+            <DeploymentLogsFeature key={location.pathname} environment={environment} statusStages={statusStages} />
+          }
+        />
+        <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
+      </Routes>
+      {/* </ServiceStageIdsProvider> */}
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
         <div className="m-1 flex min-h-full w-[calc(100%-8px)] justify-center rounded bg-neutral-650">
