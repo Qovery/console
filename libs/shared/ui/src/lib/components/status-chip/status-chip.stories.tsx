@@ -1,9 +1,9 @@
 import type { Meta } from '@storybook/react'
-import { StateEnum } from 'qovery-typescript-axios'
+import { StateEnum, StepMetricStatusEnum } from 'qovery-typescript-axios'
 import { RunningState } from '@qovery/shared/enums'
 import { StatusChip, type StatusChipProps } from './status-chip'
 
-const AllStatus = [...Object.values(RunningState), ...Object.values(StateEnum)]
+const AllStatus = [...Object.values(RunningState), ...Object.values(StateEnum), ...Object.values(StepMetricStatusEnum)]
 
 const Story: Meta<typeof StatusChip> = {
   component: StatusChip,

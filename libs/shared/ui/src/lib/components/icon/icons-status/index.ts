@@ -10,6 +10,7 @@ import ErrorIcon from './error'
 import QueuedIcon from './queued'
 import RestartedIcon from './restarted'
 import RestartingIcon from './restarting'
+import SkipIcon from './skip'
 import StoppedIcon from './stopped'
 import StoppingIcon from './stopping'
 import UnknownIcon from './unknown'
@@ -28,6 +29,7 @@ export {
   QueuedIcon,
   RestartedIcon,
   RestartingIcon,
+  SkipIcon,
   StoppedIcon,
   StoppingIcon,
   UnknownIcon,
