@@ -3,7 +3,7 @@ import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from
 import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-// import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 // import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
@@ -76,32 +76,37 @@ export function PageEnvironmentLogs() {
     onMessage: messageHandler,
   })
 
+  console.log(statusStages)
+
   if (!environment) return
 
   return (
     <div className="flex h-full">
-      {/* <ServiceStageIdsProvider> */}
-      {/* <Sidebar
+      <ServiceStageIdsProvider>
+        {/* <Sidebar
           services={services}
           statusStages={statusStages}
           environmentStatus={environmentStatus}
           versionId={versionId}
           serviceId={serviceId}
         /> */}
-      <Routes>
-        <Route
-          path={DEPLOYMENT_LOGS_URL()}
-          element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
-        />
-        <Route
-          path={DEPLOYMENT_LOGS_VERSION_URL()}
-          element={
-            <DeploymentLogsFeature key={location.pathname} environment={environment} statusStages={statusStages} />
-          }
-        />
-        <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
-      </Routes>
-      {/* </ServiceStageIdsProvider> */}
+        <Routes>
+          <Route
+            path={DEPLOYMENT_LOGS_URL()}
+            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
+          />
+          <Route
+            path={DEPLOYMENT_LOGS_VERSION_URL()}
+            element={
+              <DeploymentLogsFeature key={location.pathname} environment={environment} statusStages={statusStages} />
+            }
+          />
+          <Route
+            path={SERVICE_LOGS_URL()}
+            element={<PodLogsFeature environment={environment} statusStages={statusStages} />}
+          />
+        </Routes>
+      </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
         <div className="m-1 flex min-h-full w-[calc(100%-8px)] justify-center rounded bg-neutral-650">
