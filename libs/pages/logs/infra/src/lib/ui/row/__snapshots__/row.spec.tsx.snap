@@ -45,7 +45,7 @@ exports[`Row should have cell error message 1`] = `
       class="flex whitespace-nowrap px-2 py-1 text-red-500"
     >
       <span
-        class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] mr-4 text-white opacity-0 group-hover:opacity-100"
+        class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-4 text-white opacity-0 group-hover:opacity-100"
         data-state="closed"
         data-testid="copy-container"
       >
@@ -104,7 +104,7 @@ exports[`Row should have cell message 1`] = `
       class="flex whitespace-nowrap px-2 py-1 text-green-500"
     >
       <span
-        class="relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-[''] mr-4 text-white opacity-0 group-hover:opacity-100"
+        class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-[''] mr-4 text-white opacity-0 group-hover:opacity-100"
         data-state="closed"
         data-testid="copy-container"
       >
