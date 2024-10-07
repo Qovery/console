@@ -40,8 +40,8 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const { organizations, clusters, projects, environments, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
-  const { data: statusStages = [] } = useDeploymentStages({ environmentId })
-  const { data: services = [] } = useServices({ environmentId })
+  const { data: statusStages = [], isFetched: isFetchedStatusStages } = useDeploymentStages({ environmentId })
+  const { data: services = [], isLoading: isLoadingServices } = useServices({ environmentId })
 
   const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
   const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
@@ -350,7 +350,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link=""
           />
         )}
-        {matchDeploymentLogs && statusStages && (
+        {matchDeploymentLogs && statusStages && isFetchedStatusStages && !isLoadingServices && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
             <div className="flex items-center">
@@ -365,7 +365,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             <BreadcrumbDeploymentHistory serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''} />
           </>
         )}
-        {matchServiceLogs && (
+        {matchServiceLogs && services && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
             <div className="flex items-center">

@@ -42,7 +42,7 @@ export function HeaderLogs({
 
   if (!service) return null
 
-  const totalDurationSec = serviceStatus.steps?.total_computing_duration_sec ?? 0
+  const totalDurationSec = serviceStatus?.steps?.total_computing_duration_sec ?? 0
 
   return (
     <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-800 pr-4">

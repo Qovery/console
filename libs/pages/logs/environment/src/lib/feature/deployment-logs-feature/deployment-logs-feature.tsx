@@ -104,7 +104,7 @@ export function DeploymentLogsFeature({
   if (!serviceStatus && isFetchedService)
     return (
       <div className="flex h-full w-full items-center overflow-y-auto bg-neutral-800 px-1 pt-1">
-        <div className="h-full w-full border border-neutral-500 bg-neutral-650"></div>
+        <div className="h-full w-full border border-neutral-500 bg-neutral-600"></div>
       </div>
     )
 

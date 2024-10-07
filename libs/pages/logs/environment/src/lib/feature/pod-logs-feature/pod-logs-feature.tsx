@@ -17,8 +17,8 @@ export interface PodLogsFeatureProps {
 }
 
 export function PodLogsFeature({ environment, deploymentStages, environmentStatus }: PodLogsFeatureProps) {
-  const { environmentId = '', serviceId = '' } = useParams()
-  const { data: service } = useService({ environmentId, serviceId })
+  const { serviceId = '' } = useParams()
+  const { data: service } = useService({ environmentId: environment.id, serviceId })
 
   useDocumentTitle(`Service logs ${service ? `- ${service?.name}` : '- Loading...'}`)
 
