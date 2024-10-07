@@ -97,17 +97,17 @@ export function BreadcrumbDeploymentLogs({
         <div className="flex items-center gap-1">
           <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
             <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
-              <Popover.Trigger>
-                <span className="flex items-center justify-between pl-2">
-                  <BadgeDeploymentOrder className="mr-1.5" order={findStageIndex(serviceId)} />
-                  <span className="mr-3 text-sm font-medium text-neutral-50">{currentService?.name}</span>
+              <span className="flex items-center justify-between pl-2">
+                <BadgeDeploymentOrder className="mr-1.5" order={findStageIndex(serviceId)} />
+                <span className="mr-3 text-sm font-medium text-neutral-50">{currentService?.name}</span>
+                <Popover.Trigger>
                   <Button type="button" variant="plain" radius="full">
                     <Icon iconName="angle-down" />
                   </Button>
-                </span>
-              </Popover.Trigger>
+                </Popover.Trigger>
+              </span>
               <DropdownMenu.Content asChild>
-                <Popover.Content className="flex min-w-[406px] flex-col gap-1 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
+                <Popover.Content className="-ml-2 flex min-w-[406px] flex-col gap-1 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
                   {/* 
                     `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                     fix issue with item focus if we use input search
