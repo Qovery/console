@@ -1,5 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import { type DeploymentStageWithServicesStatuses, type Stage, type Status } from 'qovery-typescript-axios'
+import { type DeploymentStageWithServicesStatuses, type Status } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { BadgeDeploymentOrder, Button, Icon, InputSearch, Popover } from '@qovery/shared/ui'
@@ -82,7 +82,7 @@ export function BreadcrumbDeploymentLogs({
     [stagesWithMergedServices, searchTerm, services]
   )
 
-  if (currentFindStageIndex === -1) return null
+  if (currentFindStageIndex === -1 && !currentService) return null
 
   // XXX: https://github.com/radix-ui/primitives/issues/1342
   // We are waiting for radix combobox primitives
