@@ -34,7 +34,7 @@ export function BreadcrumbDeploymentHistory({ serviceId }: BreadcrumbDeploymentH
                 <Tooltip content={dateFullFormat(deploymentHistory[0].created_at)} side="bottom">
                   <span className="mr-2 flex h-5 items-center gap-1 rounded bg-purple-500 px-1 text-sm font-medium text-neutral-50">
                     Latest
-                    <Icon iconName="circle-info" className="text-xs" />
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
                   </span>
                 </Tooltip>
               ) : (
