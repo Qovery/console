@@ -15,7 +15,6 @@
     "**/*.spec.js",
     "**/*.test.jsx",
     "**/*.spec.jsx",
-    "**/*.d.ts",
-    "src/lib/feature/breadcrumb-deployment-history/.tsx"
+    "**/*.d.ts"
   ]
 }
