@@ -32,7 +32,7 @@ describe('ContainerRegistryForm', () => {
         },
         {
           kind: 'SCALEWAY_CR',
-          required_config: ['region', 'scaleway_access_key', 'scaleway_secret_key'],
+          required_config: ['region', 'scaleway_access_key', 'scaleway_project_id', 'scaleway_secret_key'],
           is_mandatory: true,
         },
         {

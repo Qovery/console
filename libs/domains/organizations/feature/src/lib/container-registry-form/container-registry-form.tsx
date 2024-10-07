@@ -375,6 +375,22 @@ export function ContainerRegistryForm({
       {watchKind === ContainerRegistryKindEnum.SCALEWAY_CR && (
         <>
           <Controller
+            name="config.scaleway_project_id"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a Scaleway project id.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Project ID"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
             name="config.scaleway_access_key"
             control={methods.control}
             rules={{
