@@ -9,7 +9,6 @@ import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'reac
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
-// import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
