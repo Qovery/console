@@ -2,7 +2,6 @@ import { useLinks, useService } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { HeaderLogs, type HeaderLogsProps } from './header-logs'
 
-// Mock the hooks
 jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),
   useService: jest.fn(),
