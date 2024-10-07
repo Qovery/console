@@ -3,7 +3,7 @@ import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from
 import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-// import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 // import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
@@ -49,18 +49,18 @@ export function PageEnvironmentLogs() {
 
   // const { data: services } = useServices({ environmentId })
 
-  const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
-  // const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
+  const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
+  const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
 
   const messageHandler = useCallback(
     (
       _: QueryClient,
       { stages, environment }: { stages: DeploymentStageWithServicesStatuses[]; environment: EnvironmentStatus }
     ) => {
-      setStatusStages(stages)
-      // setEnvironmentStatus(environment)
+      setDeploymentStages(stages)
+      setEnvironmentStatus(environment)
     },
-    [setStatusStages]
+    [setDeploymentStages]
   )
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
@@ -80,28 +80,48 @@ export function PageEnvironmentLogs() {
 
   return (
     <div className="flex h-full">
-      {/* <ServiceStageIdsProvider> */}
-      {/* <Sidebar
+      <ServiceStageIdsProvider>
+        {/* <Sidebar
           services={services}
-          statusStages={statusStages}
+          deploymentStages={deploymentStages}
           environmentStatus={environmentStatus}
           versionId={versionId}
           serviceId={serviceId}
         /> */}
-      <Routes>
-        <Route
-          path={DEPLOYMENT_LOGS_URL()}
-          element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
-        />
-        <Route
-          path={DEPLOYMENT_LOGS_VERSION_URL()}
-          element={
-            <DeploymentLogsFeature key={location.pathname} environment={environment} statusStages={statusStages} />
-          }
-        />
-        <Route path={SERVICE_LOGS_URL()} element={<PodLogsFeature clusterId={environment?.cluster_id} />} />
-      </Routes>
-      {/* </ServiceStageIdsProvider> */}
+        <Routes>
+          <Route
+            path={DEPLOYMENT_LOGS_URL()}
+            element={
+              <DeploymentLogsFeature
+                environment={environment}
+                deploymentStages={deploymentStages}
+                environmentStatus={environmentStatus}
+              />
+            }
+          />
+          <Route
+            path={DEPLOYMENT_LOGS_VERSION_URL()}
+            element={
+              <DeploymentLogsFeature
+                key={location.pathname}
+                environment={environment}
+                deploymentStages={deploymentStages}
+                environmentStatus={environmentStatus}
+              />
+            }
+          />
+          <Route
+            path={SERVICE_LOGS_URL()}
+            element={
+              <PodLogsFeature
+                environment={environment}
+                deploymentStages={deploymentStages}
+                environmentStatus={environmentStatus}
+              />
+            }
+          />
+        </Routes>
+      </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
         <div className="m-1 flex min-h-full w-[calc(100%-8px)] justify-center rounded bg-neutral-650">
