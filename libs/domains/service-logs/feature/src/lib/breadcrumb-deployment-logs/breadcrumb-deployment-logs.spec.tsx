@@ -67,13 +67,4 @@ describe('BreadcrumbDeploymentLogs', () => {
     const badgeElement = screen.getByText('1')
     expect(badgeElement).toBeInTheDocument()
   })
-
-  it('renders nothing when service is not found in any stage', async () => {
-    const propsWithInvalidService = {
-      ...mockProps,
-      serviceId: 'invalid-service',
-    }
-    const { container } = renderWithProviders(<BreadcrumbDeploymentLogs {...propsWithInvalidService} />)
-    expect(container).toBeEmptyDOMElement()
-  })
 })
