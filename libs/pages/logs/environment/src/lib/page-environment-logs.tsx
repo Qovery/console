@@ -8,7 +8,7 @@ import { useCallback, useState } from 'react'
 import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-// import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 // import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
