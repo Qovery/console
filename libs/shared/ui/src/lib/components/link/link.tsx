@@ -11,7 +11,7 @@ const linkVariants = cva(
   {
     variants: {
       color: {
-        brand: ['text-brand-500', 'hover:text-brand-600'],
+        brand: ['text-brand-500', 'hover:text-brand-600 dark:hover:text-brand-400'],
         red: ['text-red-500', 'hover:text-red-600'],
         sky: ['text-sky-500', 'hover:text-sky-600'],
         current: ['text-current', 'hover:brightness-75'],

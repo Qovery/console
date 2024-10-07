@@ -126,7 +126,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             contentLeft: environment.cloud_provider.provider && (
               <span className="flex items-center gap-3">
                 <EnvironmentMode mode={environment.mode} variant="shrink" />
-                <Icon className="mt-0.5 w-4" name={environment.cloud_provider.provider} />
+                <Icon className="w-4" name={environment.cloud_provider.provider} />
               </span>
             ),
             isActive: environmentId === environment.id,

@@ -29,7 +29,7 @@ export function CopyToClipboardButtonIcon(props: CopyToClipboardButtonIconProps)
       <span
         onClick={onClickCopyToClipboard}
         className={twMerge(
-          "relative cursor-pointer after:absolute after:inset-[-4px] after:block after:content-['']",
+          "relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']",
           className
         )}
         data-testid="copy-container"

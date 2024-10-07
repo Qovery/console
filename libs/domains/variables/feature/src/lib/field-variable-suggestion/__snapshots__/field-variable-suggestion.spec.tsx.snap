@@ -4,7 +4,7 @@ exports[`FieldVariableSuggestion should render dropdown content when clicked 1`]
 <div
   aria-labelledby="radix-:rf:"
   aria-orientation="vertical"
-  class="rounded border border-neutral-200 bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded flex max-h-60 w-[248px] min-w-[248px] flex-col p-2"
+  class="rounded bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded dark:bg-neutral-550 flex max-h-60 w-[248px] min-w-[248px] flex-col p-2"
   data-align="center"
   data-orientation="vertical"
   data-radix-menu-content=""
@@ -39,7 +39,7 @@ exports[`FieldVariableSuggestion should render dropdown content when clicked 1`]
     class="overflow-y-auto"
   >
     <div
-      class="text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 flex h-[52px] items-center justify-between gap-1 px-2 py-1.5"
+      class="text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 flex h-[52px] items-center justify-between gap-1 px-2 py-1.5"
       data-orientation="vertical"
       data-radix-collection-item=""
       role="menuitem"

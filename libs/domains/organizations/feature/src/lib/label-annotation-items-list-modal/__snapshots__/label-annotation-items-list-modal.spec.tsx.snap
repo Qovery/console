@@ -93,7 +93,7 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
                     />
                   </button>
                   <a
-                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand-500 hover:text-brand-600 text-sm"
+                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400 text-sm"
                     href="/organization/0000-0000-0000/project/1/environment/1/services/general"
                   >
                     Development
@@ -248,7 +248,7 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
                     />
                   </button>
                   <a
-                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand-500 hover:text-brand-600 text-sm"
+                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400 text-sm"
                     href="/organization/0000-0000-0000/project/1/environment/1/services/general"
                   >
                     Development
