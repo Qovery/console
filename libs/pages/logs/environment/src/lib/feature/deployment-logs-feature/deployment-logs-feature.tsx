@@ -1,22 +1,20 @@
 import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
+  type EnvironmentStatus,
   type Stage,
   type Status,
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-// import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { ListDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
-// import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-
-// import { LinkLogs } from '../pod-logs-feature/pod-logs-feature'
 
 export interface DeploymentLogsFeatureProps {
   environment: Environment
-  statusStages?: DeploymentStageWithServicesStatuses[]
+  deploymentStages?: DeploymentStageWithServicesStatuses[]
+  environmentStatus?: EnvironmentStatus
 }
 
 export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
@@ -89,7 +87,11 @@ export function getStageFromServiceId(
   return undefined
 }
 
-export function DeploymentLogsFeature({ environment, statusStages }: DeploymentLogsFeatureProps) {
+export function DeploymentLogsFeature({
+  environment,
+  environmentStatus,
+  deploymentStages,
+}: DeploymentLogsFeatureProps) {
   const { serviceId = '' } = useParams()
 
   const { data: service, isFetched: isFetchedService } = useService({ environmentId: environment.id, serviceId })
@@ -97,7 +99,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading...'}`)
 
-  const serviceStatus = getServiceStatusesById(statusStages, serviceId) as Status
+  const serviceStatus = getServiceStatusesById(deploymentStages, serviceId) as Status
 
   if (!serviceStatus && isFetchedService)
     return (
@@ -106,7 +108,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
       </div>
     )
 
-  const stageFromServiceId = getStageFromServiceId(statusStages ?? [], serviceId)
+  const stageFromServiceId = getStageFromServiceId(deploymentStages ?? [], serviceId)
 
   if (!serviceStatus) return null
 
@@ -116,6 +118,7 @@ export function DeploymentLogsFeature({ environment, statusStages }: DeploymentL
         environment={environment}
         deploymentHistoryEnvironment={deploymentHistoryEnvironment}
         serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
         stage={stageFromServiceId}
       />
     </div>

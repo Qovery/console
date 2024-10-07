@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type Row } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LogsType } from '@qovery/shared/enums'
 import { Ansi, Icon, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -9,14 +9,12 @@ import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { type EnvironmentLogIds } from '../../hooks/use-deployment-logs/use-deployment-logs'
-import { UpdateTimeContext } from '../../update-time-context/update-time-context'
 
 const { Table } = TablePrimitives
 
-export interface RowDeploymentProps extends Row<EnvironmentLogIds> {}
+export interface RowDeploymentLogsProps extends Row<EnvironmentLogIds> {}
 
-export function RowDeployment({ original }: RowDeploymentProps) {
-  const { utc } = useContext(UpdateTimeContext)
+export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
   const [, copyToClipboard] = useCopyToClipboard()
   const navigate = useNavigate()
   const { pathname, hash } = useLocation()
@@ -73,7 +71,7 @@ export function RowDeployment({ original }: RowDeploymentProps) {
       </Table.Cell>
       <Table.Cell className="h-fit shrink-0 py-1 pl-2 pr-3 font-code font-bold text-neutral-300">
         <span title={dateUTCString(original.timestamp)}>
-          {dateFullFormat(original.timestamp, utc ? 'UTC' : undefined, 'dd MMM, HH:mm:ss.SS')}
+          {dateFullFormat(original.timestamp, 'UTC', 'dd MMM, HH:mm:ss.SS')}
         </span>
       </Table.Cell>
       <Table.Cell
@@ -95,4 +93,4 @@ export function RowDeployment({ original }: RowDeploymentProps) {
   )
 }
 
-export default RowDeployment
+export default RowDeploymentLogs

@@ -7,12 +7,19 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
-import { type DeploymentHistoryEnvironment, type Environment, type Stage, type Status } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryEnvironment,
+  type Environment,
+  type EnvironmentStatus,
+  type Stage,
+  type Status,
+} from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
-import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { Button, Icon, Link, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -21,11 +28,11 @@ import { ServiceStageIdsContext } from '../service-stage-ids-context/service-sta
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { FiltersStageStep } from './filters-stage-step/filters-stage-step'
-import { RowDeployment } from './row-deployment/row-deployment'
+import { RowDeploymentLogs } from './row-deployment-logs/row-deployment-logs'
 
 const { Table } = TablePrimitives
 
-const MemoizedRowDeployment = memo(RowDeployment)
+const MemoizedRowDeploymentLogs = memo(RowDeploymentLogs)
 
 export type FilterType = 'ALL' | 'DEPLOY' | 'BUILD'
 
@@ -34,11 +41,13 @@ export interface ListDeploymentLogsProps {
   deploymentHistoryEnvironment: DeploymentHistoryEnvironment[]
   serviceStatus: Status
   stage?: Stage
+  environmentStatus?: EnvironmentStatus
 }
 
 export function ListDeploymentLogs({
   environment,
   deploymentHistoryEnvironment,
+  environmentStatus,
   serviceStatus,
   stage,
 }: ListDeploymentLogsProps) {
@@ -51,7 +60,7 @@ export function ListDeploymentLogs({
     if (stage) updateStageId(stage.id)
   }, [serviceId, serviceStatus, updateStageId, stage])
 
-  const { data: serviceType } = useServiceType({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
   const {
     data: logs = [],
@@ -213,11 +222,27 @@ export function ListDeploymentLogs({
           environment={environment}
           serviceId={serviceId ?? ''}
           serviceStatus={serviceStatus}
-        />
+          environmentStatus={environmentStatus}
+        >
+          <Link
+            as="button"
+            className="gap-1"
+            variant="surface"
+            to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + SERVICE_LOGS_URL(serviceId)}
+          >
+            {match(service)
+              .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+              .otherwise(() => true) ? (
+              <ServiceStateChip className="mr-1" mode="running" environmentId={environment.id} serviceId={serviceId} />
+            ) : null}
+            Go to service logs
+            <Icon iconName="arrow-right" />
+          </Link>
+        </HeaderLogs>
         <div className="flex h-12 w-full items-center justify-between border-b border-r border-neutral-500 px-4 py-2.5">
           <FiltersStageStep
             serviceStatus={serviceStatus}
-            serviceType={serviceType}
+            serviceType={service?.serviceType}
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
@@ -232,7 +257,7 @@ export function ListDeploymentLogs({
           </Button>
         </div>
         <div
-          className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-16"
+          className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"
           ref={refScrollSection}
           onWheel={(event) => {
             if (
@@ -256,7 +281,7 @@ export function ListDeploymentLogs({
           <Table.Root className="w-full text-xs">
             <Table.Body className="divide-y-0">
               {table.getRowModel().rows.map((row) => (
-                <MemoizedRowDeployment key={row.id} {...row} />
+                <MemoizedRowDeploymentLogs key={row.id} {...row} />
               ))}
             </Table.Body>
           </Table.Root>

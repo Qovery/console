@@ -1,14 +1,15 @@
-import { type Environment, type Status } from 'qovery-typescript-axios'
-import { useParams } from 'react-router-dom'
+import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
+import { type PropsWithChildren } from 'react'
 import { ServiceAvatar, ServiceLinksPopover, useLinks, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 
-export interface HeaderLogsProps {
+export interface HeaderLogsProps extends PropsWithChildren {
   type: 'DEPLOYMENT' | 'SERVICE'
   serviceId: string
   environment: Environment
   serviceStatus: Status
+  environmentStatus?: EnvironmentStatus
 }
 
 function EndCurve() {
@@ -27,10 +28,17 @@ function EndCurve() {
   )
 }
 
-export function HeaderLogs({ type, environment, serviceId, serviceStatus }: HeaderLogsProps) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+export function HeaderLogs({
+  type,
+  environment,
+  serviceId,
+  environmentStatus,
+  serviceStatus,
+  children,
+}: HeaderLogsProps) {
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: links = [] } = useLinks({ serviceId: serviceId, serviceType: service?.serviceType })
+  const filteredLinks = links.filter((link) => !(link.is_default && link.is_qovery_domain))
 
   if (!service) return null
 
@@ -40,11 +48,15 @@ export function HeaderLogs({ type, environment, serviceId, serviceStatus }: Head
     <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-800 pr-4">
       <div className="flex h-full">
         <div className="bg-n flex h-full items-center gap-4 border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
-          <span className="flex items-center gap-2.5">
-            <ServiceAvatar size="xs" service={service} border="none" />
-            {service.name}
-          </span>
-          <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
+          <Tooltip side="bottom" content={<span>execution id: {environmentStatus?.id}</span>}>
+            <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2.5">
+                <ServiceAvatar size="xs" service={service} border="none" />
+                {service.name}
+              </span>
+              <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
+            </span>
+          </Tooltip>
           {type === 'DEPLOYMENT' && (
             <>
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
@@ -67,7 +79,7 @@ export function HeaderLogs({ type, environment, serviceId, serviceStatus }: Head
               <Tooltip content="Links">
                 <div className="flex items-center gap-1">
                   <Icon iconName="link" iconStyle="regular" />
-                  {links.length} links
+                  {filteredLinks.length} {pluralize(filteredLinks.length, 'link', 'links')}
                   <Icon iconName="angle-down" />
                 </div>
               </Tooltip>
@@ -76,27 +88,7 @@ export function HeaderLogs({ type, environment, serviceId, serviceStatus }: Head
         </div>
         <EndCurve />
       </div>
-      {type === 'DEPLOYMENT' ? (
-        <Link
-          as="button"
-          className="gap-1"
-          variant="surface"
-          to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)}
-        >
-          Go to service logs
-          <Icon iconName="arrow-right" />
-        </Link>
-      ) : (
-        <Link
-          as="button"
-          className="gap-1"
-          variant="surface"
-          to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
-        >
-          Go to latest deployment
-          <Icon iconName="arrow-right" />
-        </Link>
-      )}
+      {children}
     </div>
   )
 }

@@ -49,18 +49,18 @@ export function PageEnvironmentLogs() {
 
   // const { data: services } = useServices({ environmentId })
 
-  const [statusStages, setStatusStages] = useState<DeploymentStageWithServicesStatuses[]>()
-  // const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
+  const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
+  const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
 
   const messageHandler = useCallback(
     (
       _: QueryClient,
       { stages, environment }: { stages: DeploymentStageWithServicesStatuses[]; environment: EnvironmentStatus }
     ) => {
-      setStatusStages(stages)
-      // setEnvironmentStatus(environment)
+      setDeploymentStages(stages)
+      setEnvironmentStatus(environment)
     },
-    [setStatusStages]
+    [setDeploymentStages]
   )
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
@@ -76,8 +76,6 @@ export function PageEnvironmentLogs() {
     onMessage: messageHandler,
   })
 
-  console.log(statusStages)
-
   if (!environment) return
 
   return (
@@ -85,7 +83,7 @@ export function PageEnvironmentLogs() {
       <ServiceStageIdsProvider>
         {/* <Sidebar
           services={services}
-          statusStages={statusStages}
+          deploymentStages={deploymentStages}
           environmentStatus={environmentStatus}
           versionId={versionId}
           serviceId={serviceId}
@@ -93,17 +91,34 @@ export function PageEnvironmentLogs() {
         <Routes>
           <Route
             path={DEPLOYMENT_LOGS_URL()}
-            element={<DeploymentLogsFeature environment={environment} statusStages={statusStages} />}
+            element={
+              <DeploymentLogsFeature
+                environment={environment}
+                deploymentStages={deploymentStages}
+                environmentStatus={environmentStatus}
+              />
+            }
           />
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
             element={
-              <DeploymentLogsFeature key={location.pathname} environment={environment} statusStages={statusStages} />
+              <DeploymentLogsFeature
+                key={location.pathname}
+                environment={environment}
+                deploymentStages={deploymentStages}
+                environmentStatus={environmentStatus}
+              />
             }
           />
           <Route
             path={SERVICE_LOGS_URL()}
-            element={<PodLogsFeature environment={environment} statusStages={statusStages} />}
+            element={
+              <PodLogsFeature
+                environment={environment}
+                deploymentStages={deploymentStages}
+                environmentStatus={environmentStatus}
+              />
+            }
           />
         </Routes>
       </ServiceStageIdsProvider>

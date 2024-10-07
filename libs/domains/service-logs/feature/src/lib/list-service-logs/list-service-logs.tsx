@@ -8,13 +8,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
-import { type Environment, type Status } from 'qovery-typescript-axios'
+import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useRunningStatus, useService } from '@qovery/domains/services/feature'
-import { Button, DropdownMenu, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { ServiceStateChip, useRunningStatus, useService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { Button, DropdownMenu, Icon, Link, TablePrimitives } from '@qovery/shared/ui'
 import { HeaderLogs } from '../header-logs/header-logs'
 import { type LogType, useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
@@ -35,9 +36,10 @@ export interface ListServiceLogsProps {
   environment: Environment
   clusterId: string
   serviceStatus: Status
+  environmentStatus?: EnvironmentStatus
 }
 
-export function ListServiceLogs({ environment, clusterId, serviceStatus }: ListServiceLogsProps) {
+export function ListServiceLogs({ environment, clusterId, serviceStatus, environmentStatus }: ListServiceLogsProps) {
   const { organizationId, projectId, environmentId, serviceId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const [searchParams, setSearchParams] = useSearchParams()
@@ -202,7 +204,28 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus }: ListS
             environment={environment}
             serviceId={serviceId ?? ''}
             serviceStatus={serviceStatus}
-          />
+            environmentStatus={environmentStatus}
+          >
+            <Link
+              as="button"
+              className="gap-1"
+              variant="surface"
+              to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
+            >
+              {match(service)
+                .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+                .otherwise(() => true) ? (
+                <ServiceStateChip
+                  className="mr-1"
+                  mode="deployment"
+                  environmentId={environmentId}
+                  serviceId={serviceId}
+                />
+              ) : null}
+              Go to latest deployment
+              <Icon iconName="arrow-right" />
+            </Link>
+          </HeaderLogs>
           <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
             <div className="flex items-center gap-3">
               <Button
