@@ -151,7 +151,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         contentLeft: (
           <div className="flex items-center">
             <ServiceStateChip mode="deployment" environmentId={service.environment?.id} serviceId={service.id} />
-            <div className="ml-3 mt-[1px]">
+            <div className="ml-3">
               <Icon
                 name={match(service)
                   .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
@@ -183,7 +183,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         contentLeft: (
           <div className="flex items-center">
             <ServiceStateChip mode="running" environmentId={service.environment?.id} serviceId={service.id} />
-            <div className="ml-3 mt-[1px]">
+            <div className="ml-3">
               <Icon
                 name={match(service)
                   .with({ serviceType: 'HELM' }, () => IconEnum.HELM)
