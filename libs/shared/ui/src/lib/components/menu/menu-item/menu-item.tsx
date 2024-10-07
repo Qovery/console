@@ -62,7 +62,7 @@ export function MenuItem(props: MenuItemProps) {
     itemContentCustom
   ) : (
     <>
-      <div className={`flex items-center truncate ${className}`}>
+      <div className={`flex items-baseline truncate ${className}`}>
         {copy && (
           <div onClick={(e) => e.preventDefault()}>
             <CopyToClipboardButtonIcon
@@ -74,7 +74,7 @@ export function MenuItem(props: MenuItemProps) {
         )}
 
         {contentLeft && (
-          <span className="mr-3" data-testid="menu-icon">
+          <span className="mr-3 flex items-center" data-testid="menu-icon">
             {contentLeft}
           </span>
         )}

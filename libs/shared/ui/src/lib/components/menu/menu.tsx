@@ -188,7 +188,6 @@ export function Menu(props: MenuProps) {
       </div>
       <ControlledMenu
         state={isOpen === undefined ? undefined : isOpen ? 'open' : 'closed'}
-        arrow
         offsetX={offsetX}
         offsetY={offsetY}
         direction={direction}

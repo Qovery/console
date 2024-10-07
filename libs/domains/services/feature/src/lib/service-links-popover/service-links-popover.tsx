@@ -55,7 +55,7 @@ export function ServiceLinksPopover({
         align={align}
       >
         <div className="flex items-center justify-between p-2">
-          <p className="font-medium text-neutral-350">
+          <p className="font-medium text-neutral-350 dark:text-neutral-250">
             {filteredLinks?.length ?? 0} {pluralize(filteredLinks?.length ?? 0, 'link')} attached
           </p>
           {serviceType !== 'HELM' && (
@@ -71,11 +71,11 @@ export function ServiceLinksPopover({
           {filteredLinks.map((link: LinkProps) => (
             <li key={link.url} className="flex p-2">
               <CopyToClipboardButtonIcon
-                className="mr-2 text-brand-500 hover:text-brand-600"
+                className="mr-2 text-brand-500 hover:text-brand-600 dark:hover:text-brand-400"
                 content={link.url ?? ''}
               />
               <a
-                className="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500"
+                className="flex w-full items-center justify-between text-neutral-400 transition hover:text-brand-500 dark:text-neutral-50 dark:hover:text-brand-400"
                 href={link.url}
                 target="_blank"
                 rel="noreferrer"
@@ -83,7 +83,7 @@ export function ServiceLinksPopover({
                 <div className="mr-2 text-ssm font-medium">
                   <Truncate text={link.url ?? ''} truncateLimit={26} />
                 </div>
-                <div className="text-xs text-neutral-350">{link.internal_port}</div>
+                <div className="text-xs text-neutral-350 dark:text-neutral-250">{link.internal_port}</div>
               </a>
             </li>
           ))}

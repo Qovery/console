@@ -89,12 +89,12 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
   <div
     data-radix-popper-content-wrapper=""
     dir="ltr"
-    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 12px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -12px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0px 0px;"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
       aria-labelledby="radix-:r6:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:bg-neutral-700"
+      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:bg-neutral-550"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -106,22 +106,6 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"
     >
-      <span
-        style="position: absolute; top: 0px; transform-origin: center 0; transform: rotate(180deg); left: 0px;"
-      >
-        <svg
-          class="fill-white dark:fill-neutral-700"
-          height="6"
-          preserveAspectRatio="none"
-          style="display: block;"
-          viewBox="0 0 30 10"
-          width="12"
-        >
-          <polygon
-            points="0,0 30,0 15,10"
-          />
-        </svg>
-      </span>
       <div
         class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-neutral-150 cursor-pointer hover:bg-neutral-150 text-neutral-400 relative"
         data-orientation="vertical"
@@ -150,7 +134,7 @@ exports[`ServiceActionToolbar should match manage deployment snapshot 1`] = `
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -263,12 +247,12 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
   <div
     data-radix-popper-content-wrapper=""
     dir="ltr"
-    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 12px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -12px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0px 0px;"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
       aria-labelledby="radix-:rv:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:bg-neutral-700"
+      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:bg-neutral-550"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
@@ -280,24 +264,8 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"
     >
-      <span
-        style="position: absolute; top: 0px; transform-origin: center 0; transform: rotate(180deg); left: 0px;"
-      >
-        <svg
-          class="fill-white dark:fill-neutral-700"
-          height="6"
-          preserveAspectRatio="none"
-          style="display: block;"
-          viewBox="0 0 30 10"
-          width="12"
-        >
-          <polygon
-            points="0,0 30,0 15,10"
-          />
-        </svg>
-      </span>
       <a
-        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 gap-0"
+        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/project/456/environment/789/logs/0/service-logs"
@@ -316,7 +284,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         target="_blank"
       >
         <div
-          class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+          class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
           data-orientation="vertical"
           data-radix-collection-item=""
           role="menuitem"
@@ -330,7 +298,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         </div>
       </a>
       <a
-        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 gap-0"
+        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/audit-logs/general?targetId=0&targetType=HELM&projectId=123&environmentId=3840068565336064"
@@ -344,7 +312,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         See audit logs
       </a>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -357,7 +325,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         Copy identifiers
       </div>
       <a
-        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 gap-0"
+        class="transition duration-100 px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
         href="/organization/123/project/123/environment/3840068565336064/application/0/settings/general"
@@ -371,7 +339,7 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
         Open settings
       </a>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-550 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"

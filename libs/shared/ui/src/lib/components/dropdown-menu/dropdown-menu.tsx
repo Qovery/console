@@ -12,9 +12,8 @@ const dropdownMenuItemVariants = cva(
         brand: [
           'dark:text-neutral-100',
           'data-[highlighted]:bg-brand-50',
-          'dark:data-[highlighted]:bg-neutral-550',
           'data-[highlighted]:text-brand-500',
-          'dark:data-[highlighted]:bg-neutral-550',
+          'dark:data-[highlighted]:bg-neutral-400',
         ],
         red: ['data-[highlighted]:bg-red-50', 'data-[highlighted]:text-red-600'],
         yellow: ['data-[highlighted]:bg-neutral-150'],
@@ -33,7 +32,7 @@ const dropdownMenuItemVariants = cva(
       {
         color: 'brand',
         disabled: false,
-        className: ['text-neutral-400', 'hover:bg-brand-50', 'hover:text-brand-500'],
+        className: ['text-neutral-400', 'hover:bg-brand-50', 'hover:text-brand-500', 'dark:hover:bg-neutral-550'],
       },
       {
         color: 'red',
@@ -128,7 +127,7 @@ const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item
 interface DropdownMenuContentProps extends ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> {}
 
 const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Content>, DropdownMenuContentProps>(
-  function DropdownMenuContent({ children, sideOffset = 12, align = 'start', className, ...props }, ref) {
+  function DropdownMenuContent({ children, sideOffset = 8, align = 'start', className, ...props }, ref) {
     return (
       <DropdownMenuPrimitive.Portal>
         <DropdownMenuPrimitive.Content
@@ -136,12 +135,11 @@ const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.C
           sideOffset={sideOffset}
           align={align}
           className={twMerge(
-            'flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:bg-neutral-700',
+            'flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:bg-neutral-550',
             className
           )}
           ref={ref}
         >
-          <DropdownMenuArrow />
           {children}
         </DropdownMenuPrimitive.Content>
       </DropdownMenuPrimitive.Portal>
@@ -163,22 +161,6 @@ const DropdownMenuSeparator = forwardRef<
     />
   )
 })
-
-interface DropdownMenuArrowProps extends ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Arrow> {}
-
-const DropdownMenuArrow = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Arrow>, DropdownMenuArrowProps>(
-  function DropdownMenuArrow({ className, width = 12, height = 6, ...props }, ref) {
-    return (
-      <DropdownMenuPrimitive.Arrow
-        {...props}
-        width={width}
-        height={height}
-        className={twMerge('fill-white dark:fill-neutral-700', className)}
-        ref={ref}
-      />
-    )
-  }
-)
 
 const DropdownMenu = Object.assign(
   {},

@@ -1,8 +1,9 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import type { Column, Row, RowData } from '@tanstack/react-table'
 import { Fragment, type ReactNode, useMemo, useState } from 'react'
-import { twMerge } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { Button } from '../button/button'
+import { dropdownMenuItemVariants } from '../dropdown-menu/dropdown-menu'
 import { Icon } from '../icon/icon'
 import { Popover } from '../popover/popover'
 import { Truncate } from '../truncate/truncate'
@@ -46,7 +47,10 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
                 column.columnDef.meta?.customFilterValue ? (
                   column.columnDef.meta.customFilterValue({ filterValue: column.getFilterValue() as string[] })
                 ) : (
-                  <Truncate text={(column.getFilterValue() as string[]).join(', ')} truncateLimit={18} />
+                  <Truncate
+                    text={upperCaseFirstLetter((column.getFilterValue() as string[]).join(', '))}
+                    truncateLimit={18}
+                  />
                 )
               ) : (
                 <>
@@ -74,7 +78,7 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
                   <Fragment key={value}>
                     <Popover.Close>
                       <DropdownMenu.Item
-                        className="flex cursor-pointer items-center justify-between gap-2 rounded p-2 text-neutral-400 hover:bg-neutral-100 hover:text-brand-500"
+                        className={twMerge(dropdownMenuItemVariants({ color: 'brand' }), 'justify-between')}
                         onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
                       >
                         {column.columnDef.meta?.customFacetEntry ? (
