@@ -40,12 +40,12 @@ export interface ListServiceLogsProps {
 }
 
 export function ListServiceLogs({ environment, clusterId, serviceStatus, environmentStatus }: ListServiceLogsProps) {
-  const { organizationId, projectId, environmentId, serviceId } = useParams()
+  const { serviceId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const { data: service } = useService({ environmentId, serviceId })
-  const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
   const {
     data: logs = [],
     pauseLogs,
@@ -57,10 +57,10 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
     enabledNginx,
     setEnabledNginx,
   } = useServiceLogs({
-    organizationId,
+    organizationId: environment.organization.id,
     clusterId,
-    projectId,
-    environmentId,
+    projectId: environment.project.id,
+    environmentId: environment.id,
     serviceId,
     enabled: service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true,
   })
@@ -179,7 +179,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
   if (!logs || logs.length === 0 || logs[0].message.includes('No pods found')) {
     return (
       <div className="p-1">
-        <div className="h-[calc(100vh-68px)] border border-neutral-500 bg-neutral-650 pt-11">
+        <div className="h-[calc(100vh-72px)] border border-neutral-500 bg-neutral-600 pt-11">
           <ServiceLogsPlaceholder
             serviceName={service?.name}
             itemsLength={logs.length}
@@ -210,7 +210,10 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
               as="button"
               className="gap-1"
               variant="surface"
-              to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
+              to={
+                ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+                DEPLOYMENT_LOGS_URL(serviceId)
+              }
             >
               {match(service)
                 .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
@@ -218,7 +221,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
                 <ServiceStateChip
                   className="mr-1"
                   mode="deployment"
-                  environmentId={environmentId}
+                  environmentId={environment.id}
                   serviceId={serviceId}
                 />
               ) : null}

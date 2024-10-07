@@ -4,7 +4,6 @@ import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
-// import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -18,36 +17,20 @@ import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 
-// import Sidebar from './ui/sidebar/sidebar'
-
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-
+  const location = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
-  const location = useLocation()
-  // const matchDeployment = matchPath<'serviceId', string>(
-  //   ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(),
-  //   location.pathname
-  // )
   const matchDeploymentVersion = matchPath<'versionId' | 'serviceId', string>(
     ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
     location.pathname
   )
-  // const matchServiceLogs = matchPath<'serviceId', string>(
-  //   ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(),
-  //   location.pathname
-  // )
 
   const versionId =
     matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
-
-  // const matchServiceId = matchDeploymentVersion || matchServiceLogs || matchDeployment
-  // const serviceId = matchServiceId?.params.serviceId !== ':serviceId' ? matchServiceId?.params.serviceId : undefined
-
-  // const { data: services } = useServices({ environmentId })
 
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
@@ -81,13 +64,6 @@ export function PageEnvironmentLogs() {
   return (
     <div className="flex h-full">
       <ServiceStageIdsProvider>
-        {/* <Sidebar
-          services={services}
-          deploymentStages={deploymentStages}
-          environmentStatus={environmentStatus}
-          versionId={versionId}
-          serviceId={serviceId}
-        /> */}
         <Routes>
           <Route
             path={DEPLOYMENT_LOGS_URL()}
@@ -124,7 +100,7 @@ export function PageEnvironmentLogs() {
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
-        <div className="m-1 flex min-h-full w-[calc(100%-8px)] justify-center rounded bg-neutral-650">
+        <div className="m-1 flex min-h-full w-[calc(100%-8px)] justify-center rounded bg-neutral-600">
           <div className="mt-12 flex flex-col items-center">
             <Icon iconName="wrench" className="text-neutral-300" />
             <div className="font-medium text-neutral-300">

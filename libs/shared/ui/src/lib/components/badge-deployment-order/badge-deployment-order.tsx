@@ -8,14 +8,7 @@ export interface BadgeDeploymentOrderProps {
 export function BadgeDeploymentOrder({ order = 0, className }: BadgeDeploymentOrderProps) {
   return (
     <div data-testid="badge" className={twMerge('relative mr-2 flex drop-shadow-sm', className)}>
-      <svg
-        data-testid="badge-svg"
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill="none"
-        viewBox="0 0 16 16"
-      >
+      <svg data-testid="badge-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
         <path
           fill="#009EDD"
           stroke="#3AB0E9"

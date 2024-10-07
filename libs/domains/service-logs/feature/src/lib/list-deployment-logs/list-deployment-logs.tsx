@@ -295,7 +295,7 @@ export function ListDeploymentLogs({
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
       <div className="h-full p-1">
-        <div className="h-full border border-neutral-500 bg-neutral-650 pt-11">
+        <div className="h-full border border-neutral-500 bg-neutral-600 pt-11">
           <DeploymentLogsPlaceholder
             serviceStatus={serviceStatus}
             itemsLength={logs.length}

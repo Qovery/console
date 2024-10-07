@@ -82,8 +82,6 @@ export function BreadcrumbDeploymentLogs({
     [stagesWithMergedServices, searchTerm, services]
   )
 
-  if (currentFindStageIndex === -1 && !currentService) return null
-
   // XXX: https://github.com/radix-ui/primitives/issues/1342
   // We are waiting for radix combobox primitives
   // So we are using DropdownMenu.Root in combination of Popover.Root
@@ -98,7 +96,7 @@ export function BreadcrumbDeploymentLogs({
           <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
             <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
               <span className="flex items-center justify-between pl-2">
-                <BadgeDeploymentOrder className="mr-1.5" order={findStageIndex(serviceId)} />
+                <BadgeDeploymentOrder className="mr-1.5" order={currentFindStageIndex} />
                 <span className="mr-3 text-sm font-medium text-neutral-50">{currentService?.name}</span>
                 <Popover.Trigger>
                   <Button type="button" variant="plain" radius="full">
@@ -107,7 +105,7 @@ export function BreadcrumbDeploymentLogs({
                 </Popover.Trigger>
               </span>
               <DropdownMenu.Content asChild>
-                <Popover.Content className="-ml-2 flex min-w-[406px] flex-col gap-1 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
+                <Popover.Content className="-ml-2 flex min-w-96 flex-col gap-1 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
                   {/* 
                     `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                     fix issue with item focus if we use input search

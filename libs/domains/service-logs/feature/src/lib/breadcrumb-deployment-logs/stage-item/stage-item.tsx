@@ -64,7 +64,7 @@ export function StageItem({ stage, index, getService, versionId, searchTerm }: S
                 >
                   <span className="flex items-center gap-2.5">
                     <ServiceAvatar size="xs" service={getService(service.id)!} border="none" />
-                    <span className="text-sm text-neutral-50">{fullService?.name}</span>
+                    <Truncate text={fullService?.name ?? ''} truncateLimit={28} />
                   </span>
                   <span className="flex items-center gap-2">
                     <span className="text-xs text-neutral-300">
