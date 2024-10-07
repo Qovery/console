@@ -7,7 +7,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useService: jest.fn(),
   useLinks: jest.fn(),
   ServiceAvatar: () => <div data-testid="service-avatar" />,
-  ServiceLinksPopover: () => <div>service-links</div>,
+  ServiceLinksPopover: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
 const mockProps: HeaderLogsProps = {
