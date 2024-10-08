@@ -32,6 +32,7 @@ export function ContainerRegistryCreateEditModal({
         region: registry?.config?.region,
         access_key_id: registry?.config?.access_key_id,
         secret_access_key: undefined,
+        scaleway_project_id: registry?.config?.scaleway_project_id,
         scaleway_access_key: registry?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
         json_credentials: undefined,

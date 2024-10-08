@@ -22,7 +22,6 @@ import {
   ContainerMainCallsApi,
   type ContainerRequest,
   ContainersApi,
-  CustomDomainApi,
   type CustomDomainRequest,
   DatabaseActionsApi,
   DatabaseDeploymentHistoryApi,
@@ -106,7 +105,6 @@ const containerConfigurationApi = new ContainerConfigurationApi()
 const helmConfigurationApi = new HelmConfigurationApi()
 const jobConfigurationApi = new JobConfigurationApi()
 
-const customDomainApi = new CustomDomainApi()
 const customDomainApplicationApi = new ApplicationCustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
@@ -482,11 +480,11 @@ export const services = createQueryKeys('services', {
           serviceType,
         }))
         .with('CONTAINER', (serviceType) => ({
-          query: customDomainApi.checkContainerCustomDomain.bind(customDomainApi),
+          query: customDomainContainerApi.checkContainerCustomDomain.bind(customDomainContainerApi),
           serviceType,
         }))
         .with('HELM', (serviceType) => ({
-          query: customDomainApi.checkHelmCustomDomain.bind(customDomainApi),
+          query: customDomainHelmApi.checkHelmCustomDomain.bind(customDomainHelmApi),
           serviceType,
         }))
         .exhaustive()

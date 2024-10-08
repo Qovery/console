@@ -63,6 +63,7 @@ export function HelmRepositoryCreateEditModal({
         password: undefined,
         region: repository?.config?.region,
         access_key_id: repository?.config?.access_key_id,
+        scaleway_project_id: repository?.config?.scaleway_project_id,
         scaleway_access_key: repository?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
         secret_access_key: undefined,
@@ -351,6 +352,22 @@ export function HelmRepositoryCreateEditModal({
                     onChange={field.onChange}
                     value={field.value}
                     label="Region"
+                    error={error?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="config.scaleway_project_id"
+                control={methods.control}
+                rules={{
+                  required: 'Please enter a Scaleway project id.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Project ID"
                     error={error?.message}
                   />
                 )}
