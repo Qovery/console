@@ -155,6 +155,9 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
           environmentToClone={environment}
         />
       ),
+      options: {
+        fakeModal: true,
+      },
     })
   }
 

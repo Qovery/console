@@ -78,6 +78,9 @@ export function Container({ children }: PropsWithChildren) {
                     organizationId={organizationId}
                   />
                 ),
+                options: {
+                  fakeModal: true,
+                },
               })
             }}
           >

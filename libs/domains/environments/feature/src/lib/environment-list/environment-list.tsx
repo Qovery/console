@@ -268,6 +268,9 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                       organizationId={project.organization.id}
                     />
                   ),
+                  options: {
+                    fakeModal: true,
+                  },
                 })
               : navigate(CLUSTERS_URL(project.organization?.id) + CLUSTERS_NEW_URL)
           }}
