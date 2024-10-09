@@ -113,7 +113,7 @@ export function useDeploymentLogs({
           // Include the entry if any of the following conditions are true:
           // 1. The stage name is "delete".
           // 2. stageId is empty or equal with current stageId.
-          // 3. The transmitter matches serviceId or has a type of "Environment" or "TaskManager" or "Application".
+          // 3. The transmitter matches serviceId or has a type of "Environment" or "TaskManager".
           return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter
         })
         .map((log, index) => ({ ...log, id: index + 1 }))
