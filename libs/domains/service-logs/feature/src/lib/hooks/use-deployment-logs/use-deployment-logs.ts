@@ -39,7 +39,7 @@ export function useDeploymentLogs({
   const [pauseLogs, setPauseLogs] = useState(false)
   const [debounceTime, setDebounceTime] = useState(1000)
 
-  const [logs, setLogs] = useState<EnvironmentLogIds[]>([])
+  const [logs, setLogs] = useState<EnvironmentLogs[]>([])
   const [messageChunks, setMessageChunks] = useState<EnvironmentLogs[][]>([])
 
   const { stageId } = useContext(ServiceStageIdsContext)
@@ -82,8 +82,7 @@ export function useDeploymentLogs({
         setMessageChunks((prevChunks) => prevChunks.slice(1))
         setLogs((prevLogs) => {
           const combinedLogs = [...prevLogs, ...messageChunks[0]]
-          const uniqueLogs = [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
-          return uniqueLogs.map((log, index) => ({ ...log, id: index + 1 }))
+          return [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
         })
 
         if (!hash && logs.length > 1000) {
@@ -103,20 +102,24 @@ export function useDeploymentLogs({
   const logsByServiceId = useMemo(
     () =>
       logs
-        .filter((currentData: EnvironmentLogIds) => {
+        .filter((currentData: EnvironmentLogs) => {
           const { stage, transmitter } = currentData.details
           const isDeleteStage = stage?.name === 'delete'
           const isEmptyOrEqualStageId = !stage?.id || stage?.id === stageId
+
           const isMatchingTransmitter =
             transmitter?.type === 'Environment' || transmitter?.type === 'TaskManager' || transmitter?.id === serviceId
 
           // Include the entry if any of the following conditions are true:
           // 1. The stage name is "delete".
           // 2. stageId is empty or equal with current stageId.
-          // 3. The transmitter matches serviceId and has a type of "Environment" or "TaskManager".
+          // 3. The transmitter matches serviceId or has a type of "Environment" or "TaskManager".
           return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter
         })
-        .filter((log) => (showPreviousLogs || log.id >= logs.length - CHUNK_SIZE ? true : +log.timestamp > now)),
+        .map((log, index) => ({ ...log, id: index + 1 }))
+        .filter((log, index, array) =>
+          showPreviousLogs || index >= array.length - CHUNK_SIZE ? true : +log.timestamp > now
+        ) as EnvironmentLogIds[],
     [logs, stageId, serviceId, now, showPreviousLogs]
   )
 
