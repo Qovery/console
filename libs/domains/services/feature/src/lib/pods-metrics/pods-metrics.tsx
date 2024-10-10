@@ -74,13 +74,9 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
   const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
-    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
-    .with({ serviceType: ServiceTypeEnum.CONTAINER }, ({ image_name, tag, registry }) => ({
-      image_name,
-      tag,
-      registry,
-    }))
-    .otherwise(() => undefined)
+    .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, () => true)
+    .with({ serviceType: ServiceTypeEnum.CONTAINER }, () => true)
+    .otherwise(() => false)
 
   const columns = useMemo(() => {
     const podsColumn = columnHelper.accessor('podName', {
@@ -143,9 +139,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
           value && (
             <Badge variant="surface" className="max-w-full shrink">
               {containerImage ? (
-                <div className="truncate">
-                  {containerImage.image_name}:{containerImage.tag}
-                </div>
+                <div className="truncate">{value}</div>
               ) : (
                 <span className="max-w-full truncate">
                   <Icon className="mr-2" iconName="code-commit" iconStyle="regular" />
