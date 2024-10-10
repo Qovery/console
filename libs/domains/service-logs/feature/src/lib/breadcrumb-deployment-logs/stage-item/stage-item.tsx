@@ -1,5 +1,7 @@
+import { type CheckedState } from '@radix-ui/react-checkbox'
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import clsx from 'clsx'
 import { type Stage, type Status } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
@@ -15,13 +17,16 @@ export interface StageItemProps {
     stage?: Stage
   }
   index: number
+  serviceId: string
   versionId: string
   searchTerm: string
   getService: (serviceId: string) => AnyService | undefined
+  hideSkipped: CheckedState
 }
 
-export function StageItem({ stage, index, getService, versionId, searchTerm }: StageItemProps) {
+export function StageItem({ stage, index, getService, serviceId, versionId, searchTerm, hideSkipped }: StageItemProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+
   const [isOpen, setIsOpen] = useState(() => {
     // Initialize open state based on whether there are any non-skipped services
     return stage.mergedServices.some((service) => service.steps?.total_duration_sec !== undefined)
@@ -31,11 +36,20 @@ export function StageItem({ stage, index, getService, versionId, searchTerm }: S
     if (searchTerm.length > 0) setIsOpen(true)
   }, [searchTerm])
 
+  const mergedServices = stage.mergedServices.filter((s) => {
+    if (!hideSkipped) {
+      return true
+    }
+    return s.steps?.total_duration_sec !== undefined
+  })
+
+  if (mergedServices.length === 0) return null
+
   return (
     <Collapsible.Root open={isOpen} onOpenChange={setIsOpen} asChild>
       <div className="mb-2 last:mb-0">
         <Collapsible.Trigger className="w-full" asChild>
-          <button className="flex items-center justify-between pb-2 pr-2 pt-1 text-sm text-neutral-250">
+          <button className="flex items-center justify-between px-2 pb-2 pt-1 text-sm text-neutral-250">
             <span className="flex items-center">
               <BadgeDeploymentOrder className="mr-1.5" order={index + 1} />
               <Truncate text={upperCaseFirstLetter(stage.stage?.name)} truncateLimit={40} />
@@ -47,12 +61,16 @@ export function StageItem({ stage, index, getService, versionId, searchTerm }: S
           {stage.mergedServices.map((service) => {
             const fullService = getService(service.id)
             const totalDurationSec = service.steps?.total_duration_sec
+
+            if (hideSkipped && !totalDurationSec) return null
+
             return (
               <DropdownMenu.Item
                 key={service.id}
                 className={twMerge(
-                  dropdownMenuItemVariants({ color: 'brand' }),
-                  'w-full justify-between gap-1 px-2 py-1.5'
+                  clsx(dropdownMenuItemVariants({ color: 'brand' }), 'w-full justify-between gap-1 px-2 py-1.5', {
+                    'bg-neutral-400': service.id === serviceId,
+                  })
                 )}
                 asChild
               >

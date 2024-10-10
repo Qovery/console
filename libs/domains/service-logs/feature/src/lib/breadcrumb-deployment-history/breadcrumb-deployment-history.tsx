@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { Link, useMatch, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -8,18 +8,12 @@ import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deploy
 
 export interface BreadcrumbDeploymentHistoryProps {
   serviceId: string
+  versionId?: string
 }
 
-export function BreadcrumbDeploymentHistory({ serviceId }: BreadcrumbDeploymentHistoryProps) {
+export function BreadcrumbDeploymentHistory({ serviceId, versionId }: BreadcrumbDeploymentHistoryProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({ environmentId })
-
-  const matchDeploymentLogs = useMatch({
-    path: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_VERSION_URL(serviceId),
-    end: false,
-  })
-
-  const versionIdUrl = matchDeploymentLogs?.params['versionId']
 
   if (!isFetchedDeloymentHistory) return null
 
@@ -30,7 +24,7 @@ export function BreadcrumbDeploymentHistory({ serviceId }: BreadcrumbDeploymentH
         <div className="flex items-center gap-1">
           <DropdownMenu.Root>
             <span className="flex h-6 items-center px-2">
-              {!versionIdUrl || versionIdUrl === deploymentHistory[0]?.id ? (
+              {!versionId || versionId === deploymentHistory[0]?.id ? (
                 <Tooltip content={dateFullFormat(deploymentHistory[0].created_at)} side="bottom">
                   <span className="mr-2 flex h-5 items-center gap-1 rounded bg-purple-500 px-1 text-sm font-medium text-neutral-50">
                     Latest
@@ -39,7 +33,7 @@ export function BreadcrumbDeploymentHistory({ serviceId }: BreadcrumbDeploymentH
                 </Tooltip>
               ) : (
                 <span className="mr-2 text-sm font-medium text-neutral-50">
-                  {dateFullFormat(deploymentHistory.find((h) => h.id === versionIdUrl)?.created_at ?? 0)}
+                  {dateFullFormat(deploymentHistory.find((h) => h.id === versionId)?.created_at ?? 0)}
                 </span>
               )}
               <DropdownMenu.Trigger asChild>
@@ -48,14 +42,14 @@ export function BreadcrumbDeploymentHistory({ serviceId }: BreadcrumbDeploymentH
                 </Button>
               </DropdownMenu.Trigger>
             </span>
-            <DropdownMenu.Content className="-ml-2 max-h-64 w-80 overflow-y-auto">
+            <DropdownMenu.Content className="-ml-2.5 max-h-64 w-80 overflow-y-auto">
               <span className="mb-1 block px-2 text-sm font-medium text-neutral-250">Deployment History</span>
               {deploymentHistory.map((history) => (
                 <DropdownMenu.Item
                   asChild
                   key={history.id}
                   className={clsx('min-h-9', {
-                    'bg-neutral-550': (versionIdUrl || deploymentHistory[0]?.id) === history.id,
+                    'bg-neutral-400': (versionId || deploymentHistory[0]?.id) === history.id,
                   })}
                 >
                   <Link

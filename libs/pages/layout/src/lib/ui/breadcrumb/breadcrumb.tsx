@@ -41,7 +41,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
   const { data: statusStages = [], isFetched: isFetchedStatusStages } = useDeploymentStages({ environmentId })
-  const { data: services = [], isLoading: isLoadingServices } = useServices({ environmentId })
+  const { data: services = [] } = useServices({ environmentId })
 
   const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
   const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
@@ -350,7 +350,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link=""
           />
         )}
-        {matchDeploymentLogs && statusStages && isFetchedStatusStages && !isLoadingServices && (
+        {matchDeploymentLogs && statusStages && isFetchedStatusStages && services.length > 0 && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
             <div className="flex items-center">
@@ -362,7 +362,10 @@ export function Breadcrumb(props: BreadcrumbProps) {
               />
             </div>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
-            <BreadcrumbDeploymentHistory serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''} />
+            <BreadcrumbDeploymentHistory
+              serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''}
+              versionId={matchDeploymentLogs?.params['versionId']}
+            />
           </>
         )}
         {matchServiceLogs && services && (
