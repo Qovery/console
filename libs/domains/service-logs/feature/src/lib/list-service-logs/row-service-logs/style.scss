@@ -5,5 +5,5 @@
 .sl-row:hover + .sl-expanded,
 .sl-expanded:hover,
 .sl-row:has(+ .sl-expanded:hover) {
-  background-color: theme('colors.neutral.700');
+  background-color: theme('colors.neutral.550');
 }

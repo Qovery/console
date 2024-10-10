@@ -66,13 +66,13 @@ export function MenuGroup(props: MenuGroupProps) {
       {!isFilter && menu?.title && (
         <div className="flex items-center justify-between" style={headPaddingStyle}>
           {menu?.title && (
-            <p data-testid="title" className="text-sm text-neutral-350 dark:text-neutral-250">
+            <p data-testid="title" className="text-sm font-medium text-neutral-350 dark:text-neutral-250">
               {menu?.title}
             </p>
           )}
           {menu?.button && (
             <span
-              className="link inline-block cursor-pointer text-sm font-medium text-brand-500 dark:text-brand-400 dark:hover:text-brand-500"
+              className="link inline-block cursor-pointer text-sm font-medium text-brand-500 dark:hover:text-brand-500"
               onClick={menu?.button.onClick}
             >
               {menu?.button.label}
@@ -84,6 +84,7 @@ export function MenuGroup(props: MenuGroupProps) {
         <div className="menu__search" style={headPaddingStyle} data-testid="menu-search">
           <InputSearch
             autofocus
+            className="dark:bg-neutral-600"
             placeholder="Search"
             isEmpty={filteredItems.length === 0}
             onChange={(value: string) => {

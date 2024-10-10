@@ -1,6 +1,5 @@
 import { type Status } from 'qovery-typescript-axios'
-import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { useServiceType } from '@qovery/domains/services/feature'
+import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -101,8 +100,15 @@ describe('ListDeploymentLogs', () => {
       data: { state: 'RUNNING' },
     })
 
-    useServiceType.mockReturnValue({
-      data: { serviceType: 'APPLICATION' },
+    useService.mockReturnValue({
+      data: {
+        id: 'service-1',
+        name: 'Test Service',
+        serviceType: 'APPLICATION',
+      },
+    })
+    useLinks.mockReturnValue({
+      data: [{ id: 'link-1', url: 'https://example.com', is_default: false, is_qovery_domain: false }],
     })
   })
 
