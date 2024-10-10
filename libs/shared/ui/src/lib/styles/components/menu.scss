@@ -100,10 +100,6 @@ $menuTiming: 0.6s;
 
 // dark
 .dark {
-  .menu__container,
-  .szh-menu__arrow {
-    background: theme('colors.neutral.550') !important;
-  }
   .menu-item {
     &.szh-menu__item--hover:not(.text-red-600),
     &.menu-item--hover:not(.text-red-600),
