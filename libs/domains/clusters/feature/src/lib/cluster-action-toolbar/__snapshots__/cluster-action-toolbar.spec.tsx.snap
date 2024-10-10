@@ -120,7 +120,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 relative"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 relative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -133,7 +133,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
         Update
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -277,7 +277,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -290,7 +290,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
         Access info
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -303,7 +303,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
         See audit logs
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -316,7 +316,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
         Copy identifier
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -478,7 +478,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -491,7 +491,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
         Access info
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -504,7 +504,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
         See audit logs
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -517,7 +517,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
         Copy identifier
       </div>
       <div
-        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none dark:text-neutral-100 data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-9 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 dark:border-solid dark:border-neutral-500 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
