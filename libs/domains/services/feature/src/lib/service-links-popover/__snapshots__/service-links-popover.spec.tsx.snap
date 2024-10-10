@@ -29,7 +29,7 @@ exports[`ServiceLinksPopover should match snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 100% 0px;"
   >
     <div
-      class="rounded bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded dark:border-solid dark:border-neutral-500 dark:bg-neutral-550 max-w-[280px] border-transparent p-2 text-sm text-neutral-350"
+      class="rounded bg-white shadow-xl outline-none data-[state=open]:data-[side=bottom]:animate-slidein-up-sm-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-sm-faded data-[state=open]:data-[side=top]:animate-slidein-down-sm-faded dark:border dark:border-neutral-500 dark:bg-neutral-550 max-w-[280px] border-transparent p-2 text-sm text-neutral-350"
       data-align="end"
       data-side="bottom"
       data-state="open"

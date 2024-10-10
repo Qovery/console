@@ -1,8 +1,9 @@
+import { type CheckedState } from '@radix-ui/react-checkbox'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { type DeploymentStageWithServicesStatuses, type Status } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { BadgeDeploymentOrder, Button, Icon, InputSearch, Popover } from '@qovery/shared/ui'
+import { BadgeDeploymentOrder, Button, Checkbox, Icon, InputSearch, Popover } from '@qovery/shared/ui'
 import { StageItem } from './stage-item/stage-item'
 
 export function mergeServices(
@@ -36,6 +37,7 @@ export function BreadcrumbDeploymentLogs({
 }: BreadcrumbDeploymentLogsProps) {
   const [open, setOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const [hideSkipped, setHideSkipped] = useState<CheckedState>(true)
 
   const getService = (serviceId: string) => services.find((service: AnyService) => service.id === serviceId)
   const currentService = getService(serviceId)
@@ -105,19 +107,30 @@ export function BreadcrumbDeploymentLogs({
                 </Popover.Trigger>
               </span>
               <DropdownMenu.Content asChild>
-                <Popover.Content className="-ml-2 flex min-w-96 flex-col gap-1 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
+                <Popover.Content className="-ml-2.5 flex min-w-96 flex-col gap-3 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
                   {/* 
                     `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                     fix issue with item focus if we use input search
                     https://github.com/radix-ui/primitives/issues/2193#issuecomment-1790564604 
                   */}
-                  <div onKeyDown={(e) => e.stopPropagation()}>
+                  <div className="flex flex-col gap-3" onKeyDown={(e) => e.stopPropagation()}>
                     <InputSearch
                       placeholder="Search..."
-                      className="mb-1"
+                      className="mb-1 dark:bg-neutral-600"
                       onChange={(value) => setSearchTerm(value)}
                       autofocus
                     />
+                    <div className="flex items-center gap-3 text-sm font-medium text-neutral-50">
+                      <Checkbox
+                        name="skipped"
+                        id="skipped"
+                        className="shrink-0"
+                        color="brand"
+                        checked={hideSkipped}
+                        onCheckedChange={setHideSkipped}
+                      />
+                      <label htmlFor="skipped">Hide skipped</label>
+                    </div>
                   </div>
                   <div className="overflow-y-auto">
                     {filteredStages.length > 0 ? (
@@ -127,8 +140,10 @@ export function BreadcrumbDeploymentLogs({
                           stage={stage}
                           index={index}
                           getService={getService}
+                          serviceId={serviceId}
                           versionId={versionId}
                           searchTerm={searchTerm}
+                          hideSkipped={hideSkipped}
                         />
                       ))
                     ) : (

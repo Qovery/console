@@ -84,6 +84,7 @@ export function MenuGroup(props: MenuGroupProps) {
         <div className="menu__search" style={headPaddingStyle} data-testid="menu-search">
           <InputSearch
             autofocus
+            className="dark:bg-neutral-600"
             placeholder="Search"
             isEmpty={filteredItems.length === 0}
             onChange={(value: string) => {
