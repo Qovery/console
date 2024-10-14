@@ -135,10 +135,10 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         className="relative"
         color="yellow"
       >
-        Upgrade to {clusterStatus.next_k8s_available_version}
+        Upgrade K8s to {clusterStatus.next_k8s_available_version}
         <Tooltip
           side="bottom"
-          content="Your cluster is out of date. Click here to upgrade it now. The upgrade will be performed automatically after a certain period."
+          content="A new Kubernetes version is available. Click here to upgrade your cluster now or wait for the upgrade to be performed automatically by Qovery after a certain period."
         >
           <div className="absolute right-2">
             <Icon iconName="circle-exclamation" iconStyle="regular" />
