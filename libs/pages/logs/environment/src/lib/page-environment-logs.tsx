@@ -2,6 +2,7 @@ import { type QueryClient } from '@tanstack/react-query'
 import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
+import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import {
@@ -10,7 +11,6 @@ import {
   ENVIRONMENT_LOGS_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -100,18 +100,7 @@ export function PageEnvironmentLogs() {
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
-        <div className="m-1 flex min-h-full w-[calc(100%-8px)] justify-center rounded bg-neutral-600">
-          <div className="mt-12 flex flex-col items-center">
-            <Icon iconName="wrench" className="text-neutral-300" />
-            <div className="font-medium text-neutral-300">
-              Please select a service on the left menu to access its deployment logs or live logs.
-              <p>
-                You can access the deployment logs only for the services recently deployed (
-                <span className="text-brand-400">in purple</span>).
-              </p>
-            </div>
-          </div>
-        </div>
+        <EnvironmentStages environment={environment} deploymentStages={deploymentStages} />
       )}
     </div>
   )
