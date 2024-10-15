@@ -76,13 +76,13 @@ describe('ListDeploymentLogs', () => {
       id: '1',
       timestamp: '2023-01-01T00:00:00Z',
       message: { safe_message: 'Log 1' },
-      details: { stage: { step: 'BUILD' } },
+      details: { stage: { step: 'Built' } },
     },
     {
       id: '2',
       timestamp: '2023-01-01T00:01:00Z',
       message: { safe_message: 'Log 2' },
-      details: { stage: { step: 'DEPLOY' } },
+      details: { stage: { step: 'Deploy' } },
     },
   ]
 

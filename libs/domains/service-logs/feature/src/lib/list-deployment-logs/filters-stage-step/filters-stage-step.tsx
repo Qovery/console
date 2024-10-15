@@ -4,7 +4,7 @@ import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { StatusChip } from '@qovery/shared/ui'
+import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type FilterType } from '../list-deployment-logs'
 
@@ -83,6 +83,33 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
           </span>
         </>
       ) : null}
+      <Tooltip
+        content={
+          <span className="flex flex-col gap-0.5">
+            {steps.length > 0 ? (
+              steps.map((step) => (
+                <span key={step.step_name} className="font-medium">
+                  {upperCaseFirstLetter(step.step_name)?.replace(/_/g, ' ')}:{' '}
+                  {step.duration_sec ? (
+                    <>
+                      {Math.floor(step.duration_sec / 60)}m {step.duration_sec % 60}s
+                    </>
+                  ) : (
+                    '0s'
+                  )}
+                </span>
+              ))
+            ) : (
+              <span>No detail available</span>
+            )}
+          </span>
+        }
+        side="bottom"
+      >
+        <span>
+          <Icon iconName="circle-info" iconStyle="regular" />
+        </span>
+      </Tooltip>
     </button>
   )
 }
