@@ -59,15 +59,17 @@ export function HeaderLogs({
           >
             <Icon iconName="timeline" />
           </Link>
-          <Tooltip side="bottom" content={<span>Execution id: {environmentStatus?.id}</span>}>
-            <span className="flex items-center gap-2">
-              <span className="flex items-center gap-2.5">
-                <ServiceAvatar size="xs" service={service} border="none" />
-                {service.name}
-              </span>
-              <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
+          <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2.5">
+              <ServiceAvatar size="xs" service={service} border="none" />
+              {service.name}
             </span>
-          </Tooltip>
+            <Tooltip side="bottom" content={<span>Execution id: {environmentStatus?.id}</span>}>
+              <span>
+                <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
+              </span>
+            </Tooltip>
+          </span>
           {type === 'DEPLOYMENT' && (
             <>
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
