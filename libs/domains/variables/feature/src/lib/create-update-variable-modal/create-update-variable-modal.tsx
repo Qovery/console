@@ -101,7 +101,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   const methods = useForm<{
     key: string
-    value: string
+    value?: string | null
     description?: string
     scope: Scope
     isSecret: boolean
@@ -111,7 +111,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     defaultValues: {
       key: variable?.key,
       scope: defaultScope,
-      value: variable?.value ?? '',
+      value: variable?.value,
       isSecret: variable?.is_secret,
       description: variable?.description,
       enable_interpolation_in_file: _isFile ? variable?.enable_interpolation_in_file ?? true : undefined,
@@ -160,7 +160,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             variableRequest: {
               is_secret: data.isSecret,
               key: data.key,
-              value: data.value,
+              value: data.value || '',
               description: data.description,
               mount_path: data.mountPath || null,
               variable_parent_id: parentId,
@@ -192,7 +192,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             variableOverrideRequest: {
               override_scope: data.scope,
               override_parent_id: parentId,
-              value: data.value,
+              value: data.value || '',
               description: data.description,
             },
           })
@@ -205,11 +205,13 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             throw new Error('No variable to be based on')
           }
 
+          // Allowing a null value for the variable when updating permits retaining the current value.
+          // For newly created variables, a value is required and an empty string will be set if not provided.
           return editVariable({
             variableId: variable.id,
             variableEditRequest: {
               key: data.key,
-              value: variable.aliased_variable?.key || data.value || '',
+              value: variable.aliased_variable?.key || data.value,
               description: data.description,
             },
           })
@@ -369,7 +371,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 {'environmentId' in props && (
                   <DropdownVariable
                     environmentId={props.environmentId}
-                    onChange={(variableKey) => handleInsertVariable({ variableKey, value, onChange })}
+                    onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
                   >
                     <Button
                       size="md"
