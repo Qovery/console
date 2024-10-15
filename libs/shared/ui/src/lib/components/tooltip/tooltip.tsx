@@ -6,7 +6,7 @@ import { twMerge } from '@qovery/shared/util-js'
 const tooltipContentVariants = cva(['rounded-sm', 'px-2', 'py-1', 'text-xs', 'font-medium'], {
   variants: {
     color: {
-      neutral: ['bg-neutral-600', 'text-neutral-50', 'dark:bg-neutral-100', 'dark:text-neutral-400'],
+      neutral: ['bg-neutral-600', 'text-neutral-50', 'dark:bg-neutral-500'],
       orange: ['bg-orange-500', 'text-neutral-50'],
     },
   },
@@ -15,7 +15,7 @@ const tooltipContentVariants = cva(['rounded-sm', 'px-2', 'py-1', 'text-xs', 'fo
 const tooltipArrowVariants = cva('', {
   variants: {
     color: {
-      neutral: ['fill-neutral-600', 'dark:fill-neutral-100'],
+      neutral: ['fill-neutral-600', 'dark:fill-neutral-500'],
       orange: ['fill-orange-500'],
     },
   },
