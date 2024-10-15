@@ -1,10 +1,17 @@
 import clsx from 'clsx'
-import { type DeploymentStageWithServicesStatuses, type Environment, type Status } from 'qovery-typescript-axios'
+import {
+  type DeploymentStageWithServicesStatuses,
+  type Environment,
+  type EnvironmentStatus,
+  type Status,
+} from 'qovery-typescript-axios'
 import { NavLink } from 'react-router-dom'
 import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, LoaderSpinner, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
+import HeaderLogs from '../header-logs/header-logs'
 
 function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServicesStatuses[]) {
   return deploymentStages.map((deploymentStage) => {
@@ -21,21 +28,27 @@ function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServices
 
 export interface EnvironmentStagesProps {
   environment: Environment
+  environmentStatus?: EnvironmentStatus
   deploymentStages?: DeploymentStageWithServicesStatuses[]
 }
 
-export function EnvironmentStages({ environment, deploymentStages }: EnvironmentStagesProps) {
+export function EnvironmentStages({ environment, environmentStatus, deploymentStages }: EnvironmentStagesProps) {
   const { data: services = [] } = useServices({ environmentId: environment.id })
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
 
+  if (!environmentStatus) return null
+
   return (
-    <div className="h-full w-[calc(100vw-64px)] p-1">
-      <div className="m-1 flex min-h-full justify-center bg-neutral-600">
+    <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
+      <HeaderLogs environment={environment} environmentStatus={environmentStatus} />
+      <div className="flex h-[calc(100vh-120px)] justify-center border border-t-0 border-neutral-500 bg-neutral-600">
         <div className="h-full w-full">
           <div className="flex gap-5 overflow-y-scroll px-6 py-6">
             {!deploymentStages ? (
-              <LoaderSpinner className="h-4 w-4" />
+              <div className="mt-6 flex h-full w-full justify-center">
+                <LoaderSpinner className="h-4 w-4" />
+              </div>
             ) : (
               <>
                 {matchServicesWithStatuses(deploymentStages)?.map((s, index) => {
@@ -83,7 +96,13 @@ export function EnvironmentStages({ environment, deploymentStages }: Environment
                             return (
                               <NavLink
                                 key={service?.id}
-                                to="/"
+                                to={
+                                  ENVIRONMENT_LOGS_URL(
+                                    environment.organization.id,
+                                    environment.project.id,
+                                    environment.id
+                                  ) + DEPLOYMENT_LOGS_URL(service.id)
+                                }
                                 className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
                               >
                                 <ServiceAvatar

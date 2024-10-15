@@ -100,7 +100,11 @@ export function PageEnvironmentLogs() {
       </ServiceStageIdsProvider>
       {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
         location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
-        <EnvironmentStages environment={environment} deploymentStages={deploymentStages} />
+        <EnvironmentStages
+          environment={environment}
+          environmentStatus={environmentStatus}
+          deploymentStages={deploymentStages}
+        />
       )}
     </div>
   )

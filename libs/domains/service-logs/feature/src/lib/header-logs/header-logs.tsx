@@ -1,7 +1,8 @@
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { ServiceAvatar, ServiceLinksPopover, useLinks, useService } from '@qovery/domains/services/feature'
-import { Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 
 export interface HeaderLogsProps extends PropsWithChildren {
@@ -45,9 +46,19 @@ export function HeaderLogs({
   const totalDurationSec = serviceStatus?.steps?.total_computing_duration_sec ?? 0
 
   return (
-    <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-800 pr-4">
+    <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900 pr-4">
       <div className="flex h-full">
         <div className="bg-n flex h-full items-center gap-4 border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
+          <Link
+            as="button"
+            size="sm"
+            variant="surface"
+            color="neutral"
+            className="w-7 justify-center"
+            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+          >
+            <Icon iconName="timeline" />
+          </Link>
           <Tooltip side="bottom" content={<span>Execution id: {environmentStatus?.id}</span>}>
             <span className="flex items-center gap-2">
               <span className="flex items-center gap-2.5">

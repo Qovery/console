@@ -306,7 +306,7 @@ export function ListDeploymentLogs({
     )
   }
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden bg-neutral-800 p-1">
+    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden bg-neutral-900 p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
         <HeaderLogs
           type="DEPLOYMENT"
