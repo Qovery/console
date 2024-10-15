@@ -15,7 +15,7 @@ import {
   CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
@@ -48,7 +48,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
   const matchEnvironmentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL(), end: false })
   const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })
-  const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(), end: false })
+  const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(), end: false })
 
   const location = useLocation()
   const navigate = useNavigate()
