@@ -43,7 +43,6 @@ describe('HeaderLogs', () => {
         <div data-testid="child-content">Child Content</div>
       </HeaderLogs>
     )
-
     expect(screen.getByTestId('child-content')).toBeInTheDocument()
   })
 })
