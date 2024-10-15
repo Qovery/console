@@ -3,7 +3,7 @@ import { type FormEvent, type ReactNode, forwardRef, useEffect, useRef, useState
 export interface InputTextAreaProps {
   label: string
   name: string
-  value?: string | undefined
+  value?: string | null
   onChange?: (e: FormEvent<HTMLTextAreaElement>) => void
   className?: string
   disabled?: boolean
@@ -51,7 +51,7 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
           name={name}
           id={label}
           className="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
-          value={currentValue}
+          value={!currentValue ? undefined : currentValue}
           onChange={(e) => {
             if (onChange) onChange(e)
             setCurrentValue(e.currentTarget.value)
