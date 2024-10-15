@@ -71,7 +71,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     onChange,
   }: {
     variableKey: string
-    value?: string | null
+    value: string
     onChange: (value: string) => void
   }) => {
     const textarea = textareaRef.current
@@ -80,7 +80,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     const startPos = textarea.selectionStart ?? 0
     const endPos = textarea.selectionEnd ?? 0
 
-    const newValue = value?.substring(0, startPos) + `{{${variableKey}}}` + value?.substring(endPos)
+    const newValue = value.substring(0, startPos) + `{{${variableKey}}}` + value.substring(endPos)
 
     onChange(newValue)
     // setTimeout is required to refocus the textarea after a potential re-render caused by the value update.
@@ -371,7 +371,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 {'environmentId' in props && (
                   <DropdownVariable
                     environmentId={props.environmentId}
-                    onChange={(variableKey) => handleInsertVariable({ variableKey, value, onChange })}
+                    onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
                   >
                     <Button
                       size="md"
