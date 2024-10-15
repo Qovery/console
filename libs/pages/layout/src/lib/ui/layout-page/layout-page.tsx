@@ -72,10 +72,12 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       clusterStatuses?.find(({ status }) => status === ClusterStateEnum.INVALID_CREDENTIALS)?.cluster_id === id
   )
 
-  const clusterUpgradeWarning = clusters?.find(
-    ({ id }) =>
-      clusterStatuses?.find(({ next_k8s_available_version }) => next_k8s_available_version !== null)?.cluster_id === id
-  )
+  const clusterUpgradeWarning = clusters?.find(({ id, cloud_provider }) => {
+    const updatedClusters = clusterStatuses?.find(
+      ({ next_k8s_available_version }) => next_k8s_available_version !== null
+    )
+    return updatedClusters?.cluster_id === id && cloud_provider !== 'ON_PREMISE'
+  })
 
   const clusterCredentialError = Boolean(!matchLogInfraRoute && invalidCluster)
 
