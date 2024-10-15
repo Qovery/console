@@ -32,7 +32,7 @@ export function HeaderLogs({ environment, environmentStatus, children }: HeaderL
   return (
     <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900 pr-4">
       <div className="flex h-full">
-        <div className="bg-n flex h-full items-center gap-4 border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
+        <div className="flex h-full items-center gap-4 border-l border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
           <Tooltip content={`Cloud provider: ${environment.cloud_provider.provider}`} side="bottom">
             <span className="flex items-center gap-2">
               <span className="flex items-center gap-2.5">
@@ -47,7 +47,7 @@ export function HeaderLogs({ environment, environmentStatus, children }: HeaderL
           </svg>
           <span className="flex items-center gap-2">
             <EnvironmentStateChip mode="deployment" environmentId={environment.id} />
-            <span>{upperCaseFirstLetter(environmentStatus?.state)}</span>
+            <span>{upperCaseFirstLetter(environmentStatus?.state).replace(/_/g, ' ')}</span>
           </span>
           <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
             <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>

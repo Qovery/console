@@ -46,6 +46,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
   const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
   const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
+  const matchEnvironmentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL(), end: false })
   const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })
   const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(), end: false })
 
@@ -55,8 +56,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 
   const locationIsClusterLogs = location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
 
-  const matchLogsRoute =
-    location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) || matchServiceLogs || matchDeploymentLogs
+  const matchLogsRoute = location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) || matchEnvironmentLogs
 
   const clustersMenu: MenuData = [
     {
@@ -287,7 +287,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
               {environmentId && (
                 <>
                   <BreadcrumbItem
-                    isLast={!(applicationId || databaseId || matchServiceLogs || matchDeploymentLogs)}
+                    isLast={!(applicationId || databaseId || matchEnvironmentLogs)}
                     label="Environment"
                     data={environments}
                     menuItems={environmentMenu}
@@ -387,7 +387,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
           </>
         )}
       </div>
-      {(matchServiceLogs || matchDeploymentLogs || locationIsClusterLogs) && (
+      {(matchEnvironmentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
           <Button
             className="gap-2"
