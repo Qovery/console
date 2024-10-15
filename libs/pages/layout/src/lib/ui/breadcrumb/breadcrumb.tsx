@@ -15,6 +15,7 @@ import {
   CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
+  DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
@@ -48,7 +49,11 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
   const matchEnvironmentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL(), end: false })
   const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })
-  const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(), end: false })
+  const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(), end: false })
+  const matchDeploymentLogsVersion = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
+    end: false,
+  })
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -350,24 +355,33 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link=""
           />
         )}
-        {matchDeploymentLogs && statusStages && isFetchedStatusStages && services.length > 0 && (
-          <>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
-            <div className="flex items-center">
-              <BreadcrumbDeploymentLogs
-                serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''}
-                versionId={matchDeploymentLogs?.params['versionId'] ?? ''}
-                services={services}
-                statusStages={statusStages}
+        {(matchDeploymentLogsVersion || matchDeploymentLogs) &&
+          statusStages &&
+          isFetchedStatusStages &&
+          services.length > 0 && (
+            <>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <div className="flex items-center">
+                <BreadcrumbDeploymentLogs
+                  serviceId={
+                    matchDeploymentLogsVersion?.params['serviceId'] || matchDeploymentLogs?.params['serviceId'] || ''
+                  }
+                  versionId={
+                    matchDeploymentLogsVersion?.params['versionId'] || matchDeploymentLogs?.params['versionId'] || ''
+                  }
+                  services={services}
+                  statusStages={statusStages}
+                />
+              </div>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <BreadcrumbDeploymentHistory
+                serviceId={
+                  matchDeploymentLogsVersion?.params['serviceId'] || matchDeploymentLogs?.params['serviceId'] || ''
+                }
+                versionId={matchDeploymentLogsVersion?.params['versionId'] || matchDeploymentLogs?.params['versionId']}
               />
-            </div>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
-            <BreadcrumbDeploymentHistory
-              serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''}
-              versionId={matchDeploymentLogs?.params['versionId']}
-            />
-          </>
-        )}
+            </>
+          )}
         {matchServiceLogs && services && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>

@@ -12,7 +12,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Checkbox, Icon, LoaderSpinner, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
-import HeaderLogs from '../header-logs/header-logs'
+import { HeaderLogs } from '../header-logs/header-logs'
 
 function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServicesStatuses[]) {
   return deploymentStages.map((deploymentStage) => {
@@ -66,13 +66,40 @@ export function EnvironmentStages({ environment, environmentStatus, deploymentSt
       </HeaderLogs>
       <div className="flex h-[calc(100vh-120px)] justify-center border border-t-0 border-neutral-500 bg-neutral-600">
         <div className="h-full w-full">
-          <div className="flex gap-0.5 overflow-y-scroll px-6 py-6">
+          <div className="flex gap-0.5 overflow-y-scroll py-6 pl-6 pr-4">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">
                 <LoaderSpinner className="h-6 w-6" theme="dark" />
               </div>
             ) : (
               <>
+                <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650 text-neutral-50">
+                  <div className="flex items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
+                      <span className="text-xs">3m:38s</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                    <NavLink
+                      to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+                      className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
+                    >
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
+                        <Icon iconName="list-check" iconStyle="solid" />
+                      </span>
+                      <span className="flex flex-col gap-0.5">
+                        <span className="text-sm">Pre-check logs</span>
+                        <span className="text-xs">3m:38s</span>
+                      </span>
+                    </NavLink>
+                  </div>
+                </div>
+                <div className="mt-4 w-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
+                    <path fill="#C6D3E7" d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"></path>
+                  </svg>
+                </div>
                 {matchServicesWithStatuses(deploymentStages)?.map((s, index) => {
                   const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
 
