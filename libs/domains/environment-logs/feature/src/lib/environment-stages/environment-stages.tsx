@@ -8,6 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { Fragment, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
@@ -83,7 +84,7 @@ export function EnvironmentStages({
                 {preCheckStage && (
                   <>
                     <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650 text-neutral-50">
-                      <div className="flex items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                      <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
                         <StatusChip status={preCheckStage?.status || 'SKIP'} />
                         <div className="flex flex-col gap-0.5">
                           <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
@@ -108,7 +109,7 @@ export function EnvironmentStages({
                     </div>
                     <div className="mt-4 w-4">
                       <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
-                        <path fill="#C6D3E7" d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"></path>
+                        <path fill="#383E50" d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"></path>
                       </svg>
                     </div>
                   </>
@@ -129,7 +130,7 @@ export function EnvironmentStages({
                           }
                         )}
                       >
-                        <div className="flex items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                        <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
                           <StatusChip status={s.stage?.status} />
                           <div className="flex flex-col gap-0.5">
                             <span className="flex gap-1.5 text-sm font-medium">
@@ -142,9 +143,13 @@ export function EnvironmentStages({
                                 </Tooltip>
                               )}
                             </span>
-                            <span className="text-xs">
-                              {Math.floor(stageTotalDurationSec / 60)}m {stageTotalDurationSec % 60}s
-                            </span>
+                            {match(s.stage?.status)
+                              .with('CANCELED', 'DONE', 'ERROR', () => (
+                                <span className="text-xs">
+                                  {Math.floor(stageTotalDurationSec / 60)}m {stageTotalDurationSec % 60}s
+                                </span>
+                              ))
+                              .otherwise(() => null)}
                           </div>
                         </div>
                         <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
@@ -213,7 +218,7 @@ export function EnvironmentStages({
                       <div className="mt-4 w-4 last:hidden">
                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
                           <path
-                            fill="#C6D3E7"
+                            fill="#383E50"
                             d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"
                           ></path>
                         </svg>
