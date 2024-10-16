@@ -17,6 +17,7 @@ import {
   ENVIRONMENT_STAGES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
+import { LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -85,7 +86,14 @@ export function PageEnvironmentLogs() {
     onMessage: messageHandler,
   })
 
-  if (!environment) return
+  if (!environment)
+    return (
+      <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
+        <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
+          <LoaderSpinner className="h-6 w-6" theme="dark" />
+        </div>
+      </div>
+    )
 
   return (
     <div className="flex h-full">

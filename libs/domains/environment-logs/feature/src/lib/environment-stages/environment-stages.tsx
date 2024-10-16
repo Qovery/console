@@ -142,7 +142,7 @@ export function EnvironmentStages({
                           <StatusChip status={s.stage?.status} />
                           <div className="flex flex-col gap-0.5">
                             <span className="flex gap-1.5 text-sm font-medium">
-                              {s?.stage?.name}
+                              <Truncate text={s?.stage?.name || ''} truncateLimit={20} />
                               {s?.stage?.description && (
                                 <Tooltip content={s?.stage?.description}>
                                   <span className="text-neutral-250">
@@ -160,7 +160,7 @@ export function EnvironmentStages({
                               .otherwise(() => null)}
                           </div>
                         </div>
-                        <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                        <div className="flex max-h-[75vh] flex-col gap-1.5 overflow-x-scroll bg-neutral-800 p-1.5">
                           {s.services.length > 0 ? (
                             s.services.map((service) => {
                               const fullService = getServiceById(service.id!)
