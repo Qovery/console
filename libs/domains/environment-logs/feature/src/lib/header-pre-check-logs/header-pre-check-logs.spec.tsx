@@ -1,7 +1,7 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { HeaderLogs, HeaderLogsProps } from './header-logs'
 
-const mockProps: HeaderLogsProps = {
+const mockProps: HeaderPreCheckLogsProps = {
   environment: {
     name: 'Test Environment',
     cloud_provider: {
@@ -39,9 +39,9 @@ describe('HeaderLogs', () => {
 
   it('renders children correctly', () => {
     renderWithProviders(
-      <HeaderLogs {...mockProps}>
+      <HeaderPreCheckLogs {...mockProps}>
         <div data-testid="child-content">Child Content</div>
-      </HeaderLogs>
+      </HeaderPreCheckLogs>
     )
     expect(screen.getByTestId('child-content')).toBeInTheDocument()
   })

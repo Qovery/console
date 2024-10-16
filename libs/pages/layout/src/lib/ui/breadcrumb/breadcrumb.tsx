@@ -20,6 +20,7 @@ import {
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_PRE_CHECK_LOGS_URL,
   ENVIRONMENT_STAGES_URL,
   INFRA_LOGS_URL,
   SERVICES_GENERAL_URL,
@@ -57,6 +58,14 @@ export function Breadcrumb(props: BreadcrumbProps) {
   })
   const matchEnvironmentStageVersion = useMatch({
     path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(':versionId'),
+    end: false,
+  })
+  const matchEnvironmentPreCheck = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(),
+    end: false,
+  })
+  const matchEnvironmentPreCheckVersion = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId'),
     end: false,
   })
   const matchDeploymentLogsVersion = useMatch({
@@ -392,12 +401,22 @@ export function Breadcrumb(props: BreadcrumbProps) {
               />
             </>
           )}
-        {(matchEnvironmentStage || matchEnvironmentStageVersion) && statusStages && (
-          <>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
-            <BreadcrumbDeploymentHistory type="STAGES" versionId={matchEnvironmentStageVersion?.params['versionId']} />
-          </>
-        )}
+        {(matchEnvironmentStage ||
+          matchEnvironmentStageVersion ||
+          matchEnvironmentPreCheck ||
+          matchEnvironmentPreCheckVersion) &&
+          statusStages && (
+            <>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <BreadcrumbDeploymentHistory
+                type={matchEnvironmentPreCheck ? 'PRE_CHECK' : 'STAGES'}
+                versionId={
+                  matchEnvironmentStageVersion?.params['versionId'] ||
+                  matchEnvironmentPreCheckVersion?.params['versionId']
+                }
+              />
+            </>
+          )}
         {matchServiceLogs && services && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>

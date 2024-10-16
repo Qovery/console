@@ -13,6 +13,7 @@ import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_PRE_CHECK_LOGS_URL,
   ENVIRONMENT_STAGES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
@@ -21,6 +22,7 @@ import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
+import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
 
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
@@ -110,6 +112,14 @@ export function PageEnvironmentLogs() {
                 preCheckStage={preCheckStage}
               />
             }
+          />
+          <Route
+            path={ENVIRONMENT_PRE_CHECK_LOGS_URL()}
+            element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
+          />
+          <Route
+            path={ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId')}
+            element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
           />
           <Route
             path={DEPLOYMENT_LOGS_URL()}
