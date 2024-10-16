@@ -20,6 +20,7 @@ import {
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
   INFRA_LOGS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
@@ -50,6 +51,14 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const matchEnvironmentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL(), end: false })
   const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })
   const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(), end: false })
+  const matchEnvironmentStage = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(),
+    end: false,
+  })
+  const matchEnvironmentStageVersion = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(':versionId'),
+    end: false,
+  })
   const matchDeploymentLogsVersion = useMatch({
     path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
     end: false,
@@ -375,13 +384,20 @@ export function Breadcrumb(props: BreadcrumbProps) {
               </div>
               <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
               <BreadcrumbDeploymentHistory
+                type="DEPLOYMENT"
                 serviceId={
                   matchDeploymentLogsVersion?.params['serviceId'] || matchDeploymentLogs?.params['serviceId'] || ''
                 }
-                versionId={matchDeploymentLogsVersion?.params['versionId'] || matchDeploymentLogs?.params['versionId']}
+                versionId={matchDeploymentLogsVersion?.params['versionId']}
               />
             </>
           )}
+        {(matchEnvironmentStage || matchEnvironmentStageVersion) && statusStages && (
+          <>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+            <BreadcrumbDeploymentHistory type="STAGES" versionId={matchEnvironmentStageVersion?.params['versionId']} />
+          </>
+        )}
         {matchServiceLogs && services && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>

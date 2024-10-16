@@ -5,7 +5,7 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
-import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
@@ -13,6 +13,7 @@ import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -28,13 +29,22 @@ export function PageEnvironmentLogs() {
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
+  const matchEnvironmentStageVersion = matchPath<'versionId', string>(
+    ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(':versionId'),
+    location.pathname
+  )
   const matchDeploymentVersion = matchPath<'versionId' | 'serviceId', string>(
     ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
     location.pathname
   )
 
-  const versionId =
+  const deploymentVersionId =
     matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
+
+  const stageVersionId =
+    matchEnvironmentStageVersion?.params.versionId !== ':versionId'
+      ? matchEnvironmentStageVersion?.params.versionId
+      : undefined
 
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
@@ -66,7 +76,7 @@ export function PageEnvironmentLogs() {
       cluster: environment?.cluster_id,
       project: projectId,
       environment: environmentId,
-      version: versionId,
+      version: deploymentVersionId || stageVersionId,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
@@ -79,6 +89,28 @@ export function PageEnvironmentLogs() {
     <div className="flex h-full">
       <ServiceStageIdsProvider>
         <Routes>
+          <Route
+            path={ENVIRONMENT_STAGES_URL()}
+            element={
+              <EnvironmentStages
+                environment={environment}
+                environmentStatus={environmentStatus}
+                deploymentStages={deploymentStages}
+                preCheckStage={preCheckStage}
+              />
+            }
+          />
+          <Route
+            path={ENVIRONMENT_STAGES_URL(':versionId')}
+            element={
+              <EnvironmentStages
+                environment={environment}
+                environmentStatus={environmentStatus}
+                deploymentStages={deploymentStages}
+                preCheckStage={preCheckStage}
+              />
+            }
+          />
           <Route
             path={DEPLOYMENT_LOGS_URL()}
             element={
@@ -110,17 +142,16 @@ export function PageEnvironmentLogs() {
               />
             }
           />
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL()}
+              />
+            }
+          />
         </Routes>
       </ServiceStageIdsProvider>
-      {(location.pathname === `${ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)}/` ||
-        location.pathname === ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)) && (
-        <EnvironmentStages
-          environment={environment}
-          environmentStatus={environmentStatus}
-          deploymentStages={deploymentStages}
-          preCheckStage={preCheckStage}
-        />
-      )}
     </div>
   )
 }

@@ -1,17 +1,18 @@
 import clsx from 'clsx'
 import { Link, useParams } from 'react-router-dom'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 
 export interface BreadcrumbDeploymentHistoryProps {
-  serviceId: string
+  type: 'DEPLOYMENT' | 'STAGES'
+  serviceId?: string
   versionId?: string
 }
 
-export function BreadcrumbDeploymentHistory({ serviceId, versionId }: BreadcrumbDeploymentHistoryProps) {
+export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: BreadcrumbDeploymentHistoryProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({ environmentId })
 
@@ -55,8 +56,11 @@ export function BreadcrumbDeploymentHistory({ serviceId, versionId }: Breadcrumb
                   <Link
                     className="flex w-full justify-between"
                     to={
-                      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                      DEPLOYMENT_LOGS_VERSION_URL(serviceId, history.id)
+                      type === 'DEPLOYMENT'
+                        ? ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                          DEPLOYMENT_LOGS_VERSION_URL(serviceId, history.id)
+                        : ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                          ENVIRONMENT_STAGES_URL(history.id)
                     }
                   >
                     <Tooltip content={history.id}>
