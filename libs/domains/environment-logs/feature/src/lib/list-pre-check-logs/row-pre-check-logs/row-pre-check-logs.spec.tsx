@@ -1,7 +1,7 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { RowDeploymentLogs } from './row-pre-check-logs'
+import { RowPreCheckLogs } from './row-pre-check-logs'
 
-describe('RowDeploymentLogs', () => {
+describe('RowPreCheckLogs', () => {
   const mockProps = {
     index: 0,
     original: {
@@ -12,19 +12,19 @@ describe('RowDeploymentLogs', () => {
       },
       details: {
         stage: {
-          step: 'Building',
+          step: 'PreCheck',
         },
       },
     },
   }
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<RowDeploymentLogs {...mockProps} />)
+    const { baseElement } = renderWithProviders(<RowPreCheckLogs {...mockProps} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('renders basic row content', () => {
-    renderWithProviders(<RowDeploymentLogs {...mockProps} />)
+    renderWithProviders(<RowPreCheckLogs {...mockProps} />)
 
     expect(screen.getByText('1')).toBeInTheDocument()
     expect(screen.getByText('Test log message')).toBeInTheDocument()
