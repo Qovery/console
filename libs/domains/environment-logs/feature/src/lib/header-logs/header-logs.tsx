@@ -51,13 +51,17 @@ export function HeaderLogs({ environment, environmentStatus, children }: HeaderL
             <EnvironmentStateChip mode="deployment" environmentId={environment.id} />
             <span>{upperCaseFirstLetter(environmentStatus?.state).replace(/_/g, ' ')}</span>
           </span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-            <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
-          </svg>
-          <span className="flex items-center gap-1.5">
-            <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-250" />
-            {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
-          </span>
+          {environmentStatus?.state !== 'DEPLOYING' && (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+                <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+              </svg>
+              <span className="flex items-center gap-1.5">
+                <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-250" />
+                {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
+              </span>
+            </>
+          )}
         </div>
         <EndCurve />
       </div>
