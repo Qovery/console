@@ -2,7 +2,7 @@ import { type Environment, type EnvironmentStatus } from 'qovery-typescript-axio
 import { type PropsWithChildren } from 'react'
 import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { Icon, Tooltip } from '@qovery/shared/ui'
+import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderLogsProps extends PropsWithChildren {
@@ -48,7 +48,7 @@ export function HeaderLogs({ environment, environmentStatus, children }: HeaderL
             <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
           </svg>
           <span className="flex items-center gap-2">
-            <EnvironmentStateChip mode="deployment" environmentId={environment.id} />
+            <StatusChip status={environmentStatus?.state} />
             <span>{upperCaseFirstLetter(environmentStatus?.state).replace(/_/g, ' ')}</span>
           </span>
           {environmentStatus?.state !== 'DEPLOYING' && (
