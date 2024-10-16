@@ -6,9 +6,8 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
-import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
@@ -89,7 +88,7 @@ export function EnvironmentStages({
                         <div className="flex flex-col gap-0.5">
                           <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
                           <span className="text-xs">
-                            {Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60)}m:
+                            {Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60)}m{' '}
                             {preCheckStage?.total_duration_sec ?? 0 % 60}s
                           </span>
                         </div>
@@ -102,13 +101,7 @@ export function EnvironmentStages({
                           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
                             <Icon iconName="list-check" iconStyle="solid" />
                           </span>
-                          <span className="flex flex-col gap-0.5">
-                            <span className="text-sm">Pre-check logs</span>
-                            <span className="text-xs">
-                              {Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60)}m:
-                              {preCheckStage?.total_duration_sec ?? 0 % 60}s
-                            </span>
-                          </span>
+                          <span className="text-sm">Pre-check logs</span>
                           <StatusChip className="ml-auto" status={preCheckStage?.status || 'SKIP'} />
                         </NavLink>
                       </div>
@@ -123,26 +116,21 @@ export function EnvironmentStages({
                 {matchServicesWithStatuses(deploymentStages)?.map((s) => {
                   const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
 
-                  if (hideSkipped && stageTotalDurationSec === 0) return null
+                  if (hideSkipped && s?.stage?.status === 'SKIPPED') return null
 
                   return (
-                    <>
+                    <Fragment key={s.stage?.id}>
                       <div
-                        key={s.stage?.id}
                         className={clsx(
                           'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650',
                           {
-                            'text-neutral-50': stageTotalDurationSec > 0,
-                            'text-neutral-300': stageTotalDurationSec === 0,
+                            'text-neutral-50': s?.stage?.status !== 'SKIPPED',
+                            'text-neutral-300': s?.stage?.status === 'SKIPPED',
                           }
                         )}
                       >
                         <div className="flex items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
-                          {stageTotalDurationSec > 0 ? (
-                            <EnvironmentStateChip mode="running" environmentId={environment.id} />
-                          ) : (
-                            <StatusChip status="SKIP" />
-                          )}
+                          <StatusChip status={s.stage?.status} />
                           <div className="flex flex-col gap-0.5">
                             <span className="flex gap-1.5 text-sm font-medium">
                               {s?.stage?.name}
@@ -155,7 +143,7 @@ export function EnvironmentStages({
                               )}
                             </span>
                             <span className="text-xs">
-                              {Math.floor(stageTotalDurationSec / 60)}m:{stageTotalDurationSec % 60}s
+                              {Math.floor(stageTotalDurationSec / 60)}m {stageTotalDurationSec % 60}s
                             </span>
                           </div>
                         </div>
@@ -165,7 +153,7 @@ export function EnvironmentStages({
                               const fullService = getServiceById(service.id!)
                               const serviceTotalDurationSec = service?.steps?.total_duration_sec
 
-                              if (hideSkipped && serviceTotalDurationSec === 0) return null
+                              if (hideSkipped && !service.is_part_last_deployment) return null
                               if (!fullService) return null
 
                               return (
@@ -184,27 +172,32 @@ export function EnvironmentStages({
                                           environment.id
                                         ) + DEPLOYMENT_LOGS_URL(service.id)
                                   }
-                                  className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
+                                  className={clsx(
+                                    'flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400',
+                                    {
+                                      'text-neutral-300': !service.is_part_last_deployment,
+                                    }
+                                  )}
                                 >
                                   <ServiceAvatar
                                     service={fullService}
                                     border="solid"
                                     size="sm"
                                     className={clsx('border-neutral-400', {
-                                      'opacity-50': stageTotalDurationSec === 0,
+                                      'opacity-50': !service.is_part_last_deployment,
                                     })}
                                   />
                                   <span className="flex flex-col gap-0.5 text-sm">
                                     <Truncate text={fullService.name} truncateLimit={28} />
                                     {serviceTotalDurationSec && (
                                       <span className="text-xs">
-                                        {Math.floor(serviceTotalDurationSec / 60)}m:{serviceTotalDurationSec % 60}s
+                                        {Math.floor(serviceTotalDurationSec / 60)}m {serviceTotalDurationSec % 60}s
                                       </span>
                                     )}
                                   </span>
                                   <StatusChip
                                     className="ml-auto"
-                                    status={stageTotalDurationSec > 0 ? service.state : 'SKIP'}
+                                    status={!service.is_part_last_deployment ? 'SKIPPED' : service.state}
                                   />
                                 </NavLink>
                               )
@@ -225,7 +218,7 @@ export function EnvironmentStages({
                           ></path>
                         </svg>
                       </div>
-                    </>
+                    </Fragment>
                   )
                 })}
               </>
