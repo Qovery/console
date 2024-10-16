@@ -1,5 +1,9 @@
 import { type QueryClient } from '@tanstack/react-query'
-import { type DeploymentStageWithServicesStatuses, type EnvironmentStatus } from 'qovery-typescript-axios'
+import {
+  type DeploymentStageWithServicesStatuses,
+  type EnvironmentStatus,
+  type EnvironmentStatusesWithStagesPreCheckStage,
+} from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
@@ -34,14 +38,24 @@ export function PageEnvironmentLogs() {
 
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
+  const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
 
   const messageHandler = useCallback(
     (
       _: QueryClient,
-      { stages, environment }: { stages: DeploymentStageWithServicesStatuses[]; environment: EnvironmentStatus }
+      {
+        stages,
+        environment,
+        pre_check_stage,
+      }: {
+        stages: DeploymentStageWithServicesStatuses[]
+        environment: EnvironmentStatus
+        pre_check_stage: EnvironmentStatusesWithStagesPreCheckStage
+      }
     ) => {
       setDeploymentStages(stages)
       setEnvironmentStatus(environment)
+      setPreCheckStage(pre_check_stage)
     },
     [setDeploymentStages]
   )
@@ -104,6 +118,7 @@ export function PageEnvironmentLogs() {
           environment={environment}
           environmentStatus={environmentStatus}
           deploymentStages={deploymentStages}
+          preCheckStage={preCheckStage}
         />
       )}
     </div>

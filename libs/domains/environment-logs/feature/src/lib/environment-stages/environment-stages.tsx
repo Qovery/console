@@ -4,6 +4,7 @@ import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentStatus,
+  type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
@@ -31,9 +32,15 @@ export interface EnvironmentStagesProps {
   environment: Environment
   environmentStatus?: EnvironmentStatus
   deploymentStages?: DeploymentStageWithServicesStatuses[]
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
 }
 
-export function EnvironmentStages({ environment, environmentStatus, deploymentStages }: EnvironmentStagesProps) {
+export function EnvironmentStages({
+  environment,
+  environmentStatus,
+  deploymentStages,
+  preCheckStage,
+}: EnvironmentStagesProps) {
   const { data: services = [] } = useServices({ environmentId: environment.id })
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
 
@@ -75,9 +82,13 @@ export function EnvironmentStages({ environment, environmentStatus, deploymentSt
               <>
                 <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650 text-neutral-50">
                   <div className="flex items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                    <StatusChip status={preCheckStage?.status ?? 'SKIP'} />
                     <div className="flex flex-col gap-0.5">
                       <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
-                      <span className="text-xs">3m:38s</span>
+                      <span className="text-xs">
+                        {Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60)}m:
+                        {preCheckStage?.total_duration_sec ?? 0 % 60}s
+                      </span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
@@ -90,7 +101,10 @@ export function EnvironmentStages({ environment, environmentStatus, deploymentSt
                       </span>
                       <span className="flex flex-col gap-0.5">
                         <span className="text-sm">Pre-check logs</span>
-                        <span className="text-xs">3m:38s</span>
+                        <span className="text-xs">
+                          {Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60)}m:
+                          {preCheckStage?.total_duration_sec ?? 0 % 60}s
+                        </span>
                       </span>
                     </NavLink>
                   </div>
