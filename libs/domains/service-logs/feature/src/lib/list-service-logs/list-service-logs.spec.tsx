@@ -1,10 +1,7 @@
-import { applicationFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import ListServiceLogs from './list-service-logs'
 
 window.HTMLElement.prototype.scroll = jest.fn()
-
-const mockApplication = applicationFactoryMock(1)[0]
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -14,11 +11,6 @@ jest.mock('react-router-dom', () => ({
     environmentId: '222',
     serviceId: '333',
   }),
-}))
-
-jest.mock('@qovery/domains/services/feature', () => ({
-  useService: () => ({ data: mockApplication }),
-  useRunningStatus: () => ({ data: { state: 'RUNNING' } }),
 }))
 
 jest.mock('../hooks/use-service-logs/use-service-logs', () => ({
@@ -46,7 +38,16 @@ jest.mock('../hooks/use-service-logs/use-service-logs', () => ({
 
 describe('ListServiceLogs', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<ListServiceLogs clusterId="000" />)
+    const { baseElement } = renderWithProviders(
+      <ListServiceLogs
+        environment={{
+          id: 'env-1',
+          organization: { id: 'org-1' },
+          project: { id: 'proj-1' },
+        }}
+        clusterId="000"
+      />
+    )
     expect(baseElement).toBeTruthy()
   })
 })

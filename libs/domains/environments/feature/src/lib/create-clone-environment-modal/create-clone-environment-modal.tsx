@@ -31,6 +31,7 @@ export function CreateCloneEnvironmentModal({
   const navigate = useNavigate()
   const { enableAlertClickOutside } = useModal()
   const { data: clusters = [] } = useClusters({ organizationId })
+
   const { mutateAsync: createEnvironment, isLoading: isCreateEnvironmentLoading } = useCreateEnvironment()
   const { mutateAsync: cloneEnvironment, isLoading: isCloneEnvironmentLoading } = useCloneEnvironment()
 
