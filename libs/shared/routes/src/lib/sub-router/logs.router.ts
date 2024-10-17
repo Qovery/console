@@ -9,6 +9,8 @@ export const ENVIRONMENT_LOGS_URL = (
   environmentId = ':environmentId'
 ) => `${SERVICES_URL(organizationId, projectId, environmentId)}/logs`
 
+export const ENVIRONMENT_STAGES_URL = (versionId?: string) => (versionId ? `/stages/${versionId}` : '/stages')
+
 export const SERVICE_LOGS_URL = (serviceId = ':serviceId', podName = '') =>
   `/${serviceId}/service-logs${podName ? `?pod_name=${podName}` : ''}`
 
