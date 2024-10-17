@@ -1,14 +1,28 @@
-import { type Status } from 'qovery-typescript-axios'
-import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { useDeploymentLogs } from '../hooks/use-pre-check-logs/use-deployment-logs'
-import { ListDeploymentLogs } from './list-pre-check-logs'
+import { ListPreCheckLogs } from './list-pre-check-logs'
 
-window.HTMLElement.prototype.scroll = jest.fn()
-
-jest.mock('../hooks/use-deployment-logs/use-deployment-logs')
-jest.mock('@qovery/domains/services/feature')
+jest.mock('../hooks/use-pre-check-logs/use-pre-check-logs', () => {
+  return {
+    ...jest.requireActual('../hooks/use-pre-check-logs/use-pre-check-logs'),
+    usePreCheckLogs: () => ({
+      data: [
+        {
+          id: '1',
+          timestamp: '2023-01-01T00:00:00Z',
+          message: { safe_message: 'Log 1' },
+          details: { stage: { step: 'PreCheck' } },
+        },
+        {
+          id: '2',
+          timestamp: '2023-01-01T00:01:00Z',
+          message: { safe_message: 'Log 2' },
+          details: { stage: { step: 'PreCheck' } },
+        },
+      ],
+    }),
+  }
+})
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -21,152 +35,26 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
-describe('ListDeploymentLogs', () => {
-  const mockEnvironment = environmentFactoryMock(1)[0]
-
-  const mockDeploymentHistoryEnvironment = [{ id: '4', created_at: '2023-01-01T00:00:00Z' }]
-
-  const mockServiceStatus: Status = {
-    id: '111',
-    state: 'DELETE_ERROR',
-    service_deployment_status: 'UP_TO_DATE',
-    last_deployment_date: '2024-09-18T07:03:29.819774Z',
-    is_part_last_deployment: true,
-    steps: {
-      total_duration_sec: 69,
-      total_computing_duration_sec: 64,
-      details: [
-        {
-          step_name: 'BUILD_QUEUEING',
-          status: 'SUCCESS',
-          duration_sec: 0,
-        },
-        {
-          step_name: 'REGISTRY_CREATE_REPOSITORY',
-          status: 'SUCCESS',
-          duration_sec: 10,
-        },
-        {
-          step_name: 'GIT_CLONE',
-          status: 'SUCCESS',
-          duration_sec: 1,
-        },
-        {
-          step_name: 'BUILD',
-          status: 'SUCCESS',
-          duration_sec: 24,
-        },
-        {
-          step_name: 'DEPLOYMENT_QUEUEING',
-          status: 'SUCCESS',
-          duration_sec: 0,
-        },
-        {
-          step_name: 'DEPLOYMENT',
-          status: 'ERROR',
-          duration_sec: 29,
-        },
-      ],
+describe('ListPreCheckLogs', () => {
+  const defaultProps = {
+    environment: environmentFactoryMock(1)[0],
+    preCheckStage: {
+      status: 'RUNNING',
+      start_time: '2023-01-01T00:00:00Z',
     },
   }
 
-  const mockLogs = [
-    {
-      id: '1',
-      timestamp: '2023-01-01T00:00:00Z',
-      message: { safe_message: 'Log 1' },
-      details: { stage: { step: 'Built' } },
-    },
-    {
-      id: '2',
-      timestamp: '2023-01-01T00:01:00Z',
-      message: { safe_message: 'Log 2' },
-      details: { stage: { step: 'Deploy' } },
-    },
-  ]
-
-  beforeEach(() => {
-    useDeploymentLogs.mockReturnValue({
-      data: mockLogs,
-      pauseLogs: false,
-      setPauseLogs: jest.fn(),
-      newMessagesAvailable: false,
-      setNewMessagesAvailable: jest.fn(),
-      showPreviousLogs: false,
-      setShowPreviousLogs: jest.fn(),
-    })
-
-    useDeploymentStatus.mockReturnValue({
-      data: { state: 'RUNNING' },
-    })
-
-    useService.mockReturnValue({
-      data: {
-        id: 'service-1',
-        name: 'Test Service',
-        serviceType: 'APPLICATION',
-      },
-    })
-    useLinks.mockReturnValue({
-      data: [{ id: 'link-1', url: 'https://example.com', is_default: false, is_qovery_domain: false }],
-    })
-  })
-
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
-    )
+    const { baseElement } = renderWithProviders(<ListPreCheckLogs {...defaultProps} />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should display logs', () => {
-    renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
-    )
-
-    expect(screen.getByText('Log 1')).toBeInTheDocument()
-    expect(screen.getByText('Log 2')).toBeInTheDocument()
-  })
-
-  it('should filter logs by stage step', async () => {
-    const { userEvent } = renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
-    )
-
-    const buildButton = screen.getByRole('button', { name: /build/i })
-    await userEvent.click(buildButton)
+  it('should display logs', async () => {
+    renderWithProviders(<ListPreCheckLogs {...defaultProps} />)
 
     await waitFor(() => {
       expect(screen.getByText('Log 1')).toBeInTheDocument()
-      expect(screen.queryByText('Log 2')).not.toBeInTheDocument()
+      expect(screen.getByText('Log 2')).toBeInTheDocument()
     })
-  })
-
-  it('should show progress indicator when deployment is progressing', () => {
-    useDeploymentStatus.mockReturnValue({
-      data: { state: 'BUILDING' },
-    })
-
-    renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
-    )
-
-    expect(screen.getByText('Streaming service logs')).toBeInTheDocument()
   })
 })

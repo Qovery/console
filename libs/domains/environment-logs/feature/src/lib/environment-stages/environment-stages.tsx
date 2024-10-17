@@ -10,7 +10,7 @@ import { Fragment, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
+import { ServiceAvatar } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -35,6 +35,7 @@ function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServices
 
 export interface EnvironmentStagesProps {
   environment: Environment
+  services: AnyService[]
   environmentStatus?: EnvironmentStatus
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
@@ -42,12 +43,12 @@ export interface EnvironmentStagesProps {
 
 export function EnvironmentStages({
   environment,
+  services,
   environmentStatus,
   deploymentStages,
   preCheckStage,
 }: EnvironmentStagesProps) {
   const { versionId } = useParams()
-  const { data: services = [] } = useServices({ environmentId: environment.id })
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService

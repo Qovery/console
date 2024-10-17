@@ -9,6 +9,7 @@ import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'reac
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -29,6 +30,7 @@ export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: services = [] } = useServices({ environmentId })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
@@ -105,6 +107,7 @@ export function PageEnvironmentLogs() {
               <EnvironmentStages
                 environment={environment}
                 environmentStatus={environmentStatus}
+                services={services}
                 deploymentStages={deploymentStages}
                 preCheckStage={preCheckStage}
               />
@@ -116,6 +119,7 @@ export function PageEnvironmentLogs() {
               <EnvironmentStages
                 environment={environment}
                 environmentStatus={environmentStatus}
+                services={services}
                 deploymentStages={deploymentStages}
                 preCheckStage={preCheckStage}
               />

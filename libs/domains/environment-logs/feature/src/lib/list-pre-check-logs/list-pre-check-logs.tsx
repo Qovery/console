@@ -1,6 +1,6 @@
-import { type ColumnFiltersState, createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { type Environment, type EnvironmentStatusesWithStagesPreCheckStage } from 'qovery-typescript-axios'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { LoaderSpinner, TablePrimitives } from '@qovery/shared/ui'
 import { HeaderPreCheckLogs } from '../header-pre-check-logs/header-pre-check-logs'
@@ -17,20 +17,14 @@ export interface ListPreCheckLogsProps {
 }
 
 export function ListPreCheckLogs({ environment, preCheckStage }: ListPreCheckLogsProps) {
-  const { organizationId, projectId, serviceId, versionId } = useParams()
+  const { organizationId, projectId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
-  // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
-  useEffect(() => {
-    const section = refScrollSection.current
-    if (!section) return
-  }, [])
-
   const { data: logs = [] } = usePreCheckLogs({
+    clusterId: environment.cluster_id,
     organizationId,
     projectId,
     environmentId: environment.id,
-    serviceId,
     versionId,
   })
 
@@ -45,25 +39,17 @@ export function ListPreCheckLogs({ environment, preCheckStage }: ListPreCheckLog
     [columnHelper]
   )
 
-  const defaultColumnsFilters = useMemo(
-    () => [
-      {
-        id: 'details.stage.step',
-        value: 'ALL',
-      },
-    ],
-    []
-  )
-
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(defaultColumnsFilters)
-
   const table = useReactTable({
     data: logs,
-    state: { columnFilters },
-    onColumnFiltersChange: setColumnFilters,
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
+
+  // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
+  useEffect(() => {
+    const section = refScrollSection.current
+    if (!section) return
+  }, [logs])
 
   if (!logs || logs.length === 0) {
     return (

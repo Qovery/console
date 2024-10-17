@@ -1,7 +1,7 @@
-import { type Environment, EnvironmentStatusesWithStagesPreCheckStage } from 'qovery-typescript-axios'
+import { type Environment, type EnvironmentStatusesWithStagesPreCheckStage } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, Link, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Icon, Link, StatusChip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderPreCheckLogsProps extends PropsWithChildren {

@@ -1,40 +1,32 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { HeaderLogs, HeaderLogsProps } from './header-logs'
+import { HeaderPreCheckLogs, type HeaderPreCheckLogsProps } from './header-pre-check-logs'
 
 const mockProps: HeaderPreCheckLogsProps = {
   environment: {
+    id: 'env-id',
     name: 'Test Environment',
+    organization: {
+      id: 'org-id',
+    },
+    project: {
+      id: 'project-id',
+    },
     cloud_provider: {
       provider: 'AWS',
     },
   },
-  environmentStatus: {
-    state: 'RUNNING',
-    total_deployment_duration_in_seconds: 125,
+  preCheckStage: {
+    status: 'SUCCESS',
+    total_duration_sec: 125,
   },
 }
 
-describe('HeaderLogs', () => {
+describe('HeaderPreCheckLogs', () => {
   it('renders correctly with given props', () => {
-    renderWithProviders(<HeaderLogs {...mockProps} />)
+    renderWithProviders(<HeaderPreCheckLogs {...mockProps} />)
 
-    expect(screen.getByText('Test Environment')).toBeInTheDocument()
-    expect(screen.getByText('Running')).toBeInTheDocument()
+    expect(screen.getByText('Pre-check')).toBeInTheDocument()
     expect(screen.getByText('2m : 5s')).toBeInTheDocument()
-  })
-
-  it('does not render deployment duration when status is DEPLOYING', () => {
-    const props = {
-      ...mockProps,
-      environmentStatus: {
-        ...mockProps.environmentStatus,
-        state: 'DEPLOYING',
-      },
-    }
-
-    renderWithProviders(<HeaderLogs {...props} />)
-
-    expect(screen.queryByText(/\d+m : \d+s/)).not.toBeInTheDocument()
   })
 
   it('renders children correctly', () => {
