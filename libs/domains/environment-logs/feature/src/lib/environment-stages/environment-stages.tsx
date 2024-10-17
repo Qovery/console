@@ -10,10 +10,15 @@ import { Fragment, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { ServiceAvatar } from '@qovery/domains/services/feature'
+import {
+  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
+  ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_PRE_CHECK_LOGS_URL,
+} from '@qovery/shared/routes'
 import { Checkbox, Icon, LoaderSpinner, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
-import { HeaderLogs } from '../header-logs/header-logs'
+import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
 function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServicesStatuses[]) {
   return deploymentStages.map((deploymentStage) => {
@@ -30,6 +35,7 @@ function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServices
 
 export interface EnvironmentStagesProps {
   environment: Environment
+  services: AnyService[]
   environmentStatus?: EnvironmentStatus
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
@@ -37,12 +43,12 @@ export interface EnvironmentStagesProps {
 
 export function EnvironmentStages({
   environment,
+  services,
   environmentStatus,
   deploymentStages,
   preCheckStage,
 }: EnvironmentStagesProps) {
   const { versionId } = useParams()
-  const { data: services = [] } = useServices({ environmentId: environment.id })
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
@@ -59,7 +65,7 @@ export function EnvironmentStages({
 
   return (
     <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
-      <HeaderLogs environment={environment} environmentStatus={environmentStatus}>
+      <HeaderEnvironmentStages environment={environment} environmentStatus={environmentStatus}>
         <div className="flex items-center gap-3 text-sm font-medium text-neutral-50">
           <Checkbox
             name="skipped"
@@ -71,7 +77,7 @@ export function EnvironmentStages({
           />
           <label htmlFor="skipped">Hide skipped</label>
         </div>
-      </HeaderLogs>
+      </HeaderEnvironmentStages>
       <div className="flex h-[calc(100vh-120px)] justify-center border border-t-0 border-neutral-500 bg-neutral-600">
         <div className="h-full w-full">
           <div className="flex gap-0.5 overflow-y-scroll py-6 pl-6 pr-4">
@@ -96,7 +102,10 @@ export function EnvironmentStages({
                       </div>
                       <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
                         <NavLink
-                          to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+                          to={
+                            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+                            ENVIRONMENT_PRE_CHECK_LOGS_URL()
+                          }
                           className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
                         >
                           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
@@ -134,7 +143,7 @@ export function EnvironmentStages({
                           <StatusChip status={s.stage?.status} />
                           <div className="flex flex-col gap-0.5">
                             <span className="flex gap-1.5 text-sm font-medium">
-                              {s?.stage?.name}
+                              <Truncate text={s?.stage?.name || ''} truncateLimit={20} />
                               {s?.stage?.description && (
                                 <Tooltip content={s?.stage?.description}>
                                   <span className="text-neutral-250">
@@ -152,7 +161,7 @@ export function EnvironmentStages({
                               .otherwise(() => null)}
                           </div>
                         </div>
-                        <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                        <div className="flex max-h-[75vh] flex-col gap-1.5 overflow-x-scroll bg-neutral-800 p-1.5">
                           {s.services.length > 0 ? (
                             s.services.map((service) => {
                               const fullService = getServiceById(service.id!)

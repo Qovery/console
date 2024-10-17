@@ -1,9 +1,7 @@
-import { useServices } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { EnvironmentStages, EnvironmentStagesProps } from './environment-stages'
+import { EnvironmentStages, type EnvironmentStagesProps } from './environment-stages'
 
 jest.mock('@qovery/domains/services/feature', () => ({
-  useServices: jest.fn(),
   ServiceAvatar: () => <div data-testid="service-avatar" />,
 }))
 
@@ -13,6 +11,10 @@ jest.mock('react-router-dom', () => ({
 }))
 
 const mockProps: EnvironmentStagesProps = {
+  services: [
+    { id: 'app-1', name: 'App 1' },
+    { id: 'app-2', name: 'App 2' },
+  ],
   environment: {
     id: 'env-1',
     name: 'Test Environment',
@@ -62,15 +64,6 @@ const mockProps: EnvironmentStagesProps = {
 }
 
 describe('EnvironmentStages', () => {
-  beforeEach(() => {
-    ;(useServices as jest.Mock).mockReturnValue({
-      data: [
-        { id: 'app-1', name: 'App 1' },
-        { id: 'app-2', name: 'App 2' },
-      ],
-    })
-  })
-
   it('renders loader when environmentStatus is not provided', () => {
     renderWithProviders(<EnvironmentStages {...mockProps} environmentStatus={undefined} />)
     expect(screen.getByTestId('spinner')).toBeInTheDocument()
@@ -91,7 +84,7 @@ describe('EnvironmentStages', () => {
   })
 
   it('hides skipped services when checkbox is checked', async () => {
-    const { userEvent, debug } = renderWithProviders(<EnvironmentStages {...mockProps} />)
+    const { userEvent } = renderWithProviders(<EnvironmentStages {...mockProps} />)
 
     expect(screen.getByText('App 1')).toBeInTheDocument()
     expect(screen.getByText('App 2')).toBeInTheDocument()
@@ -107,8 +100,17 @@ describe('EnvironmentStages', () => {
       ...mockProps,
       deploymentStages: [
         {
-          ...mockProps.deploymentStages![0],
+          stage: {
+            id: 'stage-1',
+            name: 'Stage 1',
+            status: 'DONE',
+            steps: { total_duration_sec: 120 },
+          },
           applications: [],
+          databases: [],
+          containers: [],
+          jobs: [],
+          helms: [],
         },
       ],
     }

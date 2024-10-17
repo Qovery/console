@@ -9,23 +9,28 @@ import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'reac
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+import { useServices } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_PRE_CHECK_LOGS_URL,
   ENVIRONMENT_STAGES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
+import { LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
+import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
 
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: services = [] } = useServices({ environmentId })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
@@ -83,7 +88,14 @@ export function PageEnvironmentLogs() {
     onMessage: messageHandler,
   })
 
-  if (!environment) return
+  if (!environment)
+    return (
+      <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
+        <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
+          <LoaderSpinner className="h-6 w-6" theme="dark" />
+        </div>
+      </div>
+    )
 
   return (
     <div className="flex h-full">
@@ -95,6 +107,7 @@ export function PageEnvironmentLogs() {
               <EnvironmentStages
                 environment={environment}
                 environmentStatus={environmentStatus}
+                services={services}
                 deploymentStages={deploymentStages}
                 preCheckStage={preCheckStage}
               />
@@ -106,10 +119,19 @@ export function PageEnvironmentLogs() {
               <EnvironmentStages
                 environment={environment}
                 environmentStatus={environmentStatus}
+                services={services}
                 deploymentStages={deploymentStages}
                 preCheckStage={preCheckStage}
               />
             }
+          />
+          <Route
+            path={ENVIRONMENT_PRE_CHECK_LOGS_URL()}
+            element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
+          />
+          <Route
+            path={ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId')}
+            element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
           />
           <Route
             path={DEPLOYMENT_LOGS_URL()}
