@@ -1,4 +1,4 @@
-import { type StageStatusEnum, StepMetricStatusEnum } from 'qovery-typescript-axios'
+import { type StageStatusEnum, type StepMetricStatusEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
