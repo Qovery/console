@@ -64,6 +64,8 @@ export function EnvironmentStages({
     )
   }
 
+  console.log(Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60))
+
   return (
     <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
       <HeaderEnvironmentStages environment={environment} environmentStatus={environmentStatus}>
@@ -96,7 +98,7 @@ export function EnvironmentStages({
                         <div className="flex flex-col gap-0.5">
                           <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
                           <span className="text-xs">
-                            {Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60)}m{' '}
+                            {Math.max(0, Math.floor((preCheckStage?.total_duration_sec ?? 0) / 60))}m{' '}
                             {preCheckStage?.total_duration_sec ?? 0 % 60}s
                           </span>
                         </div>
