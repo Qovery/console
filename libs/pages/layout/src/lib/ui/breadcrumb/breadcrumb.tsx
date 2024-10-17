@@ -16,9 +16,11 @@ import {
   DATABASE_GENERAL_URL,
   DATABASE_URL,
   DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENTS_GENERAL_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
   INFRA_LOGS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
@@ -46,8 +48,21 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const matchAuditLogs = useMatch({ path: AUDIT_LOGS_URL(), end: false })
   const matchSettings = useMatch({ path: SETTINGS_URL(), end: false })
   const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
+  const matchEnvironmentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL(), end: false })
   const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })
   const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(), end: false })
+  const matchEnvironmentStage = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(),
+    end: false,
+  })
+  const matchEnvironmentStageVersion = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(':versionId'),
+    end: false,
+  })
+  const matchDeploymentLogsVersion = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
+    end: false,
+  })
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -55,8 +70,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 
   const locationIsClusterLogs = location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
 
-  const matchLogsRoute =
-    location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) || matchServiceLogs || matchDeploymentLogs
+  const matchLogsRoute = location.pathname.includes(INFRA_LOGS_URL(organizationId, clusterId)) || matchEnvironmentLogs
 
   const clustersMenu: MenuData = [
     {
@@ -287,7 +301,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
               {environmentId && (
                 <>
                   <BreadcrumbItem
-                    isLast={!(applicationId || databaseId || matchServiceLogs || matchDeploymentLogs)}
+                    isLast={!(applicationId || databaseId || matchEnvironmentLogs)}
                     label="Environment"
                     data={environments}
                     menuItems={environmentMenu}
@@ -350,22 +364,38 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link=""
           />
         )}
-        {matchDeploymentLogs && statusStages && isFetchedStatusStages && services.length > 0 && (
+        {(matchDeploymentLogsVersion || matchDeploymentLogs) &&
+          statusStages &&
+          isFetchedStatusStages &&
+          services.length > 0 && (
+            <>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <div className="flex items-center">
+                <BreadcrumbDeploymentLogs
+                  serviceId={
+                    matchDeploymentLogsVersion?.params['serviceId'] || matchDeploymentLogs?.params['serviceId'] || ''
+                  }
+                  versionId={
+                    matchDeploymentLogsVersion?.params['versionId'] || matchDeploymentLogs?.params['versionId'] || ''
+                  }
+                  services={services}
+                  statusStages={statusStages}
+                />
+              </div>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <BreadcrumbDeploymentHistory
+                type="DEPLOYMENT"
+                serviceId={
+                  matchDeploymentLogsVersion?.params['serviceId'] || matchDeploymentLogs?.params['serviceId'] || ''
+                }
+                versionId={matchDeploymentLogsVersion?.params['versionId']}
+              />
+            </>
+          )}
+        {(matchEnvironmentStage || matchEnvironmentStageVersion) && statusStages && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
-            <div className="flex items-center">
-              <BreadcrumbDeploymentLogs
-                serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''}
-                versionId={matchDeploymentLogs?.params['versionId'] ?? ''}
-                services={services}
-                statusStages={statusStages}
-              />
-            </div>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
-            <BreadcrumbDeploymentHistory
-              serviceId={matchDeploymentLogs?.params['serviceId'] ?? ''}
-              versionId={matchDeploymentLogs?.params['versionId']}
-            />
+            <BreadcrumbDeploymentHistory type="STAGES" versionId={matchEnvironmentStageVersion?.params['versionId']} />
           </>
         )}
         {matchServiceLogs && services && (
@@ -387,7 +417,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
           </>
         )}
       </div>
-      {(matchServiceLogs || matchDeploymentLogs || locationIsClusterLogs) && (
+      {(matchEnvironmentLogs || locationIsClusterLogs) && (
         <div className="ml-auto">
           <Button
             className="gap-2"

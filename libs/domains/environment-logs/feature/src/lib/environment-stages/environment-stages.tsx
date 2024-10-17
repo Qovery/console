@@ -1,0 +1,238 @@
+import { type CheckedState } from '@radix-ui/react-checkbox'
+import clsx from 'clsx'
+import {
+  type DeploymentStageWithServicesStatuses,
+  type Environment,
+  type EnvironmentStatus,
+  type EnvironmentStatusesWithStagesPreCheckStage,
+} from 'qovery-typescript-axios'
+import { Fragment, useState } from 'react'
+import { NavLink, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { Checkbox, Icon, LoaderSpinner, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
+import { HeaderLogs } from '../header-logs/header-logs'
+
+function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServicesStatuses[]) {
+  return deploymentStages.map((deploymentStage) => {
+    const serviceTypes = ['applications', 'databases', 'containers', 'jobs', 'helms'] as const
+
+    const services = serviceTypes
+      .map((serviceType) => deploymentStage[serviceType])
+      .flat()
+      .map((service) => ({ ...service, status: service?.state }))
+
+    return { services, stage: deploymentStage.stage }
+  })
+}
+
+export interface EnvironmentStagesProps {
+  environment: Environment
+  environmentStatus?: EnvironmentStatus
+  deploymentStages?: DeploymentStageWithServicesStatuses[]
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
+}
+
+export function EnvironmentStages({
+  environment,
+  environmentStatus,
+  deploymentStages,
+  preCheckStage,
+}: EnvironmentStagesProps) {
+  const { versionId } = useParams()
+  const { data: services = [] } = useServices({ environmentId: environment.id })
+  const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
+
+  const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
+
+  if (!environmentStatus) {
+    return (
+      <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
+        <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
+          <LoaderSpinner className="h-6 w-6" theme="dark" />
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
+      <HeaderLogs environment={environment} environmentStatus={environmentStatus}>
+        <div className="flex items-center gap-3 text-sm font-medium text-neutral-50">
+          <Checkbox
+            name="skipped"
+            id="skipped"
+            className="shrink-0"
+            color="brand"
+            checked={hideSkipped}
+            onCheckedChange={setHideSkipped}
+          />
+          <label htmlFor="skipped">Hide skipped</label>
+        </div>
+      </HeaderLogs>
+      <div className="flex h-[calc(100vh-120px)] justify-center border border-t-0 border-neutral-500 bg-neutral-600">
+        <div className="h-full w-full">
+          <div className="flex gap-0.5 overflow-y-scroll py-6 pl-6 pr-4">
+            {!deploymentStages ? (
+              <div className="mt-6 flex h-full w-full justify-center">
+                <LoaderSpinner className="h-6 w-6" theme="dark" />
+              </div>
+            ) : (
+              <>
+                {preCheckStage && (
+                  <>
+                    <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650 text-neutral-50">
+                      <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                        <StatusChip status={preCheckStage?.status || 'SKIP'} />
+                        <div className="flex flex-col gap-0.5">
+                          <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
+                          <span className="text-xs">
+                            {Math.floor(preCheckStage?.total_duration_sec ?? 0 / 60)}m{' '}
+                            {preCheckStage?.total_duration_sec ?? 0 % 60}s
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                        <NavLink
+                          to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+                          className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
+                        >
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
+                            <Icon iconName="list-check" iconStyle="solid" />
+                          </span>
+                          <span className="text-sm">Pre-check logs</span>
+                          <StatusChip className="ml-auto" status={preCheckStage?.status || 'SKIP'} />
+                        </NavLink>
+                      </div>
+                    </div>
+                    <div className="mt-4 w-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
+                        <path fill="#383E50" d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"></path>
+                      </svg>
+                    </div>
+                  </>
+                )}
+                {matchServicesWithStatuses(deploymentStages)?.map((s) => {
+                  const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
+
+                  if (hideSkipped && s?.stage?.status === 'SKIPPED') return null
+
+                  return (
+                    <Fragment key={s.stage?.id}>
+                      <div
+                        className={clsx(
+                          'h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650',
+                          {
+                            'text-neutral-50': s?.stage?.status !== 'SKIPPED',
+                            'text-neutral-300': s?.stage?.status === 'SKIPPED',
+                          }
+                        )}
+                      >
+                        <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                          <StatusChip status={s.stage?.status} />
+                          <div className="flex flex-col gap-0.5">
+                            <span className="flex gap-1.5 text-sm font-medium">
+                              {s?.stage?.name}
+                              {s?.stage?.description && (
+                                <Tooltip content={s?.stage?.description}>
+                                  <span className="text-neutral-250">
+                                    <Icon iconName="info-circle" iconStyle="regular" />
+                                  </span>
+                                </Tooltip>
+                              )}
+                            </span>
+                            {match(s.stage?.status)
+                              .with('CANCELED', 'DONE', 'ERROR', () => (
+                                <span className="text-xs">
+                                  {Math.floor(stageTotalDurationSec / 60)}m {stageTotalDurationSec % 60}s
+                                </span>
+                              ))
+                              .otherwise(() => null)}
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                          {s.services.length > 0 ? (
+                            s.services.map((service) => {
+                              const fullService = getServiceById(service.id!)
+                              const serviceTotalDurationSec = service?.steps?.total_duration_sec
+
+                              if (hideSkipped && !service.is_part_last_deployment) return null
+                              if (!fullService) return null
+
+                              return (
+                                <NavLink
+                                  key={service?.id}
+                                  to={
+                                    versionId
+                                      ? ENVIRONMENT_LOGS_URL(
+                                          environment.organization.id,
+                                          environment.project.id,
+                                          environment.id
+                                        ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId)
+                                      : ENVIRONMENT_LOGS_URL(
+                                          environment.organization.id,
+                                          environment.project.id,
+                                          environment.id
+                                        ) + DEPLOYMENT_LOGS_URL(service.id)
+                                  }
+                                  className={clsx(
+                                    'flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400',
+                                    {
+                                      'text-neutral-300': !service.is_part_last_deployment,
+                                    }
+                                  )}
+                                >
+                                  <ServiceAvatar
+                                    service={fullService}
+                                    border="solid"
+                                    size="sm"
+                                    className={clsx('border-neutral-400', {
+                                      'opacity-50': !service.is_part_last_deployment,
+                                    })}
+                                  />
+                                  <span className="flex flex-col gap-0.5 text-sm">
+                                    <Truncate text={fullService.name} truncateLimit={28} />
+                                    {serviceTotalDurationSec && (
+                                      <span className="text-xs">
+                                        {Math.floor(serviceTotalDurationSec / 60)}m {serviceTotalDurationSec % 60}s
+                                      </span>
+                                    )}
+                                  </span>
+                                  <StatusChip
+                                    className="ml-auto"
+                                    status={!service.is_part_last_deployment ? 'SKIPPED' : service.state}
+                                  />
+                                </NavLink>
+                              )
+                            })
+                          ) : (
+                            <div className="px-3 py-6 text-center" data-testid="placeholder-stage">
+                              <Icon iconName="wave-pulse" className="text-neutral-350" />
+                              <p className="mt-1 text-xs font-medium text-neutral-350">No service for this stage.</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="mt-4 w-4 last:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
+                          <path
+                            fill="#383E50"
+                            d="M16.092 4.5L8.592.17v8.66l7.5-4.33zm-16 .75h9.25v-1.5H.092v1.5z"
+                          ></path>
+                        </svg>
+                      </div>
+                    </Fragment>
+                  )
+                })}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default EnvironmentStages
