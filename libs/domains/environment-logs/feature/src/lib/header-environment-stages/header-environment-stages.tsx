@@ -4,7 +4,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
-export interface HeaderLogsProps extends PropsWithChildren {
+export interface HeaderEnvironmentStagesProps extends PropsWithChildren {
   environment: Environment
   environmentStatus: EnvironmentStatus
 }
@@ -25,7 +25,7 @@ function EndCurve() {
   )
 }
 
-export function HeaderLogs({ environment, environmentStatus, children }: HeaderLogsProps) {
+export function HeaderEnvironmentStages({ environment, environmentStatus, children }: HeaderEnvironmentStagesProps) {
   const totalDurationSec = environmentStatus?.total_deployment_duration_in_seconds ?? 0
 
   return (
@@ -69,4 +69,4 @@ export function HeaderLogs({ environment, environmentStatus, children }: HeaderL
   )
 }
 
-export default HeaderLogs
+export default HeaderEnvironmentStages

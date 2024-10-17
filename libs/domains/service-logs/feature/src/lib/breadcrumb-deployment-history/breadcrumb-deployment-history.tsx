@@ -1,13 +1,19 @@
 import clsx from 'clsx'
 import { Link, useParams } from 'react-router-dom'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { match } from 'ts-pattern'
+import {
+  DEPLOYMENT_LOGS_VERSION_URL,
+  ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_PRE_CHECK_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
+} from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 
 export interface BreadcrumbDeploymentHistoryProps {
-  type: 'DEPLOYMENT' | 'STAGES'
+  type: 'DEPLOYMENT' | 'STAGES' | 'PRE_CHECK'
   serviceId?: string
   versionId?: string
 }
@@ -55,13 +61,26 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
                 >
                   <Link
                     className="flex w-full justify-between"
-                    to={
-                      type === 'DEPLOYMENT'
-                        ? ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                    to={match(type)
+                      .with(
+                        'DEPLOYMENT',
+                        () =>
+                          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
                           DEPLOYMENT_LOGS_VERSION_URL(serviceId, history.id)
-                        : ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                      )
+                      .with(
+                        'STAGES',
+                        () =>
+                          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
                           ENVIRONMENT_STAGES_URL(history.id)
-                    }
+                      )
+                      .with(
+                        'PRE_CHECK',
+                        () =>
+                          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                          ENVIRONMENT_PRE_CHECK_LOGS_URL(history.id)
+                      )
+                      .exhaustive()}
                   >
                     <Tooltip content={history.id}>
                       <span>{trimId(history.id)}</span>

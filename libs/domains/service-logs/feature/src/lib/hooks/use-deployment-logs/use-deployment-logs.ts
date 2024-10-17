@@ -114,7 +114,8 @@ export function useDeploymentLogs({
           // 1. The stage name is "delete".
           // 2. stageId is empty or equal with current stageId.
           // 3. The transmitter matches serviceId or has a type of "Environment" or "TaskManager".
-          return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter
+          // 4. Don't have step PreCheck
+          return (isDeleteStage || isEmptyOrEqualStageId) && isMatchingTransmitter && stage?.step !== 'PreCheck'
         })
         .map((log, index) => ({ ...log, id: index + 1 }))
         .filter((log, index, array) =>
