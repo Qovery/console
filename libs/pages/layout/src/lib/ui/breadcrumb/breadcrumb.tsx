@@ -417,12 +417,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
               />
             </>
           )}
-        {(matchEnvironmentStage || matchEnvironmentStageVersion) && statusStages && (
-          <>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
-            <BreadcrumbDeploymentHistory type="STAGES" versionId={matchEnvironmentStageVersion?.params['versionId']} />
-          </>
-        )}
         {matchServiceLogs && services && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
