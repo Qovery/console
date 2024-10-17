@@ -28,7 +28,7 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
         <span className="mb-1 ml-2 text-xs font-medium text-neutral-350 dark:text-neutral-300">Deployment History</span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center">
           <DropdownMenu.Root>
             <span className="relative -top-[2px] flex h-6 items-center px-2">
               {!versionId || versionId === deploymentHistory[0]?.id ? (
