@@ -6,7 +6,6 @@ import {
 } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
-import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import {
@@ -22,6 +21,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
+import EnvironmentStagesFeature from './feature/environment-stages-feature/environment-stages-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
 
@@ -29,7 +29,6 @@ export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
-  const { data: services = [] } = useServices({ environmentId })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
@@ -103,10 +102,9 @@ export function PageEnvironmentLogs() {
           <Route
             path={ENVIRONMENT_STAGES_URL()}
             element={
-              <EnvironmentStages
+              <EnvironmentStagesFeature
                 environment={environment}
                 environmentStatus={environmentStatus}
-                services={services}
                 deploymentStages={deploymentStages}
                 preCheckStage={preCheckStage}
               />
@@ -115,10 +113,9 @@ export function PageEnvironmentLogs() {
           <Route
             path={ENVIRONMENT_STAGES_URL(':versionId')}
             element={
-              <EnvironmentStages
+              <EnvironmentStagesFeature
                 environment={environment}
                 environmentStatus={environmentStatus}
-                services={services}
                 deploymentStages={deploymentStages}
                 preCheckStage={preCheckStage}
               />
