@@ -1,6 +1,5 @@
 import { type Environment, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { EnvironmentStateChip } from '@qovery/domains/environments/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
