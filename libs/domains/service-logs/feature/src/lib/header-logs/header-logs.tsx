@@ -1,7 +1,7 @@
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { ServiceAvatar, ServiceLinksPopover, useLinks, useService } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 
@@ -10,6 +10,7 @@ export interface HeaderLogsProps extends PropsWithChildren {
   serviceId: string
   environment: Environment
   serviceStatus: Status
+  versionId?: string
   environmentStatus?: EnvironmentStatus
 }
 
@@ -32,6 +33,7 @@ function EndCurve() {
 export function HeaderLogs({
   type,
   environment,
+  versionId,
   serviceId,
   environmentStatus,
   serviceStatus,
@@ -55,7 +57,10 @@ export function HeaderLogs({
             variant="surface"
             color="neutral"
             className="w-7 justify-center"
-            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+            to={
+              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+              ENVIRONMENT_STAGES_URL(versionId)
+            }
           >
             <Icon iconName="timeline" />
           </Link>
