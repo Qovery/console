@@ -62,7 +62,7 @@ export function MenuItem(props: MenuItemProps) {
     itemContentCustom
   ) : (
     <>
-      <div className={`flex items-baseline truncate ${className}`}>
+      <div className={`flex items-center truncate ${className}`}>
         {copy && (
           <div onClick={(e) => e.preventDefault()}>
             <CopyToClipboardButtonIcon

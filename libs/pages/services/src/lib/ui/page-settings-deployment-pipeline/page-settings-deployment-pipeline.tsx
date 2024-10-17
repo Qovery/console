@@ -141,20 +141,20 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                         heading={
                           <div className="flex grow items-center">
                             <BadgeDeploymentOrder order={deployment_order} />
-                            <span className="block truncate text-2xs font-bold text-neutral-400">
-                              <Truncate truncateLimit={28} text={name || ''} />
+                            <span className="flex items-center gap-1.5 text-sm font-bold text-neutral-400">
+                              <Truncate truncateLimit={28} text={upperCaseFirstLetter(name) || ''} />
+                              {description && (
+                                <Tooltip content={description}>
+                                  <span>
+                                    <Icon
+                                      iconName="circle-info"
+                                      iconStyle="regular"
+                                      className="cursor-default text-xs text-neutral-350"
+                                    />
+                                  </span>
+                                </Tooltip>
+                              )}
                             </span>
-                            {description && (
-                              <Tooltip content={description}>
-                                <div>
-                                  <Icon
-                                    iconName="circle-info"
-                                    iconStyle="regular"
-                                    className="relative -top-[2px] ml-1 cursor-default text-xs text-neutral-350"
-                                  />
-                                </div>
-                              </Tooltip>
-                            )}
                             <DropdownMenu.Root>
                               <DropdownMenu.Trigger asChild>
                                 <Button data-testid="btn-more-menu" color="neutral" variant="plain" className="ml-auto">

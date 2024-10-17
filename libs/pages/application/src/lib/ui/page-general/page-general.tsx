@@ -17,7 +17,7 @@ export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJo
         <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
           {isCronJob && (
             <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
-              <Icon className="row-span-2" iconName="circle-info" />
+              <Icon className="row-span-2" iconName="circle-info" iconStyle="regular" />
               <p>
                 The number of past Completed or Failed job execution retained in the history and their TTL can be
                 customized in the advanced settings.

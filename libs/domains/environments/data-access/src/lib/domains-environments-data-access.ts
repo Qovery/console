@@ -5,6 +5,7 @@ import {
   DatabasesApi,
   DeploymentStageMainCallsApi,
   type DeploymentStageRequest,
+  type DeploymentStageWithServicesStatuses,
   type DockerfileCheckRequest,
   EnvironmentActionsApi,
   EnvironmentApi,
@@ -37,6 +38,14 @@ export const environments = createQueryKeys('environments', {
     async queryFn() {
       const result = await environmentMainCallsApi.getEnvironmentStatus(environmentId)
       return result.data
+    },
+  }),
+  // NOTE: Value is set by WebSocket
+  deploymentStages: (environmentId: string) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      return new Promise<DeploymentStageWithServicesStatuses[] | null>(() => {})
     },
   }),
   // NOTE: Value is set by WebSocket

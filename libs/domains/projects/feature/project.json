@@ -1,5 +1,5 @@
 {
-  "name": "feature",
+  "name": "domains-projects-feature",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/projects/feature/src",
   "projectType": "library",

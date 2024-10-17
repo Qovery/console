@@ -7,7 +7,9 @@ export interface EnvironmentAvatarProps extends Omit<ComponentPropsWithoutRef<ty
 }
 
 export const EnvironmentAvatar = forwardRef<ElementRef<typeof Avatar>, EnvironmentAvatarProps>(
-  function EnvironmentAvatar({ environment, ...props }, ref) {
-    return <Avatar ref={ref} fallback={<Icon name="SERVICES" height="100%" width="100%" />} {...props} />
+  function EnvironmentAvatar({ environment, className, ...props }, ref) {
+    return (
+      <Avatar ref={ref} className={className} fallback={<Icon name="SERVICES" height="40" width="40" />} {...props} />
+    )
   }
 )
