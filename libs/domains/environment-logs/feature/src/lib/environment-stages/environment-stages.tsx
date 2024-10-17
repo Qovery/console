@@ -17,7 +17,8 @@ import {
   ENVIRONMENT_LOGS_URL,
   ENVIRONMENT_PRE_CHECK_LOGS_URL,
 } from '@qovery/shared/routes'
-import { Checkbox, Icon, LoaderSpinner, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
+import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
 function matchServicesWithStatuses(deploymentStages: DeploymentStageWithServicesStatuses[]) {
@@ -91,7 +92,7 @@ export function EnvironmentStages({
                   <>
                     <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650 text-neutral-50">
                       <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
-                        <StatusChip status={preCheckStage?.status || 'SKIP'} />
+                        <StageStatusChip status={preCheckStage?.status} />
                         <div className="flex flex-col gap-0.5">
                           <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
                           <span className="text-xs">
@@ -112,7 +113,7 @@ export function EnvironmentStages({
                             <Icon iconName="list-check" iconStyle="solid" />
                           </span>
                           <span className="text-sm">Pre-check logs</span>
-                          <StatusChip className="ml-auto" status={preCheckStage?.status || 'SKIP'} />
+                          <StatusChip className="ml-auto" status={preCheckStage.status} />
                         </NavLink>
                       </div>
                     </div>
@@ -125,6 +126,7 @@ export function EnvironmentStages({
                 )}
                 {matchServicesWithStatuses(deploymentStages)?.map((s) => {
                   const stageTotalDurationSec = s.stage?.steps?.total_duration_sec ?? 0
+                  const stageName = s?.stage?.name || ''
 
                   if (hideSkipped && s?.stage?.status === 'SKIPPED') return null
 
@@ -140,10 +142,10 @@ export function EnvironmentStages({
                         )}
                       >
                         <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
-                          <StatusChip status={s.stage?.status} />
+                          <StageStatusChip status={s.stage?.status} />
                           <div className="flex flex-col gap-0.5">
                             <span className="flex gap-1.5 text-sm font-medium">
-                              <Truncate text={s?.stage?.name || ''} truncateLimit={20} />
+                              <Truncate text={upperCaseFirstLetter(stageName) || ''} truncateLimit={20} />
                               {s?.stage?.description && (
                                 <Tooltip content={s?.stage?.description}>
                                   <span className="text-neutral-250">
@@ -202,7 +204,7 @@ export function EnvironmentStages({
                                     })}
                                   />
                                   <span className="flex flex-col gap-0.5 text-sm">
-                                    <Truncate text={fullService.name} truncateLimit={28} />
+                                    <Truncate text={fullService.name} truncateLimit={18} />
                                     {serviceTotalDurationSec && (
                                       <span className="text-xs">
                                         {Math.floor(serviceTotalDurationSec / 60)}m {serviceTotalDurationSec % 60}s

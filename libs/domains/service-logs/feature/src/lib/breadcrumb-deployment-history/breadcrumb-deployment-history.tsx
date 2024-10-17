@@ -27,10 +27,10 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
-        <span className="ml-2 text-xs font-medium text-neutral-350 dark:text-neutral-300">History</span>
+        <span className="mb-1 ml-2 text-xs font-medium text-neutral-350 dark:text-neutral-300">Deployment History</span>
         <div className="flex items-center gap-1">
           <DropdownMenu.Root>
-            <span className="flex h-6 items-center px-2">
+            <span className="relative -top-[2px] flex h-6 items-center px-2">
               {!versionId || versionId === deploymentHistory[0]?.id ? (
                 <Tooltip content={dateFullFormat(deploymentHistory[0].created_at)} side="bottom">
                   <span className="mr-2 flex h-5 items-center gap-1 rounded bg-purple-500 px-1 text-sm font-medium text-neutral-50">
