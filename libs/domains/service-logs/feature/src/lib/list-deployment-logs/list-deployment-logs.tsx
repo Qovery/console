@@ -7,23 +7,32 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
-import { type DeploymentHistoryEnvironment, type Environment, type Status } from 'qovery-typescript-axios'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  type DeploymentHistoryEnvironment,
+  type Environment,
+  type EnvironmentStatus,
+  type Stage,
+  type Status,
+} from 'qovery-typescript-axios'
+import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useDeploymentStatus, useServiceType } from '@qovery/domains/services/feature'
-import { Button, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { Button, Icon, Link, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
+import HeaderLogs from '../header-logs/header-logs'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
+import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { FiltersStageStep } from './filters-stage-step/filters-stage-step'
-import { RowDeployment } from './row-deployment/row-deployment'
+import { RowDeploymentLogs } from './row-deployment-logs/row-deployment-logs'
 
 const { Table } = TablePrimitives
 
-const MemoizedRowDeployment = memo(RowDeployment)
+const MemoizedRowDeploymentLogs = memo(RowDeploymentLogs)
 
 export type FilterType = 'ALL' | 'DEPLOY' | 'BUILD'
 
@@ -119,18 +128,27 @@ export interface ListDeploymentLogsProps {
   environment: Environment
   deploymentHistoryEnvironment: DeploymentHistoryEnvironment[]
   serviceStatus: Status
+  stage?: Stage
+  environmentStatus?: EnvironmentStatus
 }
 
 export function ListDeploymentLogs({
   environment,
   deploymentHistoryEnvironment,
+  environmentStatus,
   serviceStatus,
+  stage,
 }: ListDeploymentLogsProps) {
   const { hash } = useLocation()
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
+  const { updateStageId } = useContext(ServiceStageIdsContext)
 
-  const { data: serviceType } = useServiceType({ environmentId: environment.id, serviceId })
+  useEffect(() => {
+    if (stage) updateStageId(stage.id)
+  }, [serviceId, serviceStatus, updateStageId, stage])
+
+  const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
   const {
     data: logs = [],
@@ -276,8 +294,8 @@ export function ListDeploymentLogs({
 
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
-      <div className="px-1 pb-1">
-        <div className="h-[calc(100vh-116px)] bg-neutral-650 pt-11">
+      <div className="h-full p-1">
+        <div className="h-full border border-neutral-500 bg-neutral-600 pt-11">
           <DeploymentLogsPlaceholder
             serviceStatus={serviceStatus}
             itemsLength={logs.length}
@@ -288,12 +306,34 @@ export function ListDeploymentLogs({
     )
   }
   return (
-    <div className="h-[calc(100vh-112px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 pt-0">
-      <div className="relative h-full border border-neutral-500 bg-neutral-600">
-        <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
+    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden bg-neutral-800 p-1">
+      <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+        <HeaderLogs
+          type="DEPLOYMENT"
+          environment={environment}
+          serviceId={serviceId ?? ''}
+          serviceStatus={serviceStatus}
+          environmentStatus={environmentStatus}
+        >
+          <Link
+            as="button"
+            className="gap-1"
+            variant="surface"
+            to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + SERVICE_LOGS_URL(serviceId)}
+          >
+            {match(service)
+              .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+              .otherwise(() => true) ? (
+              <ServiceStateChip className="mr-1" mode="running" environmentId={environment.id} serviceId={serviceId} />
+            ) : null}
+            Go to service logs
+            <Icon iconName="arrow-right" />
+          </Link>
+        </HeaderLogs>
+        <div className="flex h-12 w-full items-center justify-between border-b border-r border-neutral-500 px-4 py-2.5">
           <FiltersStageStep
             serviceStatus={serviceStatus}
-            serviceType={serviceType}
+            serviceType={service?.serviceType}
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
@@ -308,7 +348,7 @@ export function ListDeploymentLogs({
           </Button>
         </div>
         <div
-          className="h-full w-full overflow-y-scroll pb-16"
+          className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"
           ref={refScrollSection}
           onWheel={(event) => {
             if (
@@ -332,7 +372,7 @@ export function ListDeploymentLogs({
           <Table.Root className="w-full text-xs">
             <Table.Body className="divide-y-0">
               {table.getRowModel().rows.map((row) => (
-                <MemoizedRowDeployment key={row.id} {...row} />
+                <MemoizedRowDeploymentLogs key={row.id} {...row} />
               ))}
             </Table.Body>
           </Table.Root>
