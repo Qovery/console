@@ -9,6 +9,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { BadgeDeploymentOrder, Icon, StatusChip, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
+import { dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface StageItemProps {
@@ -87,7 +88,7 @@ export function StageItem({ stage, index, getService, serviceId, versionId, sear
                   <span className="flex items-center gap-2">
                     <span className="text-xs text-neutral-300">
                       {totalDurationSec ? (
-                        <span>
+                        <span title={dateUTCString(service.last_deployment_date ?? '')}>
                           {Math.floor(totalDurationSec / 60)}m:{totalDurationSec % 60}s
                         </span>
                       ) : (

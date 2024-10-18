@@ -2,6 +2,7 @@ import { type Environment, type EnvironmentStatus } from 'qovery-typescript-axio
 import { type PropsWithChildren } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderEnvironmentStagesProps extends PropsWithChildren {
@@ -57,7 +58,10 @@ export function HeaderEnvironmentStages({ environment, environmentStatus, childr
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                 <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
               </svg>
-              <span className="flex items-center gap-1.5">
+              <span
+                className="flex items-center gap-1.5"
+                title={dateUTCString(environmentStatus.last_deployment_date ?? '')}
+              >
                 <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-250" />
                 {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
               </span>

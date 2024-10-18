@@ -3,6 +3,7 @@ import { type PropsWithChildren } from 'react'
 import { ServiceAvatar, ServiceLinksPopover, useLinks, useService } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Button, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { dateUTCString } from '@qovery/shared/util-dates'
 import { pluralize } from '@qovery/shared/util-js'
 
 export interface HeaderLogsProps extends PropsWithChildren {
@@ -81,7 +82,10 @@ export function HeaderLogs({
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                 <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
               </svg>
-              <span className="flex items-center gap-1.5">
+              <span
+                className="flex items-center gap-1.5"
+                title={dateUTCString(serviceStatus.last_deployment_date ?? '')}
+              >
                 <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-250" />
                 {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
               </span>
