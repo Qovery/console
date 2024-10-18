@@ -1,62 +1,37 @@
-import clsx from 'clsx'
-import { Link, useLocation, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import {
+  type DeploymentStageWithServicesStatuses,
+  type Environment,
+  type EnvironmentStatus,
+  type Status,
+} from 'qovery-typescript-axios'
+import { useParams } from 'react-router-dom'
 import { ListServiceLogs } from '@qovery/domains/service-logs/feature'
-import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { getServiceStatusesById } from '../deployment-logs-feature/deployment-logs-feature'
 
 export interface PodLogsFeatureProps {
-  clusterId: string
+  environment: Environment
+  deploymentStages?: DeploymentStageWithServicesStatuses[]
+  environmentStatus?: EnvironmentStatus
 }
 
-export function LinkLogs({ title, url, statusChip = true }: { title: string; url: string; statusChip?: boolean }) {
-  const { environmentId = '', serviceId = '' } = useParams()
-  const location = useLocation()
-
-  const isActive = location.pathname.includes(url)
-  return (
-    <Link
-      className={clsx(
-        'transition-timing duration-250 flex h-11 items-center rounded-t px-6 text-sm font-medium text-neutral-50 transition-colors hover:bg-neutral-700',
-        {
-          'bg-neutral-650': isActive,
-        }
-      )}
-      to={url}
-    >
-      {statusChip && (
-        <ServiceStateChip className="mr-2" mode="running" environmentId={environmentId} serviceId={serviceId} />
-      )}
-
-      <span className="truncate">{title}</span>
-    </Link>
-  )
-}
-
-export function PodLogsFeature({ clusterId }: PodLogsFeatureProps) {
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams()
-  const { data: service } = useService({ environmentId, serviceId })
+export function PodLogsFeature({ environment, deploymentStages, environmentStatus }: PodLogsFeatureProps) {
+  const { serviceId = '' } = useParams()
+  const { data: service } = useService({ environmentId: environment.id, serviceId })
 
   useDocumentTitle(`Service logs ${service ? `- ${service?.name}` : '- Loading...'}`)
 
+  const serviceStatus = getServiceStatusesById(deploymentStages, serviceId) as Status
+
   return (
-    <div className="w-full">
-      <div className="flex w-full items-center overflow-y-auto bg-neutral-900 px-1 pt-1">
-        <LinkLogs
-          title="Deployment logs"
-          url={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
-          statusChip={false}
-        />
-        <LinkLogs
-          title="Service logs"
-          url={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId)}
-          statusChip={match(service)
-            .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-            .otherwise(() => true)}
-        />
-      </div>
-      <ListServiceLogs clusterId={clusterId} />
+    <div className="h-full w-full bg-neutral-800">
+      <ListServiceLogs
+        environment={environment}
+        clusterId={environment.cluster_id}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+      />
     </div>
   )
 }

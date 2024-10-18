@@ -1,4 +1,9 @@
-import { type ClusterStateEnum, type StateEnum, type StepMetricStatusEnum } from 'qovery-typescript-axios'
+import {
+  type ClusterStateEnum,
+  type StageStatusEnum,
+  type StateEnum,
+  type StepMetricStatusEnum,
+} from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type RunningState } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -24,7 +29,7 @@ import {
 import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
-  status: StateEnum | keyof typeof RunningState | ClusterStateEnum | StepMetricStatusEnum | undefined
+  status: StateEnum | keyof typeof RunningState | ClusterStateEnum | StepMetricStatusEnum | StageStatusEnum | undefined
   appendTooltipMessage?: string
   className?: string
 }
@@ -48,7 +53,7 @@ export function StatusChip(props: StatusChipProps) {
   const icon = match(status)
     // success
     .with('READY', () => <StoppedIcon />)
-    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', () => <DeployedIcon />)
+    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', 'DONE', () => <DeployedIcon />)
     .with('RESTARTED', () => <RestartedIcon />)
     // spinner
     .with(
@@ -63,7 +68,7 @@ export function StatusChip(props: StatusChipProps) {
       'WAITING_STOPPING',
       () => <QueuedIcon />
     )
-    .with('DEPLOYING', 'STARTING', () => <DeployingIcon />)
+    .with('DEPLOYING', 'STARTING', 'ONGOING', () => <DeployingIcon />)
     .with('RESTARTING', () => <RestartingIcon />)
     .with('BUILDING', () => <BuildingIcon />)
     .with('STOPPING', () => <StoppingIcon />)
@@ -72,7 +77,7 @@ export function StatusChip(props: StatusChipProps) {
     // stopped
     .with('STOPPED', () => <StoppedIcon />)
     .with('CANCELED', 'CANCEL', () => <CanceledIcon />)
-    .with('SKIP', () => <SkipIcon />)
+    .with('SKIP', 'SKIPPED', () => <SkipIcon />)
     .with('DELETED', () => <DeletedIcon />)
     // unknow / error / warning
     .with('UNKNOWN', () => <UnknownIcon />)

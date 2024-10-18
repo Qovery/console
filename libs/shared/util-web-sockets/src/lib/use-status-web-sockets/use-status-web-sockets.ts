@@ -40,6 +40,7 @@ export function useStatusWebSockets({
           queries.environments.deploymentStatus(environmentId).queryKey,
           () => message.environment
         )
+        queryClient.setQueryData(queries.environments.deploymentStages(environmentId).queryKey, () => message.stages)
         for (const stage of message.stages ?? []) {
           const services = [
             ...(stage.applications ?? []),

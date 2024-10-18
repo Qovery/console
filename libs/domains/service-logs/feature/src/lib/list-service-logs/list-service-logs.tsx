@@ -8,12 +8,15 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
+import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useRunningStatus, useService } from '@qovery/domains/services/feature'
-import { Button, DropdownMenu, Icon, TablePrimitives } from '@qovery/shared/ui'
+import { ServiceStateChip, useRunningStatus, useService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { Button, DropdownMenu, Icon, Link, TablePrimitives } from '@qovery/shared/ui'
+import { HeaderLogs } from '../header-logs/header-logs'
 import { type LogType, useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs-placeholder'
@@ -30,16 +33,19 @@ const MemoizedRowInfraLogs = memo(RowInfraLogs)
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
 export interface ListServiceLogsProps {
+  environment: Environment
   clusterId: string
+  serviceStatus: Status
+  environmentStatus?: EnvironmentStatus
 }
 
-export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
-  const { organizationId, projectId, environmentId, serviceId } = useParams()
+export function ListServiceLogs({ environment, clusterId, serviceStatus, environmentStatus }: ListServiceLogsProps) {
+  const { serviceId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const { data: service } = useService({ environmentId, serviceId })
-  const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
   const {
     data: logs = [],
     pauseLogs,
@@ -51,10 +57,10 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
     enabledNginx,
     setEnabledNginx,
   } = useServiceLogs({
-    organizationId,
+    organizationId: environment.organization.id,
     clusterId,
-    projectId,
-    environmentId,
+    projectId: environment.project.id,
+    environmentId: environment.id,
     serviceId,
     enabled: service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true,
   })
@@ -172,8 +178,8 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
   if (!logs || logs.length === 0 || logs[0].message.includes('No pods found')) {
     return (
-      <div className="px-1 pb-1">
-        <div className="h-[calc(100vh-116px)] bg-neutral-650 pt-11">
+      <div className="p-1">
+        <div className="h-[calc(100vh-72px)] border border-neutral-500 bg-neutral-600 pt-11">
           <ServiceLogsPlaceholder
             serviceName={service?.name}
             itemsLength={logs.length}
@@ -191,8 +197,38 @@ export function ListServiceLogs({ clusterId }: ListServiceLogsProps) {
         setUpdateTimeContext,
       }}
     >
-      <div className="h-[calc(100vh-112px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 pt-0">
-        <div className="relative h-full border border-neutral-500 bg-neutral-600">
+      <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
+        <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+          <HeaderLogs
+            type="SERVICE"
+            environment={environment}
+            serviceId={serviceId ?? ''}
+            serviceStatus={serviceStatus}
+            environmentStatus={environmentStatus}
+          >
+            <Link
+              as="button"
+              className="gap-1"
+              variant="surface"
+              to={
+                ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+                DEPLOYMENT_LOGS_URL(serviceId)
+              }
+            >
+              {match(service)
+                .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+                .otherwise(() => true) ? (
+                <ServiceStateChip
+                  className="mr-1"
+                  mode="deployment"
+                  environmentId={environment.id}
+                  serviceId={serviceId}
+                />
+              ) : null}
+              Go to latest deployment
+              <Icon iconName="arrow-right" />
+            </Link>
+          </HeaderLogs>
           <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
             <div className="flex items-center gap-3">
               <Button

@@ -194,7 +194,7 @@ const BoardColumn = <T extends Card>({
 
   return (
     <motion.div layout="position" layoutId={columnId} className="flex w-60 shrink-0 flex-col rounded">
-      <div className="flex h-11 items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2">
+      <div className="flex h-[58px] items-center justify-between rounded-t border border-neutral-250 bg-neutral-100 px-3 py-2">
         {heading}
       </div>
 

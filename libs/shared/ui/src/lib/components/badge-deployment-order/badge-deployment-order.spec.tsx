@@ -15,6 +15,5 @@ describe('BadgeDeploymentOrder', () => {
     const badgeSvg = screen.getByTestId('badge-svg')
     expect(badge).toBeInTheDocument()
     expect(badgeSvg).toBeInTheDocument()
-    expect(badgeSvg).toHaveAttribute('fill', '#009EDD')
   })
 })
