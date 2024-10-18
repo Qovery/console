@@ -22,7 +22,7 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({ environmentId })
 
-  if (!isFetchedDeloymentHistory) return null
+  if (!isFetchedDeloymentHistory || deploymentHistory.length === 0) return null
 
   return (
     <div className="flex items-center justify-center">
