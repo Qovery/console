@@ -27,18 +27,17 @@ describe('BreadcrumbDeploymentHistory', () => {
   })
 
   it('renders correctly with deployment history', async () => {
-    const { userEvent } = renderWithProviders(<BreadcrumbDeploymentHistory serviceId="service-1" />, {
+    const { userEvent } = renderWithProviders(<BreadcrumbDeploymentHistory type="DEPLOYMENT" serviceId="service-1" />, {
       container: document.body,
     })
 
-    expect(screen.getByText('History')).toBeInTheDocument()
+    expect(screen.getByText('Deployment History')).toBeInTheDocument()
     expect(screen.getByText('Latest')).toBeInTheDocument()
 
     const dropdownButton = screen.getByRole('button')
 
     await userEvent.click(dropdownButton)
 
-    expect(screen.getByText('Deployment History')).toBeInTheDocument()
     expect(screen.getByText('versi...n-1')).toBeInTheDocument()
     expect(screen.getByText('versi...n-2')).toBeInTheDocument()
   })
