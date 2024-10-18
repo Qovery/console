@@ -37,18 +37,20 @@ export function HeaderEnvironmentStages({ environment, environmentStatus, childr
               <Icon name={IconEnum.SERVICES} />
               {environment.name}
             </span>
-            <Tooltip content={`Cloud provider: ${environment.cloud_provider.provider}`} side="bottom">
-              <span>
-                <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
-              </span>
-            </Tooltip>
+            {environmentStatus.last_deployment_id && (
+              <Tooltip content={`Excecution id: ${environmentStatus.last_deployment_id}`} side="bottom">
+                <span>
+                  <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
+                </span>
+              </Tooltip>
+            )}
           </span>
           <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
             <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
           </svg>
           <span className="flex items-center gap-2">
-            <StatusChip status={environmentStatus?.state} />
-            <span>{upperCaseFirstLetter(environmentStatus?.state).replace(/_/g, ' ')}</span>
+            <StatusChip status={environmentStatus?.last_deployment_state} />
+            <span>{upperCaseFirstLetter(environmentStatus?.last_deployment_state).replace(/_/g, ' ')}</span>
           </span>
           {environmentStatus?.state !== 'DEPLOYING' && (
             <>

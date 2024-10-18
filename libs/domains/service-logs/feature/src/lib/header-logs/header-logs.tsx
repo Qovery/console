@@ -64,6 +64,7 @@ export function HeaderLogs({
           >
             <Icon iconName="timeline" />
           </Link>
+          <span className="text-neutral-400">/</span>
           <span className="flex items-center gap-2">
             <span className="flex items-center gap-2.5">
               <ServiceAvatar size="xs" service={service} border="none" />

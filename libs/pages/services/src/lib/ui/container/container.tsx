@@ -111,8 +111,8 @@ export function Container({ children }: PropsWithChildren) {
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
     },
     {
-      icon: <EnvironmentStateChip mode="deployment" environmentId={environmentId} />,
-      name: 'Deployments',
+      icon: <EnvironmentStateChip mode="last-deployment" environmentId={environmentId} />,
+      name: 'Deployments History',
       active:
         location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,

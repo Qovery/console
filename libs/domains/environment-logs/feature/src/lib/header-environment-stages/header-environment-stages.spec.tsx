@@ -12,6 +12,7 @@ describe('HeaderEnvironmentStages', () => {
     environmentStatus: {
       state: 'RUNNING',
       total_deployment_duration_in_seconds: 125,
+      last_deployment_state: 'DEPLOYED',
     },
   }
 
@@ -22,7 +23,7 @@ describe('HeaderEnvironmentStages', () => {
 
   it('renders the status text', () => {
     renderWithProviders(<HeaderEnvironmentStages {...defaultProps} />)
-    expect(screen.getByText('Running')).toBeInTheDocument()
+    expect(screen.getByText('Deployed')).toBeInTheDocument()
   })
 
   it('renders the deployment duration when not deploying', () => {

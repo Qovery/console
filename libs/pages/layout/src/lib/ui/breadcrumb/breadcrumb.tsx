@@ -305,7 +305,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
         )}
         {environmentId && (
           <>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
             <div className="flex items-center">
               {environmentId && (
                 <>
@@ -319,7 +319,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                   />
                   {(applicationId || databaseId) && (
                     <>
-                      <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+                      <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
                       <div className="flex items-center">
                         <BreadcrumbItem
                           isLast={true}
@@ -378,7 +378,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
           isFetchedStatusStages &&
           services.length > 0 && (
             <>
-              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
               <div className="flex items-center">
                 <BreadcrumbDeploymentLogs
                   serviceId={
@@ -391,7 +391,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                   statusStages={statusStages}
                 />
               </div>
-              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
               <BreadcrumbDeploymentHistory
                 type="DEPLOYMENT"
                 serviceId={
@@ -407,7 +407,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
           matchEnvironmentPreCheckVersion) &&
           statusStages && (
             <>
-              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
               <BreadcrumbDeploymentHistory
                 type={matchEnvironmentPreCheck ? 'PRE_CHECK' : 'STAGES'}
                 versionId={
@@ -419,7 +419,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
           )}
         {matchServiceLogs && services && (
           <>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300">/</div>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
             <div className="flex items-center">
               <BreadcrumbItem
                 isLast
