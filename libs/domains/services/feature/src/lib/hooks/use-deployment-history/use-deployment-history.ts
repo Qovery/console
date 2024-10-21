@@ -12,7 +12,7 @@ export function useDeploymentHistory({ serviceId, serviceType }: UseDeploymentHi
     // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
     ...queries.services.deploymentHistory({ serviceId: serviceId!!, serviceType: serviceType!! }),
     enabled: Boolean(serviceId) && Boolean(serviceType),
-    refetchInterval: 2000,
+    refetchInterval: 5000,
   })
 }
 

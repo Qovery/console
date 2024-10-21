@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { LoaderSpinner } from '@qovery/shared/ui'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { Icon, Link, LoaderSpinner } from '@qovery/shared/ui'
 
 export function LoaderPlaceholder() {
   return (
@@ -20,7 +21,7 @@ export interface ServiceLogsPlaceholderProps {
 }
 
 export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength }: ServiceLogsPlaceholderProps) {
-  const { environmentId, serviceId } = useParams()
+  const { organizationId, projectId, environmentId, serviceId } = useParams()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { state: deploymentState } = deploymentStatus ?? {}
   const [showPlaceholder, setShowPlaceholder] = useState(false)
@@ -47,7 +48,16 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
           <p className="mb-1 font-medium text-neutral-50">
             No logs available for <span className="text-brand-400">{serviceName}</span>.
           </p>
-          <p className="text-sm font-normal text-neutral-300">Please check if the service is up and running.</p>
+          <p className="mb-2 text-sm font-normal text-neutral-300">Please check if the service is up and running.</p>
+          <Link
+            as="button"
+            size="sm"
+            color="neutral"
+            to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
+          >
+            Go to latest deployment
+            <Icon iconName="arrow-right" className="ml-1" />
+          </Link>
         </div>
       ) : (
         <LoaderPlaceholder />

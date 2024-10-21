@@ -1,16 +1,20 @@
-import { type DeploymentStageWithServicesStatuses, type Environment, type Status } from 'qovery-typescript-axios'
+import {
+  type DeploymentStageWithServicesStatuses,
+  type Environment,
+  type EnvironmentStatus,
+  type Stage,
+  type Status,
+} from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { ListDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { LinkLogs } from '../pod-logs-feature/pod-logs-feature'
 
 export interface DeploymentLogsFeatureProps {
   environment: Environment
-  statusStages?: DeploymentStageWithServicesStatuses[]
+  deploymentStages?: DeploymentStageWithServicesStatuses[]
+  environmentStatus?: EnvironmentStatus
 }
 
 export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
@@ -59,45 +63,63 @@ export function getServiceStatusesById(services?: DeploymentStageWithServicesSta
   return null
 }
 
-export function DeploymentLogsFeature({ environment, statusStages }: DeploymentLogsFeatureProps) {
-  const { organizationId = '', projectId = '', serviceId = '' } = useParams()
+export function getStageFromServiceId(
+  deploymentStages: DeploymentStageWithServicesStatuses[],
+  serviceId: string
+): Stage | undefined {
+  for (const deploymentStage of deploymentStages) {
+    const serviceTypes: (keyof DeploymentStageWithServicesStatuses)[] = [
+      'applications',
+      'containers',
+      'jobs',
+      'databases',
+      'helms',
+    ]
+
+    for (const serviceType of serviceTypes) {
+      const services = deploymentStage[serviceType]
+      if (Array.isArray(services) && services.some((service) => service.id === serviceId)) {
+        return deploymentStage.stage
+      }
+    }
+  }
+
+  return undefined
+}
+
+export function DeploymentLogsFeature({
+  environment,
+  environmentStatus,
+  deploymentStages,
+}: DeploymentLogsFeatureProps) {
+  const { serviceId = '' } = useParams()
 
   const { data: service, isFetched: isFetchedService } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentHistoryEnvironment = [] } = useDeploymentHistory({ environmentId: environment.id })
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading...'}`)
 
-  const serviceStatus = getServiceStatusesById(statusStages, serviceId) as Status
+  const serviceStatus = getServiceStatusesById(deploymentStages, serviceId) as Status
 
   if (!serviceStatus && isFetchedService)
     return (
-      <div className="flex h-full w-full items-center overflow-y-auto bg-neutral-900 px-1 pt-1">
-        <div className="h-full w-full border border-neutral-500 bg-neutral-650"></div>
+      <div className="flex h-full w-full items-center overflow-y-auto bg-neutral-800 px-1 pt-1">
+        <div className="h-full w-full border border-neutral-500 bg-neutral-600"></div>
       </div>
     )
+
+  const stageFromServiceId = getStageFromServiceId(deploymentStages ?? [], serviceId)
 
   if (!serviceStatus) return null
 
   return (
-    <div className="w-full">
-      <div className="flex w-full items-center overflow-y-auto bg-neutral-900 px-1 pt-1">
-        <LinkLogs
-          title="Deployment logs"
-          url={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + DEPLOYMENT_LOGS_URL(serviceId)}
-          statusChip={false}
-        />
-        <LinkLogs
-          title="Service logs"
-          url={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + SERVICE_LOGS_URL(serviceId)}
-          statusChip={match(service)
-            .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-            .otherwise(() => true)}
-        />
-      </div>
+    <div className="h-full w-full bg-neutral-900">
       <ListDeploymentLogs
         environment={environment}
         deploymentHistoryEnvironment={deploymentHistoryEnvironment}
         serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+        stage={stageFromServiceId}
       />
     </div>
   )

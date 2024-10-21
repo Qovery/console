@@ -23,7 +23,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
         {label && <span className="ml-2 text-xs font-medium text-neutral-350 dark:text-neutral-300">{label}</span>}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center">
           <BreadcrumbItemValue link={link} active={isLast} name={currentName ?? ''} logo={logo} />
           {menuItems.length > 0 && (
             <Menu

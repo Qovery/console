@@ -34,7 +34,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
     pathname.includes(CLUSTER_URL(organizationId, clusterId))
 
   return (
-    <div className="flex h-screen w-16 flex-col bg-white dark:bg-neutral-650">
+    <div className="flex h-screen w-16 flex-col bg-white dark:bg-neutral-600">
       <RouterLink
         to={matchLogInfraRoute ? INFRA_LOGS_URL(organizationId, clusterId) : ORGANIZATION_URL(organizationId)}
         className="z-10 flex h-16 w-16 items-center justify-center border-b border-neutral-200 dark:border-neutral-500"

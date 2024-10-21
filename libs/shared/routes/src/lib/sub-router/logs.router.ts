@@ -9,6 +9,8 @@ export const ENVIRONMENT_LOGS_URL = (
   environmentId = ':environmentId'
 ) => `${SERVICES_URL(organizationId, projectId, environmentId)}/logs`
 
+export const ENVIRONMENT_STAGES_URL = (versionId?: string) => (versionId ? `/stages/${versionId}` : '/stages')
+
 export const SERVICE_LOGS_URL = (serviceId = ':serviceId', podName = '') =>
   `/${serviceId}/service-logs${podName ? `?pod_name=${podName}` : ''}`
 
@@ -16,3 +18,6 @@ export const DEPLOYMENT_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/
 
 export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
   `/${serviceId}/deployment-logs/${versionId}`
+
+export const ENVIRONMENT_PRE_CHECK_LOGS_URL = (versionId?: string) =>
+  versionId ? `/pre-check-logs/${versionId}` : '/pre-check-logs'
