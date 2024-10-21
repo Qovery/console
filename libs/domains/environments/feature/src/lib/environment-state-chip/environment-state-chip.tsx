@@ -30,7 +30,6 @@ function DeploymentStateChip({ environmentId, mode, ...props }: DeploymentStateC
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
 
   if (mode === 'last-deployment') {
-    console.log(deploymentStatus)
     return (
       <Skeleton width={16} height={16} show={!deploymentStatus?.last_deployment_state} rounded>
         <StatusChip status={deploymentStatus?.last_deployment_state} {...props} />
