@@ -323,7 +323,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
             </div>
           </div>
           <div
-            className="h-full w-full overflow-y-scroll pb-8"
+            className="h-full w-full overflow-y-scroll pb-20"
             ref={refScrollSection}
             onWheel={(event) => {
               if (

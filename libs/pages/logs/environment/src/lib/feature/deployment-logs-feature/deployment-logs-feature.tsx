@@ -113,7 +113,7 @@ export function DeploymentLogsFeature({
   if (!serviceStatus) return null
 
   return (
-    <div className="h-full w-full bg-neutral-800">
+    <div className="h-full w-full bg-neutral-900">
       <ListDeploymentLogs
         environment={environment}
         deploymentHistoryEnvironment={deploymentHistoryEnvironment}
