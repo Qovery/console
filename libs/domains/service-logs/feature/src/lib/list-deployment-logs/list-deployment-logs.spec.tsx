@@ -167,6 +167,6 @@ describe('ListDeploymentLogs', () => {
       />
     )
 
-    expect(screen.getByText('Streaming service logs')).toBeInTheDocument()
+    expect(screen.getByText('Streaming deployment logs')).toBeInTheDocument()
   })
 })

@@ -388,7 +388,7 @@ export function ListDeploymentLogs({
             </Table.Body>
           </Table.Root>
           {isDeploymentProgressing && (
-            <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming service logs" />
+            <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming deployment logs" />
           )}
         </div>
         <ShowNewLogsButton
