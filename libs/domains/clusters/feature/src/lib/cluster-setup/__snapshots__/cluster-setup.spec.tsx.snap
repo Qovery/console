@@ -3,6 +3,26 @@
 exports[`ClusterSetup should match manage deployment snapshot 1`] = `
 <body>
   <div>
+    <div
+      class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 text-sm"
+      data-accent-color="sky"
+    >
+      <div
+        class="-order-2 text-base leading-6"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-regular fa-info-circle "
+        />
+      </div>
+      <div
+        class="-order-1 mr-auto gap-x-3 text-neutral-400"
+      >
+        <p>
+          This guide walks you through the process of installing Qovery on your existing Kubernetes cluster, where you will have full control over the infrastructure. You will be responsible for managing updates and upgrades. Please note that advanced Kubernetes knowledge is required.
+        </p>
+      </div>
+    </div>
     <ul
       class="flex flex-col gap-4 text-sm font-medium text-neutral-400"
     >
