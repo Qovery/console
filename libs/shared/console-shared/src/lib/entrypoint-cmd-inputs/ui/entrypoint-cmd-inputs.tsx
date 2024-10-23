@@ -25,6 +25,7 @@ export function EntrypointCmdInputs({
   const watchCmdArguments = watch(cmdArgumentsFieldName)
   const watchEntryPoint = watch(imageEntryPointFieldName)
   const watchImageName = watch('image_name')
+  const watchImageTag = watch('image_tag')
 
   return (
     <>
@@ -68,7 +69,8 @@ export function EntrypointCmdInputs({
           <span className="select-none text-xs">Docker run format:</span>
           <span className="break-words text-sm">
             docker run {watchEntryPoint ? '--entrypoint ' + watchEntryPoint : ''}
-            {watchImageName ? ` ${watchImageName}` : ''} {displayParsedCmd(watchCmdArguments ?? '')}
+            {watchImageName ? ` ${watchImageName}${watchImageTag ? `:${watchImageTag}` : ''}` : ''}{' '}
+            {displayParsedCmd(watchCmdArguments ?? '')}
           </span>
         </div>
       )}
