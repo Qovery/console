@@ -199,7 +199,8 @@ export function ContainerRegistryForm({
                     ContainerRegistryKindEnum.GITLAB_CR,
                     () => true
                   )
-                  .otherwise(() => false)
+                  .otherwise(() => false) ||
+                cluster?.is_demo
               }
             />
           )}
@@ -229,6 +230,7 @@ export function ContainerRegistryForm({
                 }}
                 value={field.value}
                 label="Login type"
+                disabled={cluster?.is_demo}
                 error={error?.message}
                 options={[
                   {
