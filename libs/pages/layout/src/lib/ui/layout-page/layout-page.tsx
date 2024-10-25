@@ -80,6 +80,18 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   })
 
   const clusterCredentialError = Boolean(!matchLogInfraRoute && invalidCluster)
+  const clusterStatusesError = clusterStatuses?.some(({ status }) =>
+    match(status)
+      .with(
+        ClusterStateEnum.BUILD_ERROR,
+        ClusterStateEnum.DELETE_ERROR,
+        ClusterStateEnum.STOP_ERROR,
+        ClusterStateEnum.DEPLOYMENT_ERROR,
+        ClusterStateEnum.RESTART_ERROR,
+        () => true
+      )
+      .otherwise(() => false)
+  )
 
   // Display Qovery admin if we don't have the organization in the token
   const displayQoveryAdminBanner = useMemo(() => {
@@ -104,7 +116,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
           <div className="sticky top-0 h-full">
             <Navigation
               defaultOrganizationId={defaultOrganizationId}
-              clusterNotification={clusterCredentialError ? 'error' : clusterUpgradeWarning ? 'warning' : undefined}
+              clusterNotification={
+                clusterCredentialError || clusterStatusesError ? 'error' : clusterUpgradeWarning ? 'warning' : undefined
+              }
             />
           </div>
           <div className="flex w-full grow flex-col-reverse">

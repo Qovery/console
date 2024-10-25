@@ -83,7 +83,10 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 <Icon iconName="cloud-word" className="text-[18px]" />
               </Link>
               {clusterNotification === 'error' && (
-                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-red-500"></span>
+                <span className="absolute right-1.5 top-1.5 flex">
+                  <span className="absolute inline-flex h-full w-full animate-ping-small rounded-full bg-red-500 opacity-75" />
+                  <span className="h-2 w-2 rounded-lg bg-red-500"></span>
+                </span>
               )}
               {clusterNotification === 'warning' && (
                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-lg bg-yellow-500"></span>
