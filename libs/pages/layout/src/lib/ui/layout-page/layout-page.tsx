@@ -81,14 +81,16 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
 
   const clusterCredentialError = Boolean(!matchLogInfraRoute && invalidCluster)
   const clusterStatusesError = clusterStatuses?.some(({ status }) =>
-    match(status).with(
-      ClusterStateEnum.BUILD_ERROR,
-      ClusterStateEnum.DELETE_ERROR,
-      ClusterStateEnum.STOP_ERROR,
-      ClusterStateEnum.DEPLOYMENT_ERROR,
-      ClusterStateEnum.RESTART_ERROR,
-      () => true
-    )
+    match(status)
+      .with(
+        ClusterStateEnum.BUILD_ERROR,
+        ClusterStateEnum.DELETE_ERROR,
+        ClusterStateEnum.STOP_ERROR,
+        ClusterStateEnum.DEPLOYMENT_ERROR,
+        ClusterStateEnum.RESTART_ERROR,
+        () => true
+      )
+      .otherwise(() => false)
   )
 
   // Display Qovery admin if we don't have the organization in the token
