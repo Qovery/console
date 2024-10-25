@@ -115,7 +115,7 @@ export function EnvironmentStagesFeature({
                         .otherwise(() => null)}
                     </div>
                   </div>
-                  <div className="flex max-h-[75vh] flex-col gap-1.5 overflow-x-hidden overflow-y-scroll bg-neutral-800 p-1.5">
+                  <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
                     {s.services.length > 0 ? (
                       s.services.map((service) => {
                         const fullService = getServiceById(service.id!)

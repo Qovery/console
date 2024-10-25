@@ -26,6 +26,15 @@ export function DarkModeEnabler(props: DarkModeEnablerProps) {
   }
 
   useEffect(() => {
+    // Handle meta tag for color scheme
+    let metaColorScheme = document.querySelector('meta[name="color-scheme"]')
+    if (!metaColorScheme) {
+      metaColorScheme = document.createElement('meta')
+      metaColorScheme.setAttribute('name', 'color-scheme')
+      document.head.appendChild(metaColorScheme)
+    }
+    metaColorScheme.setAttribute('content', isDarkMode ? 'dark' : 'light')
+
     if (isDarkMode) {
       document.documentElement.classList.add('dark')
       hideElementTransitionDuringNavigation()
