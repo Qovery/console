@@ -2,8 +2,6 @@ import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qover
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
-import { ClusterSetup } from '@qovery/domains/clusters/feature'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_URL } from '@qovery/shared/routes'
@@ -75,121 +73,97 @@ export function StepGeneral(props: StepGeneralProps) {
       </div>
 
       <form onSubmit={onSubmit}>
-        {watch('installation_type') === 'MANAGED' && (
-          <>
-            <div className="mb-10">
-              <h4 className="mb-4 text-sm text-neutral-400">General</h4>
-              <ClusterGeneralSettings />
-            </div>
-            <div className="mb-10">
-              <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
-              {cloudProviders.length > 0 ? (
-                <>
-                  {watch('cloud_provider') === CloudProviderEnum.GCP && (
-                    <Callout.Root color="yellow" className="mb-2">
-                      <Callout.Icon>
-                        <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                      </Callout.Icon>
-                      <Callout.Text className="text-xs">
-                        GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
-                        behavior.
-                        <ExternalLink
-                          className="mt-1 flex"
-                          href="https://cloud.google.com/billing/docs/how-to/budgets"
-                          size="xs"
-                        >
-                          Setup budget alerts
-                        </ExternalLink>
-                        <ExternalLink
-                          className="mt-1 flex"
-                          href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
-                          size="xs"
-                        >
-                          More details
-                        </ExternalLink>
-                      </Callout.Text>
-                    </Callout.Root>
-                  )}
-                  <Controller
-                    name="cloud_provider"
-                    control={control}
-                    rules={{
-                      required: 'Please select a cloud provider.',
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputSelect
-                        dataTestId="input-cloud-provider"
-                        label="Cloud provider"
-                        className="mb-3"
-                        options={buildCloudProviders}
-                        onChange={(value) => {
-                          field.onChange(value)
-                          setResourcesData && setResourcesData(defaultResourcesData)
-                        }}
-                        value={field.value}
-                        error={error?.message}
-                        portal
-                      />
-                    )}
-                  />
-                  {currentProvider && (
-                    <>
-                      <Controller
-                        name="region"
-                        control={control}
-                        rules={{
-                          required: 'Please select a region.',
-                        }}
-                        render={({ field, fieldState: { error } }) => (
-                          <InputSelect
-                            dataTestId="input-region"
-                            label="Region"
-                            className="mb-3"
-                            options={buildRegions}
-                            onChange={field.onChange}
-                            value={field.value}
-                            error={error?.message}
-                            isSearchable
-                            portal
-                          />
-                        )}
-                      />
-                      <ClusterCredentialsSettingsFeature
-                        cloudProvider={currentProvider.short_name as CloudProviderEnum}
-                      />
-                    </>
-                  )}
-                </>
-              ) : (
-                <div className="mt-2 flex justify-center">
-                  <LoaderSpinner className="w-4" />
-                </div>
-              )}
-            </div>
-          </>
-        )}
-
-        {watch('installation_type') !== 'MANAGED' && (
+        <>
           <div className="mb-10">
-            <h4 className="text-sm text-neutral-400">Installation instruction</h4>
-            {watch('installation_type') === 'LOCAL_DEMO' ? (
-              <ExternalLink className="mb-4" href="https://hub.qovery.com/docs/getting-started/install-qovery/local/">
-                See documentation
-              </ExternalLink>
-            ) : (
-              <ExternalLink
-                className="mb-4"
-                href="https://hub.qovery.com/docs/getting-started/install-qovery/kubernetes/quickstart/"
-              >
-                See documentation
-              </ExternalLink>
-            )}
-
-            {match(watch('installation_type'))
-              .with('LOCAL_DEMO', 'SELF_MANAGED', (type) => <ClusterSetup type={type} />)
-              .otherwise(() => null)}
+            <h4 className="mb-4 text-sm text-neutral-400">General</h4>
+            <ClusterGeneralSettings />
           </div>
-        )}
+          <div className="mb-10">
+            <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
+            {cloudProviders.length > 0 ? (
+              <>
+                {watch('cloud_provider') === CloudProviderEnum.GCP && (
+                  <Callout.Root color="yellow" className="mb-2">
+                    <Callout.Icon>
+                      <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                    </Callout.Icon>
+                    <Callout.Text className="text-xs">
+                      GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
+                      behavior.
+                      <ExternalLink
+                        className="mt-1 flex"
+                        href="https://cloud.google.com/billing/docs/how-to/budgets"
+                        size="xs"
+                      >
+                        Setup budget alerts
+                      </ExternalLink>
+                      <ExternalLink
+                        className="mt-1 flex"
+                        href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
+                        size="xs"
+                      >
+                        More details
+                      </ExternalLink>
+                    </Callout.Text>
+                  </Callout.Root>
+                )}
+                <Controller
+                  name="cloud_provider"
+                  control={control}
+                  rules={{
+                    required: 'Please select a cloud provider.',
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputSelect
+                      dataTestId="input-cloud-provider"
+                      label="Cloud provider"
+                      className="mb-3"
+                      options={buildCloudProviders}
+                      onChange={(value) => {
+                        field.onChange(value)
+                        setResourcesData && setResourcesData(defaultResourcesData)
+                      }}
+                      value={field.value}
+                      error={error?.message}
+                      portal
+                    />
+                  )}
+                />
+                {currentProvider && (
+                  <>
+                    <Controller
+                      name="region"
+                      control={control}
+                      rules={{
+                        required: 'Please select a region.',
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputSelect
+                          dataTestId="input-region"
+                          label="Region"
+                          className="mb-3"
+                          options={buildRegions}
+                          onChange={field.onChange}
+                          value={field.value}
+                          error={error?.message}
+                          isSearchable
+                          portal
+                        />
+                      )}
+                    />
+                    <ClusterCredentialsSettingsFeature
+                      cloudProvider={currentProvider.short_name as CloudProviderEnum}
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <div className="mt-2 flex justify-center">
+                <LoaderSpinner className="w-4" />
+              </div>
+            )}
+          </div>
+        </>
 
         <div className="flex justify-between">
           <Button

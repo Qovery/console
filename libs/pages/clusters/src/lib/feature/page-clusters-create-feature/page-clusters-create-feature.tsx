@@ -13,6 +13,7 @@ import {
 import {
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_URL,
+  CLUSTERS_NEW_URL,
   CLUSTERS_TEMPLATE_CREATION_URL,
   CLUSTERS_URL,
 } from '@qovery/shared/routes'
@@ -157,7 +158,7 @@ export function PageClusterCreateFeature() {
       <FunnelFlow
         onExit={() => {
           if (window.confirm('Do you really want to leave?')) {
-            navigate(CLUSTERS_URL(organizationId))
+            navigate(CLUSTERS_URL(organizationId) + CLUSTERS_NEW_URL)
           }
         }}
         totalSteps={steps(generalData, resourcesData?.cluster_type).length}

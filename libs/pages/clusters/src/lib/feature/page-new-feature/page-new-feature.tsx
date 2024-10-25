@@ -4,15 +4,16 @@ import Azure from 'devicon/icons/azure/azure-original.svg'
 import DigitalOcean from 'devicon/icons/digitalocean/digitalocean-original.svg'
 import GCP from 'devicon/icons/googlecloud/googlecloud-original.svg'
 import Kubernetes from 'devicon/icons/kubernetes/kubernetes-original.svg'
+import { AnimatePresence, motion } from 'framer-motion'
 import posthog from 'posthog-js'
 import { type CloudProviderEnum } from 'qovery-typescript-axios'
-import { type ReactElement, cloneElement, useState } from 'react'
+import { type MutableRefObject, type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ClusterInstallationGuideModal } from '@qovery/domains/clusters/feature'
 import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
+import { useClickAway, useDocumentTitle } from '@qovery/shared/util-hooks'
 
 const Qovery = '/assets/logos/logo-icon.svg'
 
@@ -38,7 +39,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   return match(props)
     .with({ selectedInstallationType: 'self-managed' }, ({ selectedInstallationType, openInstallationGuideModal }) => (
       <button
-        className="flex items-start justify-start gap-3 rounded-sm border border-neutral-200 p-3 transition hover:bg-white"
+        className="flex h-32 flex-col items-start justify-start gap-3 rounded-sm border border-neutral-200 p-3 transition hover:bg-white"
         onClick={() => {
           posthog.capture('select-cluster', {
             selectedCloudProvider,
@@ -48,9 +49,9 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         }}
       >
         {typeof icon === 'string' ? (
-          <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
+          <img className="mt-1 select-none" width={48} height={48} src={icon} alt={title} />
         ) : (
-          cloneElement(icon as ReactElement, { className: 'w-[24px] mt-1 select-none' })
+          cloneElement(icon as ReactElement, { className: 'w-[48px] mt-1 select-none' })
         )}
         <span className="text-start">
           <span className="inline-block items-center text-ssm font-medium text-neutral-400">{title}</span>
@@ -70,9 +71,9 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         }
       >
         {typeof icon === 'string' ? (
-          <img className="mt-1 select-none" width={24} height={24} src={icon} alt={title} />
+          <img className="mt-1 select-none" width={48} height={48} src={icon} alt={title} />
         ) : (
-          cloneElement(icon as ReactElement, { className: 'w-[24px] mt-1 select-none' })
+          cloneElement(icon as ReactElement, { className: 'w-[48px] mt-1 select-none' })
         )}
         <span className="text-start">
           <span className="inline-flex items-center text-ssm font-medium text-neutral-400">
@@ -121,74 +122,134 @@ function CardCluster({ title, description, icon, ...props }: CardClusterProps) {
 
   if ('options' in props) {
     const { options } = props
+
+    const ref = useClickAway(() => {
+      setExpanded(false)
+    }) as MutableRefObject<HTMLDivElement>
+
+    const handleOpenModal = () => {
+      if (expanded === false) {
+        setExpanded(true)
+      }
+    }
+
     return (
-      <div
-        onClick={() => setExpanded(true)}
-        className={clsx({
-          'flex cursor-pointer  items-center gap-6 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100':
-            true,
-          'col-span-3 bg-neutral-100 p-6': expanded,
-        })}
-      >
-        {expanded ? (
-          <div className="flex w-full flex-col gap-8">
-            <div className="relative flex gap-6">
-              <div className="flex w-14 items-center justify-center">
-                {typeof icon === 'string' ? (
-                  <img className="select-none" width={52} height={52} src={icon} alt={title} />
-                ) : (
-                  cloneElement(icon as ReactElement, { className: 'w-[52px]' })
-                )}
-              </div>
-              <div>
-                <h3 className="mb-1 text-base font-medium">{title}</h3>
-                <p className="max-w-96 text-ssm text-neutral-350">{description}</p>
-              </div>
-              <Button
-                className="absolute right-0 top-0"
-                color="neutral"
-                variant="surface"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setExpanded(false)
-                }}
-              >
-                <Icon iconName="xmark" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {options.map((props) => (
-                <CardOption key={props.title} {...props} />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <>
-            <span className="relative flex w-14 items-center justify-center">
+      <>
+        <div
+          onClick={handleOpenModal}
+          className={clsx(
+            'flex h-32 cursor-pointer justify-start gap-4 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100',
+            {
+              'border-brand-500': expanded,
+            }
+          )}
+        >
+          <div className="flex flex-col gap-4">
+            <div>
               {typeof icon === 'string' ? (
-                <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
+                <img className="select-none" width={52} height={52} src={icon} alt={title} />
               ) : (
-                cloneElement(icon as ReactElement, { className: 'w-10' })
+                cloneElement(icon as ReactElement, { className: 'w-[52px] h-[52px]' })
               )}
-            </span>
-            <div className="flex h-full w-60 flex-col justify-between gap-2">
-              <div>
-                <h3 className="mb-1 text-ssm font-medium">{title}</h3>
-              </div>
-              <p className="text-xs font-medium text-neutral-400">
-                Click to select an option <Icon iconName="chevron-right" className="ml-1 text-2xs" />
-              </p>
             </div>
-          </>
-        )}
-      </div>
+            <p className="text-base font-semibold">{title}</p>
+          </div>
+          <div className="ml-auto flex items-center gap-2.5 text-neutral-400">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md border border-neutral-200 text-xs font-medium">
+              2
+            </span>
+            <Icon iconName="angle-up" iconStyle="regular" className="text-xs " />
+          </div>
+        </div>
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              ref={ref}
+              className="col-span-3 row-start-2 flex w-full flex-col bg-neutral-200"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="grid grid-cols-3 gap-2">
+                {options.map((props) => (
+                  <CardOption key={props.title} {...props} />
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </>
     )
+
+    // return (
+    //   <div
+    //     onClick={() => setExpanded(true)}
+    //     className={clsx({
+    //       'flex h-32 cursor-pointer flex-col justify-start gap-6 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100':
+    //         true,
+    //       'col-span-3 bg-neutral-100 p-6': expanded,
+    //     })}
+    //   >
+    //     {expanded ? (
+    //       <div className="flex w-full flex-col gap-8">
+    //         <div className="relative flex gap-6">
+    // <div className="flex w-14 items-center justify-center">
+    //   {typeof icon === 'string' ? (
+    //     <img className="select-none" width={52} height={52} src={icon} alt={title} />
+    //   ) : (
+    //     cloneElement(icon as ReactElement, { className: 'w-[52px]' })
+    //   )}
+    // </div>
+    //           <div>
+    //             <h3 className="mb-1 text-base font-medium">{title}</h3>
+    //             <p className="max-w-96 text-ssm text-neutral-350">{description}</p>
+    //           </div>
+    //           <Button
+    //             className="absolute right-0 top-0"
+    //             color="neutral"
+    //             variant="surface"
+    //             onClick={(e) => {
+    //               e.stopPropagation()
+    //               setExpanded(false)
+    //             }}
+    //           >
+    //             <Icon iconName="xmark" />
+    //           </Button>
+    //         </div>
+    // <div className="grid grid-cols-3 gap-2">
+    //   {options.map((props) => (
+    //     <CardOption key={props.title} {...props} />
+    //   ))}
+    // </div>
+    //       </div>
+    //     ) : (
+    //       <>
+    //         <span className="relative flex w-14 items-center justify-center">
+    //           {typeof icon === 'string' ? (
+    //             <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
+    //           ) : (
+    //             cloneElement(icon as ReactElement, { className: 'w-10' })
+    //           )}
+    //         </span>
+    //         <div className="flex h-full w-60 flex-col justify-between gap-2">
+    //           <div>
+    //             <h3 className="mb-1 text-ssm font-medium">{title}</h3>
+    //           </div>
+    //           <p className="text-xs font-medium text-neutral-400">
+    //             Click to select an option <Icon iconName="chevron-right" className="ml-1 text-2xs" />
+    //           </p>
+    //         </div>
+    //       </>
+    //     )}
+    //   </div>
+    // )
   } else {
     const { selectedCloudProvider, selectedInstallationType, openInstallationGuideModal } = props
 
     return (
       <button
-        className="flex gap-6 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100"
+        className="flex h-32 cursor-pointer justify-between gap-4 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100"
         onClick={() => {
           posthog.capture('select-cluster', {
             selectedCloudProvider,
@@ -197,21 +258,28 @@ function CardCluster({ title, description, icon, ...props }: CardClusterProps) {
           openInstallationGuideModal()
         }}
       >
-        <div className="flex w-14 items-center justify-center">
-          {typeof icon === 'string' ? (
-            <img className="max-h-10 w-14 select-none" src={icon} alt={title} />
-          ) : (
-            cloneElement(icon as ReactElement, { className: 'w-10' })
-          )}
+        <div className="flex flex-col gap-4">
+          <div>
+            {typeof icon === 'string' ? (
+              <img className="select-none" width={52} height={52} src={icon} alt={title} />
+            ) : (
+              cloneElement(icon as ReactElement, { className: 'w-[52px] h-[52px]' })
+            )}
+          </div>
+          <p className="truncate text-base font-semibold">{title}</p>
         </div>
-        <div className="w-60 text-start">
-          <h3 className="mb-1 text-ssm font-medium">{title}</h3>
-          {selectedInstallationType === 'demo' && (
-            <span className="relative -top-0.5 inline-block rounded bg-brand-500 px-1 text-2xs text-neutral-50">
-              3min to setup
+        {selectedInstallationType === 'demo' ? (
+          <span className="flex h-5  min-w-min items-center justify-center truncate rounded-lg bg-brand-500 px-1.5 text-[11px] font-medium leading-6 text-neutral-50">
+            3min to setup
+          </span>
+        ) : (
+          <div className="ml-auto flex items-center gap-2.5 text-neutral-400">
+            <span className="flex h-5 items-center justify-center truncate rounded-lg border border-neutral-200 px-1.5 text-[11px] font-semibold leading-6">
+              Self-managed
             </span>
-          )}
-        </div>
+            <Icon iconName="arrow-up-right" iconStyle="regular" className="text-xs" />
+          </div>
+        )}
       </button>
     )
   }
@@ -378,33 +446,34 @@ export function PageNewFeature() {
   ]
 
   return (
-    <Section className="flex w-full flex-1 flex-col gap-8 rounded-t bg-white p-8 pb-24">
+    <Section className="flex w-full flex-1 flex-col gap-8 rounded-t bg-white p-8 pb-48">
       <Link color="brand" to={CLUSTERS_URL(organizationId)} className="text-sm">
         <Icon iconName="arrow-left" className="mr-1" />
         Back to clusters
       </Link>
-      <div className="mx-auto flex w-[1024px] flex-col gap-10">
-        <div className="flex flex-col text-center">
+      <div className="flex w-full max-w-[1280px] flex-col gap-10">
+        <div className="flex flex-col">
           <Heading className="mb-2 text-2xl">Install new cluster</Heading>
-          <p className="mb-4 text-sm text-neutral-350">
-            Configure your Qovery cluster to run on your chosen cloud provider.
-          </p>
         </div>
-        <Section className="grid grid-cols-3 gap-4">
-          <div className="col-span-3 gap-2">
+        <Section>
+          <div className="mb-5 flex flex-col gap-0.5">
             <Heading>Qovery on your local machine</Heading>
-            <p className="text-xs text-neutral-350">Quickly test and validate the Qovery solution on your computer.</p>
+            <p className="text-sm text-neutral-350">Quickly test and validate the Qovery solution on your computer.</p>
           </div>
-          <CardCluster {...cloudProviders[0]} />
+          <div className="grid grid-cols-3 gap-4">
+            <CardCluster {...cloudProviders[0]} />
+          </div>
         </Section>
-        <Section className="grid grid-cols-3 gap-4">
-          <div className="col-span-3 gap-2">
+        <Section>
+          <div className="mb-5 flex flex-col gap-1">
             <Heading>Or choose your hosting mode</Heading>
-            <p className="text-xs text-neutral-350">Manage your infrastructure across different hosting mode.</p>
+            <p className="text-sm text-neutral-350">Manage your infrastructure across different hosting mode.</p>
           </div>
-          {cloudProviders.slice(1).map((props) => (
-            <CardCluster key={props.title} {...props} />
-          ))}
+          <div className="grid grid-cols-3 gap-4">
+            {cloudProviders.slice(1).map((props) => (
+              <CardCluster key={props.title} {...props} />
+            ))}
+          </div>
         </Section>
       </div>
     </Section>
