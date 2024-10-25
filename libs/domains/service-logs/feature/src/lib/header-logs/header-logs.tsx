@@ -54,19 +54,21 @@ export function HeaderLogs({
         <div className="flex h-full items-center gap-4 border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
           {type === 'DEPLOYMENT' && (
             <>
-              <Link
-                as="button"
-                size="sm"
-                variant="surface"
-                color="neutral"
-                className="w-7 justify-center"
-                to={
-                  ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                  ENVIRONMENT_STAGES_URL(versionId)
-                }
-              >
-                <Icon iconName="timeline" />
-              </Link>
+              <Tooltip content="Environment stages">
+                <Link
+                  as="button"
+                  size="sm"
+                  variant="surface"
+                  color="neutral"
+                  className="w-7 justify-center"
+                  to={
+                    ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+                    ENVIRONMENT_STAGES_URL(versionId)
+                  }
+                >
+                  <Icon iconName="timeline" />
+                </Link>
+              </Tooltip>
               <span className="text-neutral-400">/</span>
             </>
           )}
