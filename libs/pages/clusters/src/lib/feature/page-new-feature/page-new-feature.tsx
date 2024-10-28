@@ -183,9 +183,9 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
           <div className="flex flex-col gap-4">
             <div>
               {typeof icon === 'string' ? (
-                <img className="select-none" width={52} height={52} src={icon} alt={title} />
+                <img className="select-none" width={48} height={48} src={icon} alt={title} />
               ) : (
-                cloneElement(icon as ReactElement, { className: 'w-[52px] h-[52px]' })
+                cloneElement(icon as ReactElement, { className: 'w-[48px] h-[48px]' })
               )}
             </div>
             <p className="text-base font-semibold">{title}</p>
@@ -254,9 +254,9 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
         <div className="flex flex-col gap-4">
           <div>
             {typeof icon === 'string' ? (
-              <img className="select-none" width={52} height={52} src={icon} alt={title} />
+              <img className="select-none" width={48} height={48} src={icon} alt={title} />
             ) : (
-              cloneElement(icon as ReactElement, { className: 'w-[52px] h-[52px]' })
+              cloneElement(icon as ReactElement, { className: 'w-[48px] h-[48px]' })
             )}
           </div>
           <p className="truncate text-base font-semibold">{title}</p>
