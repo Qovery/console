@@ -21,7 +21,7 @@ export function ClusterCard({ cluster, clusterStatus }: ClusterCardProps) {
   return (
     <Link
       to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}
-      className="flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm transition-colors duration-150 hover:border-brand-500"
+      className="duration-50 flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm outline outline-2 outline-transparent transition-all hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-3">
