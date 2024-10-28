@@ -168,7 +168,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
     }) as MutableRefObject<HTMLDivElement>
 
     return (
-      <div className="h-fit w-[calc(100%/2-20px)] lg:w-[calc(100%/3-20px)]">
+      <div ref={ref} className="h-fit w-[calc(100%/2-20px)] lg:w-[calc(100%/3-20px)]">
         <div
           onClick={() => setExpanded(!expanded)}
           className={twMerge(
@@ -201,7 +201,6 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
         <AnimatePresence>
           {expanded && (
             <motion.div
-              ref={ref}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0.25, pointerEvents: 'none' }}
