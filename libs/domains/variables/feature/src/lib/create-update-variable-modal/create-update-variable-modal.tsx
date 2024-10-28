@@ -180,6 +180,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               alias_parent_id: parentId,
               key: data.key,
               description: data.description,
+              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
             },
           })
         })
@@ -194,6 +195,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               override_parent_id: parentId,
               value: data.value || '',
               description: data.description,
+              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
             },
           })
         })
@@ -213,6 +215,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               key: data.key,
               value: variable.aliased_variable?.key || data.value,
               description: data.description,
+              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
             },
           })
         })
@@ -389,7 +392,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           />
         )}
 
-        {_isFile && type === 'VALUE' && (
+        {_isFile && (
           <Controller
             name="enable_interpolation_in_file"
             control={methods.control}

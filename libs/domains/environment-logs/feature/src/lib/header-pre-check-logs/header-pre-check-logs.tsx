@@ -1,7 +1,7 @@
 import { type Environment, type EnvironmentStatusesWithStagesPreCheckStage } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, Link, StatusChip } from '@qovery/shared/ui'
+import { Icon, Link, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderPreCheckLogsProps extends PropsWithChildren {
@@ -32,16 +32,18 @@ export function HeaderPreCheckLogs({ environment, preCheckStage, children }: Hea
     <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900 pr-4">
       <div className="flex h-full">
         <div className="flex h-full items-center gap-4 border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
-          <Link
-            as="button"
-            size="sm"
-            variant="surface"
-            color="neutral"
-            className="w-7 justify-center"
-            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-          >
-            <Icon iconName="timeline" />
-          </Link>
+          <Tooltip content="Environment stages">
+            <Link
+              as="button"
+              size="sm"
+              variant="surface"
+              color="neutral"
+              className="w-7 justify-center"
+              to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+            >
+              <Icon iconName="timeline" />
+            </Link>
+          </Tooltip>
           <span className="text-neutral-400">/</span>
           <span className="flex items-center gap-2.5">
             <Icon iconName="list-check" />
