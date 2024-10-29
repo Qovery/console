@@ -23,50 +23,63 @@
 </p>
 <br />
 
-## Getting Started
 
-First use
+---
 
-    yarn && yarn setup
+📚 **Table of Contents**
 
-Start the project on http://localhost:4200
+1. [🚀 Getting Started](#-getting-started)
+2. [🤝 Contributing](#-contributing)
+3. [📚 Architecture Decision Records](#-architecture-decision-records)
+4. [💬 Community Support](#-community-support)
+5. [❓ FAQ](#-faq)
+   - [Why does Qovery exist?](#why-does-qovery-exist)
+   - [Why do we use Nx?](#why-do-we-use-nx)
+   - [How is the project structured?](#how-is-the-project-structured)
 
-    yarn start
+---
 
-Start Storybook on http://localhost:4400
+## 🚀 Getting Started 
 
-    yarn storybook
+**First use:**  
+`yarn && yarn setup`
 
-Run tests
+**Start the project on:** [http://localhost:4200](http://localhost:4200)  
+`yarn start`
 
-    yarn test
+**Start Storybook on:** [http://localhost:4400](http://localhost:4400)  
+`yarn storybook`
 
-Generate a library
+**Run tests:**  
+`yarn test`
 
-    nx g @nx/react:lib my-lib
+**Generate a library:**  
+`nx g @nx/react:lib my-lib`
 
-Generate a component
+**Generate a component:**  
+`nx g @nx/react:component my-component`
 
-    nx g @nx/react:component my-component
+**Run unit tests with Jest:**  
+`nx affected:test`
 
-Run unit tests with Jest
+**Run end-to-end tests with Cypress:**  
+`nx affected:e2e`
 
-    nx affected:test
+---
 
-Run end-to-end tests with Cypress
+## 🤝 Contributing
 
-    nx affected:e2e
+Qovery Console is actively developing, and we need some help! You are welcome to contribute! You can propose improvements directly from the [issues](https://github.com/Qovery/console/issues) page or include them in your pull request for changes.
 
-## Contributing
+---
 
-Qovery Console is actively develop and we need some help, you are welcome to contribute! You can propose improvements directly from the [issues](https://github.com/Qovery/console/issues) page or include them in your pull request for changes.
+## 📚 Architecture Decision Records
 
-## Architecture Decision Records
+We document our architecture decisions using the [Architecture Decision Record](https://github.com/joelparkerhenderson/architecture-decision-record) principle. You can find our [ADR documents here](https://github.com/Qovery/console/tree/staging/adr).
 
-We try to document our architecture decisions using [Architecture Decision Record](https://github.com/joelparkerhenderson/architecture-decision-record) principle.
-You can find our [ADR documents here](https://github.com/Qovery/console/tree/staging/adr) and the template used follows [this one](https://github.com/joelparkerhenderson/architecture-decision-record/tree/ab49e5ecad09b0e80c6ebeaf4f41c7958a2ad291/locales/en/templates/decision-record-template-by-michael-nygard)
+---
 
-## Community support
+## 💬 Community Support 
 
 For help, you can use one of the channels to ask a question:
 
@@ -74,21 +87,23 @@ For help, you can use one of the channels to ask a question:
 - [GitHub](https://github.com/Qovery/console): (Bug reports, Contributions)
 - [Twitter](https://twitter.com/qovery_): (Get the news fast)
 
-## FAQ
+---
+
+## ❓ FAQ 
 
 ### Why does Qovery exist?
 
-At Qovery, we believe that the Cloud must be simpler than what it is today. Our goal is to consolidate the Cloud ecosystem and makes it accessible to any developer, DevOps, and company. Qovery helps people to focus on what they build instead of wasting time doing plumbing stuff.
+At Qovery, we believe that the Cloud must be simpler than what it is today. Our goal is to consolidate the Cloud ecosystem and make it accessible to any developer, DevOps, and company. Qovery helps people to focus on what they build instead of wasting time doing plumbing stuff.
 
 ### Why do we use Nx?
 
-- Nx acts as a robust framework, providing significant benefits for React applications.
+- Nx acts as a robust framework, providing significant benefits for React applications. 💪
 - It supports mono-repo architecture, allowing us to divide our application into multiple reusable entities/libraries.
-- It offers tools to generate components, libraries, applications, and to check the health of our applications (e.g., circular dependencies).
+- It offers tools to generate components, libraries, applications, and check the health of our applications (e.g., circular dependencies).
 - By using [Nx Cloud](https://cloud.nx.app/orgs/62aaef82e814d400050ea393/workspaces/635932a66ecea758758f0563/overview), we can cache deployments, run tests, and build only the modified parts of the application.
 - It provides a framework for unit tests with [Jest](https://jestjs.io/) and end-to-end tests with [Cypress](https://www.cypress.io/).
 
-### How is the project structured?
+### How is the project structured? 🏗️
 
 To help you navigate through the project, here is a brief overview of its structure.
 
@@ -102,12 +117,11 @@ libs/
 │       ├── data-access/    # Data access layer for the feature
 │       └── feature/        # Core logic and components for the feature
 │       ...
-├── pages/                  # Page components for routing and layout, calling features from domain and common shared utilities and components
-└── shared/                 # Shared utilities and components across the application
-    ├── ui/                 # Storybook - UI components for reusable user interface elements
-    ├── util-[name]/        # Utility functions and helpers
+├── pages/                  # Page components for routing and layout
+└── shared/                 # Shared utilities and components
+    ├── ui/                 # Storybook - UI components
+    ├── util-[name]/        # Utility functions
     └── util-queries/       # Shared utility functions for queries
-    ...
 ```
 
-This organization aims to make the codebase more maintainable and understandable, based on our structure and Nx recommendations. For more information about it, read this article: [Organizing and Structuring a React Project with Nx](https://www.qovery.com/blog/nx-architecture-part-1-organizing-and-structuring-a-react-project-with-nx/).
+This organization aims to make the codebase more maintainable and understandable. For more information about it, read this article: [Organizing and Structuring a React Project with Nx](https://www.qovery.com/blog/nx-architecture-part-1-organizing-and-structuring-a-react-project-with-nx/).
