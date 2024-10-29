@@ -12,7 +12,7 @@ import { NavLink, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ClusterInstallationGuideModal } from '@qovery/domains/clusters/feature'
 import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, Link, Section, Tooltip, useModal } from '@qovery/shared/ui'
 import { useClickAway, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -63,9 +63,20 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         {recommended && (
           <>
             {selectedCloudProvider === 'AZURE' ? (
-              <span className="absolute right-5 top-5 h-5 rounded-lg border border-neutral-200 px-1.5 text-[11px] leading-[17px] text-neutral-350">
-                coming soon
-              </span>
+              <Tooltip
+                content={
+                  <span>
+                    Follow the release on our{' '}
+                    <ExternalLink size="xs" href="https://roadmap.qovery.com/p/support-aks-as-a-managed-cluster">
+                      product roadmap
+                    </ExternalLink>
+                  </span>
+                }
+              >
+                <span className="absolute right-5 top-5 h-5 rounded-lg border border-neutral-200 px-1.5 text-[11px] leading-[17px] text-neutral-350">
+                  coming soon
+                </span>
+              </Tooltip>
             ) : (
               <span className="absolute right-5 top-5 h-5 rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
                 recommended
@@ -105,20 +116,28 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         </span>
       </button>
     ))
-    .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) => (
-      <NavLink
-        to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider)}
-        className={twMerge(
-          clsx(baseClassNames, {
-            'pointer-events-none cursor-not-allowed shadow-none': selectedCloudProvider === 'AZURE',
-          })
-        )}
-        onClick={() => handleAnalytics(selectedInstallationType)}
-      >
-        {renderIcon()}
-        {renderContent()}
-      </NavLink>
-    ))
+    .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) =>
+      selectedCloudProvider === 'AZURE' ? (
+        <div
+          className={twMerge(
+            baseClassNames,
+            'cursor-default shadow-none hover:border-neutral-200 hover:outline-transparent'
+          )}
+        >
+          {renderIcon()}
+          {renderContent()}
+        </div>
+      ) : (
+        <NavLink
+          to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider)}
+          className={baseClassNames}
+          onClick={() => handleAnalytics(selectedInstallationType)}
+        >
+          {renderIcon()}
+          {renderContent()}
+        </NavLink>
+      )
+    )
     .exhaustive()
 }
 
@@ -149,6 +168,10 @@ type CardClusterProps = {
 function CardCluster({ title, description, icon, index = 1, ...props }: CardClusterProps) {
   const [expanded, setExpanded] = useState(false)
 
+  const ref = useClickAway(() => {
+    setExpanded(false)
+  }) as MutableRefObject<HTMLDivElement>
+
   if ('options' in props) {
     const { options } = props
 
@@ -162,10 +185,6 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
         '-ml-[calc(100%+20px)] lg:-ml-0': index === 3,
       })
     }
-
-    const ref = useClickAway(() => {
-      setExpanded(false)
-    }) as MutableRefObject<HTMLDivElement>
 
     return (
       <div ref={ref} className="h-fit w-[calc(100%/2-20px)] lg:w-[calc(100%/3-20px)]">
