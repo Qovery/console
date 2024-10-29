@@ -207,7 +207,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
                 cloneElement(icon as ReactElement, { className: 'w-[48px] h-[48px]' })
               )}
             </div>
-            <p className="text-base font-semibold">{title}</p>
+            <p className="text-base font-semibold text-neutral-400">{title}</p>
           </div>
           <div className="ml-auto flex items-center gap-2.5 text-neutral-400">
             <span className="flex h-6 w-6 items-center justify-center rounded-md border border-neutral-200 text-xs font-medium">
@@ -278,7 +278,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
               cloneElement(icon as ReactElement, { className: 'w-[48px] h-[48px]' })
             )}
           </div>
-          <p className="truncate text-base font-semibold">{title}</p>
+          <p className="truncate text-base font-semibold text-neutral-400">{title}</p>
         </div>
         {selectedInstallationType === 'demo' ? (
           <span className="flex h-5 min-w-min items-center justify-center truncate rounded-lg bg-brand-500 px-1.5 text-[11px] font-medium leading-6 text-neutral-50">
