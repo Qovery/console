@@ -32,9 +32,13 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
     download(installationHelmValues ?? '', `cluster-installation-guide-${props.cluster.id}.yaml`, 'text/plain')
   }
 
+  const isDemo = props.mode === 'CREATE' ? props.isDemo : props.cluster.is_demo
+
   return (
     <div className="flex flex-col gap-6 p-6">
-      <h2 className="h4 text-neutral-400">Installation guide</h2>
+      <h2 className="h4 text-neutral-400">
+        {isDemo ? 'Install Qovery on your local machine' : 'Install Qovery on your cluster'}
+      </h2>
 
       <div className="flex flex-col gap-4">
         {props.mode === 'EDIT' && type === 'ON_PREMISE' && (
