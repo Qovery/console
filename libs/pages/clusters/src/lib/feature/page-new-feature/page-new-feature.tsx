@@ -461,7 +461,7 @@ export function PageNewFeature() {
         <Icon iconName="arrow-left" className="mr-1" />
         Back to clusters
       </Link>
-      <div className="flex w-full max-w-[1280px] flex-col gap-10">
+      <div className="flex w-full flex-col gap-10">
         <div className="flex flex-col">
           <Heading className="mb-2 text-2xl">Install cluster</Heading>
         </div>
@@ -479,7 +479,7 @@ export function PageNewFeature() {
             <Heading>Or choose your hosting mode</Heading>
             <p className="text-sm text-neutral-350">Manage your infrastructure across different hosting mode.</p>
           </div>
-          <div className="flex flex-wrap gap-5">
+          <div className="flex w-[calc(100%+20px)] flex-wrap gap-5">
             {cloudProviders.slice(1).map((props, index) => (
               <CardCluster key={props.title} index={index} {...props} />
             ))}
