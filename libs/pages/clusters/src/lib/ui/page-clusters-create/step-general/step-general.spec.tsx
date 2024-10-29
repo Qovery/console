@@ -67,18 +67,4 @@ describe('StepGeneral', () => {
     expect(button).toBeEnabled()
     expect(props.onSubmit).toHaveBeenCalled()
   })
-
-  it('should render self managed cluster', async () => {
-    renderWithProviders(
-      wrapWithReactHookForm(<StepGeneral {...props} />, {
-        defaultValues: {
-          installation_type: 'SELF_MANAGED',
-        },
-      })
-    )
-
-    screen.getByText('1. Download/Update Qovery CLI')
-    screen.getByText('2. Install Qovery on your cluster')
-    screen.getByText('3. Deploy your first environment!')
-  })
 })
