@@ -1,3 +1,4 @@
+export * from './lib/karpenter-instance-filter-modal/karpenter-instance-filter-modal'
 export * from './lib/hooks/use-cloud-providers/use-cloud-providers'
 export * from './lib/hooks/use-cloud-provider-credentials/use-cloud-provider-credentials'
 export * from './lib/hooks/use-cloud-provider-features/use-cloud-provider-features'

@@ -175,15 +175,9 @@ export function StepGeneral(props: StepGeneralProps) {
           >
             Cancel
           </Button>
-          {watch('installation_type') === 'MANAGED' ? (
-            <Button size="lg" data-testid="button-submit" type="submit" disabled={!formState.isValid}>
-              Continue
-            </Button>
-          ) : (
-            <Button size="lg" type="button" onClick={() => navigate(CLUSTERS_URL(organizationId))}>
-              Close
-            </Button>
-          )}
+          <Button size="lg" data-testid="button-submit" type="submit" disabled={!formState.isValid}>
+            Continue
+          </Button>
         </div>
       </form>
     </Section>

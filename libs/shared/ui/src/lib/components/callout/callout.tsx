@@ -73,7 +73,7 @@ interface CalloutTextDescriptionProps extends ComponentPropsWithoutRef<'span'> {
 const CalloutTextDescription = forwardRef<ElementRef<'span'>, CalloutTextDescriptionProps>(
   function CalloutTextDescription({ children, className, ...props }, ref) {
     return (
-      <span {...props} className={twMerge('text-neutral-350', className)} ref={ref}>
+      <span {...props} className={twMerge('text-neutral-400', className)} ref={ref}>
         {children}
       </span>
     )

@@ -82,6 +82,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       clusterTypeOptions={clusterTypeOptions}
       instanceTypeOptions={instanceTypeOptions}
       cloudProvider={props.cloudProvider}
+      clusterRegion={props.clusterRegion}
       isProduction={props.isProduction}
       hasAlreadyKarpenter={props.hasAlreadyKarpenter}
     />

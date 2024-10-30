@@ -1,10 +1,12 @@
 import { CloudProviderEnum, CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { KarpenterInstanceFilterModal } from '@qovery/domains/cloud-providers/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
+  Button,
   Callout,
   ExternalLink,
   Heading,
@@ -15,6 +17,7 @@ import {
   InputToggle,
   Section,
   Slider,
+  useModal,
 } from '@qovery/shared/ui'
 import KarpenterImage from './karpenter-image'
 
@@ -23,12 +26,14 @@ export interface ClusterResourcesSettingsProps {
   clusterTypeOptions?: Value[]
   instanceTypeOptions?: Value[]
   cloudProvider?: CloudProviderEnum
+  clusterRegion?: string
   showWarningInstance?: boolean
   hasAlreadyKarpenter?: boolean
   isProduction?: boolean
 }
 
 export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
+  const { openModal, closeModal } = useModal()
   const { control, watch, setValue } = useFormContext<ClusterResourcesData>()
   const watchNodes = watch('nodes')
   const [warningInstance, setWarningInstance] = useState(false)
@@ -87,46 +92,80 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       {((!props.fromDetail && !props.isProduction) || props.fromDetail) &&
         props.cloudProvider === 'AWS' &&
         watchClusterType === KubernetesEnum.MANAGED && (
-          <Controller
-            name="karpenter.enabled"
-            defaultValue={false}
-            control={control}
-            render={({ field }) => (
-              <div className="relative flex flex-col gap-2 overflow-hidden rounded border border-neutral-250 bg-neutral-100 p-4">
-                <InputToggle
-                  className="max-w-[70%]"
-                  name={field.name}
-                  value={field.value}
-                  onChange={(e) => {
-                    if (props.fromDetail) {
-                      const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
-                      setValue('karpenter.disk_size_in_gib', diskSize)
-                    }
+          <BlockContent title="Reduce your costs by enabling Karpenter (Beta) " className="mb-0" classNameContent="p-0">
+            <Controller
+              name="karpenter.enabled"
+              defaultValue={false}
+              control={control}
+              render={({ field }) => (
+                <div className="flex flex-col">
+                  <div className="relative overflow-hidden">
+                    <div className="p-4">
+                      <InputToggle
+                        className="max-w-[70%]"
+                        name={field.name}
+                        value={field.value}
+                        onChange={(e) => {
+                          if (props.fromDetail) {
+                            const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
+                            setValue('karpenter.disk_size_in_gib', diskSize)
+                          }
 
-                    const instanceTypeLabel: string | undefined = props.instanceTypeOptions
-                      ?.find((option) => option.value === watchInstanceType)
-                      ?.label?.toString()
-                    const architecture = instanceTypeLabel?.includes('AMD') ? 'AMD64' : 'ARM64'
-                    setValue('karpenter.default_service_architecture', architecture)
+                          const instanceTypeLabel: string | undefined = props.instanceTypeOptions
+                            ?.find((option) => option.value === watchInstanceType)
+                            ?.label?.toString()
+                          const architecture = instanceTypeLabel?.includes('AMD') ? 'AMD64' : 'ARM64'
+                          setValue('karpenter.default_service_architecture', architecture)
 
-                    field.onChange(e)
-                  }}
-                  title="Reduce your costs by enabling Karpenter (Beta)"
-                  description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                  forceAlignTop
-                  disabled={props.fromDetail ? props.isProduction || props.hasAlreadyKarpenter : false}
-                  small
-                />
-                <ExternalLink
-                  className="ml-11"
-                  href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
-                >
-                  Documentation link
-                </ExternalLink>
-                <KarpenterImage className="absolute right-0 top-0" />
-              </div>
-            )}
-          />
+                          field.onChange(e)
+                        }}
+                        title="Activate Karpenter"
+                        description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                        forceAlignTop
+                        disabled={props.fromDetail ? props.isProduction || props.hasAlreadyKarpenter : false}
+                        small
+                      />
+                      <ExternalLink
+                        className="ml-11"
+                        href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
+                      >
+                        Documentation link
+                      </ExternalLink>
+                    </div>
+                    <KarpenterImage className="absolute right-0 top-0" />
+                  </div>
+                  <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
+                    <div className="w-full">
+                      <span>Instance type scope</span>
+                    </div>
+                    <Button
+                      type="button"
+                      color="neutral"
+                      variant="surface"
+                      size="md"
+                      className="gap-2"
+                      onClick={() => {
+                        openModal({
+                          options: {
+                            width: 840,
+                          },
+                          content: (
+                            <KarpenterInstanceFilterModal
+                              cloudProvider={props.cloudProvider ?? 'AWS'}
+                              clusterRegion={props.clusterRegion ?? ''}
+                              onClose={closeModal}
+                            />
+                          ),
+                        })
+                      }}
+                    >
+                      Edit <Icon iconName="pen" iconStyle="solid" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            />
+          </BlockContent>
         )}
 
       {watchKarpenter && (
