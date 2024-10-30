@@ -97,7 +97,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
   }
 
   const baseClassNames =
-    'flex text-left items-start gap-4 relative rounded shadow border border-neutral-200 outline outline-2 outline-transparent transition-all hover:border-brand-500 -outline-offset-2 hover:outline-brand-500 bg-white p-5 transition w-[calc(100%/2-20px)] lg:w-[calc(100%/3-20px)]'
+    'flex text-left items-start gap-4 relative rounded shadow border border-neutral-200 outline outline-2 outline-transparent transition-all hover:border-brand-500 -outline-offset-2 hover:outline-brand-500 bg-white p-5 transition w-[397px] xl:w-[calc(100%/3-20px)]'
 
   return match(props)
     .with({ selectedInstallationType: 'self-managed' }, ({ selectedInstallationType, openInstallationGuideModal }) => (
@@ -281,7 +281,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
           <p className="truncate text-base font-semibold text-neutral-400">{title}</p>
         </div>
         {selectedInstallationType === 'demo' ? (
-          <span className="flex h-5 min-w-min items-center justify-center truncate rounded-lg bg-brand-500 px-1.5 text-[11px] font-medium leading-6 text-neutral-50">
+          <span className="absolute right-5 top-5 flex h-5 min-w-min items-center justify-center truncate rounded-lg bg-brand-500 px-1.5 text-[11px] font-medium leading-6 text-neutral-50">
             3min to setup
           </span>
         ) : (
