@@ -15,6 +15,7 @@ import {
   type EnvironmentEditRequest,
   EnvironmentExportApi,
   EnvironmentMainCallsApi,
+  type EnvironmentStatus,
   EnvironmentsApi,
   LifecycleTemplateMainCallsApi,
 } from 'qovery-typescript-axios'
@@ -36,8 +37,8 @@ export const environments = createQueryKeys('environments', {
   deploymentStatus: (environmentId: string) => ({
     queryKey: [environmentId],
     async queryFn() {
-      const result = await environmentMainCallsApi.getEnvironmentStatus(environmentId)
-      return result.data
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      return new Promise<EnvironmentStatus | null>(() => {})
     },
   }),
   // NOTE: Value is set by WebSocket
