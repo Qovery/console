@@ -44,8 +44,8 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
         <div>
           <LoaderPlaceholder />
           {showPlaceholder && (
-            <p className="mt-2 text-center text-sm font-medium text-neutral-300">
-              Processing is taking more than 10s. <br /> No logs available, please check the service configuration.
+            <p className="mt-4 text-center text-sm font-medium text-neutral-300">
+              Processing is taking more than 10s <br /> No logs available, please check the service configuration
             </p>
           )}
         </div>
