@@ -146,7 +146,6 @@ function KarpenterInstanceForm({
         if (!instanceCategory || !instanceFamily) return false
 
         const hashmap = new Map(Object.entries(data.categories))
-
         return hashmap.get(instanceCategory)?.includes(instanceFamily)
       }
 
