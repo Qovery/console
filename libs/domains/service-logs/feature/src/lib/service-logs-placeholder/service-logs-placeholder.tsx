@@ -40,7 +40,16 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
         itemsLength: 0,
         deploymentState: P.when((state) => state !== 'READY' && state !== 'STOPPED'),
       },
-      () => <LoaderPlaceholder />
+      () => (
+        <div>
+          <LoaderPlaceholder />
+          {showPlaceholder && (
+            <p className="mt-2 text-center text-sm font-medium text-neutral-300">
+              Processing is taking more than 10s. <br /> No logs available, please check the service configuration.
+            </p>
+          )}
+        </div>
+      )
     )
     .with({ itemsLength: 0, deploymentState: P.when((state) => state === 'READY' || state === 'STOPPED') }, () =>
       showPlaceholder ? (
@@ -48,7 +57,7 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
           <p className="mb-1 font-medium text-neutral-50">
             No logs available for <span className="text-brand-400">{serviceName}</span>.
           </p>
-          <p className="mb-2 text-sm font-normal text-neutral-300">Please check if the service is up and running.</p>
+          <p className="mb-4 text-sm font-normal text-neutral-300">Please check if the service is up and running.</p>
           <Link
             as="button"
             size="sm"
