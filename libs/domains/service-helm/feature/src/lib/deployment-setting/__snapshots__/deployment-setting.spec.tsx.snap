@@ -40,7 +40,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           </div>
         </div>
         <p
-          class="ml-4 mt-1 text-xs text-neutral-350"
+          class="ml-3 mt-1 text-xs text-neutral-350"
         >
           Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
           <br />

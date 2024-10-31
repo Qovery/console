@@ -48,7 +48,7 @@ export function GitPublicRepositorySettings({
               disabled={disabled}
             />
             {urlRepository && (
-              <ExternalLink className="ml-4" size="xs" href={urlRepository}>
+              <ExternalLink className="ml-3" size="xs" href={urlRepository}>
                 Go to repository
               </ExternalLink>
             )}

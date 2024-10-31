@@ -261,7 +261,7 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
                     />
                   )}
                 />
-                <p className="mb-5 ml-4 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application
+                <p className="mb-5 ml-3 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application
 port from the internet. Default value is p<port_number>-<service_name>`}</p>
               </div>
             </>

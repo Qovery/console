@@ -72,14 +72,11 @@ export function PageSettingsGeneral(props: PageSettingsGeneralProps) {
                   onChange={field.onChange}
                   value={field.value}
                   error={error?.message}
-                  className="mb-1"
+                  hint="Cluster cannot be changed. Clone the environment to deploy the same applications on another cluster."
                   disabled
                 />
               )}
             />
-            <p className="ml-4 text-xs text-neutral-350">
-              Cluster cannot be changed. Clone the environment to deploy the same applications on another cluster.
-            </p>
           </BlockContent>
           <div className="flex justify-end">
             <Button type="submit" size="lg" disabled={!formState.isValid} loading={loading}>
