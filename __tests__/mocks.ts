@@ -24,4 +24,12 @@ jest.mock('@uidotdev/usehooks', () => ({
   // Params are implicitly `any` and needed for the tests
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   useLocalStorage: (_: any, intialValue: any) => [intialValue, jest.fn()],
+  useNetworkState: () => ({
+    effectiveType: '4g',
+    downlink: 10,
+    rtt: 50,
+    saveData: false,
+    online: true,
+    type: 'wifi',
+  }),
 }))

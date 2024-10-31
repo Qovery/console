@@ -175,16 +175,49 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
     .with('RUNNING', 'WARNING', () => true)
     .otherwise(() => false)
 
+  function HeaderLogsComponent() {
+    return (
+      <HeaderLogs
+        type="SERVICE"
+        environment={environment}
+        serviceId={serviceId ?? ''}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+      >
+        <Link
+          as="button"
+          className="gap-1"
+          variant="surface"
+          to={
+            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+            DEPLOYMENT_LOGS_URL(serviceId)
+          }
+        >
+          {match(service)
+            .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+            .otherwise(() => true) ? (
+            <ServiceStateChip className="mr-1" mode="deployment" environmentId={environment.id} serviceId={serviceId} />
+          ) : null}
+          Go to latest deployment
+          <Icon iconName="arrow-right" />
+        </Link>
+      </HeaderLogs>
+    )
+  }
+
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
   if (!logs || logs.length === 0 || logs[0].message.includes('No pods found')) {
     return (
       <div className="p-1">
-        <div className="h-[calc(100vh-72px)] border border-neutral-500 bg-neutral-600 pt-11">
-          <ServiceLogsPlaceholder
-            serviceName={service?.name}
-            itemsLength={logs.length}
-            databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
-          />
+        <div className="h-[calc(100vh-72px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+          <HeaderLogsComponent />
+          <div className="h-[calc(100vh-136px)] border-r border-neutral-500 bg-neutral-600 pt-11">
+            <ServiceLogsPlaceholder
+              serviceName={service?.name}
+              itemsLength={logs.length}
+              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
+            />
+          </div>
         </div>
       </div>
     )
@@ -199,36 +232,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
     >
       <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
         <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderLogs
-            type="SERVICE"
-            environment={environment}
-            serviceId={serviceId ?? ''}
-            serviceStatus={serviceStatus}
-            environmentStatus={environmentStatus}
-          >
-            <Link
-              as="button"
-              className="gap-1"
-              variant="surface"
-              to={
-                ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                DEPLOYMENT_LOGS_URL(serviceId)
-              }
-            >
-              {match(service)
-                .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-                .otherwise(() => true) ? (
-                <ServiceStateChip
-                  className="mr-1"
-                  mode="deployment"
-                  environmentId={environment.id}
-                  serviceId={serviceId}
-                />
-              ) : null}
-              Go to latest deployment
-              <Icon iconName="arrow-right" />
-            </Link>
-          </HeaderLogs>
+          <HeaderLogsComponent />
           <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
             <div className="flex items-center gap-3">
               <Button
