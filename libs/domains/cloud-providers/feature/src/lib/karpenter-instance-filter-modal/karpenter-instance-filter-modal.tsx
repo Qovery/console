@@ -1,4 +1,3 @@
-import * as Collapsible from '@radix-ui/react-collapsible'
 import {
   CloudProviderEnum,
   type ClusterInstanceAttributes,
@@ -6,92 +5,16 @@ import {
   CpuArchitectureEnum,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { Callout, Checkbox, Icon, InputSelect, ModalCrud, Slider } from '@qovery/shared/ui'
-import { useCloudProviderInstanceTypes } from '../..'
+import { useCloudProviderInstanceTypes } from '../hooks/use-cloud-provider-instance-types/use-cloud-provider-instance-types'
+import { InstanceCategory } from './instance-category/instance-category'
 
 export interface KarpenterInstanceFilterModalProps {
   cloudProvider: CloudProviderEnum
   clusterRegion: string
   onClose: () => void
-}
-
-function InstanceCategory({ title, attributes }: { title: string; attributes: ClusterInstanceAttributes[] }) {
-  const [open, setOpen] = useState(false)
-  const { control, watch, setValue } = useFormContext<{ ['categories']: string[] }>()
-
-  const watchCategories = watch('categories')
-
-  return (
-    <Collapsible.Root open={open} onOpenChange={setOpen} asChild>
-      <div className="flex flex-col">
-        <Collapsible.Trigger asChild>
-          <button type="button" className="flex items-center justify-between py-1">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id={title}
-                name={title}
-                className="shrink-0"
-                checked={
-                  attributes.length === watchCategories.length
-                    ? true
-                    : watchCategories.length > 0
-                      ? 'indeterminate'
-                      : false
-                }
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    const allCategories = attributes.filter((a) => a.instance_family)
-                    console.log(allCategories)
-                    // setValue('categories', allCategories)
-                  }
-                }}
-              />
-              <label htmlFor={title} className="text-neutral-400">
-                {title.toUpperCase()} - ARM Optimized
-              </label>
-            </div>
-            <Icon className="text-sm text-neutral-350" iconName={open ? 'chevron-up' : 'chevron-down'} />
-          </button>
-        </Collapsible.Trigger>
-        <Collapsible.Content>
-          <div className="flex flex-col">
-            {attributes.map((attribute) => {
-              const instanceFamily = attribute.instance_family
-              if (!instanceFamily) return null
-
-              return (
-                <div className="flex items-center gap-3 py-1 pl-6">
-                  <Controller
-                    name="categories"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        <Checkbox
-                          className="shrink-0"
-                          name={field.name}
-                          id={field.name}
-                          checked={field.value.includes(instanceFamily)}
-                          onCheckedChange={(checked) => {
-                            const newFamily = checked
-                              ? [...field.value, attribute.instance_family]
-                              : field.value.filter((s) => s !== attribute.instance_family)
-                            field.onChange(newFamily)
-                          }}
-                        />
-                        <label htmlFor={attribute.instance_family}>{attribute.instance_family}</label>
-                      </>
-                    )}
-                  />
-                </div>
-              )
-            })}
-          </div>
-        </Collapsible.Content>
-      </div>
-    </Collapsible.Root>
-  )
 }
 
 export function KarpenterInstanceFilterModal({
@@ -131,7 +54,7 @@ export function KarpenterInstanceFilterModal({
     default_service_architecture: CpuArchitectureEnum
     cpu: [number, number]
     memory: [number, number]
-    categories: string[]
+    categories: Record<string, string[]>
     sizes: string[]
   }>({
     mode: 'onChange',
@@ -141,7 +64,7 @@ export function KarpenterInstanceFilterModal({
       default_service_architecture: 'AMD64',
       cpu: [1, 8],
       memory: [1, 8],
-      categories: [],
+      categories: {},
       sizes: ['large', 'medium'],
     },
   })
@@ -201,12 +124,22 @@ export function KarpenterInstanceFilterModal({
         instanceType.ram_in_gb <= (data.memory[1] ?? getMaxMemory)
 
       // Categories check
-      const categoriesMatch = data.categories && data.categories.includes(instanceType.attributes?.instance_family)
+      const categoriesMatch = () => {
+        if (!data.categories || Object.keys(data.categories).length === 0) return false
+
+        const instanceCategory = instanceType.attributes?.instance_category
+        const instanceFamily = instanceType.attributes?.instance_family
+
+        if (!instanceCategory || !instanceFamily) return false
+
+        const hashmap = new Map(Object.entries(data.categories))
+        return hashmap.get(instanceCategory)?.includes(instanceFamily)
+      }
 
       // Sizes range check
       const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
 
-      return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch
+      return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
     })
 
     setDataFiltered(filtered)
@@ -223,7 +156,7 @@ export function KarpenterInstanceFilterModal({
     <FormProvider {...methods}>
       <ModalCrud title="Karpenter Instance Visual filter" onClose={onClose} onSubmit={onSubmit} submitLabel="Confirm">
         <div className="flex rounded-md border border-neutral-200">
-          <div className="flex w-1/2 flex-col gap-2 p-2">
+          <div className="flex max-h-[64vh] w-1/2 flex-col gap-2 overflow-y-scroll p-2">
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <span className="font-semibold text-neutral-400">Architecture</span>
               <div className="flex flex-col gap-1">
@@ -309,9 +242,11 @@ export function KarpenterInstanceFilterModal({
               <span className="font-semibold text-neutral-400">Categories/Families</span>
               <div>
                 {getInstanceCategories &&
-                  Object.entries(getInstanceCategories).map(([category, families]) => {
-                    return <InstanceCategory key={category} title={category} attributes={families} />
-                  })}
+                  Object.entries(getInstanceCategories)
+                    .sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
+                    .map(([category, families]) => {
+                      return <InstanceCategory key={category} title={category} attributes={families} />
+                    })}
               </div>
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
