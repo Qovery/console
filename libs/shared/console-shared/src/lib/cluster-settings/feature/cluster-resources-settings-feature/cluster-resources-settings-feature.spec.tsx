@@ -1,7 +1,6 @@
-import { act, getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
+import { getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import ClusterResourcesSettingsFeature from './cluster-resources-settings-feature'
 
@@ -46,7 +45,6 @@ describe('ClusterResourcesSettingsFeature', () => {
       )
     )
     getByText(baseElement, 'Managed K8S (EKS)')
-    getByText(baseElement, 'BETA - Single EC2 (K3S)')
   })
 
   it('should render one cluster type option if scw', () => {
@@ -96,41 +94,5 @@ describe('ClusterResourcesSettingsFeature', () => {
     )
     const checkbox = getByLabelText(baseElement, 'Managed K8S (EKS)')
     expect(checkbox).toBeChecked()
-  })
-
-  it('should fetch the availabale Instance types at init and on change', async () => {
-    const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
-      cloudProvidersDomain,
-      'useCloudProviderInstanceTypes'
-    ) as jest.Mock
-    const { baseElement } = render(
-      wrapWithReactHookForm<ClusterResourcesData>(
-        <ClusterResourcesSettingsFeature
-          clusterRegion="us-east-2"
-          fromDetail={false}
-          cloudProvider={CloudProviderEnum.AWS}
-        />,
-        {
-          defaultValues,
-        }
-      )
-    )
-
-    expect(useCloudProviderInstanceTypesMockSpy).toHaveBeenCalledWith({
-      clusterType: 'MANAGED',
-      cloudProvider: 'AWS',
-      region: 'us-east-2',
-    })
-
-    const checkbox = getByText(baseElement, 'BETA - Single EC2 (K3S)')
-    await act(() => {
-      checkbox.click()
-    })
-
-    expect(useCloudProviderInstanceTypesMockSpy).toHaveBeenCalledWith({
-      clusterType: KubernetesEnum.K3_S,
-      cloudProvider: 'AWS',
-      region: 'us-east-2',
-    })
   })
 })

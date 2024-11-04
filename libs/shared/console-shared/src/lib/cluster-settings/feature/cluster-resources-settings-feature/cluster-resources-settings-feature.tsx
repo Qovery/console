@@ -49,11 +49,6 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
     if (props?.cloudProvider === CloudProviderEnum.AWS) {
       clusterTypeOptions = [
         { label: 'Managed K8S (EKS)', value: KubernetesEnum.MANAGED, description: 'Multiple node cluster' },
-        {
-          label: 'BETA - Single EC2 (K3S)',
-          value: KubernetesEnum.K3_S,
-          description: 'Single instance K3S cluster - only for dev purposes',
-        },
       ]
     } else if (props?.cloudProvider === CloudProviderEnum.GCP) {
       clusterTypeOptions = [
