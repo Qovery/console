@@ -1,7 +1,6 @@
-import { act, getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
+import { getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import ClusterResourcesSettingsFeature from './cluster-resources-settings-feature'
 
