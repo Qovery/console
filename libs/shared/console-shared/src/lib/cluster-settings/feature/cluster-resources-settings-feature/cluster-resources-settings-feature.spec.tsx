@@ -46,7 +46,6 @@ describe('ClusterResourcesSettingsFeature', () => {
       )
     )
     getByText(baseElement, 'Managed K8S (EKS)')
-    getByText(baseElement, 'BETA - Single EC2 (K3S)')
   })
 
   it('should render one cluster type option if scw', () => {
@@ -96,41 +95,5 @@ describe('ClusterResourcesSettingsFeature', () => {
     )
     const checkbox = getByLabelText(baseElement, 'Managed K8S (EKS)')
     expect(checkbox).toBeChecked()
-  })
-
-  it('should fetch the availabale Instance types at init and on change', async () => {
-    const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
-      cloudProvidersDomain,
-      'useCloudProviderInstanceTypes'
-    ) as jest.Mock
-    const { baseElement } = render(
-      wrapWithReactHookForm<ClusterResourcesData>(
-        <ClusterResourcesSettingsFeature
-          clusterRegion="us-east-2"
-          fromDetail={false}
-          cloudProvider={CloudProviderEnum.AWS}
-        />,
-        {
-          defaultValues,
-        }
-      )
-    )
-
-    expect(useCloudProviderInstanceTypesMockSpy).toHaveBeenCalledWith({
-      clusterType: 'MANAGED',
-      cloudProvider: 'AWS',
-      region: 'us-east-2',
-    })
-
-    const checkbox = getByText(baseElement, 'BETA - Single EC2 (K3S)')
-    await act(() => {
-      checkbox.click()
-    })
-
-    expect(useCloudProviderInstanceTypesMockSpy).toHaveBeenCalledWith({
-      clusterType: KubernetesEnum.K3_S,
-      cloudProvider: 'AWS',
-      region: 'us-east-2',
-    })
   })
 })
