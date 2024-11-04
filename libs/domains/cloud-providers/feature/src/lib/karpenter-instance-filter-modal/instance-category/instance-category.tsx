@@ -9,18 +9,28 @@ import { Checkbox, Icon } from '@qovery/shared/ui'
 const getInstanceTypeCategory = (instancePrefix: string): string => {
   const prefix = instancePrefix.toLowerCase()
 
+  // Mapping of instance to display title
+  // Related to this page: https://docs.aws.amazon.com/ec2/latest/instancetypes/instance-types.html
   const categoryMap: Record<string, string> = {
     a: 'General Purpose',
     c: 'Compute Optimized',
     d: 'Storage Optimized',
+    f: 'Accelerated computing',
     g: 'Accelerated Computing',
-    h: 'High-performance Computing',
+    gr: 'Accelerated computing',
+    h: 'Storage optimized',
+    hpc: 'High-performance Computing',
     i: 'Storage Optimized',
+    im: 'Storage Optimized',
+    inf: 'Accelerated computing',
+    is: 'Storage optimized',
     m: 'General Purpose',
     p: 'Accelerated Computing',
     r: 'Memory Optimized',
     t: 'General Purpose',
+    trn: 'Accelerated computing',
     v: 'Accelerated Computing',
+    vt: 'Accelerated Computing',
     x: 'Memory Optimized',
     z: 'Memory Optimized',
   }
@@ -52,7 +62,7 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
     .otherwise(() => false)
 
   return (
-    <Collapsible.Root open={open} onOpenChange={setOpen} asChild>
+    <Collapsible.Root key={title} open={open} onOpenChange={setOpen} asChild>
       <div className="flex flex-col">
         <Collapsible.Trigger asChild>
           <div className="flex items-center justify-between py-1">
@@ -86,7 +96,7 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
           </div>
         </Collapsible.Trigger>
 
-        <Collapsible.Content>
+        <Collapsible.Content asChild>
           <div className="flex flex-col">
             {attributes.map((attribute) => (
               <div key={attribute.instance_family} className="flex items-center gap-3 py-1 pl-6">
@@ -99,7 +109,6 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
                         className="shrink-0"
                         id={`${title}-${attribute.instance_family}`}
                         checked={field.value?.includes(attribute.instance_family!)}
-                        onChange={(event) => event?.preventDefault()}
                         onCheckedChange={(checked) => {
                           const newValue = checked
                             ? [...(field.value || []), attribute.instance_family!]

@@ -45,7 +45,7 @@ export function StepGeneralFeature() {
         karpenter: {
           enabled: false,
           default_service_architecture: 'AMD64',
-          disk_size_in_gib: '50',
+          disk_size_in_gib: 50,
           spot_enabled: false,
         },
       }))

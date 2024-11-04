@@ -41,7 +41,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchClusterType = watch('cluster_type')
   const watchInstanceType = watch('instance_type')
   const watchDiskSize = watch('disk_size')
-  const watchKarpenter = watch('karpenter.enabled')
+  const watchKarpenterEnabled = watch('karpenter.enabled')
+  const watchKarpenter = watch('karpenter')
 
   useEffect(() => {
     const instanceType: Value | undefined = props.instanceTypeOptions?.find(
@@ -107,7 +108,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         value={field.value}
                         onChange={(e) => {
                           if (props.fromDetail) {
-                            const diskSize = watchDiskSize >= 50 ? watchDiskSize.toString() : '50'
+                            const diskSize = watchDiskSize >= 50 ? watchDiskSize : 50
                             setValue('karpenter.disk_size_in_gib', diskSize)
                           }
 
@@ -134,41 +135,52 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     </div>
                     <KarpenterImage className="absolute right-0 top-0" />
                   </div>
-                  <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
-                    <div className="w-full">
-                      <span>Instance type scope</span>
+                  {watchKarpenterEnabled && (
+                    <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
+                      <div className="w-full">
+                        <span>Instance type scope</span>
+                      </div>
+                      <Button
+                        type="button"
+                        color="neutral"
+                        variant="surface"
+                        size="md"
+                        className="gap-2"
+                        onClick={() => {
+                          openModal({
+                            options: {
+                              width: 840,
+                            },
+                            content: (
+                              <KarpenterInstanceFilterModal
+                                cloudProvider={props.cloudProvider ?? 'AWS'}
+                                clusterRegion={props.clusterRegion ?? ''}
+                                defaultValues={watchKarpenter}
+                                onClose={closeModal}
+                                onChange={(values) => {
+                                  setValue('karpenter', {
+                                    enabled: watchKarpenterEnabled,
+                                    spot_enabled: watchKarpenter?.spot_enabled ?? false,
+                                    disk_size_in_gib: watchDiskSize,
+                                    ...values,
+                                  })
+                                }}
+                              />
+                            ),
+                          })
+                        }}
+                      >
+                        Edit <Icon iconName="pen" iconStyle="solid" />
+                      </Button>
                     </div>
-                    <Button
-                      type="button"
-                      color="neutral"
-                      variant="surface"
-                      size="md"
-                      className="gap-2"
-                      onClick={() => {
-                        openModal({
-                          options: {
-                            width: 840,
-                          },
-                          content: (
-                            <KarpenterInstanceFilterModal
-                              cloudProvider={props.cloudProvider ?? 'AWS'}
-                              clusterRegion={props.clusterRegion ?? ''}
-                              onClose={closeModal}
-                            />
-                          ),
-                        })
-                      }}
-                    >
-                      Edit <Icon iconName="pen" iconStyle="solid" />
-                    </Button>
-                  </div>
+                  )}
                 </div>
               )}
             />
           </BlockContent>
         )}
 
-      {watchKarpenter && (
+      {watchKarpenterEnabled && (
         <Callout.Root color="yellow">
           <Callout.Icon>
             <Icon iconName="triangle-exclamation" iconStyle="regular" />
@@ -189,8 +201,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       <Section className="gap-4">
         <Heading>Resources configuration</Heading>
 
-        {watchKarpenter ? (
-          <Fragment key={`karpenter-${watchKarpenter}`}>
+        {watchKarpenterEnabled ? (
+          <Fragment key={`karpenter-${watchKarpenterEnabled}`}>
             <Controller
               name="karpenter.disk_size_in_gib"
               control={control}

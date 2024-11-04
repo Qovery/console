@@ -4,91 +4,77 @@ import {
   type ClusterInstanceTypeResponseListResultsInner,
   CpuArchitectureEnum,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { Callout, Checkbox, Icon, InputSelect, ModalCrud, Slider } from '@qovery/shared/ui'
+import { KarpenterData } from '@qovery/shared/interfaces'
+import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Slider } from '@qovery/shared/ui'
 import { useCloudProviderInstanceTypes } from '../hooks/use-cloud-provider-instance-types/use-cloud-provider-instance-types'
+import { filterInstancesByKarpenterRequirements } from '../karpenter-instance-filter-modal/utils/filter-instances-by-karpenter-requirements'
+import { generateDefaultValues } from '../karpenter-instance-filter-modal/utils/generate-default-values'
 import { InstanceCategory } from './instance-category/instance-category'
+
+const DISPLAY_LIMIT = 51
 
 export interface KarpenterInstanceFilterModalProps {
   cloudProvider: CloudProviderEnum
   clusterRegion: string
+  cloudProviderInstanceTypes: ClusterInstanceTypeResponseListResultsInner[]
+  onChange: (data: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>) => void
   onClose: () => void
+  defaultValues?: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>
 }
 
-export function KarpenterInstanceFilterModal({
-  cloudProvider,
-  clusterRegion,
+export interface KarpenterInstanceForm {
+  ARM64: boolean
+  AMD64: boolean
+  default_service_architecture: CpuArchitectureEnum
+  cpu: [number, number]
+  memory: [number, number]
+  categories: Record<string, string[]>
+  sizes: string[]
+}
+
+function KarpenterInstanceForm({
+  cloudProviderInstanceTypes,
+  defaultValues,
+  onChange,
   onClose,
-}: KarpenterInstanceFilterModalProps) {
-  // Get instance types only available for AWS
-  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
-    match(cloudProvider)
-      .with('AWS', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        region: clusterRegion,
-      }))
-      .with('SCW', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        region: clusterRegion,
-      }))
-      .with('GCP', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-      }))
-      .with('ON_PREMISE', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-      }))
-      .exhaustive()
-  )
+}: Omit<KarpenterInstanceFilterModalProps, 'cloudProvider' | 'clusterRegion'>) {
+  const _defaultValues = defaultValues
+    ? filterInstancesByKarpenterRequirements(cloudProviderInstanceTypes, defaultValues)
+    : cloudProviderInstanceTypes
 
-  const [dataFiltered, setDataFiltered] = useState<ClusterInstanceTypeResponseListResultsInner[]>([])
+  const [dataFiltered, setDataFiltered] = useState<ClusterInstanceTypeResponseListResultsInner[]>(_defaultValues)
 
-  const methods = useForm<{
-    ARM64: boolean
-    AMD64: boolean
-    default_service_architecture: CpuArchitectureEnum
-    cpu: [number, number]
-    memory: [number, number]
-    categories: Record<string, string[]>
-    sizes: string[]
-  }>({
+  const methods = useForm<KarpenterInstanceForm>({
     mode: 'onChange',
     defaultValues: {
-      ARM64: true,
-      AMD64: false,
-      default_service_architecture: 'AMD64',
-      cpu: [1, 8],
-      memory: [1, 8],
-      categories: {},
-      sizes: ['large', 'medium'],
+      default_service_architecture: defaultValues?.default_service_architecture ?? 'AMD64',
+      ...generateDefaultValues(_defaultValues),
     },
   })
 
   const getMaxCpu =
-    cloudProviderInstanceTypes?.reduce<number>((acc, instanceType) => {
+    cloudProviderInstanceTypes.reduce<number>((acc, instanceType) => {
       if (instanceType.cpu > acc) return instanceType.cpu
       return acc
     }, 0) ?? 0
 
   const getMaxMemory =
-    cloudProviderInstanceTypes?.reduce<number>((acc, instanceType) => {
+    cloudProviderInstanceTypes.reduce<number>((acc, instanceType) => {
       if (instanceType.cpu > acc) return instanceType.ram_in_gb
       return acc
     }, 0) ?? 0
 
-  const getInstanceSizes = cloudProviderInstanceTypes?.reduce<string[]>((acc, instanceType) => {
+  const getInstanceSizes = cloudProviderInstanceTypes.reduce<string[]>((acc, instanceType) => {
     const size = instanceType.attributes?.instance_size
     if (!size) return acc
     if (!acc.includes(size)) acc.push(size)
     return acc
   }, [])
 
-  const getInstanceCategories = cloudProviderInstanceTypes?.reduce<{
+  const getInstanceCategories = cloudProviderInstanceTypes.reduce<{
     [key: string]: ClusterInstanceAttributes[]
   }>((acc, instanceType) => {
     const attributes = instanceType.attributes
@@ -129,8 +115,9 @@ export function KarpenterInstanceFilterModal({
 
         const instanceCategory = instanceType.attributes?.instance_category
         const instanceFamily = instanceType.attributes?.instance_family
+        const instanceArchitecture = instanceType.architecture === data.AMD64 ? 'AMD64' : data.ARM64 ? 'ARM64' : ''
 
-        if (!instanceCategory || !instanceFamily) return false
+        if (!instanceCategory || !instanceFamily || !instanceArchitecture) return false
 
         const hashmap = new Map(Object.entries(data.categories))
         return hashmap.get(instanceCategory)?.includes(instanceFamily)
@@ -145,7 +132,30 @@ export function KarpenterInstanceFilterModal({
     setDataFiltered(filtered)
   })
 
-  const onSubmit = methods.handleSubmit(({ sizes }) => {
+  const onSubmit = methods.handleSubmit(({ ARM64, AMD64, default_service_architecture, categories, sizes }) => {
+    onChange({
+      default_service_architecture: default_service_architecture,
+      qovery_node_pools: {
+        requirements: [
+          {
+            key: 'InstanceSize',
+            operator: 'In',
+            values: sizes,
+          },
+          {
+            key: 'InstanceFamily',
+            operator: 'In',
+            values: Object.values(categories).flat(),
+          },
+          {
+            key: 'Arch',
+            operator: 'In',
+            values: [ARM64 ? 'ARM64' : '', AMD64 ? 'AMD64' : ''].filter((v) => v !== ''),
+          },
+        ],
+      },
+    })
+
     return onClose()
   })
 
@@ -281,12 +291,13 @@ export function KarpenterInstanceFilterModal({
           <div className="flex w-1/2 flex-col gap-4 border-l border-neutral-200 p-6">
             <span className="font-semibold text-neutral-400">Selected type instances: {dataFiltered.length}</span>
             <div className="flex flex-wrap text-neutral-400">
-              {dataFiltered.map((instanceType, index) => (
+              {dataFiltered.slice(0, DISPLAY_LIMIT).map((instanceType, index) => (
                 <span key={instanceType.name} className="mr-1 inline-block last:mr-0">
                   {instanceType.name}
-                  {dataFiltered.length - 1 !== index ? ', ' : ' '}
+                  {index < DISPLAY_LIMIT - 1 && index !== dataFiltered.length - 1 ? ', ' : ' '}
                 </span>
               ))}
+              {dataFiltered.length > DISPLAY_LIMIT && <span>and {dataFiltered.length - DISPLAY_LIMIT} others</span>}
             </div>
             <Callout.Root color="yellow">
               <Callout.Icon>
@@ -306,6 +317,55 @@ export function KarpenterInstanceFilterModal({
       </ModalCrud>
     </FormProvider>
   )
+}
+
+export function KarpenterInstanceFilterModal({
+  cloudProvider,
+  clusterRegion,
+  defaultValues,
+  onChange,
+  onClose,
+}: Omit<KarpenterInstanceFilterModalProps, 'cloudProviderInstanceTypes'>) {
+  // Get instance types only available for AWS
+  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
+    match(cloudProvider)
+      .with('AWS', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: clusterRegion,
+      }))
+      .with('SCW', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: clusterRegion,
+      }))
+      .with('GCP', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
+      .with('ON_PREMISE', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
+      .exhaustive()
+  )
+
+  if (cloudProviderInstanceTypes) {
+    return (
+      <KarpenterInstanceForm
+        defaultValues={defaultValues}
+        cloudProviderInstanceTypes={cloudProviderInstanceTypes}
+        onChange={onChange}
+        onClose={onClose}
+      />
+    )
+  } else {
+    return (
+      <div className="flex h-[80vh] w-full items-center justify-center">
+        <LoaderSpinner />
+      </div>
+    )
+  }
 }
 
 export default KarpenterInstanceFilterModal
