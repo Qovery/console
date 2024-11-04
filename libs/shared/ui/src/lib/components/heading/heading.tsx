@@ -10,7 +10,7 @@ const headingVariants = cva(['text-neutral-400'], {
     level: {
       0: [], // not really possible
       1: ['text-xl'],
-      2: ['text-xl'],
+      2: ['text-base'],
       3: ['text-sm'],
       4: ['text-xs'],
       5: ['text-xs'],

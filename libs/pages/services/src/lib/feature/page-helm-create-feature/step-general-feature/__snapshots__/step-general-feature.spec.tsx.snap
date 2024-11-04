@@ -34,7 +34,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   General
                 </h2>
@@ -201,7 +201,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Source
                 </h2>
@@ -437,7 +437,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Deploy
                 </h2>
@@ -682,7 +682,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   General
                 </h2>
@@ -851,7 +851,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Source
                 </h2>
@@ -972,7 +972,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Deploy
                 </h2>
@@ -1201,7 +1201,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   General
                 </h2>
@@ -1368,7 +1368,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Source
                 </h2>
@@ -1718,7 +1718,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold"
+                  class="text-neutral-400 text-base font-bold"
                 >
                   Deploy
                 </h2>

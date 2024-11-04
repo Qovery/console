@@ -42,7 +42,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           class="flex flex-col gap-4"
         >
           <h2
-            class="text-neutral-400 text-xl font-bold"
+            class="text-neutral-400 text-base font-bold"
           >
             Resources configuration
           </h2>
@@ -167,7 +167,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           class="flex flex-col gap-4"
         >
           <h2
-            class="text-neutral-400 text-xl font-bold"
+            class="text-neutral-400 text-base font-bold"
           >
             Instances
           </h2>

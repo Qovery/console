@@ -151,7 +151,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold mb-2"
+                  class="text-neutral-400 text-base font-bold mb-2"
                 >
                   Override from repository
                 </h2>
@@ -529,7 +529,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
                 class="flex flex-col"
               >
                 <h2
-                  class="text-neutral-400 text-xl font-bold mb-2"
+                  class="text-neutral-400 text-base font-bold mb-2"
                 >
                   Override with raw Yaml
                 </h2>
