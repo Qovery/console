@@ -4,11 +4,11 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 text-sm"
+      class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500"
       data-accent-color="sky"
     >
       <div
-        class="-order-2 text-base leading-6"
+        class="-order-2 text-lg leading-6"
       >
         <i
           aria-hidden="true"

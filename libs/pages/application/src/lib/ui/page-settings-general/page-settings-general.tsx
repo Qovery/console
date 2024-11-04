@@ -221,7 +221,7 @@ export function PageSettingsGeneral({
                   <DeploymentSetting />
                   {watchFieldProvider === 'GIT' && <AutoDeploySetting source="GIT" />}
                   {watchFieldProvider === 'HELM_REPOSITORY' && (
-                    <Callout.Root color="sky" className="mt-5 items-center text-xs">
+                    <Callout.Root color="sky" className="mt-5 items-center">
                       <Callout.Icon>
                         <Icon iconName="circle-info" iconStyle="regular" />
                       </Callout.Icon>

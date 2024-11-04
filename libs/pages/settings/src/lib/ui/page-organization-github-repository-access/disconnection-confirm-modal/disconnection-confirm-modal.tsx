@@ -15,7 +15,7 @@ export function DisconnectionConfirmModal(props: DisconnectionConfirmModalProps)
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextHeading>This action might affect your future deployment</Callout.TextHeading>
-          <Callout.TextDescription className="text-xs">
+          <Callout.TextDescription>
             Removing the Qovery Github App will reset the permission access to your repositories. After the removal,
             Qovery will use your Github account to access them. Make sure that your Github account has the access
             permissions to all the repositories shown in the “Authorised Repositories” section.

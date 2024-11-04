@@ -39,9 +39,7 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-xs">
-            The Qovery GitHub app is being deprecated, please use the Git tokens.
-          </Callout.Text>
+          <Callout.Text>The Qovery GitHub app is being deprecated, please use the Git tokens.</Callout.Text>
         </Callout.Root>
 
         <BlockContent title="Qovery Github application installation status">

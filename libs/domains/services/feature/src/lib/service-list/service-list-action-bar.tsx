@@ -45,7 +45,7 @@ function ConfirmationModal({
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextHeading>Some services will not be impacted:</Callout.TextHeading>
-            <Callout.TextDescription className="text-xs">
+            <Callout.TextDescription>
               <ul className="list-disc pl-4">
                 {selectedRows
                   .filter(({ id: selectedId }) => !impactedRows.find(({ id }) => id === selectedId))

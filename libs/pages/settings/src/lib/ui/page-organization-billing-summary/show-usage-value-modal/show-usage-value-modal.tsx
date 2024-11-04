@@ -20,7 +20,7 @@ export function ShowUsageValueModal(props: ShowUsageValueModalProps) {
         <Callout.Icon>
           <Icon iconName="triangle-exclamation" iconStyle="regular" />
         </Callout.Icon>
-        <Callout.Text className="text-xs">
+        <Callout.Text>
           Please keep this URL safe! It is publicly accessible to anyone who use it. This link expires in{' '}
           {props.url_expires_in_hours} hours.
         </Callout.Text>

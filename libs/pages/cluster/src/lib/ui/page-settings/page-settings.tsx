@@ -12,7 +12,7 @@ export function PageSettings(props: PageSettingsProps) {
   return (
     <div className="flex flex-grow">
       <div className="relative w-72 shrink-0 border-r border-neutral-200 pb-10">
-        <NavigationLeft className="sticky top-14 pt-6" links={links} />
+        <NavigationLeft className="sticky top-14 pt-5" links={links} />
       </div>
       <div className="flex flex-grow">
         <ErrorBoundary>{children}</ErrorBoundary>

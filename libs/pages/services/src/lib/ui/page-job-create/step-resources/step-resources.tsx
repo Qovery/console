@@ -27,7 +27,7 @@ export function StepResources({ templateType, onBack, onSubmit }: StepResourcesP
               <Callout.Icon>
                 <Icon iconName="circle-info" iconStyle="regular" />
               </Callout.Icon>
-              <Callout.Text className="text-xs">
+              <Callout.Text>
                 Qovery provides you with a default value for the resources to be used to run this job on your cluster.
                 We recommend to test it with these value and customize these later.
               </Callout.Text>

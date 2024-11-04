@@ -31,9 +31,9 @@ export function StepFeatures(props: StepFeaturesProps) {
         <div className="mb-10">
           <Callout.Root className="mb-4" color="yellow">
             <Callout.Icon>
-              <Icon className="text-xs" iconName="triangle-exclamation" iconStyle="regular" />
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
-            <Callout.Text className="text-xs">
+            <Callout.Text>
               <Callout.TextHeading>Choose wisely</Callout.TextHeading>
               <Callout.TextDescription>
                 These features will not be modifiable after cluster creation.
@@ -81,9 +81,9 @@ export function StepFeatures(props: StepFeaturesProps) {
                         {feature.id === 'STATIC_IP' && (
                           <Callout.Root color="yellow" className="mt-4">
                             <Callout.Icon>
-                              <Icon className="text-xs" iconName="triangle-exclamation" iconStyle="regular" />
+                              <Icon iconName="triangle-exclamation" iconStyle="regular" />
                             </Callout.Icon>
-                            <Callout.Text className="text-xs">
+                            <Callout.Text>
                               <Callout.TextHeading>Warning</Callout.TextHeading>
                               <Callout.TextDescription>
                                 This feature has been activated by default. Since February 1, 2024, AWS charge public

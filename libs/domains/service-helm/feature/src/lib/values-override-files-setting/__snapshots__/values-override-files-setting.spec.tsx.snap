@@ -139,7 +139,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
           class="flex flex-col"
         >
           <h2
-            class="text-neutral-400 text-base font-bold mb-2"
+            class="text-neutral-400 text-xl font-bold mb-2"
           >
             Override from repository
           </h2>
@@ -442,7 +442,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
           class="flex flex-col"
         >
           <h2
-            class="text-neutral-400 text-base font-bold mb-2"
+            class="text-neutral-400 text-xl font-bold mb-2"
           >
             Override with raw Yaml
           </h2>

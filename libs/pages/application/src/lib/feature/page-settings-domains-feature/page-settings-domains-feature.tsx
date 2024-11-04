@@ -54,7 +54,7 @@ export function PageSettingsDomainsFeature() {
             warning: (
               <>
                 <Callout.TextHeading>Domain migration - read this!</Callout.TextHeading>
-                <Callout.TextDescription className="text-xs">
+                <Callout.TextDescription>
                   If you are in a migration process and want to assign this domain to another application, make sure you
                   deploy first this application to ensure that every configuration is cleaned up.
                 </Callout.TextDescription>

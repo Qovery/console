@@ -136,7 +136,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextHeading>Warning</Callout.TextHeading>
-            <Callout.TextDescription className="text-xs">
+            <Callout.TextDescription>
               Before deploying your cluster, update the IAM permissions of the Qovery user, make sure to use the{' '}
               <ExternalLink size="xs" href="https://hub.qovery.com/files/qovery-iam-aws.json">
                 latest version here
@@ -244,7 +244,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                       </Callout.Icon>
                       <Callout.Text>
                         <Callout.TextHeading>Be careful</Callout.TextHeading>
-                        <Callout.TextDescription className="text-xs">
+                        <Callout.TextDescription>
                           You selected an instance with ARM64/AARCH64 Cpu architecture. To deploy your services, be sure
                           all containers and dockerfile you are using are compatible with this CPU architecture
                         </Callout.TextDescription>
@@ -278,10 +278,10 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
             {warningClusterNodes && (
               <Callout.Root color="yellow">
-                <Callout.Icon className="text-xs">
+                <Callout.Icon>
                   <Icon iconName="circle-exclamation" iconStyle="regular" />
                 </Callout.Icon>
-                <Callout.Text className="text-xs">
+                <Callout.Text>
                   <Callout.TextHeading>
                     Changing these parameters might cause a downtime on your service.
                   </Callout.TextHeading>
@@ -324,7 +324,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             <Callout.TextHeading>
               {watchClusterType === KubernetesEnum.MANAGED ? 'Starting at $220 /month' : 'Starting at $20 /month'}
             </Callout.TextHeading>
-            <Callout.TextDescription className="text-xs">
+            <Callout.TextDescription>
               Approximate cost charged by the cloud provider based on your consumption
             </Callout.TextDescription>
           </Callout.Text>

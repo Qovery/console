@@ -36,7 +36,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               </Callout.Icon>
               <Callout.Text>
                 <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>
-                <Callout.TextDescription className="text-xs">
+                <Callout.TextDescription>
                   Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
                   <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
                   drift in the configuration.

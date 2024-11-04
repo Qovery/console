@@ -70,7 +70,7 @@ export function PageSettingsGeneral({
               </Callout.Icon>
               <Callout.Text>
                 <Callout.TextHeading>Qovery manages this resource for you </Callout.TextHeading>
-                <Callout.TextDescription className="text-xs">
+                <Callout.TextDescription>
                   Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
                   <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk a
                   drift in the configuration. <br />
@@ -144,7 +144,7 @@ export function PageSettingsGeneral({
                       <Callout.Icon>
                         <Icon iconName="circle-info" iconStyle="regular" />
                       </Callout.Icon>
-                      <Callout.Text className="text-xs">
+                      <Callout.Text>
                         Upgrading the version might cause service interruption. Have a look at the database
                         documentation before launching the upgrade.
                       </Callout.Text>
@@ -156,7 +156,7 @@ export function PageSettingsGeneral({
                       <Callout.Icon>
                         <Icon iconName="circle-info" />
                       </Callout.Icon>
-                      <Callout.Text className="text-xs text-neutral-350">
+                      <Callout.Text className="text-neutral-350">
                         Once triggered, the update will be managed by your cloud provider and applied during the
                         configured maintenance window. Moreover, the operation might cause a service interruption.{' '}
                         <ExternalLink

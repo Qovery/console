@@ -34,7 +34,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   General
                 </h2>
@@ -201,7 +201,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   Source
                 </h2>
@@ -437,7 +437,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   Deploy
                 </h2>
@@ -682,7 +682,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   General
                 </h2>
@@ -851,7 +851,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   Source
                 </h2>
@@ -972,7 +972,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   Deploy
                 </h2>
@@ -1119,11 +1119,11 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                   </div>
                 </div>
                 <div
-                  class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 mt-5 items-center text-xs"
+                  class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-5 items-center"
                   data-accent-color="sky"
                 >
                   <div
-                    class="-order-2 text-base leading-6"
+                    class="-order-2 text-lg leading-6"
                   >
                     <i
                       aria-hidden="true"
@@ -1201,7 +1201,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   General
                 </h2>
@@ -1368,7 +1368,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   Source
                 </h2>
@@ -1695,11 +1695,11 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                     Provide the path in the repository where the service is located
                   </p>
                   <div
-                    class="flex flex-row gap-x-3 p-3 border rounded border-sky-500 bg-sky-50 text-sky-500 items-center text-xs"
+                    class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 items-center"
                     data-accent-color="sky"
                   >
                     <div
-                      class="-order-2 text-base leading-6"
+                      class="-order-2 text-lg leading-6"
                     >
                       <i
                         aria-hidden="true"
@@ -1718,7 +1718,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                 class="flex flex-col gap-4"
               >
                 <h2
-                  class="text-neutral-400 text-base font-bold"
+                  class="text-neutral-400 text-xl font-bold"
                 >
                   Deploy
                 </h2>

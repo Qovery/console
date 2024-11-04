@@ -144,7 +144,7 @@ export function PageSettingsValuesOverrideFileFeature() {
         <>
           <GitPublicRepositorySettings hideRootPath />
           <GitPathsSettings methods={methods} />
-          <Callout.Root color="sky" className="items-center text-xs">
+          <Callout.Root color="sky" className="items-center">
             <Callout.Icon>
               <Icon iconName="info-circle" iconStyle="regular" />
             </Callout.Icon>
@@ -174,7 +174,7 @@ export function PageSettingsValuesOverrideFileFeature() {
                     <Icon iconName="circle-info" iconStyle="regular" />
                   </Callout.Icon>
 
-                  <Callout.Text className="text-xs">
+                  <Callout.Text>
                     <Callout.TextHeading>Auto-deploy is activated</Callout.TextHeading>
                     The service will be automatically updated on every new commit on the branch.
                   </Callout.Text>
@@ -184,7 +184,7 @@ export function PageSettingsValuesOverrideFileFeature() {
                   <Callout.Icon>
                     <Icon iconName="circle-info" iconStyle="regular" />
                   </Callout.Icon>
-                  <Callout.Text className="text-xs">
+                  <Callout.Text>
                     <Callout.TextHeading>Auto-deploy is not activated</Callout.TextHeading>
                   </Callout.Text>
                 </Callout.Root>

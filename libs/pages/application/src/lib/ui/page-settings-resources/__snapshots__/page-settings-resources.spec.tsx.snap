@@ -42,7 +42,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           class="flex flex-col gap-4"
         >
           <h2
-            class="text-neutral-400 text-base font-bold"
+            class="text-neutral-400 text-xl font-bold"
           >
             Resources configuration
           </h2>
@@ -96,7 +96,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             data-testid="banner-box"
           >
             <div
-              class="-order-2 text-base leading-6"
+              class="-order-2 text-lg leading-6"
             >
               <i
                 aria-hidden="true"
@@ -167,7 +167,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
           class="flex flex-col gap-4"
         >
           <h2
-            class="text-neutral-400 text-base font-bold"
+            class="text-neutral-400 text-xl font-bold"
           >
             Instances
           </h2>

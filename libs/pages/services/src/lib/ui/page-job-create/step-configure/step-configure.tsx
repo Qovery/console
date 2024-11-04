@@ -39,7 +39,7 @@ export function StepConfigure(props: StepConfigureProps) {
               <Callout.Icon>
                 <Icon iconName="circle-info" iconStyle="regular" />
               </Callout.Icon>
-              <Callout.Text className="text-xs">
+              <Callout.Text>
                 Qovery provides you with a default set of commands to be executed for each environment event based on
                 the default Dockerfile. You can customize these based on your needs.
               </Callout.Text>

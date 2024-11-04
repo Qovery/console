@@ -1,5 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Link, useLocation } from 'react-router-dom'
+import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 import NavigationLeftSubLink from './navigation-left-sub-link/navigation-left-sub-link'
 
@@ -55,9 +56,9 @@ export function LinkContent({ link }: { link: NavigationLeftLinkProps }) {
         <div className="mr-4 flex items-center">
           {link.iconName ? (
             // Prepared for migration to use iconName instead of name
-            <Icon iconName={link.iconName as IconName} className="inline-block w-3" />
+            <Icon iconName={link.iconName as IconName} className="inline-block w-3 text-sm" />
           ) : (
-            <Icon name={link.icon} className="inline-block w-3" />
+            <Icon name={link.icon} className="inline-block w-4" />
           )}
         </div>
       )}
@@ -72,16 +73,18 @@ export function NavigationLeft(props: NavigationLeftProps) {
   const { pathname } = useLocation()
 
   return (
-    <div className={`flex flex-col px-5 ${className}`}>
-      <div className="mb-4 flex items-center justify-between">
-        {title && <span className="pl-3 text-2xs font-bold uppercase text-neutral-350">{title}</span>}
-        {link && (
-          <span className="link cursor-pointer text-sm font-medium text-brand-500" onClick={() => link.onClick()}>
-            {link.title}
-            <Icon iconName="circle-plus" iconStyle="regular" className="ml-1" />
-          </span>
-        )}
-      </div>
+    <div className={twMerge('flex flex-col px-5', className)}>
+      {title && (
+        <div className="mb-4 flex items-center justify-between">
+          {title && <span className="pl-3 text-2xs font-bold uppercase text-neutral-350">{title}</span>}
+          {link && (
+            <span className="link cursor-pointer text-sm font-medium text-brand-500" onClick={() => link.onClick()}>
+              {link.title}
+              <Icon iconName="circle-plus" iconStyle="regular" className="ml-1" />
+            </span>
+          )}
+        </div>
+      )}
       {links.map((link) =>
         'url' in link ? (
           <Link data-testid="link" key={link.url} to={link.url} className={linkClassName(link.url, pathname)}>

@@ -87,7 +87,7 @@ export function StepGeneral(props: StepGeneralProps) {
                     <Callout.Icon>
                       <Icon iconName="triangle-exclamation" iconStyle="regular" />
                     </Callout.Icon>
-                    <Callout.Text className="text-xs">
+                    <Callout.Text>
                       GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
                       behavior.
                       <ExternalLink

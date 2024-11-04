@@ -46,7 +46,7 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
             <Callout.Icon>
               <Icon iconName="circle-info" iconStyle="regular" />
             </Callout.Icon>
-            <Callout.Text className="text-xs">
+            <Callout.Text>
               This cluster has been created via Qovery CLI.
               <br />
               Please use the Qovery CLI to manage any upgrade or modification for this cluster.
@@ -98,7 +98,7 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-xs">
+          <Callout.Text>
             Note: You can access again this installation guide and the configuration file by opening the “Installation
             guide” section from the cluster menu
           </Callout.Text>

@@ -170,7 +170,7 @@ export function CrudModal({
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-xs">
+          <Callout.Text>
             This service is deployed on a local demo cluster and it will be accessible only from the machine where the
             cluster is running.
           </Callout.Text>
@@ -238,7 +238,7 @@ export function CrudModal({
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-xs">
+          <Callout.Text>
             Activating this feature will add an extra cost to your cloud provider bill (a Network Load Balancer will be
             created).
           </Callout.Text>
@@ -249,7 +249,7 @@ export function CrudModal({
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-xs">The health check will be updated to use the new port value.</Callout.Text>
+          <Callout.Text>The health check will be updated to use the new port value.</Callout.Text>
         </Callout.Root>
       )}
       {isMatchingHealthCheck && currentProtocol !== watchProtocol && (
@@ -257,7 +257,7 @@ export function CrudModal({
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-xs">Please verify the health check configuration.</Callout.Text>
+          <Callout.Text>Please verify the health check configuration.</Callout.Text>
         </Callout.Root>
       )}
     </ModalCrud>

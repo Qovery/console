@@ -5,7 +5,7 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
   return (
     <>
       {type === 'SELF_MANAGED' && (
-        <Callout.Root className="text-sm" color="sky">
+        <Callout.Root color="sky">
           <Callout.Icon>
             <Icon iconName="info-circle" iconStyle="regular" />
           </Callout.Icon>
