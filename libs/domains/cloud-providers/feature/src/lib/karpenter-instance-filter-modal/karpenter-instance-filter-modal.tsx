@@ -4,7 +4,7 @@ import {
   type ClusterInstanceTypeResponseListResultsInner,
   CpuArchitectureEnum,
 } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { KarpenterData } from '@qovery/shared/interfaces'
@@ -14,7 +14,7 @@ import { filterInstancesByKarpenterRequirements } from '../karpenter-instance-fi
 import { generateDefaultValues } from '../karpenter-instance-filter-modal/utils/generate-default-values'
 import { InstanceCategory } from './instance-category/instance-category'
 
-const DISPLAY_LIMIT = 51
+const DISPLAY_LIMIT = 46
 
 export interface KarpenterInstanceFilterModalProps {
   cloudProvider: CloudProviderEnum
@@ -53,7 +53,28 @@ function KarpenterInstanceForm({
       default_service_architecture: defaultValues?.default_service_architecture ?? 'AMD64',
       ...generateDefaultValues(_defaultValues),
     },
+    resolver: async (values) => {
+      if (!values.AMD64 && !values.ARM64) {
+        return {
+          values,
+          errors: {
+            type: 'error',
+            message: 'Please select at least one architecture.',
+          },
+        }
+      }
+
+      return {
+        values,
+        errors: {},
+      }
+    },
   })
+
+  const watchCpu = methods.watch('cpu')
+  const watchMemory = methods.watch('memory')
+  const watchAMD64 = methods.watch('AMD64')
+  const watchARM64 = methods.watch('ARM64')
 
   const getMaxCpu =
     cloudProviderInstanceTypes.reduce<number>((acc, instanceType) => {
@@ -69,22 +90,39 @@ function KarpenterInstanceForm({
 
   const getInstanceSizes = cloudProviderInstanceTypes.reduce<string[]>((acc, instanceType) => {
     const size = instanceType.attributes?.instance_size
-    if (!size) return acc
+    const architecture = instanceType.architecture
+
+    if (!size || !architecture) return acc
+    if ((architecture === 'AMD64' && !watchAMD64) || (architecture === 'ARM64' && !watchARM64)) {
+      return acc
+    }
+
     if (!acc.includes(size)) acc.push(size)
     return acc
   }, [])
 
   const getInstanceCategories = cloudProviderInstanceTypes.reduce<{
-    [key: string]: ClusterInstanceAttributes[]
+    [architecture: string]: {
+      [category: string]: ClusterInstanceAttributes[]
+    }
   }>((acc, instanceType) => {
     const attributes = instanceType.attributes
     const category = attributes?.instance_category
+    const architecture = instanceType.architecture
 
-    if (!category || !attributes) return acc
-    if (!acc[category]) acc[category] = []
+    if (!category || !attributes || !architecture) return acc
+    if ((architecture === 'AMD64' && !watchAMD64) || (architecture === 'ARM64' && !watchARM64)) {
+      return acc
+    }
 
-    const exists = acc[category].some((attr) => attr.instance_family === attributes.instance_family)
-    if (!exists) acc[category].push(attributes)
+    if (!acc[architecture]) acc[architecture] = {}
+    if (!acc[architecture][category]) acc[architecture][category] = []
+
+    const exists = acc[architecture][category].some((attr) => attr.instance_family === attributes.instance_family)
+
+    if (!exists) {
+      acc[architecture][category].push(attributes)
+    }
 
     return acc
   }, {})
@@ -159,9 +197,6 @@ function KarpenterInstanceForm({
     return onClose()
   })
 
-  const watchCpu = methods.watch('cpu')
-  const watchMemory = methods.watch('memory')
-
   return (
     <FormProvider {...methods}>
       <ModalCrud title="Karpenter Instance Visual filter" onClose={onClose} onSubmit={onSubmit} submitLabel="Confirm">
@@ -221,72 +256,86 @@ function KarpenterInstanceForm({
                 )}
               />
             </div>
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="font-semibold text-neutral-400">Resources</span>
-              <div>
-                <Controller
-                  name="cpu"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <div className="flex w-full flex-col">
-                      <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
-                      <Slider onChange={field.onChange} value={field.value} max={getMaxCpu} min={1} step={1} />
-                    </div>
-                  )}
-                />
-              </div>
-              <div>
-                <Controller
-                  name="memory"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <div className="flex w-full flex-col">
-                      <p className="mb-3 text-sm font-medium text-neutral-400">{`Memory min ${watchMemory[0]} - max ${watchMemory[1]}`}</p>
-                      <Slider onChange={field.onChange} value={field.value} max={getMaxMemory} min={1} step={1} />
-                    </div>
-                  )}
-                />
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="font-semibold text-neutral-400">Categories/Families</span>
-              <div>
-                {getInstanceCategories &&
-                  Object.entries(getInstanceCategories)
-                    .sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
-                    .map(([category, families]) => {
-                      return <InstanceCategory key={category} title={category} attributes={families} />
-                    })}
-              </div>
-            </div>
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="font-semibold text-neutral-400">Size</span>
-              <div className="grid grid-cols-2 gap-1">
-                {getInstanceSizes?.map((size) => (
-                  <div key={size} className="flex items-center gap-3">
+            {(watchAMD64 || watchARM64) && (
+              <>
+                <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+                  <span className="font-semibold text-neutral-400">Resources</span>
+                  <div>
                     <Controller
-                      name="sizes"
+                      name="cpu"
                       control={methods.control}
                       render={({ field }) => (
-                        <>
-                          <Checkbox
-                            className="shrink-0"
-                            name={size}
-                            id={size}
-                            checked={field.value.includes(size)}
-                            onCheckedChange={(checked) => {
-                              const newSizes = checked ? [...field.value, size] : field.value.filter((s) => s !== size)
-                              field.onChange(newSizes)
-                            }}
-                          />
-                          <label htmlFor={size}>{size}</label>
-                        </>
+                        <div className="flex w-full flex-col">
+                          <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
+                          <Slider onChange={field.onChange} value={field.value} max={getMaxCpu} min={1} step={1} />
+                        </div>
                       )}
                     />
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div>
+                    <Controller
+                      name="memory"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <div className="flex w-full flex-col">
+                          <p className="mb-3 text-sm font-medium text-neutral-400">{`Memory min ${watchMemory[0]} - max ${watchMemory[1]}`}</p>
+                          <Slider onChange={field.onChange} value={field.value} max={getMaxMemory} min={1} step={1} />
+                        </div>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+                  <span className="font-semibold text-neutral-400">Categories/Families</span>
+                  <div>
+                    {[
+                      ...new Set(
+                        Object.values(getInstanceCategories).flatMap((architecture) => Object.keys(architecture))
+                      ),
+                    ]
+                      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+                      .map((category) => {
+                        const attributes: ClusterInstanceAttributes[] = Object.values(getInstanceCategories).flatMap(
+                          (architecture) => architecture[category] || []
+                        )
+
+                        if (attributes.length === 0) return null
+                        return <InstanceCategory key={category} title={category} attributes={attributes} />
+                      })}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+                  <span className="font-semibold text-neutral-400">Size</span>
+                  <div className="grid grid-cols-2 gap-1">
+                    {getInstanceSizes?.map((size) => (
+                      <div key={size} className="flex items-center gap-3">
+                        <Controller
+                          name="sizes"
+                          control={methods.control}
+                          render={({ field }) => (
+                            <>
+                              <Checkbox
+                                className="shrink-0"
+                                name={size}
+                                id={size}
+                                checked={field.value.includes(size)}
+                                onCheckedChange={(checked) => {
+                                  const newSizes = checked
+                                    ? [...field.value, size]
+                                    : field.value.filter((s) => s !== size)
+                                  field.onChange(newSizes)
+                                }}
+                              />
+                              <label htmlFor={size}>{size}</label>
+                            </>
+                          )}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
           <div className="flex w-1/2 flex-col gap-4 border-l border-neutral-200 p-6">
             <span className="font-semibold text-neutral-400">Selected type instances: {dataFiltered.length}</span>
@@ -299,19 +348,21 @@ function KarpenterInstanceForm({
               ))}
               {dataFiltered.length > DISPLAY_LIMIT && <span>and {dataFiltered.length - DISPLAY_LIMIT} others</span>}
             </div>
-            <Callout.Root color="yellow">
-              <Callout.Icon>
-                <Icon iconName="info-circle" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Warning</Callout.TextHeading>
-                <Callout.TextDescription>
-                  To install Qovery, at least one of the selected instance types must meet the minimum requirements of 2
-                  CPUs and 2 GB of memory. Currently, none of them do. Please select at least one instance type that
-                  satisfies these criteria.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
+            {dataFiltered.filter((instanceType) => instanceType.attributes?.meets_resource_reqs).length === 0 && (
+              <Callout.Root color="yellow">
+                <Callout.Icon>
+                  <Icon iconName="info-circle" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Warning</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    To install Qovery, at least one of the selected instance types must meet the minimum requirements of
+                    2 CPUs and 2 GB of memory. Currently, none of them do. Please select at least one instance type that
+                    satisfies these criteria.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            )}
           </div>
         </div>
       </ModalCrud>

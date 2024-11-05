@@ -45,6 +45,7 @@ export interface InstanceCategoryProps {
 
 export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
   const [open, setOpen] = useState(false)
+
   const { control, watch, setValue } = useFormContext<{ categories: Record<string, string[]> }>()
 
   const watchCategories = watch(`categories.${title}`) || []
