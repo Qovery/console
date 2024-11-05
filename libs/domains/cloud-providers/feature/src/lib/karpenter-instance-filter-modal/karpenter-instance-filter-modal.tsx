@@ -26,8 +26,6 @@ import { sortInstanceSizes } from './utils/sort-instance-sizes'
 
 const DISPLAY_LIMIT = 60
 
-const DISPLAY_LIMIT = 51
-
 export interface KarpenterInstanceFilterModalProps {
   clusterRegion: string
   cloudProviderInstanceTypes: ClusterInstanceTypeResponseListResultsInner[]
@@ -339,22 +337,13 @@ function KarpenterInstanceForm({
                 {sortInstanceSizes(instanceSizes)?.map((size) => (
                   <div key={size} className="flex items-center gap-3">
                     <Controller
-                      name="sizes"
+                      name="cpu"
                       control={methods.control}
                       render={({ field }) => (
-                        <>
-                          <Checkbox
-                            className="shrink-0"
-                            name={size}
-                            id={size}
-                            checked={field.value.includes(size)}
-                            onCheckedChange={(checked) => {
-                              const newSizes = checked ? [...field.value, size] : field.value.filter((s) => s !== size)
-                              field.onChange(newSizes)
-                            }}
-                          />
-                          <label htmlFor={size}>{size}</label>
-                        </>
+                        <div className="flex w-full flex-col">
+                          <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
+                          <Slider onChange={field.onChange} value={field.value} max={getMaxCpu} min={1} step={1} />
+                        </div>
                       )}
                     />
                   </div>
