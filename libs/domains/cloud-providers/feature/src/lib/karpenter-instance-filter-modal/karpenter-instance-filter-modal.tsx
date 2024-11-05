@@ -26,6 +26,8 @@ import { sortInstanceSizes } from './utils/sort-instance-sizes'
 
 const DISPLAY_LIMIT = 60
 
+const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
+
 export interface KarpenterInstanceFilterModalProps {
   clusterRegion: string
   cloudProviderInstanceTypes: ClusterInstanceTypeResponseListResultsInner[]
@@ -142,9 +144,8 @@ function KarpenterInstanceForm({
         if (!data.categories || Object.keys(data.categories).length === 0) return false
         const instanceCategory = instanceType.attributes?.instance_category
         const instanceFamily = instanceType.attributes?.instance_family
-        const instanceArchitecture = instanceType.architecture === data.AMD64 ? 'AMD64' : data.ARM64 ? 'ARM64' : ''
 
-        if (!instanceCategory || !instanceFamily || !instanceArchitecture) return false
+        if (!instanceCategory || !instanceFamily) return false
 
         const hashmap = new Map(Object.entries(data.categories))
         return hashmap.get(instanceCategory)?.includes(instanceFamily)
