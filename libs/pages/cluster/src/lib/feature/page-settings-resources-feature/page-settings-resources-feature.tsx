@@ -30,6 +30,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
           spot_enabled: data['karpenter'].spot_enabled ?? false,
           disk_size_in_gib: data['karpenter'].disk_size_in_gib,
           default_service_architecture: data['karpenter'].default_service_architecture,
+          qovery_node_pools: data['karpenter'].qovery_node_pools,
         },
       } as ClusterRequestFeaturesInner,
     ]
@@ -42,6 +43,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
             spot_enabled: data['karpenter'].spot_enabled ?? false,
             disk_size_in_gib: data['karpenter'].disk_size_in_gib,
             default_service_architecture: data['karpenter'].default_service_architecture,
+            qovery_node_pools: data['karpenter'].qovery_node_pools,
           },
         }
       }
@@ -76,6 +78,7 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
             spot_enabled: karpenterFeature.value.spot_enabled,
             disk_size_in_gib: karpenterFeature.value.disk_size_in_gib,
             default_service_architecture: karpenterFeature.value.default_service_architecture,
+            qovery_node_pools: karpenterFeature.value.qovery_node_pools,
           }
         : {
             enabled: false,

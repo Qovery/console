@@ -101,7 +101,7 @@ export function StepSummary(props: StepSummaryProps) {
           className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
         >
           <div className="mr-2 flex-grow">
-            <Heading className="mb-2">General information</Heading>
+            <Heading className="mb-3">General information</Heading>
             <ul className="list-none space-y-2 text-sm text-neutral-400">
               <li>
                 <strong className="font-medium">Installation type: </strong>
@@ -148,7 +148,7 @@ export function StepSummary(props: StepSummaryProps) {
                 className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
               >
                 <div className="mr-2 flex-grow">
-                  <Heading className="mb-2">Resources</Heading>
+                  <Heading className="mb-3">Resources</Heading>
                   <ul className="list-none space-y-2 text-sm text-neutral-400">
                     <li>
                       <strong className="font-medium">Cluster type: </strong>
@@ -205,8 +205,8 @@ export function StepSummary(props: StepSummaryProps) {
               className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
             >
               <div className="mr-2 flex-grow">
-                <Heading className="mb-2">Kubeconfig</Heading>
-                <ul className="list-none text-sm text-neutral-350">
+                <Heading className="mb-3">Kubeconfig</Heading>
+                <ul className="list-none text-sm text-neutral-400">
                   <li>
                     <strong className="font-medium">Kubeconfig: </strong>
                     {props.kubeconfigData?.file_name}
@@ -226,8 +226,8 @@ export function StepSummary(props: StepSummaryProps) {
             className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
           >
             <div className="mr-2 flex-grow">
-              <Heading className="mb-2">Remote access</Heading>
-              <ul className="list-none text-sm text-neutral-350">
+              <Heading className="mb-3">Remote access</Heading>
+              <ul className="list-none text-sm text-neutral-400">
                 <li>
                   <strong className="font-medium">SSH key: </strong>
                   {trimId(props.remoteData.ssh_key, 'both')}
@@ -246,16 +246,16 @@ export function StepSummary(props: StepSummaryProps) {
             className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
           >
             <div className="mr-2 flex-grow">
-              <Heading className="mb-2">Features</Heading>
-              <ul className="list-none text-sm text-neutral-350">
+              <Heading className="mb-3">Features</Heading>
+              <ul className="list-none space-y-2 text-sm text-neutral-400">
                 {props.featuresData.aws_existing_vpc && (
                   <>
-                    <li className="mb-2">
+                    <li className="mb-3">
                       <strong className="font-medium">VPC ID: </strong>
                       {props.featuresData.aws_existing_vpc.aws_vpc_eks_id}
                     </li>
                     {props.featuresData.aws_existing_vpc.eks_subnets?.length !== 0 && (
-                      <li className="mb-2">
+                      <li className="mb-3">
                         <strong className="font-medium">EKS public subnet IDs: </strong>
                         <ul className="ml-4 list-disc">
                           <SubnetsList
@@ -278,7 +278,7 @@ export function StepSummary(props: StepSummaryProps) {
                     )}
                     {props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets &&
                       props.featuresData.aws_existing_vpc.eks_karpenter_fargate_subnets?.length !== 0 && (
-                        <li className="mb-2">
+                        <li className="mb-3">
                           <strong className="font-medium">EKS private subnet IDs: </strong>
                           <ul className="ml-4 list-disc">
                             <SubnetsList
@@ -300,7 +300,7 @@ export function StepSummary(props: StepSummaryProps) {
                         </li>
                       )}
                     {props.featuresData.aws_existing_vpc.mongodb_subnets?.length !== 0 && (
-                      <li className="mb-2">
+                      <li className="mb-3">
                         <strong className="font-medium">MongoDB subnet IDs: </strong>
                         <ul className="ml-4 list-disc">
                           <SubnetsList
@@ -322,7 +322,7 @@ export function StepSummary(props: StepSummaryProps) {
                       </li>
                     )}
                     {props.featuresData.aws_existing_vpc.redis_subnets?.length !== 0 && (
-                      <li className="mb-2">
+                      <li className="mb-3">
                         <strong className="font-medium">Redis subnet IDs: </strong>
                         <ul className="ml-4 list-disc">
                           <SubnetsList
@@ -344,7 +344,7 @@ export function StepSummary(props: StepSummaryProps) {
                       </li>
                     )}
                     {props.featuresData.aws_existing_vpc.rds_subnets?.length !== 0 && (
-                      <li className="mb-2">
+                      <li className="mb-3">
                         <strong className="font-medium">MySQL/PostgreSQL subnet IDs: </strong>
                         <ul className="ml-4 list-disc">
                           <SubnetsList
