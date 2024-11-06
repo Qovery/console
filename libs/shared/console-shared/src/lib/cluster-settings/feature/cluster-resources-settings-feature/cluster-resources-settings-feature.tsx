@@ -42,8 +42,6 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       }))
       .exhaustive()
   )
-  const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
-
   useEffect(() => {
     let clusterTypeOptions: Value[] = []
     if (props?.cloudProvider === CloudProviderEnum.AWS) {
@@ -80,7 +78,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
     <ClusterResourcesSettings
       fromDetail={props.fromDetail}
       clusterTypeOptions={clusterTypeOptions}
-      instanceTypeOptions={instanceTypeOptions}
+      cloudProviderInstanceTypes={cloudProviderInstanceTypes}
       cloudProvider={props.cloudProvider}
       clusterRegion={props.clusterRegion}
       isProduction={props.isProduction}

@@ -1,7 +1,11 @@
-import { CloudProviderEnum, CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, ClusterInstanceTypeResponseListResultsInner, KubernetesEnum } from 'qovery-typescript-axios'
 import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { KarpenterInstanceFilterModal } from '@qovery/domains/cloud-providers/feature'
+import {
+  KarpenterInstanceFilterModal,
+  KarpenterInstanceTypePreview,
+  convertToKarpenterRequirements,
+} from '@qovery/domains/cloud-providers/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import {
@@ -19,12 +23,13 @@ import {
   Slider,
   useModal,
 } from '@qovery/shared/ui'
+import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
 import KarpenterImage from './karpenter-image'
 
 export interface ClusterResourcesSettingsProps {
   fromDetail?: boolean
   clusterTypeOptions?: Value[]
-  instanceTypeOptions?: Value[]
+  cloudProviderInstanceTypes?: ClusterInstanceTypeResponseListResultsInner[]
   cloudProvider?: CloudProviderEnum
   clusterRegion?: string
   showWarningInstance?: boolean
@@ -44,14 +49,14 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchKarpenterEnabled = watch('karpenter.enabled')
   const watchKarpenter = watch('karpenter')
 
+  const instanceTypeOptions = listInstanceTypeFormatter(props.cloudProviderInstanceTypes ?? [])
+
   useEffect(() => {
-    const instanceType: Value | undefined = props.instanceTypeOptions?.find(
-      (option) => option.value === watchInstanceType
-    )
+    const instanceType: Value | undefined = instanceTypeOptions?.find((option) => option.value === watchInstanceType)
     if (instanceType) {
       setWarningInstance(instanceType.label?.toString().indexOf('ARM') !== -1)
     }
-  }, [watchInstanceType, props.instanceTypeOptions])
+  }, [watchInstanceType])
 
   return (
     <div className="flex flex-col gap-10">
@@ -112,11 +117,18 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                             setValue('karpenter.disk_size_in_gib', diskSize)
                           }
 
-                          const instanceTypeLabel: string | undefined = props.instanceTypeOptions
-                            ?.find((option) => option.value === watchInstanceType)
-                            ?.label?.toString()
-                          const architecture = instanceTypeLabel?.includes('AMD') ? 'AMD64' : 'ARM64'
-                          setValue('karpenter.default_service_architecture', architecture)
+                          if (props.cloudProviderInstanceTypes) {
+                            setValue(
+                              'karpenter.qovery_node_pools.requirements',
+                              convertToKarpenterRequirements(props.cloudProviderInstanceTypes)
+                            )
+                          }
+
+                          // const instanceTypeLabel: string | undefined = props.instanceTypeOptions
+                          //   ?.find((option) => option.value === watchInstanceType)
+                          //   ?.label?.toString()
+                          // const architecture = instanceTypeLabel?.includes('AMD') ? 'AMD64' : 'ARM64'
+                          // setValue('karpenter.default_service_architecture', architecture)
 
                           field.onChange(e)
                         }}
@@ -138,7 +150,11 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   {watchKarpenterEnabled && (
                     <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
                       <div className="w-full">
-                        <span>Instance type scope</span>
+                        <p className="mb-2">Instance type scope</p>
+                        <KarpenterInstanceTypePreview
+                          defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
+                          requirements={watchKarpenter?.qovery_node_pools?.requirements}
+                        />
                       </div>
                       <Button
                         type="button"
@@ -222,7 +238,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               )}
             />
 
-            <Controller
+            {/* <Controller
               name="karpenter.default_service_architecture"
               control={control}
               rules={{
@@ -245,7 +261,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   </p>
                 </div>
               )}
-            />
+            /> */}
 
             <Controller
               name="karpenter.spot_enabled"
@@ -283,7 +299,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     value={field.value}
                     label="Instance type"
                     error={error?.message}
-                    options={props.instanceTypeOptions || []}
+                    options={instanceTypeOptions}
                   />
                   <p className="ml-4 text-xs text-neutral-350">
                     Instance type to be used to run your Kubernetes nodes.

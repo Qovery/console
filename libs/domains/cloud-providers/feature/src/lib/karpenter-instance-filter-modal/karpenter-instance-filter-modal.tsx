@@ -9,12 +9,13 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { KarpenterData } from '@qovery/shared/interfaces'
 import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Slider } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import { useCloudProviderInstanceTypes } from '../hooks/use-cloud-provider-instance-types/use-cloud-provider-instance-types'
 import { filterInstancesByKarpenterRequirements } from '../karpenter-instance-filter-modal/utils/filter-instances-by-karpenter-requirements'
 import { generateDefaultValues } from '../karpenter-instance-filter-modal/utils/generate-default-values'
 import { InstanceCategory } from './instance-category/instance-category'
 
-const DISPLAY_LIMIT = 46
+const DISPLAY_LIMIT = 70
 
 const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
@@ -364,7 +365,12 @@ function KarpenterInstanceForm({
                     {index < DISPLAY_LIMIT - 1 && index !== dataFiltered.length - 1 ? ', ' : ' '}
                   </span>
                 ))}
-                {dataFiltered.length > DISPLAY_LIMIT && <span>and {dataFiltered.length - DISPLAY_LIMIT} others</span>}
+                {dataFiltered.length > DISPLAY_LIMIT && (
+                  <span>
+                    and {dataFiltered.length - DISPLAY_LIMIT}{' '}
+                    {pluralize(dataFiltered.length - DISPLAY_LIMIT, 'other', 'others')}
+                  </span>
+                )}
               </div>
             )}
             {dataFiltered.filter((instanceType) => instanceType.attributes?.meets_resource_reqs).length === 0 && (
