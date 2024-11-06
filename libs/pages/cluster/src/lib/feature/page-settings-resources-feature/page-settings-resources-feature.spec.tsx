@@ -164,7 +164,7 @@ describe('PageSettingsResourcesFeature', () => {
         karpenter: {
           enabled: true,
           spot_enabled: false,
-          disk_size_in_gib: 30,
+          disk_size_in_gib: '30',
           default_service_architecture: 'AMD64',
         },
       },

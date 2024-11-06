@@ -66,22 +66,26 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'AWS'>
           clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
           region: string
+          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'SCW'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
           region: string
+          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'GCP'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          onlyMeetsResourceReqs?: boolean
         }
   ) => ({
-    queryKey: [args.cloudProvider, args.clusterType],
+    queryKey: [args.cloudProvider, args.clusterType, args.onlyMeetsResourceReqs ?? false],
     async queryFn() {
       const response = await match(args)
         .with({ cloudProvider: 'AWS', clusterType: 'K3S' }, ({ region }) =>

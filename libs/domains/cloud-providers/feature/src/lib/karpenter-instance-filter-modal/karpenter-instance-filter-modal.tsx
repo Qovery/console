@@ -28,6 +28,46 @@ const DISPLAY_LIMIT = 60
 
 const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
+export const getMaxValue = (
+  instances: ClusterInstanceTypeResponseListResultsInner[],
+  key: 'cpu' | 'ram_in_gb'
+): number => {
+  return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
+}
+
+export const getFilteredInstances = (
+  instances: ClusterInstanceTypeResponseListResultsInner[],
+  filters: {
+    AMD64: boolean
+    ARM64: boolean
+    cpu: [number, number]
+    memory: [number, number]
+    categories: Record<string, string[]>
+    sizes: string[]
+  }
+) => {
+  return instances.filter((instanceType) => {
+    const architectureMatch =
+      (filters.AMD64 && instanceType.architecture === 'AMD64') ||
+      (filters.ARM64 && instanceType.architecture === 'ARM64')
+
+    const cpuMatch = isNumberInRange(instanceType.cpu, filters.cpu)
+    const memoryMatch = isNumberInRange(instanceType.ram_in_gb, filters.memory)
+
+    const categoriesMatch = () => {
+      if (!filters.categories || Object.keys(filters.categories).length === 0) return false
+      const instanceCategory = instanceType.attributes?.instance_category
+      const instanceFamily = instanceType.attributes?.instance_family
+      if (!instanceCategory || !instanceFamily) return false
+      return filters.categories[instanceCategory]?.includes(instanceFamily)
+    }
+
+    const sizeMatch = filters.sizes.includes(instanceType.attributes?.instance_size ?? '')
+
+    return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
+  })
+}
+
 export interface KarpenterInstanceFilterModalProps {
   clusterRegion: string
   cloudProviderInstanceTypes: ClusterInstanceTypeResponseListResultsInner[]
@@ -148,6 +188,7 @@ function KarpenterInstanceForm({
         if (!instanceCategory || !instanceFamily) return false
 
         const hashmap = new Map(Object.entries(data.categories))
+
         return hashmap.get(instanceCategory)?.includes(instanceFamily)
       }
 
@@ -343,7 +384,7 @@ function KarpenterInstanceForm({
                       render={({ field }) => (
                         <div className="flex w-full flex-col">
                           <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
-                          <Slider onChange={field.onChange} value={field.value} max={getMaxCpu} min={1} step={1} />
+                          <Slider onChange={field.onChange} value={field.value} max={maxCpu} min={1} step={1} />
                         </div>
                       )}
                     />
