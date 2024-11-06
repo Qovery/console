@@ -1,13 +1,14 @@
+import { useDebounce } from '@uidotdev/usehooks'
 import {
-  CloudProviderEnum,
+  type CloudProviderEnum,
   type ClusterInstanceAttributes,
   type ClusterInstanceTypeResponseListResultsInner,
   CpuArchitectureEnum,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { KarpenterData } from '@qovery/shared/interfaces'
+import { type KarpenterData } from '@qovery/shared/interfaces'
 import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Slider } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { useCloudProviderInstanceTypes } from '../hooks/use-cloud-provider-instance-types/use-cloud-provider-instance-types'
@@ -16,8 +17,49 @@ import { generateDefaultValues } from '../karpenter-instance-filter-modal/utils/
 import { InstanceCategory } from './instance-category/instance-category'
 
 const DISPLAY_LIMIT = 70
+const DEBOUNCE_TIME = 500
 
 const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
+
+export const getMaxValue = (
+  instances: ClusterInstanceTypeResponseListResultsInner[],
+  key: 'cpu' | 'ram_in_gb'
+): number => {
+  return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
+}
+
+export const getFilteredInstances = (
+  instances: ClusterInstanceTypeResponseListResultsInner[],
+  filters: {
+    AMD64: boolean
+    ARM64: boolean
+    cpu: [number, number]
+    memory: [number, number]
+    categories: Record<string, string[]>
+    sizes: string[]
+  }
+) => {
+  return instances.filter((instanceType) => {
+    const architectureMatch =
+      (filters.AMD64 && instanceType.architecture === 'AMD64') ||
+      (filters.ARM64 && instanceType.architecture === 'ARM64')
+
+    const cpuMatch = isNumberInRange(instanceType.cpu, filters.cpu)
+    const memoryMatch = isNumberInRange(instanceType.ram_in_gb, filters.memory)
+
+    const categoriesMatch = () => {
+      if (!filters.categories || Object.keys(filters.categories).length === 0) return false
+      const instanceCategory = instanceType.attributes?.instance_category
+      const instanceFamily = instanceType.attributes?.instance_family
+      if (!instanceCategory || !instanceFamily) return false
+      return filters.categories[instanceCategory]?.includes(instanceFamily)
+    }
+
+    const sizeMatch = filters.sizes.includes(instanceType.attributes?.instance_size ?? '')
+
+    return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
+  })
+}
 
 export interface KarpenterInstanceFilterModalProps {
   cloudProvider: CloudProviderEnum
@@ -28,7 +70,7 @@ export interface KarpenterInstanceFilterModalProps {
   defaultValues?: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>
 }
 
-export interface KarpenterInstanceForm {
+export interface KarpenterInstanceFormProps {
   ARM64: boolean
   AMD64: boolean
   default_service_architecture: CpuArchitectureEnum
@@ -50,7 +92,7 @@ function KarpenterInstanceForm({
 
   const [dataFiltered, setDataFiltered] = useState<ClusterInstanceTypeResponseListResultsInner[]>(_defaultValues)
 
-  const methods = useForm<KarpenterInstanceForm>({
+  const methods = useForm<KarpenterInstanceFormProps>({
     mode: 'onChange',
     defaultValues: {
       default_service_architecture: defaultValues?.default_service_architecture ?? 'AMD64',
@@ -79,70 +121,55 @@ function KarpenterInstanceForm({
   const watchAMD64 = methods.watch('AMD64')
   const watchARM64 = methods.watch('ARM64')
 
-  const getMaxCpu =
-    cloudProviderInstanceTypes.reduce<number>((acc, instanceType) => {
-      if (instanceType.cpu > acc) return instanceType.cpu
-      return acc
-    }, 0) ?? 0
+  const debounceCpu = useDebounce(watchCpu, DEBOUNCE_TIME)
+  const debounceMemory = useDebounce(watchMemory, DEBOUNCE_TIME)
 
-  const getMaxMemory =
-    cloudProviderInstanceTypes.reduce<number>((acc, instanceType) => {
-      if (instanceType.cpu > acc) return instanceType.ram_in_gb
-      return acc
-    }, 0) ?? 0
+  const maxCpu = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'cpu'), [cloudProviderInstanceTypes])
+  const maxMemory = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'ram_in_gb'), [cloudProviderInstanceTypes])
 
-  const getInstanceSizes = cloudProviderInstanceTypes.reduce<string[]>((acc, instanceType) => {
-    const size = instanceType.attributes?.instance_size
-    const architecture = instanceType.architecture
-    const cpu = instanceType.cpu
-    const memory = instanceType.ram_in_gb
+  const { instanceSizes, instanceCategories } = useMemo(() => {
+    const sizes = new Set<string>()
+    const categories: {
+      [architecture: string]: {
+        [category: string]: ClusterInstanceAttributes[]
+      }
+    } = {}
 
-    if (!size || !architecture) return acc
-    if (
-      (architecture === 'AMD64' && !watchAMD64) ||
-      (architecture === 'ARM64' && !watchARM64) ||
-      !isNumberInRange(cpu, watchCpu) ||
-      !isNumberInRange(memory, watchMemory)
-    ) {
-      return acc
+    cloudProviderInstanceTypes.forEach((instanceType) => {
+      const { attributes, architecture } = instanceType
+      if (!attributes?.instance_size || !architecture) return
+      if (
+        (architecture === 'AMD64' && !watchAMD64) ||
+        (architecture === 'ARM64' && !watchARM64) ||
+        !isNumberInRange(instanceType.cpu, debounceCpu) ||
+        !isNumberInRange(instanceType.ram_in_gb, debounceMemory)
+      )
+        return
+
+      sizes.add(attributes.instance_size)
+
+      const category = attributes.instance_category
+      if (category) {
+        if (!categories[architecture]) categories[architecture] = {}
+        if (!categories[architecture][category]) categories[architecture][category] = []
+
+        const exists = categories[architecture][category].some(
+          (attr) => attr.instance_family === attributes.instance_family
+        )
+
+        if (!exists) {
+          categories[architecture][category].push(attributes)
+        }
+      }
+    })
+
+    return {
+      instanceSizes: Array.from(sizes),
+      instanceCategories: categories,
     }
+  }, [cloudProviderInstanceTypes, watchAMD64, watchARM64, debounceCpu, debounceMemory])
 
-    if (!acc.includes(size)) acc.push(size)
-    return acc
-  }, [])
-
-  const getInstanceCategories = cloudProviderInstanceTypes.reduce<{
-    [architecture: string]: {
-      [category: string]: ClusterInstanceAttributes[]
-    }
-  }>((acc, instanceType) => {
-    const attributes = instanceType.attributes
-    const category = attributes?.instance_category
-    const architecture = instanceType.architecture
-    const cpu = instanceType.cpu
-    const memory = instanceType.ram_in_gb
-
-    if (!category || !attributes || !architecture) return acc
-    if (
-      (architecture === 'AMD64' && !watchAMD64) ||
-      (architecture === 'ARM64' && !watchARM64) ||
-      !isNumberInRange(cpu, watchCpu) ||
-      !isNumberInRange(memory, watchMemory)
-    ) {
-      return acc
-    }
-
-    if (!acc[architecture]) acc[architecture] = {}
-    if (!acc[architecture][category]) acc[architecture][category] = []
-
-    const exists = acc[architecture][category].some((attr) => attr.instance_family === attributes.instance_family)
-
-    if (!exists) {
-      acc[architecture][category].push(attributes)
-    }
-
-    return acc
-  }, {})
+  console.log(instanceSizes)
 
   methods.watch((data) => {
     if (!data || !cloudProviderInstanceTypes) return
@@ -153,25 +180,21 @@ function KarpenterInstanceForm({
         (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
 
       // CPU range check
-      const cpuMatch =
-        data.cpu && instanceType.cpu >= (data.cpu[0] ?? 0) && instanceType.cpu <= (data.cpu[1] ?? getMaxCpu)
+      const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
 
       // Memory range check
-      const memoryMatch =
-        data.memory &&
-        instanceType.ram_in_gb >= (data.memory[0] ?? 0) &&
-        instanceType.ram_in_gb <= (data.memory[1] ?? getMaxMemory)
+      const memoryMatch = data.memory && isNumberInRange(instanceType.ram_in_gb, data.memory as [number, number])
 
       // Categories check
       const categoriesMatch = () => {
         if (!data.categories || Object.keys(data.categories).length === 0) return false
-
         const instanceCategory = instanceType.attributes?.instance_category
         const instanceFamily = instanceType.attributes?.instance_family
 
         if (!instanceCategory || !instanceFamily) return false
 
         const hashmap = new Map(Object.entries(data.categories))
+
         return hashmap.get(instanceCategory)?.includes(instanceFamily)
       }
 
@@ -184,35 +207,33 @@ function KarpenterInstanceForm({
     setDataFiltered(filtered)
   })
 
-  const onSubmit = methods.handleSubmit(({ ARM64, AMD64, default_service_architecture, categories, sizes }) => {
-    onChange({
-      default_service_architecture: default_service_architecture,
-      qovery_node_pools: {
-        requirements: [
-          {
-            key: 'InstanceSize',
-            operator: 'In',
-            values: sizes,
-          },
-          {
-            key: 'InstanceFamily',
-            operator: 'In',
-            values: Object.values(categories).flat(),
-          },
-          {
-            key: 'Arch',
-            operator: 'In',
-            values: [ARM64 ? 'ARM64' : '', AMD64 ? 'AMD64' : ''].filter((v) => v !== ''),
-          },
-        ],
-      },
-    })
+  const onSubmit = useCallback(
+    methods.handleSubmit(({ ARM64, AMD64, default_service_architecture }) => {
+      const instanceSize = dataFiltered
+        .map((instanceType) => instanceType.attributes?.instance_size ?? '')
+        .filter(Boolean)
+      const instanceFamily = dataFiltered
+        .map((instanceType) => instanceType.attributes?.instance_family ?? '')
+        .filter(Boolean)
 
-    return onClose()
-  })
+      onChange({
+        default_service_architecture,
+        qovery_node_pools: {
+          requirements: [
+            { key: 'InstanceSize', operator: 'In', values: instanceSize },
+            { key: 'InstanceFamily', operator: 'In', values: instanceFamily },
+            { key: 'Arch', operator: 'In', values: [ARM64 ? 'ARM64' : '', AMD64 ? 'AMD64' : ''].filter(Boolean) },
+          ],
+        },
+      })
+
+      onClose()
+    }),
+    [dataFiltered, onChange, onClose]
+  )
 
   const allCategories = [
-    ...new Set(Object.values(getInstanceCategories).flatMap((architecture) => Object.keys(architecture))),
+    ...new Set(Object.values(instanceCategories).flatMap((architecture) => Object.keys(architecture))),
   ]
 
   return (
@@ -285,7 +306,7 @@ function KarpenterInstanceForm({
                       render={({ field }) => (
                         <div className="flex w-full flex-col">
                           <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
-                          <Slider onChange={field.onChange} value={field.value} max={getMaxCpu} min={1} step={1} />
+                          <Slider onChange={field.onChange} value={field.value} max={maxCpu} min={1} step={1} />
                         </div>
                       )}
                     />
@@ -297,34 +318,17 @@ function KarpenterInstanceForm({
                       render={({ field }) => (
                         <div className="flex w-full flex-col">
                           <p className="mb-3 text-sm font-medium text-neutral-400">{`Memory min ${watchMemory[0]} - max ${watchMemory[1]}`}</p>
-                          <Slider onChange={field.onChange} value={field.value} max={getMaxMemory} min={1} step={1} />
+                          <Slider onChange={field.onChange} value={field.value} max={maxMemory} min={1} step={1} />
                         </div>
                       )}
                     />
                   </div>
                 </div>
-                {allCategories.length > 0 && (
-                  <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-                    <span className="font-semibold text-neutral-400">Categories/Families</span>
-                    <div>
-                      {allCategories
-                        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-                        .map((category) => {
-                          const attributes: ClusterInstanceAttributes[] = Object.values(getInstanceCategories).flatMap(
-                            (architecture) => architecture[category] || []
-                          )
-
-                          if (attributes.length === 0) return null
-                          return <InstanceCategory key={category} title={category} attributes={attributes} />
-                        })}
-                    </div>
-                  </div>
-                )}
-                {getInstanceSizes.length > 0 && (
+                {instanceSizes.length > 0 && (
                   <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
                     <span className="font-semibold text-neutral-400">Size</span>
                     <div className="grid grid-cols-2 gap-1">
-                      {getInstanceSizes?.map((size) => (
+                      {instanceSizes?.map((size) => (
                         <div key={size} className="flex items-center gap-3">
                           <Controller
                             name="sizes"
@@ -349,6 +353,23 @@ function KarpenterInstanceForm({
                           />
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+                {allCategories.length > 0 && (
+                  <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+                    <span className="font-semibold text-neutral-400">Categories/Families</span>
+                    <div>
+                      {allCategories
+                        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+                        .map((category) => {
+                          const attributes: ClusterInstanceAttributes[] = Object.values(instanceCategories).flatMap(
+                            (architecture) => architecture[category] || []
+                          )
+
+                          if (attributes.length === 0) return null
+                          return <InstanceCategory key={category} title={category} attributes={attributes} />
+                        })}
                     </div>
                   </div>
                 )}
@@ -409,19 +430,23 @@ export function KarpenterInstanceFilterModal({
         cloudProvider,
         clusterType: 'MANAGED' as const,
         region: clusterRegion,
+        onlyMeetsResourceReqs: false,
       }))
       .with('SCW', (cloudProvider) => ({
         cloudProvider,
         clusterType: 'MANAGED' as const,
         region: clusterRegion,
+        onlyMeetsResourceReqs: false,
       }))
       .with('GCP', (cloudProvider) => ({
         cloudProvider,
         clusterType: 'MANAGED' as const,
+        onlyMeetsResourceReqs: false,
       }))
       .with('ON_PREMISE', (cloudProvider) => ({
         cloudProvider,
         clusterType: 'MANAGED' as const,
+        onlyMeetsResourceReqs: false,
       }))
       .exhaustive()
   )

@@ -1,4 +1,4 @@
-import { ClusterInstanceAttributes } from 'qovery-typescript-axios'
+import { type ClusterInstanceAttributes } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { InstanceCategory } from './instance-category'

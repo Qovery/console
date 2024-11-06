@@ -1,9 +1,9 @@
 import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
-import { type KarpenterInstanceForm } from '../karpenter-instance-filter-modal'
+import { type KarpenterInstanceFormProps } from '../karpenter-instance-filter-modal'
 
 export function generateDefaultValues(
   instances: ClusterInstanceTypeResponseListResultsInner[]
-): Omit<KarpenterInstanceForm, 'default_service_architecture'> {
+): Omit<KarpenterInstanceFormProps, 'default_service_architecture'> {
   // Get unique architectures
   const architectures = [...new Set(instances.map((i) => i.architecture))]
 

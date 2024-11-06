@@ -1,4 +1,4 @@
-import { ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
+import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
 import { type KarpenterData } from '@qovery/shared/interfaces'
 
 export function filterInstancesByKarpenterRequirements(

@@ -66,32 +66,36 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'AWS'>
           clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
           region: string
+          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'SCW'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
           region: string
+          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'GCP'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          onlyMeetsResourceReqs?: boolean
         }
   ) => ({
-    queryKey: [args.cloudProvider, args.clusterType],
+    queryKey: [args.cloudProvider, args.clusterType, args.onlyMeetsResourceReqs ?? false],
     async queryFn() {
       const response = await match(args)
         .with({ cloudProvider: 'AWS', clusterType: 'K3S' }, ({ region }) =>
           cloudProviderApi.listAWSEc2InstanceType(region)
         )
-        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
-          cloudProviderApi.listAWSEKSInstanceType(region)
+        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region, onlyMeetsResourceReqs = false }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, onlyMeetsResourceReqs)
         )
-        .with({ cloudProvider: 'AWS', clusterType: 'SELF_MANAGED' }, ({ region }) =>
-          cloudProviderApi.listAWSEKSInstanceType(region)
+        .with({ cloudProvider: 'AWS', clusterType: 'SELF_MANAGED' }, ({ region, onlyMeetsResourceReqs = false }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, onlyMeetsResourceReqs)
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))

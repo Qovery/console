@@ -1,8 +1,7 @@
 import { type CpuArchitectureEnum, type KarpenterNodePoolRequirement } from 'qovery-typescript-axios'
-import { twMerge } from 'tailwind-merge'
-import { pluralize } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 
-export interface KarpenterInstanceTypePreview {
+export interface KarpenterInstanceTypePreviewProps {
   defaultServiceArchitecture: CpuArchitectureEnum
   requirements?: KarpenterNodePoolRequirement[]
   className?: string
@@ -27,7 +26,7 @@ export function KarpenterInstanceTypePreview({
   defaultServiceArchitecture,
   requirements,
   className,
-}: KarpenterInstanceTypePreview) {
+}: KarpenterInstanceTypePreviewProps) {
   const architectures = requirements?.find((a) => a.key === 'Arch')
   const sizes = requirements?.find((s) => s.key === 'InstanceSize')
   const families = requirements?.find((f) => f.key === 'InstanceFamily')

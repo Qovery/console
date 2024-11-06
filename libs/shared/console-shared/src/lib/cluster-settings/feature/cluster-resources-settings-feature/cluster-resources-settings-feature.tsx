@@ -1,11 +1,8 @@
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { match } from 'ts-pattern'
-import { useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import ClusterResourcesSettings from '../../ui/cluster-resources-settings/cluster-resources-settings'
-import { listInstanceTypeFormatter } from './utils/list-instance-type-formatter'
 
 export interface ClusterResourcesSettingsFeatureProps {
   fromDetail?: boolean
@@ -20,28 +17,6 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
   const watchClusterType = watch('cluster_type')
 
-  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
-    match(props.cloudProvider || CloudProviderEnum.AWS)
-      .with('AWS', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
-        region: props.clusterRegion || '',
-      }))
-      .with('SCW', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        region: props.clusterRegion || '',
-      }))
-      .with('GCP', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-      }))
-      .with('ON_PREMISE', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-      }))
-      .exhaustive()
-  )
   useEffect(() => {
     let clusterTypeOptions: Value[] = []
     if (props?.cloudProvider === CloudProviderEnum.AWS) {
@@ -78,7 +53,6 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
     <ClusterResourcesSettings
       fromDetail={props.fromDetail}
       clusterTypeOptions={clusterTypeOptions}
-      cloudProviderInstanceTypes={cloudProviderInstanceTypes}
       cloudProvider={props.cloudProvider}
       clusterRegion={props.clusterRegion}
       isProduction={props.isProduction}

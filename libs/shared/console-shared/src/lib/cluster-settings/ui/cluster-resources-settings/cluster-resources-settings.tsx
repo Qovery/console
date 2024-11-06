@@ -1,10 +1,12 @@
-import { CloudProviderEnum, ClusterInstanceTypeResponseListResultsInner, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import {
   KarpenterInstanceFilterModal,
   KarpenterInstanceTypePreview,
   convertToKarpenterRequirements,
+  useCloudProviderInstanceTypes,
 } from '@qovery/domains/cloud-providers/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
@@ -29,7 +31,6 @@ import KarpenterImage from './karpenter-image'
 export interface ClusterResourcesSettingsProps {
   fromDetail?: boolean
   clusterTypeOptions?: Value[]
-  cloudProviderInstanceTypes?: ClusterInstanceTypeResponseListResultsInner[]
   cloudProvider?: CloudProviderEnum
   clusterRegion?: string
   showWarningInstance?: boolean
@@ -49,7 +50,47 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchKarpenterEnabled = watch('karpenter.enabled')
   const watchKarpenter = watch('karpenter')
 
-  const instanceTypeOptions = listInstanceTypeFormatter(props.cloudProviderInstanceTypes ?? [])
+  const {
+    data: cloudProviderInstanceTypes,
+    refetch: refetchCloudProviderInstanceTypes,
+    isRefetching: isLoadingCloudProviderInstanceTypes,
+  } = useCloudProviderInstanceTypes(
+    match(props.cloudProvider || CloudProviderEnum.AWS)
+      .with('AWS', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
+        region: props.clusterRegion || '',
+        onlyMeetsResourceReqs: !watchKarpenterEnabled,
+      }))
+      .with('SCW', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: props.clusterRegion || '',
+        onlyMeetsResourceReqs: !watchKarpenterEnabled,
+      }))
+      .with('GCP', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        onlyMeetsResourceReqs: !watchKarpenterEnabled,
+      }))
+      .with('ON_PREMISE', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        onlyMeetsResourceReqs: !watchKarpenterEnabled,
+      }))
+      .exhaustive()
+  )
+
+  const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await refetchCloudProviderInstanceTypes()
+      if (data) setValue('karpenter.qovery_node_pools.requirements', convertToKarpenterRequirements(data))
+    }
+
+    fetchData()
+  }, [watchKarpenterEnabled])
 
   useEffect(() => {
     const instanceType: Value | undefined = instanceTypeOptions?.find((option) => option.value === watchInstanceType)
@@ -116,20 +157,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                             const diskSize = watchDiskSize >= 50 ? watchDiskSize : 50
                             setValue('karpenter.disk_size_in_gib', diskSize)
                           }
-
-                          if (props.cloudProviderInstanceTypes) {
-                            setValue(
-                              'karpenter.qovery_node_pools.requirements',
-                              convertToKarpenterRequirements(props.cloudProviderInstanceTypes)
-                            )
-                          }
-
-                          // const instanceTypeLabel: string | undefined = props.instanceTypeOptions
-                          //   ?.find((option) => option.value === watchInstanceType)
-                          //   ?.label?.toString()
-                          // const architecture = instanceTypeLabel?.includes('AMD') ? 'AMD64' : 'ARM64'
-                          // setValue('karpenter.default_service_architecture', architecture)
-
                           field.onChange(e)
                         }}
                         title="Activate Karpenter"
@@ -147,7 +174,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     </div>
                     <KarpenterImage className="absolute right-0 top-0" />
                   </div>
-                  {watchKarpenterEnabled && (
+                  {watchKarpenterEnabled && !isLoadingCloudProviderInstanceTypes && (
                     <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
                       <div className="w-full">
                         <p className="mb-2">Instance type scope</p>
@@ -237,32 +264,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 />
               )}
             />
-
-            {/* <Controller
-              name="karpenter.default_service_architecture"
-              control={control}
-              rules={{
-                required: 'Please select a node architecture',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <div>
-                  <InputSelect
-                    onChange={field.onChange}
-                    value={field.value}
-                    label="Default node architecture"
-                    error={error?.message}
-                    options={Object.values(CpuArchitectureEnum).map((value) => ({
-                      label: value,
-                      value,
-                    }))}
-                  />
-                  <p className="ml-4 mt-1 text-xs text-neutral-350">
-                    All your applications will be built and deployed on this architecture.
-                  </p>
-                </div>
-              )}
-            /> */}
-
             <Controller
               name="karpenter.spot_enabled"
               control={control}
