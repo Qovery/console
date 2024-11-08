@@ -35,39 +35,6 @@ export const getMaxValue = (
   return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
 }
 
-export const getFilteredInstances = (
-  instances: ClusterInstanceTypeResponseListResultsInner[],
-  filters: {
-    AMD64: boolean
-    ARM64: boolean
-    cpu: [number, number]
-    memory: [number, number]
-    categories: Record<string, string[]>
-    sizes: string[]
-  }
-) => {
-  return instances.filter((instanceType) => {
-    const architectureMatch =
-      (filters.AMD64 && instanceType.architecture === 'AMD64') ||
-      (filters.ARM64 && instanceType.architecture === 'ARM64')
-
-    const cpuMatch = isNumberInRange(instanceType.cpu, filters.cpu)
-    const memoryMatch = isNumberInRange(instanceType.ram_in_gb, filters.memory)
-
-    const categoriesMatch = () => {
-      if (!filters.categories || Object.keys(filters.categories).length === 0) return false
-      const instanceCategory = instanceType.attributes?.instance_category
-      const instanceFamily = instanceType.attributes?.instance_family
-      if (!instanceCategory || !instanceFamily) return false
-      return filters.categories[instanceCategory]?.includes(instanceFamily)
-    }
-
-    const sizeMatch = filters.sizes.includes(instanceType.attributes?.instance_size ?? '')
-
-    return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
-  })
-}
-
 export interface KarpenterInstanceFilterModalProps {
   clusterRegion: string
   cloudProviderInstanceTypes: ClusterInstanceTypeResponseListResultsInner[]
@@ -174,10 +141,8 @@ function KarpenterInstanceForm({
   methods.watch((data) => {
     if (!data || !cloudProviderInstanceTypes) return
 
-    const filtered = cloudProviderInstanceTypes.filter((instanceType) => {
-      // Architecture check
-      const architectureMatch =
-        (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
+        // CPU range check
+        const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
 
       // Categories check
       const categoriesMatch = () => {
@@ -185,21 +150,31 @@ function KarpenterInstanceForm({
         const instanceCategory = instanceType.attributes?.instance_category
         const instanceFamily = instanceType.attributes?.instance_family
 
-        if (!instanceCategory || !instanceFamily) return false
+          const hashmap = new Map(Object.entries(data.categories))
 
-        const hashmap = new Map(Object.entries(data.categories))
+          return hashmap.get(instanceCategory)?.includes(instanceFamily)
+        }
 
-        return hashmap.get(instanceCategory)?.includes(instanceFamily)
-      }
+        // Sizes range check
+        const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
 
-      // Sizes range check
-      const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
+        return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
+      })
 
       return architectureMatch && sizeMatch && categoriesMatch()
     })
+    return () => subscription.unsubscribe()
+  }, [methods])
 
-    setDataFiltered(filtered)
-  })
+  useEffect(() => {
+    const values = generateDefaultValues(dataFiltered)
+    // Set all news values based on the filtered data
+    // We can't use `methods.reset` because it provides infinite loop
+    methods.setValue('AMD64', values.AMD64)
+    methods.setValue('ARM64', values.ARM64)
+    methods.setValue('sizes', values.sizes)
+    methods.setValue('categories', values.categories)
+  }, [dataFiltered, methods])
 
   const onSubmit = useCallback(
     methods.handleSubmit(({ ARM64, AMD64, default_service_architecture }) => {
@@ -379,7 +354,7 @@ function KarpenterInstanceForm({
                 {sortInstanceSizes(instanceSizes)?.map((size) => (
                   <div key={size} className="flex items-center gap-3">
                     <Controller
-                      name="cpu"
+                      name="sizes"
                       control={methods.control}
                       render={({ field }) => (
                         <div className="flex w-full flex-col">
