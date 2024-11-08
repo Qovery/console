@@ -64,37 +64,31 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
   return (
     <Collapsible.Root key={title} open={open} onOpenChange={setOpen} asChild>
       <div className="flex flex-col">
-        <Collapsible.Trigger asChild>
-          <div className="flex items-center justify-between py-1">
-            <span className="flex items-center gap-3">
-              <Checkbox
-                name={title}
-                className="shrink-0"
-                checked={checked}
-                onClick={(event) => {
-                  event.stopPropagation()
-                  setOpen(true)
-                }}
-                onCheckedChange={(checked: boolean) => {
-                  if (checked) {
-                    // Check all children
-                    setValue(
-                      `categories.${title}`,
-                      attributes.map((a) => a.instance_family!)
-                    )
-                  } else {
-                    // Uncheck all children
-                    setValue(`categories.${title}`, [])
-                  }
-                }}
-              />
-              <span className="text-neutral-400">
-                {title.toUpperCase()} - {getInstanceTypeCategory(title)}
-              </span>
+        <div className="flex items-center justify-between gap-3 py-1">
+          <Checkbox
+            name={title}
+            className="shrink-0"
+            checked={checked}
+            onCheckedChange={(checked: boolean) => {
+              if (checked) {
+                // Check all children
+                setValue(
+                  `categories.${title}`,
+                  attributes.map((a) => a.instance_family).filter((item): item is string => item !== undefined)
+                )
+              } else {
+                // Uncheck all children
+                setValue(`categories.${title}`, [])
+              }
+            }}
+          />
+          <Collapsible.Trigger className="flex w-full items-center justify-between gap-3">
+            <span className="text-neutral-400">
+              {title.toUpperCase()} - {getInstanceTypeCategory(title)}
             </span>
-            <Icon className="text-sm text-neutral-350" iconName={open ? 'chevron-up' : 'chevron-down'} />{' '}
-          </div>
-        </Collapsible.Trigger>
+            <Icon className="text-sm text-neutral-350" iconName={open ? 'chevron-up' : 'chevron-down'} />
+          </Collapsible.Trigger>
+        </div>
 
         <Collapsible.Content asChild>
           <div className="flex flex-col">

@@ -1,4 +1,3 @@
-import { useDebounce } from '@uidotdev/usehooks'
 import {
   type CloudProviderEnum,
   type ClusterInstanceAttributes,
@@ -9,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type KarpenterData } from '@qovery/shared/interfaces'
-import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Slider, Tooltip } from '@qovery/shared/ui'
+import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { useCloudProviderInstanceTypes } from '../hooks/use-cloud-provider-instance-types/use-cloud-provider-instance-types'
 import { filterInstancesByKarpenterRequirements } from '../karpenter-instance-filter-modal/utils/filter-instances-by-karpenter-requirements'
@@ -22,12 +21,12 @@ const DISPLAY_LIMIT = 60
 
 const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
-export const getMaxValue = (
-  instances: ClusterInstanceTypeResponseListResultsInner[],
-  key: 'cpu' | 'ram_in_gb'
-): number => {
-  return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
-}
+// export const getMaxValue = (
+//   instances: ClusterInstanceTypeResponseListResultsInner[],
+//   key: 'cpu' | 'ram_in_gb'
+// ): number => {
+//   return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
+// }
 
 export interface KarpenterInstanceFilterModalProps {
   cloudProvider: CloudProviderEnum
@@ -94,16 +93,16 @@ function KarpenterInstanceForm({
     },
   })
 
-  const watchCpu = methods.watch('cpu')
-  const watchMemory = methods.watch('memory')
+  // const watchCpu = methods.watch('cpu')
+  // const watchMemory = methods.watch('memory')
   const watchAMD64 = methods.watch('AMD64')
   const watchARM64 = methods.watch('ARM64')
 
   // const debounceCpu = useDebounce(watchCpu, DEBOUNCE_TIME)
   // const debounceMemory = useDebounce(watchMemory, DEBOUNCE_TIME)
 
-  const maxCpu = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'cpu'), [cloudProviderInstanceTypes])
-  const maxMemory = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'ram_in_gb'), [cloudProviderInstanceTypes])
+  // const maxCpu = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'cpu'), [cloudProviderInstanceTypes])
+  // const maxMemory = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'ram_in_gb'), [cloudProviderInstanceTypes])
 
   const { instanceSizes, instanceCategories } = useMemo(() => {
     const sizes = new Set<string>()
@@ -180,16 +179,6 @@ function KarpenterInstanceForm({
     })
     return () => subscription.unsubscribe()
   }, [methods])
-
-  useEffect(() => {
-    const values = generateDefaultValues(dataFiltered)
-    // Set all news values based on the filtered data
-    // We can't use `methods.reset` because it provides infinite loop
-    methods.setValue('AMD64', values.AMD64)
-    methods.setValue('ARM64', values.ARM64)
-    methods.setValue('sizes', values.sizes)
-    methods.setValue('categories', values.categories)
-  }, [dataFiltered, methods])
 
   const onSubmit = useCallback(
     methods.handleSubmit(({ ARM64, AMD64, default_service_architecture }) => {
@@ -271,14 +260,6 @@ function KarpenterInstanceForm({
                           onCheckedChange={(checked) => {
                             if (!checked) {
                               methods.setValue('default_service_architecture', 'AMD64')
-
-                              const values = generateDefaultValues(
-                                cloudProviderInstanceTypes.filter(
-                                  (instanceType) => instanceType.architecture === 'AMD64'
-                                )
-                              )
-                              // methods.setValue(`sizes.${values.}`, values.sizes)
-                              // methods.setValue('categories', values.categories)
                             } else {
                               // Reset all other values
                               const values = generateDefaultValues(cloudProviderInstanceTypes)
@@ -338,7 +319,7 @@ function KarpenterInstanceForm({
                 ))}
               </div>
             </div>
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+            {/* <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <span className="font-semibold text-neutral-400">Resources</span>
               <div>
                 <Controller
@@ -364,7 +345,7 @@ function KarpenterInstanceForm({
                   )}
                 />
               </div>
-            </div>
+            </div> */}
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <span className="font-semibold text-neutral-400">Categories/Families</span>
               <div>
@@ -388,7 +369,7 @@ function KarpenterInstanceForm({
                 classNameContent="max-w-80"
                 content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
               >
-                <span className="text-xl text-neutral-400">
+                <span className="text-neutral-400">
                   <Icon iconName="info-circle" iconStyle="regular" />
                 </span>
               </Tooltip>
