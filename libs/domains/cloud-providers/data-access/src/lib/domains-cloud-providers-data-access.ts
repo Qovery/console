@@ -67,6 +67,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
           region: string
           onlyMeetsResourceReqs?: boolean
+          withCpu?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'SCW'>
@@ -85,14 +86,16 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           onlyMeetsResourceReqs?: boolean
         }
   ) => ({
-    queryKey: [args.cloudProvider, args.clusterType, args.onlyMeetsResourceReqs ?? false],
+    queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
       const response = await match(args)
         .with({ cloudProvider: 'AWS', clusterType: 'K3S' }, ({ region }) =>
           cloudProviderApi.listAWSEc2InstanceType(region)
         )
-        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region, onlyMeetsResourceReqs = false }) =>
-          cloudProviderApi.listAWSEKSInstanceType(region, onlyMeetsResourceReqs)
+        .with(
+          { cloudProvider: 'AWS', clusterType: 'MANAGED' },
+          ({ region, onlyMeetsResourceReqs = false, withCpu = true }) =>
+            cloudProviderApi.listAWSEKSInstanceType(region, onlyMeetsResourceReqs, withCpu)
         )
         .with({ cloudProvider: 'AWS', clusterType: 'SELF_MANAGED' }, ({ region, onlyMeetsResourceReqs = false }) =>
           cloudProviderApi.listAWSEKSInstanceType(region, onlyMeetsResourceReqs)

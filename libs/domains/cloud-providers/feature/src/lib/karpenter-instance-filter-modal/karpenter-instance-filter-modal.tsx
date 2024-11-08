@@ -9,15 +9,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type KarpenterData } from '@qovery/shared/interfaces'
-import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Slider } from '@qovery/shared/ui'
+import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Slider, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { useCloudProviderInstanceTypes } from '../hooks/use-cloud-provider-instance-types/use-cloud-provider-instance-types'
 import { filterInstancesByKarpenterRequirements } from '../karpenter-instance-filter-modal/utils/filter-instances-by-karpenter-requirements'
 import { generateDefaultValues } from '../karpenter-instance-filter-modal/utils/generate-default-values'
 import { InstanceCategory } from './instance-category/instance-category'
+import { sortInstanceSizes } from './utils/sort-instance-sizes'
 
-const DISPLAY_LIMIT = 70
-const DEBOUNCE_TIME = 500
+const DISPLAY_LIMIT = 60
+// const DEBOUNCE_TIME = 300
 
 const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
@@ -26,39 +27,6 @@ export const getMaxValue = (
   key: 'cpu' | 'ram_in_gb'
 ): number => {
   return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
-}
-
-export const getFilteredInstances = (
-  instances: ClusterInstanceTypeResponseListResultsInner[],
-  filters: {
-    AMD64: boolean
-    ARM64: boolean
-    cpu: [number, number]
-    memory: [number, number]
-    categories: Record<string, string[]>
-    sizes: string[]
-  }
-) => {
-  return instances.filter((instanceType) => {
-    const architectureMatch =
-      (filters.AMD64 && instanceType.architecture === 'AMD64') ||
-      (filters.ARM64 && instanceType.architecture === 'ARM64')
-
-    const cpuMatch = isNumberInRange(instanceType.cpu, filters.cpu)
-    const memoryMatch = isNumberInRange(instanceType.ram_in_gb, filters.memory)
-
-    const categoriesMatch = () => {
-      if (!filters.categories || Object.keys(filters.categories).length === 0) return false
-      const instanceCategory = instanceType.attributes?.instance_category
-      const instanceFamily = instanceType.attributes?.instance_family
-      if (!instanceCategory || !instanceFamily) return false
-      return filters.categories[instanceCategory]?.includes(instanceFamily)
-    }
-
-    const sizeMatch = filters.sizes.includes(instanceType.attributes?.instance_size ?? '')
-
-    return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
-  })
 }
 
 export interface KarpenterInstanceFilterModalProps {
@@ -109,6 +77,16 @@ function KarpenterInstanceForm({
         }
       }
 
+      if (dataFiltered.length === 0) {
+        return {
+          values,
+          errors: {
+            type: 'error',
+            message: 'Please select at least one instance type.',
+          },
+        }
+      }
+
       return {
         values,
         errors: {},
@@ -121,8 +99,8 @@ function KarpenterInstanceForm({
   const watchAMD64 = methods.watch('AMD64')
   const watchARM64 = methods.watch('ARM64')
 
-  const debounceCpu = useDebounce(watchCpu, DEBOUNCE_TIME)
-  const debounceMemory = useDebounce(watchMemory, DEBOUNCE_TIME)
+  // const debounceCpu = useDebounce(watchCpu, DEBOUNCE_TIME)
+  // const debounceMemory = useDebounce(watchMemory, DEBOUNCE_TIME)
 
   const maxCpu = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'cpu'), [cloudProviderInstanceTypes])
   const maxMemory = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'ram_in_gb'), [cloudProviderInstanceTypes])
@@ -138,14 +116,6 @@ function KarpenterInstanceForm({
     cloudProviderInstanceTypes.forEach((instanceType) => {
       const { attributes, architecture } = instanceType
       if (!attributes?.instance_size || !architecture) return
-      if (
-        (architecture === 'AMD64' && !watchAMD64) ||
-        (architecture === 'ARM64' && !watchARM64) ||
-        !isNumberInRange(instanceType.cpu, debounceCpu) ||
-        !isNumberInRange(instanceType.ram_in_gb, debounceMemory)
-      )
-        return
-
       sizes.add(attributes.instance_size)
 
       const category = attributes.instance_category
@@ -167,61 +137,75 @@ function KarpenterInstanceForm({
       instanceSizes: Array.from(sizes),
       instanceCategories: categories,
     }
-  }, [cloudProviderInstanceTypes, watchAMD64, watchARM64, debounceCpu, debounceMemory])
+  }, [cloudProviderInstanceTypes])
 
-  console.log(instanceSizes)
+  // Defined data filtered
+  useEffect(() => {
+    const subscription = methods.watch((data) => {
+      if (!data || !cloudProviderInstanceTypes) return
 
-  methods.watch((data) => {
-    if (!data || !cloudProviderInstanceTypes) return
+      const filtered = cloudProviderInstanceTypes.filter((instanceType) => {
+        // Architecture check
+        const architectureMatch =
+          (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
 
-    const filtered = cloudProviderInstanceTypes.filter((instanceType) => {
-      // Architecture check
-      const architectureMatch =
-        (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
+        // CPU range check
+        const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
 
-      // CPU range check
-      const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
+        // Memory range check
+        const memoryMatch = data.memory && isNumberInRange(instanceType.ram_in_gb, data.memory as [number, number])
 
-      // Memory range check
-      const memoryMatch = data.memory && isNumberInRange(instanceType.ram_in_gb, data.memory as [number, number])
+        // Categories check
+        const categoriesMatch = () => {
+          if (!data.categories || Object.keys(data.categories).length === 0) return false
+          const instanceCategory = instanceType.attributes?.instance_category
+          const instanceFamily = instanceType.attributes?.instance_family
 
-      // Categories check
-      const categoriesMatch = () => {
-        if (!data.categories || Object.keys(data.categories).length === 0) return false
-        const instanceCategory = instanceType.attributes?.instance_category
-        const instanceFamily = instanceType.attributes?.instance_family
+          if (!instanceCategory || !instanceFamily) return false
 
-        if (!instanceCategory || !instanceFamily) return false
+          const hashmap = new Map(Object.entries(data.categories))
 
-        const hashmap = new Map(Object.entries(data.categories))
+          return hashmap.get(instanceCategory)?.includes(instanceFamily)
+        }
 
-        return hashmap.get(instanceCategory)?.includes(instanceFamily)
-      }
+        // Sizes range check
+        const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
 
-      // Sizes range check
-      const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
+        return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
+      })
 
-      return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
+      setDataFiltered((previousData) =>
+        JSON.stringify(previousData) !== JSON.stringify(filtered) ? filtered : previousData
+      )
     })
+    return () => subscription.unsubscribe()
+  }, [methods])
 
-    setDataFiltered(filtered)
-  })
+  useEffect(() => {
+    const values = generateDefaultValues(dataFiltered)
+    // Set all news values based on the filtered data
+    // We can't use `methods.reset` because it provides infinite loop
+    methods.setValue('AMD64', values.AMD64)
+    methods.setValue('ARM64', values.ARM64)
+    methods.setValue('sizes', values.sizes)
+    methods.setValue('categories', values.categories)
+  }, [dataFiltered, methods])
 
   const onSubmit = useCallback(
     methods.handleSubmit(({ ARM64, AMD64, default_service_architecture }) => {
       const instanceSize = dataFiltered
-        .map((instanceType) => instanceType.attributes?.instance_size ?? '')
-        .filter(Boolean)
+        .map((instanceType) => instanceType.attributes?.instance_size)
+        .filter((item): item is string => item !== undefined)
       const instanceFamily = dataFiltered
-        .map((instanceType) => instanceType.attributes?.instance_family ?? '')
-        .filter(Boolean)
+        .map((instanceType) => instanceType.attributes?.instance_family)
+        .filter((item): item is string => item !== undefined)
 
       onChange({
         default_service_architecture,
         qovery_node_pools: {
           requirements: [
-            { key: 'InstanceSize', operator: 'In', values: instanceSize },
-            { key: 'InstanceFamily', operator: 'In', values: instanceFamily },
+            { key: 'InstanceSize', operator: 'In', values: Array.from(new Set(instanceSize)) },
+            { key: 'InstanceFamily', operator: 'In', values: Array.from(new Set(instanceFamily)) },
             { key: 'Arch', operator: 'In', values: [ARM64 ? 'ARM64' : '', AMD64 ? 'AMD64' : ''].filter(Boolean) },
           ],
         },
@@ -240,10 +224,10 @@ function KarpenterInstanceForm({
     <FormProvider {...methods}>
       <ModalCrud title="Karpenter Instance Visual filter" onClose={onClose} onSubmit={onSubmit} submitLabel="Confirm">
         <div className="flex rounded-md border border-neutral-200">
-          <div className="flex max-h-[64vh] w-1/2 flex-col gap-2 overflow-y-scroll p-2">
+          <div className="flex max-h-[60vh] w-1/2 flex-col gap-2 overflow-y-scroll p-2">
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <span className="font-semibold text-neutral-400">Architecture</span>
-              <div className="flex flex-col gap-1">
+              <div className="grid grid-cols-2 gap-1">
                 <div className="flex items-center gap-3">
                   <Controller
                     name="AMD64"
@@ -255,7 +239,18 @@ function KarpenterInstanceForm({
                           name={field.name}
                           id={field.name}
                           checked={field.value}
-                          onCheckedChange={field.onChange}
+                          onCheckedChange={(checked) => {
+                            if (!checked) {
+                              methods.setValue('default_service_architecture', 'ARM64')
+                            } else {
+                              // Reset all other values
+                              const values = generateDefaultValues(cloudProviderInstanceTypes)
+                              methods.setValue('sizes', values.sizes)
+                              methods.setValue('categories', values.categories)
+                            }
+
+                            field.onChange(checked)
+                          }}
                         />
                         <label htmlFor="AMD64">AMD64</label>
                       </>
@@ -273,7 +268,26 @@ function KarpenterInstanceForm({
                           name={field.name}
                           id={field.name}
                           checked={field.value}
-                          onCheckedChange={field.onChange}
+                          onCheckedChange={(checked) => {
+                            if (!checked) {
+                              methods.setValue('default_service_architecture', 'AMD64')
+
+                              const values = generateDefaultValues(
+                                cloudProviderInstanceTypes.filter(
+                                  (instanceType) => instanceType.architecture === 'AMD64'
+                                )
+                              )
+                              // methods.setValue(`sizes.${values.}`, values.sizes)
+                              // methods.setValue('categories', values.categories)
+                            } else {
+                              // Reset all other values
+                              const values = generateDefaultValues(cloudProviderInstanceTypes)
+                              methods.setValue('sizes', values.sizes)
+                              methods.setValue('categories', values.categories)
+                            }
+
+                            field.onChange(checked)
+                          }}
                         />
                         <label htmlFor="ARM64">ARM64</label>
                       </>
@@ -290,94 +304,95 @@ function KarpenterInstanceForm({
                     options={Object.keys(CpuArchitectureEnum).map((value) => ({ label: value, value }))}
                     onChange={field.onChange}
                     value={field.value}
+                    disabled={!watchAMD64 || !watchARM64}
                     hint="Applications will be built and deployed on this architecture"
                   />
                 )}
               />
             </div>
-            {(watchAMD64 || watchARM64) && (
-              <>
-                <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-                  <span className="font-semibold text-neutral-400">Resources</span>
-                  <div>
+            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+              <span className="font-semibold text-neutral-400">Size</span>
+              <div className="grid grid-cols-3 gap-1">
+                {sortInstanceSizes(instanceSizes)?.map((size) => (
+                  <div key={size} className="flex items-center gap-3">
                     <Controller
-                      name="cpu"
+                      name="sizes"
                       control={methods.control}
                       render={({ field }) => (
-                        <div className="flex w-full flex-col">
-                          <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
-                          <Slider onChange={field.onChange} value={field.value} max={maxCpu} min={1} step={1} />
-                        </div>
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <Controller
-                      name="memory"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <div className="flex w-full flex-col">
-                          <p className="mb-3 text-sm font-medium text-neutral-400">{`Memory min ${watchMemory[0]} - max ${watchMemory[1]}`}</p>
-                          <Slider onChange={field.onChange} value={field.value} max={maxMemory} min={1} step={1} />
-                        </div>
-                      )}
-                    />
-                  </div>
-                </div>
-                {instanceSizes.length > 0 && (
-                  <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-                    <span className="font-semibold text-neutral-400">Size</span>
-                    <div className="grid grid-cols-2 gap-1">
-                      {instanceSizes?.map((size) => (
-                        <div key={size} className="flex items-center gap-3">
-                          <Controller
-                            name="sizes"
-                            control={methods.control}
-                            render={({ field }) => (
-                              <>
-                                <Checkbox
-                                  className="shrink-0"
-                                  name={size}
-                                  id={size}
-                                  checked={field.value.includes(size)}
-                                  onCheckedChange={(checked) => {
-                                    const newSizes = checked
-                                      ? [...field.value, size]
-                                      : field.value.filter((s) => s !== size)
-                                    field.onChange(newSizes)
-                                  }}
-                                />
-                                <label htmlFor={size}>{size}</label>
-                              </>
-                            )}
+                        <>
+                          <Checkbox
+                            className="shrink-0"
+                            name={size}
+                            id={size}
+                            checked={field.value.includes(size)}
+                            onCheckedChange={(checked) => {
+                              const newSizes = checked ? [...field.value, size] : field.value.filter((s) => s !== size)
+                              field.onChange(newSizes)
+                            }}
                           />
-                        </div>
-                      ))}
-                    </div>
+                          <label htmlFor={size}>{size}</label>
+                        </>
+                      )}
+                    />
                   </div>
-                )}
-                {allCategories.length > 0 && (
-                  <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-                    <span className="font-semibold text-neutral-400">Categories/Families</span>
-                    <div>
-                      {allCategories
-                        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-                        .map((category) => {
-                          const attributes: ClusterInstanceAttributes[] = Object.values(instanceCategories).flatMap(
-                            (architecture) => architecture[category] || []
-                          )
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+              <span className="font-semibold text-neutral-400">Resources</span>
+              <div>
+                <Controller
+                  name="cpu"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <div className="flex w-full flex-col">
+                      <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU (vCPUs) min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
+                      <Slider onChange={field.onChange} value={field.value} max={maxCpu} min={1} step={1} />
+                    </div>
+                  )}
+                />
+              </div>
+              <div>
+                <Controller
+                  name="memory"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <div className="flex w-full flex-col">
+                      <p className="mb-3 text-sm font-medium text-neutral-400">{`Memory (GiB) min ${watchMemory[0]} - max ${watchMemory[1]}`}</p>
+                      <Slider onChange={field.onChange} value={field.value} max={maxMemory} min={1} step={1} />
+                    </div>
+                  )}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
+              <span className="font-semibold text-neutral-400">Categories/Families</span>
+              <div>
+                {allCategories
+                  .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+                  .map((category) => {
+                    const attributes: ClusterInstanceAttributes[] = Object.values(instanceCategories).flatMap(
+                      (architecture) => architecture[category] || []
+                    )
 
-                          if (attributes.length === 0) return null
-                          return <InstanceCategory key={category} title={category} attributes={attributes} />
-                        })}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+                    if (attributes.length === 0) return null
+                    return <InstanceCategory key={category} title={category} attributes={attributes} />
+                  })}
+              </div>
+            </div>
           </div>
           <div className="flex w-1/2 flex-col gap-4 border-l border-neutral-200 p-6">
-            <span className="font-semibold text-neutral-400">Selected type instances: {dataFiltered.length}</span>
+            <div className="flex w-full items-center justify-between">
+              <span className="font-semibold text-neutral-400">Selected type instances: {dataFiltered.length}</span>
+              <Tooltip
+                classNameContent="max-w-80"
+                content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
+              >
+                <span className="text-xl text-neutral-400">
+                  <Icon iconName="info-circle" iconStyle="regular" />
+                </span>
+              </Tooltip>
+            </div>
             {dataFiltered.length > 0 && (
               <div className="flex flex-wrap text-neutral-400">
                 {dataFiltered.slice(0, DISPLAY_LIMIT).map((instanceType, index) => (
@@ -431,6 +446,7 @@ export function KarpenterInstanceFilterModal({
         clusterType: 'MANAGED' as const,
         region: clusterRegion,
         onlyMeetsResourceReqs: false,
+        withCpu: false,
       }))
       .with('SCW', (cloudProvider) => ({
         cloudProvider,
@@ -452,6 +468,7 @@ export function KarpenterInstanceFilterModal({
   )
 
   if (cloudProviderInstanceTypes) {
+    // Hide GPU instances for Karpenter
     return (
       <KarpenterInstanceForm
         defaultValues={defaultValues}
@@ -462,7 +479,7 @@ export function KarpenterInstanceFilterModal({
     )
   } else {
     return (
-      <div className="flex h-[80vh] w-full items-center justify-center">
+      <div className="flex w-full items-center justify-center">
         <LoaderSpinner />
       </div>
     )

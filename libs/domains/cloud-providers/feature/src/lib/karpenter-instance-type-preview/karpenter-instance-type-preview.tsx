@@ -1,5 +1,6 @@
 import { type CpuArchitectureEnum, type KarpenterNodePoolRequirement } from 'qovery-typescript-axios'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
+import sortInstanceSizes from '../karpenter-instance-filter-modal/utils/sort-instance-sizes'
 
 export interface KarpenterInstanceTypePreviewProps {
   defaultServiceArchitecture: CpuArchitectureEnum
@@ -8,12 +9,11 @@ export interface KarpenterInstanceTypePreviewProps {
 }
 
 function TruncatedList({ values, maxDisplay = 10 }: { values: string[]; maxDisplay?: number }) {
-  if (values.length <= maxDisplay) {
-    return <>{values.join(', ')}</>
-  }
+  const uniqueValues = Array.from(new Set(values))
+  if (uniqueValues.length <= maxDisplay) return <>{uniqueValues.join(', ')}</>
 
-  const displayedValues = values.slice(0, maxDisplay)
-  const remaining = values.length - maxDisplay
+  const displayedValues = uniqueValues.slice(0, maxDisplay)
+  const remaining = uniqueValues.length - maxDisplay
 
   return (
     <>
@@ -48,13 +48,13 @@ export function KarpenterInstanceTypePreview({
       {families && families?.values.length > 0 && (
         <p className="font-normal">
           <span className="font-medium">{pluralize(families?.values.length, 'Family', 'Families')}: </span>
-          <TruncatedList values={families?.values} />
+          <TruncatedList values={families?.values.sort((a, b) => a.localeCompare(b))} />
         </p>
       )}
       {sizes && sizes?.values.length > 0 && (
         <p className="font-normal">
           <span className="font-medium">{pluralize(sizes?.values.length, 'Size', 'Sizes')}: </span>
-          <TruncatedList values={sizes?.values} maxDisplay={8} />
+          <TruncatedList values={sortInstanceSizes(sizes?.values)} maxDisplay={8} />
         </p>
       )}
     </div>

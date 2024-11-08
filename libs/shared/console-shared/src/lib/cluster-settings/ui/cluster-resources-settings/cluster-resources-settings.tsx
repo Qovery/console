@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion'
 import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -50,36 +51,31 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchKarpenterEnabled = watch('karpenter.enabled')
   const watchKarpenter = watch('karpenter')
 
-  const {
-    data: cloudProviderInstanceTypes,
-    refetch: refetchCloudProviderInstanceTypes,
-    isRefetching: isLoadingCloudProviderInstanceTypes,
-  } = useCloudProviderInstanceTypes(
-    match(props.cloudProvider || CloudProviderEnum.AWS)
-      .with('AWS', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
-        region: props.clusterRegion || '',
-        onlyMeetsResourceReqs: !watchKarpenterEnabled,
-      }))
-      .with('SCW', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        region: props.clusterRegion || '',
-        onlyMeetsResourceReqs: !watchKarpenterEnabled,
-      }))
-      .with('GCP', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        onlyMeetsResourceReqs: !watchKarpenterEnabled,
-      }))
-      .with('ON_PREMISE', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        onlyMeetsResourceReqs: !watchKarpenterEnabled,
-      }))
-      .exhaustive()
-  )
+  const { data: cloudProviderInstanceTypes, refetch: refetchCloudProviderInstanceTypes } =
+    useCloudProviderInstanceTypes(
+      match(props.cloudProvider || CloudProviderEnum.AWS)
+        .with('AWS', (cloudProvider) => ({
+          cloudProvider,
+          clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
+          region: props.clusterRegion || '',
+          onlyMeetsResourceReqs: !watchKarpenterEnabled,
+          withCpu: !watchKarpenterEnabled,
+        }))
+        .with('SCW', (cloudProvider) => ({
+          cloudProvider,
+          clusterType: 'MANAGED' as const,
+          region: props.clusterRegion || '',
+        }))
+        .with('GCP', (cloudProvider) => ({
+          cloudProvider,
+          clusterType: 'MANAGED' as const,
+        }))
+        .with('ON_PREMISE', (cloudProvider) => ({
+          cloudProvider,
+          clusterType: 'MANAGED' as const,
+        }))
+        .exhaustive()
+    )
 
   const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
 
@@ -139,7 +135,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       {((!props.fromDetail && !props.isProduction) || props.fromDetail) &&
         props.cloudProvider === 'AWS' &&
         watchClusterType === KubernetesEnum.MANAGED && (
-          <BlockContent title="Reduce your costs by enabling Karpenter (Beta) " className="mb-0" classNameContent="p-0">
+          <BlockContent title="Reduce your costs by enabling Karpenter (Beta)" className="mb-0" classNameContent="p-0">
             <Controller
               name="karpenter.enabled"
               defaultValue={false}
@@ -174,49 +170,67 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     </div>
                     <KarpenterImage className="absolute right-0 top-0" />
                   </div>
-                  {watchKarpenterEnabled && !isLoadingCloudProviderInstanceTypes && (
-                    <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
-                      <div className="w-full">
-                        <p className="mb-2">Instance type scope</p>
-                        <KarpenterInstanceTypePreview
-                          defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
-                          requirements={watchKarpenter?.qovery_node_pools?.requirements}
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        color="neutral"
-                        variant="surface"
-                        size="md"
-                        className="gap-2"
-                        onClick={() => {
-                          openModal({
-                            options: {
-                              width: 840,
-                            },
-                            content: (
-                              <KarpenterInstanceFilterModal
-                                cloudProvider={props.cloudProvider ?? 'AWS'}
-                                clusterRegion={props.clusterRegion ?? ''}
-                                defaultValues={watchKarpenter}
-                                onClose={closeModal}
-                                onChange={(values) => {
-                                  setValue('karpenter', {
-                                    enabled: watchKarpenterEnabled,
-                                    spot_enabled: watchKarpenter?.spot_enabled ?? false,
-                                    disk_size_in_gib: watchDiskSize,
-                                    ...values,
-                                  })
-                                }}
-                              />
-                            ),
-                          })
-                        }}
+                  <AnimatePresence>
+                    {watchKarpenterEnabled && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                        exit={{ height: 0 }}
+                        transition={{ duration: 0.15, ease: 'linear' }}
+                        className="overflow-hidden"
                       >
-                        Edit <Icon iconName="pen" iconStyle="solid" />
-                      </Button>
-                    </div>
-                  )}
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                          className="overflow-hidden"
+                        >
+                          <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
+                            <div className="w-full">
+                              <p className="mb-2">Instance type scope</p>
+                              <KarpenterInstanceTypePreview
+                                defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
+                                requirements={watchKarpenter?.qovery_node_pools?.requirements}
+                              />
+                            </div>
+                            <Button
+                              type="button"
+                              color="neutral"
+                              variant="surface"
+                              size="md"
+                              className="gap-2"
+                              onClick={() => {
+                                openModal({
+                                  options: {
+                                    width: 840,
+                                  },
+                                  content: (
+                                    <KarpenterInstanceFilterModal
+                                      cloudProvider={props.cloudProvider ?? 'AWS'}
+                                      clusterRegion={props.clusterRegion ?? ''}
+                                      defaultValues={watchKarpenter}
+                                      onClose={closeModal}
+                                      onChange={(values) => {
+                                        setValue('karpenter', {
+                                          enabled: watchKarpenterEnabled,
+                                          spot_enabled: watchKarpenter?.spot_enabled ?? false,
+                                          disk_size_in_gib: watchDiskSize,
+                                          ...values,
+                                        })
+                                      }}
+                                    />
+                                  ),
+                                })
+                              }}
+                            >
+                              Edit <Icon iconName="pen" iconStyle="solid" />
+                            </Button>
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
             />
