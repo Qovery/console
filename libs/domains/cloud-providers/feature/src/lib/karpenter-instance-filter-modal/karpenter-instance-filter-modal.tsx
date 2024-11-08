@@ -28,12 +28,12 @@ const DISPLAY_LIMIT = 60
 
 const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
-export const getMaxValue = (
-  instances: ClusterInstanceTypeResponseListResultsInner[],
-  key: 'cpu' | 'ram_in_gb'
-): number => {
-  return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
-}
+// export const getMaxValue = (
+//   instances: ClusterInstanceTypeResponseListResultsInner[],
+//   key: 'cpu' | 'ram_in_gb'
+// ): number => {
+//   return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
+// }
 
 export interface KarpenterInstanceFilterModalProps {
   clusterRegion: string
@@ -140,41 +140,25 @@ function KarpenterInstanceForm({
   // Defined data filtered
   methods.watch((data) => {
     if (!data || !cloudProviderInstanceTypes) return
-
-        // CPU range check
-        const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
-
+    const filtered = cloudProviderInstanceTypes.filter((instanceType) => {
+      // Architecture check
+      const architectureMatch =
+        (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
       // Categories check
       const categoriesMatch = () => {
         if (!data.categories || Object.keys(data.categories).length === 0) return false
         const instanceCategory = instanceType.attributes?.instance_category
         const instanceFamily = instanceType.attributes?.instance_family
-
-          const hashmap = new Map(Object.entries(data.categories))
-
-          return hashmap.get(instanceCategory)?.includes(instanceFamily)
-        }
-
-        // Sizes range check
-        const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
-
-        return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
-      })
-
+        if (!instanceCategory || !instanceFamily) return false
+        const hashmap = new Map(Object.entries(data.categories))
+        return hashmap.get(instanceCategory)?.includes(instanceFamily)
+      }
+      // Sizes range check
+      const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
       return architectureMatch && sizeMatch && categoriesMatch()
     })
-    return () => subscription.unsubscribe()
-  }, [methods])
-
-  useEffect(() => {
-    const values = generateDefaultValues(dataFiltered)
-    // Set all news values based on the filtered data
-    // We can't use `methods.reset` because it provides infinite loop
-    methods.setValue('AMD64', values.AMD64)
-    methods.setValue('ARM64', values.ARM64)
-    methods.setValue('sizes', values.sizes)
-    methods.setValue('categories', values.categories)
-  }, [dataFiltered, methods])
+    setDataFiltered(filtered)
+  })
 
   const onSubmit = useCallback(
     methods.handleSubmit(({ ARM64, AMD64, default_service_architecture }) => {
