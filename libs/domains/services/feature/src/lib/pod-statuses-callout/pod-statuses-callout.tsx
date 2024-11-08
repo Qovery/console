@@ -60,7 +60,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     })
   }
 
-  if (runningStatuses.state === 'WARNING') {
+  if (runningStatuses.state === 'WARNING' || runningStatuses.state === 'ERROR') {
     const certificatesInError =
       'certificates' in runningStatuses && runningStatuses.certificates.filter(({ state }) => state === 'ERROR')
     if (certificatesInError && certificatesInError.length > 0) {
@@ -117,14 +117,14 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     <>
       {callouts
         .filter((_, index) => index === activeIndex)
-        .map(({ id, icon, color, children, title, description: description }, index) => (
+        .map(({ id, icon, color, children, title, description: description }) => (
           <Callout.Root color={color} key={id}>
             <Callout.Icon>
               <Icon name={icon} iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>
-                {callouts.length > 1 ? `${index + 1}/${callouts.length} ` : undefined}
+                {callouts.length > 1 ? `${activeIndex + 1}/${callouts.length} ` : undefined}
                 {title}
               </Callout.TextHeading>
               <Callout.TextDescription>{description}</Callout.TextDescription>

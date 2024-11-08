@@ -21,6 +21,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
         <span
           class="block font-medium leading-6"
         >
+          1/2 
           Application pods are in error
         </span>
         <span
@@ -31,7 +32,27 @@ exports[`PodStatusesCallout should render successfully 1`] = `
       </div>
       <div
         class="flex flex-row items-center gap-1.5"
-      />
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+          disabled=""
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-chevron-left px-1"
+          />
+        </button>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+          type="button"
+        >
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-chevron-right px-1"
+          />
+        </button>
+      </div>
     </div>
   </div>
 </body>
