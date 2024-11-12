@@ -191,6 +191,22 @@ function KarpenterInstanceForm({
     [dataFiltered, onChange, onClose]
   )
 
+  const resetAll = () => {
+    const values = generateDefaultValues(cloudProviderInstanceTypes)
+    methods.setValue('sizes', values.sizes)
+    methods.setValue('categories', values.categories)
+  }
+
+  const resetSizes = () => {
+    const values = generateDefaultValues(cloudProviderInstanceTypes)
+    methods.setValue('sizes', values.sizes)
+  }
+
+  const resetCategories = () => {
+    const values = generateDefaultValues(cloudProviderInstanceTypes)
+    methods.setValue('categories', values.categories)
+  }
+
   const allCategories = [
     ...new Set(Object.values(instanceCategories).flatMap((architecture) => Object.keys(architecture))),
   ]
@@ -201,7 +217,20 @@ function KarpenterInstanceForm({
         <div className="flex rounded-md border border-neutral-200">
           <div className="flex max-h-[60vh] w-1/2 flex-col gap-2 overflow-y-scroll p-2">
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="font-semibold text-neutral-400">Architecture</span>
+              <span className="flex w-full justify-between font-semibold text-neutral-400">
+                Architecture{' '}
+                <button
+                  type="button"
+                  onClick={() => {
+                    methods.setValue('AMD64', true)
+                    methods.setValue('ARM64', true)
+                    resetAll()
+                  }}
+                  className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                >
+                  Reset all
+                </button>
+              </span>
               <div className="grid grid-cols-2 gap-1">
                 <div className="flex items-center gap-3">
                   <Controller
@@ -219,9 +248,7 @@ function KarpenterInstanceForm({
                               methods.setValue('default_service_architecture', 'ARM64')
                             } else {
                               // Reset all other values
-                              const values = generateDefaultValues(cloudProviderInstanceTypes)
-                              methods.setValue('sizes', values.sizes)
-                              methods.setValue('categories', values.categories)
+                              resetAll()
                             }
 
                             field.onChange(checked)
@@ -248,9 +275,7 @@ function KarpenterInstanceForm({
                               methods.setValue('default_service_architecture', 'AMD64')
                             } else {
                               // Reset all other values
-                              const values = generateDefaultValues(cloudProviderInstanceTypes)
-                              methods.setValue('sizes', values.sizes)
-                              methods.setValue('categories', values.categories)
+                              resetAll()
                             }
 
                             field.onChange(checked)
@@ -278,7 +303,16 @@ function KarpenterInstanceForm({
               />
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="font-semibold text-neutral-400">Size</span>
+              <span className="flex w-full justify-between font-semibold text-neutral-400">
+                Size
+                <button
+                  type="button"
+                  onClick={resetSizes}
+                  className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                >
+                  Reset
+                </button>
+              </span>
               <div className="grid grid-cols-3 gap-1">
                 {sortInstanceSizes(instanceSizes)?.map((size) => (
                   <div key={size} className="flex items-center gap-3">
@@ -306,7 +340,16 @@ function KarpenterInstanceForm({
               </div>
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="font-semibold text-neutral-400">Categories/Families</span>
+              <span className="flex w-full justify-between font-semibold text-neutral-400">
+                Categories/Families
+                <button
+                  type="button"
+                  onClick={resetCategories}
+                  className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                >
+                  Reset
+                </button>
+              </span>
               <div>
                 {allCategories
                   .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
@@ -327,7 +370,7 @@ function KarpenterInstanceForm({
             })}
           >
             <div className="flex w-full items-center justify-between">
-              <span className="font-semibold text-neutral-400">Selected type instances: {dataFiltered.length}</span>
+              <span className="font-semibold text-neutral-400">Selected instance types: {dataFiltered.length}</span>
               <Tooltip
                 classNameContent="max-w-80"
                 content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
@@ -337,6 +380,21 @@ function KarpenterInstanceForm({
                 </span>
               </Tooltip>
             </div>
+            {dataFiltered.filter((instanceType) => instanceType.attributes?.meets_resource_reqs).length === 0 && (
+              <Callout.Root color="yellow">
+                <Callout.Icon>
+                  <Icon iconName="info-circle" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Warning</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    To install Qovery, at least one of the selected instance types must meet the minimum requirements of
+                    2 CPUs and 2 GB of memory. Currently, none of them do. Please select at least one instance type that
+                    satisfies these criteria.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            )}
             {dataFiltered.length > 0 && (
               <div className="flex flex-wrap text-neutral-400">
                 {(!extendSelection ? dataFiltered.slice(0, DISPLAY_LIMIT) : dataFiltered).map((instanceType, index) => (
@@ -374,21 +432,6 @@ function KarpenterInstanceForm({
                   </button>
                 )}
               </div>
-            )}
-            {dataFiltered.filter((instanceType) => instanceType.attributes?.meets_resource_reqs).length === 0 && (
-              <Callout.Root color="yellow">
-                <Callout.Icon>
-                  <Icon iconName="info-circle" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextHeading>Warning</Callout.TextHeading>
-                  <Callout.TextDescription>
-                    To install Qovery, at least one of the selected instance types must meet the minimum requirements of
-                    2 CPUs and 2 GB of memory. Currently, none of them do. Please select at least one instance type that
-                    satisfies these criteria.
-                  </Callout.TextDescription>
-                </Callout.Text>
-              </Callout.Root>
             )}
           </div>
         </div>
