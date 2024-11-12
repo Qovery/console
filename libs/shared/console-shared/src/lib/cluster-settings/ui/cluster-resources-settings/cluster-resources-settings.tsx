@@ -245,7 +245,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                           setValue('karpenter', {
                                             enabled: watchKarpenterEnabled,
                                             spot_enabled: watchKarpenter?.spot_enabled ?? false,
-                                            disk_size_in_gib: watchDiskSize,
+                                            disk_size_in_gib: watchKarpenter?.disk_size_in_gib ?? 50,
                                             ...values,
                                           })
                                         }}

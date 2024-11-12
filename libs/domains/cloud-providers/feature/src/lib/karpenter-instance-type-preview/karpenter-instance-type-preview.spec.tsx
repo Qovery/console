@@ -27,7 +27,7 @@ describe('KarpenterInstanceTypePreview', () => {
     expect(screen.getByText('amd64, arm64')).toBeInTheDocument()
 
     expect(screen.getByText('Families:')).toBeInTheDocument()
-    expect(screen.getByText('t3, m5, c5')).toBeInTheDocument()
+    expect(screen.getByText('c5, m5, t3')).toBeInTheDocument()
 
     expect(screen.getByText('Sizes:')).toBeInTheDocument()
     expect(screen.getByText('small, medium, large')).toBeInTheDocument()
