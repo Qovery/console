@@ -18,7 +18,8 @@ export function filterInstancesByKarpenterRequirements(
       }
 
       if (requirement.key === 'Arch') {
-        return requirement.values.includes(instanceArchitecture)
+        // Fix inconsistency between uppercase and lowercase with architecture during the migration
+        return requirement.values.map((v) => v.toUpperCase()).includes(instanceArchitecture)
       }
 
       if (requirement.key === 'InstanceFamily') {

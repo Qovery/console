@@ -197,14 +197,46 @@ function KarpenterInstanceForm({
     methods.setValue('categories', values.categories)
   }
 
-  const resetSizes = () => {
-    const values = generateDefaultValues(cloudProviderInstanceTypes)
-    methods.setValue('sizes', values.sizes)
+  const selectAllArchitectures = () => {
+    methods.setValue('AMD64', true)
+    methods.setValue('ARM64', true)
   }
 
-  const resetCategories = () => {
-    const values = generateDefaultValues(cloudProviderInstanceTypes)
-    methods.setValue('categories', values.categories)
+  const unselectAllArchitectures = () => {
+    methods.setValue('AMD64', false)
+    methods.setValue('ARM64', false)
+  }
+
+  const selectAllSizes = () => {
+    methods.setValue('sizes', instanceSizes)
+  }
+
+  const unselectAllSizes = () => {
+    methods.setValue('sizes', [])
+  }
+
+  const selectAllCategories = () => {
+    const allCategories: Record<string, string[]> = {}
+
+    cloudProviderInstanceTypes.forEach((instanceType) => {
+      const category = instanceType.attributes?.instance_category
+      const family = instanceType.attributes?.instance_family
+
+      if (category && family) {
+        if (!allCategories[category]) {
+          allCategories[category] = []
+        }
+        if (!allCategories[category].includes(family)) {
+          allCategories[category].push(family)
+        }
+      }
+    })
+
+    methods.setValue('categories', allCategories)
+  }
+
+  const unselectAllCategories = () => {
+    methods.setValue('categories', {})
   }
 
   const allCategories = [
@@ -217,20 +249,26 @@ function KarpenterInstanceForm({
         <div className="flex rounded-md border border-neutral-200">
           <div className="flex max-h-[60vh] w-1/2 flex-col gap-2 overflow-y-scroll p-2">
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="flex w-full justify-between font-semibold text-neutral-400">
+              <div className="flex w-full justify-between font-semibold text-neutral-400">
                 Architecture{' '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    methods.setValue('AMD64', true)
-                    methods.setValue('ARM64', true)
-                    resetAll()
-                  }}
-                  className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                >
-                  Reset all
-                </button>
-              </span>
+                <div className="flex gap-0.5">
+                  <button
+                    type="button"
+                    onClick={selectAllArchitectures}
+                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                  >
+                    Select
+                  </button>
+                  <span className="text-neutral-400">/</span>
+                  <button
+                    type="button"
+                    onClick={unselectAllArchitectures}
+                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                  >
+                    Unselect
+                  </button>
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-1">
                 <div className="flex items-center gap-3">
                   <Controller
@@ -303,16 +341,26 @@ function KarpenterInstanceForm({
               />
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="flex w-full justify-between font-semibold text-neutral-400">
+              <div className="flex w-full justify-between font-semibold text-neutral-400">
                 Size
-                <button
-                  type="button"
-                  onClick={resetSizes}
-                  className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                >
-                  Reset
-                </button>
-              </span>
+                <div className="flex gap-0.5">
+                  <button
+                    type="button"
+                    onClick={selectAllSizes}
+                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                  >
+                    Select
+                  </button>
+                  <span className="text-neutral-400">/</span>
+                  <button
+                    type="button"
+                    onClick={unselectAllSizes}
+                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                  >
+                    Unselect
+                  </button>
+                </div>
+              </div>
               <div className="grid grid-cols-3 gap-1">
                 {sortInstanceSizes(instanceSizes)?.map((size) => (
                   <div key={size} className="flex items-center gap-3">
@@ -340,16 +388,26 @@ function KarpenterInstanceForm({
               </div>
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="flex w-full justify-between font-semibold text-neutral-400">
+              <div className="flex w-full justify-between font-semibold text-neutral-400">
                 Categories/Families
-                <button
-                  type="button"
-                  onClick={resetCategories}
-                  className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                >
-                  Reset
-                </button>
-              </span>
+                <div className="flex gap-0.5">
+                  <button
+                    type="button"
+                    onClick={selectAllCategories}
+                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                  >
+                    Select
+                  </button>
+                  <span className="text-neutral-400">/</span>
+                  <button
+                    type="button"
+                    onClick={unselectAllCategories}
+                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                  >
+                    Unselect
+                  </button>
+                </div>
+              </div>
               <div>
                 {allCategories
                   .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))

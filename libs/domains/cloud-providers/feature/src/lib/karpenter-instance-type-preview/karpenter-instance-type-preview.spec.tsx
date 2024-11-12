@@ -24,7 +24,7 @@ describe('KarpenterInstanceTypePreview', () => {
     renderWithProviders(<KarpenterInstanceTypePreview {...defaultProps} requirements={requirements} />)
 
     expect(screen.getByText('Architectures:')).toBeInTheDocument()
-    expect(screen.getByText('amd64, arm64')).toBeInTheDocument()
+    expect(screen.getByText('AMD64, ARM64')).toBeInTheDocument()
 
     expect(screen.getByText('Families:')).toBeInTheDocument()
     expect(screen.getByText('c5, m5, t3')).toBeInTheDocument()

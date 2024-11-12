@@ -38,7 +38,7 @@ export function KarpenterInstanceTypePreview({
           <span className="font-medium">
             {pluralize(architectures?.values.length, 'Architecture', 'Architectures')}:{' '}
           </span>
-          {architectures?.values.join(', ')}
+          {architectures?.values.join(', ').toUpperCase()}
         </p>
       )}
       <p className="font-normal">
