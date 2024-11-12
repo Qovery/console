@@ -6,7 +6,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import { buttonVariants } from '../button-primitive/button-primitive'
 import Icon from '../icon/icon'
 
-const linkVariants = cva(
+export const linkVariants = cva(
   ['cursor-pointer', 'transition', 'duration-100', 'font-medium', 'inline-flex', 'items-center', 'gap-1'],
   {
     variants: {

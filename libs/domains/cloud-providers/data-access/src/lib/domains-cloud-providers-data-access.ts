@@ -66,24 +66,19 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudProviderEnum, 'AWS'>
           clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
           region: string
-          onlyMeetsResourceReqs?: boolean
-          withCpu?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'SCW'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
           region: string
-          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'GCP'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
-          onlyMeetsResourceReqs?: boolean
         }
       | {
           cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
-          onlyMeetsResourceReqs?: boolean
         }
   ) => ({
     queryKey: [args.cloudProvider, args.clusterType],
@@ -92,18 +87,23 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         .with({ cloudProvider: 'AWS', clusterType: 'K3S' }, ({ region }) =>
           cloudProviderApi.listAWSEc2InstanceType(region)
         )
-        .with(
-          { cloudProvider: 'AWS', clusterType: 'MANAGED' },
-          ({ region, onlyMeetsResourceReqs = false, withCpu = true }) =>
-            cloudProviderApi.listAWSEKSInstanceType(region, onlyMeetsResourceReqs, withCpu)
+        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, true, true)
         )
-        .with({ cloudProvider: 'AWS', clusterType: 'SELF_MANAGED' }, ({ region, onlyMeetsResourceReqs = false }) =>
-          cloudProviderApi.listAWSEKSInstanceType(region, onlyMeetsResourceReqs)
+        .with({ cloudProvider: 'AWS', clusterType: 'SELF_MANAGED' }, ({ region }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, true)
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'ON_PREMISE' }, () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
+      return response.data.results
+    },
+  }),
+  listInstanceTypesKarpenter: (args: { cloudProvider: Extract<CloudProviderEnum, 'AWS'>; region: string }) => ({
+    queryKey: [args.cloudProvider, args.region],
+    async queryFn() {
+      const response = await cloudProviderApi.listAWSEKSInstanceType(args.region, false, false)
       return response.data.results
     },
   }),

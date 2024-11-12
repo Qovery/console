@@ -8,6 +8,7 @@ import {
   KarpenterInstanceTypePreview,
   convertToKarpenterRequirements,
   useCloudProviderInstanceTypes,
+  useCloudProviderInstanceTypesKarpenter,
 } from '@qovery/domains/cloud-providers/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
@@ -51,42 +52,35 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchKarpenterEnabled = watch('karpenter.enabled')
   const watchKarpenter = watch('karpenter')
 
-  const { data: cloudProviderInstanceTypes, refetch: refetchCloudProviderInstanceTypes } =
-    useCloudProviderInstanceTypes(
-      match(props.cloudProvider || CloudProviderEnum.AWS)
-        .with('AWS', (cloudProvider) => ({
-          cloudProvider,
-          clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
-          region: props.clusterRegion || '',
-          onlyMeetsResourceReqs: !watchKarpenterEnabled,
-          withCpu: !watchKarpenterEnabled,
-        }))
-        .with('SCW', (cloudProvider) => ({
-          cloudProvider,
-          clusterType: 'MANAGED' as const,
-          region: props.clusterRegion || '',
-        }))
-        .with('GCP', (cloudProvider) => ({
-          cloudProvider,
-          clusterType: 'MANAGED' as const,
-        }))
-        .with('ON_PREMISE', (cloudProvider) => ({
-          cloudProvider,
-          clusterType: 'MANAGED' as const,
-        }))
-        .exhaustive()
-    )
+  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
+    match(props.cloudProvider || CloudProviderEnum.AWS)
+      .with('AWS', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
+        region: props.clusterRegion || '',
+      }))
+      .with('SCW', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: props.clusterRegion || '',
+      }))
+      .with('GCP', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
+      .with('ON_PREMISE', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+      }))
+      .exhaustive()
+  )
+
+  const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
+    region: props.clusterRegion || '',
+    enabled: !props.fromDetail,
+  })
 
   const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await refetchCloudProviderInstanceTypes()
-      if (data) setValue('karpenter.qovery_node_pools.requirements', convertToKarpenterRequirements(data))
-    }
-
-    fetchData()
-  }, [watchKarpenterEnabled])
 
   useEffect(() => {
     const instanceType: Value | undefined = instanceTypeOptions?.find((option) => option.value === watchInstanceType)
@@ -149,10 +143,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         name={field.name}
                         value={field.value}
                         onChange={(e) => {
-                          if (props.fromDetail) {
-                            const diskSize = watchDiskSize >= 50 ? watchDiskSize : 50
-                            setValue('karpenter.disk_size_in_gib', diskSize)
+                          if (cloudProviderInstanceTypesKarpenter) {
+                            setValue(
+                              'karpenter.qovery_node_pools.requirements',
+                              convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                            )
                           }
+
                           field.onChange(e)
                         }}
                         title="Activate Karpenter"
@@ -167,6 +164,39 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                       >
                         Documentation link
                       </ExternalLink>
+                      <AnimatePresence>
+                        <motion.div
+                          className="overflow-hidden"
+                          animate={{
+                            opacity: watchKarpenterEnabled ? 1 : 0,
+                            height: watchKarpenterEnabled ? 'auto' : 0,
+                          }}
+                          initial={{ opacity: 0, height: 0 }}
+                          transition={{
+                            duration: 0.2,
+                            ease: 'easeOut',
+                          }}
+                        >
+                          <div className="mt-5">
+                            <Callout.Root color="yellow">
+                              <Callout.Icon>
+                                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                              </Callout.Icon>
+                              <Callout.Text>
+                                <Callout.TextHeading>Warning</Callout.TextHeading>
+                                <Callout.TextDescription>
+                                  Before deploying your cluster, update the IAM permissions of the Qovery user, make
+                                  sure to use the{' '}
+                                  <ExternalLink size="sm" href="https://hub.qovery.com/files/qovery-iam-aws.json">
+                                    latest version here
+                                  </ExternalLink>{' '}
+                                  (adding the permission on SQS)
+                                </Callout.TextDescription>
+                              </Callout.Text>
+                            </Callout.Root>
+                          </div>
+                        </motion.div>
+                      </AnimatePresence>
                     </div>
                     <KarpenterImage className="absolute right-0 top-0" />
                   </div>
@@ -176,7 +206,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         initial={{ height: 0 }}
                         animate={{ height: 'auto' }}
                         exit={{ height: 0 }}
-                        transition={{ duration: 0.15, ease: 'linear' }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
                         className="overflow-hidden"
                       >
                         <motion.div
@@ -186,46 +216,63 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           transition={{ duration: 0.3, ease: 'easeInOut' }}
                           className="overflow-hidden"
                         >
-                          <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
-                            <div className="w-full">
-                              <p className="mb-2">Instance type scope</p>
-                              <KarpenterInstanceTypePreview
-                                defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
-                                requirements={watchKarpenter?.qovery_node_pools?.requirements}
+                          <div className="flex flex-col">
+                            <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
+                              <div className="w-full">
+                                <p className="mb-2">Instance type scope</p>
+                                <KarpenterInstanceTypePreview
+                                  defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
+                                  requirements={watchKarpenter?.qovery_node_pools?.requirements}
+                                />
+                              </div>
+                              <Button
+                                type="button"
+                                color="neutral"
+                                variant="surface"
+                                size="md"
+                                className="gap-2"
+                                onClick={() => {
+                                  openModal({
+                                    options: {
+                                      width: 840,
+                                    },
+                                    content: (
+                                      <KarpenterInstanceFilterModal
+                                        clusterRegion={props.clusterRegion ?? ''}
+                                        defaultValues={watchKarpenter}
+                                        onClose={closeModal}
+                                        onChange={(values) => {
+                                          setValue('karpenter', {
+                                            enabled: watchKarpenterEnabled,
+                                            spot_enabled: watchKarpenter?.spot_enabled ?? false,
+                                            disk_size_in_gib: watchDiskSize,
+                                            ...values,
+                                          })
+                                        }}
+                                      />
+                                    ),
+                                  })
+                                }}
+                              >
+                                Edit <Icon iconName="pen" iconStyle="solid" />
+                              </Button>
+                            </div>
+                            <div className="flex border-t border-neutral-250 p-4">
+                              <Controller
+                                name="karpenter.spot_enabled"
+                                control={control}
+                                render={({ field }) => (
+                                  <InputToggle
+                                    value={field.value}
+                                    onChange={field.onChange}
+                                    title="Spot instances"
+                                    description="Enable spot instances on your cluster"
+                                    forceAlignTop
+                                    small
+                                  />
+                                )}
                               />
                             </div>
-                            <Button
-                              type="button"
-                              color="neutral"
-                              variant="surface"
-                              size="md"
-                              className="gap-2"
-                              onClick={() => {
-                                openModal({
-                                  options: {
-                                    width: 840,
-                                  },
-                                  content: (
-                                    <KarpenterInstanceFilterModal
-                                      cloudProvider={props.cloudProvider ?? 'AWS'}
-                                      clusterRegion={props.clusterRegion ?? ''}
-                                      defaultValues={watchKarpenter}
-                                      onClose={closeModal}
-                                      onChange={(values) => {
-                                        setValue('karpenter', {
-                                          enabled: watchKarpenterEnabled,
-                                          spot_enabled: watchKarpenter?.spot_enabled ?? false,
-                                          disk_size_in_gib: watchDiskSize,
-                                          ...values,
-                                        })
-                                      }}
-                                    />
-                                  ),
-                                })
-                              }}
-                            >
-                              Edit <Icon iconName="pen" iconStyle="solid" />
-                            </Button>
                           </div>
                         </motion.div>
                       </motion.div>
@@ -236,24 +283,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
           </BlockContent>
         )}
-
-      {watchKarpenterEnabled && (
-        <Callout.Root color="yellow">
-          <Callout.Icon>
-            <Icon iconName="triangle-exclamation" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextHeading>Warning</Callout.TextHeading>
-            <Callout.TextDescription>
-              Before deploying your cluster, update the IAM permissions of the Qovery user, make sure to use the{' '}
-              <ExternalLink size="xs" href="https://hub.qovery.com/files/qovery-iam-aws.json">
-                latest version here
-              </ExternalLink>{' '}
-              (adding the permission on SQS)
-            </Callout.TextDescription>
-          </Callout.Text>
-        </Callout.Root>
-      )}
 
       <Section className="gap-4">
         <Heading>Resources configuration</Heading>
@@ -275,20 +304,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   onChange={field.onChange}
                   value={field.value}
                   hint="Storage allocated to your Kubernetes nodes to store files, application images etc.."
-                />
-              )}
-            />
-            <Controller
-              name="karpenter.spot_enabled"
-              control={control}
-              render={({ field }) => (
-                <InputToggle
-                  value={field.value}
-                  onChange={field.onChange}
-                  title="Spot instances"
-                  description="Enable spot instances on your cluster"
-                  forceAlignTop
-                  small
                 />
               )}
             />

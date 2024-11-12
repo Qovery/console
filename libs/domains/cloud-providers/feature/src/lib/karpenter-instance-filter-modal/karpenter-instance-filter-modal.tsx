@@ -1,35 +1,33 @@
+import clsx from 'clsx'
 import {
-  type CloudProviderEnum,
   type ClusterInstanceAttributes,
   type ClusterInstanceTypeResponseListResultsInner,
   CpuArchitectureEnum,
 } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { match } from 'ts-pattern'
 import { type KarpenterData } from '@qovery/shared/interfaces'
-import { Callout, Checkbox, Icon, InputSelect, LoaderSpinner, ModalCrud, Tooltip } from '@qovery/shared/ui'
-import { pluralize } from '@qovery/shared/util-js'
-import { useCloudProviderInstanceTypes } from '../hooks/use-cloud-provider-instance-types/use-cloud-provider-instance-types'
+import {
+  Callout,
+  Checkbox,
+  Icon,
+  InputSelect,
+  LoaderSpinner,
+  ModalCrud,
+  Tooltip,
+  linkVariants,
+} from '@qovery/shared/ui'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { useCloudProviderInstanceTypesKarpenter } from '../hooks/use-cloud-provider-instance-types-karpenter/use-cloud-provider-instance-types-karpenter'
 import { filterInstancesByKarpenterRequirements } from '../karpenter-instance-filter-modal/utils/filter-instances-by-karpenter-requirements'
 import { generateDefaultValues } from '../karpenter-instance-filter-modal/utils/generate-default-values'
 import { InstanceCategory } from './instance-category/instance-category'
 import { sortInstanceSizes } from './utils/sort-instance-sizes'
 
 const DISPLAY_LIMIT = 60
-// const DEBOUNCE_TIME = 300
-
 const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
-// export const getMaxValue = (
-//   instances: ClusterInstanceTypeResponseListResultsInner[],
-//   key: 'cpu' | 'ram_in_gb'
-// ): number => {
-//   return instances.reduce((acc, instance) => Math.max(acc, instance[key]), 0)
-// }
-
 export interface KarpenterInstanceFilterModalProps {
-  cloudProvider: CloudProviderEnum
   clusterRegion: string
   cloudProviderInstanceTypes: ClusterInstanceTypeResponseListResultsInner[]
   onChange: (data: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>) => void
@@ -52,12 +50,13 @@ function KarpenterInstanceForm({
   defaultValues,
   onChange,
   onClose,
-}: Omit<KarpenterInstanceFilterModalProps, 'cloudProvider' | 'clusterRegion'>) {
+}: Omit<KarpenterInstanceFilterModalProps, 'clusterRegion'>) {
   const _defaultValues = defaultValues
     ? filterInstancesByKarpenterRequirements(cloudProviderInstanceTypes, defaultValues)
     : cloudProviderInstanceTypes
 
   const [dataFiltered, setDataFiltered] = useState<ClusterInstanceTypeResponseListResultsInner[]>(_defaultValues)
+  const [extendSelection, setExtendSelection] = useState(false)
 
   const methods = useForm<KarpenterInstanceFormProps>({
     mode: 'onChange',
@@ -93,16 +92,8 @@ function KarpenterInstanceForm({
     },
   })
 
-  // const watchCpu = methods.watch('cpu')
-  // const watchMemory = methods.watch('memory')
   const watchAMD64 = methods.watch('AMD64')
   const watchARM64 = methods.watch('ARM64')
-
-  // const debounceCpu = useDebounce(watchCpu, DEBOUNCE_TIME)
-  // const debounceMemory = useDebounce(watchMemory, DEBOUNCE_TIME)
-
-  // const maxCpu = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'cpu'), [cloudProviderInstanceTypes])
-  // const maxMemory = useMemo(() => getMaxValue(cloudProviderInstanceTypes, 'ram_in_gb'), [cloudProviderInstanceTypes])
 
   const { instanceSizes, instanceCategories } = useMemo(() => {
     const sizes = new Set<string>()
@@ -139,46 +130,41 @@ function KarpenterInstanceForm({
   }, [cloudProviderInstanceTypes])
 
   // Defined data filtered
-  useEffect(() => {
-    const subscription = methods.watch((data) => {
-      if (!data || !cloudProviderInstanceTypes) return
+  methods.watch((data) => {
+    if (!data || !cloudProviderInstanceTypes) return
 
-      const filtered = cloudProviderInstanceTypes.filter((instanceType) => {
-        // Architecture check
-        const architectureMatch =
-          (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
+    const filtered = cloudProviderInstanceTypes.filter((instanceType) => {
+      // Architecture check
+      const architectureMatch =
+        (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
 
-        // CPU range check
-        const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
+      // CPU range check
+      const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
 
-        // Memory range check
-        const memoryMatch = data.memory && isNumberInRange(instanceType.ram_in_gb, data.memory as [number, number])
+      // Memory range check
+      const memoryMatch = data.memory && isNumberInRange(instanceType.ram_in_gb, data.memory as [number, number])
 
-        // Categories check
-        const categoriesMatch = () => {
-          if (!data.categories || Object.keys(data.categories).length === 0) return false
-          const instanceCategory = instanceType.attributes?.instance_category
-          const instanceFamily = instanceType.attributes?.instance_family
+      // Categories check
+      const categoriesMatch = () => {
+        if (!data.categories || Object.keys(data.categories).length === 0) return false
+        const instanceCategory = instanceType.attributes?.instance_category
+        const instanceFamily = instanceType.attributes?.instance_family
 
-          if (!instanceCategory || !instanceFamily) return false
+        if (!instanceCategory || !instanceFamily) return false
 
-          const hashmap = new Map(Object.entries(data.categories))
+        const hashmap = new Map(Object.entries(data.categories))
 
-          return hashmap.get(instanceCategory)?.includes(instanceFamily)
-        }
+        return hashmap.get(instanceCategory)?.includes(instanceFamily)
+      }
 
-        // Sizes range check
-        const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
+      // Sizes range check
+      const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
 
-        return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
-      })
-
-      setDataFiltered((previousData) =>
-        JSON.stringify(previousData) !== JSON.stringify(filtered) ? filtered : previousData
-      )
+      return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
     })
-    return () => subscription.unsubscribe()
-  }, [methods])
+
+    setDataFiltered(filtered)
+  })
 
   const onSubmit = useCallback(
     methods.handleSubmit(({ ARM64, AMD64, default_service_architecture }) => {
@@ -319,33 +305,6 @@ function KarpenterInstanceForm({
                 ))}
               </div>
             </div>
-            {/* <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="font-semibold text-neutral-400">Resources</span>
-              <div>
-                <Controller
-                  name="cpu"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <div className="flex w-full flex-col">
-                      <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU (vCPUs) min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
-                      <Slider onChange={field.onChange} value={field.value} max={maxCpu} min={1} step={1} />
-                    </div>
-                  )}
-                />
-              </div>
-              <div>
-                <Controller
-                  name="memory"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <div className="flex w-full flex-col">
-                      <p className="mb-3 text-sm font-medium text-neutral-400">{`Memory (GiB) min ${watchMemory[0]} - max ${watchMemory[1]}`}</p>
-                      <Slider onChange={field.onChange} value={field.value} max={maxMemory} min={1} step={1} />
-                    </div>
-                  )}
-                />
-              </div>
-            </div> */}
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <span className="font-semibold text-neutral-400">Categories/Families</span>
               <div>
@@ -362,7 +321,11 @@ function KarpenterInstanceForm({
               </div>
             </div>
           </div>
-          <div className="flex w-1/2 flex-col gap-4 border-l border-neutral-200 p-6">
+          <div
+            className={clsx('flex max-h-[60vh] w-1/2 flex-col gap-4 border-l border-neutral-200 p-6', {
+              'overflow-y-scroll': extendSelection,
+            })}
+          >
             <div className="flex w-full items-center justify-between">
               <span className="font-semibold text-neutral-400">Selected type instances: {dataFiltered.length}</span>
               <Tooltip
@@ -376,17 +339,39 @@ function KarpenterInstanceForm({
             </div>
             {dataFiltered.length > 0 && (
               <div className="flex flex-wrap text-neutral-400">
-                {dataFiltered.slice(0, DISPLAY_LIMIT).map((instanceType, index) => (
+                {(!extendSelection ? dataFiltered.slice(0, DISPLAY_LIMIT) : dataFiltered).map((instanceType, index) => (
                   <span key={instanceType.name} className="mr-1 inline-block last:mr-0">
                     {instanceType.name}
                     {index < DISPLAY_LIMIT - 1 && index !== dataFiltered.length - 1 ? ', ' : ' '}
                   </span>
                 ))}
-                {dataFiltered.length > DISPLAY_LIMIT && (
+                {!extendSelection && dataFiltered.length > DISPLAY_LIMIT && (
                   <span>
-                    and {dataFiltered.length - DISPLAY_LIMIT}{' '}
-                    {pluralize(dataFiltered.length - DISPLAY_LIMIT, 'other', 'others')}
+                    and{' '}
+                    <button
+                      className={twMerge(
+                        linkVariants({ color: 'sky', size: 'sm', underline: true }),
+                        'inline text-base font-normal'
+                      )}
+                      type="button"
+                      onClick={() => setExtendSelection(true)}
+                    >
+                      {dataFiltered.length - DISPLAY_LIMIT}{' '}
+                      {pluralize(dataFiltered.length - DISPLAY_LIMIT, 'other', 'others')}
+                    </button>
                   </span>
+                )}
+                {extendSelection && (
+                  <button
+                    type="button"
+                    className={twMerge(
+                      linkVariants({ color: 'sky', size: 'sm', underline: true }),
+                      'text-base font-normal'
+                    )}
+                    onClick={() => setExtendSelection(false)}
+                  >
+                    less
+                  </button>
                 )}
               </div>
             )}
@@ -413,54 +398,29 @@ function KarpenterInstanceForm({
 }
 
 export function KarpenterInstanceFilterModal({
-  cloudProvider,
   clusterRegion,
   defaultValues,
   onChange,
   onClose,
 }: Omit<KarpenterInstanceFilterModalProps, 'cloudProviderInstanceTypes'>) {
   // Get instance types only available for AWS
-  const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
-    match(cloudProvider)
-      .with('AWS', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        region: clusterRegion,
-        onlyMeetsResourceReqs: false,
-        withCpu: false,
-      }))
-      .with('SCW', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        region: clusterRegion,
-        onlyMeetsResourceReqs: false,
-      }))
-      .with('GCP', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        onlyMeetsResourceReqs: false,
-      }))
-      .with('ON_PREMISE', (cloudProvider) => ({
-        cloudProvider,
-        clusterType: 'MANAGED' as const,
-        onlyMeetsResourceReqs: false,
-      }))
-      .exhaustive()
-  )
+  const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
+    region: clusterRegion,
+    enabled: true,
+  })
 
-  if (cloudProviderInstanceTypes) {
-    // Hide GPU instances for Karpenter
+  if (cloudProviderInstanceTypesKarpenter) {
     return (
       <KarpenterInstanceForm
         defaultValues={defaultValues}
-        cloudProviderInstanceTypes={cloudProviderInstanceTypes}
+        cloudProviderInstanceTypes={cloudProviderInstanceTypesKarpenter}
         onChange={onChange}
         onClose={onClose}
       />
     )
   } else {
     return (
-      <div className="flex w-full items-center justify-center">
+      <div className="flex h-[75vh] w-full items-center justify-center p-5">
         <LoaderSpinner />
       </div>
     )
