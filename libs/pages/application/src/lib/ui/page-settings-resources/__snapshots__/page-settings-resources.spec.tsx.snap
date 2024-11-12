@@ -112,7 +112,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                 Not enough resources
               </span>
               <span
-                class="text-neutral-350"
+                class="text-neutral-400"
               >
                 Increase the capacity of your cluster nodes or reduce the service consumption.
               </span>

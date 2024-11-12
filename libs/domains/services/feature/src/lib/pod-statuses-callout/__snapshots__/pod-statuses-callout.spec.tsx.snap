@@ -25,7 +25,7 @@ exports[`PodStatusesCallout should render successfully 1`] = `
           Application pods are in error
         </span>
         <span
-          class="text-neutral-350"
+          class="text-neutral-400"
         >
           Some pods are experiencing issues. Have a look at the table below for investigation.
         </span>
