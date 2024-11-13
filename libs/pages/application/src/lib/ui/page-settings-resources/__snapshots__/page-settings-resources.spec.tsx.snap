@@ -78,7 +78,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               </div>
             </div>
             <p
-              class="mt-0.5 px-4 text-xs font-normal text-neutral-350"
+              class="mt-0.5 px-3 text-xs font-normal text-neutral-350"
             >
               Minimum value is 
               10
@@ -150,7 +150,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               </div>
             </div>
             <p
-              class="mt-0.5 px-4 text-xs font-normal text-neutral-350"
+              class="mt-0.5 px-3 text-xs font-normal text-neutral-350"
             >
               Minimum value is 
               1

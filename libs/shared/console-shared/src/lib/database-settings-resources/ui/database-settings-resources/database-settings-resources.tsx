@@ -175,7 +175,6 @@ export function DatabaseSettingsResources({
             <ExternalLink
               className="mt-1"
               href="https://hub.qovery.com/docs/using-qovery/configuration/database/#applying-changes-to-a-managed-database"
-              size="xs"
             >
               Have a look at the documentation first
             </ExternalLink>
