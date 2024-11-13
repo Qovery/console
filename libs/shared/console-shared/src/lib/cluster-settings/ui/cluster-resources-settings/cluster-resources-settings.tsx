@@ -49,7 +49,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const [warningClusterNodes, setWarningClusterNodes] = useState(false)
   const watchClusterType = watch('cluster_type')
   const watchInstanceType = watch('instance_type')
-  const watchDiskSize = watch('disk_size')
   const watchKarpenterEnabled = watch('karpenter.enabled')
   const watchKarpenter = watch('karpenter')
 
