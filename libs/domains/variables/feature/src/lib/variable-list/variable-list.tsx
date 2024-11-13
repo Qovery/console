@@ -444,7 +444,7 @@ export function VariableList({
             <Tooltip
               content={variable.updated_at ? dateUTCString(variable.updated_at) : dateUTCString(variable.created_at)}
             >
-              <span className="text-xs text-neutral-300">
+              <span className="text-xs text-neutral-350">
                 {timeAgo(variable.updated_at ? new Date(variable.updated_at) : new Date(variable.created_at))} ago
               </span>
             </Tooltip>

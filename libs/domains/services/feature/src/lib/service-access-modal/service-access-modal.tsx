@@ -204,56 +204,54 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                     : 'Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
                 }
               >
-                <div className="max-h-48 overflow-y-scroll">
-                  {isLoadingVariables ? (
-                    <div className="flex justify-center p-5">
-                      <LoaderSpinner className="w-5" />
-                    </div>
-                  ) : (
-                    <>
-                      {variables
-                        ?.filter(
-                          (v) =>
-                            v.service_id === service.id &&
-                            (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
-                        )
-                        ?.map((variable) => (
-                          <div
-                            key={variable.id}
-                            className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className="flex items-center truncate">
-                                {variable.aliased_variable && (
-                                  <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
-                                    ALIAS
+                {isLoadingVariables ? (
+                  <div className="flex justify-center p-5">
+                    <LoaderSpinner className="w-5" />
+                  </div>
+                ) : (
+                  <>
+                    {variables
+                      ?.filter(
+                        (v) =>
+                          v.service_id === service.id &&
+                          (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
+                      )
+                      ?.map((variable) => (
+                        <div
+                          key={variable.id}
+                          className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center truncate">
+                              {variable.aliased_variable && (
+                                <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+                                  ALIAS
+                                </span>
+                              )}
+                              <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
+                              {variable.description && (
+                                <Tooltip content={variable.description}>
+                                  <span>
+                                    <Icon
+                                      iconName="circle-info"
+                                      iconStyle="regular"
+                                      className="ml-2 text-neutral-350"
+                                    />
                                   </span>
-                                )}
-                                <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
-                                {variable.description && (
-                                  <Tooltip content={variable.description}>
-                                    <span>
-                                      <Icon
-                                        iconName="circle-info"
-                                        iconStyle="regular"
-                                        className="ml-2 text-neutral-350"
-                                      />
-                                    </span>
-                                  </Tooltip>
-                                )}
-                              </div>
+                                </Tooltip>
+                              )}
                             </div>
-                            {variable.aliased_variable && (
-                              <div className="flex flex-row gap-1 text-xs text-neutral-350">
-                                <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
-                                <span>{variable.aliased_variable.key}</span>
-                              </div>
-                            )}
                           </div>
-                        ))}
-                    </>
-                  )}
-                </div>
+                          {variable.aliased_variable && (
+                            <div className="flex flex-row gap-1 text-xs text-neutral-350">
+                              <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
+                              <span>{variable.aliased_variable.key}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                  </>
+                )}
               </SectionExpand>
             </Accordion.Root>
           </Tabs.Content>
