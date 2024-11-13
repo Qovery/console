@@ -173,7 +173,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
+        <DropdownMenu.Item icon={<Icon iconName="timeline" />} asChild>
           <Link
             className="gap-0"
             to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
@@ -237,7 +237,7 @@ export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolb
             to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
             state={{ prevUrl: pathname }}
           >
-            <Icon iconName="scroll" />
+            <Icon iconName="timeline" />
           </Link>
         </ActionToolbar.Button>
       </Tooltip>

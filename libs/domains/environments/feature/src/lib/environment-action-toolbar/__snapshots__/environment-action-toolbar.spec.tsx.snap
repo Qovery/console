@@ -60,7 +60,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-scroll "
+        class="fa-solid fa-timeline "
       />
     </a>
     <button
@@ -221,7 +221,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-scroll "
+        class="fa-solid fa-timeline "
       />
     </a>
     <button
@@ -278,7 +278,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll text-sm mr-3 text-brand-500"
+          class="fa-solid fa-timeline text-sm mr-3 text-brand-500"
         />
         Logs
       </a>
