@@ -25,7 +25,7 @@ export interface MenuGroupProps {
 }
 
 export function MenuGroup(props: MenuGroupProps) {
-  const { menu = { items: [] }, isLast = true, paddingMenuX = 12, paddingMenuY = 12, style = {}, isFilter } = props
+  const { menu = { items: [] }, isLast = true, paddingMenuX = 8, paddingMenuY = 8, style = {}, isFilter } = props
 
   const [currentItems, setCurrentItems] = useState(menu.items)
   const [filteredItems, setFilteredItems] = useState(menu.items)

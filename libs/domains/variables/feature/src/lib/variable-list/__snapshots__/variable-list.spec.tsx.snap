@@ -246,7 +246,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               13 days
@@ -355,7 +355,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               6 months
@@ -464,7 +464,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               2 months
@@ -670,7 +670,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               6 months
@@ -786,7 +786,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               10 months
@@ -993,7 +993,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               6 months
@@ -1250,7 +1250,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               2 days
@@ -1375,7 +1375,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               5 months
@@ -1484,7 +1484,7 @@ exports[`VariableList should match snapshot 1`] = `
             style="width: 12%;"
           >
             <span
-              class="text-xs text-neutral-300"
+              class="text-xs text-neutral-350"
               data-state="closed"
             >
               2 months

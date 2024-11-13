@@ -5,7 +5,7 @@ import { type ComponentPropsWithoutRef, type ElementRef, type ReactElement, clon
 import { twMerge } from '@qovery/shared/util-js'
 
 const dropdownMenuItemVariants = cva(
-  ['px-3', 'flex', 'items-center', 'h-9', 'text-sm', 'font-medium', 'rounded-sm', 'outline-none'],
+  ['px-3', 'flex', 'items-center', 'h-8', 'text-sm', 'font-medium', 'rounded-sm', 'outline-none'],
   {
     variants: {
       color: {
@@ -135,7 +135,7 @@ const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.C
           sideOffset={sideOffset}
           align={align}
           className={twMerge(
-            'flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550',
+            'flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550',
             className
           )}
           ref={ref}
@@ -156,7 +156,7 @@ const DropdownMenuSeparator = forwardRef<
   return (
     <DropdownMenuPrimitive.Separator
       {...props}
-      className={twMerge('my-2 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600', className)}
+      className={twMerge('my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600', className)}
       ref={ref}
     />
   )

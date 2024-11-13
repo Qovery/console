@@ -28,7 +28,7 @@ export interface PageCreateEditDeploymentRuleProps {
 }
 
 export function PageCreateEditDeploymentRule(props: PageCreateEditDeploymentRuleProps) {
-  const { title, control, onSubmit, clusters, btnLabel = 'Create Rule', defaultAutoStop = false } = props
+  const { title, control, onSubmit, clusters, btnLabel = 'Create rule', defaultAutoStop = false } = props
   const { organizationId, projectId } = useParams()
   const [autoStop, setAutoStop] = useState(defaultAutoStop)
 

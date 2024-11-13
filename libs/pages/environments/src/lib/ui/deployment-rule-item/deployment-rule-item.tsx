@@ -12,12 +12,23 @@ export interface DeploymentRuleItemProps {
   stopTime: string
   weekDays: string[]
   isLast: boolean
-  isLoading?: boolean
   removeDeploymentRule: (id: string) => void
+  isLoading?: boolean
+  noDragDrop?: boolean
 }
 
 export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
-  const { id, name, startTime, stopTime, weekDays, isLast = false, isLoading = false, removeDeploymentRule } = props
+  const {
+    id,
+    name,
+    startTime,
+    stopTime,
+    weekDays,
+    isLast = false,
+    isLoading = false,
+    removeDeploymentRule,
+    noDragDrop = false,
+  } = props
   const [menuOpen, setMenuOpen] = useState(false)
   const { organizationId, projectId } = useParams()
 
@@ -84,9 +95,11 @@ export function DeploymentRuleItem(props: DeploymentRuleItemProps) {
       </div>
       <Skeleton show={isLoading} width={58} height={30}>
         <div className="flex h-[34px] overflow-hidden rounded border border-neutral-250">
-          <span className="flex h-8 w-8 cursor-pointer items-center justify-center border-r border-neutral-250 bg-white text-xs text-neutral-350 transition hover:bg-brand-50 hover:text-brand-500">
-            <Icon name="icon-solid-grip-lines" />
-          </span>
+          {!noDragDrop && (
+            <span className="flex h-8 w-8 cursor-pointer items-center justify-center border-r border-neutral-250 bg-white text-xs text-neutral-350 transition hover:bg-brand-50 hover:text-brand-500">
+              <Icon name="icon-solid-grip-lines" />
+            </span>
+          )}
           <Menu
             menus={menu}
             width={248}

@@ -31,6 +31,8 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
               open={false}
               portal={false}
               arrowAlign={MenuAlign.START}
+              paddingMenuX={12}
+              paddingMenuY={12}
               trigger={
                 <Button type="button" variant="plain" radius="full">
                   <Icon iconName="angle-down" />
