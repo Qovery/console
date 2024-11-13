@@ -1,3 +1,4 @@
+import * as Collapsible from '@radix-ui/react-collapsible'
 import {
   CloudProviderEnum,
   type Cluster,
@@ -5,7 +6,7 @@ import {
   DatabaseAccessibilityEnum,
   DatabaseModeEnum,
 } from 'qovery-typescript-axios'
-import { type FormEventHandler } from 'react'
+import { type FormEventHandler, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -53,6 +54,7 @@ export function StepGeneral({
   const { control, formState, watch } = useFormContext<GeneralData>()
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
+  const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
 
   const watchType = watch('type')
   const watchMode = watch('mode')
@@ -261,18 +263,52 @@ export function StepGeneral({
         </Section>
 
         {watchMode === DatabaseModeEnum.CONTAINER && (
-          <Section className="gap-4">
-            <Heading>Extra labels/annotations</Heading>
-            <LabelSetting />
-            <AnnotationSetting />
-          </Section>
+          <Collapsible.Root open={openExtraAttributes} onOpenChange={setOpenExtraAttributes} asChild>
+            <Section className="gap-4">
+              <div className="flex justify-between">
+                <Heading>Extra labels/annotations</Heading>
+                <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
+                  {openExtraAttributes ? (
+                    <>
+                      Hide <Icon iconName="chevron-up" />
+                    </>
+                  ) : (
+                    <>
+                      Show <Icon iconName="chevron-down" />
+                    </>
+                  )}
+                </Collapsible.Trigger>
+              </div>{' '}
+              <Collapsible.Content className="flex flex-col gap-4">
+                <LabelSetting />
+                <AnnotationSetting />
+              </Collapsible.Content>
+            </Section>
+          </Collapsible.Root>
         )}
 
         {watchMode === DatabaseModeEnum.MANAGED && (
-          <Section className="gap-4">
-            <Heading>Extra labels</Heading>
-            <LabelSetting />
-          </Section>
+          <Collapsible.Root open={openExtraAttributes} onOpenChange={setOpenExtraAttributes} asChild>
+            <Section className="gap-4">
+              <div className="flex justify-between">
+                <Heading>Extra labels</Heading>
+                <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
+                  {openExtraAttributes ? (
+                    <>
+                      Hide <Icon iconName="chevron-up" />
+                    </>
+                  ) : (
+                    <>
+                      Show <Icon iconName="chevron-down" />
+                    </>
+                  )}
+                </Collapsible.Trigger>
+              </div>{' '}
+              <Collapsible.Content className="flex flex-col gap-4">
+                <LabelSetting />
+              </Collapsible.Content>
+            </Section>
+          </Collapsible.Root>
         )}
 
         <div className="flex justify-between">
