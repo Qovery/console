@@ -110,40 +110,41 @@ export function StepGeneral(props: StepGeneralProps) {
         </Section>
 
         {watchServiceType && (
-          <Section className="gap-4">
-            <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
-            {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings />}
-            <EntrypointCmdInputs />
-            {!watchIsPublicRepository && (
-              <AutoDeploySetting
-                source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'}
-              />
-            )}
-          </Section>
+          <>
+            <Section className="gap-4">
+              <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
+              {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings />}
+              <EntrypointCmdInputs />
+              {!watchIsPublicRepository && (
+                <AutoDeploySetting
+                  source={watchServiceType === ServiceTypeEnum.CONTAINER ? 'CONTAINER_REGISTRY' : 'GIT'}
+                />
+              )}
+            </Section>
+            <Collapsible.Root open={openExtraAttributes} onOpenChange={setOpenExtraAttributes} asChild>
+              <Section className="gap-4">
+                <div className="flex justify-between">
+                  <Heading>Extra labels/annotations</Heading>
+                  <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
+                    {openExtraAttributes ? (
+                      <>
+                        Hide <Icon iconName="chevron-up" />
+                      </>
+                    ) : (
+                      <>
+                        Show <Icon iconName="chevron-down" />
+                      </>
+                    )}
+                  </Collapsible.Trigger>
+                </div>
+                <Collapsible.Content className="flex flex-col gap-4">
+                  <LabelSetting />
+                  <AnnotationSetting />
+                </Collapsible.Content>
+              </Section>
+            </Collapsible.Root>
+          </>
         )}
-
-        <Collapsible.Root open={openExtraAttributes} onOpenChange={setOpenExtraAttributes} asChild>
-          <Section className="gap-4">
-            <div className="flex justify-between">
-              <Heading>Extra labels/annotations</Heading>
-              <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
-                {openExtraAttributes ? (
-                  <>
-                    Hide <Icon iconName="chevron-up" />
-                  </>
-                ) : (
-                  <>
-                    Show <Icon iconName="chevron-down" />
-                  </>
-                )}
-              </Collapsible.Trigger>
-            </div>
-            <Collapsible.Content className="flex flex-col gap-4">
-              <LabelSetting />
-              <AnnotationSetting />
-            </Collapsible.Content>
-          </Section>
-        </Collapsible.Root>
 
         <div className="flex justify-between">
           <Button
