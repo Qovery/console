@@ -321,7 +321,10 @@ function KarpenterInstanceForm({
                     <button
                       type="button"
                       onClick={selectAllSizes}
-                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                      className={twMerge(
+                        linkVariants({ color: 'brand', size: 'sm', underline: true }),
+                        'font-semibold'
+                      )}
                     >
                       Select all
                     </button>
@@ -329,7 +332,10 @@ function KarpenterInstanceForm({
                     <button
                       type="button"
                       onClick={unselectAllSizes}
-                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                      className={twMerge(
+                        linkVariants({ color: 'brand', size: 'sm', underline: true }),
+                        'font-semibold'
+                      )}
                     >
                       Unselect all
                     </button>
@@ -370,7 +376,10 @@ function KarpenterInstanceForm({
                     <button
                       type="button"
                       onClick={selectAllCategories}
-                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                      className={twMerge(
+                        linkVariants({ color: 'brand', size: 'sm', underline: true }),
+                        'font-semibold'
+                      )}
                     >
                       Select all
                     </button>
@@ -378,7 +387,10 @@ function KarpenterInstanceForm({
                     <button
                       type="button"
                       onClick={unselectAllCategories}
-                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                      className={twMerge(
+                        linkVariants({ color: 'brand', size: 'sm', underline: true }),
+                        'font-semibold'
+                      )}
                     >
                       Unselect all
                     </button>
@@ -435,7 +447,7 @@ function KarpenterInstanceForm({
                 {(!extendSelection ? dataFiltered.slice(0, DISPLAY_LIMIT) : dataFiltered).map((instanceType, index) => (
                   <span key={instanceType.name} className="mr-1 inline-block last:mr-0">
                     {instanceType.name}
-                    {index !== dataFiltered.length - 1 ? ', ' : ' '}
+                    {index < dataFiltered.length - 1 ? ', ' : ' '}
                   </span>
                 ))}
                 {!extendSelection && dataFiltered.length > DISPLAY_LIMIT && (
