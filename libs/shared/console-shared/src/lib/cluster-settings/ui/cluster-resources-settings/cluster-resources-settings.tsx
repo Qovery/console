@@ -25,6 +25,7 @@ import {
   InputToggle,
   Section,
   Slider,
+  Tooltip,
   useModal,
 } from '@qovery/shared/ui'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
@@ -219,7 +220,17 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           <div className="flex flex-col">
                             <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
                               <div className="w-full">
-                                <p className="mb-2">Instance type scope</p>
+                                <p className="mb-2">
+                                  Instance types scope{' '}
+                                  <Tooltip
+                                    classNameContent="max-w-80"
+                                    content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
+                                  >
+                                    <span className="text-neutral-400">
+                                      <Icon iconName="info-circle" iconStyle="regular" />
+                                    </span>
+                                  </Tooltip>
+                                </p>
                                 <KarpenterInstanceTypePreview
                                   defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
                                   requirements={watchKarpenter?.qovery_node_pools?.requirements}
