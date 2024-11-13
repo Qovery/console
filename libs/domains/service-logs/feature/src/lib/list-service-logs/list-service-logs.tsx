@@ -15,7 +15,7 @@ import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Button, DropdownMenu, Icon, Link, TablePrimitives } from '@qovery/shared/ui'
+import { Button, DropdownMenu, ExternalLink, Icon, Link, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { HeaderLogs } from '../header-logs/header-logs'
 import { type LogType, useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
@@ -242,6 +242,21 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
                 className="gap-1.5"
                 onClick={() => setEnabledNginx(!enabledNginx)}
               >
+                <Tooltip
+                  side="top"
+                  content={
+                    <ExternalLink
+                      size="xs"
+                      href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
+                    >
+                      Learn more about NGINX log format
+                    </ExternalLink>
+                  }
+                >
+                  <span>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </span>
+                </Tooltip>
                 Nginx Logs
                 <Icon iconName={enabledNginx ? 'eye-slash' : 'eye'} iconStyle="regular" />
               </Button>
