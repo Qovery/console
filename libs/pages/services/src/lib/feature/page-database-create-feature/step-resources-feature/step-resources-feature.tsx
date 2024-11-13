@@ -19,7 +19,6 @@ export function StepResourcesFeature() {
   const { setCurrentStep, resourcesData, setResourcesData, generalData, creationFlowUrl } = useDatabaseCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
-  const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`
 
   useEffect(() => {
     !generalData?.name &&

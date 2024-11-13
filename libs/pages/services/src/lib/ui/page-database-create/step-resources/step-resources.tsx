@@ -23,7 +23,7 @@ export function StepResources({ onSubmit, isManaged, onBack, databaseType }: Ste
 
         <Section className="gap-4">
           <Heading>Resources configuration</Heading>
-          <DatabaseSettingsResources isDatabase isManaged={isManaged} databaseType={databaseType} />
+          <DatabaseSettingsResources isManaged={isManaged} databaseType={databaseType} />
         </Section>
 
         <div className="flex justify-between">
