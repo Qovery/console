@@ -66,7 +66,7 @@ $menuTiming: 0.6s;
 
 // item
 .menu-item {
-  @apply mb-1 flex h-9 w-full justify-between rounded-sm px-3 py-0;
+  @apply mb-1 flex h-8 w-full justify-between rounded-sm px-3 py-0;
 
   &:last-of-type {
     @apply mb-0;
