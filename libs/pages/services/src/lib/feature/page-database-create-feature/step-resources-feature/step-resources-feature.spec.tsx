@@ -9,6 +9,9 @@ jest.mock('@qovery/domains/cloud-providers/feature', () => ({
   useCloudProviderDatabaseInstanceTypes: () => ({
     data: [
       {
+        name: 'db.t3.small',
+      },
+      {
         name: 'db.t3.medium',
       },
     ],
@@ -97,7 +100,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
             storage: 1,
             cpu: 100,
             memory: 100,
-            instance_type: 'db.t3.medium',
+            instance_type: 'db.t3.small',
           },
           setResourcesData: mockSetResourcesData,
           creationFlowUrl: '/organization/1/project/2/environment/3/services/create/database',
@@ -108,10 +111,10 @@ describe('PageDatabaseCreateResourcesFeature', () => {
     )
 
     const realSelect = screen.getByLabelText('Instance type')
-    await selectEvent.select(realSelect, 'db.t3.medium')
-    await waitFor(() => expect(screen.getAllByText('db.t3.medium')).toHaveLength(1))
+    await selectEvent.select(realSelect, 'db.t3.small')
+    await waitFor(() => expect(screen.getAllByText('db.t3.small')).toHaveLength(1))
 
-    expect(screen.getByText('db.t3.medium')).toBeInTheDocument()
+    expect(screen.getByText('db.t3.small')).toBeInTheDocument()
 
     const button = screen.getByTestId('button-submit')
     expect(button).toBeInTheDocument()
