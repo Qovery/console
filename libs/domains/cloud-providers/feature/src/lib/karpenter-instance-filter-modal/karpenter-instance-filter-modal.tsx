@@ -435,7 +435,7 @@ function KarpenterInstanceForm({
                 {(!extendSelection ? dataFiltered.slice(0, DISPLAY_LIMIT) : dataFiltered).map((instanceType, index) => (
                   <span key={instanceType.name} className="mr-1 inline-block last:mr-0">
                     {instanceType.name}
-                    {index < DISPLAY_LIMIT - 1 && index !== dataFiltered.length - 1 ? ', ' : ' '}
+                    {index !== dataFiltered.length - 1 ? ', ' : ' '}
                   </span>
                 ))}
                 {!extendSelection && dataFiltered.length > DISPLAY_LIMIT && (
