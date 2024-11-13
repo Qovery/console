@@ -50,7 +50,7 @@ export function GitRepositorySettings({
       {watchFieldIsPublicRepository ? (
         <>
           <GitPublicRepositorySettings urlRepository={urlRepository} disabled={gitDisabled} />
-          <Callout.Root color="sky" className="items-center text-xs">
+          <Callout.Root color="sky" className="items-center">
             <Callout.Icon>
               <Icon iconName="info-circle" iconStyle="regular" />
             </Callout.Icon>

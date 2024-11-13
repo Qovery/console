@@ -169,7 +169,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
                   </label>
                 </div>
                 {cluster.is_demo && (
-                  <Callout.Root className="mt-3 text-xs" color="sky">
+                  <Callout.Root className="mt-3" color="sky">
                     <Callout.Icon>
                       <Icon iconName="info-circle" iconStyle="regular" />
                     </Callout.Icon>
@@ -220,7 +220,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
             )}
           </div>
           {kubernetes !== 'SELF_MANAGED' && clusterDeleteMode !== ClusterDeleteMode.DELETE_QOVERY_CONFIG && (
-            <Callout.Root className="mt-3 text-xs" color="yellow">
+            <Callout.Root className="mt-3" color="yellow">
               <Callout.Icon>
                 <Icon iconName="triangle-exclamation" iconStyle="regular" />
               </Callout.Icon>

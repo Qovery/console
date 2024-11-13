@@ -38,7 +38,7 @@ export function SettingsResourcesInstanceTypes({
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-xs text-neutral-350">
+          <Callout.Text className="text-neutral-350">
             Once triggered, the update will be managed by your cloud provider and applied during the configured
             maintenance window. Moreover, the operation might cause a service interruption.{' '}
             <ExternalLink

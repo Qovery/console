@@ -36,7 +36,7 @@ const CalloutIcon = forwardRef<ElementRef<'div'>, CalloutIconProps>(function Cal
   ref
 ) {
   return (
-    <div {...props} className={twMerge('-order-2 text-base leading-6', className)} ref={ref}>
+    <div {...props} className={twMerge('-order-2 text-lg leading-6', className)} ref={ref}>
       {children}
     </div>
   )

@@ -330,7 +330,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     data-accent-color="sky"
                   >
                     <div
-                      class="-order-2 text-base leading-6"
+                      class="-order-2 text-lg leading-6"
                     >
                       <i
                         aria-hidden="true"
@@ -338,7 +338,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                       />
                     </div>
                     <div
-                      class="-order-1 mr-auto gap-x-3 text-neutral-400 text-xs"
+                      class="-order-1 mr-auto gap-x-3 text-neutral-400"
                     >
                       <span
                         class="block font-medium leading-6"

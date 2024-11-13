@@ -34,6 +34,20 @@ export const Primary = {
   ),
 }
 
+export const Secondary = {
+  render: () => (
+    <Callout.Root color="sky">
+      <Callout.Icon>
+        <Icon iconName="triangle-exclamation" iconStyle="regular" />
+      </Callout.Icon>
+      <Callout.Text>
+        <Callout.TextHeading>Lorem ipsum</Callout.TextHeading>
+        Lorem ipsum dolor sit amet
+      </Callout.Text>
+    </Callout.Root>
+  ),
+}
+
 export const WithButtons = {
   render: () => (
     <Callout.Root color="red">

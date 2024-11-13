@@ -57,7 +57,7 @@ export function FlowCreateVariable({
               <Callout.Icon>
                 <Icon iconName="circle-info" iconStyle="regular" />
               </Callout.Icon>
-              <Callout.Text className="text-xs">
+              <Callout.Text>
                 Some environment variable are proposed by default to match the default Dockerfile provided in the
                 previous step.
               </Callout.Text>

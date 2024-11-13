@@ -34,7 +34,7 @@ export function PageSettingsHealthchecks({
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
-            <Callout.Text className="text-xs">
+            <Callout.Text>
               Your service is configured to run with a minimum of one instance, setting the health checks will not
               ensure the service high availability during a cluster upgrade. Have a look at your{' '}
               <Link to={linkResourcesSetting} size="xs">

@@ -96,7 +96,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
             data-testid="banner-box"
           >
             <div
-              class="-order-2 text-base leading-6"
+              class="-order-2 text-lg leading-6"
             >
               <i
                 aria-hidden="true"

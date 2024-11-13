@@ -22,7 +22,7 @@ export function ConfirmationGitModal({
         </Callout.Icon>
         <Callout.Text>
           <Callout.TextHeading>Access to the current repository</Callout.TextHeading>
-          <Callout.TextDescription className="text-xs">
+          <Callout.TextDescription>
             If you do not have access to the current repository, you will not be able to select it again after
             modification.
           </Callout.TextDescription>

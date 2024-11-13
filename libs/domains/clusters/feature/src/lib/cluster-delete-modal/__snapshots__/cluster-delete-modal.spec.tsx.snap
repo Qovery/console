@@ -214,11 +214,11 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             </div>
           </div>
           <div
-            class="flex flex-row gap-x-3 p-3 border rounded border-yellow-600 bg-yellow-50 text-yellow-700 mt-3 text-xs"
+            class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mt-3"
             data-accent-color="yellow"
           >
             <div
-              class="-order-2 text-base leading-6"
+              class="-order-2 text-lg leading-6"
             >
               <i
                 aria-hidden="true"

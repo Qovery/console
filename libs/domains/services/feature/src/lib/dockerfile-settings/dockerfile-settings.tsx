@@ -146,7 +146,7 @@ export function DockerfileSettings({
                   <Callout.Icon>
                     <Icon iconName="circle-info" iconStyle="regular" />
                   </Callout.Icon>
-                  <Callout.Text className="text-xs">
+                  <Callout.Text>
                     Qovery provides a default Dockerfile and job parameters to deploy your template. These can be
                     customize based on your needs (additional arguments in the CLI commands etc..).
                   </Callout.Text>
@@ -157,7 +157,7 @@ export function DockerfileSettings({
                   <Callout.Icon>
                     <Icon iconName="circle-info" iconStyle="regular" />
                   </Callout.Icon>
-                  <Callout.Text className="text-xs">
+                  <Callout.Text>
                     Qovery provides a default Dockerfile and job parameters to deploy your manifest. These can be
                     customize based on your needs (additional arguments in the CLI commands etc..).
                   </Callout.Text>

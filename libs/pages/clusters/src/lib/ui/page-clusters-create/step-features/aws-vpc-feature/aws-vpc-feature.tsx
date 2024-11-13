@@ -121,9 +121,9 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
             callout: (
               <Callout.Root color="yellow">
                 <Callout.Icon>
-                  <Icon className="text-xs" iconName="exclamation-circle" iconStyle="regular" />
+                  <Icon iconName="exclamation-circle" iconStyle="regular" />
                 </Callout.Icon>
-                <Callout.Text className="text-xs">
+                <Callout.Text>
                   <Callout.TextHeading>
                     You must enable auto-assign public IPv4 address in the subnets settings for EKS
                   </Callout.TextHeading>
@@ -139,9 +139,9 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
                   callout: (
                     <Callout.Root color="yellow">
                       <Callout.Icon>
-                        <Icon className="text-xs" iconName="exclamation-circle" iconStyle="regular" />
+                        <Icon iconName="exclamation-circle" iconStyle="regular" />
                       </Callout.Icon>
-                      <Callout.Text className="text-xs">
+                      <Callout.Text>
                         <Callout.TextHeading>
                           These subnets have to be private and connected to internet through a NAT Gateway
                         </Callout.TextHeading>

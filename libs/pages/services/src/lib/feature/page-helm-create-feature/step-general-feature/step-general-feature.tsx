@@ -111,7 +111,7 @@ export function StepGeneralFeature() {
                   {watchFieldIsPublicRepository ? (
                     <>
                       <GitPublicRepositorySettings />
-                      <Callout.Root color="sky" className="items-center text-xs">
+                      <Callout.Root color="sky" className="items-center">
                         <Callout.Icon>
                           <Icon iconName="info-circle" iconStyle="regular" />
                         </Callout.Icon>
@@ -144,7 +144,7 @@ export function StepGeneralFeature() {
               <DeploymentSetting />
               {watchFieldProvider === 'GIT' && !watchFieldIsPublicRepository && <AutoDeploySetting source="GIT" />}
               {watchFieldProvider === 'HELM_REPOSITORY' && (
-                <Callout.Root color="sky" className="mt-5 items-center text-xs">
+                <Callout.Root color="sky" className="mt-5 items-center">
                   <Callout.Icon>
                     <Icon iconName="circle-info" iconStyle="regular" />
                   </Callout.Icon>

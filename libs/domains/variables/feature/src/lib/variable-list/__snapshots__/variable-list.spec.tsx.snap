@@ -41,14 +41,14 @@ exports[`VariableList should match snapshot 1`] = `
               class="absolute -right-9 top-[7px]"
             >
               <span
-                class="relative"
+                class="group relative"
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-magnifying-glass absolute left-2 top-1/2 block -translate-y-1/2 text-xs text-neutral-400"
+                  class="fa-solid fa-magnifying-glass absolute left-2 top-1/2 block -translate-y-1/2 text-xs text-neutral-350 transition-colors group-hover:text-neutral-400"
                 />
                 <input
-                  class="w-36 rounded border border-neutral-300 py-1.5 pl-7 outline-0 placeholder:text-neutral-350"
+                  class="w-36 rounded border border-neutral-250 py-1.5 pl-7 outline-0 transition-colors placeholder:text-neutral-350 group-hover:border-neutral-350"
                   placeholder="Search"
                   value=""
                 />
