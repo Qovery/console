@@ -145,7 +145,7 @@ export function StepGeneral({
         </BlockContent>
 
         {watchMode === DatabaseModeEnum.MANAGED && clusterVpc && (
-          <Callout.Root className="text-xs" color="yellow">
+          <Callout.Root color="yellow">
             <Callout.Icon>
               <Icon iconName="circle-info" iconStyle="regular" />
             </Callout.Icon>

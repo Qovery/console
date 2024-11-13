@@ -37,10 +37,7 @@ export function PageSettingsHealthchecks({
             <Callout.Text>
               Your service is configured to run with a minimum of one instance, setting the health checks will not
               ensure the service high availability during a cluster upgrade. Have a look at your{' '}
-              <Link to={linkResourcesSetting} size="xs">
-                instance setup
-              </Link>{' '}
-              first and increase the minimum instance type.
+              <Link to={linkResourcesSetting}>instance setup</Link> first and increase the minimum instance type.
             </Callout.Text>
           </Callout.Root>
         )}
