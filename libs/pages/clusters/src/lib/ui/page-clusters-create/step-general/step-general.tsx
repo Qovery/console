@@ -4,7 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
-import { CLUSTERS_URL } from '@qovery/shared/routes'
+import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import {
   Button,
   Callout,
@@ -171,7 +171,7 @@ export function StepGeneral(props: StepGeneralProps) {
             type="button"
             variant="plain"
             color="neutral"
-            onClick={() => navigate(CLUSTERS_URL(organizationId))}
+            onClick={() => navigate(CLUSTERS_URL(organizationId) + CLUSTERS_NEW_URL)}
           >
             Cancel
           </Button>

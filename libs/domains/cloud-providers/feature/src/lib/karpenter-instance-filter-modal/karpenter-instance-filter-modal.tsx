@@ -94,6 +94,8 @@ function KarpenterInstanceForm({
 
   const watchAMD64 = methods.watch('AMD64')
   const watchARM64 = methods.watch('ARM64')
+  const watchSizes = methods.watch('sizes')
+  const watchCategories = methods.watch('categories')
 
   const { instanceSizes, instanceCategories } = useMemo(() => {
     const sizes = new Set<string>()
@@ -197,16 +199,6 @@ function KarpenterInstanceForm({
     methods.setValue('categories', values.categories)
   }
 
-  const selectAllArchitectures = () => {
-    methods.setValue('AMD64', true)
-    methods.setValue('ARM64', true)
-  }
-
-  const unselectAllArchitectures = () => {
-    methods.setValue('AMD64', false)
-    methods.setValue('ARM64', false)
-  }
-
   const selectAllSizes = () => {
     methods.setValue('sizes', instanceSizes)
   }
@@ -249,26 +241,7 @@ function KarpenterInstanceForm({
         <div className="flex rounded-md border border-neutral-200">
           <div className="flex max-h-[60vh] w-1/2 flex-col gap-2 overflow-y-scroll p-2">
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <div className="flex w-full justify-between font-semibold text-neutral-400">
-                Architecture{' '}
-                <div className="flex gap-0.5">
-                  <button
-                    type="button"
-                    onClick={selectAllArchitectures}
-                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                  >
-                    Select
-                  </button>
-                  <span className="text-neutral-400">/</span>
-                  <button
-                    type="button"
-                    onClick={unselectAllArchitectures}
-                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                  >
-                    Unselect
-                  </button>
-                </div>
-              </div>
+              <span className="flex w-full justify-between font-semibold text-neutral-400">Architecture</span>
               <div className="grid grid-cols-2 gap-1">
                 <div className="flex items-center gap-3">
                   <Controller
@@ -344,21 +317,23 @@ function KarpenterInstanceForm({
               <div className="flex w-full justify-between font-semibold text-neutral-400">
                 Size
                 <div className="flex gap-0.5">
-                  <button
-                    type="button"
-                    onClick={selectAllSizes}
-                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                  >
-                    Select
-                  </button>
-                  <span className="text-neutral-400">/</span>
-                  <button
-                    type="button"
-                    onClick={unselectAllSizes}
-                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                  >
-                    Unselect
-                  </button>
+                  {watchSizes.length === 0 ? (
+                    <button
+                      type="button"
+                      onClick={selectAllSizes}
+                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                    >
+                      Select all
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={unselectAllSizes}
+                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                    >
+                      Unselect all
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-1">
@@ -391,21 +366,23 @@ function KarpenterInstanceForm({
               <div className="flex w-full justify-between font-semibold text-neutral-400">
                 Categories/Families
                 <div className="flex gap-0.5">
-                  <button
-                    type="button"
-                    onClick={selectAllCategories}
-                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                  >
-                    Select
-                  </button>
-                  <span className="text-neutral-400">/</span>
-                  <button
-                    type="button"
-                    onClick={unselectAllCategories}
-                    className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
-                  >
-                    Unselect
-                  </button>
+                  {Object.keys(watchCategories).length === 0 ? (
+                    <button
+                      type="button"
+                      onClick={selectAllCategories}
+                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                    >
+                      Select all
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={unselectAllCategories}
+                      className={linkVariants({ color: 'brand', size: 'sm', underline: true })}
+                    >
+                      Unselect all
+                    </button>
+                  )}
                 </div>
               </div>
               <div>
