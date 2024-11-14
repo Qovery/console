@@ -159,6 +159,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                 'karpenter.qovery_node_pools.requirements',
                                 convertToKarpenterRequirements(instanceType)
                               )
+                              setValue('karpenter.disk_size_in_gib', 50)
                             }
                           }
 
@@ -353,7 +354,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     error={error?.message}
                     options={instanceTypeOptions}
                   />
-                  <p className="ml-4 text-xs text-neutral-350">
+                  <p className="ml-3 text-xs text-neutral-350">
                     Instance type to be used to run your Kubernetes nodes.
                   </p>
                   {warningInstance && (
