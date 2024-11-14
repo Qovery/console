@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { CloudProviderEnum, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type Cluster, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -32,6 +32,7 @@ import { listInstanceTypeFormatter } from '../../feature/cluster-resources-setti
 import KarpenterImage from './karpenter-image'
 
 export interface ClusterResourcesSettingsProps {
+  cluster?: Cluster
   fromDetail?: boolean
   clusterTypeOptions?: Value[]
   cloudProvider?: CloudProviderEnum
@@ -266,6 +267,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                     },
                                     content: (
                                       <KarpenterInstanceFilterModal
+                                        cluster={props.cluster}
                                         clusterRegion={props.clusterRegion ?? ''}
                                         defaultValues={watchKarpenter}
                                         onClose={closeModal}
