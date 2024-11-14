@@ -25,7 +25,6 @@ import { InstanceCategory } from './instance-category/instance-category'
 import { sortInstanceSizes } from './utils/sort-instance-sizes'
 
 const DISPLAY_LIMIT = 60
-const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
 export interface KarpenterInstanceFilterModalProps {
   clusterRegion: string
@@ -39,8 +38,6 @@ export interface KarpenterInstanceFormProps {
   ARM64: boolean
   AMD64: boolean
   default_service_architecture: CpuArchitectureEnum
-  cpu: [number, number]
-  memory: [number, number]
   categories: Record<string, string[]>
   sizes: string[]
 }
@@ -140,12 +137,6 @@ function KarpenterInstanceForm({
       const architectureMatch =
         (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
 
-      // CPU range check
-      const cpuMatch = data.cpu && isNumberInRange(instanceType.cpu, data.cpu as [number, number])
-
-      // Memory range check
-      const memoryMatch = data.memory && isNumberInRange(instanceType.ram_in_gb, data.memory as [number, number])
-
       // Categories check
       const categoriesMatch = () => {
         if (!data.categories || Object.keys(data.categories).length === 0) return false
@@ -162,7 +153,7 @@ function KarpenterInstanceForm({
       // Sizes range check
       const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
 
-      return architectureMatch && cpuMatch && memoryMatch && sizeMatch && categoriesMatch()
+      return architectureMatch && sizeMatch && categoriesMatch()
     })
 
     setDataFiltered(filtered)

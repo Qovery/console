@@ -7,16 +7,6 @@ export function generateDefaultValues(
   // Get unique architectures
   const architectures = [...new Set(instances.map((i) => i.architecture))]
 
-  // Get CPU range
-  const cpus = instances.map((i) => i.cpu)
-  const minCpu = Math.min(...cpus)
-  const maxCpu = Math.max(...cpus)
-
-  // Get memory range
-  const memories = instances.map((i) => i.ram_in_gb)
-  const minMemory = Math.min(...memories)
-  const maxMemory = Math.max(...memories)
-
   // Get unique sizes without sorting
   const sizes = [...new Set(instances.map((i) => i.attributes?.instance_size ?? ''))].filter((i) => i !== '')
 
@@ -38,8 +28,6 @@ export function generateDefaultValues(
   return {
     ARM64: architectures.includes('ARM64'),
     AMD64: architectures.includes('AMD64'),
-    cpu: [minCpu, maxCpu],
-    memory: [minMemory, maxMemory],
     categories,
     sizes,
   }

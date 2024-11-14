@@ -27,8 +27,6 @@ describe('generateDefaultValues', () => {
     expect(result).toEqual({
       ARM64: false,
       AMD64: false,
-      cpu: [Infinity, -Infinity],
-      memory: [Infinity, -Infinity],
       categories: {},
       sizes: [],
     })
@@ -41,8 +39,6 @@ describe('generateDefaultValues', () => {
     expect(result).toEqual({
       ARM64: false,
       AMD64: true,
-      cpu: [2, 2],
-      memory: [4, 4],
       categories: {
         general_purpose: ['t3'],
       },
@@ -61,8 +57,6 @@ describe('generateDefaultValues', () => {
     expect(result).toEqual({
       ARM64: true,
       AMD64: true,
-      cpu: [2, 8],
-      memory: [4, 16],
       categories: {
         general_purpose: ['t3'],
         compute: ['c6g'],
@@ -83,8 +77,6 @@ describe('generateDefaultValues', () => {
     expect(result).toEqual({
       ARM64: true,
       AMD64: true,
-      cpu: [4, 4],
-      memory: [8, 16],
       categories: {
         general_purpose: ['t3', 't4g'],
         memory: ['m5'],

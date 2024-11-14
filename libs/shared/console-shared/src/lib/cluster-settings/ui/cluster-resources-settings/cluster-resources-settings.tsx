@@ -51,6 +51,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchInstanceType = watch('instance_type')
   const watchKarpenterEnabled = watch('karpenter.enabled')
   const watchKarpenter = watch('karpenter')
+  const watchDiskSize = watch('disk_size')
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudProviderEnum.AWS)
@@ -155,13 +156,11 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               (option) => option.name === watchInstanceType
                             )
                             if (instanceType) {
-                              console.log(instanceType[0])
-
                               setValue(
                                 'karpenter.qovery_node_pools.requirements',
                                 convertToKarpenterRequirements(instanceType)
                               )
-                              setValue('karpenter.disk_size_in_gib', 50)
+                              setValue('karpenter.disk_size_in_gib', watchDiskSize)
                               setValue(
                                 'karpenter.default_service_architecture',
                                 (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
