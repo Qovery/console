@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -155,11 +155,17 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               (option) => option.name === watchInstanceType
                             )
                             if (instanceType) {
+                              console.log(instanceType[0])
+
                               setValue(
                                 'karpenter.qovery_node_pools.requirements',
                                 convertToKarpenterRequirements(instanceType)
                               )
                               setValue('karpenter.disk_size_in_gib', 50)
+                              setValue(
+                                'karpenter.default_service_architecture',
+                                (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
+                              )
                             }
                           }
 
