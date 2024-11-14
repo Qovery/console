@@ -143,11 +143,23 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         name={field.name}
                         value={field.value}
                         onChange={(e) => {
-                          if (cloudProviderInstanceTypesKarpenter) {
-                            setValue(
-                              'karpenter.qovery_node_pools.requirements',
-                              convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                          if (!props.fromDetail) {
+                            if (cloudProviderInstanceTypesKarpenter) {
+                              setValue(
+                                'karpenter.qovery_node_pools.requirements',
+                                convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                              )
+                            }
+                          } else {
+                            const instanceType = cloudProviderInstanceTypes?.filter(
+                              (option) => option.name === watchInstanceType
                             )
+                            if (instanceType) {
+                              setValue(
+                                'karpenter.qovery_node_pools.requirements',
+                                convertToKarpenterRequirements(instanceType)
+                              )
+                            }
                           }
 
                           field.onChange(e)
