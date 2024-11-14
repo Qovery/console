@@ -265,6 +265,8 @@ function KarpenterInstanceForm({
                           onCheckedChange={(checked) => {
                             if (!checked) {
                               methods.setValue('default_service_architecture', 'ARM64')
+                              const clusterArchitecture = getDefaultArchitecture()
+                              setShowArchitectureWarning('ARM64' !== clusterArchitecture)
                             } else {
                               // Reset all other values
                               resetAll()
@@ -292,6 +294,8 @@ function KarpenterInstanceForm({
                           onCheckedChange={(checked) => {
                             if (!checked) {
                               methods.setValue('default_service_architecture', 'AMD64')
+                              const clusterArchitecture = getDefaultArchitecture()
+                              setShowArchitectureWarning('AMD64' !== clusterArchitecture)
                             } else {
                               // Reset all other values
                               resetAll()
