@@ -21,6 +21,7 @@ export function PageSettingsResources({ cluster, onSubmit, loading }: PageSettin
         <SettingsHeading title="Resources settings" />
         <form onSubmit={onSubmit}>
           <ClusterResourcesSettingsFeature
+            cluster={cluster}
             cloudProvider={cluster.cloud_provider}
             clusterRegion={cluster.region}
             isProduction={cluster.production}

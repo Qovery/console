@@ -1,10 +1,11 @@
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type Cluster, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import ClusterResourcesSettings from '../../ui/cluster-resources-settings/cluster-resources-settings'
 
 export interface ClusterResourcesSettingsFeatureProps {
+  cluster?: Cluster
   fromDetail?: boolean
   cloudProvider?: CloudProviderEnum
   clusterRegion?: string
@@ -57,6 +58,7 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
       clusterRegion={props.clusterRegion}
       isProduction={props.isProduction}
       hasAlreadyKarpenter={props.hasAlreadyKarpenter}
+      cluster={props.cluster}
     />
   )
 }
