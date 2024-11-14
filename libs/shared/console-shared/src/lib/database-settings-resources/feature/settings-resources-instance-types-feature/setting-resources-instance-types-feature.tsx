@@ -3,7 +3,8 @@ import {
   type DatabaseTypeEnum,
   type ManagedDatabaseInstanceTypeResponse,
 } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCloudProviderDatabaseInstanceTypes } from '@qovery/domains/cloud-providers/feature'
@@ -14,13 +15,16 @@ import SettingsResourcesInstanceTypes from '../../ui/settings-resources-instance
 export interface SettingsResourcesInstanceTypesFeatureProps {
   databaseType: DatabaseTypeEnum
   displayWarning: boolean
+  isSetting: boolean
 }
 
 export function SettingsResourcesInstanceTypesFeature({
   databaseType,
   displayWarning,
+  isSetting,
 }: SettingsResourcesInstanceTypesFeatureProps) {
   const { organizationId = '', environmentId = '' } = useParams()
+  const { setValue } = useFormContext()
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
@@ -54,6 +58,20 @@ export function SettingsResourcesInstanceTypesFeature({
       })),
     [databaseInstanceTypes]
   )
+
+  // Set default value when component mounts or database type changes
+  useEffect(() => {
+    if (!isSetting && databaseInstanceTypes) {
+      const defaultInstanceType = match(databaseType)
+        .with('POSTGRESQL', () => 'db.t3.small')
+        .with('MONGODB', () => 'db.t3.small')
+        .with('MYSQL', () => 'db.t3.small')
+        .with('REDIS', () => 'cache.t3.small')
+        .exhaustive()
+
+      setValue('instance_type', defaultInstanceType)
+    }
+  }, [databaseInstanceTypes, setValue])
 
   return (
     <SettingsResourcesInstanceTypes

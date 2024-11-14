@@ -53,6 +53,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
               isManaged={database.mode === DatabaseModeEnum.MANAGED}
               displayInstanceTypesWarning={displayInstanceTypesWarning}
               displayStorageWarning={displayStorageWarning}
+              isSetting
             />
           </Section>
 

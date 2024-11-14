@@ -140,7 +140,6 @@ export function StepGeneralFeature() {
   })
 
   const watchModeDatabase = methods.watch('mode')
-  const watchTypeDatabase = methods.watch('type')
 
   const { databaseTypeOptions, databaseVersionOptions } = generateDatabasesTypesAndVersionOptions(
     databaseConfigurations,
@@ -153,13 +152,6 @@ export function StepGeneralFeature() {
 
   const publicOptionNotAvailable =
     cluster?.kubernetes === KubernetesEnum.K3_S && watchModeDatabase === DatabaseModeEnum.CONTAINER
-
-  useEffect(() => {
-    if (methods.formState.isDirty) {
-      methods.setValue('version', '')
-      if (watchTypeDatabase) methods.trigger('version')
-    }
-  }, [watchModeDatabase, methods.setValue])
 
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {

@@ -51,7 +51,7 @@ export function StepGeneral({
   cloudProvider,
   showManagedWithVpcOptions,
 }: StepGeneralProps) {
-  const { control, formState, watch } = useFormContext<GeneralData>()
+  const { control, formState, watch, resetField } = useFormContext<GeneralData>()
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const navigate = useNavigate()
   const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
@@ -119,7 +119,6 @@ export function StepGeneral({
                   <>
                     <InputRadio
                       value={DatabaseModeEnum.CONTAINER}
-                      className="mb-3"
                       name={field.name}
                       description="Deployed on your Kubernetes cluster. Not for production purposes, no back-ups nor snapshots."
                       onChange={field.onChange}
@@ -130,7 +129,6 @@ export function StepGeneral({
                       cloudProvider === CloudProviderEnum.AWS &&
                       cluster.kubernetes !== 'SELF_MANAGED' && (
                         <InputRadio
-                          className="mb-3"
                           value={DatabaseModeEnum.MANAGED}
                           name={field.name}
                           description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
@@ -169,7 +167,10 @@ export function StepGeneral({
               <InputSelect
                 label="Database type"
                 options={databaseTypeOptions || []}
-                onChange={field.onChange}
+                onChange={(e) => {
+                  field.onChange(e)
+                  resetField('version')
+                }}
                 value={field.value}
                 error={error?.message}
               />

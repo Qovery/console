@@ -10,12 +10,12 @@ import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resour
 
 export interface DatabaseSettingsResourcesProps {
   database?: Database
-  isDatabase?: boolean
   isManaged?: boolean
   clusterId?: string
   databaseType?: DatabaseTypeEnum
   displayInstanceTypesWarning?: boolean
   displayStorageWarning?: boolean
+  isSetting?: boolean
 }
 
 export function DatabaseSettingsResources({
@@ -25,6 +25,7 @@ export function DatabaseSettingsResources({
   clusterId = '',
   displayInstanceTypesWarning = false,
   displayStorageWarning = false,
+  isSetting = false,
 }: DatabaseSettingsResourcesProps) {
   const { control } = useFormContext()
   const { organizationId = '', environmentId } = useParams()
@@ -142,6 +143,7 @@ export function DatabaseSettingsResources({
         <SettingsResourcesInstanceTypesFeature
           databaseType={databaseType}
           displayWarning={displayInstanceTypesWarning}
+          isSetting={isSetting}
         />
       )}
       <Controller
