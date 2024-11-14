@@ -156,8 +156,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               (option) => option.name === watchInstanceType
                             )
                             if (instanceType) {
-                              console.log(instanceType[0])
-
                               setValue(
                                 'karpenter.qovery_node_pools.requirements',
                                 convertToKarpenterRequirements(instanceType)

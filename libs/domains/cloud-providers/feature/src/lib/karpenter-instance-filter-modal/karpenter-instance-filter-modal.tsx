@@ -25,7 +25,6 @@ import { InstanceCategory } from './instance-category/instance-category'
 import { sortInstanceSizes } from './utils/sort-instance-sizes'
 
 const DISPLAY_LIMIT = 60
-const isNumberInRange = (num: number, [min, max]: [number, number]) => num >= min && num <= max
 
 export interface KarpenterInstanceFilterModalProps {
   clusterRegion: string
