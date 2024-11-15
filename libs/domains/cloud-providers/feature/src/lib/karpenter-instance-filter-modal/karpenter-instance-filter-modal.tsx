@@ -23,7 +23,7 @@ import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useCloudProviderInstanceTypesKarpenter } from '../hooks/use-cloud-provider-instance-types-karpenter/use-cloud-provider-instance-types-karpenter'
 import { filterInstancesByKarpenterRequirements } from '../karpenter-instance-filter-modal/utils/filter-instances-by-karpenter-requirements'
 import { generateDefaultValues } from '../karpenter-instance-filter-modal/utils/generate-default-values'
-import { InstanceCategory } from './instance-category/instance-category'
+import { type ClusterInstanceAttributesExtended, InstanceCategory } from './instance-category/instance-category'
 import { sortInstanceSizes } from './utils/sort-instance-sizes'
 
 const DISPLAY_LIMIT = 60
@@ -433,8 +433,22 @@ function KarpenterInstanceForm({
                 {allCategories
                   .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
                   .map((category) => {
-                    const attributes: ClusterInstanceAttributes[] = Object.values(instanceCategories).flatMap(
-                      (architecture) => architecture[category] || []
+                    const allSizes = Array.from(
+                      new Set(
+                        Object.values(instanceCategories)
+                          .flatMap((categories) => categories[category] || [])
+                          .filter((attr) => attr.instance_size)
+                          .map((attr) => attr.instance_size!)
+                      )
+                    ).sort()
+
+                    const attributes: ClusterInstanceAttributesExtended[] = Object.entries(instanceCategories).flatMap(
+                      ([architecture, categories]) =>
+                        (categories[category] || []).map((attr) => ({
+                          ...attr,
+                          architecture: architecture as CpuArchitectureEnum,
+                          sizes: allSizes,
+                        }))
                     )
 
                     if (attributes.length === 0) return null

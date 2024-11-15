@@ -1,12 +1,11 @@
-import { type ClusterInstanceAttributes } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { InstanceCategory } from './instance-category'
+import { type ClusterInstanceAttributesExtended, InstanceCategory } from './instance-category'
 
-const mockAttributes: ClusterInstanceAttributes[] = [
-  { instance_family: 't3' },
-  { instance_family: 't3a' },
-  { instance_family: 't4g' },
+const mockAttributes: ClusterInstanceAttributesExtended[] = [
+  { instance_family: 't3', sizes: ['t3.small', 't3.medium'], architecture: 'AMD64' },
+  { instance_family: 't3a', sizes: ['t3a.small', 't3a.medium'], architecture: 'AMD64' },
+  { instance_family: 't4g', sizes: ['t4g.small', 't4g.medium'], architecture: 'AMD64' },
 ]
 
 const WrapperComponent = ({ children, defaultValues = {} }) => {
