@@ -366,6 +366,31 @@ function KarpenterInstanceForm({
                   )}
                 </div>
               </div>
+              <div className="grid grid-cols-3 gap-1">
+                {sortInstanceSizes(instanceSizes)?.map((size) => (
+                  <div key={size} className="flex items-center gap-3">
+                    <Controller
+                      name="sizes"
+                      control={methods.control}
+                      render={({ field }) => (
+                        <>
+                          <Checkbox
+                            className="shrink-0"
+                            name={size}
+                            id={size}
+                            checked={field.value.includes(size)}
+                            onCheckedChange={(checked) => {
+                              const newSizes = checked ? [...field.value, size] : field.value.filter((s) => s !== size)
+                              field.onChange(newSizes)
+                            }}
+                          />
+                          <label htmlFor={size}>{size}</label>
+                        </>
+                      )}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <div className="flex w-full justify-between font-semibold text-neutral-400">
