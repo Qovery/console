@@ -71,15 +71,19 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
     .otherwise(() => false)
 
   const attributeCheckboxState = (attribute: ClusterInstanceAttributesExtended) => {
-    const sizeDisabled = !watchSizes.some((size) => attribute.sizes.includes(size))
-
     const architectureEnabled = match(attribute.architecture)
       .with('AMD64', () => watchAMD64)
       .with('ARM64', () => watchARM64)
       .otherwise(() => false)
 
+    const sizeDisabled = !watchSizes.some((size) => attribute.sizes.includes(size))
+
     const getTooltipMessage = () => {
       const conditions = []
+
+      if (!architectureEnabled) {
+        conditions.push(<span>{attribute.architecture} architecture must be enabled for this instance type.</span>)
+      }
 
       if (sizeDisabled) {
         const availableSizes = attribute.sizes.join(', ')
@@ -90,10 +94,6 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
             Available sizes: {availableSizes}
           </span>
         )
-      }
-
-      if (!architectureEnabled) {
-        conditions.push(<span>{attribute.architecture} architecture must be enabled for this instance type.</span>)
       }
 
       if (conditions.length === 0) return false
