@@ -115,7 +115,7 @@ describe('PageSettingsResourcesFeature', () => {
         type: ClusterFeatureResponseTypeEnum.KARPENTER,
         value: {
           spot_enabled: false,
-          disk_size_in_gib: 50,
+          disk_size_in_gib: '50',
           default_service_architecture: 'AMD64',
         },
         cloud_provider: 'AWS',

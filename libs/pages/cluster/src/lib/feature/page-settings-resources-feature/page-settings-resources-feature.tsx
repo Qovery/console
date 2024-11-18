@@ -28,8 +28,9 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
         id: 'KARPENTER',
         value: {
           spot_enabled: data['karpenter'].spot_enabled ?? false,
-          disk_size_in_gib: parseInt(data['karpenter'].disk_size_in_gib),
+          disk_size_in_gib: data['karpenter'].disk_size_in_gib,
           default_service_architecture: data['karpenter'].default_service_architecture,
+          qovery_node_pools: data['karpenter'].qovery_node_pools,
         },
       } as ClusterRequestFeaturesInner,
     ]
@@ -40,8 +41,9 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
           ...feature,
           value: {
             spot_enabled: data['karpenter'].spot_enabled ?? false,
-            disk_size_in_gib: parseInt(data['karpenter'].disk_size_in_gib),
+            disk_size_in_gib: data['karpenter'].disk_size_in_gib,
             default_service_architecture: data['karpenter'].default_service_architecture,
+            qovery_node_pools: data['karpenter'].qovery_node_pools,
           },
         }
       }
@@ -74,8 +76,9 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
         ? {
             enabled: true,
             spot_enabled: karpenterFeature.value.spot_enabled,
-            disk_size_in_gib: karpenterFeature.value.disk_size_in_gib.toString(),
+            disk_size_in_gib: karpenterFeature.value.disk_size_in_gib,
             default_service_architecture: karpenterFeature.value.default_service_architecture,
+            qovery_node_pools: karpenterFeature.value.qovery_node_pools,
           }
         : {
             enabled: false,

@@ -5,32 +5,62 @@ import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterResourcesSettings, { type ClusterResourcesSettingsProps } from './cluster-resources-settings'
 
+jest.mock('@qovery/domains/cloud-providers/feature', () => {
+  return {
+    ...jest.requireActual('@qovery/domains/cloud-providers/feature'),
+    useCloudProviderInstanceTypes: () => ({
+      data: [
+        {
+          type: 'c6g.t2micro',
+          name: 'c6g.t2micro',
+          cpu: 1,
+          ram_in_gb: 1,
+          bandwidth_in_gbps: '',
+          bandwidth_guarantee: '',
+          architecture: 'ARM64',
+          gpu_info: null,
+          attributes: {
+            instance_category: 'c',
+            instance_generation: 6,
+            instance_family: 'c6g',
+            instance_size: 't2.micro',
+            meets_resource_reqs: true,
+          },
+        },
+        {
+          type: 'm5ad.t2medium',
+          name: 'm5ad.t2medium',
+          cpu: 64,
+          ram_in_gb: 256,
+          bandwidth_in_gbps: '',
+          bandwidth_guarantee: '',
+          architecture: 'AMD64',
+          gpu_info: null,
+          attributes: {
+            instance_category: 'm',
+            instance_generation: 5,
+            instance_family: 'm5ad',
+            instance_size: 't2medium',
+            meets_resource_reqs: true,
+          },
+        },
+      ],
+    }),
+  }
+})
+
 describe('ClusterResourcesSettings', () => {
   let defaultValues: ClusterResourcesData
   let props: ClusterResourcesSettingsProps
   beforeEach(() => {
     defaultValues = {
-      instance_type: 't2.micro',
+      instance_type: 't2micro',
       disk_size: 50,
       cluster_type: 'MANAGED',
       nodes: [1, 3],
     }
 
     props = {
-      instanceTypeOptions: [
-        {
-          label: 't2.micro (1CPU - 1GB RAM)',
-          value: 't2.micro',
-        },
-        {
-          label: 't2.small (1CPU - 2GB RAM)',
-          value: 't2.small',
-        },
-        {
-          label: 't2.medium (2CPU - 4GB RAM - ARM)',
-          value: 't2.medium',
-        },
-      ],
       clusterTypeOptions: [
         {
           label: 'Managed K8S (EKS)',
@@ -106,7 +136,7 @@ describe('ClusterResourcesSettings', () => {
       wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
         defaultValues: {
           ...defaultValues,
-          instance_type: 't2.medium',
+          instance_type: 'c6g.t2micro',
         },
       })
     )
@@ -122,7 +152,7 @@ describe('ClusterResourcesSettings', () => {
     )
 
     const selectInstanceType = screen.getByLabelText('Instance type')
-    await selectEvent.select(selectInstanceType, 't2.micro (1CPU - 1GB RAM)', { container: document.body })
+    await selectEvent.select(selectInstanceType, 'c6g.t2micro (1CPU - 1GB RAM - ARM64)', { container: document.body })
 
     const inputDiskSize = screen.getByLabelText('Disk size (GB)')
     await userEvent.type(inputDiskSize, '100')

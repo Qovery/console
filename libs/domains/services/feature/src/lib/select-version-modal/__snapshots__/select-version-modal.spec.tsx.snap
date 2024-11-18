@@ -127,7 +127,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
         </div>
       </div>
       <p
-        class="mt-0.5 px-4 text-xs font-normal text-neutral-350"
+        class="mt-0.5 px-3 text-xs font-normal text-neutral-350"
       >
         Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)
       </p>

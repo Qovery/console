@@ -88,15 +88,22 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProviderApi.listAWSEc2InstanceType(region)
         )
         .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
-          cloudProviderApi.listAWSEKSInstanceType(region)
+          cloudProviderApi.listAWSEKSInstanceType(region, true, true)
         )
         .with({ cloudProvider: 'AWS', clusterType: 'SELF_MANAGED' }, ({ region }) =>
-          cloudProviderApi.listAWSEKSInstanceType(region)
+          cloudProviderApi.listAWSEKSInstanceType(region, true)
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'ON_PREMISE' }, () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
+      return response.data.results
+    },
+  }),
+  listInstanceTypesKarpenter: (args: { cloudProvider: Extract<CloudProviderEnum, 'AWS'>; region: string }) => ({
+    queryKey: [args.cloudProvider, args.region],
+    async queryFn() {
+      const response = await cloudProviderApi.listAWSEKSInstanceType(args.region, false, false)
       return response.data.results
     },
   }),
