@@ -29,7 +29,7 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
-import KarpenterImage from './karpenter-image'
+import KarpenterImage from './karpenter-image.png'
 
 export interface ClusterResourcesSettingsProps {
   cluster?: Cluster
@@ -217,7 +217,11 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         </motion.div>
                       </AnimatePresence>
                     </div>
-                    <KarpenterImage className="absolute right-0 top-0" />
+                    <img
+                      src={KarpenterImage}
+                      alt="Karpenter"
+                      className="pointer-events-none absolute right-0 top-0 h-[120px] select-none"
+                    />
                   </div>
                   <AnimatePresence>
                     {watchKarpenterEnabled && (
