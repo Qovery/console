@@ -366,22 +366,6 @@ function KarpenterInstanceForm({
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-1">
-                {sortInstanceSizes(instanceSizes)?.map((size) => (
-                  <div key={size} className="flex items-center gap-3">
-                    <Controller
-                      name="sizes"
-                      control={methods.control}
-                      render={({ field }) => (
-                        <div className="flex w-full flex-col">
-                          <p className="mb-3 text-sm font-medium text-neutral-400">{`CPU min ${watchCpu[0]} - max ${watchCpu[1]}`}</p>
-                          <Slider onChange={field.onChange} value={field.value} max={maxCpu} min={1} step={1} />
-                        </div>
-                      )}
-                    />
-                  </div>
-                ))}
-              </div>
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <div className="flex w-full justify-between font-semibold text-neutral-400">
