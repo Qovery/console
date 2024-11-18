@@ -113,7 +113,7 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
                 />
               )}
             />
-            <p className="ml-4 mt-1 text-xs text-neutral-350">
+            <p className="ml-3 mt-1 text-xs text-neutral-350">
               Indicate emails where you want to receive important communications from Qovery. (E.g. cluster upgrade,
               downtime...)
             </p>

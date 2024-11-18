@@ -79,7 +79,7 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
             isSearchable
           />
           {urlRepository && (
-            <ExternalLink className="ml-4" size="xs" href={urlRepository}>
+            <ExternalLink className="ml-3" size="xs" href={urlRepository}>
               Go to repository
             </ExternalLink>
           )}

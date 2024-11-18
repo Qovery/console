@@ -90,17 +90,12 @@ export function StepGeneral(props: StepGeneralProps) {
                     <Callout.Text>
                       GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
                       behavior.
-                      <ExternalLink
-                        className="mt-1 flex"
-                        href="https://cloud.google.com/billing/docs/how-to/budgets"
-                        size="xs"
-                      >
+                      <ExternalLink className="mt-1 flex" href="https://cloud.google.com/billing/docs/how-to/budgets">
                         Setup budget alerts
                       </ExternalLink>
                       <ExternalLink
                         className="mt-1 flex"
                         href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
-                        size="xs"
                       >
                         More details
                       </ExternalLink>

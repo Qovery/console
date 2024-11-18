@@ -90,7 +90,6 @@ export function StepFeatures(props: StepFeaturesProps) {
                                 IPv4 Addresses. Disabling it may cost you more, depending on the number of nodes in your
                                 cluster. <br />
                                 <ExternalLink
-                                  size="xs"
                                   href="https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/"
                                   className="mt-1"
                                 >

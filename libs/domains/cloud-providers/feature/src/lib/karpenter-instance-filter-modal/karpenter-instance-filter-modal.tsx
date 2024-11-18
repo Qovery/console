@@ -1,5 +1,7 @@
 import clsx from 'clsx'
 import {
+  type Cluster,
+  type ClusterFeatureKarpenterParametersResponse,
   type ClusterInstanceAttributes,
   type ClusterInstanceTypeResponseListResultsInner,
   CpuArchitectureEnum,
@@ -32,6 +34,7 @@ export interface KarpenterInstanceFilterModalProps {
   onChange: (data: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>) => void
   onClose: () => void
   defaultValues?: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>
+  cluster?: Cluster
 }
 
 export interface KarpenterInstanceFormProps {
@@ -47,6 +50,7 @@ function KarpenterInstanceForm({
   defaultValues,
   onChange,
   onClose,
+  cluster,
 }: Omit<KarpenterInstanceFilterModalProps, 'clusterRegion'>) {
   const _defaultValues = defaultValues
     ? filterInstancesByKarpenterRequirements(cloudProviderInstanceTypes, defaultValues)
@@ -54,6 +58,7 @@ function KarpenterInstanceForm({
 
   const [dataFiltered, setDataFiltered] = useState<ClusterInstanceTypeResponseListResultsInner[]>(_defaultValues)
   const [extendSelection, setExtendSelection] = useState(false)
+  const [showArchitectureWarning, setShowArchitectureWarning] = useState(false)
 
   const methods = useForm<KarpenterInstanceFormProps>({
     mode: 'onChange',
@@ -131,31 +136,23 @@ function KarpenterInstanceForm({
   // Defined data filtered
   methods.watch((data) => {
     if (!data || !cloudProviderInstanceTypes) return
-
     const filtered = cloudProviderInstanceTypes.filter((instanceType) => {
       // Architecture check
       const architectureMatch =
         (data.AMD64 && instanceType.architecture === 'AMD64') || (data.ARM64 && instanceType.architecture === 'ARM64')
-
       // Categories check
       const categoriesMatch = () => {
         if (!data.categories || Object.keys(data.categories).length === 0) return false
         const instanceCategory = instanceType.attributes?.instance_category
         const instanceFamily = instanceType.attributes?.instance_family
-
         if (!instanceCategory || !instanceFamily) return false
-
         const hashmap = new Map(Object.entries(data.categories))
-
         return hashmap.get(instanceCategory)?.includes(instanceFamily)
       }
-
       // Sizes range check
       const sizeMatch = data.sizes && data.sizes.includes(instanceType.attributes?.instance_size)
-
       return architectureMatch && sizeMatch && categoriesMatch()
     })
-
     setDataFiltered(filtered)
   })
 
@@ -226,6 +223,18 @@ function KarpenterInstanceForm({
     ...new Set(Object.values(instanceCategories).flatMap((architecture) => Object.keys(architecture))),
   ]
 
+  const getDefaultArchitecture = () => {
+    const karpenterFeature = cluster?.features?.find(
+      (feature) => feature.id === 'KARPENTER'
+    ) as ClusterFeatureKarpenterParametersResponse
+
+    if (karpenterFeature) {
+      return karpenterFeature.value.default_service_architecture
+    }
+
+    return null
+  }
+
   return (
     <FormProvider {...methods}>
       <ModalCrud title="Karpenter Instance Visual filter" onClose={onClose} onSubmit={onSubmit} submitLabel="Confirm">
@@ -248,6 +257,8 @@ function KarpenterInstanceForm({
                           onCheckedChange={(checked) => {
                             if (!checked) {
                               methods.setValue('default_service_architecture', 'ARM64')
+                              const clusterArchitecture = getDefaultArchitecture()
+                              setShowArchitectureWarning('ARM64' !== clusterArchitecture)
                             } else {
                               // Reset all other values
                               resetAll()
@@ -275,6 +286,8 @@ function KarpenterInstanceForm({
                           onCheckedChange={(checked) => {
                             if (!checked) {
                               methods.setValue('default_service_architecture', 'AMD64')
+                              const clusterArchitecture = getDefaultArchitecture()
+                              setShowArchitectureWarning('AMD64' !== clusterArchitecture)
                             } else {
                               // Reset all other values
                               resetAll()
@@ -296,13 +309,33 @@ function KarpenterInstanceForm({
                   <InputSelect
                     label="Select build default"
                     options={Object.keys(CpuArchitectureEnum).map((value) => ({ label: value, value }))}
-                    onChange={field.onChange}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      if (cluster) {
+                        const clusterArchitecture = getDefaultArchitecture()
+                        setShowArchitectureWarning(value !== clusterArchitecture)
+                      }
+                    }}
                     value={field.value}
                     disabled={!watchAMD64 || !watchARM64}
                     hint="Applications will be built and deployed on this architecture"
                   />
                 )}
               />
+              {showArchitectureWarning && (
+                <Callout.Root color="yellow">
+                  <Callout.Icon>
+                    <Icon iconName="info-circle" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    <Callout.TextHeading>Warning</Callout.TextHeading>
+                    <Callout.TextDescription>
+                      Please note that if you change your default build architecture, you will need to redeploy all
+                      applications to ensure they are built in the new architecture.
+                    </Callout.TextDescription>
+                  </Callout.Text>
+                </Callout.Root>
+              )}
             </div>
             <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
               <div className="flex w-full justify-between font-semibold text-neutral-400">
@@ -483,6 +516,7 @@ export function KarpenterInstanceFilterModal({
   defaultValues,
   onChange,
   onClose,
+  cluster,
 }: Omit<KarpenterInstanceFilterModalProps, 'cloudProviderInstanceTypes'>) {
   // Get instance types only available for AWS
   const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
@@ -497,6 +531,7 @@ export function KarpenterInstanceFilterModal({
         cloudProviderInstanceTypes={cloudProviderInstanceTypesKarpenter}
         onChange={onChange}
         onClose={onClose}
+        cluster={cluster}
       />
     )
   } else {
