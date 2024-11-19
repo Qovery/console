@@ -208,7 +208,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
   if (!logs || logs.length === 0 || logs[0].message.includes('No pods found')) {
     return (
-      <div className="p-1">
+      <div className="w-full p-1">
         <div className="h-[calc(100vh-72px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
           <div className="h-[calc(100vh-136px)] border-r border-neutral-500 bg-neutral-600 pt-11">

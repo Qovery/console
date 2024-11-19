@@ -49,7 +49,12 @@ export function HeaderLogs({
   const totalDurationSec = serviceStatus?.steps?.total_computing_duration_sec ?? 0
 
   return (
-    <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900 pr-4">
+    <div
+      className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900 pr-4"
+      style={{
+        paddingRight: 'var(--padding-sidebar)',
+      }}
+    >
       <div className="flex h-full">
         <div className="flex h-full items-center gap-4 border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50">
           {type === 'DEPLOYMENT' && (

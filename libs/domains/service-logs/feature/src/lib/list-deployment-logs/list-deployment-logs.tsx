@@ -294,7 +294,7 @@ export function ListDeploymentLogs({
 
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
-      <div className="h-full p-1">
+      <div className="h-full w-full p-1">
         <div className="h-full border border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogs
             type="DEPLOYMENT"
