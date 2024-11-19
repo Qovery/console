@@ -145,7 +145,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
               onChange={field.onChange}
               value={field.value}
               label="Number of restarts"
-              hint="Maximum number of restarts allowed in case of job failure (0 means no failure)"
+              hint="Maximum number of restarts allowed in case of job failure (0 means no failure). Restarts follow an exponential re-try policy (after 10s, 20s, 40s ... capped at six minutes)"
               error={error?.message}
             />
           )}
