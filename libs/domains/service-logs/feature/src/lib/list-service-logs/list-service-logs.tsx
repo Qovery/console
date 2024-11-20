@@ -228,7 +228,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       }}
     >
       <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
-        <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+        <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
           <HeaderLogsComponent />
           <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
             <div className="flex items-center gap-3">

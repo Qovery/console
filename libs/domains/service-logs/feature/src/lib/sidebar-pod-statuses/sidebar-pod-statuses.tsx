@@ -18,8 +18,8 @@ export interface SidebarPodStatusesProps extends PropsWithChildren {
   service?: AnyService
 }
 
-const PADDING_SIDEBAR_CLOSE = '47px'
-const PADDING_SIDEBAR_OPEN = '93px'
+const PADDING_SIDEBAR_CLOSE = '93px'
+const PADDING_SIDEBAR_OPEN = '47px'
 
 export function SidebarPodStatuses({ organizationId, projectId, service, children }: SidebarPodStatusesProps) {
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
@@ -30,8 +30,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     environmentId: service?.environment.id,
     serviceId: service?.id,
   })
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [open, setOpen] = useState(false)
+  const [searchParams] = useSearchParams()
   const getColorByPod = usePodColor()
 
   const pods: Pod[] = useMemo(() => {
@@ -76,21 +75,28 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     )
   }, [pods])
 
+  // Update padding based on loading state and errors
   useEffect(() => {
     if (!isMetricsLoading && !isRunningStatusesLoading) {
-      document.documentElement.style.setProperty('--padding-sidebar', PADDING_SIDEBAR_OPEN)
-    } else {
-      document.documentElement.style.setProperty('--padding-sidebar', '16px')
+      document.documentElement.style.setProperty(
+        '--padding-sidebar',
+        podsErrors.length > 0 ? PADDING_SIDEBAR_OPEN : PADDING_SIDEBAR_CLOSE
+      )
+
+      setOpen(podsErrors.length > 0)
     }
-  }, [isMetricsLoading, isRunningStatusesLoading])
+  }, [isMetricsLoading, isRunningStatusesLoading, podsErrors.length])
+
+  const [open, setOpen] = useState(() => podsErrors.length > 0)
 
   const toggleOpen = () => {
-    setOpen(!open)
-    if (open) {
+    if (!open) {
       document.documentElement.style.setProperty('--padding-sidebar', PADDING_SIDEBAR_OPEN)
     } else {
       document.documentElement.style.setProperty('--padding-sidebar', PADDING_SIDEBAR_CLOSE)
     }
+
+    setOpen(!open)
   }
 
   const segments = useMemo(() => {

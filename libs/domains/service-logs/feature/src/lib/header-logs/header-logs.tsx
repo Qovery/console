@@ -50,9 +50,9 @@ export function HeaderLogs({
 
   return (
     <div
-      className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900 pr-4"
+      className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900"
       style={{
-        paddingRight: 'var(--padding-sidebar)',
+        paddingRight: 'var(--padding-sidebar, 16px)',
       }}
     >
       <div className="flex h-full">
