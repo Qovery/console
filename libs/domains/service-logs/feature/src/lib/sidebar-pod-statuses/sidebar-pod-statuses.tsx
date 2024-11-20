@@ -48,6 +48,8 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     }))
   }, [metrics, runningStatuses])
 
+  console.log(pods)
+
   const podsErrors = useMemo(() => pods.filter((pod) => pod.state === 'ERROR'), [pods])
 
   const podStatusCount = useMemo(() => {
@@ -55,8 +57,14 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
       (acc, pod) => {
         const status = match(pod.state)
           .with('RUNNING', () => ({ type: 'running', message: 'running', color: 'bg-green-500' }))
+          .with('COMPLETED', () => ({ type: 'running', message: 'completed', color: 'bg-green-500' }))
           .with('WARNING', () => ({ type: 'warning', message: 'warning', color: 'bg-yellow-500' }))
-          .with('STARTING', 'STOPPING', 'COMPLETED', () => ({
+          .with('STARTING', () => ({
+            type: 'running',
+            message: 'starting',
+            color: 'bg-purple-500',
+          }))
+          .with('STOPPING', () => ({
             type: 'pending',
             message: 'pending',
             color: 'bg-purple-500',
@@ -105,9 +113,9 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     const statusCount = pods.reduce(
       (acc, pod) => {
         const color = match(pod.state)
-          .with('RUNNING', () => 'GREEN')
+          .with('RUNNING', 'COMPLETED', () => 'GREEN')
           .with('WARNING', () => 'YELLOW')
-          .with('STARTING', 'STOPPING', 'COMPLETED', () => 'PURPLE')
+          .with('STARTING', 'STOPPING', () => 'PURPLE')
           .with('ERROR', () => 'RED')
           .otherwise(() => 'GREY')
 
