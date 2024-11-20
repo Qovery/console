@@ -53,7 +53,7 @@ export function RowServiceLogs({
         onClick={() => toggleExpanded(!isExpanded)}
         className="sl-row relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-['']"
       >
-        <Table.Cell className="flex h-9 select-none items-center gap-2 whitespace-nowrap pr-1.5">
+        <Table.Cell className="flex h-min min-h-9 select-none items-center gap-2 whitespace-nowrap pr-1.5">
           <span className="flex h-3 w-3 items-center justify-center">
             <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
           </span>
@@ -84,13 +84,13 @@ export function RowServiceLogs({
             </Button>
           </Tooltip>
         </Table.Cell>
-        <Table.Cell className="h-9 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
+        <Table.Cell className="h-min min-h-9 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
           <span title={dateUTCString(original.created_at)} className="inline-block whitespace-nowrap">
             {dateFullFormat(original.created_at, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>
         {hasMultipleContainers && (
-          <Table.Cell className="flex h-9 select-none items-center gap-2 whitespace-nowrap px-1.5">
+          <Table.Cell className="flex h-min min-h-9 select-none items-center gap-2 whitespace-nowrap px-1.5">
             <Tooltip content={original.container_name}>
               <Button
                 type="button"
@@ -115,7 +115,7 @@ export function RowServiceLogs({
             </Tooltip>
           </Table.Cell>
         )}
-        <Table.Cell className="h-9 w-full pb-1 pl-1.5 pr-3 pt-2.5 align-top font-code font-bold">
+        <Table.Cell className="h-min min-h-9 w-full pb-1 pl-1.5 pr-3 pt-2.5 align-top font-code font-bold">
           <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
             {original.message}
           </Ansi>
