@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
@@ -8,6 +9,7 @@ import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Button, Icon, Link, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge } from '@qovery/shared/util-js'
+import { usePodColor } from '../list-service-logs/use-pod-color'
 import { DonutChart } from './donut-chart/donut-chart'
 
 export interface SidebarPodStatusesProps extends PropsWithChildren {
@@ -20,7 +22,6 @@ const PADDING_SIDEBAR_CLOSE = '47px'
 const PADDING_SIDEBAR_OPEN = '93px'
 
 export function SidebarPodStatuses({ organizationId, projectId, service, children }: SidebarPodStatusesProps) {
-  const [open, setOpen] = useState(false)
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
     environmentId: service?.environment.id,
     serviceId: service?.id,
@@ -29,6 +30,9 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     environmentId: service?.environment.id,
     serviceId: service?.id,
   })
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [open, setOpen] = useState(false)
+  const getColorByPod = usePodColor()
 
   const pods: Pod[] = useMemo(() => {
     // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
@@ -131,7 +135,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     <div className="flex">
       {children}
       <motion.aside
-        className="relative my-1 -mr-[317px] flex w-[330px] border border-r-0 border-neutral-500 bg-neutral-600"
+        className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral-500 bg-neutral-600"
         animate={{
           marginRight: open ? '0' : '-317px',
         }}
@@ -174,7 +178,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
         <AnimatePresence>
           {open && (
             <motion.div
-              className="w-ful flex h-full min-w-[320px] flex-col gap-4 p-4 pl-1.5"
+              className="w-ful flex h-full min-w-[320px] flex-col gap-4 overflow-y-scroll p-4 pl-1.5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 1 }}
@@ -206,28 +210,45 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                   // Display list of errors for jobs
                   podsErrors
                     .sort((a, b) => new Date(b.started_at ?? '').getTime() - new Date(a.started_at ?? '').getTime())
-                    .map((pod) => (
-                      <div
-                        key={pod.podName}
-                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
-                      >
-                        <p>
-                          {pod.started_at && (
-                            <span title={dateUTCString(pod.started_at)}>
-                              {dateMediumLocalFormat(new Date(pod.started_at).toString())}
-                            </span>
-                          )}{' '}
-                          - {pod.state_reason}:{pod.state_message}
-                        </p>
-                        <div>
-                          <Tooltip content={pod.podName}>
-                            <Button type="button" variant="surface" color="neutral" size="xs">
-                              {pod.podName.substring(pod.podName.length - 5)}
-                            </Button>
-                          </Tooltip>
+                    .map((pod) => {
+                      return (
+                        <div
+                          key={pod.podName}
+                          className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
+                        >
+                          <p>
+                            {pod.started_at && (
+                              <span title={dateUTCString(pod.started_at)}>
+                                {dateMediumLocalFormat(new Date(pod.started_at).toString())}
+                              </span>
+                            )}{' '}
+                            - {pod.state_reason}:{pod.state_message}
+                          </p>
+                          <div>
+                            <Tooltip content={pod.podName}>
+                              <Button
+                                type="button"
+                                variant="surface"
+                                color="neutral"
+                                size="xs"
+                                className={twMerge(
+                                  clsx('gap-1.5 font-code', {
+                                    'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
+                                      searchParams.get('pod_name') === pod.podName,
+                                  })
+                                )}
+                              >
+                                <span
+                                  className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
+                                  style={{ backgroundColor: getColorByPod(pod.podName) }}
+                                />
+                                {pod.podName.substring(pod.podName.length - 5)}
+                              </Button>
+                            </Tooltip>
+                          </div>
                         </div>
-                      </div>
-                    ))
+                      )
+                    })
                 ) : (
                   // Group similar errors for services
                   Object.entries(
@@ -263,9 +284,22 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                               size="xs"
                               to={
                                 ENVIRONMENT_LOGS_URL(organizationId, projectId, service?.environment.id) +
-                                SERVICE_LOGS_URL(service?.id, pod.podName)
+                                SERVICE_LOGS_URL(
+                                  service?.id,
+                                  searchParams.get('pod_name') === pod.podName ? '' : pod.podName
+                                )
                               }
+                              className={twMerge(
+                                clsx('gap-1.5 font-code', {
+                                  'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
+                                    searchParams.get('pod_name') === pod.podName,
+                                })
+                              )}
                             >
+                              <span
+                                className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
+                                style={{ backgroundColor: getColorByPod(pod.podName) }}
+                              />
                               {pod.podName.substring(pod.podName.length - 5)}
                             </Link>
                           </Tooltip>

@@ -16,12 +16,12 @@ import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge } from '@qovery/shared/util-js'
 import { type LogType } from '../../hooks/use-service-logs/use-service-logs'
 import { UpdateTimeContext } from '../../update-time-context/update-time-context'
+import { usePodColor } from '../use-pod-color'
 import './style.scss'
 
 const { Table } = TablePrimitives
 
 export interface RowServiceLogsProps extends Row<ServiceLogResponseDto & { type: LogType; id: number }> {
-  podNameColor: Map<string, string>
   hasMultipleContainers: boolean
   toggleColumnFilter: (id: string, value: string) => void
   isFilterActive: (id: string, value: string) => boolean
@@ -30,7 +30,6 @@ export interface RowServiceLogsProps extends Row<ServiceLogResponseDto & { type:
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export function RowServiceLogs({
-  podNameColor,
   hasMultipleContainers,
   toggleColumnFilter,
   isFilterActive,
@@ -40,6 +39,7 @@ export function RowServiceLogs({
   original,
 }: RowServiceLogsProps) {
   const { utc } = useContext(UpdateTimeContext)
+  const getColorByPod = usePodColor()
 
   const isExpanded = getIsExpanded()
 
@@ -78,7 +78,7 @@ export function RowServiceLogs({
             >
               <span
                 className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                style={{ backgroundColor: podNameColor.get(original.pod_name) }}
+                style={{ backgroundColor: getColorByPod(original.pod_name) }}
               />
               {original.pod_name.substring(original.pod_name.length - 5)}
             </Button>

@@ -23,7 +23,6 @@ import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { UpdateTimeContext, defaultUpdateTimeContext } from '../update-time-context/update-time-context'
-import { getColorByPod } from './get-color-by-pod'
 import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
 
@@ -121,6 +120,12 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       : []
   )
 
+  // Necessary with sidebar-pod-statuses to keep the filter in sync if you navigate from service logs page
+  useEffect(() => {
+    const podName = searchParams.get('pod_name')
+    setColumnFilters(podName ? [{ id: 'pod_name', value: podName }] : [])
+  }, [searchParams])
+
   const table = useReactTable({
     data: logs,
     state: { columnFilters },
@@ -162,14 +167,6 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
 
     !pauseLogs && section.scroll(0, section.scrollHeight)
   }, [logs, pauseLogs])
-
-  const podNameColor = useMemo(() => {
-    const res = new Map<string, string>()
-    for (const { pod_name } of logs) {
-      if (!res.has(pod_name)) res.set(pod_name, getColorByPod(pod_name))
-    }
-    return res
-  }, [logs.map((log) => log.pod_name).join(',')]) // Only recalculate when pod names change
 
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
@@ -378,7 +375,6 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
                       <MemoizedRowServiceLogs
                         key={row.id}
                         hasMultipleContainers={hasMultipleContainers}
-                        podNameColor={podNameColor}
                         toggleColumnFilter={toggleColumnFilter}
                         isFilterActive={isFilterActive}
                         {...row}
