@@ -223,7 +223,12 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                             key={pod.podName}
                             className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
                           >
-                            <p>
+                            <p className="flex flex-col gap-1">
+                              {pod.started_at && (
+                                <span className="flex text-xs text-red-400" title={dateUTCString(pod.started_at)}>
+                                  {dateFullFormat(pod.started_at)}
+                                </span>
+                              )}
                               {pod.state_reason}:{pod.state_message}
                             </p>
                             <div className="flex gap-1">
@@ -254,14 +259,6 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                   {pod.podName.substring(pod.podName.length - 5)}
                                 </Link>
                               </Tooltip>
-                              {pod.started_at && (
-                                <span
-                                  className="flex h-6 items-center rounded bg-neutral-400 px-1.5 font-code text-xs"
-                                  title={dateUTCString(pod.started_at)}
-                                >
-                                  {dateFullFormat(pod.started_at)}
-                                </span>
-                              )}
                             </div>
                           </div>
                         )
