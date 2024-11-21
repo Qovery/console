@@ -1,13 +1,13 @@
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { Icon, Link, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge } from '@qovery/shared/util-js'
 import { usePodColor } from '../list-service-logs/use-pod-color'
 import { DonutChart } from './donut-chart/donut-chart'
@@ -18,6 +18,7 @@ export interface SidebarPodStatusesProps extends PropsWithChildren {
   service?: AnyService
 }
 
+const PADDING_SIDEBAR_DEFAULT = '16px'
 const PADDING_SIDEBAR_CLOSE = '93px'
 const PADDING_SIDEBAR_OPEN = '47px'
 
@@ -47,8 +48,6 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
       podName,
     }))
   }, [metrics, runningStatuses])
-
-  console.log(pods)
 
   const podsErrors = useMemo(() => pods.filter((pod) => pod.state === 'ERROR'), [pods])
 
@@ -83,27 +82,20 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     )
   }, [pods])
 
-  // Update padding based on loading state and errors
-  useEffect(() => {
-    if (!isMetricsLoading && !isRunningStatusesLoading) {
-      document.documentElement.style.setProperty(
-        '--padding-sidebar',
-        podsErrors.length > 0 ? PADDING_SIDEBAR_OPEN : PADDING_SIDEBAR_CLOSE
-      )
+  const shouldBeOpen = useMemo(() => {
+    if (isMetricsLoading || isRunningStatusesLoading) return false
+    return podsErrors.length > 0 && runningStatuses?.state !== 'STOPPED'
+  }, [isMetricsLoading, isRunningStatusesLoading, podsErrors.length, runningStatuses?.state])
 
-      setOpen(podsErrors.length > 0)
-    }
-  }, [isMetricsLoading, isRunningStatusesLoading, podsErrors.length])
+  const [open, setOpen] = useState(shouldBeOpen)
 
-  const [open, setOpen] = useState(() => podsErrors.length > 0)
+  const currentPadding = useMemo(() => {
+    if (isMetricsLoading || isRunningStatusesLoading) return PADDING_SIDEBAR_CLOSE
+    if (runningStatuses?.state === 'STOPPED') return PADDING_SIDEBAR_DEFAULT
+    return open ? PADDING_SIDEBAR_OPEN : PADDING_SIDEBAR_CLOSE
+  }, [isMetricsLoading, isRunningStatusesLoading, runningStatuses?.state, open])
 
   const toggleOpen = () => {
-    if (!open) {
-      document.documentElement.style.setProperty('--padding-sidebar', PADDING_SIDEBAR_OPEN)
-    } else {
-      document.documentElement.style.setProperty('--padding-sidebar', PADDING_SIDEBAR_CLOSE)
-    }
-
     setOpen(!open)
   }
 
@@ -146,105 +138,174 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
   }
 
   return (
-    <div className="flex">
+    <div className="flex" style={{ '--padding-sidebar': currentPadding } as React.CSSProperties}>
       {children}
-      <motion.aside
-        className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral-500 bg-neutral-600"
-        animate={{
-          marginRight: open ? '0' : '-317px',
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 300,
-          damping: 30,
-        }}
-      >
-        <div
-          className={twMerge(
-            'group h-full w-[10px] min-w-[10px] cursor-pointer bg-neutral-600 transition-colors hover:bg-neutral-500 group-hover:bg-neutral-500'
-          )}
-          onClick={toggleOpen}
+      {service && segments.length > 0 && (
+        <motion.aside
+          className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral-500 bg-neutral-600"
+          animate={{
+            marginRight: open ? '0' : '-317px',
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 300,
+            damping: 30,
+          }}
         >
-          <button
-            type="button"
-            onClick={toggleOpen}
+          <div
             className={twMerge(
-              clsx(
-                'absolute top-1 flex h-9 items-center justify-center gap-1.5 rounded-l-full border border-r-0 border-neutral-500 bg-neutral-600 pl-2 pr-1 text-xs transition-colors group-hover:bg-neutral-500',
-                {
-                  '-left-[80px]': !open,
-                  '-left-9 w-9 pl-3 pr-2': open,
-                }
-              )
+              'group h-full w-[10px] min-w-[10px] cursor-pointer bg-neutral-600 transition-colors hover:bg-neutral-500 group-hover:bg-neutral-500'
             )}
+            onClick={toggleOpen}
           >
-            {!open && (
-              <>
-                <Skeleton className="flex items-center gap-1.5" show={segments.length === 0} width={54} height={16}>
-                  <DonutChart width={21} height={21} items={segments} innerRadius={7} outerRadius={10} />
-                  {service?.serviceType === 'JOB' ? 'Jobs' : 'Pods'}
-                </Skeleton>{' '}
-              </>
-            )}{' '}
-            <Icon iconName={!open ? 'angle-left' : 'angle-right'} />
-          </button>
-        </div>
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              className="w-ful flex h-full min-w-[320px] flex-col gap-4 overflow-y-scroll p-4 pl-1.5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
+            <button
+              type="button"
+              onClick={toggleOpen}
+              className={twMerge(
+                clsx(
+                  'absolute top-1 flex h-9 items-center justify-center gap-1.5 rounded-l-full border border-r-0 border-neutral-500 bg-neutral-600 pl-2 pr-1 text-xs transition-colors group-hover:bg-neutral-500',
+                  {
+                    '-left-[80px]': !open,
+                    '-left-9 w-9 pl-3 pr-2': open,
+                  }
+                )
+              )}
             >
-              <div className="flex flex-col items-center justify-center gap-4 rounded bg-neutral-550 p-6">
-                <DonutChart width={81} height={81} items={segments} innerRadius={30} outerRadius={40} />
-                <div className="flex flex-col items-center gap-1 text-center">
-                  <p className="text-sm font-medium">
-                    {podsErrors.length > 0
-                      ? `${service?.serviceType === 'JOB' ? 'Jobs' : 'Pods'} were not successful`
-                      : `${service?.serviceType === 'JOB' ? 'Jobs' : 'Pods'} are running`}
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-2 text-sm">
-                    {Object.entries(podStatusCount).map(
-                      ([status, { count, color, message }]) =>
-                        count > 0 && (
-                          <p key={status} className="flex items-center gap-2">
-                            <span className={`relative top-[1px] block h-2 w-2 rounded-full ${color}`}></span>
-                            {count} {message}
-                          </p>
-                        )
-                    )}
+              {!open && (
+                <>
+                  <Skeleton className="flex items-center gap-1.5" show={segments.length === 0} width={54} height={16}>
+                    <DonutChart width={21} height={21} items={segments} innerRadius={7} outerRadius={10} />
+                    {service.serviceType === 'JOB' ? 'Jobs' : 'Pods'}
+                  </Skeleton>{' '}
+                </>
+              )}{' '}
+              <Icon iconName={!open ? 'angle-left' : 'angle-right'} />
+            </button>
+          </div>
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                className="w-ful flex h-full min-w-[320px] flex-col gap-4 overflow-y-scroll p-4 pl-1.5"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex flex-col items-center justify-center gap-4 rounded bg-neutral-550 p-6">
+                  <DonutChart width={81} height={81} items={segments} innerRadius={30} outerRadius={40} />
+                  <div className="flex flex-col items-center gap-1 text-center">
+                    <p className="text-sm font-medium">
+                      {podsErrors.length > 0
+                        ? `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} were not successful`
+                        : `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} are running`}
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2 text-sm">
+                      {Object.entries(podStatusCount).map(
+                        ([status, { count, color, message }]) =>
+                          count > 0 && (
+                            <p key={status} className="flex items-center gap-2">
+                              <span className={`relative top-[1px] block h-2 w-2 rounded-full ${color}`}></span>
+                              {count} {message}
+                            </p>
+                          )
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              {podsErrors.length ? (
-                service?.serviceType === 'JOB' ? (
-                  // Display list of errors for jobs
-                  podsErrors
-                    .sort((a, b) => new Date(b.started_at ?? '').getTime() - new Date(a.started_at ?? '').getTime())
-                    .map((pod) => {
-                      return (
-                        <div
-                          key={pod.podName}
-                          className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
-                        >
-                          <p>
-                            {pod.started_at && (
-                              <span title={dateUTCString(pod.started_at)}>
-                                {dateMediumLocalFormat(new Date(pod.started_at).toString())}
-                              </span>
-                            )}{' '}
-                            - {pod.state_reason}:{pod.state_message}
-                          </p>
-                          <div>
-                            <Tooltip content={pod.podName}>
-                              <Button
-                                type="button"
+                {podsErrors.length ? (
+                  service.serviceType === 'JOB' ? (
+                    // Display list of errors for jobs
+                    podsErrors
+                      .sort((a, b) => new Date(b.started_at ?? '').getTime() - new Date(a.started_at ?? '').getTime())
+                      .map((pod) => {
+                        return (
+                          <div
+                            key={pod.podName}
+                            className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
+                          >
+                            <p>
+                              {pod.state_reason}:{pod.state_message}
+                            </p>
+                            <div className="flex gap-1">
+                              <Tooltip content={pod.podName}>
+                                <Link
+                                  as="button"
+                                  variant="surface"
+                                  color="neutral"
+                                  size="xs"
+                                  to={
+                                    ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
+                                    SERVICE_LOGS_URL(
+                                      service?.id,
+                                      searchParams.get('pod_name') === pod.podName ? '' : pod.podName
+                                    )
+                                  }
+                                  className={twMerge(
+                                    clsx('gap-1.5 font-code', {
+                                      'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
+                                        searchParams.get('pod_name') === pod.podName,
+                                    })
+                                  )}
+                                >
+                                  <span
+                                    className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
+                                    style={{ backgroundColor: getColorByPod(pod.podName) }}
+                                  />
+                                  {pod.podName.substring(pod.podName.length - 5)}
+                                </Link>
+                              </Tooltip>
+                              {pod.started_at && (
+                                <span
+                                  className="flex h-6 items-center rounded bg-neutral-400 px-1.5 font-code text-xs"
+                                  title={dateUTCString(pod.started_at)}
+                                >
+                                  {dateFullFormat(pod.started_at)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      })
+                  ) : (
+                    // Group similar errors for services
+                    Object.entries(
+                      podsErrors.reduce(
+                        (acc, pod) => {
+                          const errorKey = `${pod.state_reason}:${pod.state_message}`
+                          if (!acc[errorKey]) {
+                            acc[errorKey] = {
+                              error: { reason: pod.state_reason || '', message: pod.state_message || '' },
+                              pods: [],
+                            }
+                          }
+                          acc[errorKey].pods.push(pod)
+                          return acc
+                        },
+                        {} as Record<string, { error: { reason: string; message: string }; pods: Pod[] }>
+                      )
+                    ).map(([errorKey, { error, pods }]) => (
+                      <div
+                        key={errorKey}
+                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
+                      >
+                        <p>
+                          {error.reason}:{error.message}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {pods.map((pod) => (
+                            <Tooltip key={pod.podName} content={pod.podName}>
+                              <Link
+                                as="button"
                                 variant="surface"
                                 color="neutral"
                                 size="xs"
+                                to={
+                                  ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
+                                  SERVICE_LOGS_URL(
+                                    service?.id,
+                                    searchParams.get('pod_name') === pod.podName ? '' : pod.podName
+                                  )
+                                }
                                 className={twMerge(
                                   clsx('gap-1.5 font-code', {
                                     'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
@@ -257,81 +318,24 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                   style={{ backgroundColor: getColorByPod(pod.podName) }}
                                 />
                                 {pod.podName.substring(pod.podName.length - 5)}
-                              </Button>
+                              </Link>
                             </Tooltip>
-                          </div>
+                          ))}
                         </div>
-                      )
-                    })
-                ) : (
-                  // Group similar errors for services
-                  Object.entries(
-                    podsErrors.reduce(
-                      (acc, pod) => {
-                        const errorKey = `${pod.state_reason}:${pod.state_message}`
-                        if (!acc[errorKey]) {
-                          acc[errorKey] = {
-                            error: { reason: pod.state_reason || '', message: pod.state_message || '' },
-                            pods: [],
-                          }
-                        }
-                        acc[errorKey].pods.push(pod)
-                        return acc
-                      },
-                      {} as Record<string, { error: { reason: string; message: string }; pods: Pod[] }>
-                    )
-                  ).map(([errorKey, { error, pods }]) => (
-                    <div
-                      key={errorKey}
-                      className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
-                    >
-                      <p>
-                        {error.reason}:{error.message}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {pods.map((pod) => (
-                          <Tooltip key={pod.podName} content={pod.podName}>
-                            <Link
-                              as="button"
-                              variant="surface"
-                              color="neutral"
-                              size="xs"
-                              to={
-                                ENVIRONMENT_LOGS_URL(organizationId, projectId, service?.environment.id) +
-                                SERVICE_LOGS_URL(
-                                  service?.id,
-                                  searchParams.get('pod_name') === pod.podName ? '' : pod.podName
-                                )
-                              }
-                              className={twMerge(
-                                clsx('gap-1.5 font-code', {
-                                  'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
-                                    searchParams.get('pod_name') === pod.podName,
-                                })
-                              )}
-                            >
-                              <span
-                                className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                                style={{ backgroundColor: getColorByPod(pod.podName) }}
-                              />
-                              {pod.podName.substring(pod.podName.length - 5)}
-                            </Link>
-                          </Tooltip>
-                        ))}
                       </div>
-                    </div>
-                  ))
-                )
-              ) : (
-                <div className="flex h-32 w-full flex-col items-center justify-center rounded bg-neutral-550 text-sm">
-                  <p className="mb-1 font-medium">Everything running fine</p>
-                  <span className="text-neutral-250">Any errors will be displayed here</span>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.aside>
+                    ))
+                  )
+                ) : (
+                  <div className="flex h-32 w-full flex-col items-center justify-center rounded bg-neutral-550 text-sm">
+                    <p className="mb-1 font-medium">Everything running fine</p>
+                    <span className="text-neutral-250">Any errors will be displayed here</span>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.aside>
+      )}
     </div>
   )
 }
