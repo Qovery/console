@@ -449,11 +449,7 @@ function KarpenterInstanceForm({
               </div>
             </div>
           </div>
-          <div
-            className={clsx('flex max-h-[60vh] w-1/2 flex-col gap-4 border-l border-neutral-200 p-6', {
-              'overflow-y-scroll': extendSelection,
-            })}
-          >
+          <div className="flex max-h-[60vh] w-1/2 flex-col gap-4 overflow-y-scroll border-l border-neutral-200 p-6">
             <div className="flex w-full items-center justify-between">
               <span className="font-semibold text-neutral-400">Selected instance types: {dataFiltered.length}</span>
               <Tooltip
