@@ -29,7 +29,7 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
-import KarpenterImage from './karpenter-image.png'
+import KarpenterImage from './karpenter-image.svg'
 
 export interface ClusterResourcesSettingsProps {
   cluster?: Cluster

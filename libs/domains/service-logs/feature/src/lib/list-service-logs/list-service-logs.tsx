@@ -23,7 +23,6 @@ import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { UpdateTimeContext, defaultUpdateTimeContext } from '../update-time-context/update-time-context'
-import { getColorByPod } from './get-color-by-pod'
 import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
 
@@ -110,15 +109,25 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
     [columnHelper, hasMultipleContainers]
   )
 
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-    searchParams.get('pod_name')
-      ? [
-          {
-            id: 'pod_name',
-            value: searchParams.get('pod_name'),
-          },
-        ]
-      : []
+  const columnFilters = useMemo(() => {
+    const podName = searchParams.get('pod_name')
+    return podName ? [{ id: 'pod_name', value: podName }] : []
+  }, [searchParams])
+
+  const setColumnFilters = useCallback(
+    (filterOrUpdater: ColumnFiltersState | ((prev: ColumnFiltersState) => ColumnFiltersState)) => {
+      const newFilters = typeof filterOrUpdater === 'function' ? filterOrUpdater(columnFilters) : filterOrUpdater
+
+      // Update searchParams based on the new filters
+      const podNameFilter = newFilters.find((f) => f.id === 'pod_name')
+      if (podNameFilter) {
+        searchParams.set('pod_name', podNameFilter.value as string)
+      } else {
+        searchParams.delete('pod_name')
+      }
+      setSearchParams(searchParams)
+    },
+    [searchParams, setSearchParams, columnFilters]
   )
 
   const table = useReactTable({
@@ -163,14 +172,6 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
     !pauseLogs && section.scroll(0, section.scrollHeight)
   }, [logs, pauseLogs])
 
-  const podNameColor = useMemo(() => {
-    const res = new Map<string, string>()
-    for (const { pod_name } of logs) {
-      if (!res.has(pod_name)) res.set(pod_name, getColorByPod(pod_name))
-    }
-    return res
-  }, [logs.map((log) => log.pod_name).join(',')]) // Only recalculate when pod names change
-
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
     .otherwise(() => false)
@@ -208,7 +209,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
   if (!logs || logs.length === 0 || logs[0].message.includes('No pods found')) {
     return (
-      <div className="p-1">
+      <div className="w-full p-1">
         <div className="h-[calc(100vh-72px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
           <div className="h-[calc(100vh-136px)] border-r border-neutral-500 bg-neutral-600 pt-11">
@@ -231,7 +232,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       }}
     >
       <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
-        <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+        <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
           <HeaderLogsComponent />
           <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
             <div className="flex items-center gap-3">
@@ -378,7 +379,6 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
                       <MemoizedRowServiceLogs
                         key={row.id}
                         hasMultipleContainers={hasMultipleContainers}
-                        podNameColor={podNameColor}
                         toggleColumnFilter={toggleColumnFilter}
                         isFilterActive={isFilterActive}
                         {...row}

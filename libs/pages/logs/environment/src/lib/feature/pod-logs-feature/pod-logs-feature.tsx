@@ -4,11 +4,16 @@ import {
   type EnvironmentStatus,
   type Status,
 } from 'qovery-typescript-axios'
+import { memo } from 'react'
 import { useParams } from 'react-router-dom'
-import { ListServiceLogs } from '@qovery/domains/service-logs/feature'
+import { ListServiceLogs, SidebarPodStatuses } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { getServiceStatusesById } from '../deployment-logs-feature/deployment-logs-feature'
+
+// XXX: Prevent web-socket invalidations when re-rendering
+const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 export interface PodLogsFeatureProps {
   environment: Environment
@@ -26,12 +31,28 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
 
   return (
     <div className="h-full w-full bg-neutral-900">
-      <ListServiceLogs
-        environment={environment}
-        clusterId={environment.cluster_id}
-        serviceStatus={serviceStatus}
-        environmentStatus={environmentStatus}
-      />
+      <SidebarPodStatuses
+        organizationId={environment.organization.id}
+        projectId={environment.project.id}
+        service={service}
+      >
+        <ListServiceLogs
+          environment={environment}
+          clusterId={environment.cluster_id}
+          serviceStatus={serviceStatus}
+          environmentStatus={environmentStatus}
+        />
+      </SidebarPodStatuses>
+      {service && environment && (
+        <WebSocketListenerMemo
+          organizationId={environment.organization.id}
+          clusterId={environment.cluster_id}
+          projectId={environment.project.id}
+          environmentId={environment.id}
+          serviceId={service.id}
+          serviceType={service.serviceType}
+        />
+      )}
     </div>
   )
 }

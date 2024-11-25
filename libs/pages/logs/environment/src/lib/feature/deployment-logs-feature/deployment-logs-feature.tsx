@@ -5,11 +5,16 @@ import {
   type Stage,
   type Status,
 } from 'qovery-typescript-axios'
+import { memo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
-import { ListDeploymentLogs } from '@qovery/domains/service-logs/feature'
+import { ListDeploymentLogs, SidebarPodStatuses } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
+
+// XXX: Prevent web-socket invalidations when re-rendering
+const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 export interface DeploymentLogsFeatureProps {
   environment: Environment
@@ -114,13 +119,29 @@ export function DeploymentLogsFeature({
 
   return (
     <div className="h-full w-full bg-neutral-900">
-      <ListDeploymentLogs
-        environment={environment}
-        deploymentHistoryEnvironment={deploymentHistoryEnvironment}
-        serviceStatus={serviceStatus}
-        environmentStatus={environmentStatus}
-        stage={stageFromServiceId}
-      />
+      <SidebarPodStatuses
+        organizationId={environment.organization.id}
+        projectId={environment.project.id}
+        service={service}
+      >
+        <ListDeploymentLogs
+          environment={environment}
+          deploymentHistoryEnvironment={deploymentHistoryEnvironment}
+          serviceStatus={serviceStatus}
+          environmentStatus={environmentStatus}
+          stage={stageFromServiceId}
+        />
+      </SidebarPodStatuses>
+      {service && environment && (
+        <WebSocketListenerMemo
+          organizationId={environment.organization.id}
+          clusterId={environment.cluster_id}
+          projectId={environment.project.id}
+          environmentId={environment.id}
+          serviceId={service.id}
+          serviceType={service.serviceType}
+        />
+      )}
     </div>
   )
 }

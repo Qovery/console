@@ -23,7 +23,7 @@ export const Skeleton = forwardRef<ElementRef<'div'>, SkeletonProps>(function Sk
       className={twMerge(
         clsx('flex', {
           truncate: truncate,
-          'block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s]':
+          'block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637]':
             show,
           rounded: !rounded && !square,
         }),
