@@ -54,7 +54,7 @@ export function ServiceAvatarSwitcher({ onChange, service }: ServiceAvatarSwitch
                   <Tooltip content={title}>
                     <img
                       className={clsx(
-                        'max-h-[38px] max-w-[38px] cursor-pointer select-none rounded border p-2',
+                        'h-[38px] max-h-[38px] w-[38px] max-w-[38px] cursor-pointer select-none rounded border p-2',
                         isSelected && 'border-brand-500 bg-brand-50',
                         !isSelected && 'border-neutral-250 transition hover:border-neutral-300'
                       )}

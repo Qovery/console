@@ -46,6 +46,8 @@ const Kubecost = '/assets/devicon/kubecost.svg'
 const Windmill = '/assets/devicon/windmill.svg'
 const Temporal = '/assets/devicon/temporal.svg'
 const CloudFormation = '/assets/devicon/cloudformation.svg'
+const Lambda = '/assets/devicon/lambda.svg'
+const S3 = '/assets/devicon/s3.svg'
 
 export enum TagsEnum {
   IAC = 'IAC',
@@ -386,8 +388,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     slug: 'aws-lambda',
     title: 'AWS Lambda',
     description: 'AWS Lambda lets you run code without provisioning or managing servers.',
-    icon: AWS,
-    icon_uri: 'app://qovery-console/aws',
+    icon: Lambda,
+    icon_uri: 'app://qovery-console/lambda',
     cloud_provider: 'AWS',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -398,8 +400,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         title: 'Cloudformation',
         description:
           'Deploy an AWS Lambda function using CloudFormation. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/aws',
+        icon: Lambda,
+        icon_uri: 'app://qovery-console/lambda',
         type: 'LIFECYCLE_JOB',
         cloud_provider: 'AWS',
         dockerfile:
@@ -913,8 +915,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
     description:
       'AWS S3 is an object storage service that offers industry-leading scalability, ' +
       'data availability, security, and performance.',
-    icon: AWS,
-    icon_uri: 'app://qovery-console/aws',
+    icon: S3,
+    icon_uri: 'app://qovery-console/s3',
     cloud_provider: 'AWS',
     dockerfile:
       'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
@@ -923,8 +925,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         slug: 's3-cli',
         title: 'S3 CLI',
         description: 'Do operations on S3 using the AWS CLI. Resource managed via a Qovery Lifecycle Job.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/aws',
+        icon: S3,
+        icon_uri: 'app://qovery-console/s3',
         type: 'LIFECYCLE_JOB',
         cloud_provider: 'AWS',
         dockerfile:
@@ -949,8 +951,8 @@ export const serviceTemplates: ServiceTemplateType[] = [
         title: 'S3 via Cloudformation',
         description:
           'Do operations on S3 using Cloudformation. Resource managed via a Qovery Lifecycle Job specialized for Cloudformation.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/aws',
+        icon: S3,
+        icon_uri: 'app://qovery-console/s3',
         type: 'LIFECYCLE_JOB',
         cloud_provider: 'AWS',
         dockerfile:
