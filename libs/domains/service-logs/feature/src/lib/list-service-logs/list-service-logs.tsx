@@ -187,7 +187,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       >
         <Link
           as="button"
-          className="gap-1"
+          className="gap-1.5"
           variant="surface"
           to={
             ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
@@ -197,7 +197,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
           {match(service)
             .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
             .otherwise(() => true) ? (
-            <ServiceStateChip className="mr-1" mode="deployment" environmentId={environment.id} serviceId={serviceId} />
+            <ServiceStateChip mode="deployment" environmentId={environment.id} serviceId={serviceId} />
           ) : null}
           Go to latest deployment
           <Icon iconName="arrow-right" />

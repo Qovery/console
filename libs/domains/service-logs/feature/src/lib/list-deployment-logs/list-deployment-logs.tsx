@@ -18,8 +18,8 @@ import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } f
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Link, TablePrimitives } from '@qovery/shared/ui'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
@@ -292,18 +292,71 @@ export function ListDeploymentLogs({
         .otherwise(() => false)
     : false
 
+  function HeaderLogsComponent() {
+    return (
+      <HeaderLogs
+        type="DEPLOYMENT"
+        environment={environment}
+        serviceId={serviceId ?? ''}
+        versionId={versionId}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+      >
+        <div className="flex items-center gap-4">
+          <Indicator
+            align="start"
+            side="left"
+            className="left-[3px] top-[3px]"
+            content={
+              environmentStatus?.last_deployment_state.includes('ERROR') && (
+                <span className="flex h-3 w-3 items-center justify-center rounded bg-red-500 text-2xs">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="2" height="8" fill="none" viewBox="0 0 2 8">
+                    <path
+                      fill="#fff"
+                      d="M1.483.625H.517A.267.267 0 0 0 .25.892v3.716c0 .148.12.267.267.267h.966c.148 0 .267-.12.267-.267V.892a.267.267 0 0 0-.267-.267M.25 6.142v.966c0 .148.12.267.267.267h.966c.148 0 .267-.12.267-.267v-.966a.267.267 0 0 0-.267-.267H.517a.267.267 0 0 0-.267.267"
+                    ></path>
+                  </svg>
+                </span>
+              )
+            }
+          >
+            <Link
+              as="button"
+              className="gap-1.5"
+              variant="surface"
+              to={
+                ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+                ENVIRONMENT_STAGES_URL(versionId)
+              }
+            >
+              Go to pipeline
+              <Icon iconName="timeline" />
+            </Link>
+          </Indicator>
+          <Link
+            as="button"
+            className="gap-1.5"
+            variant="surface"
+            to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + SERVICE_LOGS_URL(serviceId)}
+          >
+            {match(service)
+              .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+              .otherwise(() => true) ? (
+              <ServiceStateChip mode="running" environmentId={environment.id} serviceId={serviceId} />
+            ) : null}
+            Go to service logs
+            <Icon iconName="arrow-right" />
+          </Link>
+        </div>
+      </HeaderLogs>
+    )
+  }
+
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
       <div className="h-[calc(100vh-64px)] w-full p-1">
         <div className="h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderLogs
-            type="DEPLOYMENT"
-            environment={environment}
-            serviceId={serviceId ?? ''}
-            versionId={versionId}
-            serviceStatus={serviceStatus}
-            environmentStatus={environmentStatus}
-          />
+          <HeaderLogsComponent />
           <div className="h-full bg-neutral-600 pt-11">
             <DeploymentLogsPlaceholder
               serviceStatus={serviceStatus}
@@ -318,29 +371,7 @@ export function ListDeploymentLogs({
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden bg-neutral-900 p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-        <HeaderLogs
-          type="DEPLOYMENT"
-          environment={environment}
-          serviceId={serviceId ?? ''}
-          versionId={versionId}
-          serviceStatus={serviceStatus}
-          environmentStatus={environmentStatus}
-        >
-          <Link
-            as="button"
-            className="gap-1"
-            variant="surface"
-            to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environment.id) + SERVICE_LOGS_URL(serviceId)}
-          >
-            {match(service)
-              .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-              .otherwise(() => true) ? (
-              <ServiceStateChip className="mr-1" mode="running" environmentId={environment.id} serviceId={serviceId} />
-            ) : null}
-            Go to service logs
-            <Icon iconName="arrow-right" />
-          </Link>
-        </HeaderLogs>
+        <HeaderLogsComponent />
         <div className="flex h-12 w-full items-center justify-between border-b border-r border-neutral-500 px-4 py-2.5">
           <FiltersStageStep
             serviceStatus={serviceStatus}
