@@ -20,22 +20,29 @@ export function sortVersions(versions?: string[]) {
   })
 }
 
-export interface UseContainerVersionsProps {
+export interface UseContainerImagesProps {
   organizationId: string
   containerRegistryId: string
   imageName: string
+  enabled?: boolean
 }
 
-export function useContainerVersions({ organizationId, containerRegistryId, imageName }: UseContainerVersionsProps) {
+export function useContainerImages({
+  organizationId,
+  containerRegistryId,
+  imageName,
+  enabled,
+}: UseContainerImagesProps) {
   return useQuery({
-    ...queries.organizations.containerVersions({ organizationId, containerRegistryId, imageName }),
+    ...queries.organizations.containerImages({ organizationId, containerRegistryId, imageName }),
     select(data) {
       return data?.map(({ image_name, versions }) => ({
         image_name,
         versions: sortVersions(versions),
       }))
     },
+    enabled,
   })
 }
 
-export default useContainerVersions
+export default useContainerImages

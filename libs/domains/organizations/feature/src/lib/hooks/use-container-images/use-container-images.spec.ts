@@ -1,7 +1,7 @@
-import { sortVersions } from './use-container-versions'
+import { sortVersions } from './use-container-images'
 
-describe('useContainerVersions', () => {
-  it('should sort versions properly', () => {
+describe('useContainerImages', () => {
+  it('should sort images properly', () => {
     const unsorted = [
       '4',
       '4.0',

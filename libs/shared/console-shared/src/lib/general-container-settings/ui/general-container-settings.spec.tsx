@@ -8,7 +8,7 @@ const mockOrganization = organizationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
   ...jest.requireActual('@qovery/domains/organizations/feature'),
-  useContainerVersions: () => ({
+  useContainerImages: () => ({
     data: [
       {
         image_name: 'my-image',
@@ -46,7 +46,7 @@ describe('CreateGeneralContainer', () => {
       wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
     )
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
-    await userEvent.type(screen.getByTestId('input-text-image-name'), 'my-image')
+    await userEvent.type(screen.getByTestId('input-select-image-name'), 'my-image')
     const imageTag = await screen.findByTestId('input-text-image-tag')
     expect(imageTag).toBeInTheDocument()
   })

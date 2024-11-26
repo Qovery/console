@@ -1,0 +1,105 @@
+import { useEffect, useState } from 'react'
+import { type Control, Controller, useForm, useFormContext, useWatch } from 'react-hook-form'
+import { match } from 'ts-pattern'
+import { useContainerImages, useContainerRegistries } from '@qovery/domains/organizations/feature'
+import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
+import { useDebounce } from '@qovery/shared/util-hooks'
+import { type ContainerFormProps } from './general-container-settings'
+
+const DEBOUNCE_TIME = 500
+
+export function ImageName({
+  control,
+  organizationId,
+  containerRegistryId,
+}: {
+  control: Control<ContainerFormProps>
+  organizationId: string
+  containerRegistryId: string
+}) {
+  const { setValue } = useFormContext()
+  const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
+  const watchImageName = useWatch({ control, name: 'image_name' }) || ''
+  const [imageName, setImageName] = useState<string>(watchImageName)
+  const debouncedImageName = useDebounce(imageName, DEBOUNCE_TIME)
+
+  const {
+    data: containerImages = [],
+    refetch: refetchContainerImages,
+    isFetching,
+  } = useContainerImages({
+    organizationId,
+    containerRegistryId,
+    imageName: imageName || watchImageName,
+    enabled: (imageName || watchImageName).length > 2,
+  })
+
+  // XXX: Available only for this kind of registry: https://qovery.atlassian.net/browse/FRT-1307?focusedCommentId=13219
+  const isSearchFieldAvailable = match(containerRegistries.find((c) => c.id === containerRegistryId)?.kind)
+    .with('ECR', 'GCP_ARTIFACT_REGISTRY', 'DOCKER_HUB', 'GENERIC_CR', 'GITHUB_CR', () => true)
+    .otherwise(() => false)
+
+  // Refetch when debounced value changes
+  useEffect(() => {
+    if (!isSearchFieldAvailable && debouncedImageName) refetchContainerImages()
+  }, [debouncedImageName, refetchContainerImages])
+
+  const options =
+    containerImages.map(({ image_name }) => ({
+      value: image_name ?? '',
+      label: image_name ?? '',
+    })) ?? []
+
+  return isSearchFieldAvailable ? (
+    <Controller
+      name="image_name"
+      control={control}
+      rules={{
+        required: 'Please select a value.',
+      }}
+      render={({ field, fieldState: { error } }) => (
+        <InputSelect
+          dataTestId="input-select-image-name"
+          onInputChange={(value) => setImageName(value)}
+          onChange={(value) => {
+            // Reset image tag when image name changes
+            setValue('image_tag', containerImages.find((c) => c.image_name === value)?.versions?.[0] ?? '')
+            field.onChange(value)
+          }}
+          value={field.value}
+          options={options}
+          error={error?.message}
+          label="Image name"
+          filterOption="startsWith"
+          minInputLength={3}
+          isSearchable
+          isLoading={isFetching}
+          isCreatable
+        />
+      )}
+    />
+  ) : (
+    <Controller
+      name="image_name"
+      control={control}
+      rules={{
+        required: 'Please type a value.',
+      }}
+      render={({ field, fieldState: { error } }) => (
+        <InputText
+          dataTestId="input-text-image-name"
+          name="image_name"
+          onChange={(event) => {
+            event.target.value = event.target.value.trim()
+            field.onChange(event)
+          }}
+          value={field.value}
+          label="Image name"
+          error={error?.message}
+        />
+      )}
+    />
+  )
+}
+
+export default ImageName

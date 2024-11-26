@@ -104,7 +104,7 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
-  containerVersions: ({
+  containerImages: ({
     organizationId,
     containerRegistryId,
     imageName,
