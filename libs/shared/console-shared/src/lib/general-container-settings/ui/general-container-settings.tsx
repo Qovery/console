@@ -1,125 +1,23 @@
 import { type Organization } from 'qovery-typescript-axios'
-import { type Control, Controller, useFormContext } from 'react-hook-form'
-import {
-  ContainerRegistryCreateEditModal,
-  useContainerRegistries,
-  useContainerVersions,
-} from '@qovery/domains/organizations/feature'
-import { type Value } from '@qovery/shared/interfaces'
+import { Controller, useFormContext } from 'react-hook-form'
+import { ContainerRegistryCreateEditModal, useContainerRegistries } from '@qovery/domains/organizations/feature'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { Icon, InputSelect, InputText, Link, LoaderSpinner, Tooltip, useModal } from '@qovery/shared/ui'
+import { InputSelect, InputText, Link, useModal } from '@qovery/shared/ui'
+import ImageName from './image-name'
+import { ImageTag } from './image-tag'
 
 export interface GeneralContainerSettingsProps {
   organization?: Organization
 }
 
-function ImageTag({
-  control,
-  organizationId,
-  containerRegistryId,
-  imageName,
-  imageTag,
-}: {
-  control: Control<{ image_tag?: string }>
-  organizationId: string
-  containerRegistryId: string
-  imageName: string
-  imageTag?: string
-}) {
-  const { data: containerVersions = [], isFetching } = useContainerVersions({
-    organizationId,
-    containerRegistryId,
-    imageName,
-  })
-
-  const options =
-    containerVersions
-      .find(({ image_name }) => image_name === imageName)
-      ?.versions?.map<Value>((version) => ({
-        value: version,
-        label:
-          version === 'latest' ? (
-            <span className="flex items-center gap-3">
-              <span>{version}</span>
-              <Tooltip classNameContent="z-10" content="Image tag cannot be latest to ensure consistent deployment">
-                <span>
-                  <Icon iconName="circle-info" iconStyle="regular" className="text-base text-neutral-400" />
-                </span>
-              </Tooltip>
-            </span>
-          ) : (
-            version
-          ),
-        isDisabled: version === 'latest',
-      })) ?? []
-
-  const versionKnown = options.find(({ value }) => value === imageTag)
-
-  return isFetching ? (
-    <div className="flex justify-center">
-      <LoaderSpinner />
-    </div>
-  ) : options.length > 0 && (imageTag ? versionKnown : true) ? (
-    <Controller
-      name="image_tag"
-      control={control}
-      rules={{
-        required: 'Please select a value.',
-      }}
-      render={({ field, fieldState: { error } }) => (
-        <InputSelect
-          onChange={field.onChange}
-          value={field.value}
-          options={options}
-          error={error?.message}
-          label="Image tag"
-          hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
-          dataTestId="input-text-image-tag"
-          isSearchable
-          filterOption="startsWith"
-          isCreatable
-        />
-      )}
-    />
-  ) : (
-    <Controller
-      name="image_tag"
-      control={control}
-      rules={{
-        required: 'Please type a value.',
-      }}
-      render={({ field, fieldState: { error } }) => (
-        <InputText
-          dataTestId="input-text-image-tag"
-          name="image_tag"
-          onChange={field.onChange}
-          value={field.value}
-          error={error?.message}
-          label="Image tag"
-          hint={
-            <>
-              <span className="text-orange-500">
-                Tag not found. Please verify that the container registry and the image name are correct. You can
-                manually enter it.
-                <br />
-                Note: If you have more than 500 tags for this image, only the first 500 are displayed.
-              </span>
-              <br />
-              Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)
-            </>
-          }
-        />
-      )}
-    />
-  )
+export interface ContainerFormProps {
+  registry?: string
+  image_name?: string
+  image_tag?: string
 }
 
 export function GeneralContainerSettings({ organization }: GeneralContainerSettingsProps) {
-  const { control, watch } = useFormContext<{
-    registry?: string
-    image_name?: string
-    image_tag?: string
-  }>()
+  const { control, watch } = useFormContext<ContainerFormProps>()
   const { openModal, closeModal } = useModal()
   const watchRegistry = watch('registry')
   const watchImageName = watch('image_name')
@@ -180,26 +78,9 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
           </Link>
         </p>
       </div>
-      <Controller
-        name="image_name"
-        control={control}
-        rules={{
-          required: 'Please type a value.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            dataTestId="input-text-image-name"
-            name="image_name"
-            onChange={(event) => {
-              event.target.value = event.target.value.trim()
-              field.onChange(event)
-            }}
-            value={field.value}
-            label="Image name"
-            error={error?.message}
-          />
-        )}
-      />
+      {organization && watchRegistry && (
+        <ImageName control={control} organizationId={organization.id} containerRegistryId={watchRegistry} />
+      )}
       {organization && watchRegistry && watchImageName && (
         <ImageTag
           control={control}

@@ -16,6 +16,7 @@ import CreatableSelect from 'react-select/creatable'
 import { match } from 'ts-pattern'
 import { type Value } from '@qovery/shared/interfaces'
 import { Icon } from '../../icon/icon'
+import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
 
 export interface InputSelectProps {
   className?: string
@@ -26,6 +27,7 @@ export interface InputSelectProps {
   hint?: ReactNode
   error?: string
   onChange?: (e: string | string[]) => void
+  onInputChange?: (e: string) => void
   dataTestId?: string
   isMulti?: true
   portal?: boolean
@@ -43,6 +45,8 @@ export interface InputSelectProps {
   menuPlacement?: MenuPlacement
   filterOption?: 'fuzzy' | 'startsWith'
   isCreatable?: boolean
+  isLoading?: boolean
+  minInputLength?: number
 }
 
 export function InputSelect({
@@ -55,17 +59,20 @@ export function InputSelect({
   error,
   portal,
   onChange,
+  onInputChange,
   dataTestId,
   isMulti = undefined,
   isSearchable = false,
   isClearable = false,
   isFilter = false,
+  isLoading = false,
   autoFocus = false,
   placeholder,
   menuListButton,
   menuPlacement = 'auto',
   filterOption = 'fuzzy',
   isCreatable = false,
+  minInputLength = 0,
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -174,14 +181,49 @@ export function InputSelect({
   )
 
   const NoOptionsMessage = (props: NoticeProps<Value>) => {
+    if (value && value.length > minInputLength) {
+      return (
+        <components.NoOptionsMessage {...props}>
+          <div className="px-3 py-6 text-center">
+            <Icon iconName="wave-pulse" className="text-neutral-350" />
+            <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+          </div>
+        </components.NoOptionsMessage>
+      )
+    } else {
+      return (
+        <components.NoOptionsMessage {...props}>
+          <div className="px-3 py-1 text-center">
+            <p className="text-xs font-medium text-neutral-350">
+              Search input must be at least {minInputLength} characters.
+            </p>
+          </div>{' '}
+        </components.NoOptionsMessage>
+      )
+    }
+  }
+
+  const LoadingMessage = (props: NoticeProps<Value>) => {
     return (
-      <components.NoOptionsMessage {...props}>
-        <div className="px-3 py-6 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
-        </div>{' '}
-      </components.NoOptionsMessage>
+      <components.LoadingMessage {...props}>
+        <div className="flex justify-center">
+          <LoaderSpinner className="w-4" />
+        </div>
+      </components.LoadingMessage>
     )
+  }
+
+  // Custom validation function for new options
+  const isValidNewOption = (inputValue: string) => {
+    // Check minimum length requirement
+    if (inputValue.length < minInputLength) {
+      return false
+    }
+
+    const normalizedInput = inputValue.toLowerCase().trim()
+    const valueExists = options.some((option) => option.value.toLowerCase() === normalizedInput)
+
+    return !valueExists
   }
 
   const currentIcon = options.find((option) => option.value === selectedValue)
@@ -212,12 +254,15 @@ export function InputSelect({
       SingleValue,
       NoOptionsMessage,
       MenuList,
+      LoadingMessage,
     },
     name: label,
+    isLoading,
     inputId: label,
     menuPlacement,
     closeMenuOnSelect: !isMulti,
     onChange: handleChange,
+    onInputChange,
     classNamePrefix: 'input-select',
     hideSelectedOptions: false,
     isSearchable,
@@ -280,6 +325,7 @@ export function InputSelect({
         <SelectComponent
           data-testid="select-react-select"
           {...selectProps}
+          isValidNewOption={isValidNewOption}
           formatCreateLabel={(value) => `Select "${value}"`}
         />
         <input type="hidden" name={label} value={selectedValue} />

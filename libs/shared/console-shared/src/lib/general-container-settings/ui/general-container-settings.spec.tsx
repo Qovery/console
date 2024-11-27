@@ -1,13 +1,21 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import selectEvent from 'react-select-event'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import GeneralContainerSettings from './general-container-settings'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { GeneralContainerSettings } from './general-container-settings'
 
 const mockOrganization = organizationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
   ...jest.requireActual('@qovery/domains/organizations/feature'),
+  useContainerImages: () => ({
+    data: [
+      {
+        image_name: 'my-image',
+        versions: [],
+      },
+    ],
+  }),
   useContainerVersions: () => ({
     data: [
       {
@@ -35,19 +43,23 @@ describe('CreateGeneralContainer', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render default inputs', () => {
-    renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings />))
-    screen.getByTestId('input-select-registry')
-    screen.getByTestId('input-text-image-name')
+  it('should render inputs available in the requests', async () => {
+    renderWithProviders(wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />))
+    await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
+    await selectEvent.select(screen.getByLabelText('Image name'), ['my-image'])
+    await selectEvent.select(screen.getByLabelText('Image tag'), ['3.0.0'])
   })
 
-  it('should render image tag input', async () => {
+  it('should render inputs NOT available in the requests', async () => {
     const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
     )
+    // Registry
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
-    await userEvent.type(screen.getByTestId('input-text-image-name'), 'my-image')
-    const imageTag = await screen.findByTestId('input-text-image-tag')
-    expect(imageTag).toBeInTheDocument()
+    // Image name
+    await userEvent.type(screen.getByLabelText('Image name'), 'my-custom-image')
+    await selectEvent.select(screen.getByLabelText('Image name'), ['Select "my-custom-image"'])
+    // Image tag
+    await userEvent.type(screen.getByLabelText('Image tag'), '12.0.0')
   })
 })
