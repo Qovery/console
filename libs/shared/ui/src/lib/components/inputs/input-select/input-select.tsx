@@ -47,6 +47,7 @@ export interface InputSelectProps {
   isCreatable?: boolean
   isLoading?: boolean
   minInputLength?: number
+  formatCreateLabel?: ((inputValue: string) => ReactNode) | undefined
 }
 
 export function InputSelect({
@@ -73,6 +74,7 @@ export function InputSelect({
   filterOption = 'fuzzy',
   isCreatable = false,
   minInputLength = 0,
+  formatCreateLabel,
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -326,7 +328,7 @@ export function InputSelect({
           data-testid="select-react-select"
           {...selectProps}
           isValidNewOption={isValidNewOption}
-          formatCreateLabel={(value) => `Select "${value}"`}
+          formatCreateLabel={formatCreateLabel ?? ((value) => `Select "${value}"`)}
         />
         <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (

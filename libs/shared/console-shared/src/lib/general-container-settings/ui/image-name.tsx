@@ -22,8 +22,8 @@ export function ImageName({
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
   const watchImageName = useWatch({ control, name: 'image_name' }) || ''
   const [customOptions, setCustomOptions] = useState<Value[]>([])
-  const [search, setSearch] = useState(watchImageName)
-  const debouncedImageName = useDebounce(search, DEBOUNCE_TIME)
+  const [searchParams, setSearchParams] = useState(watchImageName)
+  const debouncedImageName = useDebounce(searchParams, DEBOUNCE_TIME)
 
   const {
     data: containerImages = [],
@@ -32,8 +32,8 @@ export function ImageName({
   } = useContainerImages({
     organizationId,
     containerRegistryId,
-    search: search || watchImageName,
-    enabled: (search || watchImageName).length > 2,
+    search: debouncedImageName || watchImageName,
+    enabled: (debouncedImageName || watchImageName).length > 2,
   })
 
   // XXX: Available only for this kind of registry: https://qovery.atlassian.net/browse/FRT-1307?focusedCommentId=13219
@@ -43,8 +43,8 @@ export function ImageName({
 
   // Refetch when debounced value changes
   useEffect(() => {
-    if (!isSearchFieldAvailable && debouncedImageName) refetchContainerImages()
-  }, [debouncedImageName, refetchContainerImages])
+    if (!isSearchFieldAvailable && debouncedImageName.length > 2) refetchContainerImages()
+  }, [searchParams, refetchContainerImages])
 
   const options = [
     ...containerImages.map(({ image_name }) => ({
@@ -63,7 +63,7 @@ export function ImageName({
       }}
       render={({ field, fieldState: { error } }) => (
         <InputSelect
-          onInputChange={(value) => setSearch(value)}
+          onInputChange={(value) => setSearchParams(value)}
           onChange={(value) => {
             // If the value doesn't exist in options, it's a new creation
             const existingOption = options.find((opt) => opt.value === value)
@@ -87,6 +87,7 @@ export function ImageName({
           minInputLength={3}
           isSearchable
           isLoading={isFetching}
+          formatCreateLabel={(inputValue) => `Select "${inputValue}" - not found in registry`}
           isCreatable
         />
       )}
