@@ -12,6 +12,7 @@ export function useContainerImages({ organizationId, containerRegistryId, search
   return useQuery({
     ...queries.organizations.containerImages({ organizationId, containerRegistryId, search }),
     enabled,
+    keepPreviousData: true,
   })
 }
 

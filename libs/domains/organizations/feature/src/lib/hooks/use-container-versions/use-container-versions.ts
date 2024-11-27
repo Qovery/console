@@ -35,6 +35,7 @@ export function useContainerVersions({ organizationId, containerRegistryId, imag
         versions: sortVersions(versions),
       }))
     },
+    refetchOnWindowFocus: false,
   })
 }
 
