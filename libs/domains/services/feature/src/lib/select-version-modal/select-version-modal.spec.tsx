@@ -33,7 +33,7 @@ jest.mock('../hooks/use-helm-charts-versions/use-helm-charts-versions', () => {
 jest.mock('@qovery/domains/organizations/feature', () => {
   return {
     ...jest.requireActual('@qovery/domains/organizations/feature'),
-    useContainerImages: () => ({
+    useContainerVersions: () => ({
       data: [
         {
           image_name: 'datadog',

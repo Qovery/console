@@ -1,7 +1,8 @@
 import { type Control, Controller } from 'react-hook-form'
-import { useContainerImages } from '@qovery/domains/organizations/feature'
+import { useContainerVersions } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { Icon, InputSelect, InputText, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
+import { type ContainerFormProps } from './general-container-settings'
 
 export function ImageTag({
   control,
@@ -10,13 +11,13 @@ export function ImageTag({
   imageName,
   imageTag,
 }: {
-  control: Control<{ image_tag?: string }>
+  control: Control<ContainerFormProps>
   organizationId: string
   containerRegistryId: string
   imageName: string
   imageTag?: string
 }) {
-  const { data: containerVersions = [], isFetching } = useContainerImages({
+  const { data: containerVersions = [], isFetching } = useContainerVersions({
     organizationId,
     containerRegistryId,
     imageName,
@@ -64,7 +65,6 @@ export function ImageTag({
           error={error?.message}
           label="Image tag"
           hint="Image tag shall be unique (no ‘main’, ‘dev’, ‘master’)"
-          dataTestId="input-text-image-tag"
           isSearchable
           filterOption="startsWith"
           isCreatable
@@ -80,7 +80,6 @@ export function ImageTag({
       }}
       render={({ field, fieldState: { error } }) => (
         <InputText
-          dataTestId="input-text-image-tag"
           name="image_tag"
           onChange={field.onChange}
           value={field.value}

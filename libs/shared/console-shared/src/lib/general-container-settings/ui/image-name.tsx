@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { type Control, Controller, useForm, useFormContext, useWatch } from 'react-hook-form'
+import { type Control, Controller, useFormContext, useWatch } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useContainerImages, useContainerRegistries } from '@qovery/domains/organizations/feature'
-import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
+import { type Value } from '@qovery/shared/interfaces'
+import { InputSelect, InputText } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type ContainerFormProps } from './general-container-settings'
 
@@ -20,8 +21,9 @@ export function ImageName({
   const { setValue } = useFormContext()
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
   const watchImageName = useWatch({ control, name: 'image_name' }) || ''
-  const [imageName, setImageName] = useState<string>(watchImageName)
-  const debouncedImageName = useDebounce(imageName, DEBOUNCE_TIME)
+  const [customOptions, setCustomOptions] = useState<Value[]>([])
+  const [search, setSearch] = useState(watchImageName)
+  const debouncedImageName = useDebounce(search, DEBOUNCE_TIME)
 
   const {
     data: containerImages = [],
@@ -30,8 +32,8 @@ export function ImageName({
   } = useContainerImages({
     organizationId,
     containerRegistryId,
-    imageName: imageName || watchImageName,
-    enabled: (imageName || watchImageName).length > 2,
+    search: search || watchImageName,
+    enabled: (search || watchImageName).length > 2,
   })
 
   // XXX: Available only for this kind of registry: https://qovery.atlassian.net/browse/FRT-1307?focusedCommentId=13219
@@ -44,11 +46,13 @@ export function ImageName({
     if (!isSearchFieldAvailable && debouncedImageName) refetchContainerImages()
   }, [debouncedImageName, refetchContainerImages])
 
-  const options =
-    containerImages.map(({ image_name }) => ({
+  const options = [
+    ...containerImages.map(({ image_name }) => ({
       value: image_name ?? '',
       label: image_name ?? '',
-    })) ?? []
+    })),
+    ...customOptions,
+  ]
 
   return isSearchFieldAvailable ? (
     <Controller
@@ -59,9 +63,18 @@ export function ImageName({
       }}
       render={({ field, fieldState: { error } }) => (
         <InputSelect
-          dataTestId="input-select-image-name"
-          onInputChange={(value) => setImageName(value)}
+          onInputChange={(value) => setSearch(value)}
           onChange={(value) => {
+            // If the value doesn't exist in options, it's a new creation
+            const existingOption = options.find((opt) => opt.value === value)
+            if (!existingOption && value) {
+              const newOption: Value = {
+                value: String(value),
+                label: String(value),
+              }
+              setCustomOptions((prev) => [...prev, newOption])
+            }
+
             // Reset image tag when image name changes
             setValue('image_tag', containerImages.find((c) => c.image_name === value)?.versions?.[0] ?? '')
             field.onChange(value)
@@ -87,7 +100,6 @@ export function ImageName({
       }}
       render={({ field, fieldState: { error } }) => (
         <InputText
-          dataTestId="input-text-image-name"
           name="image_name"
           onChange={(event) => {
             event.target.value = event.target.value.trim()

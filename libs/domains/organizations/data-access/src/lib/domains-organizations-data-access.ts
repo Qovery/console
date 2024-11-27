@@ -107,6 +107,26 @@ export const organizations = createQueryKeys('organizations', {
   containerImages: ({
     organizationId,
     containerRegistryId,
+    search,
+  }: {
+    organizationId: string
+    containerRegistryId: string
+    search: string
+  }) => ({
+    queryKey: [organizationId, containerRegistryId, search],
+    async queryFn() {
+      const response = await containerRegistriesApi.getContainerVersions(
+        organizationId,
+        containerRegistryId,
+        undefined,
+        search
+      )
+      return response.data.results
+    },
+  }),
+  containerVersions: ({
+    organizationId,
+    containerRegistryId,
     imageName,
   }: {
     organizationId: string
@@ -115,7 +135,12 @@ export const organizations = createQueryKeys('organizations', {
   }) => ({
     queryKey: [organizationId, containerRegistryId, imageName],
     async queryFn() {
-      const response = await containerRegistriesApi.getContainerVersions(organizationId, containerRegistryId, imageName)
+      const response = await containerRegistriesApi.getContainerVersions(
+        organizationId,
+        containerRegistryId,
+        imageName,
+        undefined
+      )
       return response.data.results
     },
   }),

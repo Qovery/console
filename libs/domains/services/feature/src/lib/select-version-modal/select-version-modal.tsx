@@ -1,6 +1,6 @@
 import { type ContainerSource, type HelmSourceRepositoryResponse } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, useState } from 'react'
-import { useContainerImages } from '@qovery/domains/organizations/feature'
+import { useContainerVersions } from '@qovery/domains/organizations/feature'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Icon, InputSelect, InputText, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { useHelmChartsVersions } from '../hooks/use-helm-charts-versions/use-helm-charts-versions'
@@ -71,7 +71,7 @@ function SelectImageVersion({
   onChange: (value: string) => void
   value?: string
 }) {
-  const { data: containerVersions = [], isFetching } = useContainerImages({
+  const { data: containerVersions = [], isFetching } = useContainerVersions({
     organizationId,
     containerRegistryId: containerSource.registry.id,
     imageName: containerSource.image_name,

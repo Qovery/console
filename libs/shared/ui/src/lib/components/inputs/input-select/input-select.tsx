@@ -194,7 +194,9 @@ export function InputSelect({
       return (
         <components.NoOptionsMessage {...props}>
           <div className="px-3 py-1 text-center">
-            <p className="text-xs text-neutral-350">Search input must be at least {minInputLength} characters.</p>
+            <p className="text-xs font-medium text-neutral-350">
+              Search input must be at least {minInputLength} characters.
+            </p>
           </div>{' '}
         </components.NoOptionsMessage>
       )
@@ -205,7 +207,7 @@ export function InputSelect({
     return (
       <components.LoadingMessage {...props}>
         <div className="flex justify-center">
-          <LoaderSpinner className="w-5" />
+          <LoaderSpinner className="w-4" />
         </div>
       </components.LoadingMessage>
     )
