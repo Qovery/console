@@ -31,7 +31,7 @@
 }
 
 .input__value {
-  @apply absolute bottom-[7px] left-0 w-full appearance-none bg-transparent px-4 text-sm text-neutral-400 ring-0;
+  @apply absolute bottom-[7px] left-0 w-full appearance-none bg-transparent px-3 text-sm text-neutral-400 ring-0;
 }
 
 .input__value[type='time'] {
