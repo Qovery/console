@@ -1,7 +1,7 @@
 import { sortVersions } from './use-container-versions'
 
 describe('useContainerVersions', () => {
-  it('should sort images properly', () => {
+  it('should sort versions properly', () => {
     const unsorted = [
       '4',
       '4.0',

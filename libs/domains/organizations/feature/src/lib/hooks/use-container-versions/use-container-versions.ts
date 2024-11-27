@@ -24,15 +24,9 @@ export interface UseContainerVersionsProps {
   organizationId: string
   containerRegistryId: string
   imageName: string
-  enabled?: boolean
 }
 
-export function useContainerVersions({
-  organizationId,
-  containerRegistryId,
-  imageName,
-  enabled,
-}: UseContainerVersionsProps) {
+export function useContainerVersions({ organizationId, containerRegistryId, imageName }: UseContainerVersionsProps) {
   return useQuery({
     ...queries.organizations.containerVersions({ organizationId, containerRegistryId, imageName }),
     select(data) {
@@ -41,7 +35,6 @@ export function useContainerVersions({
         versions: sortVersions(versions),
       }))
     },
-    enabled,
   })
 }
 
