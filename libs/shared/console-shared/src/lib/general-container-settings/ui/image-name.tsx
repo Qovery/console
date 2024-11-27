@@ -54,6 +54,19 @@ export function ImageName({
     ...customOptions,
   ]
 
+  // Custom validation function for new options
+  const isValidNewOption = (inputValue: string) => {
+    // Check minimum length requirement
+    if (inputValue.length < 3) {
+      return false
+    }
+
+    const normalizedInput = inputValue.toLowerCase().trim()
+    const valueExists = options.some((option) => option.value.toLowerCase() === normalizedInput)
+
+    return !valueExists
+  }
+
   return isSearchFieldAvailable ? (
     <Controller
       name="image_name"
@@ -83,12 +96,13 @@ export function ImageName({
           options={options}
           error={error?.message}
           label="Image name"
-          filterOption="startsWith"
           minInputLength={3}
-          isSearchable
-          isLoading={isFetching}
+          isLoading={isFetching || searchParams !== debouncedImageName}
           formatCreateLabel={(inputValue) => `Select "${inputValue}" - not found in registry`}
+          isValidNewOption={isValidNewOption}
+          filterOption="startsWith"
           isCreatable
+          isSearchable
         />
       )}
     />

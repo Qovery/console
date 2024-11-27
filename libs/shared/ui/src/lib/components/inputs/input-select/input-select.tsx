@@ -48,6 +48,7 @@ export interface InputSelectProps {
   isLoading?: boolean
   minInputLength?: number
   formatCreateLabel?: ((inputValue: string) => ReactNode) | undefined
+  isValidNewOption?: (inputValue: string) => boolean
 }
 
 export function InputSelect({
@@ -75,6 +76,7 @@ export function InputSelect({
   isCreatable = false,
   minInputLength = 0,
   formatCreateLabel,
+  isValidNewOption,
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
@@ -183,16 +185,9 @@ export function InputSelect({
   )
 
   const NoOptionsMessage = (props: NoticeProps<Value>) => {
-    if (value && value.length > minInputLength) {
-      return (
-        <components.NoOptionsMessage {...props}>
-          <div className="px-3 py-6 text-center">
-            <Icon iconName="wave-pulse" className="text-neutral-350" />
-            <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
-          </div>
-        </components.NoOptionsMessage>
-      )
-    } else {
+    const value = props.selectProps.inputValue
+
+    if (value.length <= minInputLength) {
       return (
         <components.NoOptionsMessage {...props}>
           <div className="px-3 py-1 text-center">
@@ -203,6 +198,15 @@ export function InputSelect({
         </components.NoOptionsMessage>
       )
     }
+
+    return (
+      <components.NoOptionsMessage {...props}>
+        <div className="px-3 py-6 text-center">
+          <Icon iconName="wave-pulse" className="text-neutral-350" />
+          <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+        </div>
+      </components.NoOptionsMessage>
+    )
   }
 
   const LoadingMessage = (props: NoticeProps<Value>) => {
@@ -213,19 +217,6 @@ export function InputSelect({
         </div>
       </components.LoadingMessage>
     )
-  }
-
-  // Custom validation function for new options
-  const isValidNewOption = (inputValue: string) => {
-    // Check minimum length requirement
-    if (inputValue.length < minInputLength) {
-      return false
-    }
-
-    const normalizedInput = inputValue.toLowerCase().trim()
-    const valueExists = options.some((option) => option.value.toLowerCase() === normalizedInput)
-
-    return !valueExists
   }
 
   const currentIcon = options.find((option) => option.value === selectedValue)

@@ -6,6 +6,10 @@ import { GeneralContainerSettings } from './general-container-settings'
 
 const mockOrganization = organizationFactoryMock(1)[0]
 
+jest.mock('@qovery/shared/util-hooks', () => ({
+  useDebounce: () => 'my-custom-image',
+}))
+
 jest.mock('@qovery/domains/organizations/feature', () => ({
   ...jest.requireActual('@qovery/domains/organizations/feature'),
   useContainerImages: () => ({
@@ -15,6 +19,8 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
         versions: [],
       },
     ],
+    isFetching: false,
+    refetch: () => Promise.resolve(),
   }),
   useContainerVersions: () => ({
     data: [
@@ -51,14 +57,15 @@ describe('CreateGeneralContainer', () => {
   })
 
   it('should render inputs NOT available in the requests', async () => {
-    const { userEvent } = renderWithProviders(
+    const { debug, baseElement, userEvent } = renderWithProviders(
       wrapWithReactHookForm(<GeneralContainerSettings organization={mockOrganization} />)
     )
     // Registry
     await selectEvent.select(screen.getByLabelText('Registry'), ['my-registry'])
+
     // Image name
     await userEvent.type(screen.getByLabelText('Image name'), 'my-custom-image')
-    await selectEvent.select(screen.getByLabelText('Image name'), ['Select "my-custom-image"'])
+    await selectEvent.select(screen.getByLabelText('Image name'), ['Select "my-custom-image" - not found in registry'])
     // Image tag
     await userEvent.type(screen.getByLabelText('Image tag'), '12.0.0')
   })
