@@ -171,8 +171,9 @@ describe('SidebarPodStatuses', () => {
     const toggleButton = screen.getByRole('button')
     await userEvent.click(toggleButton)
 
+    expect(screen.getByText('1 running')).toBeInTheDocument()
     expect(screen.getByText('1 warning')).toBeInTheDocument()
-    expect(screen.getByText('2 starting')).toBeInTheDocument()
+    expect(screen.getByText('1 starting')).toBeInTheDocument()
     expect(screen.getByText('1 failing')).toBeInTheDocument()
   })
 
