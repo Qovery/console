@@ -109,26 +109,22 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
     [columnHelper, hasMultipleContainers]
   )
 
-  const columnFilters = useMemo(() => {
-    const podName = searchParams.get('pod_name')
-    return podName ? [{ id: 'pod_name', value: podName }] : []
-  }, [searchParams])
-
-  const setColumnFilters = useCallback(
-    (filterOrUpdater: ColumnFiltersState | ((prev: ColumnFiltersState) => ColumnFiltersState)) => {
-      const newFilters = typeof filterOrUpdater === 'function' ? filterOrUpdater(columnFilters) : filterOrUpdater
-
-      // Update searchParams based on the new filters
-      const podNameFilter = newFilters.find((f) => f.id === 'pod_name')
-      if (podNameFilter) {
-        searchParams.set('pod_name', podNameFilter.value as string)
-      } else {
-        searchParams.delete('pod_name')
-      }
-      setSearchParams(searchParams)
-    },
-    [searchParams, setSearchParams, columnFilters]
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+    searchParams.get('pod_name')
+      ? [
+          {
+            id: 'pod_name',
+            value: searchParams.get('pod_name'),
+          },
+        ]
+      : []
   )
+
+  // Necessary with sidebar-pod-statuses to keep the filter in sync if you navigate from service logs page
+  useEffect(() => {
+    const podName = searchParams.get('pod_name')
+    setColumnFilters(podName ? [{ id: 'pod_name', value: podName }] : [])
+  }, [searchParams])
 
   const table = useReactTable({
     data: logs,
@@ -147,10 +143,8 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       setColumnFilters((prevFilters) => {
         const existingFilter = prevFilters.find((f) => f.id === id)
         const updatedFilters = existingFilter ? prevFilters.filter((f) => f.id !== id) : [...prevFilters, { id, value }]
-        if (id === 'pod_name') {
-          existingFilter ? searchParams.delete(id) : searchParams.append(id, value)
-          setSearchParams(searchParams)
-        }
+        existingFilter ? searchParams.delete(id) : searchParams.append(id, value)
+        setSearchParams(searchParams)
         return updatedFilters
       })
     },
