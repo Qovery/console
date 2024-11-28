@@ -59,7 +59,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
           .with('COMPLETED', () => ({ type: 'running', message: 'completed', color: 'bg-green-500' }))
           .with('WARNING', () => ({ type: 'warning', message: 'warning', color: 'bg-yellow-500' }))
           .with('STARTING', () => ({
-            type: 'running',
+            type: 'starting',
             message: 'starting',
             color: 'bg-purple-500',
           }))
