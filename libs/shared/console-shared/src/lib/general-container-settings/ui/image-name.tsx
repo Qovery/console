@@ -37,8 +37,15 @@ export function ImageName({
   })
 
   // XXX: Available only for this kind of registry: https://qovery.atlassian.net/browse/FRT-1307?focusedCommentId=13219
-  const isSearchFieldAvailable = match(containerRegistries.find((c) => c.id === containerRegistryId)?.kind)
-    .with('ECR', 'GCP_ARTIFACT_REGISTRY', 'DOCKER_HUB', 'GENERIC_CR', 'GITHUB_CR', () => true)
+  const isSearchFieldAvailable = match(containerRegistries.find((c) => c.id === containerRegistryId))
+    .with(
+      { kind: 'ECR' },
+      { kind: 'GCP_ARTIFACT_REGISTRY' },
+      { kind: 'DOCKER_HUB' },
+      { kind: 'GENERIC_CR' },
+      () => true
+    )
+    .with({ kind: 'GITHUB_CR' }, (r) => r.config && Object.keys(r.config).length > 0)
     .otherwise(() => false)
 
   // Refetch when debounced value changes
