@@ -40,9 +40,16 @@ export function PageEnvironmentLogs() {
     ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
     location.pathname
   )
+  const matchPreCheckVersion = matchPath<'versionId', string>(
+    ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId'),
+    location.pathname
+  )
 
   const deploymentVersionId =
     matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
+
+  const preCheckVersionId =
+    matchPreCheckVersion?.params.versionId !== ':versionId' ? matchPreCheckVersion?.params.versionId : undefined
 
   const stageVersionId =
     matchEnvironmentStageVersion?.params.versionId !== ':versionId'
@@ -79,7 +86,7 @@ export function PageEnvironmentLogs() {
       cluster: environment?.cluster_id,
       project: projectId,
       environment: environmentId,
-      version: deploymentVersionId || stageVersionId,
+      version: deploymentVersionId || preCheckVersionId || stageVersionId,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),

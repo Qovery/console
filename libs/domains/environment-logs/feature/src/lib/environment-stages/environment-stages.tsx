@@ -6,7 +6,7 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useParams } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
 import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
@@ -29,6 +29,8 @@ export function EnvironmentStages({
   setHideSkipped,
   children,
 }: EnvironmentStagesProps) {
+  const { versionId } = useParams()
+
   return (
     <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
       <HeaderEnvironmentStages environment={environment} environmentStatus={environmentStatus}>
@@ -70,7 +72,7 @@ export function EnvironmentStages({
                         <NavLink
                           to={
                             ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                            ENVIRONMENT_PRE_CHECK_LOGS_URL()
+                            ENVIRONMENT_PRE_CHECK_LOGS_URL(versionId)
                           }
                           className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
                         >

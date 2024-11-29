@@ -298,7 +298,6 @@ export function ListDeploymentLogs({
         type="DEPLOYMENT"
         environment={environment}
         serviceId={serviceId ?? ''}
-        versionId={versionId}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
       >
