@@ -10,7 +10,6 @@ export interface HeaderLogsProps extends PropsWithChildren {
   serviceId: string
   environment: Environment
   serviceStatus: Status
-  versionId?: string
   environmentStatus?: EnvironmentStatus
 }
 
@@ -33,7 +32,6 @@ function EndCurve() {
 export function HeaderLogs({
   type,
   environment,
-  versionId,
   serviceId,
   environmentStatus,
   serviceStatus,
