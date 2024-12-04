@@ -42,7 +42,7 @@ export function HeaderEnvironmentStages({
           className={clsx(
             'flex h-full items-center gap-4 border-l border-t border-neutral-500 bg-neutral-600 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral-50',
             {
-              'pr-1': environmentStatus?.state === 'DEPLOYING',
+              'pr-2': environmentStatus?.state === 'DEPLOYING',
             }
           )}
         >

@@ -300,7 +300,11 @@ export function ListDeploymentLogs({
         serviceId={serviceId ?? ''}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
-        deploymentHistory={deploymentHistoryEnvironment.find((d) => d.identifier.execution_id === versionId)}
+        deploymentHistory={
+          versionId
+            ? deploymentHistoryEnvironment.find((d) => d.identifier.execution_id === versionId)
+            : deploymentHistoryEnvironment[0]
+        }
       >
         <div className="flex items-center gap-4">
           <Indicator
