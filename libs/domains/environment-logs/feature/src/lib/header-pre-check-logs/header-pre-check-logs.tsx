@@ -4,7 +4,7 @@ import { Icon, StatusChip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderPreCheckLogsProps extends PropsWithChildren {
-  preCheckStage: EnvironmentStatusesWithStagesPreCheckStage
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
 }
 
 function EndCurve() {
@@ -24,7 +24,7 @@ function EndCurve() {
 }
 
 export function HeaderPreCheckLogs({ preCheckStage, children }: HeaderPreCheckLogsProps) {
-  const totalDurationSec = preCheckStage.total_duration_sec ?? 0
+  const totalDurationSec = preCheckStage?.total_duration_sec ?? 0
 
   return (
     <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 bg-neutral-900 pr-4">
@@ -34,13 +34,17 @@ export function HeaderPreCheckLogs({ preCheckStage, children }: HeaderPreCheckLo
             <Icon iconName="list-check" />
             Pre-check
           </span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-            <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
-          </svg>
-          <span className="flex items-center gap-2">
-            <StatusChip status={preCheckStage.status} />
-            <span>{upperCaseFirstLetter(preCheckStage?.status).replace(/_/g, ' ')}</span>
-          </span>
+          {preCheckStage && (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+                <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+              </svg>
+              <span className="flex items-center gap-2">
+                <StatusChip status={preCheckStage?.status} />
+                <span>{upperCaseFirstLetter(preCheckStage?.status).replace(/_/g, ' ')}</span>
+              </span>
+            </>
+          )}
           <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
             <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
           </svg>

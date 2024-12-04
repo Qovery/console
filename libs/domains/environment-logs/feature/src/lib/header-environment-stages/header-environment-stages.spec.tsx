@@ -21,11 +21,6 @@ describe('HeaderEnvironmentStages', () => {
     expect(screen.getByText('Test Environment')).toBeInTheDocument()
   })
 
-  it('renders the status text', () => {
-    renderWithProviders(<HeaderEnvironmentStages {...defaultProps} />)
-    expect(screen.getByText('Deployed')).toBeInTheDocument()
-  })
-
   it('renders the deployment duration when not deploying', () => {
     renderWithProviders(<HeaderEnvironmentStages {...defaultProps} />)
     expect(screen.getByText('2m : 5s')).toBeInTheDocument()

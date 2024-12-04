@@ -74,13 +74,17 @@ export function HeaderLogs({
           </span>
           {type === 'DEPLOYMENT' && (
             <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-                <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
-              </svg>
-              <ActionTriggerStatusChip
-                status={environmentStatus?.last_deployment_state}
-                triggerAction={deploymentHistory?.trigger_action}
-              />
+              {deploymentHistory?.trigger_action && (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+                    <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                  </svg>
+                  <ActionTriggerStatusChip
+                    status={environmentStatus?.last_deployment_state}
+                    triggerAction={deploymentHistory.trigger_action}
+                  />
+                </>
+              )}
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                 <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
               </svg>

@@ -1,4 +1,4 @@
-import { type Status } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironmentV2, type Status } from 'qovery-typescript-axios'
 import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -24,7 +24,13 @@ jest.mock('react-router-dom', () => ({
 describe('ListDeploymentLogs', () => {
   const mockEnvironment = environmentFactoryMock(1)[0]
 
-  const mockDeploymentHistoryEnvironment = [{ id: '4', created_at: '2023-01-01T00:00:00Z' }]
+  const mockDeploymentHistoryEnvironment: DeploymentHistoryEnvironmentV2[] = [
+    {
+      identifier: {
+        execution_id: '4',
+      },
+    },
+  ]
 
   const mockServiceStatus: Status = {
     id: '111',
