@@ -9,6 +9,7 @@ export function useDeploymentHistory({ environmentId }: UseDeploymentHistoryProp
   return useQuery({
     ...queries.environments.deploymentHistoryV2({ environmentId }),
     refetchInterval: 5000,
+    retryOnMount: true,
   })
 }
 
