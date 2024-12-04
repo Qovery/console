@@ -1,14 +1,15 @@
 import { type CheckedState } from '@radix-ui/react-checkbox'
 import {
+  type DeploymentHistoryEnvironmentV2,
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
-import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
+import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip } from '@qovery/shared/ui'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
 export interface EnvironmentStagesProps extends PropsWithChildren {
@@ -18,22 +19,28 @@ export interface EnvironmentStagesProps extends PropsWithChildren {
   setHideSkipped: Dispatch<SetStateAction<CheckedState>>
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
+  deploymentHistory?: DeploymentHistoryEnvironmentV2
 }
 
 export function EnvironmentStages({
   environment,
   environmentStatus,
   deploymentStages,
+  deploymentHistory,
   preCheckStage,
   hideSkipped,
   setHideSkipped,
   children,
 }: EnvironmentStagesProps) {
-  const { versionId } = useParams()
+  const executionId = environmentStatus.last_deployment_id ?? undefined
 
   return (
     <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
-      <HeaderEnvironmentStages environment={environment} environmentStatus={environmentStatus}>
+      <HeaderEnvironmentStages
+        environment={environment}
+        environmentStatus={environmentStatus}
+        deploymentHistory={deploymentHistory}
+      >
         <div className="flex items-center gap-3 text-sm font-medium text-neutral-50">
           <Checkbox
             name="skipped"
@@ -72,7 +79,7 @@ export function EnvironmentStages({
                         <NavLink
                           to={
                             ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                            ENVIRONMENT_PRE_CHECK_LOGS_URL(versionId)
+                            ENVIRONMENT_PRE_CHECK_LOGS_URL(executionId)
                           }
                           className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
                         >

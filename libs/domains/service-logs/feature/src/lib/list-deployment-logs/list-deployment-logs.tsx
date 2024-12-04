@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table'
 import download from 'downloadjs'
 import {
-  type DeploymentHistoryEnvironment,
+  type DeploymentHistoryEnvironmentV2,
   type Environment,
   type EnvironmentStatus,
   type Stage,
@@ -126,7 +126,7 @@ const getFilterStep = (step: EnvironmentEngineStep): FilterType =>
 
 export interface ListDeploymentLogsProps {
   environment: Environment
-  deploymentHistoryEnvironment: DeploymentHistoryEnvironment[]
+  deploymentHistoryEnvironment: DeploymentHistoryEnvironmentV2[]
   serviceStatus: Status
   stage?: Stage
   environmentStatus?: EnvironmentStatus
@@ -272,7 +272,7 @@ export function ListDeploymentLogs({
     [columnFilters]
   )
 
-  const isLastVersion = deploymentHistoryEnvironment?.[0]?.id === versionId || !versionId
+  const isLastVersion = deploymentHistoryEnvironment?.[0]?.identifier.execution_id === versionId || !versionId
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
         .with(
@@ -300,6 +300,7 @@ export function ListDeploymentLogs({
         serviceId={serviceId ?? ''}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
+        deploymentHistory={deploymentHistoryEnvironment.find((d) => d.identifier.execution_id === versionId)}
       >
         <div className="flex items-center gap-4">
           <Indicator
@@ -356,7 +357,7 @@ export function ListDeploymentLogs({
       <div className="h-[calc(100vh-64px)] w-full p-1">
         <div className="h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
-          <div className="h-full bg-neutral-600 pt-11">
+          <div className="h-[calc(100%-44px)] bg-neutral-600 pt-11">
             <DeploymentLogsPlaceholder
               serviceStatus={serviceStatus}
               itemsLength={logs.length}

@@ -92,6 +92,13 @@ export const environments = createQueryKeys('environments', {
       return result.data.results
     },
   }),
+  deploymentHistoryV2: ({ environmentId }: { environmentId: string }) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const result = await environmentDeploymentsApi.listEnvironmentDeploymentHistoryV2(environmentId)
+      return result.data.results
+    },
+  }),
   listDatabaseConfigurations: ({ environmentId }: { environmentId: string }) => ({
     queryKey: [environmentId],
     async queryFn() {

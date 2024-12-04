@@ -7,7 +7,7 @@ const AllStatus = [...Object.values(RunningState), ...Object.values(StateEnum), 
 
 const Story: Meta<typeof StatusChip> = {
   component: StatusChip,
-  title: 'StatusChip',
+  title: 'Status/StatusChip',
   argTypes: {
     status: {
       options: AllStatus,

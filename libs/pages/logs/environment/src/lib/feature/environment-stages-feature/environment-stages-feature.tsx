@@ -7,14 +7,24 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import { match } from 'ts-pattern'
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
+import { useDeploymentHistoryExecutionId } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, LoaderSpinner, StageStatusChip, StatusChip, Tooltip, Truncate } from '@qovery/shared/ui'
+import {
+  Icon,
+  Indicator,
+  LoaderSpinner,
+  StageStatusChip,
+  StatusChip,
+  Tooltip,
+  TriggerActionIcon,
+  Truncate,
+} from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -48,8 +58,13 @@ export function EnvironmentStagesFeature({
 }: EnvironmentStagesFeatureProps) {
   useDocumentTitle(`Environment stages ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
-  const { versionId } = useParams()
+  const executionId = environmentStatus?.last_deployment_id
+
   const { data: services = [] } = useServices({ environmentId: environment.id })
+  const { data: deploymentHistory } = useDeploymentHistoryExecutionId({
+    environmentId: environment.id,
+    executionId,
+  })
 
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
 
@@ -74,6 +89,7 @@ export function EnvironmentStagesFeature({
         preCheckStage={preCheckStage}
         hideSkipped={hideSkipped}
         setHideSkipped={setHideSkipped}
+        deploymentHistory={deploymentHistory}
       >
         <>
           {matchServicesWithStatuses(deploymentStages)?.map((s) => {
@@ -94,7 +110,24 @@ export function EnvironmentStagesFeature({
                   )}
                 >
                   <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
-                    <StageStatusChip status={s.stage?.status} />
+                    <Indicator
+                      align="end"
+                      side="right"
+                      content={
+                        s?.stage?.status !== 'SKIPPED' && (
+                          <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
+                            <span>
+                              <TriggerActionIcon
+                                triggerAction={deploymentHistory?.trigger_action}
+                                className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-650 text-xs text-neutral-250"
+                              />
+                            </span>
+                          </Tooltip>
+                        )
+                      }
+                    >
+                      <StageStatusChip status={s.stage?.status} />
+                    </Indicator>
                     <div className="flex flex-col gap-0.5">
                       <span className="flex gap-1.5 text-sm font-medium">
                         <Truncate text={upperCaseFirstLetter(stageName) || ''} truncateLimit={20} />
@@ -122,18 +155,26 @@ export function EnvironmentStagesFeature({
                         const serviceTotalDurationSec = service?.steps?.total_duration_sec
 
                         if (hideSkipped && !service.is_part_last_deployment) return null
-                        if (!fullService) return null
+                        if (!fullService)
+                          return (
+                            <div className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2">
+                              <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
+                                <Icon iconName="trash-can-xmark" iconStyle="solid" />
+                              </span>
+                              <span className="text-sm">Service deleted</span>
+                            </div>
+                          )
 
                         return (
                           <NavLink
                             key={service?.id}
                             to={
-                              versionId
+                              executionId
                                 ? ENVIRONMENT_LOGS_URL(
                                     environment.organization.id,
                                     environment.project.id,
                                     environment.id
-                                  ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, versionId)
+                                  ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, executionId)
                                 : ENVIRONMENT_LOGS_URL(
                                     environment.organization.id,
                                     environment.project.id,
@@ -147,14 +188,31 @@ export function EnvironmentStagesFeature({
                               }
                             )}
                           >
-                            <ServiceAvatar
-                              service={fullService}
-                              border="solid"
-                              size="sm"
-                              className={clsx('border-neutral-400', {
-                                'opacity-50': !service.is_part_last_deployment,
-                              })}
-                            />
+                            <Indicator
+                              align="end"
+                              side="right"
+                              content={
+                                service.is_part_last_deployment && (
+                                  <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
+                                    <span>
+                                      <TriggerActionIcon
+                                        triggerAction={deploymentHistory?.trigger_action}
+                                        className="relative -left-0.5 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-550 text-xs text-neutral-250"
+                                      />
+                                    </span>
+                                  </Tooltip>
+                                )
+                              }
+                            >
+                              <ServiceAvatar
+                                service={fullService}
+                                border="solid"
+                                size="sm"
+                                className={clsx('border-neutral-400', {
+                                  'opacity-50': !service.is_part_last_deployment,
+                                })}
+                              />
+                            </Indicator>
                             <span className="flex flex-col gap-0.5 text-sm">
                               <Truncate text={fullService.name} truncateLimit={18} />
                               {serviceTotalDurationSec && (

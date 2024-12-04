@@ -1,7 +1,7 @@
 import { type DeploymentHistoryEnvironment } from 'qovery-typescript-axios'
-import { mergeDeploymentServices } from './merge-deployment-services'
+import { mergeDeploymentServicesLegacy } from './merge-deployment-services'
 
-describe('mergeDeploymentServices', () => {
+describe('mergeDeploymentServicesLegacy', () => {
   it('should merge deployment services correctly and sort by id', () => {
     const deploymentHistory = [
       {
@@ -81,12 +81,12 @@ describe('mergeDeploymentServices', () => {
       },
     ]
 
-    const result = mergeDeploymentServices(deploymentHistory as DeploymentHistoryEnvironment[])
+    const result = mergeDeploymentServicesLegacy(deploymentHistory as DeploymentHistoryEnvironment[])
     expect(result).toEqual(expectedOutput)
   })
 
   it('should return an empty array if deploymentHistory is not defined', () => {
-    const result = mergeDeploymentServices(undefined)
+    const result = mergeDeploymentServicesLegacy(undefined)
     expect(result).toEqual([])
   })
 })

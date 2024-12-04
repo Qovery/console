@@ -6,7 +6,7 @@ const AllStatus = [...Object.values(StateEnum)]
 
 const Story: Meta<typeof StatusLabel> = {
   component: StatusLabel,
-  title: 'StatusLabel',
+  title: 'Status/StatusLabel',
   argTypes: {
     status: {
       options: AllStatus,

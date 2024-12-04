@@ -1,13 +1,13 @@
-import { type Environment, type EnvironmentStatus } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironmentV2, type Environment, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
-import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { ActionTriggerStatusChip, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderEnvironmentStagesProps extends PropsWithChildren {
   environment: Environment
   environmentStatus: EnvironmentStatus
+  deploymentHistory?: DeploymentHistoryEnvironmentV2
 }
 
 function EndCurve() {
@@ -26,7 +26,12 @@ function EndCurve() {
   )
 }
 
-export function HeaderEnvironmentStages({ environment, environmentStatus, children }: HeaderEnvironmentStagesProps) {
+export function HeaderEnvironmentStages({
+  environment,
+  environmentStatus,
+  deploymentHistory,
+  children,
+}: HeaderEnvironmentStagesProps) {
   const totalDurationSec = environmentStatus?.total_deployment_duration_in_seconds ?? 0
 
   return (
@@ -39,20 +44,22 @@ export function HeaderEnvironmentStages({ environment, environmentStatus, childr
               {environment.name}
             </span>
             {environmentStatus.last_deployment_id && (
-              <Tooltip content={`Excecution id: ${environmentStatus.last_deployment_id}`} side="bottom">
+              <Tooltip content={`Execution id: ${environmentStatus.last_deployment_id}`} side="bottom">
                 <span>
                   <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
                 </span>
               </Tooltip>
             )}
           </span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
-            <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
-          </svg>
-          <span className="flex items-center gap-2">
-            <StatusChip status={environmentStatus?.last_deployment_state} />
-            <span>{upperCaseFirstLetter(environmentStatus?.last_deployment_state).replace(/_/g, ' ')}</span>
-          </span>
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+              <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+            </svg>
+            <ActionTriggerStatusChip
+              status={environmentStatus?.last_deployment_state}
+              triggerAction={deploymentHistory?.trigger_action}
+            />
+          </>
           {environmentStatus?.state !== 'DEPLOYING' && (
             <>
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
