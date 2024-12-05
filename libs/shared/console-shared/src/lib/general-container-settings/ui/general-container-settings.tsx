@@ -2,12 +2,13 @@ import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ContainerRegistryCreateEditModal, useContainerRegistries } from '@qovery/domains/organizations/feature'
 import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { InputSelect, InputText, Link, useModal } from '@qovery/shared/ui'
+import { InputSelect, Link, useModal } from '@qovery/shared/ui'
 import ImageName from './image-name'
 import { ImageTag } from './image-tag'
 
 export interface GeneralContainerSettingsProps {
   organization?: Organization
+  isSetting?: boolean
 }
 
 export interface ContainerFormProps {
@@ -16,7 +17,7 @@ export interface ContainerFormProps {
   image_tag?: string
 }
 
-export function GeneralContainerSettings({ organization }: GeneralContainerSettingsProps) {
+export function GeneralContainerSettings({ organization, isSetting }: GeneralContainerSettingsProps) {
   const { control, watch } = useFormContext<ContainerFormProps>()
   const { openModal, closeModal } = useModal()
   const watchRegistry = watch('registry')
@@ -79,7 +80,12 @@ export function GeneralContainerSettings({ organization }: GeneralContainerSetti
         </p>
       </div>
       {organization && watchRegistry && (
-        <ImageName control={control} organizationId={organization.id} containerRegistryId={watchRegistry} />
+        <ImageName
+          control={control}
+          organizationId={organization.id}
+          containerRegistryId={watchRegistry}
+          isSetting={isSetting}
+        />
       )}
       {organization && watchRegistry && watchImageName && (
         <ImageTag
