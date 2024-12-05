@@ -67,7 +67,7 @@ function GitRepository({
                   height={14}
                   width={14}
                 />
-                <Truncate text={gitRepository.name} truncateLimit={18} />
+                <Truncate text={gitRepository.name} truncateLimit={17} />
               </Button>
             </a>
           </Dd>
@@ -84,7 +84,7 @@ function GitRepository({
             >
               <Button color="neutral" variant="surface" size="xs" className="gap-1">
                 <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
-                <Truncate text={gitRepository.branch} truncateLimit={18} />
+                <Truncate text={gitRepository.branch} truncateLimit={17} />
               </Button>
             </a>
           </Dd>

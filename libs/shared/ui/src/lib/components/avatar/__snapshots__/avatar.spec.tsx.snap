@@ -4,7 +4,7 @@ exports[`Avatar should match snapshot 1`] = `
 <body>
   <div>
     <span
-      class="flex items-center justify-center h-16 w-16 rounded-full"
+      class="flex items-center justify-center h-16 w-16 min-h-16 min-w-16 rounded-full"
     >
       <span
         class="flex items-center justify-center rounded-full h-16 w-16"

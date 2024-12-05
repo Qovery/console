@@ -50,7 +50,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                     type="button"
                   >
                     <span
-                      class="flex items-center justify-center h-16 w-16 rounded-full border border-neutral-200"
+                      class="flex items-center justify-center h-16 w-16 min-h-16 min-w-16 rounded-full border border-neutral-200"
                     >
                       <span
                         class="flex items-center justify-center rounded-full h-10 w-10"
@@ -698,7 +698,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                     type="button"
                   >
                     <span
-                      class="flex items-center justify-center h-16 w-16 rounded-full border border-neutral-200"
+                      class="flex items-center justify-center h-16 w-16 min-h-16 min-w-16 rounded-full border border-neutral-200"
                     >
                       <span
                         class="flex items-center justify-center rounded-full h-10 w-10"
@@ -1217,7 +1217,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                     type="button"
                   >
                     <span
-                      class="flex items-center justify-center h-16 w-16 rounded-full border border-neutral-200"
+                      class="flex items-center justify-center h-16 w-16 min-h-16 min-w-16 rounded-full border border-neutral-200"
                     >
                       <span
                         class="flex items-center justify-center rounded-full h-10 w-10"

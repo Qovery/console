@@ -123,10 +123,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 40%;"
         >
           <div
-            class="flex items-center justify-between"
+            class="flex items-center justify-between gap-4"
           >
             <span
-              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
+              class="flex min-w-0 max-w-[600px] items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
                 class="items-center shrink-0 text-xs border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300 flex h-4 w-4 justify-center p-0 font-semibold"
@@ -263,7 +263,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 20%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 truncate"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/28480911-95f9-48c9-8e58-2685dbfc9004"
           >
@@ -315,10 +315,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 40%;"
         >
           <div
-            class="flex items-center justify-between"
+            class="flex items-center justify-between gap-4"
           >
             <span
-              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
+              class="flex min-w-0 max-w-[600px] items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
                 class="items-center shrink-0 text-xs text-red-500 border rounded border-red-500 flex h-4 w-4 justify-center p-0 font-semibold"
@@ -441,7 +441,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 20%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 truncate"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
           >
@@ -486,10 +486,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 40%;"
         >
           <div
-            class="flex items-center justify-between"
+            class="flex items-center justify-between gap-4"
           >
             <span
-              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
+              class="flex min-w-0 max-w-[600px] items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
                 class="items-center shrink-0 text-xs border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300 flex h-4 w-4 justify-center p-0 font-semibold"
@@ -612,7 +612,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 20%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 truncate"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
           >
@@ -657,10 +657,10 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 40%;"
         >
           <div
-            class="flex items-center justify-between"
+            class="flex items-center justify-between gap-4"
           >
             <span
-              class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
+              class="flex min-w-0 max-w-[600px] items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
                 class="items-center shrink-0 text-xs border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300 flex h-4 w-4 justify-center p-0 font-semibold"
@@ -797,7 +797,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
           style="width: 20%;"
         >
           <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 truncate"
             data-state="closed"
             href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/cluster/c531a994-603f-4edf-86cd-bdaea66a46a9"
           >
