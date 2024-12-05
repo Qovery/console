@@ -152,7 +152,7 @@ export function PageSettingsGeneral({
                         .exhaustive()}
                     />
                   ) : (
-                    <GeneralContainerSettings organization={organization} />
+                    <GeneralContainerSettings organization={organization} isSetting />
                   )}
                 </Section>
                 <Section className="gap-4">
@@ -191,7 +191,7 @@ export function PageSettingsGeneral({
               <>
                 <Section className="gap-4">
                   <Heading>Source</Heading>
-                  <GeneralContainerSettings organization={organization} />
+                  <GeneralContainerSettings organization={organization} isSetting />
                 </Section>
                 <Section className="gap-4">
                   <Heading>Deploy</Heading>

@@ -82,12 +82,12 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
             (props.isEdition ? (
               <div data-testid="container-fields">
                 <BlockContent title="Container Settings" classNameContent="space-y-4">
-                  <GeneralContainerSettings organization={props.organization} />
+                  <GeneralContainerSettings organization={props.organization} isSetting />
                 </BlockContent>
               </div>
             ) : (
               <div data-testid="container-fields" className="space-y-4">
-                <GeneralContainerSettings organization={props.organization} />
+                <GeneralContainerSettings organization={props.organization} isSetting />
               </div>
             ))}
         </>

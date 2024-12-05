@@ -13,15 +13,26 @@ export function ImageName({
   control,
   organizationId,
   containerRegistryId,
+  isSetting,
 }: {
   control: Control<ContainerFormProps>
   organizationId: string
   containerRegistryId: string
+  isSetting?: boolean
 }) {
   const { setValue } = useFormContext()
   const { data: containerRegistries = [] } = useContainerRegistries({ organizationId })
   const watchImageName = useWatch({ control, name: 'image_name' }) || ''
-  const [customOptions, setCustomOptions] = useState<Value[]>([])
+  const [customOptions, setCustomOptions] = useState<Value[]>(
+    isSetting
+      ? [
+          {
+            value: watchImageName,
+            label: watchImageName,
+          },
+        ]
+      : []
+  )
   const [searchParams, setSearchParams] = useState(watchImageName)
   const debouncedImageName = useDebounce(searchParams, DEBOUNCE_TIME)
 
