@@ -69,6 +69,8 @@ export function EnvironmentStagesFeature({
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
+  const getServiceFromDeploymentHistoryId = (id: string) =>
+    deploymentHistory?.stages.flatMap((s) => s.services).find((s) => s.identifier.service_id === id)
 
   if (!environmentStatus) {
     return (
@@ -153,6 +155,7 @@ export function EnvironmentStagesFeature({
                       s.services.map((service) => {
                         const fullService = getServiceById(service.id!)
                         const serviceTotalDurationSec = service?.steps?.total_duration_sec
+                        const serviceFromDeploymentHistoryId = getServiceFromDeploymentHistoryId(service.id!)
 
                         if (hideSkipped && !service.is_part_last_deployment) return null
                         if (!fullService)
@@ -161,7 +164,7 @@ export function EnvironmentStagesFeature({
                               <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
                                 <Icon iconName="trash-can-xmark" iconStyle="solid" />
                               </span>
-                              <span className="text-sm">Service deleted</span>
+                              <span className="text-sm">{serviceFromDeploymentHistoryId?.identifier.name}</span>
                             </div>
                           )
 
