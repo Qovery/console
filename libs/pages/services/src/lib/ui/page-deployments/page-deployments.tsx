@@ -1,16 +1,16 @@
 import { memo, useEffect, useState } from 'react'
-import { type DeploymentService } from '@qovery/shared/interfaces'
+import { type DeploymentServiceLegacy } from '@qovery/shared/interfaces'
 import { EmptyState, Table, type TableFilterProps, TableRowDeployment } from '@qovery/shared/ui'
 
 export interface PageDeploymentsProps {
-  deployments?: DeploymentService[]
+  deployments?: DeploymentServiceLegacy[]
   isLoading?: boolean
 }
 
 export function PageDeploymentsMemo(props: PageDeploymentsProps) {
   const { deployments = [], isLoading } = props
 
-  const [data, setData] = useState<DeploymentService[]>([])
+  const [data, setData] = useState<DeploymentServiceLegacy[]>([])
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -95,7 +95,7 @@ export function PageDeploymentsMemo(props: PageDeploymentsProps) {
         {data?.map((currentData, index) => (
           <TableRowDeployment
             key={index}
-            data={currentData as DeploymentService}
+            data={currentData as DeploymentServiceLegacy}
             filter={filter}
             dataHead={tableHead}
             isLoading={loading}

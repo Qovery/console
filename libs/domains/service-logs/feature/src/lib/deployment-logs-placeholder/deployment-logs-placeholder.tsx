@@ -1,4 +1,4 @@
-import { type DeploymentHistoryEnvironment, ServiceDeploymentStatusEnum, type Status } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironmentV2, ServiceDeploymentStatusEnum, type Status } from 'qovery-typescript-axios'
 import { Link, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
@@ -43,14 +43,16 @@ function DeploymentHistoryPlaceholder({
                   }`}
                   to={
                     ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                    DEPLOYMENT_LOGS_VERSION_URL(deploymentHistory.id, deploymentHistory.execution_id)
+                    DEPLOYMENT_LOGS_VERSION_URL(deploymentHistory.identifier.service_id, deploymentHistory.execution_id)
                   }
                 >
                   <span className="flex">
                     <StatusChip className="relative top-[2px] mr-3" status={deploymentHistory.status} />
                     <span className="text-ssm text-brand-300">{trimId(deploymentHistory.execution_id || '')}</span>
                   </span>
-                  <span className="text-ssm text-neutral-300">{dateFullFormat(deploymentHistory.created_at)}</span>
+                  <span className="text-ssm text-neutral-300">
+                    {dateFullFormat(deploymentHistory.auditing_data.created_at)}
+                  </span>
                 </Link>
               </div>
             ))
@@ -71,7 +73,7 @@ function DeploymentHistoryPlaceholder({
 export interface DeploymentLogsPlaceholderProps {
   serviceStatus?: Status
   itemsLength?: number
-  deploymentHistoryEnvironment?: DeploymentHistoryEnvironment[]
+  deploymentHistoryEnvironment?: DeploymentHistoryEnvironmentV2[]
 }
 
 export function DeploymentLogsPlaceholder({
@@ -104,7 +106,7 @@ export function DeploymentLogsPlaceholder({
     .otherwise(() => false)
 
   const deploymentsByServiceId = mergeDeploymentServices(deploymentHistoryEnvironment).filter(
-    (deploymentHistory) => deploymentHistory.id === serviceId
+    (deploymentHistory) => deploymentHistory.identifier.service_id === serviceId
   )
 
   if (displaySpinner) {

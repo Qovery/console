@@ -14,8 +14,16 @@ jest.mock('react-router-dom', () => ({
 jest.mock('../hooks/use-deployment-history/use-deployment-history')
 
 const mockDeploymentHistory = [
-  { id: 'version-1', created_at: '2023-01-01T00:00:00Z', status: 'RUNNING' },
-  { id: 'version-2', created_at: '2023-01-02T00:00:00Z', status: 'RUNNING' },
+  {
+    identifier: { execution_id: 'version-1' },
+    auditing_data: { created_at: '2023-01-01T00:00:00Z' },
+    status: 'RUNNING',
+  },
+  {
+    identifier: { execution_id: 'version-2' },
+    auditing_data: { created_at: '2023-01-01T00:00:00Z' },
+    status: 'RUNNING',
+  },
 ]
 
 describe('BreadcrumbDeploymentHistory', () => {

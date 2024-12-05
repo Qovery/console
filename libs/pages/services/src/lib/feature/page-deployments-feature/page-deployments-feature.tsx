@@ -1,13 +1,13 @@
 import { useParams } from 'react-router-dom'
-import { useDeploymentHistory } from '@qovery/domains/environments/feature'
+import { useDeploymentHistoryLegacy } from '@qovery/domains/environments/feature'
 import { deploymentMock } from '@qovery/shared/factories'
-import { mergeDeploymentServices } from '@qovery/shared/util-js'
+import { mergeDeploymentServicesLegacy } from '@qovery/shared/util-js'
 import PageDeployments from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
   const { environmentId = '' } = useParams()
 
-  const { isLoading: loadingStatusDeployments, data: environmentDeploymentHistory } = useDeploymentHistory({
+  const { isLoading: loadingStatusDeployments, data: environmentDeploymentHistory } = useDeploymentHistoryLegacy({
     environmentId,
   })
 
@@ -15,8 +15,8 @@ export function PageDeploymentsFeature() {
     <PageDeployments
       deployments={
         !loadingStatusDeployments
-          ? environmentDeploymentHistory && mergeDeploymentServices(environmentDeploymentHistory)
-          : mergeDeploymentServices([deploymentMock])
+          ? environmentDeploymentHistory && mergeDeploymentServicesLegacy(environmentDeploymentHistory)
+          : mergeDeploymentServicesLegacy([deploymentMock])
       }
       isLoading={loadingStatusDeployments}
     />
