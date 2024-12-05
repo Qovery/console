@@ -176,9 +176,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
                     The pod has restarted {pod.restart_count} {pluralize(pod.restart_count, 'time')} since the last
                     deployment.
                   </>
-                ) : (
-                  'Unknow'
-                )}
+                ) : undefined}
               </span>
             )}
           </Dd>
