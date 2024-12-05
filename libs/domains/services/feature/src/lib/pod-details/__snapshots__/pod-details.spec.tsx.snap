@@ -513,7 +513,6 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
             ❌ 
             Evicted
             :Pod was rejected: The node had condition: [DiskPressure]. 
-            Unknow
           </span>
         </dd>
       </dl>
