@@ -46,8 +46,8 @@ const { Table } = TablePrimitives
 
 function EnvironmentNameCell({ environment }: { environment: Environment }) {
   return (
-    <div className="flex items-center justify-between">
-      <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
+    <div className="flex items-center justify-between gap-4">
+      <span className="flex min-w-0 max-w-[600px] items-center gap-4 text-sm font-medium text-neutral-400">
         <Tooltip content={upperCaseFirstLetter(environment.mode)}>
           <EnvironmentMode mode={environment.mode} variant="shrink" />
         </Tooltip>
@@ -193,6 +193,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
                 color="neutral"
                 variant="surface"
                 size="xs"
+                className="truncate"
               >
                 <Icon className="mr-2" name={environment.cloud_provider.provider} width={16} height={16} />
                 <Truncate text={value} truncateLimit={30} />

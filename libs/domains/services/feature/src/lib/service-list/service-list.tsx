@@ -125,37 +125,41 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
               </span>
             )
           })
-          .with({ serviceType: 'JOB' }, (job) => (
-            <span className="flex min-w-0 shrink flex-col truncate pr-2">
-              <Tooltip content={service.name}>
-                <Link
-                  className="inline max-w-max truncate"
-                  color="current"
-                  to={serviceLink}
-                  underline
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {service.name}
-                </Link>
-              </Tooltip>
-              <span className="text-xs font-normal text-neutral-350">
-                {match(job)
-                  .with(
-                    { job_type: 'CRON' },
-                    ({ schedule }) =>
-                      `${formatCronExpression(schedule.cronjob?.scheduled_at)} (${schedule.cronjob?.timezone})`
-                  )
-                  .with(
-                    { job_type: 'LIFECYCLE' },
-                    ({ schedule }) =>
-                      [schedule.on_start && 'Deploy', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
-                        .filter(Boolean)
-                        .join(' - ') || undefined
-                  )
-                  .exhaustive()}
+          .with({ serviceType: 'JOB' }, (job) => {
+            const schedule = match(job)
+              .with(
+                { job_type: 'CRON' },
+                ({ schedule }) =>
+                  `${formatCronExpression(schedule.cronjob?.scheduled_at)} (${schedule.cronjob?.timezone})`
+              )
+              .with(
+                { job_type: 'LIFECYCLE' },
+                ({ schedule }) =>
+                  [schedule.on_start && 'Deploy', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
+                    .filter(Boolean)
+                    .join(' - ') || undefined
+              )
+              .exhaustive()
+
+            return (
+              <span className="flex min-w-0 shrink flex-col truncate pr-2">
+                <Tooltip content={service.name}>
+                  <Link
+                    className="inline max-w-max truncate"
+                    color="current"
+                    to={serviceLink}
+                    underline
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {service.name}
+                  </Link>
+                </Tooltip>
+                <Tooltip content={schedule}>
+                  <span className="truncate text-xs font-normal text-neutral-350">{schedule}</span>
+                </Tooltip>
               </span>
-            </span>
-          ))
+            )
+          })
           .otherwise(() => (
             <span className="flex min-w-0 shrink flex-col truncate pr-2">
               <Tooltip content={service.name}>
@@ -535,7 +539,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           const value = info.getValue()
           return value ? (
             <Tooltip content={dateUTCString(value)}>
-              <span className="text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
+              <span className="whitespace-nowrap text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (
             <Icon iconName="circle-question" className="text-sm text-neutral-300" />

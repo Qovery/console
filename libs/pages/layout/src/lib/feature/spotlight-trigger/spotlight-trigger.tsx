@@ -27,7 +27,7 @@ export function SpotlightTrigger() {
   return (
     <>
       <button
-        className="group flex min-w-[268px] items-center gap-2 rounded border border-neutral-250 bg-white px-3 py-2 text-sm transition-colors hover:border-neutral-350"
+        className="group flex w-full items-center gap-2 rounded border border-neutral-250 bg-white px-3 py-2 text-sm transition-colors hover:border-neutral-350 lg:min-w-[268px] lg:max-w-max"
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
         <Icon

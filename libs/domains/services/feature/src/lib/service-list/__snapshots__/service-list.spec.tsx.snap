@@ -35,7 +35,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r23:"
+                aria-controls="radix-:r25:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 whitespace-nowrap text-xs"
@@ -58,7 +58,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r26:"
+                aria-controls="radix-:r28:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 whitespace-nowrap text-xs"
@@ -81,7 +81,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r29:"
+                aria-controls="radix-:r2b:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 whitespace-nowrap text-xs"
@@ -149,7 +149,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -257,7 +257,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r2b:"
+                    aria-controls="radix-:r2d:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
@@ -457,7 +457,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="text-xs text-neutral-350"
+              class="whitespace-nowrap text-xs text-neutral-350"
               data-state="closed"
             >
               6 days
@@ -495,7 +495,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -603,7 +603,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r2l:"
+                    aria-controls="radix-:r2n:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
@@ -802,7 +802,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="text-xs text-neutral-350"
+              class="whitespace-nowrap text-xs text-neutral-350"
               data-state="closed"
             >
               19 days
@@ -840,7 +840,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -1235,14 +1235,15 @@ exports[`ServiceList should match snapshot 1`] = `
                     CRONJOB
                   </a>
                   <span
-                    class="text-xs font-normal text-neutral-350"
+                    class="truncate text-xs font-normal text-neutral-350"
+                    data-state="closed"
                   >
                     Every minute (Etc/UTC)
                   </span>
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r2u:"
+                    aria-controls="radix-:r31:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
@@ -1451,7 +1452,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="text-xs text-neutral-350"
+              class="whitespace-nowrap text-xs text-neutral-350"
               data-state="closed"
             >
               19 days
@@ -1489,7 +1490,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -1677,14 +1678,15 @@ exports[`ServiceList should match snapshot 1`] = `
                     seed_script
                   </a>
                   <span
-                    class="text-xs font-normal text-neutral-350"
+                    class="truncate text-xs font-normal text-neutral-350"
+                    data-state="closed"
                   >
                     Deploy
                   </span>
                 </span>
                 <div>
                   <button
-                    aria-controls="radix-:r39:"
+                    aria-controls="radix-:r3d:"
                     aria-expanded="false"
                     aria-haspopup="dialog"
                     class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
@@ -1893,7 +1895,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 10%;"
           >
             <span
-              class="text-xs text-neutral-350"
+              class="whitespace-nowrap text-xs text-neutral-350"
               data-state="closed"
             >
               19 days
@@ -1944,7 +1946,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-haspopup="menu"
                 class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 items-center gap-2"
                 data-state="closed"
-                id="radix-:r3k:"
+                id="radix-:r3o:"
                 type="button"
               >
                 More 

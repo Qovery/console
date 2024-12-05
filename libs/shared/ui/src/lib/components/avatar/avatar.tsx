@@ -29,9 +29,9 @@ function getSubtree(
 const avatarVariants = cva(['flex', 'items-center', 'justify-center'], {
   variants: {
     size: {
-      md: ['h-16', 'w-16'],
-      sm: ['h-8', 'w-8'],
-      xs: ['h-4', 'w-4'],
+      md: ['h-16', 'w-16', 'min-h-16', 'min-w-16'],
+      sm: ['h-8', 'w-8', 'min-h-8', 'min-w-8'],
+      xs: ['h-4', 'w-4', 'min-h-4', 'min-w-4'],
     },
     radius: {
       none: [],
