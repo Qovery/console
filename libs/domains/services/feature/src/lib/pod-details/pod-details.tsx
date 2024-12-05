@@ -47,6 +47,9 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const QOVERY_SIDECAR_NAME = 'qovery-wait-container-output' as const
   const { containers = [] } = pod
 
+  const filteredContainers = containers.filter(({ name }) => name !== QOVERY_SIDECAR_NAME)
+  const defaultContainer = filteredContainers[0]?.name
+
   return (
     <div className="relative pb-4 pl-4 pr-20 pt-3">
       <Link
@@ -72,89 +75,83 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
         <Icon iconName="scroll" />
       </Link>
       {containers.length ? (
-        <Tabs.Root defaultValue={containers[0].name}>
+        <Tabs.Root defaultValue={defaultContainer}>
           <Tabs.List className={serviceType !== 'HELM' ? 'hidden' : ''}>
-            {containers
-              .filter(({ name }) => name !== QOVERY_SIDECAR_NAME)
-              .map(({ name, current_state }) => (
-                <Tabs.Trigger key={name} value={name} size="xs" radius="full">
-                  <div
-                    className={`mr-1 h-1.5 w-1.5 rounded-full ${getServiceStateColor(
-                      current_state?.state,
-                      'background'
-                    )}`}
-                  />
-                  {name}
-                </Tabs.Trigger>
-              ))}
+            {filteredContainers.map(({ name, current_state }) => (
+              <Tabs.Trigger key={name} value={name} size="xs" radius="full">
+                <div
+                  className={`mr-1 h-1.5 w-1.5 rounded-full ${getServiceStateColor(
+                    current_state?.state,
+                    'background'
+                  )}`}
+                />
+                {name}
+              </Tabs.Trigger>
+            ))}
           </Tabs.List>
           <div className="mt-3">
-            {containers
-              .filter(({ name }) => name !== QOVERY_SIDECAR_NAME)
-              .map(({ current_state, last_terminated_state, restart_count, name, image }) => (
-                <Tabs.Content key={name} value={name}>
-                  <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0">
-                    {serviceType === 'HELM' && (
-                      <>
-                        <Dt className="col-span-2 mb-2">Container image:</Dt>
-                        <Dd className="mb-2 flex gap-1">{image}</Dd>
-                      </>
-                    )}
-                    <div className="relative flex flex-col items-center">
-                      {last_terminated_state && (
-                        <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
-                      )}
-                      <div className="grid items-center gap-2">
-                        <TimelineCircle />
-                      </div>
-                    </div>
-                    <Dt className={last_terminated_state ? 'mb-2' : ''}>Current status:</Dt>
-                    <Dd className={last_terminated_state ? 'mb-2' : ''}>
-                      {current_state?.state === 'RUNNING' ? (
-                        <span>✅ Running</span>
-                      ) : (
-                        <span>
-                          {pod.state === 'ERROR' ? '❌ ' : ''}
-                          {current_state?.state_reason}
-                          {current_state?.state_message ? `:${current_state.state_message}` : ''}
-                          {restart_count && !last_terminated_state ? (
-                            <>
-                              <br />
-                              The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the
-                              last deployment.
-                            </>
-                          ) : undefined}
-                        </span>
-                      )}
-                    </Dd>
+            {filteredContainers.map(({ current_state, last_terminated_state, restart_count, name, image }) => (
+              <Tabs.Content key={name} value={name}>
+                <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0">
+                  {serviceType === 'HELM' && (
+                    <>
+                      <Dt className="col-span-2 mb-2">Container image:</Dt>
+                      <Dd className="mb-2 flex gap-1">{image}</Dd>
+                    </>
+                  )}
+                  <div className="relative flex flex-col items-center">
                     {last_terminated_state && (
-                      <>
-                        <div className="relative flex flex-col items-center">
-                          <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
-                          <div className="grid gap-2">
-                            <TimelineCircle />
-                          </div>
-                        </div>
-                        <Dt>
-                          {last_terminated_state.finished_at && dateFullFormat(last_terminated_state.finished_at)}
-                        </Dt>
-                        <Dd>
-                          {upperCaseFirstLetter(last_terminated_state.reason)}:{' '}
-                          {last_terminated_state.exit_code_message} ({last_terminated_state.exit_code}).
-                          {restart_count ? (
-                            <>
-                              <br />
-                              The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the
-                              last deployment.
-                            </>
-                          ) : undefined}{' '}
-                          If you want to clear this warning state, redeploy the service.
-                        </Dd>
-                      </>
+                      <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
                     )}
-                  </Dl>
-                </Tabs.Content>
-              ))}
+                    <div className="grid items-center gap-2">
+                      <TimelineCircle />
+                    </div>
+                  </div>
+                  <Dt className={last_terminated_state ? 'mb-2' : ''}>Current status:</Dt>
+                  <Dd className={last_terminated_state ? 'mb-2' : ''}>
+                    {current_state?.state === 'RUNNING' ? (
+                      <span>✅ Running</span>
+                    ) : (
+                      <span>
+                        {pod.state === 'ERROR' ? '❌ ' : ''}
+                        {current_state?.state_reason}
+                        {current_state?.state_message ? `:${current_state.state_message}` : ''}
+                        {restart_count && !last_terminated_state ? (
+                          <>
+                            <br />
+                            The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the
+                            last deployment.
+                          </>
+                        ) : undefined}
+                      </span>
+                    )}
+                  </Dd>
+                  {last_terminated_state && (
+                    <>
+                      <div className="relative flex flex-col items-center">
+                        <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
+                        <div className="grid gap-2">
+                          <TimelineCircle />
+                        </div>
+                      </div>
+                      <Dt>{last_terminated_state.finished_at && dateFullFormat(last_terminated_state.finished_at)}</Dt>
+                      <Dd>
+                        {upperCaseFirstLetter(last_terminated_state.reason)}: {last_terminated_state.exit_code_message}{' '}
+                        ({last_terminated_state.exit_code}).
+                        {restart_count ? (
+                          <>
+                            <br />
+                            The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the
+                            last deployment.
+                          </>
+                        ) : undefined}{' '}
+                        If you want to clear this warning state, redeploy the service.
+                      </Dd>
+                    </>
+                  )}
+                </Dl>
+              </Tabs.Content>
+            ))}
           </div>
         </Tabs.Root>
       ) : (

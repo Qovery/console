@@ -8,8 +8,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
-import { Fragment, type PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { Fragment, type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum, isJobContainerSource } from '@qovery/shared/enums'
 import {
   Badge,
@@ -32,46 +33,40 @@ import { PodsMetricsSkeleton } from './pods-metrics-skeleton'
 
 const { Table } = TablePrimitives
 
-export interface PodsMetricsProps extends PropsWithChildren {
+const columnHelper = createColumnHelper<Pod>()
+const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
+
+export interface PodsMetricsMemoizedProps extends PropsWithChildren {
   environmentId: string
   serviceId: string
+  pods: Pod[]
+  service?: AnyService
+  isServiceLoading: boolean
+  isServiceError: boolean
+  isMetricsLoading: boolean
+  isMetricsError: boolean
+  isRunningStatusesLoading: boolean
+  isRunningStatusesError: boolean
 }
 
-export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsProps) {
-  const {
-    data: metrics = [],
-    isLoading: isMetricsLoading,
-    isError: isMetricsError,
-  } = useMetrics({ environmentId, serviceId })
-  const {
-    data: runningStatuses,
-    isLoading: isRunningStatusesLoading,
-    isError: isRunningStatusesError,
-  } = useRunningStatus({ environmentId, serviceId })
+// NOTE: Memoized component to avoid loop with re-rendering, because of the useReactTable hook and the WS subscription
+// https://qovery.atlassian.net/browse/FRT-1391
+const PodsMetricsMemoized = memo(PodsMetricsTable)
+
+function PodsMetricsTable({
+  environmentId,
+  serviceId,
+  children,
+  pods,
+  service,
+  isMetricsError,
+  isMetricsLoading,
+  isRunningStatusesError,
+  isRunningStatusesLoading,
+  isServiceError,
+  isServiceLoading,
+}: PodsMetricsMemoizedProps) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const {
-    data: service,
-    isLoading: isServiceLoading,
-    isError: isServiceError,
-  } = useService({ environmentId, serviceId })
-
-  const pods: Pod[] = useMemo(() => {
-    // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
-    // So we must find all possible pods by merging the two into a Set.
-    const podNames = new Set([
-      ...(runningStatuses?.pods.map(({ name }) => name) ?? []),
-      ...(metrics?.map(({ pod_name }) => pod_name) ?? []),
-    ])
-
-    return [...podNames].map((podName) => ({
-      ...(metrics?.find(({ pod_name }) => pod_name === podName) ?? {}),
-      ...(runningStatuses?.pods.find(({ name }) => name === podName) ?? {}),
-      podName,
-    }))
-  }, [metrics, runningStatuses])
-
-  const columnHelper = createColumnHelper<Pod>()
-  const placeholder = <Icon iconStyle="regular" iconName="circle-question" className="text-sm text-neutral-300" />
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, () => true)
@@ -188,7 +183,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
           const value = info.getValue()
           return value ? (
             <Tooltip content={dateUTCString(value)}>
-              <span className="text-xs text-neutral-350">
+              <span className="truncate text-xs text-neutral-350">
                 {dateFormat === 'relative' ? timeAgo(new Date(value)) : dateFullFormat(value)}
               </span>
             </Tooltip>
@@ -236,7 +231,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
         storageColumn,
         startedAtColumn(),
       ])
-  }, [service, containerImage, columnHelper, placeholder])
+  }, [service, pods.length])
 
   const table = useReactTable({
     data: pods,
@@ -340,7 +335,7 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
                     </Table.Cell>
                   ))}
                 </Table.Row>
-                {row.getIsExpanded() && row.original.containers && (
+                {row.getIsExpanded() && row.original.containers && service?.serviceType && (
                   <Table.Row className="dark bg-neutral-700 text-xs">
                     {/* 2nd row is a custom 1 cell row */}
                     <Table.Cell colSpan={row.getVisibleCells().length} className="p-0">
@@ -355,6 +350,60 @@ export function PodsMetrics({ environmentId, serviceId, children }: PodsMetricsP
       </div>
       {children}
     </>
+  )
+}
+
+export interface PodsMetricsProps extends PropsWithChildren {
+  environmentId: string
+  serviceId: string
+}
+
+export function PodsMetrics(props: PodsMetricsProps) {
+  const { environmentId, serviceId } = props
+
+  const {
+    data: metrics = [],
+    isLoading: isMetricsLoading,
+    isError: isMetricsError,
+  } = useMetrics({ environmentId, serviceId })
+  const {
+    data: runningStatuses,
+    isLoading: isRunningStatusesLoading,
+    isError: isRunningStatusesError,
+  } = useRunningStatus({ environmentId, serviceId })
+  const {
+    data: service,
+    isLoading: isServiceLoading,
+    isError: isServiceError,
+  } = useService({ environmentId, serviceId })
+
+  const pods: Pod[] = useMemo(() => {
+    // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
+    // So we must find all possible pods by merging the two into a Set.
+    const podNames = new Set([
+      ...(runningStatuses?.pods.map(({ name }) => name) ?? []),
+      ...(metrics?.map(({ pod_name }) => pod_name) ?? []),
+    ])
+
+    return [...podNames].map((podName) => ({
+      ...(metrics?.find(({ pod_name }) => pod_name === podName) ?? {}),
+      ...(runningStatuses?.pods.find(({ name }) => name === podName) ?? {}),
+      podName,
+    }))
+  }, [metrics, runningStatuses])
+
+  return (
+    <PodsMetricsMemoized
+      pods={pods}
+      service={service}
+      isServiceLoading={isServiceLoading}
+      isServiceError={isServiceError}
+      isMetricsLoading={isMetricsLoading}
+      isMetricsError={isMetricsError}
+      isRunningStatusesLoading={isRunningStatusesLoading}
+      isRunningStatusesError={isRunningStatusesError}
+      {...props}
+    />
   )
 }
 

@@ -1,5 +1,6 @@
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { Icon, IconAwesomeEnum } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -62,7 +63,15 @@ export function EmptyState({ environmentId, serviceId }: EmptyStateProps) {
         description="It will be executed based on the configured scheduling."
       />
     ))
-    .otherwise(() => <Box title="Application is not running" description="Deploy the application first" />)
+    .otherwise((s) => {
+      const serviceType = s.service?.serviceType ?? 'Service'
+      return (
+        <Box
+          title={`${upperCaseFirstLetter(serviceType)} is not running`}
+          description={`Deploy the ${serviceType.toLowerCase()} first`}
+        />
+      )
+    })
 }
 
 export default EmptyState
