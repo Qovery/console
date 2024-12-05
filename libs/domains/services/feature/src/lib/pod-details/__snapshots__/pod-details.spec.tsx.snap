@@ -319,10 +319,10 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
                 class="font-medium text-neutral-400 dark:font-normal dark:text-white"
               >
                 Baz reason
-                :
-                 
+                : 
                 baz
-                 (
+                 
+                (
                 1
                 ).
                  
@@ -513,6 +513,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
             ❌ 
             Evicted
             :Pod was rejected: The node had condition: [DiskPressure]. 
+            Unknow
           </span>
         </dd>
       </dl>
