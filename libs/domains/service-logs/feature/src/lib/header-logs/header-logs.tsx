@@ -1,7 +1,12 @@
-import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryEnvironmentV2,
+  type Environment,
+  type EnvironmentStatus,
+  type Status,
+} from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { ServiceAvatar, ServiceLinksPopover, useLinks, useService } from '@qovery/domains/services/feature'
-import { Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { ActionTriggerStatusChip, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { pluralize } from '@qovery/shared/util-js'
 
@@ -11,6 +16,7 @@ export interface HeaderLogsProps extends PropsWithChildren {
   environment: Environment
   serviceStatus: Status
   environmentStatus?: EnvironmentStatus
+  deploymentHistory?: DeploymentHistoryEnvironmentV2
 }
 
 function EndCurve() {
@@ -35,6 +41,7 @@ export function HeaderLogs({
   serviceId,
   environmentStatus,
   serviceStatus,
+  deploymentHistory,
   children,
 }: HeaderLogsProps) {
   const { data: service } = useService({ environmentId: environment.id, serviceId })
@@ -59,7 +66,7 @@ export function HeaderLogs({
               <ServiceAvatar size="xs" service={service} border="none" />
               {service.name}
             </span>
-            <Tooltip side="bottom" content={<span>Execution id: {environmentStatus?.id}</span>}>
+            <Tooltip side="bottom" content={<span>Execution id: {environmentStatus?.last_deployment_id}</span>}>
               <span>
                 <Icon className="text-base" iconName="circle-info" iconStyle="regular" />
               </span>
@@ -67,6 +74,17 @@ export function HeaderLogs({
           </span>
           {type === 'DEPLOYMENT' && (
             <>
+              {deploymentHistory?.trigger_action && (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+                    <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                  </svg>
+                  <ActionTriggerStatusChip
+                    status={environmentStatus?.last_deployment_state}
+                    triggerAction={deploymentHistory.trigger_action}
+                  />
+                </>
+              )}
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                 <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
               </svg>

@@ -31,8 +31,8 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
         <div className="flex items-center">
           <DropdownMenu.Root>
             <span className="relative -top-[2px] flex h-6 items-center px-2">
-              {!versionId || versionId === deploymentHistory[0]?.id ? (
-                <Tooltip content={dateFullFormat(deploymentHistory[0].created_at)} side="bottom">
+              {!versionId || versionId === deploymentHistory[0]?.identifier.execution_id ? (
+                <Tooltip content={dateFullFormat(deploymentHistory[0].auditing_data.created_at)} side="bottom">
                   <span className="mr-2 flex h-5 items-center gap-1 rounded bg-purple-500 px-1 text-sm font-medium text-neutral-50">
                     Latest
                     <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
@@ -40,7 +40,10 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
                 </Tooltip>
               ) : (
                 <span className="mr-2 text-sm font-medium text-neutral-50">
-                  {dateFullFormat(deploymentHistory.find((h) => h.id === versionId)?.created_at ?? 0)}
+                  {dateFullFormat(
+                    deploymentHistory.find((h) => h.identifier.execution_id === versionId)?.auditing_data.created_at ??
+                      0
+                  )}
                 </span>
               )}
               <DropdownMenu.Trigger asChild>
@@ -54,9 +57,10 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
               {deploymentHistory.map((history) => (
                 <DropdownMenu.Item
                   asChild
-                  key={history.id}
+                  key={history.identifier.execution_id}
                   className={clsx('min-h-9', {
-                    'bg-neutral-400': (versionId || deploymentHistory[0]?.id) === history.id,
+                    'bg-neutral-400':
+                      (versionId || deploymentHistory[0]?.identifier.execution_id) === history.identifier.execution_id,
                   })}
                 >
                   <Link
@@ -66,27 +70,27 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
                         'DEPLOYMENT',
                         () =>
                           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                          DEPLOYMENT_LOGS_VERSION_URL(serviceId, history.id)
+                          DEPLOYMENT_LOGS_VERSION_URL(serviceId, history.identifier.execution_id)
                       )
                       .with(
                         'STAGES',
                         () =>
                           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                          ENVIRONMENT_STAGES_URL(history.id)
+                          ENVIRONMENT_STAGES_URL(history.identifier.execution_id)
                       )
                       .with(
                         'PRE_CHECK',
                         () =>
                           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                          ENVIRONMENT_PRE_CHECK_LOGS_URL(history.id)
+                          ENVIRONMENT_PRE_CHECK_LOGS_URL(history.identifier.execution_id)
                       )
                       .exhaustive()}
                   >
-                    <Tooltip content={history.id}>
-                      <span>{trimId(history.id)}</span>
+                    <Tooltip content={history.identifier.execution_id}>
+                      <span>{trimId(history.identifier.execution_id)}</span>
                     </Tooltip>
                     <span className="flex items-center gap-2.5 text-xs text-neutral-250">
-                      {dateFullFormat(history.created_at)}
+                      {dateFullFormat(history.auditing_data.created_at)}
                       <StatusChip status={history.status} />
                     </span>
                   </Link>

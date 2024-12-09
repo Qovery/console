@@ -1,12 +1,36 @@
-import { type DeploymentHistoryEnvironment, JobScheduleEvent } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryEnvironment,
+  type DeploymentHistoryEnvironmentV2,
+  JobScheduleEvent,
+} from 'qovery-typescript-axios'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { type DeploymentService } from '@qovery/shared/interfaces'
+import { type DeploymentService, type DeploymentServiceLegacy } from '@qovery/shared/interfaces'
 
-export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnvironment[]) => {
-  const merged: DeploymentService[] = []
+export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnvironmentV2[]): DeploymentService[] => {
+  if (!deploymentHistory?.length) {
+    return []
+  }
+
+  return deploymentHistory.flatMap((deployment) =>
+    deployment.stages.flatMap((stage) =>
+      (stage.services ?? [])
+        .filter((service) => service.identifier.service_type)
+        .map((service) => ({
+          ...service,
+          execution_id: deployment.identifier.execution_id,
+          type: service.identifier.service_type as ServiceTypeEnum,
+        }))
+    )
+  )
+}
+
+/* @deprecated Prefer use `mergeDeploymentServices` */
+export const mergeDeploymentServicesLegacy = (deploymentHistory?: DeploymentHistoryEnvironment[]) => {
+  const merged: DeploymentServiceLegacy[] = []
+
   deploymentHistory?.forEach((deployment) => {
     deployment.applications?.forEach((app) => {
-      const a: DeploymentService = {
+      const a: DeploymentServiceLegacy = {
         ...app,
         execution_id: deployment.id,
         type: ServiceTypeEnum.APPLICATION,
@@ -15,7 +39,7 @@ export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnv
     })
 
     deployment.containers?.forEach((container) => {
-      const c: DeploymentService = {
+      const c: DeploymentServiceLegacy = {
         ...container,
         execution_id: deployment.id,
         type: ServiceTypeEnum.CONTAINER,
@@ -24,7 +48,7 @@ export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnv
     })
 
     deployment.databases?.forEach((db) => {
-      const d: DeploymentService = {
+      const d: DeploymentServiceLegacy = {
         ...db,
         execution_id: deployment.id,
         type: ServiceTypeEnum.DATABASE,
@@ -33,7 +57,7 @@ export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnv
     })
 
     deployment.jobs?.forEach((job) => {
-      const j: DeploymentService = {
+      const j: DeploymentServiceLegacy = {
         ...job,
         execution_id: deployment.id,
         type: job.schedule?.event === JobScheduleEvent.CRON ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB,
@@ -42,7 +66,7 @@ export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnv
     })
 
     deployment.helms?.forEach((helm) => {
-      const h: DeploymentService = {
+      const h: DeploymentServiceLegacy = {
         ...helm,
         execution_id: deployment.id,
         type: ServiceTypeEnum.HELM,

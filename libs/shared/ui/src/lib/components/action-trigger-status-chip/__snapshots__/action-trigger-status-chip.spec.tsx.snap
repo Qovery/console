@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
+<body>
+  <div>
+    <span
+      class=""
+      data-state="closed"
+    >
+      <span
+        class="relative inline-block"
+      >
+        <span
+          class="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-400 text-sm text-neutral-250"
+        >
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-play "
+          />
+        </span>
+        <span
+          class="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2"
+        >
+          <div
+            class="relative -left-0.5 -top-1"
+          >
+            <svg
+              class="text-neutral-300"
+              fill="none"
+              height="16"
+              viewBox="0 0 24 24"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g
+                clip-path="url(#clip0_5937_4698)"
+                fill="#A0AFC5"
+              >
+                <path
+                  d="M12 2.25a9.75 9.75 0 110 19.5 9.75 9.75 0 010-19.5zM12 24a12 12 0 100-24 12 12 0 000 24z"
+                />
+                <path
+                  d="M10.587 6h2.826c.284 0 .545.16.672.415l.169.335h2.254a.75.75 0 110 1.5H7.492a.75.75 0 110-1.5h2.254l.17-.335a.748.748 0 01.67-.415zM7.492 9h9.016v7.5c0 .827-.674 1.5-1.503 1.5h-6.01a1.503 1.503 0 01-1.503-1.5V9zm2.606 2.602a.56.56 0 000 .794l1.104 1.102-1.104 1.101a.56.56 0 000 .795c.22.218.578.22.796 0l1.104-1.102 1.103 1.102a.562.562 0 10.796-.795l-1.103-1.101 1.103-1.102a.56.56 0 000-.794.564.564 0 00-.796 0l-1.103 1.101-1.104-1.101a.562.562 0 00-.796 0z"
+                />
+              </g>
+              <defs>
+                <clippath
+                  id="clip0_5937_4698"
+                >
+                  <path
+                    d="M0 0H24V24H0z"
+                    fill="#fff"
+                  />
+                </clippath>
+              </defs>
+            </svg>
+          </div>
+        </span>
+      </span>
+    </span>
+  </div>
+</body>
+`;
