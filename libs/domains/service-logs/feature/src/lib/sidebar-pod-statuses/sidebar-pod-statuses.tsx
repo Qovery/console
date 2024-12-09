@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type PropsWithChildren, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
@@ -13,6 +13,7 @@ import { usePodColor } from '../list-service-logs/use-pod-color'
 import { DonutChart } from './donut-chart/donut-chart'
 
 export interface SidebarPodStatusesProps extends PropsWithChildren {
+  type: 'SERVICE' | 'DEPLOYMENT'
   organizationId: string
   projectId: string
   service?: AnyService
@@ -21,7 +22,7 @@ export interface SidebarPodStatusesProps extends PropsWithChildren {
 const PADDING_SIDEBAR_CLOSE = '93px'
 const PADDING_SIDEBAR_OPEN = '47px'
 
-export function SidebarPodStatuses({ organizationId, projectId, service, children }: SidebarPodStatusesProps) {
+export function SidebarPodStatuses({ type, organizationId, projectId, service, children }: SidebarPodStatusesProps) {
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
     environmentId: service?.environment.id,
     serviceId: service?.id,
@@ -48,13 +49,31 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     }))
   }, [metrics, runningStatuses])
 
-  const podsErrors = useMemo(() => pods.filter((pod) => pod.state === 'ERROR'), [pods])
+  const podsFiltered = useMemo(() => {
+    const filteredPods = pods.filter(
+      (pod) => (service?.serviceType === 'JOB' && pod.state === 'COMPLETED') || pod.state === 'ERROR'
+    )
 
+    // For services of type JOB, return only the latest COMPLETED pod + all ERROR pods
+    if (type === 'SERVICE' && service?.serviceType === 'JOB') {
+      const completedPods = filteredPods.filter((pod) => pod.state === 'COMPLETED')
+
+      if (completedPods.length > 0) {
+        const sortedPods = completedPods.sort((a, b) => {
+          return String(b.started_at).localeCompare(String(a.started_at))
+        })
+        return [sortedPods[0], ...filteredPods.filter((pod) => pod.state === 'ERROR')]
+      }
+    }
+
+    // For all other cases, return all filtered pods
+    return filteredPods
+  }, [pods, type, service])
   const podStatusCount = useMemo(() => {
     return pods.reduce(
       (acc, pod) => {
         const status = match(pod.state)
-          .with('RUNNING', () => ({ type: 'running', message: 'running', color: 'bg-green-500' }))
+          .with('RUNNING', () => ({ type: 'running', message: 'running', color: 'bg-purple-500' }))
           .with('COMPLETED', () => ({ type: 'running', message: 'completed', color: 'bg-green-500' }))
           .with('WARNING', () => ({ type: 'warning', message: 'warning', color: 'bg-yellow-500' }))
           .with('STARTING', () => ({
@@ -83,8 +102,8 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
 
   const shouldBeOpen = useMemo(() => {
     if (isMetricsLoading || isRunningStatusesLoading) return false
-    return podsErrors.length > 0 && runningStatuses?.state !== 'STOPPED'
-  }, [isMetricsLoading, isRunningStatusesLoading, podsErrors.length, runningStatuses?.state])
+    return podsFiltered.filter((pod) => pod.state === 'ERROR').length > 0 && runningStatuses?.state !== 'STOPPED'
+  }, [isMetricsLoading, isRunningStatusesLoading, podsFiltered.length, runningStatuses?.state])
 
   const [open, setOpen] = useState(shouldBeOpen)
 
@@ -187,9 +206,16 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                   <div className="flex flex-col items-center gap-1 text-center">
                     {segments.length > 0 ? (
                       <p className="text-sm font-medium">
-                        {podsErrors.length > 0
-                          ? `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} were not successful`
-                          : `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} are running`}
+                        {service.serviceType === 'JOB' ? (
+                          <>
+                            {match([podsFiltered.length, podsFiltered.some((pod) => pod.state === 'ERROR')])
+                              .with([1, true], () => 'Latest job execution in error')
+                              .with([P.number.gt(1), true], () => 'Job executions have failed')
+                              .otherwise(() => 'Job executions completed')}
+                          </>
+                        ) : (
+                          <>{podsFiltered.length > 0 ? 'Pods were not successful' : 'Pods are running'}</>
+                        )}
                       </p>
                     ) : (
                       <p className="text-sm font-medium text-neutral-250">No pods</p>
@@ -207,24 +233,35 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     </div>
                   </div>
                 </div>
-                {podsErrors.length ? (
+                {podsFiltered.length ? (
                   service.serviceType === 'JOB' ? (
                     // Display list of errors for jobs
-                    podsErrors
+                    podsFiltered
                       .sort((a, b) => new Date(b.started_at ?? '').getTime() - new Date(a.started_at ?? '').getTime())
                       .map((pod) => {
                         return (
                           <div
                             key={pod.podName}
-                            className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
+                            className={clsx('flex flex-col gap-3 rounded border-l-4 bg-neutral-650 p-3 pl-5 text-sm', {
+                              'border-red-500': pod.state === 'ERROR',
+                              'border-green-500': pod.state === 'COMPLETED',
+                            })}
                           >
                             <p className="flex flex-col gap-1">
                               {pod.started_at && (
-                                <span className="flex text-xs text-red-400" title={dateUTCString(pod.started_at)}>
+                                <span
+                                  className={clsx('flex text-xs', {
+                                    'text-red-500': pod.state === 'ERROR',
+                                    'text-green-500': pod.state === 'COMPLETED',
+                                  })}
+                                  title={dateUTCString(pod.started_at)}
+                                >
                                   {dateFullFormat(pod.started_at)}
                                 </span>
                               )}
-                              {pod.state_reason}:{pod.state_message}
+                              <span className="text-sm">
+                                {pod.state === 'ERROR' ? `${pod.state_reason}:${pod.state_message}` : 'Completed'}
+                              </span>
                             </p>
                             <div className="flex gap-1">
                               <Tooltip content={pod.podName}>
@@ -261,7 +298,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                   ) : (
                     // Group similar errors for services
                     Object.entries(
-                      podsErrors.reduce(
+                      podsFiltered.reduce(
                         (acc, pod) => {
                           const errorKey = `${pod.state_reason}:${pod.state_message}`
                           if (!acc[errorKey]) {
