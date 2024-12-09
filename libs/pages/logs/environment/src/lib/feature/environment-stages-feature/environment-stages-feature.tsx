@@ -155,6 +155,7 @@ export function EnvironmentStagesFeature({
                       s.services.map((service) => {
                         const fullService = getServiceById(service.id!)
                         const serviceTotalDurationSec = service?.steps?.total_duration_sec
+                        // NOTE: This one is necessary to catch edge case with delete service because we don't have information in the service list and environment status (except their id)
                         const serviceFromDeploymentHistoryId = getServiceFromDeploymentHistoryId(service.id!)
 
                         if (hideSkipped && !service.is_part_last_deployment) return null
