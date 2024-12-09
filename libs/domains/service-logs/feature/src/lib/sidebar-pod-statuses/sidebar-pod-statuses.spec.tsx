@@ -177,7 +177,7 @@ describe('SidebarPodStatuses', () => {
     expect(screen.getByText('1 failing')).toBeInTheDocument()
   })
 
-  it('handles empty pod data', () => {
+  it('handles empty pod data', async () => {
     const useMetricsMock = useMetrics as jest.Mock
     const useRunningStatusMock = useRunningStatus as jest.Mock
 
@@ -190,8 +190,10 @@ describe('SidebarPodStatuses', () => {
       isLoading: false,
     })
 
-    const { container } = renderWithProviders(<SidebarPodStatuses {...defaultProps} />)
+    const { userEvent } = renderWithProviders(<SidebarPodStatuses {...defaultProps} />)
+    const toggleButton = screen.getByRole('button')
+    await userEvent.click(toggleButton)
 
-    expect(container.querySelector('aside')).not.toBeInTheDocument()
+    expect(screen.getByText('No pods')).toBeInTheDocument()
   })
 })

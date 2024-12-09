@@ -59,7 +59,15 @@ const getArcPath = (start: number, end: number, innerRadius: number, outerRadius
 export function DonutChart({ width, height, items, innerRadius, outerRadius }: DonutChartProps) {
   const segments = useMemo<Segment[]>(() => {
     // Handle empty items array
-    if (items.length === 0) return []
+    if (items.length === 0) {
+      return [
+        {
+          value: 100,
+          color: '#67778E',
+          path: getCirclePath(innerRadius, outerRadius),
+        },
+      ]
+    }
 
     const sum = items.reduce((acc, item) => acc + item.value, 0)
     if (sum === 0) return []

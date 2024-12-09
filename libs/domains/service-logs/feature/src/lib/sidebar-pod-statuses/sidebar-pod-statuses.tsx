@@ -6,7 +6,7 @@ import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, Link, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge } from '@qovery/shared/util-js'
 import { usePodColor } from '../list-service-logs/use-pod-color'
@@ -18,7 +18,6 @@ export interface SidebarPodStatusesProps extends PropsWithChildren {
   service?: AnyService
 }
 
-const PADDING_SIDEBAR_DEFAULT = '16px'
 const PADDING_SIDEBAR_CLOSE = '93px'
 const PADDING_SIDEBAR_OPEN = '47px'
 
@@ -65,7 +64,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
           }))
           .with('STOPPING', () => ({
             type: 'pending',
-            message: 'pending',
+            message: 'stopping',
             color: 'bg-purple-500',
           }))
           .with('ERROR', () => ({ type: 'error', message: 'failing', color: 'bg-red-500' }))
@@ -90,8 +89,6 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
   const [open, setOpen] = useState(shouldBeOpen)
 
   const currentPadding = useMemo(() => {
-    if (isMetricsLoading || isRunningStatusesLoading) return PADDING_SIDEBAR_CLOSE
-    if (runningStatuses?.state === 'STOPPED') return PADDING_SIDEBAR_DEFAULT
     return open ? PADDING_SIDEBAR_OPEN : PADDING_SIDEBAR_CLOSE
   }, [isMetricsLoading, isRunningStatusesLoading, runningStatuses?.state, open])
 
@@ -133,14 +130,10 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     }))
   }, [pods])
 
-  if (isMetricsLoading || isRunningStatusesLoading) {
-    return children
-  }
-
   return (
     <div className="flex" style={{ '--padding-sidebar': currentPadding } as React.CSSProperties}>
       {children}
-      {service && segments.length > 0 && (
+      {service && (
         <motion.aside
           className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral-500 bg-neutral-600"
           animate={{
@@ -173,10 +166,8 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
             >
               {!open && (
                 <>
-                  <Skeleton className="flex items-center gap-1.5" show={segments.length === 0} width={54} height={16}>
-                    <DonutChart width={21} height={21} items={segments} innerRadius={7} outerRadius={10} />
-                    {service.serviceType === 'JOB' ? 'Jobs' : 'Pods'}
-                  </Skeleton>{' '}
+                  <DonutChart width={21} height={21} items={segments} innerRadius={7} outerRadius={10} />
+                  {service.serviceType === 'JOB' ? 'Jobs' : 'Pods'}
                 </>
               )}{' '}
               <Icon iconName={!open ? 'angle-left' : 'angle-right'} />
@@ -194,11 +185,15 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                 <div className="flex flex-col items-center justify-center gap-4 rounded bg-neutral-550 p-6">
                   <DonutChart width={81} height={81} items={segments} innerRadius={30} outerRadius={40} />
                   <div className="flex flex-col items-center gap-1 text-center">
-                    <p className="text-sm font-medium">
-                      {podsErrors.length > 0
-                        ? `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} were not successful`
-                        : `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} are running`}
-                    </p>
+                    {segments.length > 0 ? (
+                      <p className="text-sm font-medium">
+                        {podsErrors.length > 0
+                          ? `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} were not successful`
+                          : `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} are running`}
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-neutral-250">No pods</p>
+                    )}
                     <div className="flex flex-wrap justify-center gap-2 text-sm">
                       {Object.entries(podStatusCount).map(
                         ([status, { count, color, message }]) =>
@@ -283,7 +278,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     ).map(([errorKey, { error, pods }]) => (
                       <div
                         key={errorKey}
-                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
+                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm text-neutral-250"
                       >
                         <p>
                           {error.reason}:{error.message}
@@ -323,9 +318,18 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     ))
                   )
                 ) : (
-                  <div className="flex h-32 w-full flex-col items-center justify-center rounded bg-neutral-550 text-sm">
-                    <p className="mb-1 font-medium">Everything running fine</p>
-                    <span className="text-neutral-250">Any errors will be displayed here</span>
+                  <div className="flex h-32 w-full flex-col items-center justify-center gap-1 rounded bg-neutral-550 px-5 text-center text-sm text-neutral-250">
+                    {segments.length > 0 ? (
+                      <>
+                        <p className="font-medium">Everything running fine</p>
+                        <span>Any errors will be displayed here</span>
+                      </>
+                    ) : (
+                      <>
+                        <p className="font-medium">No pods available</p>
+                        <span>You do not currently have any pods available</span>
+                      </>
+                    )}
                   </div>
                 )}
               </motion.div>
