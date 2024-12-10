@@ -30,13 +30,17 @@ import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
   status: StateEnum | keyof typeof RunningState | ClusterStateEnum | StepMetricStatusEnum | StageStatusEnum | undefined
-  appendTooltipMessage?: string
   className?: string
+  appendTooltipMessage?: string
+  disabledTooltip?: boolean
 }
 
-export function StatusChip(props: StatusChipProps) {
-  const { status, className = '', appendTooltipMessage = '' } = props
-
+export function StatusChip({
+  status,
+  className = '',
+  appendTooltipMessage = '',
+  disabledTooltip = false,
+}: StatusChipProps) {
   if (!status)
     return (
       <Tooltip content="Stopped">
@@ -101,7 +105,7 @@ export function StatusChip(props: StatusChipProps) {
     .exhaustive()
 
   return (
-    <Tooltip content={tooltipContent}>
+    <Tooltip content={tooltipContent} disabled={disabledTooltip}>
       <div className={className}>{icon}</div>
     </Tooltip>
   )

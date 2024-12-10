@@ -7,7 +7,7 @@ import { type MouseEvent, useState } from 'react'
 import { Link as RouterLink, useParams } from 'react-router-dom'
 import { type Container } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { type DeploymentService } from '@qovery/shared/interfaces'
+import { type DeploymentServiceLegacy } from '@qovery/shared/interfaces'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   APPLICATION_GENERAL_URL,
@@ -31,10 +31,14 @@ import { type TableFilterProps, type TableHeadProps } from '../table'
 import TableRow from '../table-row/table-row'
 
 export interface TableRowDeploymentProps {
-  dataHead: TableHeadProps<DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase>[]
+  dataHead: TableHeadProps<DeploymentServiceLegacy | DeploymentHistoryApplication | DeploymentHistoryDatabase>[]
   filter: TableFilterProps[]
   isLoading: boolean
-  data?: DeploymentService | DeploymentHistoryApplication | DeploymentHistoryDatabase | DeploymentHistoryHelmResponse
+  data?:
+    | DeploymentServiceLegacy
+    | DeploymentHistoryApplication
+    | DeploymentHistoryDatabase
+    | DeploymentHistoryHelmResponse
   columnsWidth?: string
   startGroup?: boolean
   noCommit?: boolean
@@ -63,7 +67,7 @@ export function TableRowDeployment({
   const handleCopy = (e: MouseEvent) => {
     e.preventDefault()
     setHoverId(true)
-    navigator.clipboard.writeText((data as DeploymentService).execution_id || data?.id || '')
+    navigator.clipboard.writeText((data as DeploymentServiceLegacy).execution_id || data?.id || '')
     setCopy(true)
     setTimeout(() => {
       setCopy(false)
@@ -100,8 +104,8 @@ export function TableRowDeployment({
                 )}
                 {!copy && !hoverId && (
                   <span>
-                    {(data as DeploymentService).execution_id
-                      ? trimId((data as DeploymentService).execution_id || '')
+                    {(data as DeploymentServiceLegacy).execution_id
+                      ? trimId((data as DeploymentServiceLegacy).execution_id || '')
                       : trimId(data?.id || '')}
                   </span>
                 )}
@@ -125,19 +129,22 @@ export function TableRowDeployment({
             </p>
           </Skeleton>
         </div>
-        {(data as DeploymentService).type && (
+        {(data as DeploymentServiceLegacy).type && (
           <div className="px-3">
             <Skeleton show={isLoading} width={120} height={20}>
               <RouterLink
                 to={
-                  (data as DeploymentService)?.type === ServiceTypeEnum.DATABASE
+                  (data as DeploymentServiceLegacy)?.type === ServiceTypeEnum.DATABASE
                     ? `${DATABASE_URL(organizationId, projectId, environmentId, data?.id) + DATABASE_GENERAL_URL}`
                     : `${APPLICATION_URL(organizationId, projectId, environmentId, data?.id) + APPLICATION_GENERAL_URL}`
                 }
               >
                 <div className="flex items-center">
                   <div className="w-8 text-center">
-                    <Icon name={(data as DeploymentService)?.type || ServiceTypeEnum.APPLICATION} className="h-5 w-5" />
+                    <Icon
+                      name={(data as DeploymentServiceLegacy)?.type || ServiceTypeEnum.APPLICATION}
+                      className="h-5 w-5"
+                    />
                   </div>
                   <p className="text-xs font-medium text-neutral-400">{data?.name}</p>
                 </div>
@@ -167,9 +174,9 @@ export function TableRowDeployment({
                 size="md"
                 to={
                   fromService
-                    ? pathEnvironmentLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentService).id)
+                    ? pathEnvironmentLogs + DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentServiceLegacy).id)
                     : pathEnvironmentLogs +
-                      DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentService).execution_id)
+                      DEPLOYMENT_LOGS_VERSION_URL(serviceId, (data as DeploymentServiceLegacy).execution_id)
                 }
               >
                 <Icon iconName="scroll" />
@@ -179,8 +186,10 @@ export function TableRowDeployment({
         </div>
         {!noCommit && (
           <div className="flex h-full items-center gap-2 border-l border-neutral-200 px-4">
-            {(data as DeploymentService | DeploymentHistoryApplication)?.commit && (
-              <TagCommit commitId={(data as DeploymentService | DeploymentHistoryApplication)?.commit?.git_commit_id} />
+            {(data as DeploymentServiceLegacy | DeploymentHistoryApplication)?.commit && (
+              <TagCommit
+                commitId={(data as DeploymentServiceLegacy | DeploymentHistoryApplication)?.commit?.git_commit_id}
+              />
             )}
             {(data as Container).image_name && (
               <Badge className="max-w-[200px] truncate">

@@ -60,7 +60,8 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
   if (!logs || logs.length === 0) {
     return (
       <div className="h-full p-1">
-        <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
+        <HeaderPreCheckLogs preCheckStage={preCheckStage} />
+        <div className="flex h-[calc(100%-44px)] w-full justify-center border border-t-0 border-neutral-500 bg-neutral-600 pt-11">
           <LoaderSpinner className="h-6 w-6" theme="dark" />
         </div>
       </div>

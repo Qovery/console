@@ -4,7 +4,7 @@ import { StageStatusChip, type StageStatusChipProps } from './stage-status-chip'
 
 const Story: Meta<typeof StageStatusChip> = {
   component: StageStatusChip,
-  title: 'StageStatusChip',
+  title: 'Status/StageStatusChip',
   argTypes: {
     status: {
       options: [...Object.values(StageStatusEnum)],

@@ -31,29 +31,44 @@ describe('DeploymentLogsPlaceholder', () => {
         itemsLength={1}
         deploymentHistoryEnvironment={[
           {
-            id: 'd941d6fa-d1e9-4389-9059-2c90e51780da-10',
-            created_at: '2024-09-18T07:02:14.324855Z',
-            updated_at: '2024-09-18T07:03:29.848720Z',
-            status: 'DEPLOYMENT_ERROR',
-            applications: [],
-            databases: [],
-            containers: [],
-            jobs: [
+            identifier: {
+              execution_id: 'exec-1',
+              environment_id: 'env-123',
+            },
+            stages: [
               {
-                id: 'serv-123',
-                name: 'my-name',
-                created_at: '2024-09-18T07:02:14.356872Z',
-                updated_at: '2024-09-18T07:03:29.819774Z',
+                name: 'test',
+                status: 'ONGOING',
+                duration: '',
+                services: [
+                  {
+                    identifier: {
+                      name: 'service',
+                      service_type: 'APPLICATION',
+                      service_id: 'serv-123',
+                    },
+                    status: 'BUILDING',
+                    auditing_data: {
+                      created_at: '2024-09-18T07:02:14.324855Z',
+                      updated_at: '',
+                      triggered_by: '',
+                    },
+                    details: {},
+                  },
+                ],
               },
             ],
-            helms: [],
+            auditing_data: {},
+            status: 'BUILDING',
+            trigger_action: 'DEPLOY',
+            total_duration: '',
           },
         ]}
       />
     )
 
     expect(screen.getByText('Last deployment logs')).toBeInTheDocument()
-    expect(screen.getByText('d941d...-10')).toBeInTheDocument()
+    expect(screen.getByText('exec-...c-1')).toBeInTheDocument()
   })
 
   it('should render "No history deployment available"', () => {
