@@ -25,10 +25,10 @@ describe('DonutChart', () => {
     expect(svg).toHaveAttribute('height', '200')
   })
 
-  it('renders nothing when items array is empty', () => {
+  it('renders default color when items array is empty', () => {
     const { container } = renderWithProviders(<DonutChart {...defaultProps} items={[]} />)
     const paths = container.querySelectorAll('path')
-    expect(paths.length).toBe(0)
+    expect(paths.length).toBe(1)
   })
 
   it('renders full circle for single item', () => {

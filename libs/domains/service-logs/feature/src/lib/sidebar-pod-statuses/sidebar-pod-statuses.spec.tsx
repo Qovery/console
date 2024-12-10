@@ -1,6 +1,6 @@
 import { useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import SidebarPodStatuses from './sidebar-pod-statuses'
+import SidebarPodStatuses, { type SidebarPodStatusesProps } from './sidebar-pod-statuses'
 
 jest.mock('@qovery/domains/services/feature', () => ({
   useMetrics: jest.fn(),
@@ -15,7 +15,7 @@ const mockService = {
   },
 }
 
-const defaultProps = {
+const defaultProps: SidebarPodStatusesProps = {
   organizationId: 'org-123',
   projectId: 'proj-123',
   service: mockService,
@@ -177,7 +177,7 @@ describe('SidebarPodStatuses', () => {
     expect(screen.getByText('1 failing')).toBeInTheDocument()
   })
 
-  it('handles empty pod data', () => {
+  it('handles empty pod data', async () => {
     const useMetricsMock = useMetrics as jest.Mock
     const useRunningStatusMock = useRunningStatus as jest.Mock
 
@@ -190,8 +190,47 @@ describe('SidebarPodStatuses', () => {
       isLoading: false,
     })
 
-    const { container } = renderWithProviders(<SidebarPodStatuses {...defaultProps} />)
+    const { userEvent } = renderWithProviders(<SidebarPodStatuses {...defaultProps} />)
+    const toggleButton = screen.getByRole('button')
+    await userEvent.click(toggleButton)
 
-    expect(container.querySelector('aside')).not.toBeInTheDocument()
+    expect(screen.getByText('No pods')).toBeInTheDocument()
+  })
+
+  it('displays correct status for completed job', async () => {
+    const completedJobPod = {
+      name: 'job-pod-123',
+      state: 'COMPLETED',
+      state_message: '',
+      state_reason: '',
+      started_at: '2024-01-01T00:00:00Z',
+    }
+
+    const jobService = {
+      ...mockService,
+      serviceType: 'JOB',
+    }
+
+    const useMetricsMock = useMetrics as jest.Mock
+    const useRunningStatusMock = useRunningStatus as jest.Mock
+
+    useMetricsMock.mockReturnValue({
+      data: [{ pod_name: completedJobPod.name }],
+      isLoading: false,
+    })
+    useRunningStatusMock.mockReturnValue({
+      data: { pods: [completedJobPod], state: 'RUNNING' },
+      isLoading: false,
+    })
+
+    const { userEvent } = renderWithProviders(<SidebarPodStatuses {...defaultProps} service={jobService} />)
+
+    const toggleButton = screen.getByRole('button')
+    await userEvent.click(toggleButton)
+
+    // Check for job-specific completed status message
+    expect(screen.getByText('Job executions completed')).toBeInTheDocument()
+    expect(screen.getByText('1 completed')).toBeInTheDocument()
+    expect(screen.getByText('Completed')).toBeInTheDocument()
   })
 })

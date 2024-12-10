@@ -2,11 +2,11 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type PropsWithChildren, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, Link, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge } from '@qovery/shared/util-js'
 import { usePodColor } from '../list-service-logs/use-pod-color'
@@ -18,7 +18,6 @@ export interface SidebarPodStatusesProps extends PropsWithChildren {
   service?: AnyService
 }
 
-const PADDING_SIDEBAR_DEFAULT = '16px'
 const PADDING_SIDEBAR_CLOSE = '93px'
 const PADDING_SIDEBAR_OPEN = '47px'
 
@@ -49,13 +48,20 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     }))
   }, [metrics, runningStatuses])
 
-  const podsErrors = useMemo(() => pods.filter((pod) => pod.state === 'ERROR'), [pods])
+  const podsFiltered = useMemo(
+    () => pods.filter((pod) => (service?.serviceType === 'JOB' && pod.state === 'COMPLETED') || pod.state === 'ERROR'),
+    [pods]
+  )
 
   const podStatusCount = useMemo(() => {
     return pods.reduce(
       (acc, pod) => {
         const status = match(pod.state)
-          .with('RUNNING', () => ({ type: 'running', message: 'running', color: 'bg-green-500' }))
+          .with('RUNNING', () => ({
+            type: 'running',
+            message: 'running',
+            color: service?.serviceType === 'JOB' ? 'bg-purple-500' : 'bg-green-500',
+          }))
           .with('COMPLETED', () => ({ type: 'running', message: 'completed', color: 'bg-green-500' }))
           .with('WARNING', () => ({ type: 'warning', message: 'warning', color: 'bg-yellow-500' }))
           .with('STARTING', () => ({
@@ -65,7 +71,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
           }))
           .with('STOPPING', () => ({
             type: 'pending',
-            message: 'pending',
+            message: 'stopping',
             color: 'bg-purple-500',
           }))
           .with('ERROR', () => ({ type: 'error', message: 'failing', color: 'bg-red-500' }))
@@ -80,18 +86,16 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
       },
       {} as Record<string, { count: number; message: string; color: string }>
     )
-  }, [pods])
+  }, [pods, service?.serviceType])
 
   const shouldBeOpen = useMemo(() => {
     if (isMetricsLoading || isRunningStatusesLoading) return false
-    return podsErrors.length > 0 && runningStatuses?.state !== 'STOPPED'
-  }, [isMetricsLoading, isRunningStatusesLoading, podsErrors.length, runningStatuses?.state])
+    return podsFiltered.filter((pod) => pod.state === 'ERROR').length > 0 && runningStatuses?.state !== 'STOPPED'
+  }, [isMetricsLoading, isRunningStatusesLoading, podsFiltered.length, runningStatuses?.state])
 
   const [open, setOpen] = useState(shouldBeOpen)
 
   const currentPadding = useMemo(() => {
-    if (isMetricsLoading || isRunningStatusesLoading) return PADDING_SIDEBAR_CLOSE
-    if (runningStatuses?.state === 'STOPPED') return PADDING_SIDEBAR_DEFAULT
     return open ? PADDING_SIDEBAR_OPEN : PADDING_SIDEBAR_CLOSE
   }, [isMetricsLoading, isRunningStatusesLoading, runningStatuses?.state, open])
 
@@ -133,14 +137,10 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     }))
   }, [pods])
 
-  if (isMetricsLoading || isRunningStatusesLoading) {
-    return children
-  }
-
   return (
     <div className="flex" style={{ '--padding-sidebar': currentPadding } as React.CSSProperties}>
       {children}
-      {service && segments.length > 0 && (
+      {service && (
         <motion.aside
           className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral-500 bg-neutral-600"
           animate={{
@@ -173,10 +173,8 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
             >
               {!open && (
                 <>
-                  <Skeleton className="flex items-center gap-1.5" show={segments.length === 0} width={54} height={16}>
-                    <DonutChart width={21} height={21} items={segments} innerRadius={7} outerRadius={10} />
-                    {service.serviceType === 'JOB' ? 'Jobs' : 'Pods'}
-                  </Skeleton>{' '}
+                  <DonutChart width={21} height={21} items={segments} innerRadius={7} outerRadius={10} />
+                  {service.serviceType === 'JOB' ? 'Jobs' : 'Pods'}
                 </>
               )}{' '}
               <Icon iconName={!open ? 'angle-left' : 'angle-right'} />
@@ -194,11 +192,31 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                 <div className="flex flex-col items-center justify-center gap-4 rounded bg-neutral-550 p-6">
                   <DonutChart width={81} height={81} items={segments} innerRadius={30} outerRadius={40} />
                   <div className="flex flex-col items-center gap-1 text-center">
-                    <p className="text-sm font-medium">
-                      {podsErrors.length > 0
-                        ? `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} were not successful`
-                        : `${service.serviceType === 'JOB' ? 'Jobs' : 'Pods'} are running`}
-                    </p>
+                    {segments.length > 0 ? (
+                      <p className="text-sm font-medium">
+                        {service.serviceType === 'JOB' ? (
+                          <>
+                            {match([podsFiltered.length, podsFiltered.some((pod) => pod.state === 'ERROR')])
+                              .with([1, true], () => 'Latest job execution in error')
+                              .with([P.number.gt(1), true], () => 'Job executions have failed')
+                              .otherwise(() => 'Job executions completed')}
+                          </>
+                        ) : (
+                          <>
+                            {match([
+                              podsFiltered.length,
+                              podsFiltered.some((pod) => pod.state === 'ERROR'),
+                              podsFiltered.some((pod) => pod.state === 'STARTING'),
+                            ])
+                              .with([P.number.gt(0), false, false], () => 'Pods are running')
+                              .with([P.number.gt(0), false, true], () => 'Pods are starting')
+                              .otherwise(() => 'Pods were not successful')}
+                          </>
+                        )}
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-neutral-250">No pods</p>
+                    )}
                     <div className="flex flex-wrap justify-center gap-2 text-sm">
                       {Object.entries(podStatusCount).map(
                         ([status, { count, color, message }]) =>
@@ -212,24 +230,35 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     </div>
                   </div>
                 </div>
-                {podsErrors.length ? (
+                {podsFiltered.length ? (
                   service.serviceType === 'JOB' ? (
                     // Display list of errors for jobs
-                    podsErrors
+                    podsFiltered
                       .sort((a, b) => new Date(b.started_at ?? '').getTime() - new Date(a.started_at ?? '').getTime())
                       .map((pod) => {
                         return (
                           <div
                             key={pod.podName}
-                            className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
+                            className={clsx('flex flex-col gap-3 rounded border-l-4 bg-neutral-650 p-3 pl-5 text-sm', {
+                              'border-red-500': pod.state === 'ERROR',
+                              'border-green-500': pod.state === 'COMPLETED',
+                            })}
                           >
                             <p className="flex flex-col gap-1">
                               {pod.started_at && (
-                                <span className="flex text-xs text-red-400" title={dateUTCString(pod.started_at)}>
+                                <span
+                                  className={clsx('flex text-xs', {
+                                    'text-red-500': pod.state === 'ERROR',
+                                    'text-green-500': pod.state === 'COMPLETED',
+                                  })}
+                                  title={dateUTCString(pod.started_at)}
+                                >
                                   {dateFullFormat(pod.started_at)}
                                 </span>
                               )}
-                              {pod.state_reason}:{pod.state_message}
+                              <span className="text-sm">
+                                {pod.state === 'ERROR' ? `${pod.state_reason}:${pod.state_message}` : 'Completed'}
+                              </span>
                             </p>
                             <div className="flex gap-1">
                               <Tooltip content={pod.podName}>
@@ -266,7 +295,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                   ) : (
                     // Group similar errors for services
                     Object.entries(
-                      podsErrors.reduce(
+                      podsFiltered.reduce(
                         (acc, pod) => {
                           const errorKey = `${pod.state_reason}:${pod.state_message}`
                           if (!acc[errorKey]) {
@@ -283,7 +312,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     ).map(([errorKey, { error, pods }]) => (
                       <div
                         key={errorKey}
-                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm"
+                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm text-neutral-250"
                       >
                         <p>
                           {error.reason}:{error.message}
@@ -323,9 +352,18 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     ))
                   )
                 ) : (
-                  <div className="flex h-32 w-full flex-col items-center justify-center rounded bg-neutral-550 text-sm">
-                    <p className="mb-1 font-medium">Everything running fine</p>
-                    <span className="text-neutral-250">Any errors will be displayed here</span>
+                  <div className="flex h-32 w-full flex-col items-center justify-center gap-1 rounded bg-neutral-550 px-5 text-center text-sm text-neutral-250">
+                    {segments.length > 0 ? (
+                      <>
+                        <p className="font-medium">Everything running fine</p>
+                        <span>Any errors will be displayed here</span>
+                      </>
+                    ) : (
+                      <>
+                        <p className="font-medium">No pods available</p>
+                        <span>You do not currently have any pods available</span>
+                      </>
+                    )}
                   </div>
                 )}
               </motion.div>
