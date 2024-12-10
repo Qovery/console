@@ -18,6 +18,12 @@ export function useUpgradeCluster({ organizationId }: UseUpgradeClusterProps) {
         queryKey: queries.clusters.listStatuses({ organizationId }).queryKey,
       })
     },
+    meta: {
+      notifyOnSuccess: {
+        title: 'Your cluster is being upgraded',
+      },
+      notifyOnError: true,
+    },
   })
 }
 
