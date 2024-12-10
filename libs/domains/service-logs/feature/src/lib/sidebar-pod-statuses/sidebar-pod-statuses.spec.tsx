@@ -16,7 +16,6 @@ const mockService = {
 }
 
 const defaultProps: SidebarPodStatusesProps = {
-  type: 'SERVICE',
   organizationId: 'org-123',
   projectId: 'proj-123',
   service: mockService,

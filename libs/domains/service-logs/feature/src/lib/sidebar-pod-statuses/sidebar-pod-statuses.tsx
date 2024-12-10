@@ -13,7 +13,6 @@ import { usePodColor } from '../list-service-logs/use-pod-color'
 import { DonutChart } from './donut-chart/donut-chart'
 
 export interface SidebarPodStatusesProps extends PropsWithChildren {
-  type: 'SERVICE' | 'DEPLOYMENT'
   organizationId: string
   projectId: string
   service?: AnyService
@@ -22,7 +21,7 @@ export interface SidebarPodStatusesProps extends PropsWithChildren {
 const PADDING_SIDEBAR_CLOSE = '93px'
 const PADDING_SIDEBAR_OPEN = '47px'
 
-export function SidebarPodStatuses({ type, organizationId, projectId, service, children }: SidebarPodStatusesProps) {
+export function SidebarPodStatuses({ organizationId, projectId, service, children }: SidebarPodStatusesProps) {
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
     environmentId: service?.environment.id,
     serviceId: service?.id,
@@ -49,31 +48,20 @@ export function SidebarPodStatuses({ type, organizationId, projectId, service, c
     }))
   }, [metrics, runningStatuses])
 
-  const podsFiltered = useMemo(() => {
-    const filteredPods = pods.filter(
-      (pod) => (service?.serviceType === 'JOB' && pod.state === 'COMPLETED') || pod.state === 'ERROR'
-    )
+  const podsFiltered = useMemo(
+    () => pods.filter((pod) => (service?.serviceType === 'JOB' && pod.state === 'COMPLETED') || pod.state === 'ERROR'),
+    [pods]
+  )
 
-    // For services of type JOB, return only the latest COMPLETED pod + all ERROR pods
-    if (type === 'SERVICE' && service?.serviceType === 'JOB') {
-      const completedPods = filteredPods.filter((pod) => pod.state === 'COMPLETED')
-
-      if (completedPods.length > 0) {
-        const sortedPods = completedPods.sort((a, b) => {
-          return String(b.started_at).localeCompare(String(a.started_at))
-        })
-        return [sortedPods[0], ...filteredPods.filter((pod) => pod.state === 'ERROR')]
-      }
-    }
-
-    // For all other cases, return all filtered pods
-    return filteredPods
-  }, [pods, type, service])
   const podStatusCount = useMemo(() => {
     return pods.reduce(
       (acc, pod) => {
         const status = match(pod.state)
-          .with('RUNNING', () => ({ type: 'running', message: 'running', color: 'bg-purple-500' }))
+          .with('RUNNING', () => ({
+            type: 'running',
+            message: 'running',
+            color: service?.serviceType === 'JOB' ? 'bg-purple-500' : 'bg-green-500',
+          }))
           .with('COMPLETED', () => ({ type: 'running', message: 'completed', color: 'bg-green-500' }))
           .with('WARNING', () => ({ type: 'warning', message: 'warning', color: 'bg-yellow-500' }))
           .with('STARTING', () => ({
@@ -98,7 +86,7 @@ export function SidebarPodStatuses({ type, organizationId, projectId, service, c
       },
       {} as Record<string, { count: number; message: string; color: string }>
     )
-  }, [pods])
+  }, [pods, service?.serviceType])
 
   const shouldBeOpen = useMemo(() => {
     if (isMetricsLoading || isRunningStatusesLoading) return false

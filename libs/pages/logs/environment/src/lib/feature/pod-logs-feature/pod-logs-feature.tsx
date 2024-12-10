@@ -32,7 +32,6 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
   return (
     <div className="h-full w-full bg-neutral-900">
       <SidebarPodStatuses
-        type="SERVICE"
         organizationId={environment.organization.id}
         projectId={environment.project.id}
         service={service}

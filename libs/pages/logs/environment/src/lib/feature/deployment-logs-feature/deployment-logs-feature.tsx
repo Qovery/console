@@ -120,7 +120,6 @@ export function DeploymentLogsFeature({
   return (
     <div className="h-full w-full bg-neutral-900">
       <SidebarPodStatuses
-        type="DEPLOYMENT"
         organizationId={environment.organization.id}
         projectId={environment.project.id}
         service={service}
