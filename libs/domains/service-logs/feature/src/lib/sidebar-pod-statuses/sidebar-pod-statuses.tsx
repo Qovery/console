@@ -202,7 +202,16 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                               .otherwise(() => 'Job executions completed')}
                           </>
                         ) : (
-                          <>{podsFiltered.length > 0 ? 'Pods were not successful' : 'Pods are running'}</>
+                          <>
+                            {match([
+                              podsFiltered.length,
+                              podsFiltered.some((pod) => pod.state === 'ERROR'),
+                              podsFiltered.some((pod) => pod.state === 'STARTING'),
+                            ])
+                              .with([P.number.gt(1), true, false], () => 'Pods were not successful')
+                              .with([P.number.gt(0), false, true], () => 'Pods are starting')
+                              .otherwise(() => 'Pods are running')}
+                          </>
                         )}
                       </p>
                     ) : (
