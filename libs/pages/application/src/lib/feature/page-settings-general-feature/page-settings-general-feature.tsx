@@ -1,7 +1,6 @@
 import {
   type ApplicationEditRequest,
   BuildModeEnum,
-  type BuildPackLanguageEnum,
   type ContainerRequest,
   type HelmRequest,
   type HelmRequestAllOfSource,
@@ -24,11 +23,7 @@ import { buildGitRepoUrl, joinArgsWithQuotes, parseCmd } from '@qovery/shared/ut
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
-  data: ApplicationGeneralData & {
-    // XXX: Keeps compatibility with legacy buildpacks apps
-    build_mode?: keyof typeof BuildModeEnum
-    buildpack_language?: keyof typeof BuildPackLanguageEnum
-  },
+  data: ApplicationGeneralData,
   application: Application,
   labelsGroups: OrganizationLabelsGroupEnrichedResponse[],
   annotationsGroups: OrganizationAnnotationsGroupResponse[]
@@ -49,9 +44,7 @@ export const handleGitApplicationSubmit = (
 
     if (data.build_mode === BuildModeEnum.DOCKER) {
       cloneApplication.dockerfile_path = data.dockerfile_path
-      cloneApplication.buildpack_language = null
     } else {
-      cloneApplication.buildpack_language = data.buildpack_language
       cloneApplication.dockerfile_path = undefined
     }
 

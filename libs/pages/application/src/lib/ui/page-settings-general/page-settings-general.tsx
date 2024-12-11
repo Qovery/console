@@ -1,4 +1,4 @@
-import { BuildModeEnum, BuildPackLanguageEnum, type Organization } from 'qovery-typescript-axios'
+import { BuildModeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -25,11 +25,6 @@ export interface PageSettingsGeneralProps {
 }
 
 const buildModeItems = Object.values(BuildModeEnum).map((value) => ({
-  label: upperCaseFirstLetter(value),
-  value: value,
-}))
-
-const languageItems = Object.values(BuildPackLanguageEnum).map((value) => ({
   label: upperCaseFirstLetter(value),
   value: value,
 }))
@@ -65,41 +60,21 @@ export function PageSettingsGeneral({
         />
       )}
 
-      {watchBuildMode === BuildModeEnum.BUILDPACKS ? (
+      {!isLifecycleJob && (
         <Controller
-          name="buildpack_language"
+          name="dockerfile_path"
           control={control}
-          rules={{
-            required: 'Please enter your buildpack language.',
-          }}
           render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              dataTestId="input-select-language"
-              label="Language framework"
-              options={languageItems}
+            <InputText
+              dataTestId="input-text-dockerfile"
+              name={field.name}
               onChange={field.onChange}
               value={field.value}
+              label="Dockerfile path"
               error={error?.message}
             />
           )}
         />
-      ) : (
-        !isLifecycleJob && (
-          <Controller
-            name="dockerfile_path"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-text-dockerfile"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Dockerfile path"
-                error={error?.message}
-              />
-            )}
-          />
-        )
       )}
     </>
   )

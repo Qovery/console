@@ -1,5 +1,5 @@
 import { Chance } from 'chance'
-import { BuildModeEnum, BuildPackLanguageEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, PortProtocolEnum, StorageTypeEnum } from 'qovery-typescript-axios'
 import { type Application } from '@qovery/domains/services/data-access'
 
 const chance = new Chance('123')
@@ -38,7 +38,6 @@ export const applicationFactoryMock = (howMany: number): Application[] =>
     description: chance.word({ length: 10 }),
     build_mode: chance.pickone(Object.values([BuildModeEnum.DOCKER])),
     dockerfile_path: chance.word({ length: 5 }),
-    buildpack_language: chance.pickone(Object.values([BuildPackLanguageEnum.NODE_JS])),
     cpu: 1000,
     memory: 1024,
     min_running_instances: 1,
