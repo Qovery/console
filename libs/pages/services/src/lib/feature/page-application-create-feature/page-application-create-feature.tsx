@@ -105,7 +105,7 @@ export function PageApplicationCreateFeature() {
         auto_deploy: true,
         description: '',
         name: templateData.slug ?? '',
-        serviceType: slug === 'container' ? 'CONTAINER' : 'APPLICATION',
+        serviceType: option === 'container' ? 'CONTAINER' : 'APPLICATION',
         icon_uri: templateData.icon_uri,
       }))
     }
