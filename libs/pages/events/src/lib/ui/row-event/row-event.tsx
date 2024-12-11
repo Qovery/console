@@ -23,7 +23,7 @@ import {
   SETTINGS_URL,
   SETTINGS_WEBHOOKS,
 } from '@qovery/shared/routes'
-import { Badge, Icon, IconAwesomeEnum, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, Icon, IconAwesomeEnum, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import CopyButton from '../copy-button/copy-button'
@@ -240,10 +240,8 @@ export function RowEvent(props: RowEventProps) {
           </Skeleton>
         </div>
         <div className="px-4">
-          <Skeleton height={10} width={80} show={isPlaceholder}>
-            <Tooltip content={event.triggered_by || ''}>
-              <span className="truncate">{event.triggered_by}</span>
-            </Tooltip>
+          <Skeleton height={10} width={80} show={isPlaceholder} className="truncate">
+            <Truncate truncateLimit={30} text={event.triggered_by ?? ''} />
           </Skeleton>
         </div>
         <div className="px-4">
