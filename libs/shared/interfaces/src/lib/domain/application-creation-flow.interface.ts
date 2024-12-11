@@ -1,9 +1,4 @@
-import {
-  type BuildModeEnum,
-  type BuildPackLanguageEnum,
-  type GitProviderEnum,
-  type GitTokenResponse,
-} from 'qovery-typescript-axios'
+import { type BuildModeEnum, type GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
@@ -17,6 +12,7 @@ export interface ApplicationGeneralData {
   labels_groups?: string[]
   annotations_groups?: string[]
   icon_uri?: string
+  build_mode?: keyof typeof BuildModeEnum
 
   // container
   registry?: string

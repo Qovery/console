@@ -21,7 +21,6 @@ const rows = [
     dockerfile_path: 'Dockerfile',
     arguments: [],
     entrypoint: '',
-    buildpack_language: null,
     cpu: 50,
     memory: 50,
     min_running_instances: 1,

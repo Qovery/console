@@ -1,4 +1,4 @@
-import { BuildModeEnum, BuildPackLanguageEnum, GitProviderEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum, GitProviderEnum } from 'qovery-typescript-axios'
 import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock, cronjobFactoryMock, helmFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
@@ -20,13 +20,11 @@ describe('PageSettingsGeneralFeature', () => {
   })
 
   it('should update the application with Docker', () => {
-    application.buildpack_language = BuildPackLanguageEnum.GO
     const app = handleGitApplicationSubmit(
       {
         name: 'hello',
         description: 'description',
         build_mode: BuildModeEnum.DOCKER,
-        buildpack_language: BuildPackLanguageEnum.GO,
         dockerfile_path: '/',
         provider: GitProviderEnum.GITHUB,
         repository: 'qovery/console',
@@ -39,40 +37,14 @@ describe('PageSettingsGeneralFeature', () => {
     )
     expect(app.name).toBe('hello')
     expect(app.description).toBe('description')
-    expect(app.buildpack_language).toBe(null)
     expect(app.dockerfile_path).toBe('/')
-  })
-
-  it('should update the application with Buildpack', () => {
-    application.dockerfile_path = 'Dockerfile'
-    const app = handleGitApplicationSubmit(
-      {
-        name: 'hello',
-        description: 'description',
-        build_mode: BuildModeEnum.BUILDPACKS,
-        buildpack_language: BuildPackLanguageEnum.GO,
-        dockerfile_path: '/',
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-      application,
-      [],
-      []
-    )
-    expect(app.name).toBe('hello')
-    expect(app.description).toBe('description')
-    expect(app.dockerfile_path).toBe(undefined)
-    expect(app.buildpack_language).toBe(BuildPackLanguageEnum.GO)
   })
 
   it('should update the application with git repository', () => {
     const app = handleGitApplicationSubmit(
       {
         name: 'hello',
-        build_mode: BuildModeEnum.BUILDPACKS,
-        buildpack_language: BuildPackLanguageEnum.GO,
+        build_mode: BuildModeEnum.DOCKER,
         dockerfile_path: '/',
         provider: GitProviderEnum.GITHUB,
         repository: 'qovery/console',

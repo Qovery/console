@@ -20,7 +20,6 @@ jest.mock('../hooks/use-services/use-services', () => ({
         dockerfile_path: 'Dockerfile',
         arguments: [],
         entrypoint: '',
-        buildpack_language: null,
         cpu: 60,
         memory: 51,
         min_running_instances: 2,

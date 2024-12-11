@@ -90,9 +90,6 @@ export const ManyItems: Story = {
         <button onClick={() => copyName(IconEnum.DO)}>
           <Icon name={IconEnum.DO} />
         </button>
-        <button onClick={() => copyName(IconEnum.DO_GRAY)}>
-          <Icon name={IconEnum.DO_GRAY} />
-        </button>
         <button onClick={() => copyName(IconEnum.DOCKER)}>
           <Icon name={IconEnum.DOCKER} width="24" />
         </button>
@@ -101,9 +98,6 @@ export const ManyItems: Story = {
         </button>
         <button onClick={() => copyName(IconEnum.REDIS)}>
           <Icon name={IconEnum.REDIS} width="24" />
-        </button>
-        <button onClick={() => copyName(IconEnum.BUILDPACKS)}>
-          <Icon name={IconEnum.BUILDPACKS} width="24" />
         </button>
         <button onClick={() => copyName(IconEnum.MONGODB)}>
           <Icon name={IconEnum.MONGODB} width="16" />

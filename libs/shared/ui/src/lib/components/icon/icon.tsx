@@ -10,7 +10,6 @@ import ApplicationIcon from './icons/application'
 import AWSIcon from './icons/aws'
 import AWSGrayIcon from './icons/aws-gray'
 import AzureIcon from './icons/azure'
-import BuildpacksIcon from './icons/buildpacks'
 import ChildrenArrow from './icons/children-arrow'
 import CivoIcon from './icons/civo'
 import CloudformationIcon from './icons/cloudformationIcon'
@@ -124,8 +123,6 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
       return <PostgresqlIcon {...formattedProps} />
     case IconEnum.REDIS:
       return <RedisIcon {...formattedProps} />
-    case IconEnum.BUILDPACKS:
-      return <BuildpacksIcon {...formattedProps} />
     case IconEnum.MONGODB:
       return <MongoDBIcon {...formattedProps} />
     case IconEnum.MYSQL:

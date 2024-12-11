@@ -1,5 +1,5 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { BuildModeEnum, BuildPackLanguageEnum } from 'qovery-typescript-axios'
+import { BuildModeEnum } from 'qovery-typescript-axios'
 import { type Application, type Container, type Job } from '@qovery/domains/services/data-access'
 import {
   applicationFactoryMock,
@@ -50,29 +50,6 @@ describe('PageSettingsGeneral', () => {
     screen.getByDisplayValue('hello-world')
     screen.getByText('Docker')
     screen.getByDisplayValue('Dockerfile')
-    screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
-  })
-
-  it('should render the form with buildpack section', async () => {
-    props.service = {
-      ...mockApplication,
-      name: 'hello-world',
-      buildpack_language: BuildPackLanguageEnum.CLOJURE,
-      build_mode: BuildModeEnum.BUILDPACKS,
-    }
-
-    renderWithProviders(
-      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
-        defaultValues: props.service,
-      })
-    )
-
-    // https://react-hook-form.com/advanced-usage#TransformandParse
-    expect(await screen.findByRole('button', { name: /save/i })).toBeInTheDocument()
-
-    screen.getByDisplayValue('hello-world')
-    screen.getByText('Buildpacks')
-    screen.getByText('Clojure')
     screen.getByText(/The service will be automatically updated on every new commit on the branch./i)
   })
 
