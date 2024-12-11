@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type ReactNode, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { APPLICATION_SETTINGS_DOMAIN_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -26,7 +27,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
 
   const callouts: {
     id: number
-    icon: IconAwesomeEnum
+    icon: IconName
     color: CalloutRootProps['color']
     title: string
     description?: ReactNode
@@ -36,7 +37,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
   if (runningStatuses.state === 'ERROR') {
     callouts.push({
       id: 1,
-      icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
+      icon: 'circle-exclamation',
       color: 'red',
       title: serviceType === 'JOB' ? 'Job execution failure' : 'Application pods are in error',
       description:
@@ -66,7 +67,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     if (certificatesInError && certificatesInError.length > 0) {
       callouts.push({
         id: 3,
-        icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
+        icon: 'circle-exclamation',
         color: 'red',
         title: 'Certificate Issues',
         description:
@@ -96,10 +97,24 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
     } else {
       callouts.push({
         id: 2,
-        icon: IconAwesomeEnum.CIRCLE_EXCLAMATION,
+        icon: 'circle-exclamation',
         color: 'yellow',
         title: 'Application pods have experienced issues in the past',
         description: 'Some pods experienced issues in the past. Have a look at the table below for investigation.',
+        children:
+          serviceType === 'JOB' && environmentId && serviceId ? (
+            <div className="flex flex-row items-center">
+              <Button
+                type="button"
+                color="neutral"
+                variant="outline"
+                size="md"
+                onClick={() => cleanFailedJobs({ environmentId, payload: { job_ids: [serviceId] } })}
+              >
+                Clear status
+              </Button>
+            </div>
+          ) : undefined,
       })
     }
   }
@@ -107,7 +122,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
   if (callouts.length === 0) {
     callouts.push({
       id: 4,
-      icon: IconAwesomeEnum.CIRCLE_CHECK,
+      icon: 'circle-check',
       color: 'green',
       title: `Service status: ${upperCaseFirstLetter(runningStatuses.state)}`,
     })
@@ -120,7 +135,7 @@ export function PodStatusesCallout({ environmentId, serviceId }: PodStatusesCall
         .map(({ id, icon, color, children, title, description: description }) => (
           <Callout.Root color={color} key={id}>
             <Callout.Icon>
-              <Icon name={icon} iconStyle="regular" />
+              <Icon iconName={icon} iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>
