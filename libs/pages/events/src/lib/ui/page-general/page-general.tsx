@@ -6,6 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction } from 'react'
 import {
+  Button,
   Icon,
   Pagination,
   Section,
@@ -21,6 +22,7 @@ export interface PageGeneralProps {
   isLoading: boolean
   showIntercom: () => void
   handleClearFilter: () => void
+  organizationMaxLimitReached: boolean
   events?: OrganizationEventResponse[]
   placeholderEvents?: OrganizationEventResponse[]
   onNext: () => void
@@ -82,7 +84,7 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
   },
 ]
 
-const columnsWidth = '14% 14% 12% 15% 10% 22% 11%'
+const columnsWidth = '18% 11% 10% 15% 10% 20% 16%'
 
 export function PageGeneral({
   isLoading,
@@ -99,18 +101,9 @@ export function PageGeneral({
   handleClearFilter,
   organization,
   showIntercom,
+  organizationMaxLimitReached,
 }: PageGeneralProps) {
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
-  const currentDate = new Date().getTime()
-  const retentionLimitDate = currentDate - auditLogsRetentionInDays * 24 * 60 * 60 * 1000
-
-  const filteredEvents =
-    events?.filter((event) => {
-      if (!event.timestamp) return null
-      return new Date(event.timestamp).getTime() >= retentionLimitDate
-    }) || []
-
-  const checkIfEventsAreFiltered = filteredEvents.length !== events?.length
 
   return (
     <Section className="grow p-8">
@@ -132,7 +125,7 @@ export function PageGeneral({
             placeholderEvents?.map((event) => (
               <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} isPlaceholder />
             ))
-          ) : !checkIfEventsAreFiltered && events.length === 0 ? (
+          ) : !organizationMaxLimitReached && events?.length === 0 ? (
             <div className="flex h-[30vh] items-center justify-center px-5 py-4 text-center">
               <div>
                 <Icon iconName="wave-pulse" className="text-neutral-350" />
@@ -142,21 +135,18 @@ export function PageGeneral({
                 </p>
               </div>
             </div>
-          ) : checkIfEventsAreFiltered ? (
+          ) : organizationMaxLimitReached ? (
             <div>
-              {filteredEvents?.map((event) => (
+              {events?.map((event) => (
                 <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />
               ))}
               <div className="flex h-14 items-center justify-center border-b border-neutral-200">
-                <p className="flex gap-1 text-sm text-neutral-400">
+                <p className="flex items-center gap-3 text-sm text-neutral-400">
                   {auditLogsRetentionInDays} days limit reached.
-                  {/* TODO: add a real button */}
-                  <span
-                    className="cursor-pointer font-medium text-sky-500 transition-colors hover:text-sky-600"
-                    onClick={() => showIntercom()}
-                  >
-                    Upgrade your plan to see more
-                  </span>
+                  <Button type="button" variant="outline" className="gap-1.5" onClick={() => showIntercom()}>
+                    <span>Upgrade plan</span>
+                    <Icon iconName="arrow-up-right-from-square" className="text-neutral-400" />
+                  </Button>
                 </p>
               </div>
               {[...Array(3)].map((_, index) => (
@@ -166,7 +156,9 @@ export function PageGeneral({
                 >
                   {[...Array(6)].map((_, index) => (
                     <div key={index} className="flex items-center gap-4">
-                      {index === 0 ? <Icon iconName="lock-keyhole" className="text-sm text-neutral-350" /> : null}
+                      {index === 0 ? (
+                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-sm text-neutral-350" />
+                      ) : null}
                       <Skeleton key={index} height={10} width={116} />
                     </div>
                   ))}
@@ -174,9 +166,7 @@ export function PageGeneral({
               ))}
             </div>
           ) : (
-            filteredEvents?.map((event) => (
-              <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />
-            ))
+            events?.map((event) => <RowEventFeature key={event.timestamp} event={event} columnsWidth={columnsWidth} />)
           )}
         </div>
       </Table>
