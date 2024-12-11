@@ -96,6 +96,7 @@ function MenuManageDeployment({
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button
           aria-label="Manage Deployment"
+          size={variant === 'default' ? 'md' : 'sm'}
           variant={variant === 'default' ? 'outline' : 'surface'}
           radius={variant === 'deployment' ? 'rounded' : 'none'}
         >
@@ -243,7 +244,8 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
   const hasServices = Boolean(countServices)
 
-  if (!deploymentStatus || !isFetchedServices) return <Skeleton height={36} width={variant === 'default' ? 144 : 67} />
+  if (!deploymentStatus || !isFetchedServices)
+    return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 144 : 67} />
 
   return (
     <ActionToolbar.Root>

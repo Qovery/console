@@ -22,7 +22,7 @@ jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
   }
 })
 
-jest.mock('@qovery/domains/services/feature', () => ({
+jest.mock('../hooks/use-service-count/use-service-count', () => ({
   useServiceCount: () => ({
     data: mockServices,
     isFetched: true,
@@ -48,5 +48,14 @@ describe('EnvironmentActionToolbar', () => {
     await userEvent.click(buttonOtherActions)
 
     expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should have variant with only deployment actions', () => {
+    renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} variant="deployment" />, {
+      container: document.body,
+    })
+
+    expect(screen.getByLabelText(/manage deployment/i)).toBeInTheDocument()
+    expect(screen.queryByLabelText(/other actions/i)).not.toBeInTheDocument()
   })
 })

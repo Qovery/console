@@ -7,23 +7,23 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
       class="p-6"
     >
       <h2
-        class="h4 mb-1 max-w-sm truncate text-neutral-400"
+        class="h4 mb-1 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Deploy latest version for..
       </h2>
       <p
-        class="mb-4 text-sm text-neutral-350"
+        class="mb-4 text-sm text-neutral-350 dark:text-neutral-50"
       >
         Select the services you want to update to the latest version
       </p>
       <div
-        class="mb-4 flex items-center justify-between text-sm text-neutral-400"
+        class="mb-4 flex items-center justify-between text-sm text-neutral-400 dark:text-neutral-50"
       >
         <p>
           For
            
           <strong
-            class="font-medium text-neutral-400"
+            class="font-medium"
           >
             Barry Lyons
           </strong>
@@ -45,11 +45,11 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
         />
         <ul>
           <li
-            class="rounded-t  flex justify-between  border border-b-0 p-4 border border-brand-500 bg-brand-50 false"
+            class="rounded-t  flex justify-between border border-b-0 p-4 dark:border-neutral-400 border border-brand-500 bg-brand-50 dark:bg-neutral-500 false"
             data-testid="outdated-service-row"
           >
             <div
-              class="flex font-medium text-neutral-400"
+              class="flex font-medium text-neutral-400 dark:text-neutral-50"
             >
               <div
                 class="relative flex items-center gap-2 mr-4"
@@ -70,7 +70,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               Amy Maxwell
             </div>
             <div
-              class="ml-auto flex"
+              class="ml-auto flex items-center"
             >
               <div
                 class="flex items-center opacity-50"
@@ -159,11 +159,11 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
             </div>
           </li>
           <li
-            class="  flex justify-between  border border-b-0 p-4 border-neutral-250 border-t-brand-500"
+            class="  flex justify-between border border-b-0 p-4 dark:border-neutral-400 border-neutral-250 border-t-brand-500"
             data-testid="outdated-service-row"
           >
             <div
-              class="flex font-medium text-neutral-400"
+              class="flex font-medium text-neutral-400 dark:text-neutral-50"
             >
               <div
                 class="relative flex items-center gap-2 mr-4"
@@ -180,7 +180,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               Jeff Rhodes
             </div>
             <div
-              class="ml-auto flex"
+              class="ml-auto flex items-center"
             >
               <div
                 class="flex items-center "
@@ -269,11 +269,11 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
             </div>
           </li>
           <li
-            class=" rounded-b !border-b flex justify-between  border border-b-0 p-4 border-neutral-250 false"
+            class=" rounded-b !border-b flex justify-between border border-b-0 p-4 dark:border-neutral-400 border-neutral-250 false"
             data-testid="outdated-service-row"
           >
             <div
-              class="flex font-medium text-neutral-400"
+              class="flex font-medium text-neutral-400 dark:text-neutral-50"
             >
               <div
                 class="relative flex items-center gap-2 mr-4"
@@ -290,7 +290,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               Joseph Morgan
             </div>
             <div
-              class="ml-auto flex"
+              class="ml-auto flex items-center"
             >
               <div
                 class="flex items-center "
@@ -385,10 +385,10 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
         />
       </div>
       <div
-        class="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-white py-6"
+        class="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-white py-6 dark:bg-neutral-550"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
           data-testid="cancel-button"
         >
           Cancel

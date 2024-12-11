@@ -151,11 +151,13 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                   key={application.id}
                   className={`${index === 0 ? 'rounded-t' : ''} ${
                     outdatedServices.length - 1 === index ? 'rounded-b !border-b' : ''
-                  } flex justify-between  border border-b-0 p-4 ${
-                    isChecked(application.id) ? `border border-brand-500 bg-brand-50` : 'border-neutral-250'
+                  } flex justify-between border border-b-0 p-4 dark:border-neutral-400 ${
+                    isChecked(application.id)
+                      ? `border border-brand-500 bg-brand-50 dark:bg-neutral-500`
+                      : 'border-neutral-250'
                   } ${outdatedServices && isChecked(outdatedServices[index - 1]?.id) && 'border-t-brand-500'}`}
                 >
-                  <div className="flex font-medium text-neutral-400">
+                  <div className="flex font-medium text-neutral-400 dark:text-neutral-50">
                     <InputCheckbox
                       name={application.id}
                       value={application.id}
@@ -164,7 +166,7 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                     />
                     <Truncate truncateLimit={31} text={application.name} />
                   </div>
-                  <div className="ml-auto flex">
+                  <div className="ml-auto flex items-center">
                     <div
                       data-testid="current-commit-block"
                       className={`flex items-center ${isChecked(application.id) ? 'opacity-50' : ''}`}
