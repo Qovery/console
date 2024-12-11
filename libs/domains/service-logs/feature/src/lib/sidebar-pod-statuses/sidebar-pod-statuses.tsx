@@ -137,6 +137,8 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     }))
   }, [pods])
 
+  if (service?.serviceType === 'DATABASE' && service?.mode === 'MANAGED') return children
+
   return (
     <div className="flex" style={{ '--padding-sidebar': currentPadding } as React.CSSProperties}>
       {children}

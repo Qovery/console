@@ -80,7 +80,7 @@ export function HeaderLogs({
                     <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
                   </svg>
                   <ActionTriggerStatusChip
-                    status={environmentStatus?.last_deployment_state}
+                    status={serviceStatus?.state}
                     triggerAction={deploymentHistory.trigger_action}
                   />
                 </>
