@@ -29,7 +29,17 @@ import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-envir
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
-function MenuManageDeployment({ environment, state }: { environment: Environment; state: StateEnum }) {
+type ActionToolbarVariant = 'default' | 'deployment'
+
+function MenuManageDeployment({
+  environment,
+  state,
+  variant,
+}: {
+  environment: Environment
+  state: StateEnum
+  variant: ActionToolbarVariant
+}) {
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployEnvironment } = useDeployEnvironment({ projectId: environment.project.id })
@@ -84,7 +94,11 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Manage Deployment">
+        <ActionToolbar.Button
+          aria-label="Manage Deployment"
+          variant={variant === 'default' ? 'outline' : 'surface'}
+          radius={variant === 'deployment' ? 'rounded' : 'none'}
+        >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="play" className="mr-4" />
@@ -219,7 +233,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
 
 export interface EnvironmentActionToolbarProps {
   environment: Environment
-  variant?: 'default' | 'deployment'
+  variant?: ActionToolbarVariant
 }
 
 export function EnvironmentActionToolbar({ environment, variant = 'default' }: EnvironmentActionToolbarProps) {
@@ -233,7 +247,9 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
 
   return (
     <ActionToolbar.Root>
-      {hasServices && <MenuManageDeployment environment={environment} state={deploymentStatus.state} />}
+      {hasServices && (
+        <MenuManageDeployment environment={environment} state={deploymentStatus.state} variant={variant} />
+      )}
       {variant === 'default' && (
         <>
           <Tooltip content="Logs">
