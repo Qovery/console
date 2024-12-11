@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { type DeploymentHistoryEnvironmentV2, type Environment, type EnvironmentStatus } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
+import { EnvironmentActionToolbar } from '@qovery/domains/environments/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { ActionTriggerStatusChip, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
@@ -59,6 +60,7 @@ export function HeaderEnvironmentStages({
               </Tooltip>
             )}
           </span>
+          <EnvironmentActionToolbar variant="deployment" environment={environment} />
           {deploymentHistory?.trigger_action && (
             <>
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">

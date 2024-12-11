@@ -47,8 +47,8 @@ export function ModalConfirmation({
 
   return (
     <div className="p-6">
-      <h2 className="h4 mb-2 max-w-sm text-neutral-400">{title}</h2>
-      <div className="mb-6 text-sm text-neutral-350">
+      <h2 className="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
+      <div className="mb-6 text-sm text-neutral-350 dark:text-neutral-50">
         {isDelete ? (
           description ? (
             description

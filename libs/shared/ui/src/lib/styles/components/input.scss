@@ -38,6 +38,13 @@
   overflow: visible;
 }
 
+.dark {
+  .input--focused,
+  .input__button--focused {
+    outline: 0px solid theme('colors.brand.500');
+  }
+}
+
 .input--focused,
 .input__button--focused {
   outline: 3px solid theme('colors.brand.100');

@@ -55,7 +55,7 @@ export function EnvironmentStages({
       </HeaderEnvironmentStages>
       <div className="flex h-[calc(100vh-120px)] justify-center border border-t-0 border-neutral-500 bg-neutral-600">
         <div className="h-full w-full">
-          <div className="flex h-full gap-0.5 overflow-y-scroll py-6 pl-6 pr-4">
+          <div className="flex h-full gap-0.5 overflow-y-scroll py-6 pl-4 pr-3">
             {!deploymentStages ? (
               <div className="mt-6 flex h-full w-full justify-center">
                 <LoaderSpinner className="h-6 w-6" theme="dark" />

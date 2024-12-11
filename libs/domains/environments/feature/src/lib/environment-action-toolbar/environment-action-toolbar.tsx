@@ -1,6 +1,5 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
-import { UpdateAllModal, useServiceCount } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -25,8 +24,10 @@ import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-e
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
+import { useServiceCount } from '../hooks/use-service-count/use-service-count'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
+import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 function MenuManageDeployment({ environment, state }: { environment: Environment; state: StateEnum }) {
   const { openModal } = useModal()
@@ -218,30 +219,36 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
 
 export interface EnvironmentActionToolbarProps {
   environment: Environment
+  variant?: 'default' | 'deployment'
 }
 
-export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
+export function EnvironmentActionToolbar({ environment, variant = 'default' }: EnvironmentActionToolbarProps) {
   const { pathname } = useLocation()
   const { data: countServices, isFetched: isFetchedServices } = useServiceCount({ environmentId: environment.id })
+
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
   const hasServices = Boolean(countServices)
 
-  if (!deploymentStatus || !isFetchedServices) return <Skeleton height={36} width={144} />
+  if (!deploymentStatus || !isFetchedServices) return <Skeleton height={36} width={variant === 'default' ? 144 : 67} />
 
   return (
     <ActionToolbar.Root>
       {hasServices && <MenuManageDeployment environment={environment} state={deploymentStatus.state} />}
-      <Tooltip content="Logs">
-        <ActionToolbar.Button asChild>
-          <Link
-            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-            state={{ prevUrl: pathname }}
-          >
-            <Icon iconName="timeline" />
-          </Link>
-        </ActionToolbar.Button>
-      </Tooltip>
-      <MenuOtherActions environment={environment} state={deploymentStatus.state} />
+      {variant === 'default' && (
+        <>
+          <Tooltip content="Logs">
+            <ActionToolbar.Button asChild>
+              <Link
+                to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+                state={{ prevUrl: pathname }}
+              >
+                <Icon iconName="timeline" />
+              </Link>
+            </ActionToolbar.Button>
+          </Tooltip>
+          <MenuOtherActions environment={environment} state={deploymentStatus.state} />
+        </>
+      )}
     </ActionToolbar.Root>
   )
 }
