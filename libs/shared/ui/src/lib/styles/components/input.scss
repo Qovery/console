@@ -1,11 +1,11 @@
 .input {
-  @apply relative min-h-[52px] cursor-pointer rounded border border-neutral-250 bg-white px-3 py-2;
+  @apply relative min-h-[52px] cursor-pointer rounded border border-neutral-250 bg-white px-3 py-2 dark:bg-neutral-500;
   transition:
     120ms all $timing-cubic,
     0 outline;
 
   label {
-    @apply absolute translate-y-2 select-none text-sm text-neutral-350 transition-label duration-[120ms] ease-in-out;
+    @apply absolute translate-y-2 select-none text-sm text-neutral-350 transition-label duration-[120ms] ease-in-out dark:text-neutral-50;
   }
 
   input:focus,
@@ -31,7 +31,7 @@
 }
 
 .input__value {
-  @apply absolute bottom-[7px] left-0 w-full appearance-none bg-transparent px-3 text-sm text-neutral-400 ring-0;
+  @apply absolute bottom-[7px] left-0 w-full appearance-none bg-transparent px-3 text-sm text-neutral-400 ring-0 dark:text-neutral-50;
 }
 
 .input__value[type='time'] {

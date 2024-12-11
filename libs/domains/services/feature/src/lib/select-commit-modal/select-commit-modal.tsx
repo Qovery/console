@@ -4,7 +4,6 @@ import { type ReactNode, useMemo, useState } from 'react'
 import {
   Button,
   Icon,
-  IconAwesomeEnum,
   InputSearch,
   LegacyAvatar,
   LegacyAvatarStyle,
@@ -76,9 +75,9 @@ export function SelectCommitModal({
 
   return (
     <div className="flex flex-col gap-6 p-5">
-      <div className="flex flex-col gap-2 text-sm text-neutral-350">
-        <h2 className="h4 max-w-sm truncate text-neutral-400">{title}</h2>
-        <p className="text-neutral-350">{description}</p>
+      <div className="flex flex-col gap-2 text-sm">
+        <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">{title}</h2>
+        <p className="text-neutral-350 dark:text-neutral-50">{description}</p>
         {children}
       </div>
 
@@ -91,12 +90,12 @@ export function SelectCommitModal({
               <div key={date} className="pl-2">
                 <div className="relative pl-5 text-sm font-medium text-neutral-350">
                   <Icon
-                    name={IconAwesomeEnum.CODE_COMMIT}
-                    className="absolute left-0 -translate-x-1/2 text-neutral-300"
+                    iconName="code-commit"
+                    className="absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
                   />
                   {pluralize(commits.length, 'Commit')} on {dateToFormat(date, 'MMM dd, yyyy')}
                 </div>
-                <div className="border-l border-neutral-250 pb-5 pl-5 pt-3">
+                <div className="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350">
                   {commits.map(
                     (
                       { author_name, author_avatar_url, commit_page_url, created_at, git_commit_id, message },
@@ -110,10 +109,10 @@ export function SelectCommitModal({
                         <label
                           key={git_commit_id}
                           className={twMerge(
-                            '-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md',
-                            isCurrentDeployedCommit ? 'bg-neutral-100' : 'cursor-pointer',
+                            '-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md dark:border-neutral-350',
+                            isCurrentDeployedCommit ? 'bg-neutral-100 dark:bg-neutral-500' : 'cursor-pointer',
                             clsx({
-                              'border-brand-500 bg-brand-50': isSelected,
+                              'border-brand-500 bg-brand-50 dark:bg-neutral-600': isSelected,
                               'border-t-transparent': isSelectedSiblings,
                             })
                           )}
@@ -131,7 +130,7 @@ export function SelectCommitModal({
                               target="_blank"
                               rel="noreferrer"
                               className={twMerge(
-                                'max-w-full truncate font-medium text-neutral-400 hover:text-brand-500',
+                                'max-w-full truncate font-medium text-neutral-400 hover:text-brand-500 dark:text-neutral-50',
                                 clsx({
                                   'text-neutral-350': isCurrentDeployedCommit,
                                 })
@@ -139,7 +138,9 @@ export function SelectCommitModal({
                             >
                               {message}
                             </a>
-                            <span className="text-neutral-350">committed {timeAgo(new Date(created_at))} ago</span>
+                            <span className="text-neutral-350 dark:text-neutral-50">
+                              committed {timeAgo(new Date(created_at))} ago
+                            </span>
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <div className="flex items-center gap-1.5">
@@ -154,7 +155,7 @@ export function SelectCommitModal({
                             <span
                               className={clsx(
                                 'text-xs',
-                                isCurrentDeployedCommit ? 'text-neutral-400' : 'text-brand-500'
+                                isCurrentDeployedCommit ? 'text-neutral-400 dark:text-neutral-50' : 'text-brand-500'
                               )}
                             >
                               {

@@ -185,7 +185,7 @@ exports[`PageSettingsDockerfileFeature should match snapshot 1`] = `
                   </div>
                 </div>
                 <p
-                  class="mt-0.5 px-3 text-xs font-normal text-neutral-350"
+                  class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
                 >
                   <span>
                     Specify the location of your dockerfile. Expected format: myapp/Dockerfile

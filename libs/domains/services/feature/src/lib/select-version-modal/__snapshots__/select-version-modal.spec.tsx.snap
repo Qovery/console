@@ -6,15 +6,15 @@ exports[`SelectVersionModal should match snapshot 1`] = `
     class="flex flex-col gap-6 p-5"
   >
     <div
-      class="flex flex-col gap-2 text-sm text-neutral-350"
+      class="flex flex-col gap-2 text-sm"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400"
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Deploy other version
       </h2>
       <p
-        class="text-neutral-350"
+        class="text-neutral-350 dark:text-neutral-50"
       >
         Type a version to deploy
       </p>
@@ -136,7 +136,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
       class="flex justify-end gap-3"
     >
       <button
-        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
       >
         Cancel
       </button>
@@ -157,15 +157,15 @@ exports[`SelectVersionModal should match snapshot with helm version 1`] = `
     class="flex flex-col gap-6 p-5"
   >
     <div
-      class="flex flex-col gap-2 text-sm text-neutral-350"
+      class="flex flex-col gap-2 text-sm"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400"
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Deploy other version
       </h2>
       <p
-        class="text-neutral-350"
+        class="text-neutral-350 dark:text-neutral-50"
       >
         Type a version to deploy
       </p>
@@ -280,7 +280,7 @@ exports[`SelectVersionModal should match snapshot with helm version 1`] = `
       class="flex justify-end gap-3"
     >
       <button
-        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
       >
         Cancel
       </button>

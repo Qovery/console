@@ -110,7 +110,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
           </div>
         )}
       </div>
-      {hint && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-350">{hint}</p>}
+      {hint && <p className="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50">{hint}</p>}
       {error && <p className="mt-0.5 px-3 text-xs font-medium text-red-500">{error}</p>}
     </div>
   )

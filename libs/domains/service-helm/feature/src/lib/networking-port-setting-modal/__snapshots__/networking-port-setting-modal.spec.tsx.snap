@@ -7,7 +7,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
       class="p-5"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400"
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Set port
       </h2>
@@ -297,7 +297,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
       class="p-5"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400"
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Edit port
       </h2>

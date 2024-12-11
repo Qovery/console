@@ -33,10 +33,10 @@ export function TagCommit(props: TagCommitProps) {
   const contentTag = (
     <Tag
       data-testid="tag-commit"
-      className={`flex items-center justify-center border font-medium ${withBackground ? 'bg-white' : ''} ${
+      className={`flex items-center justify-center border font-medium ${withBackground ? 'bg-white dark:bg-transparent' : ''} ${
         commitDeltaCount
           ? 'border-orange-500 text-orange-500'
-          : 'w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200'
+          : 'w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400'
       }`}
     >
       {!hover ? (

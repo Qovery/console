@@ -98,7 +98,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                     data-testid="tag"
                   >
                     <div
@@ -141,7 +141,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                     data-testid="tag"
                   >
                     <div
@@ -208,7 +208,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                     data-testid="tag"
                   >
                     <div
@@ -251,7 +251,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                     data-testid="tag"
                   >
                     <div
@@ -318,7 +318,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                     data-testid="tag"
                   >
                     <div
@@ -361,7 +361,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                   data-testid="tag-commit"
                 >
                   <span
-                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                    class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium bg-white dark:bg-transparent w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                     data-testid="tag"
                   >
                     <div
