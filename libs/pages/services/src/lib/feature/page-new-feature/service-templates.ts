@@ -561,7 +561,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create an Apache Kafka using a container.',
         icon: Docker,
         icon_uri: 'app://qovery-console/apachekafka',
-        type: 'DATABASE',
+        type: 'CONTAINER',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -594,7 +594,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create a RabbitMQ using a container.',
         icon: Docker,
         icon_uri: 'app://qovery-console/rabbitmq',
-        type: 'DATABASE',
+        type: 'CONTAINER',
         dockerfile:
           'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
       },
@@ -1152,7 +1152,7 @@ export const serviceTemplates: ServiceTemplateType[] = [
         description: 'Create an Elasticsearch database using a container.',
         icon: Docker,
         icon_uri: 'app://qovery-console/elasticsearch',
-        type: 'DATABASE',
+        type: 'CONTAINER',
       },
       {
         slug: 'managed',
