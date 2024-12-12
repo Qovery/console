@@ -1,5 +1,4 @@
 import {
-  DeploymentHistoryEnvironmentV2,
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentStatus,
@@ -20,7 +19,6 @@ export interface DeploymentLogsFeatureProps {
   environment: Environment
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
-  environmentDeploymentHistory?: DeploymentHistoryEnvironmentV2[]
 }
 
 export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {

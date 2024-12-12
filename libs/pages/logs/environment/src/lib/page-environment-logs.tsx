@@ -171,7 +171,6 @@ export function PageEnvironmentLogs() {
                 environment={environment}
                 deploymentStages={deploymentStages}
                 environmentStatus={environmentStatus}
-                environmentDeploymentHistory={environmentDeploymentHistory}
               />
             }
           />
