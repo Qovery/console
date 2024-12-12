@@ -128,8 +128,6 @@ export function PageEnvironmentLogs() {
 
   const lastDeploymentId = environmentStatus.last_deployment_id ?? ''
 
-  console.log(lastDeploymentId)
-
   return (
     <div className="flex h-full">
       <ServiceStageIdsProvider>
