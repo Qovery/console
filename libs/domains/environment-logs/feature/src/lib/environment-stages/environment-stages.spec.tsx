@@ -15,6 +15,7 @@ describe('EnvironmentStages', () => {
     },
     environmentStatus: {
       state: 'RUNNING',
+      last_deployment_id: 'exec-1',
     },
     hideSkipped: false,
     setHideSkipped: jest.fn(),
@@ -54,7 +55,7 @@ describe('EnvironmentStages', () => {
     const logLink = screen.getByText('Pre-check logs').closest('a')
     expect(logLink).toHaveAttribute(
       'href',
-      ENVIRONMENT_LOGS_URL('org-1', 'proj-1', 'env-1') + ENVIRONMENT_PRE_CHECK_LOGS_URL()
+      ENVIRONMENT_LOGS_URL('org-1', 'proj-1', 'env-1') + ENVIRONMENT_PRE_CHECK_LOGS_URL('exec-1')
     )
   })
 })

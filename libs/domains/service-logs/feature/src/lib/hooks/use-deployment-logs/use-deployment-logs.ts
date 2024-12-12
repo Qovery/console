@@ -6,6 +6,7 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { ServiceStageIdsContext } from '../../service-stage-ids-context/service-stage-ids-context'
+import { useDeploymentHistory } from '../use-deployment-history/use-deployment-history'
 
 export interface UseDeploymentLogsProps {
   organizationId?: string
@@ -31,6 +32,7 @@ export function useDeploymentLogs({
   versionId,
 }: UseDeploymentLogsProps) {
   const { hash } = useLocation()
+  const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId: environmentId ?? '' })
   const { data: environment } = useEnvironment({ environmentId })
 
   // States for controlling log actions, showing new, previous or paused logs
@@ -60,6 +62,9 @@ export function useDeploymentLogs({
     [setMessageChunks]
   )
 
+  // XXX: If we don't have a version, it works like WS otherwise, it works like a REST API
+  const isLatestVersion = deploymentHistory[0]?.identifier.execution_id === versionId
+
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/logs',
     urlSearchParams: {
@@ -67,7 +72,7 @@ export function useDeploymentLogs({
       cluster: environment?.cluster_id,
       project: projectId,
       environment: environmentId,
-      version: versionId,
+      version: isLatestVersion ? undefined : versionId,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),

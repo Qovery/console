@@ -22,14 +22,14 @@ describe('DeploymentLogsPlaceholder', () => {
   const props: DeploymentLogsPlaceholderProps = {
     serviceStatus: undefined,
     itemsLength: 0,
-    deploymentHistoryEnvironment: [],
+    environmentDeploymentHistory: [],
   }
 
   it('should render deployment history', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={1}
-        deploymentHistoryEnvironment={[
+        environmentDeploymentHistory={[
           {
             identifier: {
               execution_id: 'exec-1',
@@ -98,7 +98,7 @@ describe('DeploymentLogsPlaceholder', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={0}
-        deploymentHistoryEnvironment={[]}
+        environmentDeploymentHistory={[]}
         serviceStatus={{
           id: '0',
           state: 'DEPLOYED',

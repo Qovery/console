@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
-import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import {
   DEPLOYMENT_LOGS_URL,
@@ -25,10 +25,35 @@ import EnvironmentStagesFeature from './feature/environment-stages-feature/envir
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
 
+// XXX: This is a workaround to redirect to the last deployment logs with (execution_id/last_deployment_id)
+// We don't authorize to see the deployment without versionId
+function RedirectDeploymentLogs({
+  organizationId,
+  projectId,
+  environmentId,
+  lastDeploymentId,
+}: {
+  organizationId: string
+  projectId: string
+  environmentId: string
+  lastDeploymentId: string
+}) {
+  const { serviceId = '' } = useParams()
+  return (
+    <Navigate
+      to={
+        ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+        DEPLOYMENT_LOGS_VERSION_URL(serviceId, lastDeploymentId)
+      }
+    />
+  )
+}
+
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
@@ -60,6 +85,9 @@ export function PageEnvironmentLogs() {
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
 
+  const versionIdUrl = deploymentVersionId || preCheckVersionId || stageVersionId
+  const isLatestVersion = environmentDeploymentHistory[0]?.identifier.execution_id === versionIdUrl
+
   const messageHandler = useCallback(
     (
       _: QueryClient,
@@ -79,6 +107,7 @@ export function PageEnvironmentLogs() {
     },
     [setDeploymentStages]
   )
+  // XXX: If we don't have a version, it works like WS otherwise, it works like a REST API
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
     urlSearchParams: {
@@ -86,14 +115,14 @@ export function PageEnvironmentLogs() {
       cluster: environment?.cluster_id,
       project: projectId,
       environment: environmentId,
-      version: deploymentVersionId || preCheckVersionId || stageVersionId,
+      version: isLatestVersion ? undefined : versionIdUrl,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
     onMessage: messageHandler,
   })
 
-  if (!environment)
+  if (!environment || !environmentStatus?.last_deployment_state)
     return (
       <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
         <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
@@ -101,6 +130,8 @@ export function PageEnvironmentLogs() {
         </div>
       </div>
     )
+
+  const lastDeploymentId = environmentStatus.last_deployment_id ?? ''
 
   return (
     <div className="flex h-full">
@@ -129,22 +160,8 @@ export function PageEnvironmentLogs() {
             }
           />
           <Route
-            path={ENVIRONMENT_PRE_CHECK_LOGS_URL()}
-            element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
-          />
-          <Route
             path={ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId')}
             element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
-          />
-          <Route
-            path={DEPLOYMENT_LOGS_URL()}
-            element={
-              <DeploymentLogsFeature
-                environment={environment}
-                deploymentStages={deploymentStages}
-                environmentStatus={environmentStatus}
-              />
-            }
           />
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
@@ -154,6 +171,17 @@ export function PageEnvironmentLogs() {
                 environment={environment}
                 deploymentStages={deploymentStages}
                 environmentStatus={environmentStatus}
+              />
+            }
+          />
+          <Route
+            path={DEPLOYMENT_LOGS_URL()}
+            element={
+              <RedirectDeploymentLogs
+                organizationId={organizationId}
+                projectId={projectId}
+                environmentId={environmentId}
+                lastDeploymentId={lastDeploymentId}
               />
             }
           />

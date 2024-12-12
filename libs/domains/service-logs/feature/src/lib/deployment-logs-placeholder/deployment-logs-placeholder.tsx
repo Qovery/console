@@ -73,13 +73,13 @@ function DeploymentHistoryPlaceholder({
 export interface DeploymentLogsPlaceholderProps {
   serviceStatus?: Status
   itemsLength?: number
-  deploymentHistoryEnvironment?: DeploymentHistoryEnvironmentV2[]
+  environmentDeploymentHistory?: DeploymentHistoryEnvironmentV2[]
 }
 
 export function DeploymentLogsPlaceholder({
   serviceStatus,
   itemsLength,
-  deploymentHistoryEnvironment,
+  environmentDeploymentHistory,
 }: DeploymentLogsPlaceholderProps) {
   const { environmentId = '', serviceId = '' } = useParams()
 
@@ -105,7 +105,7 @@ export function DeploymentLogsPlaceholder({
     )
     .otherwise(() => false)
 
-  const deploymentsByServiceId = mergeDeploymentServices(deploymentHistoryEnvironment).filter(
+  const deploymentsByServiceId = mergeDeploymentServices(environmentDeploymentHistory).filter(
     (deploymentHistory) => deploymentHistory.identifier.service_id === serviceId
   )
 
