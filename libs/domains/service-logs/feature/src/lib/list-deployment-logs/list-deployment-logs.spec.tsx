@@ -21,16 +21,21 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
+  ...jest.requireActual('../hooks/use-deployment-history/use-deployment-history'),
+  useDeploymentHistory: () => ({
+    data: [
+      {
+        identifier: {
+          execution_id: '4',
+        },
+      },
+    ],
+  }),
+}))
+
 describe('ListDeploymentLogs', () => {
   const mockEnvironment = environmentFactoryMock(1)[0]
-
-  const mockDeploymentHistoryEnvironment: DeploymentHistoryEnvironmentV2[] = [
-    {
-      identifier: {
-        execution_id: '4',
-      },
-    },
-  ]
 
   const mockServiceStatus: Status = {
     id: '111',
@@ -120,23 +125,13 @@ describe('ListDeploymentLogs', () => {
 
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
+      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
     )
     expect(baseElement).toBeTruthy()
   })
 
   it('should display logs', () => {
-    renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
-    )
+    renderWithProviders(<ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />)
 
     expect(screen.getByText('Log 1')).toBeInTheDocument()
     expect(screen.getByText('Log 2')).toBeInTheDocument()
@@ -144,11 +139,7 @@ describe('ListDeploymentLogs', () => {
 
   it('should filter logs by stage step', async () => {
     const { userEvent } = renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
+      <ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />
     )
 
     const buildButton = screen.getByRole('button', { name: /build/i })
@@ -165,13 +156,7 @@ describe('ListDeploymentLogs', () => {
       data: { state: 'BUILDING' },
     })
 
-    renderWithProviders(
-      <ListDeploymentLogs
-        environment={mockEnvironment}
-        deploymentHistoryEnvironment={mockDeploymentHistoryEnvironment}
-        serviceStatus={mockServiceStatus}
-      />
-    )
+    renderWithProviders(<ListDeploymentLogs environment={mockEnvironment} serviceStatus={mockServiceStatus} />)
 
     expect(screen.getByText('Streaming deployment logs')).toBeInTheDocument()
   })
