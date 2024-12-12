@@ -19,5 +19,4 @@ export const DEPLOYMENT_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/
 export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
   `/${serviceId}/deployment-logs/${versionId}`
 
-export const ENVIRONMENT_PRE_CHECK_LOGS_URL = (versionId?: string) =>
-  versionId ? `/pre-check-logs/${versionId}` : '/pre-check-logs'
+export const ENVIRONMENT_PRE_CHECK_LOGS_URL = (versionId: string) => `/pre-check-logs/${versionId}`

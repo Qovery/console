@@ -161,7 +161,10 @@ export function EnvironmentStagesFeature({
                         if (hideSkipped && !service.is_part_last_deployment) return null
                         if (!fullService)
                           return (
-                            <div className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2">
+                            <div
+                              key={service?.id}
+                              className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2"
+                            >
                               <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
                                 <Icon iconName="trash-can-xmark" iconStyle="solid" />
                               </span>

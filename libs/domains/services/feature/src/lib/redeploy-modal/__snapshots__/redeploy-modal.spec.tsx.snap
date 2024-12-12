@@ -33,12 +33,12 @@ exports[`RedeployModal should match snapshot 1`] = `
               value="redeploy"
             />
             <label
-              class="font-medium leading-5 text-neutral-400 text-ssm"
+              class="font-medium leading-5 text-neutral-400 dark:text-neutral-50 text-ssm"
               for="redeploy"
             >
               Redeploy
               <p
-                class="mt-1 text-xs font-normal text-neutral-350"
+                class="mt-1 text-xs font-normal text-neutral-350 dark:text-neutral-50"
               >
                 This action will not restart your service but it will allow to align again your configuration with your cluster.
               </p>
@@ -55,12 +55,12 @@ exports[`RedeployModal should match snapshot 1`] = `
               value="restart"
             />
             <label
-              class="font-medium leading-5 text-neutral-400 text-ssm"
+              class="font-medium leading-5 text-neutral-400 dark:text-neutral-50 text-ssm"
               for="restart"
             >
               Restart service
               <p
-                class="mt-1 text-xs font-normal text-neutral-350"
+                class="mt-1 text-xs font-normal text-neutral-350 dark:text-neutral-50"
               >
                 To restart the pods of your service.
               </p>

@@ -51,7 +51,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
   const matchClusters = useMatch({ path: CLUSTERS_URL(), end: false })
   const matchEnvironmentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL(), end: false })
   const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })
-  const matchDeploymentLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_URL(), end: false })
   const matchEnvironmentStage = useMatch({
     path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(),
     end: false,
@@ -60,10 +59,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
     path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_STAGES_URL(':versionId'),
     end: false,
   })
-  const matchEnvironmentPreCheck = useMatch({
-    path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(),
-    end: false,
-  })
+
   const matchEnvironmentPreCheckVersion = useMatch({
     path: ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId'),
     end: false,
@@ -373,7 +369,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
             link=""
           />
         )}
-        {(matchDeploymentLogsVersion || matchDeploymentLogs) &&
+        {(matchDeploymentLogsVersion || matchDeploymentLogsVersion) &&
           statusStages &&
           isFetchedStatusStages &&
           services.length > 0 && (
@@ -382,10 +378,14 @@ export function Breadcrumb(props: BreadcrumbProps) {
               <div className="flex items-center">
                 <BreadcrumbDeploymentLogs
                   serviceId={
-                    matchDeploymentLogsVersion?.params['serviceId'] || matchDeploymentLogs?.params['serviceId'] || ''
+                    matchDeploymentLogsVersion?.params['serviceId'] ||
+                    matchDeploymentLogsVersion?.params['serviceId'] ||
+                    ''
                   }
                   versionId={
-                    matchDeploymentLogsVersion?.params['versionId'] || matchDeploymentLogs?.params['versionId'] || ''
+                    matchDeploymentLogsVersion?.params['versionId'] ||
+                    matchDeploymentLogsVersion?.params['versionId'] ||
+                    ''
                   }
                   services={services}
                   statusStages={statusStages}
@@ -395,28 +395,26 @@ export function Breadcrumb(props: BreadcrumbProps) {
               <BreadcrumbDeploymentHistory
                 type="DEPLOYMENT"
                 serviceId={
-                  matchDeploymentLogsVersion?.params['serviceId'] || matchDeploymentLogs?.params['serviceId'] || ''
+                  matchDeploymentLogsVersion?.params['serviceId'] ||
+                  matchDeploymentLogsVersion?.params['serviceId'] ||
+                  ''
                 }
                 versionId={matchDeploymentLogsVersion?.params['versionId']}
               />
             </>
           )}
-        {(matchEnvironmentStage ||
-          matchEnvironmentStageVersion ||
-          matchEnvironmentPreCheck ||
-          matchEnvironmentPreCheckVersion) &&
-          statusStages && (
-            <>
-              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
-              <BreadcrumbDeploymentHistory
-                type={matchEnvironmentPreCheck ? 'PRE_CHECK' : 'STAGES'}
-                versionId={
-                  matchEnvironmentStageVersion?.params['versionId'] ||
-                  matchEnvironmentPreCheckVersion?.params['versionId']
-                }
-              />
-            </>
-          )}
+        {(matchEnvironmentStage || matchEnvironmentStageVersion || matchEnvironmentPreCheckVersion) && statusStages && (
+          <>
+            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
+            <BreadcrumbDeploymentHistory
+              type={matchEnvironmentPreCheckVersion ? 'PRE_CHECK' : 'STAGES'}
+              versionId={
+                matchEnvironmentStageVersion?.params['versionId'] ||
+                matchEnvironmentPreCheckVersion?.params['versionId']
+              }
+            />
+          </>
+        )}
         {matchServiceLogs && services && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
