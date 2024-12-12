@@ -25,6 +25,30 @@ import EnvironmentStagesFeature from './feature/environment-stages-feature/envir
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
 
+// XXX: This is a workaround to redirect to the last deployment logs with (execution_id/last_deployment_id)
+// We don't authorize to see the deployment without versionId
+function RedirectDeploymentLogs({
+  organizationId,
+  projectId,
+  environmentId,
+  lastDeploymentId,
+}: {
+  organizationId: string
+  projectId: string
+  environmentId: string
+  lastDeploymentId: string
+}) {
+  const { serviceId = '' } = useParams()
+  return (
+    <Navigate
+      to={
+        ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+        DEPLOYMENT_LOGS_VERSION_URL(serviceId, lastDeploymentId)
+      }
+    />
+  )
+}
+
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
@@ -93,7 +117,7 @@ export function PageEnvironmentLogs() {
     onMessage: messageHandler,
   })
 
-  if (!environment)
+  if (!environment || !environmentStatus?.last_deployment_state)
     return (
       <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
         <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
@@ -101,6 +125,10 @@ export function PageEnvironmentLogs() {
         </div>
       </div>
     )
+
+  const lastDeploymentId = environmentStatus.last_deployment_id ?? ''
+
+  console.log(lastDeploymentId)
 
   return (
     <div className="flex h-full">
@@ -129,22 +157,8 @@ export function PageEnvironmentLogs() {
             }
           />
           <Route
-            path={ENVIRONMENT_PRE_CHECK_LOGS_URL()}
-            element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
-          />
-          <Route
             path={ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId')}
             element={<PreCheckLogsFeature environment={environment} preCheckStage={preCheckStage} />}
-          />
-          <Route
-            path={DEPLOYMENT_LOGS_URL()}
-            element={
-              <DeploymentLogsFeature
-                environment={environment}
-                deploymentStages={deploymentStages}
-                environmentStatus={environmentStatus}
-              />
-            }
           />
           <Route
             path={DEPLOYMENT_LOGS_VERSION_URL()}
@@ -154,6 +168,17 @@ export function PageEnvironmentLogs() {
                 environment={environment}
                 deploymentStages={deploymentStages}
                 environmentStatus={environmentStatus}
+              />
+            }
+          />
+          <Route
+            path={DEPLOYMENT_LOGS_URL()}
+            element={
+              <RedirectDeploymentLogs
+                organizationId={organizationId}
+                projectId={projectId}
+                environmentId={environmentId}
+                lastDeploymentId={lastDeploymentId}
               />
             }
           />

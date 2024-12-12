@@ -32,7 +32,7 @@ export function EnvironmentStages({
   setHideSkipped,
   children,
 }: EnvironmentStagesProps) {
-  const executionId = environmentStatus.last_deployment_id ?? undefined
+  const executionId = environmentStatus.last_deployment_id
 
   return (
     <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
@@ -75,21 +75,26 @@ export function EnvironmentStages({
                           </span>
                         </div>
                       </div>
-                      <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
-                        <NavLink
-                          to={
-                            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                            ENVIRONMENT_PRE_CHECK_LOGS_URL(executionId)
-                          }
-                          className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
-                        >
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
-                            <Icon iconName="list-check" iconStyle="solid" />
-                          </span>
-                          <span className="text-sm">Pre-check logs</span>
-                          <StatusChip className="ml-auto" status={preCheckStage.status} />
-                        </NavLink>
-                      </div>
+                      {executionId && (
+                        <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                          <NavLink
+                            to={
+                              ENVIRONMENT_LOGS_URL(
+                                environment.organization.id,
+                                environment.project.id,
+                                environment.id
+                              ) + ENVIRONMENT_PRE_CHECK_LOGS_URL(executionId)
+                            }
+                            className="flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400"
+                          >
+                            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-neutral-400 text-neutral-250">
+                              <Icon iconName="list-check" iconStyle="solid" />
+                            </span>
+                            <span className="text-sm">Pre-check logs</span>
+                            <StatusChip className="ml-auto" status={preCheckStage.status} />
+                          </NavLink>
+                        </div>
+                      )}
                     </div>
                     <div className="mt-4 w-4">
                       <svg xmlns="http://www.w3.org/2000/svg" width="17" height="9" fill="none" viewBox="0 0 17 9">
