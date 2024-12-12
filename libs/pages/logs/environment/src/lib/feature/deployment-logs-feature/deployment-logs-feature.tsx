@@ -1,4 +1,5 @@
 import {
+  DeploymentHistoryEnvironmentV2,
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentStatus,
@@ -7,7 +8,6 @@ import {
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
 import { useParams } from 'react-router-dom'
-import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { ListDeploymentLogs, SidebarPodStatuses } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -20,6 +20,7 @@ export interface DeploymentLogsFeatureProps {
   environment: Environment
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
+  environmentDeploymentHistory?: DeploymentHistoryEnvironmentV2[]
 }
 
 export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
@@ -100,7 +101,6 @@ export function DeploymentLogsFeature({
   const { serviceId = '' } = useParams()
 
   const { data: service, isFetched: isFetchedService } = useService({ environmentId: environment.id, serviceId })
-  const { data: deploymentHistoryEnvironment = [] } = useDeploymentHistory({ environmentId: environment.id })
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading...'}`)
 
@@ -126,7 +126,6 @@ export function DeploymentLogsFeature({
       >
         <ListDeploymentLogs
           environment={environment}
-          deploymentHistoryEnvironment={deploymentHistoryEnvironment}
           serviceStatus={serviceStatus}
           environmentStatus={environmentStatus}
           stage={stageFromServiceId}

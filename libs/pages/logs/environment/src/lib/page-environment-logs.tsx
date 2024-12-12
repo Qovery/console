@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
-import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import {
   DEPLOYMENT_LOGS_URL,
@@ -53,6 +53,7 @@ export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
@@ -84,6 +85,9 @@ export function PageEnvironmentLogs() {
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
 
+  const versionIdUrl = deploymentVersionId || preCheckVersionId || stageVersionId
+  const isLatestVersion = environmentDeploymentHistory[0]?.identifier.execution_id === versionIdUrl
+
   const messageHandler = useCallback(
     (
       _: QueryClient,
@@ -103,6 +107,7 @@ export function PageEnvironmentLogs() {
     },
     [setDeploymentStages]
   )
+  // XXX: If we don't have a version, it works like WS otherwise, it works like a REST API
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
     urlSearchParams: {
@@ -110,7 +115,7 @@ export function PageEnvironmentLogs() {
       cluster: environment?.cluster_id,
       project: projectId,
       environment: environmentId,
-      version: deploymentVersionId || preCheckVersionId || stageVersionId,
+      version: isLatestVersion ? undefined : versionIdUrl,
     },
     enabled:
       Boolean(organizationId) && Boolean(environment?.cluster_id) && Boolean(projectId) && Boolean(environmentId),
@@ -166,6 +171,7 @@ export function PageEnvironmentLogs() {
                 environment={environment}
                 deploymentStages={deploymentStages}
                 environmentStatus={environmentStatus}
+                environmentDeploymentHistory={environmentDeploymentHistory}
               />
             }
           />

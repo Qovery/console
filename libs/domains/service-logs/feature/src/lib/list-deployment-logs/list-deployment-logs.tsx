@@ -7,13 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
-import {
-  type DeploymentHistoryEnvironmentV2,
-  type Environment,
-  type EnvironmentStatus,
-  type Stage,
-  type Status,
-} from 'qovery-typescript-axios'
+import { type Environment, type EnvironmentStatus, type Stage, type Status } from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -22,6 +16,7 @@ import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '
 import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 import HeaderLogs from '../header-logs/header-logs'
+import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { type EnvironmentLogIds, useDeploymentLogs } from '../hooks/use-deployment-logs/use-deployment-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceStageIdsContext } from '../service-stage-ids-context/service-stage-ids-context'
@@ -126,19 +121,12 @@ const getFilterStep = (step: EnvironmentEngineStep): FilterType =>
 
 export interface ListDeploymentLogsProps {
   environment: Environment
-  deploymentHistoryEnvironment: DeploymentHistoryEnvironmentV2[]
   serviceStatus: Status
   stage?: Stage
   environmentStatus?: EnvironmentStatus
 }
 
-export function ListDeploymentLogs({
-  environment,
-  deploymentHistoryEnvironment,
-  environmentStatus,
-  serviceStatus,
-  stage,
-}: ListDeploymentLogsProps) {
+export function ListDeploymentLogs({ environment, environmentStatus, serviceStatus, stage }: ListDeploymentLogsProps) {
   const { hash } = useLocation()
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -150,6 +138,7 @@ export function ListDeploymentLogs({
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
   const {
     data: logs = [],
     pauseLogs,
@@ -272,7 +261,7 @@ export function ListDeploymentLogs({
     [columnFilters]
   )
 
-  const isLastVersion = deploymentHistoryEnvironment?.[0]?.identifier.execution_id === versionId || !versionId
+  const isLastVersion = environmentDeploymentHistory?.[0]?.identifier.execution_id === versionId || !versionId
   const isDeploymentProgressing = isLastVersion
     ? match(deploymentStatus?.state)
         .with(
@@ -302,8 +291,8 @@ export function ListDeploymentLogs({
         environmentStatus={environmentStatus}
         deploymentHistory={
           versionId
-            ? deploymentHistoryEnvironment.find((d) => d.identifier.execution_id === versionId)
-            : deploymentHistoryEnvironment[0]
+            ? environmentDeploymentHistory.find((d) => d.identifier.execution_id === versionId)
+            : environmentDeploymentHistory[0]
         }
       >
         <div className="flex items-center gap-4">
@@ -365,7 +354,7 @@ export function ListDeploymentLogs({
             <DeploymentLogsPlaceholder
               serviceStatus={serviceStatus}
               itemsLength={logs.length}
-              deploymentHistoryEnvironment={deploymentHistoryEnvironment}
+              environmentDeploymentHistory={environmentDeploymentHistory}
             />
           </div>
         </div>
@@ -426,11 +415,13 @@ export function ListDeploymentLogs({
             <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming deployment logs" />
           )}
         </div>
-        <ShowNewLogsButton
-          pauseLogs={pauseLogs}
-          setPauseLogs={setPauseLogs}
-          newMessagesAvailable={newMessagesAvailable}
-        />
+        {isLastVersion && (
+          <ShowNewLogsButton
+            pauseLogs={pauseLogs}
+            setPauseLogs={setPauseLogs}
+            newMessagesAvailable={newMessagesAvailable}
+          />
+        )}
       </div>
     </div>
   )
