@@ -9,6 +9,7 @@ const itemVariants = cva(
     'group',
     'transition',
     'bg-neutral-100',
+    'dark:bg-neutral-500',
     'border',
     'border-neutral-300',
     'w-[20px]',

@@ -6,12 +6,12 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 mb-2 max-w-sm text-neutral-400"
+      class="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50"
     >
       my title
     </h2>
     <div
-      class="mb-6 text-sm text-neutral-350"
+      class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
     >
       my description
       <span
@@ -76,12 +76,12 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 mb-2 max-w-sm text-neutral-400"
+      class="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50"
     >
       my title
     </h2>
     <div
-      class="mb-6 text-sm text-neutral-350"
+      class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
     >
       my description
     </div>
@@ -134,12 +134,12 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
     class="p-6"
   >
     <h2
-      class="h4 mb-2 max-w-sm text-neutral-400"
+      class="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50"
     >
       my title
     </h2>
     <div
-      class="mb-6 text-sm text-neutral-350"
+      class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
     >
       To confirm the deletion of 
       <strong>

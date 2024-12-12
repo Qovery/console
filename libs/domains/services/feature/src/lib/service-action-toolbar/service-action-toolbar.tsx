@@ -73,16 +73,20 @@ import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 
+type ActionToolbarVariant = 'default' | 'deployment'
+
 function MenuManageDeployment({
   deploymentStatus,
   environment,
   service,
   environmentLogsLink,
+  variant,
 }: {
   deploymentStatus: Status
   environment: Environment
   service: AnyService
   environmentLogsLink: string
+  variant: ActionToolbarVariant
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -184,7 +188,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),
@@ -215,7 +219,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -247,7 +251,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -280,7 +284,7 @@ function MenuManageDeployment({
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),
@@ -291,7 +295,13 @@ function MenuManageDeployment({
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Manage Deployment" color={displayYellowColor ? 'yellow' : 'neutral'}>
+        <ActionToolbar.Button
+          aria-label="Manage Deployment"
+          color={displayYellowColor ? 'yellow' : 'neutral'}
+          size={variant === 'default' ? 'md' : 'sm'}
+          variant={variant === 'default' ? 'outline' : 'surface'}
+          radius={variant === 'deployment' ? 'rounded' : 'none'}
+        >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="play" className="mr-4" />
@@ -640,9 +650,11 @@ export function ServiceActionToolbar({
   environment,
   serviceId,
   shellAction,
+  variant = 'default',
 }: {
   environment: Environment
   serviceId: string
+  variant?: ActionToolbarVariant
   shellAction?: () => void
 }) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
@@ -650,7 +662,8 @@ export function ServiceActionToolbar({
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
-  if (!service || !deploymentStatus) return <Skeleton height={36} width={184} />
+  if (!service || !deploymentStatus)
+    return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 184 : 67} />
 
   const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
@@ -661,28 +674,33 @@ export function ServiceActionToolbar({
         environment={environment}
         service={service}
         environmentLogsLink={environmentLogsLink}
+        variant={variant}
       />
-      <Tooltip content="Logs">
-        <ActionToolbar.Button asChild>
-          <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
-            <Icon iconName="scroll" />
-          </Link>
-        </ActionToolbar.Button>
-      </Tooltip>
-      {shellAction && (
-        <Tooltip content="Qovery cloud shell">
-          <ActionToolbar.Button onClick={shellAction}>
-            <Icon iconName="terminal" />
-          </ActionToolbar.Button>
-        </Tooltip>
+      {variant === 'default' && (
+        <>
+          <Tooltip content="Logs">
+            <ActionToolbar.Button asChild>
+              <Link to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
+                <Icon iconName="scroll" />
+              </Link>
+            </ActionToolbar.Button>
+          </Tooltip>
+          {shellAction && (
+            <Tooltip content="Qovery cloud shell">
+              <ActionToolbar.Button onClick={shellAction}>
+                <Icon iconName="terminal" />
+              </ActionToolbar.Button>
+            </Tooltip>
+          )}
+          <MenuOtherActions
+            state={deploymentStatus.state}
+            organizationId={organizationId}
+            environment={environment}
+            service={service}
+            environmentLogsLink={environmentLogsLink}
+          />
+        </>
       )}
-      <MenuOtherActions
-        state={deploymentStatus.state}
-        organizationId={organizationId}
-        environment={environment}
-        service={service}
-        environmentLogsLink={environmentLogsLink}
-      />
     </ActionToolbar.Root>
   )
 }

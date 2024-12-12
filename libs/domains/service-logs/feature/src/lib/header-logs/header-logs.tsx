@@ -5,7 +5,13 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { ServiceAvatar, ServiceLinksPopover, useLinks, useService } from '@qovery/domains/services/feature'
+import {
+  ServiceActionToolbar,
+  ServiceAvatar,
+  ServiceLinksPopover,
+  useLinks,
+  useService,
+} from '@qovery/domains/services/feature'
 import { ActionTriggerStatusChip, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { pluralize } from '@qovery/shared/util-js'
@@ -74,6 +80,7 @@ export function HeaderLogs({
           </span>
           {type === 'DEPLOYMENT' && (
             <>
+              <ServiceActionToolbar variant="deployment" serviceId={serviceId} environment={environment} />
               {deploymentHistory?.trigger_action && (
                 <>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">

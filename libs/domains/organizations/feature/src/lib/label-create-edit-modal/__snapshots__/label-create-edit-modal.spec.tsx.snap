@@ -7,12 +7,12 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
       class="p-5"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400"
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Create label group
       </h2>
       <p
-        class="mt-2 text-sm text-neutral-350"
+        class="mt-2 text-sm text-neutral-350 dark:text-neutral-50"
       >
         You will have the possibility to modify the parameters once created.
       </p>

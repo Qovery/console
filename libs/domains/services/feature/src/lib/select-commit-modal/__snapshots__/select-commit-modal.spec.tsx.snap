@@ -6,15 +6,15 @@ exports[`SelectCommitModal should match snapshot 1`] = `
     class="flex flex-col gap-6 p-5"
   >
     <div
-      class="flex flex-col gap-2 text-sm text-neutral-350"
+      class="flex flex-col gap-2 text-sm"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400"
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Deploy other version
       </h2>
       <p
-        class="text-neutral-350"
+        class="text-neutral-350 dark:text-neutral-50"
       >
         Type a version to deploy
       </p>
@@ -56,24 +56,24 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           <div
             class="relative pl-5 text-sm font-medium text-neutral-350"
           >
-            <span
-              class="icon-solid-code-commit shrink-0 absolute left-0 -translate-x-1/2 text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
             />
             Commit
              on 
             Jan 01, 0123
           </div>
           <div
-            class="border-l border-neutral-250 pb-5 pl-5 pt-3"
+            class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"
           >
             <label
-              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md cursor-pointer"
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md dark:border-neutral-350 cursor-pointer"
             >
               <div>
                 <button
                   aria-checked="false"
-                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
                   data-radix-collection-item=""
                   data-state="unchecked"
                   role="radio"
@@ -86,14 +86,14 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                 class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
               >
                 <a
-                  class="max-w-full truncate font-medium text-neutral-400 hover:text-brand-500"
+                  class="max-w-full truncate font-medium text-neutral-400 hover:text-brand-500 dark:text-neutral-50"
                   rel="noreferrer"
                   target="_blank"
                 >
                   lorem
                 </a>
                 <span
-                  class="text-neutral-350"
+                  class="text-neutral-350 dark:text-neutral-50"
                 >
                   committed 
                   1903 years
@@ -128,7 +128,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                     data-testid="tag-commit"
                   >
                     <span
-                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                       data-testid="tag"
                     >
                       <div
@@ -158,24 +158,24 @@ exports[`SelectCommitModal should match snapshot 1`] = `
           <div
             class="relative pl-5 text-sm font-medium text-neutral-350"
           >
-            <span
-              class="icon-solid-code-commit shrink-0 absolute left-0 -translate-x-1/2 text-neutral-300"
-              role="img"
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-300 dark:text-neutral-350"
             />
             Commit
              on 
             Jan 01, 0456
           </div>
           <div
-            class="border-l border-neutral-250 pb-5 pl-5 pt-3"
+            class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"
           >
             <label
-              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md bg-neutral-100"
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral-250 p-3 first:rounded-t-md last:rounded-b-md dark:border-neutral-350 bg-neutral-100 dark:bg-neutral-500"
             >
               <div>
                 <button
                   aria-checked="true"
-                  class="group transition bg-neutral-100 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 w-[20px] h-[20px] rounded-full hover:border-2 hover:border-brand-500 data-[state=checked]:bg-brand-500 data-[state=checked]:border-2 data-[state=checked]:border-brand-500 disabled:hover:border disabled:bg-neutral-150 disabled:border-neutral-250 disabled:data-[state=checked]:hover:border-2 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300"
                   data-disabled=""
                   data-radix-collection-item=""
                   data-state="checked"
@@ -201,14 +201,14 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                 class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
               >
                 <a
-                  class="max-w-full truncate font-medium hover:text-brand-500 text-neutral-350"
+                  class="max-w-full truncate font-medium hover:text-brand-500 dark:text-neutral-50 text-neutral-350"
                   rel="noreferrer"
                   target="_blank"
                 >
                   ipsum
                 </a>
                 <span
-                  class="text-neutral-350"
+                  class="text-neutral-350 dark:text-neutral-50"
                 >
                   committed 
                   1570 years
@@ -243,7 +243,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                     data-testid="tag-commit"
                   >
                     <span
-                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200"
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral-250 text-neutral-350 hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
                       data-testid="tag"
                     >
                       <div
@@ -259,7 +259,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   </div>
                 </div>
                 <span
-                  class="text-xs text-neutral-400"
+                  class="text-xs text-neutral-400 dark:text-neutral-50"
                 >
                   Current version
                 </span>

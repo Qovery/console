@@ -7,12 +7,12 @@ exports[`RedeployModal should match snapshot 1`] = `
       class="p-5"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400"
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
       >
         Service redeploy
       </h2>
       <p
-        class="mt-2 text-sm text-neutral-350"
+        class="mt-2 text-sm text-neutral-350 dark:text-neutral-50"
       >
         We have detected no changes to be deployed for this service. Select the action you want to apply.
       </p>

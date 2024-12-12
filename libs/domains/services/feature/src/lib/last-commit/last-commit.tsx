@@ -50,7 +50,7 @@ export function LastCommit({ className, service, gitRepository }: LastCommitProp
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400">{service.name}</strong>
+            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
           </p>
         </SelectCommitModal>
       ),

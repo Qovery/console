@@ -1,6 +1,5 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
-import { UpdateAllModal, useServiceCount } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -25,10 +24,22 @@ import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-e
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
+import { useServiceCount } from '../hooks/use-service-count/use-service-count'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
+import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
-function MenuManageDeployment({ environment, state }: { environment: Environment; state: StateEnum }) {
+type ActionToolbarVariant = 'default' | 'deployment'
+
+function MenuManageDeployment({
+  environment,
+  state,
+  variant,
+}: {
+  environment: Environment
+  state: StateEnum
+  variant: ActionToolbarVariant
+}) {
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployEnvironment } = useDeployEnvironment({ projectId: environment.project.id })
@@ -83,7 +94,12 @@ function MenuManageDeployment({ environment, state }: { environment: Environment
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
-        <ActionToolbar.Button aria-label="Manage Deployment">
+        <ActionToolbar.Button
+          aria-label="Manage Deployment"
+          size={variant === 'default' ? 'md' : 'sm'}
+          variant={variant === 'default' ? 'outline' : 'surface'}
+          radius={variant === 'deployment' ? 'rounded' : 'none'}
+        >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="play" className="mr-4" />
@@ -218,30 +234,39 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
 
 export interface EnvironmentActionToolbarProps {
   environment: Environment
+  variant?: ActionToolbarVariant
 }
 
-export function EnvironmentActionToolbar({ environment }: EnvironmentActionToolbarProps) {
+export function EnvironmentActionToolbar({ environment, variant = 'default' }: EnvironmentActionToolbarProps) {
   const { pathname } = useLocation()
   const { data: countServices, isFetched: isFetchedServices } = useServiceCount({ environmentId: environment.id })
+
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
   const hasServices = Boolean(countServices)
 
-  if (!deploymentStatus || !isFetchedServices) return <Skeleton height={36} width={144} />
+  if (!deploymentStatus || !isFetchedServices)
+    return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 144 : 67} />
 
   return (
     <ActionToolbar.Root>
-      {hasServices && <MenuManageDeployment environment={environment} state={deploymentStatus.state} />}
-      <Tooltip content="Logs">
-        <ActionToolbar.Button asChild>
-          <Link
-            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-            state={{ prevUrl: pathname }}
-          >
-            <Icon iconName="timeline" />
-          </Link>
-        </ActionToolbar.Button>
-      </Tooltip>
-      <MenuOtherActions environment={environment} state={deploymentStatus.state} />
+      {hasServices && (
+        <MenuManageDeployment environment={environment} state={deploymentStatus.state} variant={variant} />
+      )}
+      {variant === 'default' && (
+        <>
+          <Tooltip content="Logs">
+            <ActionToolbar.Button asChild>
+              <Link
+                to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
+                state={{ prevUrl: pathname }}
+              >
+                <Icon iconName="timeline" />
+              </Link>
+            </ActionToolbar.Button>
+          </Tooltip>
+          <MenuOtherActions environment={environment} state={deploymentStatus.state} />
+        </>
+      )}
     </ActionToolbar.Root>
   )
 }
