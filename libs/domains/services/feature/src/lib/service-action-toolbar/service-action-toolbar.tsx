@@ -91,18 +91,18 @@ function MenuManageDeployment({
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
+  const logsLink = environmentLogsLink + DEPLOYMENT_LOGS_URL(service.id)
+
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({
     environmentId: environment.id,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-      DEPLOYMENT_LOGS_URL(service.id),
+    logsLink,
   })
-  const { mutate: restartService } = useRestartService({ environmentId: environment.id })
-  const { mutate: stopService } = useStopService({ environmentId: environment.id })
+  const { mutate: restartService } = useRestartService({ environmentId: environment.id, logsLink })
+  const { mutate: stopService } = useStopService({ environmentId: environment.id, logsLink })
   const { mutateAsync: cancelBuild } = useCancelDeploymentService({
     projectId: environment.project.id,
-    logsLink: environmentLogsLink + DEPLOYMENT_LOGS_URL(service.id),
+    logsLink,
   })
 
   const { state, service_deployment_status } = deploymentStatus
