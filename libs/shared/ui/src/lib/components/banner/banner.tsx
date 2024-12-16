@@ -1,7 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type PropsWithChildren, forwardRef } from 'react'
-import { type IconEnum } from '@qovery/shared/enums'
 import { twMerge } from '@qovery/shared/util-js'
 import Button from '../button/button'
 import Icon from '../icon/icon'
@@ -11,6 +10,7 @@ const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-m
     color: {
       brand: ['bg-brand-500', 'text-white'],
       yellow: ['bg-yellow-500', 'text-yellow-900'],
+      purple: ['bg-purple-500', 'text-white'],
     },
   },
 })
@@ -20,6 +20,7 @@ const buttonVariants = cva('ml-4', {
     color: {
       brand: ['!bg-brand-400/50', 'hover:!bg-brand-400/75', '!text-white'],
       yellow: ['!bg-yellow-600/50', 'hover:!bg-yellow-600/75', '!text-yellow-900'],
+      purple: ['!bg-purple-400', 'hover:!bg-purple-600', '!text-white'],
     },
   },
 })
