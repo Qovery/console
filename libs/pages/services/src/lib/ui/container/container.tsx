@@ -16,6 +16,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -59,7 +60,7 @@ export function Container({ children }: PropsWithChildren) {
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
   const { mutate: deployEnvironment } = useDeployEnvironment({
     projectId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId),
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
   })
 
   const matchSettingsRoute = location.pathname.includes(
