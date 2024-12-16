@@ -92,7 +92,12 @@ function MenuManageDeployment({
   const { openModalConfirmation } = useModalConfirmation()
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
-  const { mutate: deployService } = useDeployService({ environmentId: environment.id })
+  const { mutate: deployService } = useDeployService({
+    environmentId: environment.id,
+    logsLink:
+      ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+      DEPLOYMENT_LOGS_URL(service.id),
+  })
   const { mutate: restartService } = useRestartService({ environmentId: environment.id })
   const { mutate: stopService } = useStopService({ environmentId: environment.id })
   const { mutateAsync: cancelBuild } = useCancelDeploymentService({
@@ -340,7 +345,13 @@ function MenuManageDeployment({
                 ? mutationRedeploy
                 : () =>
                     openModal({
-                      content: <RedeployModal service={service} />,
+                      content: (
+                        <RedeployModal
+                          organizationId={environment.organization.id}
+                          projectId={environment.project.id}
+                          service={service}
+                        />
+                      ),
                     })
             }
             className="relative"
@@ -363,7 +374,13 @@ function MenuManageDeployment({
             icon={<Icon iconName="play" />}
             onSelect={() =>
               openModal({
-                content: <ForceRunModalFeature service={service} />,
+                content: (
+                  <ForceRunModalFeature
+                    organizationId={environment.organization.id}
+                    projectId={environment.project.id}
+                    service={service}
+                  />
+                ),
               })
             }
           >

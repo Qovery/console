@@ -11,6 +11,7 @@ import { type Application, type Container } from '@qovery/domains/services/data-
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type PortData } from '@qovery/shared/interfaces'
+import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
@@ -65,9 +66,19 @@ export const deletePort = (application: Application | Container, portId?: string
   return cloneApplication
 }
 
-export function SettingsPortsFeature({ service }: { service: Application | Container }) {
+export function SettingsPortsFeature({
+  organizationId,
+  projectId,
+  service,
+}: {
+  organizationId: string
+  projectId: string
+  service: Application | Container
+}) {
   const { mutate: editService } = useEditService({
     environmentId: service.environment?.id || '',
+    logsLink:
+      ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment?.id) + ENVIRONMENT_LOGS_URL(service.id),
   })
 
   const { openModal, closeModal } = useModal()
@@ -124,11 +135,13 @@ export function SettingsPortsFeature({ service }: { service: Application | Conta
 }
 
 export function PageSettingsPortsFeature() {
-  const { applicationId = '', environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', applicationId = '', environmentId = '' } = useParams()
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
   return match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => <SettingsPortsFeature service={s} />)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => (
+      <SettingsPortsFeature organizationId={organizationId} projectId={projectId} service={s} />
+    ))
     .otherwise(() => null)
 }
 

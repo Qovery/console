@@ -4,16 +4,19 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateCustomDomain, useEditCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { type Application, type Container, type Helm } from '@qovery/domains/services/data-access'
 import { useLinks } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
+  organizationId: string
+  projectId: string
   service: Application | Container | Helm
   customDomain?: CustomDomain
   onClose: () => void
 }
 
-export function CrudModalFeature({ customDomain, service, onClose }: CrudModalFeatureProps) {
+export function CrudModalFeature({ organizationId, projectId, customDomain, service, onClose }: CrudModalFeatureProps) {
   const methods = useForm<CustomDomainRequest>({
     defaultValues: {
       domain: customDomain ? customDomain.domain : '',
@@ -24,9 +27,11 @@ export function CrudModalFeature({ customDomain, service, onClose }: CrudModalFe
   })
   const { mutateAsync: editCustomDomain, isLoading: isLoadingEditCustomDomain } = useEditCustomDomain({
     environmentId: service.environment.id,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) + DEPLOYMENT_LOGS_URL(service.id),
   })
   const { mutateAsync: createCustomDomain, isLoading: isLoadingCreateCustomDomain } = useCreateCustomDomain({
     environmentId: service.environment.id,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) + DEPLOYMENT_LOGS_URL(service.id),
   })
 
   const { enableAlertClickOutside } = useModal()

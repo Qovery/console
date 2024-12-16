@@ -3,9 +3,17 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useDeployService } from '../use-deploy-service/use-deploy-service'
 
-export function useEditService({ environmentId, silently = false }: { environmentId: string; silently?: boolean }) {
+export function useEditService({
+  environmentId,
+  silently = false,
+  logsLink,
+}: {
+  environmentId: string
+  silently?: boolean
+  logsLink?: string
+}) {
   const queryClient = useQueryClient()
-  const { mutate: deployService } = useDeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({ environmentId, logsLink })
 
   return useMutation(mutations.editService, {
     onSuccess(response, { payload, serviceId }) {

@@ -19,6 +19,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { buildGitRepoUrl, joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -204,14 +205,17 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
 }
 
 export function PageSettingsGeneralFeature() {
-  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
 
-  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
+    environmentId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service?.id),
+  })
 
   const helmRepository = match(service)
     .with({ serviceType: 'HELM', source: P.when(isHelmRepositorySource) }, ({ source }) => source.repository)

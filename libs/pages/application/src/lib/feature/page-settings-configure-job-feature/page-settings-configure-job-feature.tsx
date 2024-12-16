@@ -3,14 +3,18 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsConfigureJob from '../../ui/page-settings-configure-job/page-settings-configure-job'
 
 export function PageSettingsConfigureJobFeature() {
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const { data: service } = useService({ serviceId: applicationId, serviceType: 'JOB' })
-  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
+    environmentId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service?.id),
+  })
 
   const schedule = match(service)
     .with({ job_type: 'CRON' }, (s) => {

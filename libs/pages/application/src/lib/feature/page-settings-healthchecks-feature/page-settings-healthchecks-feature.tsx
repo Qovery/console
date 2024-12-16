@@ -9,7 +9,13 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type HealthcheckData } from '@qovery/shared/interfaces'
-import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import {
+  APPLICATION_SETTINGS_RESOURCES_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
+} from '@qovery/shared/routes'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
@@ -17,7 +23,10 @@ export function SettingsHealthchecksFeature({ service }: { service: Application 
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const { data: environment } = useEnvironment({ environmentId })
-  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
+    environmentId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id),
+  })
 
   const methods = useForm({
     mode: 'onChange',

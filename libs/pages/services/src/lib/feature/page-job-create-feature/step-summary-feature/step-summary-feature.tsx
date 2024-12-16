@@ -183,7 +183,9 @@ export function StepSummaryFeature() {
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createService } = useCreateService({ organizationId })
-  const { mutate: deployService } = useDeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({
+    environmentId,
+  })
 
   const gotoGlobalInformations = () => {
     navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)

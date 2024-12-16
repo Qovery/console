@@ -12,6 +12,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
+import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
@@ -45,10 +46,13 @@ function DockerfileSettingsFromTemplate({
 }
 
 export function PageSettingsDockerfileFeature() {
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const { data: service } = useService({ serviceId: applicationId, serviceType: 'JOB' })
-  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({ environmentId })
+  const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
+    environmentId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId),
+  })
   const { mutateAsync: mutateCheckDockerfile, isLoading: isLoadingCheckDockerfile } = useCheckDockerfile()
 
   const dockerfileForm = useForm<DockerfileSettingsData>({

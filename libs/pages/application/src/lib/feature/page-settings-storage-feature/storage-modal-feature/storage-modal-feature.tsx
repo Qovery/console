@@ -3,18 +3,28 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { type Application, type Container } from '@qovery/domains/services/data-access'
 import { useEditService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import StorageModal from '../../../ui/page-settings-storage/storage-modal/storage-modal'
 
 export interface StorageModalFeatureProps {
+  organizationId: string
+  projectId: string
   service: Application | Container
   onClose: () => void
   storage?: ServiceStorageStorageInner
 }
 
-export function StorageModalFeature({ service, storage, onClose }: StorageModalFeatureProps) {
+export function StorageModalFeature({
+  organizationId,
+  projectId,
+  service,
+  storage,
+  onClose,
+}: StorageModalFeatureProps) {
   const { mutateAsync: editService, isLoading: isLoadingEditService } = useEditService({
     environmentId: service.environment.id,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) + DEPLOYMENT_LOGS_URL(service.id),
   })
 
   const methods = useForm({
