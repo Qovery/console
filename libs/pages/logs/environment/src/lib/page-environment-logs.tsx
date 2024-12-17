@@ -69,6 +69,10 @@ export function PageEnvironmentLogs() {
     ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId'),
     location.pathname
   )
+  const matchServiceLogs = matchPath<'serviceId', string>(
+    ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(':serviceId'),
+    location.pathname
+  )
 
   const deploymentVersionId =
     matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
@@ -134,7 +138,7 @@ export function PageEnvironmentLogs() {
   const lastDeploymentId = environmentStatus.last_deployment_id ?? ''
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full flex-col">
       <ServiceStageIdsProvider>
         <Routes>
           <Route

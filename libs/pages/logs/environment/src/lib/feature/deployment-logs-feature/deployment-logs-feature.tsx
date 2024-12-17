@@ -6,9 +6,13 @@ import {
   type Status,
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { ListDeploymentLogs, SidebarPodStatuses } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 
@@ -96,9 +100,11 @@ export function DeploymentLogsFeature({
   environmentStatus,
   deploymentStages,
 }: DeploymentLogsFeatureProps) {
-  const { serviceId = '' } = useParams()
+  const { serviceId = '', versionId } = useParams()
+  const navigate = useNavigate()
 
   const { data: service, isFetched: isFetchedService } = useService({ environmentId: environment.id, serviceId })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading...'}`)
 
@@ -115,31 +121,73 @@ export function DeploymentLogsFeature({
 
   if (!serviceStatus) return null
 
+  const latestDeployment =
+    Array.isArray(environmentDeploymentHistory) && environmentDeploymentHistory.length > 0
+      ? environmentDeploymentHistory[0]
+      : null
+
+  const lastDeploymentStatus = latestDeployment?.status ?? null
+  const lastDeploymentExecutionId = latestDeployment?.identifier?.execution_id ?? ''
+
+  const showBannerNew =
+    versionId !== lastDeploymentExecutionId &&
+    match(lastDeploymentStatus)
+      .with(
+        'DEPLOYING',
+        'DELETING',
+        'RESTARTING',
+        'BUILDING',
+        'STOP_QUEUED',
+        'CANCELING',
+        'QUEUED',
+        'DELETE_QUEUED',
+        'DEPLOYMENT_QUEUED',
+        () => true
+      )
+      .otherwise(() => false)
+
   return (
-    <div className="h-full w-full bg-neutral-900">
-      <SidebarPodStatuses
-        organizationId={environment.organization.id}
-        projectId={environment.project.id}
-        service={service}
-      >
-        <ListDeploymentLogs
-          environment={environment}
-          serviceStatus={serviceStatus}
-          environmentStatus={environmentStatus}
-          stage={stageFromServiceId}
-        />
-      </SidebarPodStatuses>
-      {service && environment && (
-        <WebSocketListenerMemo
-          organizationId={environment.organization.id}
-          clusterId={environment.cluster_id}
-          projectId={environment.project.id}
-          environmentId={environment.id}
-          serviceId={service.id}
-          serviceType={service.serviceType}
-        />
+    <>
+      {showBannerNew && (
+        <Banner
+          color="purple"
+          buttonLabel="See latest"
+          buttonIconRight="arrow-right"
+          onClickButton={() =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+                DEPLOYMENT_LOGS_VERSION_URL(serviceId, lastDeploymentExecutionId)
+            )
+          }
+        >
+          A new deployment has been initiated
+        </Banner>
       )}
-    </div>
+      <div className="h-full w-full bg-neutral-900">
+        <SidebarPodStatuses
+          organizationId={environment.organization.id}
+          projectId={environment.project.id}
+          service={service}
+        >
+          <ListDeploymentLogs
+            environment={environment}
+            serviceStatus={serviceStatus}
+            environmentStatus={environmentStatus}
+            stage={stageFromServiceId}
+          />
+        </SidebarPodStatuses>
+        {service && environment && (
+          <WebSocketListenerMemo
+            organizationId={environment.organization.id}
+            clusterId={environment.cluster_id}
+            projectId={environment.project.id}
+            environmentId={environment.id}
+            serviceId={service.id}
+            serviceType={service.serviceType}
+          />
+        )}
+      </div>
+    </>
   )
 }
 

@@ -7,15 +7,21 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Fragment } from 'react/jsx-runtime'
 import { match } from 'ts-pattern'
 import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
-import { useDeploymentHistoryExecutionId } from '@qovery/domains/environments/feature'
+import { useDeploymentHistory, useDeploymentHistoryExecutionId } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import {
+  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
+  ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
+} from '@qovery/shared/routes'
+import {
+  Banner,
   Icon,
   Indicator,
   LoaderSpinner,
@@ -61,12 +67,14 @@ export function EnvironmentStagesFeature({
   const executionId = environmentStatus?.last_deployment_id
 
   const { data: services = [] } = useServices({ environmentId: environment.id })
+  const { data: listDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
   const { data: deploymentHistory } = useDeploymentHistoryExecutionId({
     environmentId: environment.id,
     executionId,
   })
 
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
+  const navigate = useNavigate()
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService
   const getServiceFromDeploymentHistoryId = (id: string) =>
@@ -82,8 +90,46 @@ export function EnvironmentStagesFeature({
     )
   }
 
+  const latestDeployment =
+    Array.isArray(listDeploymentHistory) && listDeploymentHistory.length > 0 ? listDeploymentHistory[0] : null
+
+  const lastDeploymentStatus = latestDeployment?.status ?? null
+  const lastDeploymentExecutionId = latestDeployment?.identifier?.execution_id ?? ''
+
+  const showBannerNew =
+    deploymentHistory?.identifier.execution_id !== lastDeploymentExecutionId &&
+    match(lastDeploymentStatus)
+      .with(
+        'DEPLOYING',
+        'DELETING',
+        'RESTARTING',
+        'BUILDING',
+        'STOP_QUEUED',
+        'CANCELING',
+        'QUEUED',
+        'DELETE_QUEUED',
+        'DEPLOYMENT_QUEUED',
+        () => true
+      )
+      .otherwise(() => false)
+
   return (
     <div className="h-full w-full bg-neutral-800">
+      {showBannerNew && (
+        <Banner
+          color="purple"
+          buttonLabel="See latest"
+          buttonIconRight="arrow-right"
+          onClickButton={() =>
+            navigate(
+              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+                ENVIRONMENT_STAGES_URL(lastDeploymentExecutionId)
+            )
+          }
+        >
+          A new deployment has been initiated
+        </Banner>
+      )}
       <EnvironmentStages
         environment={environment}
         environmentStatus={environmentStatus}
