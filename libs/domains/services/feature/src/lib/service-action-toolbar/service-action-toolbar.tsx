@@ -7,7 +7,7 @@ import {
   StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
   type AnyService,
@@ -98,6 +98,7 @@ function MenuManageDeployment({
     environmentId: environment.id,
     logsLink,
   })
+
   const { mutate: restartService } = useRestartService({ environmentId: environment.id, logsLink })
   const { mutate: stopService } = useStopService({ environmentId: environment.id, logsLink })
   const { mutateAsync: cancelBuild } = useCancelDeploymentService({
@@ -503,13 +504,11 @@ function MenuManageDeployment({
 
 function MenuOtherActions({
   state,
-  organizationId,
   environment,
   service,
   environmentLogsLink,
 }: {
   state: StateEnum
-  organizationId: string
   environment: Environment
   service: AnyService
   environmentLogsLink: string
@@ -517,6 +516,7 @@ function MenuOtherActions({
   const {
     id: environmentId,
     project: { id: projectId },
+    organization: { id: organizationId },
   } = environment
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -674,15 +674,14 @@ export function ServiceActionToolbar({
   variant?: ActionToolbarVariant
   shellAction?: () => void
 }) {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { pathname } = useLocation()
-  const { data: service } = useService({ environmentId, serviceId })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
 
   if (!service || !deploymentStatus)
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 184 : 67} />
 
-  const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
+  const environmentLogsLink = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
 
   return (
     <ActionToolbar.Root>
@@ -711,7 +710,6 @@ export function ServiceActionToolbar({
           )}
           <MenuOtherActions
             state={deploymentStatus.state}
-            organizationId={organizationId}
             environment={environment}
             service={service}
             environmentLogsLink={environmentLogsLink}
