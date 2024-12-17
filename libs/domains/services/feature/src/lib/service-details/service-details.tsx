@@ -1,5 +1,6 @@
 import { type ApplicationGitRepository, type Credentials } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef } from 'react'
+import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
 import {
@@ -48,6 +49,8 @@ function GitRepository({
   service: Application | Job | Helm
   gitRepository: ApplicationGitRepository
 }) {
+  const { organizationId = '', projectId = '' } = useParams()
+
   return (
     <>
       {gitRepository.url && gitRepository.name && (
@@ -94,7 +97,12 @@ function GitRepository({
       <Dd>
         <div className="inline-flex items-center gap-2">
           <LastCommitAuthor gitRepository={gitRepository} serviceId={service.id} serviceType={service.serviceType} />
-          <LastCommit gitRepository={gitRepository} service={service} />
+          <LastCommit
+            organizationId={organizationId}
+            projectId={projectId}
+            gitRepository={gitRepository}
+            service={service}
+          />
         </div>
       </Dd>
     </>

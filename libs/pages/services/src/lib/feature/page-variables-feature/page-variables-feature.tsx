@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { VariableList } from '@qovery/domains/variables/feature'
-import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 
 export function PageVariablesFeature() {
@@ -9,7 +9,7 @@ export function PageVariablesFeature() {
 
   const { mutate: deployEnvironment } = useDeployEnvironment({
     projectId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId),
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
   })
 
   const toasterCallback = () => {

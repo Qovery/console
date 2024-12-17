@@ -1,6 +1,6 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
-import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
   DropdownMenu,
@@ -42,9 +42,19 @@ function MenuManageDeployment({
 }) {
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const { mutate: deployEnvironment } = useDeployEnvironment({ projectId: environment.project.id })
-  const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id })
-  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({ projectId: environment.project.id })
+
+  const logsLink =
+    ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) + ENVIRONMENT_STAGES_URL()
+
+  const { mutate: deployEnvironment } = useDeployEnvironment({
+    projectId: environment.project.id,
+    logsLink,
+  })
+  const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id, logsLink })
+  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+    projectId: environment.project.id,
+    logsLink,
+  })
 
   const mutationDeploy = () =>
     deployEnvironment({

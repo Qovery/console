@@ -4,11 +4,24 @@ import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAccessModal, ServiceLinksPopover, useDeployService, useService } from '@qovery/domains/services/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar } from '@qovery/domains/variables/feature'
-import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
+import {
+  APPLICATION_URL,
+  APPLICATION_VARIABLES_URL,
+  DEPLOYMENT_LOGS_URL,
+  ENVIRONMENT_LOGS_URL,
+} from '@qovery/shared/routes'
 import { Button, Icon, Tabs, type TabsItem, toast, useModal } from '@qovery/shared/ui'
 import ImportEnvironmentVariableModalFeature from '../import-environment-variable-modal-feature/import-environment-variable-modal-feature'
 
-function ContentRightEnvVariable({ projectId, service }: { projectId: string; service: AnyService }) {
+function ContentRightEnvVariable({
+  organizationId,
+  projectId,
+  service,
+}: {
+  organizationId: string
+  projectId: string
+  service: AnyService
+}) {
   const {
     serviceType,
     id: serviceId,
@@ -22,7 +35,10 @@ function ContentRightEnvVariable({ projectId, service }: { projectId: string; se
     .otherwise(() => undefined)
 
   const { openModal, closeModal } = useModal()
-  const { mutate: deployService } = useDeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({
+    environmentId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) + DEPLOYMENT_LOGS_URL(serviceId),
+  })
   const toasterCallback = () => {
     deployService({
       serviceId,
@@ -91,7 +107,7 @@ export function TabsFeature({ items }: TabsFeatureProps) {
       contentRight={
         <div className="px-5">
           {matchEnvVariableRoute && service ? (
-            <ContentRightEnvVariable service={service} projectId={projectId} />
+            <ContentRightEnvVariable service={service} organizationId={organizationId} projectId={projectId} />
           ) : (
             <div className="flex gap-3">
               <ServiceLinksPopover

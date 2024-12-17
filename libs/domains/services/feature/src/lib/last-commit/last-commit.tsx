@@ -1,6 +1,7 @@
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent } from 'react'
 import { type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, CopyToClipboard, Icon, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
@@ -8,16 +9,21 @@ import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-las
 import SelectCommitModal from '../select-commit-modal/select-commit-modal'
 
 export interface LastCommitProps {
+  organizationId: string
+  projectId: string
   className?: string
   service: Pick<Application | Job | Helm, 'id' | 'name' | 'serviceType' | 'environment'>
   gitRepository: ApplicationGitRepository
 }
 
-export function LastCommit({ className, service, gitRepository }: LastCommitProps) {
+export function LastCommit({ organizationId, projectId, className, service, gitRepository }: LastCommitProps) {
   const {
     data: { deployedCommit, delta },
   } = useLastDeployedCommit({ gitRepository, serviceId: service.id, serviceType: service.serviceType })
-  const { mutate: deployService } = useDeployService({ environmentId: service.environment.id })
+  const { mutate: deployService } = useDeployService({
+    environmentId: service.environment.id,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) + DEPLOYMENT_LOGS_URL(service.id),
+  })
 
   const { openModal, closeModal } = useModal()
 

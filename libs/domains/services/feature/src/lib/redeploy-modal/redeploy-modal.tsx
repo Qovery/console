@@ -1,18 +1,22 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { InputRadio, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useRestartService } from '../hooks/use-restart-service/use-restart-service'
 
 export interface RedeployModalProps {
+  organizationId: string
+  projectId: string
   service: AnyService
 }
 
-export function RedeployModal({ service }: RedeployModalProps) {
+export function RedeployModal({ service, organizationId, projectId }: RedeployModalProps) {
   const { closeModal } = useModal()
 
   const { mutateAsync: deployService, isLoading: isLoadingDeployService } = useDeployService({
     environmentId: service.environment.id,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) + DEPLOYMENT_LOGS_URL(service.id),
   })
   const { mutateAsync: restartService, isLoading: isLoadingRestartService } = useRestartService({
     environmentId: service.environment.id,

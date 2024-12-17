@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeployService, useService } from '@qovery/domains/services/feature'
 import { VariableList } from '@qovery/domains/variables/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -22,7 +23,10 @@ export function PageVariablesFeature() {
     .with('HELM', () => APIVariableScopeEnum.HELM)
     .otherwise(() => undefined)
 
-  const { mutate: deployService } = useDeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({
+    environmentId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service?.id),
+  })
 
   const toasterCallback = () => {
     if (!service) {

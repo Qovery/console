@@ -31,14 +31,15 @@ function RedirectDeploymentLogs({
   organizationId,
   projectId,
   environmentId,
-  lastDeploymentId,
 }: {
   organizationId: string
   projectId: string
   environmentId: string
-  lastDeploymentId: string
 }) {
   const { serviceId = '' } = useParams()
+  const { data: deploymentHistory } = useDeploymentHistory({ environmentId })
+  const lastDeploymentId = deploymentHistory?.[0].identifier.execution_id ?? ''
+
   return (
     <Navigate
       to={
@@ -69,11 +70,6 @@ export function PageEnvironmentLogs() {
     ENVIRONMENT_LOGS_URL() + ENVIRONMENT_PRE_CHECK_LOGS_URL(':versionId'),
     location.pathname
   )
-  const matchServiceLogs = matchPath<'serviceId', string>(
-    ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(':serviceId'),
-    location.pathname
-  )
-
   const deploymentVersionId =
     matchDeploymentVersion?.params.versionId !== ':versionId' ? matchDeploymentVersion?.params.versionId : undefined
 
@@ -135,8 +131,6 @@ export function PageEnvironmentLogs() {
       </div>
     )
 
-  const lastDeploymentId = environmentStatus.last_deployment_id ?? ''
-
   return (
     <div className="flex h-full flex-col">
       <ServiceStageIdsProvider>
@@ -185,7 +179,6 @@ export function PageEnvironmentLogs() {
                 organizationId={organizationId}
                 projectId={projectId}
                 environmentId={environmentId}
-                lastDeploymentId={lastDeploymentId}
               />
             }
           />

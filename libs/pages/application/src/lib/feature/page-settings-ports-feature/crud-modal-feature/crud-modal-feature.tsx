@@ -16,6 +16,7 @@ import { type AnyService, type Application, type Container } from '@qovery/domai
 import { useEditService } from '@qovery/domains/services/feature'
 import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -139,6 +140,9 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
   })
   const { mutateAsync: editService, isLoading: isLoadingEditService } = useEditService({
     environmentId: service.environment?.id || '',
+    logsLink:
+      ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, service.environment?.id) +
+      DEPLOYMENT_LOGS_URL(service.id),
   })
 
   const livenessType = service.healthchecks?.liveness_probe?.type

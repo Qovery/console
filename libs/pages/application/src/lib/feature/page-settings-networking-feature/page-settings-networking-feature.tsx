@@ -3,6 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { NetworkingSetting } from '@qovery/domains/service-helm/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 interface HelmNetworkingData {
@@ -10,9 +11,12 @@ interface HelmNetworkingData {
 }
 
 export function PageSettingsNetworkingFeature() {
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useService({ serviceId: applicationId, serviceType: 'HELM' })
-  const { mutate: editService } = useEditService({ environmentId })
+  const { mutate: editService } = useEditService({
+    environmentId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service?.id),
+  })
 
   const methods = useForm<HelmNetworkingData>({
     mode: 'onChange',

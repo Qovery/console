@@ -405,7 +405,12 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   serviceType={service.serviceType}
                 />
                 <div className="flex flex-col gap-1">
-                  <LastCommit gitRepository={gitRepository} service={service} />
+                  <LastCommit
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    gitRepository={gitRepository}
+                    service={service}
+                  />
                   {gitRepository.branch && gitRepository.url && (
                     <span className="inline-block">
                       <ExternalLink

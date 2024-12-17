@@ -7,7 +7,7 @@ import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-do
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
 export function PageSettingsDomainsFeature() {
-  const { applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', applicationId = '' } = useParams()
 
   const { data: service } = useService({ serviceId: applicationId })
   const { data: customDomains, isLoading: isLoadingCustomDomains } = useCustomDomains({
@@ -38,12 +38,27 @@ export function PageSettingsDomainsFeature() {
         isFetchingCheckedCustomDomains={isFetchingCheckedCustomDomains}
         onAddDomain={() => {
           openModal({
-            content: <CrudModalFeature onClose={closeModal} service={s} />,
+            content: (
+              <CrudModalFeature
+                organizationId={organizationId}
+                projectId={projectId}
+                onClose={closeModal}
+                service={s}
+              />
+            ),
           })
         }}
         onEdit={(customDomain) => {
           openModal({
-            content: <CrudModalFeature onClose={closeModal} service={s} customDomain={customDomain} />,
+            content: (
+              <CrudModalFeature
+                organizationId={organizationId}
+                projectId={projectId}
+                onClose={closeModal}
+                service={s}
+                customDomain={customDomain}
+              />
+            ),
           })
         }}
         onDelete={(customDomain) => {

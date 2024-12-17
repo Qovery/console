@@ -1,18 +1,23 @@
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
 import StorageModalFeature from './storage-modal-feature/storage-modal-feature'
 
 export function PageSettingsStorageFeature() {
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
   const { data: service } = useService({ environmentId: environmentId, serviceId: applicationId })
-  const { mutateAsync: editService } = useEditService({ environmentId })
+  const { mutateAsync: editService } = useEditService({
+    environmentId,
+    logsLink:
+      ENVIRONMENT_LOGS_URL(organizationId, projectId, service?.environment.id) + DEPLOYMENT_LOGS_URL(service?.id),
+  })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
 
   return match(service)
@@ -51,12 +56,27 @@ export function PageSettingsStorageFeature() {
             }}
             onEdit={(storage) => {
               openModal({
-                content: <StorageModalFeature onClose={closeModal} storage={storage} service={service} />,
+                content: (
+                  <StorageModalFeature
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    onClose={closeModal}
+                    storage={storage}
+                    service={service}
+                  />
+                ),
               })
             }}
             onAddStorage={() => {
               openModal({
-                content: <StorageModalFeature onClose={closeModal} service={service} />,
+                content: (
+                  <StorageModalFeature
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    onClose={closeModal}
+                    service={service}
+                  />
+                ),
               })
             }}
           />
