@@ -174,31 +174,141 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
 
   function HeaderLogsComponent() {
     return (
-      <HeaderLogs
-        type="SERVICE"
-        environment={environment}
-        serviceId={serviceId ?? ''}
-        serviceStatus={serviceStatus}
-        environmentStatus={environmentStatus}
-      >
-        <Link
-          as="button"
-          className="gap-1.5"
-          variant="surface"
-          to={
-            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-            DEPLOYMENT_LOGS_URL(serviceId)
-          }
+      <>
+        <HeaderLogs
+          type="SERVICE"
+          environment={environment}
+          serviceId={serviceId ?? ''}
+          serviceStatus={serviceStatus}
+          environmentStatus={environmentStatus}
         >
-          {match(service)
-            .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-            .otherwise(() => true) ? (
-            <ServiceStateChip mode="deployment" environmentId={environment.id} serviceId={serviceId} />
-          ) : null}
-          Go to latest deployment
-          <Icon iconName="arrow-right" />
-        </Link>
-      </HeaderLogs>
+          <Link
+            as="button"
+            className="gap-1.5"
+            variant="surface"
+            to={
+              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+              DEPLOYMENT_LOGS_URL(serviceId)
+            }
+          >
+            {match(service)
+              .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
+              .otherwise(() => true) ? (
+              <ServiceStateChip mode="deployment" environmentId={environment.id} serviceId={serviceId} />
+            ) : null}
+            Go to latest deployment
+            <Icon iconName="arrow-right" />
+          </Link>
+        </HeaderLogs>
+        <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
+          <div className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="surface"
+              color="neutral"
+              className="gap-1.5"
+              onClick={() => setEnabledNginx(!enabledNginx)}
+            >
+              <Tooltip
+                side="top"
+                content={
+                  <ExternalLink
+                    size="xs"
+                    href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
+                  >
+                    Learn more about NGINX log format
+                  </ExternalLink>
+                }
+              >
+                <span>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </span>
+              </Tooltip>
+              Nginx Logs
+              <Icon iconName={enabledNginx ? 'eye-slash' : 'eye'} iconStyle="regular" />
+            </Button>
+            {table.getState().columnFilters.map((c) => (
+              <div key={c.id} className="flex items-center gap-2">
+                <span className="text-xs text-neutral-250">
+                  {match(c.id)
+                    .with('pod_name', () => 'Podname')
+                    .with('version', () => 'Version')
+                    .with('container_name', () => 'Container')
+                    .otherwise(() => '')}
+                  :{' '}
+                </span>
+                <Button
+                  key={c.id}
+                  type="button"
+                  variant="surface"
+                  color="neutral"
+                  className="gap-1.5"
+                  radius="full"
+                  onClick={() => {
+                    searchParams.delete(c.id)
+                    setSearchParams(searchParams)
+                    setColumnFilters((prevFilters) => prevFilters.filter((f) => f.id !== c.id))
+                  }}
+                >
+                  <span>{c.value?.toString()}</span>
+                  <Icon iconName="xmark" iconStyle="regular" />
+                </Button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-3">
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <Button size="sm" variant="surface" color="neutral" className="gap-1.5">
+                  Time format
+                  <Icon iconName="chevron-down" iconStyle="regular" />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item
+                  className="gap-2"
+                  onSelect={() =>
+                    setUpdateTimeContext({
+                      utc: false,
+                    })
+                  }
+                >
+                  <Icon
+                    iconName="check"
+                    iconStyle="regular"
+                    className={`text-green-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+                  />
+                  Local browser time
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  className="gap-2"
+                  onSelect={() =>
+                    setUpdateTimeContext({
+                      utc: true,
+                    })
+                  }
+                >
+                  <Icon
+                    iconName="check"
+                    iconStyle="regular"
+                    className={`text-green-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+                  />
+                  UTC
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+            <Button
+              onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
+              size="sm"
+              variant="surface"
+              color="neutral"
+              className="w-7 justify-center"
+            >
+              <Icon iconName="file-arrow-down" iconStyle="regular" />
+            </Button>
+          </div>
+        </div>
+      </>
     )
   }
 
@@ -208,12 +318,14 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       <div className="w-full p-1">
         <div className="h-[calc(100vh-72px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
-          <div className="h-[calc(100vh-136px)] border-r border-neutral-500 bg-neutral-600 pt-11">
-            <ServiceLogsPlaceholder
-              serviceName={service?.name}
-              itemsLength={logs.length}
-              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
-            />
+          <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
+            <div className="flex h-full flex-col items-center justify-center">
+              <ServiceLogsPlaceholder
+                serviceName={service?.name}
+                itemsLength={logs.length}
+                databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -230,114 +342,6 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
         <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
           <HeaderLogsComponent />
-          <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
-            <div className="flex items-center gap-3">
-              <Button
-                type="button"
-                variant="surface"
-                color="neutral"
-                className="gap-1.5"
-                onClick={() => setEnabledNginx(!enabledNginx)}
-              >
-                <Tooltip
-                  side="top"
-                  content={
-                    <ExternalLink
-                      size="xs"
-                      href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/"
-                    >
-                      Learn more about NGINX log format
-                    </ExternalLink>
-                  }
-                >
-                  <span>
-                    <Icon iconName="circle-info" iconStyle="regular" />
-                  </span>
-                </Tooltip>
-                Nginx Logs
-                <Icon iconName={enabledNginx ? 'eye-slash' : 'eye'} iconStyle="regular" />
-              </Button>
-              {table.getState().columnFilters.map((c) => (
-                <div key={c.id} className="flex items-center gap-2">
-                  <span className="text-xs text-neutral-250">
-                    {match(c.id)
-                      .with('pod_name', () => 'Podname')
-                      .with('version', () => 'Version')
-                      .with('container_name', () => 'Container')
-                      .otherwise(() => '')}
-                    :{' '}
-                  </span>
-                  <Button
-                    key={c.id}
-                    type="button"
-                    variant="surface"
-                    color="neutral"
-                    className="gap-1.5"
-                    radius="full"
-                    onClick={() => {
-                      searchParams.delete(c.id)
-                      setSearchParams(searchParams)
-                      setColumnFilters((prevFilters) => prevFilters.filter((f) => f.id !== c.id))
-                    }}
-                  >
-                    <span>{c.value?.toString()}</span>
-                    <Icon iconName="xmark" iconStyle="regular" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <div className="flex gap-3">
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button size="sm" variant="surface" color="neutral" className="gap-1.5">
-                    Time format
-                    <Icon iconName="chevron-down" iconStyle="regular" />
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item
-                    className="gap-2"
-                    onSelect={() =>
-                      setUpdateTimeContext({
-                        utc: false,
-                      })
-                    }
-                  >
-                    <Icon
-                      iconName="check"
-                      iconStyle="regular"
-                      className={`text-green-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
-                    />
-                    Local browser time
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    className="gap-2"
-                    onSelect={() =>
-                      setUpdateTimeContext({
-                        utc: true,
-                      })
-                    }
-                  >
-                    <Icon
-                      iconName="check"
-                      iconStyle="regular"
-                      className={`text-green-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
-                    />
-                    UTC
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-              <Button
-                onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-                size="sm"
-                variant="surface"
-                color="neutral"
-                className="w-7 justify-center"
-              >
-                <Icon iconName="file-arrow-down" iconStyle="regular" />
-              </Button>
-            </div>
-          </div>
           <div
             className="h-[calc(100vh-160px)] w-full overflow-y-scroll pb-3"
             ref={refScrollSection}

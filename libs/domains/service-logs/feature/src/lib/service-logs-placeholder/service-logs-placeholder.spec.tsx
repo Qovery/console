@@ -8,7 +8,7 @@ describe('ServiceLogsPlaceholder', () => {
       <ServiceLogsPlaceholder serviceName="my-app" databaseMode={DatabaseModeEnum.CONTAINER} itemsLength={0} />
     )
 
-    expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    expect(screen.getByText('Service logs are loading…')).toBeInTheDocument()
   })
 
   it('render default placeholder', () => {

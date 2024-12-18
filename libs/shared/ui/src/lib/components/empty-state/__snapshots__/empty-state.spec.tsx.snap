@@ -11,11 +11,16 @@ exports[`EmptyState should match snapshot 1`] = `
       >
         <img
           alt="Event placeholder"
-          class="user-none pointer-events-none w-[170px]"
+          class="user-none pointer-events-none w-[170px] dark:hidden"
           src="/assets/images/event-placeholder-light.svg"
         />
+        <img
+          alt="Event placeholder"
+          class="user-none pointer-events-none hidden w-[170px] dark:block"
+          src="/assets/images/event-placeholder-dark.svg"
+        />
         <p
-          class="font-medium text-neutral-400"
+          class="text-neutral-400 dark:text-neutral-300"
         >
           No Storage are set
         </p>

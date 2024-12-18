@@ -50,6 +50,7 @@ export * from './lib/components/buttons/button-icon-action/button-icon-action-el
 export * from './lib/components/menu/menu'
 export * from './lib/components/menu/menu-item/menu-item'
 export * from './lib/components/loader-spinner/loader-spinner'
+export * from './lib/components/loader-dots/loader-dots'
 export * from './lib/components/modal/modal'
 export * from './lib/components/modal/modal-root'
 export * from './lib/components/modal/use-modal/use-modal'

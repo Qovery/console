@@ -1,16 +1,26 @@
 import { DatabaseModeEnum } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Icon, Link, LoaderSpinner } from '@qovery/shared/ui'
+import { Icon, Link, LoaderDots } from '@qovery/shared/ui'
 import { useNetworkState } from '@qovery/shared/util-hooks'
 
-export function LoaderPlaceholder() {
+export function LoaderPlaceholder({
+  title = 'Service logs are loading…',
+  description,
+}: {
+  title?: ReactNode
+  description?: ReactNode
+}) {
   return (
-    <div className="flex w-full justify-center text-center">
-      <LoaderSpinner className="h-6 w-6" theme="dark" />
+    <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
+      <LoaderDots />
+      <div className="flex flex-col gap-3">
+        <p className="text-neutral-300">{title}</p>
+        {description && <span className="text-sm text-neutral-350">{description}</span>}
+      </div>
     </div>
   )
 }
@@ -43,19 +53,15 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
         deploymentState: P.when((state) => state !== 'READY' && state !== 'STOPPED'),
       },
       () => (
-        <div>
-          <LoaderPlaceholder />
-          <div className="mt-4 flex flex-col gap-1">
-            {showPlaceholder && (
-              <p className="text-center text-sm font-medium text-neutral-300">
-                Processing is taking more than 10s <br /> No logs available, please check the service configuration
-              </p>
-            )}
-            {effectiveType !== undefined && effectiveType !== '4g' && (
-              <p className="text-center text-sm font-medium text-neutral-350">Your connection is slow.</p>
-            )}
-          </div>
-        </div>
+        <>
+          <LoaderPlaceholder
+            title={showPlaceholder ? 'Processing is taking more than 10s' : 'Service logs are loading…'}
+            description={showPlaceholder && 'No logs available, please check the service configuration.'}
+          />
+          {effectiveType !== undefined && effectiveType !== '4g' && (
+            <p className="mt-0.5 text-center text-sm text-neutral-350">Your connection is slow</p>
+          )}
+        </>
       )
     )
     .with(
@@ -65,37 +71,33 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
       },
       () =>
         showPlaceholder ? (
-          <div className="text-center">
-            <p className="mb-1 font-medium text-neutral-50">
-              No logs available for <span className="text-brand-400">{serviceName}</span>.
-            </p>
-            <p className="mb-4 text-sm font-normal text-neutral-300">Please check if the service is up and running.</p>
+          <>
+            <p className="mb-1 text-neutral-300">No service logs available for {serviceName}</p>
+            <p className="mb-4 text-sm text-neutral-350">Please check if the service is up and running</p>
             <Link
               as="button"
               size="sm"
+              variant="surface"
               color="neutral"
               to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
             >
               Go to latest deployment
               <Icon iconName="arrow-right" className="ml-1" />
             </Link>
-          </div>
+          </>
         ) : (
           <LoaderPlaceholder />
         )
     )
     .otherwise(() => (
-      <div className="text-center">
-        <p className="mb-1 font-medium text-neutral-50">
-          No logs are available for <span className="text-brand-400">{serviceName}</span>.
-        </p>
-
+      <>
+        <p className="mb-1 text-neutral-50">No logs are available for {serviceName}.</p>
         {databaseMode === DatabaseModeEnum.MANAGED && (
-          <p className="text-sm font-normal text-neutral-300">
+          <p className="text-sm text-neutral-300">
             Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider console.
           </p>
         )}
-      </div>
+      </>
     ))
 }
 

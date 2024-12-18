@@ -273,6 +273,7 @@ module.exports = {
         fadeout: `0.2s ${easingFunctions['ease-out-quad']} 0s fadeout both`,
 
         'ping-small': 'pingSmall 1s linear infinite',
+        'loader-dots': 'loaderDots 2s linear infinite',
       },
       keyframes: {
         actionBarFadeIn: {
@@ -316,6 +317,44 @@ module.exports = {
         backgroundLinear: {
           '0%': { backgroundPosition: '0% 50%' },
           '100%': { backgroundPosition: '200% 50%' },
+        },
+        loaderDots: {
+          '0%': {
+            boxShadow:
+              '0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+          },
+          '12%': {
+            boxShadow:
+              '100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+          },
+          '25%': {
+            boxShadow:
+              '110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+          },
+          '36%': {
+            boxShadow:
+              '120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0)',
+          },
+          '50%': {
+            boxShadow:
+              '130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1)',
+          },
+          '62%': {
+            boxShadow:
+              '200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1)',
+          },
+          '75%': {
+            boxShadow:
+              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1)',
+          },
+          '87%': {
+            boxShadow:
+              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1)',
+          },
+          '100%': {
+            boxShadow:
+              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0)',
+          },
         },
         ...slideEntrances(),
         ...slideExits(),
