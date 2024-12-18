@@ -184,7 +184,7 @@ export function DeploymentLogsPlaceholder({
       () => <LoaderPlaceholder />
     )
     .when(
-      (state) => !state.serviceStatus?.steps && state.serviceState === 'DEPLOYMENT_QUEUED',
+      (state) => !state.serviceStatus?.steps && state.serviceState?.includes('QUEUED'),
       () => (
         <LoaderPlaceholder
           title="The service is in the queue…"

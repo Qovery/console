@@ -145,7 +145,7 @@ describe('DeploymentLogsPlaceholder', () => {
         environment={mockEnvironment}
         serviceStatus={{
           id: '0',
-          state: 'CANCEL_QUEUED',
+          state: 'CANCELED',
           service_deployment_status: 'OUT_OF_DATE',
           is_part_last_deployment: true,
         }}
