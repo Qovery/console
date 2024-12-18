@@ -73,9 +73,9 @@ describe('AdvancedSettings', () => {
     if (input) {
       await userEvent.type(input, '79')
       await userEvent.clear(input)
-
-      expect(screen.getByTestId('submit-button')).toBeDisabled()
     }
+
+    expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
 
   it('field with empty defaultValue should not be required', async () => {
@@ -90,9 +90,9 @@ describe('AdvancedSettings', () => {
     if (input) {
       await userEvent.type(input, '79')
       await userEvent.clear(input)
-
-      expect(screen.getByTestId('submit-button')).toBeEnabled()
     }
+
+    expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
 
   it('should display only overridden settings', async () => {
