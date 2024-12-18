@@ -3,7 +3,6 @@ import equal from 'fast-deep-equal'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   CopyToClipboardButtonIcon,
@@ -16,6 +15,7 @@ import {
   type TableEditionRow,
   Tooltip,
 } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface PageSettingsAdvancedProps {
   keys?: string[]
