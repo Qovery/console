@@ -367,6 +367,7 @@ export function ListDeploymentLogs({
             <div className="flex h-full flex-col items-center justify-center">
               <DeploymentLogsPlaceholder
                 environment={environment}
+                environmentStatus={environmentStatus}
                 serviceStatus={serviceStatus}
                 itemsLength={logs.length}
                 environmentDeploymentHistory={environmentDeploymentHistory}

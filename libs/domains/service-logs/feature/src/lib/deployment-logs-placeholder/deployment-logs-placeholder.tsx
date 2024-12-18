@@ -1,12 +1,12 @@
 import {
   type DeploymentHistoryEnvironmentV2,
   type Environment,
+  type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
   ServiceDeploymentStatusEnum,
   type Status,
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { type DeploymentService } from '@qovery/shared/interfaces'
 import {
@@ -128,6 +128,7 @@ function DeploymentHistoryPlaceholder({
 
 export interface DeploymentLogsPlaceholderProps {
   environment: Environment
+  environmentStatus?: EnvironmentStatus
   serviceStatus?: Status
   itemsLength?: number
   environmentDeploymentHistory?: DeploymentHistoryEnvironmentV2[]
@@ -136,6 +137,7 @@ export interface DeploymentLogsPlaceholderProps {
 
 export function DeploymentLogsPlaceholder({
   environment,
+  environmentStatus,
   serviceStatus,
   itemsLength,
   environmentDeploymentHistory,
@@ -160,130 +162,122 @@ export function DeploymentLogsPlaceholder({
     (deployment) => deployment.identifier.service_id === serviceId
   )
 
-  return match({
-    itemsLength,
-    hideLogs,
-    serviceState,
-    serviceDeploymentStatus,
-    service,
-    serviceStatus,
-    deploymentsByServiceId,
-    preCheckStage,
-  })
-    .with(
-      {
-        itemsLength: 0,
-        hideLogs: false,
-        serviceDeploymentStatus: undefined,
-        service: undefined,
-      },
-      () => <LoaderPlaceholder />
+  // Show loader when data is loading or service is undefined
+  if (!service || (itemsLength === 0 && !hideLogs && serviceDeploymentStatus === undefined)) {
+    return <LoaderPlaceholder />
+  }
+
+  // Show queued state
+  if (!serviceStatus?.steps && serviceState?.includes('QUEUED')) {
+    return (
+      <LoaderPlaceholder
+        title="The service is in the queue…"
+        description="The logs will be displayed automatically as soon as the deployment starts."
+      />
     )
-    .when(
-      (state) => !state.service,
-      () => <LoaderPlaceholder />
+  }
+
+  // Show no logs available state
+  if (hideLogs && service && deploymentsByServiceId.length === 0 && outOfDateOrUpToDate) {
+    return (
+      <>
+        <p className="mb-1 text-neutral-300">No logs on this execution for {service.name}.</p>
+        {serviceDeploymentStatus !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED && (
+          <p className="text-sm text-neutral-350">
+            This service was deployed more than 30 days ago and thus no deployment logs are available.
+          </p>
+        )}
+      </>
     )
-    .when(
-      (state) => !state.serviceStatus?.steps && state.serviceState?.includes('QUEUED'),
-      () => (
-        <LoaderPlaceholder
-          title="The service is in the queue…"
-          description="The logs will be displayed automatically as soon as the deployment starts."
-        />
-      )
-    )
-    .when(
-      (state) => state.hideLogs && state.service && state.deploymentsByServiceId.length === 0 && outOfDateOrUpToDate,
-      (state) => (
-        <>
-          <p className="mb-1 text-neutral-300">No logs on this execution for {state.service!.name}.</p>
-          {serviceDeploymentStatus !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED && (
-            <p className="text-sm text-neutral-350">
-              This service was deployed more than 30 days ago and thus no deployment logs are available.
-            </p>
-          )}
-        </>
-      )
-    )
-    .when(
-      (state) => state.hideLogs && state.service,
-      (state) => (
-        <DeploymentHistoryPlaceholder
-          serviceName={state.service!.name}
-          deploymentsByServiceId={state.deploymentsByServiceId}
-        />
-      )
-    )
-    .when(
-      (state) => !state.serviceStatus?.steps && state.serviceState?.includes('CANCEL'),
-      () => (
-        <div className="flex flex-col items-center justify-center gap-4 text-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none" viewBox="0 0 44 44">
-            <g clipPath="url(#clip0_19290_138219)">
-              <path fill="#2A3041" d="M22 44c12.15 0 22-9.85 22-22S34.15 0 22 0 0 9.85 0 22s9.85 22 22 22"></path>
-              <path
-                fill="#A0AFC5"
-                d="M30.683 15.933a.45.45 0 0 0 0-.633L28.2 12.817a.45.45 0 0 0-.633 0l-1.246 1.246-4.004 4.004a.45.45 0 0 1-.634 0l-4.004-4.004-1.246-1.246a.45.45 0 0 0-.633 0L13.317 15.3a.45.45 0 0 0 0 .633l1.246 1.246 4.004 4.004a.45.45 0 0 1 0 .634l-4.004 4.004-1.246 1.246a.45.45 0 0 0 0 .633l2.483 2.483a.45.45 0 0 0 .633 0l1.246-1.246 4.004-4.004a.45.45 0 0 1 .634 0l4.004 4.004 1.246 1.246a.45.45 0 0 0 .633 0l2.483-2.483a.45.45 0 0 0 0-.633l-1.246-1.246-4.004-4.004a.45.45 0 0 1 0-.634l4.004-4.004z"
-              ></path>
-            </g>
-            <defs>
-              <clipPath id="clip0_19290_138219">
-                <path fill="#fff" d="M0 0h44v44H0z"></path>
-              </clipPath>
-            </defs>
-          </svg>{' '}
-          <div className="flex flex-col gap-3">
-            <p className="text-neutral-300">Deployment has been canceled.</p>
-            <span className="text-sm text-neutral-350">No logs to display.</span>
-          </div>
+  }
+
+  // Show deployment history
+  if (hideLogs && service) {
+    return <DeploymentHistoryPlaceholder serviceName={service.name} deploymentsByServiceId={deploymentsByServiceId} />
+  }
+
+  // Show canceled state
+  if (
+    !serviceStatus?.steps &&
+    !environmentStatus?.last_deployment_state?.includes('ERROR') &&
+    serviceState?.includes('CANCEL')
+  ) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none" viewBox="0 0 44 44">
+          <g clipPath="url(#clip0_19290_138219)">
+            <path fill="#2A3041" d="M22 44c12.15 0 22-9.85 22-22S34.15 0 22 0 0 9.85 0 22s9.85 22 22 22"></path>
+            <path
+              fill="#A0AFC5"
+              d="M30.683 15.933a.45.45 0 0 0 0-.633L28.2 12.817a.45.45 0 0 0-.633 0l-1.246 1.246-4.004 4.004a.45.45 0 0 1-.634 0l-4.004-4.004-1.246-1.246a.45.45 0 0 0-.633 0L13.317 15.3a.45.45 0 0 0 0 .633l1.246 1.246 4.004 4.004a.45.45 0 0 1 0 .634l-4.004 4.004-1.246 1.246a.45.45 0 0 0 0 .633l2.483 2.483a.45.45 0 0 0 .633 0l1.246-1.246 4.004-4.004a.45.45 0 0 1 .634 0l4.004 4.004 1.246 1.246a.45.45 0 0 0 .633 0l2.483-2.483a.45.45 0 0 0 0-.633l-1.246-1.246-4.004-4.004a.45.45 0 0 1 0-.634l4.004-4.004z"
+            ></path>
+          </g>
+          <defs>
+            <clipPath id="clip0_19290_138219">
+              <path fill="#fff" d="M0 0h44v44H0z"></path>
+            </clipPath>
+          </defs>
+        </svg>
+        <div className="flex flex-col gap-3">
+          <p className="text-neutral-300">Deployment has been canceled.</p>
+          <span className="text-sm text-neutral-350">No logs to display.</span>
         </div>
-      )
+      </div>
     )
-    .when(
-      (state) => state.preCheckStage?.status === 'ERROR',
-      () => (
-        <div className="flex flex-col items-center justify-center gap-4 text-center">
-          <ErrorIcon />
-          <span className="text-neutral-300">An error occurred during the precheck step.</span>
-          <Link
-            className="gap-1.5"
-            as="button"
-            variant="surface"
-            color="neutral"
-            to={
-              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-              ENVIRONMENT_PRE_CHECK_LOGS_URL(versionId)
-            }
-          >
-            Open precheck
-            <Icon iconName="list-check" />
-          </Link>
-        </div>
-      )
+  }
+
+  // Show precheck error state
+  if (preCheckStage?.status === 'ERROR') {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <ErrorIcon />
+        <span className="text-neutral-300">An error occurred during the precheck step.</span>
+        <Link
+          className="gap-1.5"
+          as="button"
+          variant="surface"
+          color="neutral"
+          to={
+            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+            ENVIRONMENT_PRE_CHECK_LOGS_URL(versionId)
+          }
+        >
+          Open precheck
+          <Icon iconName="list-check" />
+        </Link>
+      </div>
     )
-    .when(
-      (state) => state.serviceDeploymentStatus && !state.serviceStatus?.steps && state.serviceState?.includes('ERROR'),
-      () => (
-        <div className="flex flex-col items-center justify-center gap-4 text-center">
-          <ErrorIcon />
-          <span className="text-neutral-300">An error occurred during deployment.</span>
-          <Link
-            className="gap-1.5"
-            as="button"
-            variant="surface"
-            color="neutral"
-            to={
-              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-              ENVIRONMENT_STAGES_URL(versionId)
-            }
-          >
-            Open pipeline
-            <Icon iconName="timeline" />
-          </Link>
-        </div>
-      )
+  }
+
+  // Show deployment error state
+  if (
+    serviceDeploymentStatus &&
+    !serviceStatus?.steps &&
+    (serviceState?.includes('ERROR') || environmentStatus?.last_deployment_state?.includes('ERROR'))
+  ) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <ErrorIcon />
+        <span className="text-neutral-300">An error occurred during deployment.</span>
+        <Link
+          className="gap-1.5"
+          as="button"
+          variant="surface"
+          color="neutral"
+          to={
+            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+            ENVIRONMENT_STAGES_URL(versionId)
+          }
+        >
+          Open pipeline
+          <Icon iconName="timeline" />
+        </Link>
+      </div>
     )
-    .otherwise(() => <LoaderPlaceholder />)
+  }
+
+  // Default fallback
+  return <LoaderPlaceholder />
 }
 
 export default DeploymentLogsPlaceholder
