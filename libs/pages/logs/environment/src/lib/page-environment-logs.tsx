@@ -16,7 +16,7 @@ import {
   ENVIRONMENT_STAGES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { LoaderSpinner } from '@qovery/shared/ui'
+import { EmptyState, LoaderDots } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -37,8 +37,17 @@ function RedirectDeploymentLogs({
   environmentId: string
 }) {
   const { serviceId = '' } = useParams()
-  const { data: deploymentHistory } = useDeploymentHistory({ environmentId })
-  const lastDeploymentId = deploymentHistory?.[0].identifier.execution_id ?? ''
+  const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId })
+  const lastDeploymentId = deploymentHistory?.[0]?.identifier.execution_id
+
+  if (!lastDeploymentId)
+    return (
+      <div className="h-[calc(100vh-64px)] w-full p-1">
+        <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
+          <EmptyState className="-mt-12" title="No service logs" />
+        </div>
+      </div>
+    )
 
   return (
     <Navigate
@@ -124,9 +133,9 @@ export function PageEnvironmentLogs() {
 
   if (!environment || !environmentStatus?.last_deployment_state)
     return (
-      <div className="h-[calc(100vh-64px)] w-[calc(100vw-64px)] p-1">
-        <div className="flex h-full w-full justify-center border border-neutral-500 bg-neutral-600 pt-11">
-          <LoaderSpinner className="h-6 w-6" theme="dark" />
+      <div className="h-[calc(100vh-64px)] w-full p-1">
+        <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
+          <LoaderDots />
         </div>
       </div>
     )
@@ -169,6 +178,7 @@ export function PageEnvironmentLogs() {
                 environment={environment}
                 deploymentStages={deploymentStages}
                 environmentStatus={environmentStatus}
+                preCheckStage={preCheckStage}
               />
             }
           />

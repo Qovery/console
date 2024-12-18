@@ -7,7 +7,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import download from 'downloadjs'
-import { type Environment, type EnvironmentStatus, type Stage, type Status } from 'qovery-typescript-axios'
+import {
+  type Environment,
+  type EnvironmentStatus,
+  type EnvironmentStatusesWithStagesPreCheckStage,
+  type Stage,
+  type Status,
+} from 'qovery-typescript-axios'
 import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -124,9 +130,16 @@ export interface ListDeploymentLogsProps {
   serviceStatus: Status
   stage?: Stage
   environmentStatus?: EnvironmentStatus
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
 }
 
-export function ListDeploymentLogs({ environment, environmentStatus, serviceStatus, stage }: ListDeploymentLogsProps) {
+export function ListDeploymentLogs({
+  environment,
+  environmentStatus,
+  serviceStatus,
+  stage,
+  preCheckStage,
+}: ListDeploymentLogsProps) {
   const { hash } = useLocation()
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
@@ -315,7 +328,7 @@ export function ListDeploymentLogs({ environment, environmentStatus, serviceStat
           >
             <Link
               as="button"
-              className="gap-1.5"
+              className="gap-1.5 truncate"
               variant="surface"
               to={
                 ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
@@ -350,12 +363,16 @@ export function ListDeploymentLogs({ environment, environmentStatus, serviceStat
       <div className="h-[calc(100vh-64px)] w-full p-1">
         <div className="h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderLogsComponent />
-          <div className="h-[calc(100%-44px)] bg-neutral-600 pt-11">
-            <DeploymentLogsPlaceholder
-              serviceStatus={serviceStatus}
-              itemsLength={logs.length}
-              environmentDeploymentHistory={environmentDeploymentHistory}
-            />
+          <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between bg-neutral-600">
+            <div className="flex h-full flex-col items-center justify-center">
+              <DeploymentLogsPlaceholder
+                environment={environment}
+                serviceStatus={serviceStatus}
+                itemsLength={logs.length}
+                environmentDeploymentHistory={environmentDeploymentHistory}
+                preCheckStage={preCheckStage}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,8 @@
-import { applicationFactoryMock } from '@qovery/shared/factories'
+import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DeploymentLogsPlaceholder, type DeploymentLogsPlaceholderProps } from './deployment-logs-placeholder'
 
+const mockEnvironment = environmentFactoryMock(1)[0]
 const mockApplication = applicationFactoryMock(1)[0]
 
 jest.mock('@qovery/domains/services/feature', () => ({
@@ -23,12 +24,14 @@ describe('DeploymentLogsPlaceholder', () => {
     serviceStatus: undefined,
     itemsLength: 0,
     environmentDeploymentHistory: [],
+    environment: mockEnvironment,
   }
 
   it('should render deployment history', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={1}
+        environment={mockEnvironment}
         environmentDeploymentHistory={[
           {
             identifier: {
@@ -82,6 +85,7 @@ describe('DeploymentLogsPlaceholder', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={0}
+        environment={mockEnvironment}
         serviceStatus={{
           id: '0',
           state: 'DEPLOYED',
@@ -91,13 +95,14 @@ describe('DeploymentLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    expect(screen.getByText('Deployment logs are loading…')).toBeInTheDocument()
   })
 
   it('should render no logs placeholder', () => {
     renderWithProviders(
       <DeploymentLogsPlaceholder
         itemsLength={0}
+        environment={mockEnvironment}
         environmentDeploymentHistory={[]}
         serviceStatus={{
           id: '0',
@@ -111,5 +116,89 @@ describe('DeploymentLogsPlaceholder', () => {
     expect(
       screen.getByText('This service was deployed more than 30 days ago and thus no deployment logs are available.')
     ).toBeInTheDocument()
+  })
+
+  it('should render queued state', () => {
+    renderWithProviders(
+      <DeploymentLogsPlaceholder
+        itemsLength={0}
+        environment={mockEnvironment}
+        serviceStatus={{
+          id: '0',
+          state: 'DEPLOYMENT_QUEUED',
+          service_deployment_status: 'OUT_OF_DATE',
+          is_part_last_deployment: true,
+        }}
+      />
+    )
+
+    expect(screen.getByText('The service is in the queue…')).toBeInTheDocument()
+    expect(
+      screen.getByText('The logs will be displayed automatically as soon as the deployment starts.')
+    ).toBeInTheDocument()
+  })
+
+  it('should render canceled state', () => {
+    renderWithProviders(
+      <DeploymentLogsPlaceholder
+        itemsLength={0}
+        environment={mockEnvironment}
+        serviceStatus={{
+          id: '0',
+          state: 'CANCEL_QUEUED',
+          service_deployment_status: 'OUT_OF_DATE',
+          is_part_last_deployment: true,
+        }}
+      />
+    )
+
+    expect(screen.getByText('Deployment has been canceled.')).toBeInTheDocument()
+    expect(screen.getByText('No logs to display.')).toBeInTheDocument()
+  })
+
+  it('should render error state with pipeline link', () => {
+    renderWithProviders(
+      <DeploymentLogsPlaceholder
+        itemsLength={0}
+        environment={mockEnvironment}
+        serviceStatus={{
+          id: '0',
+          state: 'ERROR',
+          service_deployment_status: 'OUT_OF_DATE',
+          is_part_last_deployment: true,
+        }}
+      />
+    )
+
+    expect(screen.getByText('An error occurred during deployment.')).toBeInTheDocument()
+    const pipelineLink = screen.getByText('Open pipeline')
+    expect(pipelineLink).toBeInTheDocument()
+  })
+
+  it('should render precheck error state', () => {
+    renderWithProviders(
+      <DeploymentLogsPlaceholder
+        itemsLength={0}
+        environment={mockEnvironment}
+        serviceStatus={{
+          id: '0',
+          state: 'DEPLOYED',
+          service_deployment_status: 'UP_TO_DATE',
+          is_part_last_deployment: true,
+        }}
+        preCheckStage={{
+          status: 'ERROR',
+          started_at: '2024-01-01T00:00:00Z',
+          ended_at: '2024-01-01T00:01:00Z',
+          details: {
+            service_name: 'test-service',
+            error: 'Pre-check failed',
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('An error occurred during the precheck step.')).toBeInTheDocument()
+    expect(screen.getByText('Open precheck')).toBeInTheDocument()
   })
 })

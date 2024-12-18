@@ -2,6 +2,7 @@ import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentStatus,
+  type EnvironmentStatusesWithStagesPreCheckStage,
   type Stage,
   type Status,
 } from 'qovery-typescript-axios'
@@ -23,6 +24,7 @@ export interface DeploymentLogsFeatureProps {
   environment: Environment
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
+  preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
 }
 
 export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
@@ -99,6 +101,7 @@ export function DeploymentLogsFeature({
   environment,
   environmentStatus,
   deploymentStages,
+  preCheckStage,
 }: DeploymentLogsFeatureProps) {
   const { serviceId = '', versionId } = useParams()
   const navigate = useNavigate()
@@ -118,8 +121,6 @@ export function DeploymentLogsFeature({
     )
 
   const stageFromServiceId = getStageFromServiceId(deploymentStages ?? [], serviceId)
-
-  if (!serviceStatus) return null
 
   const latestDeployment =
     Array.isArray(environmentDeploymentHistory) && environmentDeploymentHistory.length > 0
@@ -174,6 +175,7 @@ export function DeploymentLogsFeature({
             serviceStatus={serviceStatus}
             environmentStatus={environmentStatus}
             stage={stageFromServiceId}
+            preCheckStage={preCheckStage}
           />
         </SidebarPodStatuses>
         {service && environment && (

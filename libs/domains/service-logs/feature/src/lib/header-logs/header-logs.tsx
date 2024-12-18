@@ -96,7 +96,7 @@ export function HeaderLogs({
                 <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
               </svg>
               <span
-                className="flex items-center gap-1.5"
+                className="flex items-center gap-1.5 truncate"
                 title={dateUTCString(serviceStatus.last_deployment_date ?? '')}
               >
                 <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-250" />
