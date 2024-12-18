@@ -2,12 +2,18 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ServiceAccessModal, ServiceLinksPopover, useDeployService, useService } from '@qovery/domains/services/feature'
+import {
+  ServiceAccessModal,
+  ServiceLinksPopover,
+  useDeployService,
+  useDeploymentStatus,
+  useService,
+} from '@qovery/domains/services/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import {
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
-  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Button, Icon, Tabs, type TabsItem, toast, useModal } from '@qovery/shared/ui'
@@ -27,6 +33,8 @@ function ContentRightEnvVariable({
     id: serviceId,
     environment: { id: environmentId },
   } = service
+
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const scope = match(serviceType)
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
@@ -37,7 +45,9 @@ function ContentRightEnvVariable({
   const { openModal, closeModal } = useModal()
   const { mutate: deployService } = useDeployService({
     environmentId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) + DEPLOYMENT_LOGS_URL(serviceId),
+    logsLink:
+      ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
+      DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentStatus?.execution_id),
   })
   const toasterCallback = () => {
     deployService({

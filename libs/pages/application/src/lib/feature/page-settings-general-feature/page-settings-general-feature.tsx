@@ -15,11 +15,11 @@ import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useAnnotationsGroups, useLabelsGroups, useOrganization } from '@qovery/domains/organizations/feature'
 import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
-import { useEditService, useService } from '@qovery/domains/services/feature'
+import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { buildGitRepoUrl, joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -209,12 +209,15 @@ export function PageSettingsGeneralFeature() {
 
   const { data: organization } = useOrganization({ organizationId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
   const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     environmentId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service?.id),
+    logsLink:
+      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+      DEPLOYMENT_LOGS_VERSION_URL(service?.id, deploymentStatus?.execution_id),
   })
 
   const helmRepository = match(service)

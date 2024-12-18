@@ -3,7 +3,7 @@ import { type ReactNode, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, Link, LoaderDots } from '@qovery/shared/ui'
 import { useNetworkState } from '@qovery/shared/util-hooks'
 
@@ -79,7 +79,10 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
               size="sm"
               variant="surface"
               color="neutral"
-              to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId)}
+              to={
+                ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentStatus?.execution_id)
+              }
             >
               Go to latest deployment
               <Icon iconName="arrow-right" className="ml-1" />

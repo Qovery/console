@@ -1,7 +1,8 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Checkbox, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
+import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 
 export interface ConfirmationCancelLifecycleModalProps {
   onClose: () => void
@@ -19,12 +20,13 @@ export function ConfirmationCancelLifecycleModal({
   serviceId,
 }: ConfirmationCancelLifecycleModalProps) {
   const { enableAlertClickOutside } = useModal()
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
 
   const environmentLogsLink = ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId)
 
   const { mutate: cancelDeployment, isLoading: isCancelDeploymentLoading } = useCancelDeploymentService({
     projectId,
-    logsLink: environmentLogsLink + DEPLOYMENT_LOGS_URL(serviceId),
+    logsLink: environmentLogsLink + DEPLOYMENT_LOGS_VERSION_URL(serviceId, deploymentStatus?.execution_id),
   })
 
   const methods = useForm({

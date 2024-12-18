@@ -14,6 +14,11 @@ jest.mock('@qovery/domains/services/feature', () => ({
     mutateAsync: mockDeployService,
     isLoading: false,
   }),
+  useDeploymentStatus: () => ({
+    data: {
+      execution_id: '123',
+    },
+  }),
 }))
 
 describe('ForceRunModalFeature', () => {

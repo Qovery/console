@@ -45,6 +45,9 @@ describe('ListServiceLogs', () => {
           organization: { id: 'org-1' },
           project: { id: 'proj-1' },
         }}
+        serviceStatus={{
+          execution_id: 'exec-1',
+        }}
         clusterId="000"
       />
     )

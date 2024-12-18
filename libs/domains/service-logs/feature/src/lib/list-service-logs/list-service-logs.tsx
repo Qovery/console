@@ -14,7 +14,7 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useRunningStatus, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, ExternalLink, Icon, Link, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { HeaderLogs } from '../header-logs/header-logs'
 import { type LogType, useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
@@ -188,7 +188,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
             variant="surface"
             to={
               ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-              DEPLOYMENT_LOGS_URL(serviceId)
+              DEPLOYMENT_LOGS_VERSION_URL(serviceId, serviceStatus.execution_id)
             }
           >
             {match(service)
