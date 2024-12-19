@@ -1,6 +1,6 @@
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { useNavigate, useParams } from 'react-router-dom'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Banner } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
@@ -17,7 +17,9 @@ export function NeedRedeployFlag() {
   })
   const { mutate: deployService } = useDeployService({
     environmentId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service?.id),
+    logsLink:
+      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+      DEPLOYMENT_LOGS_VERSION_URL(service?.id, serviceDeploymentStatus?.execution_id),
   })
 
   if (!serviceDeploymentStatus) return null
@@ -33,7 +35,10 @@ export function NeedRedeployFlag() {
   const mutationDeployService = () => {
     if (service) {
       deployService({ serviceId: service.id, serviceType: service.serviceType })
-      navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id))
+      navigate(
+        ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+          DEPLOYMENT_LOGS_VERSION_URL(service.id, serviceDeploymentStatus?.execution_id)
+      )
     }
   }
 

@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
-import { useEditService, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
 
@@ -15,11 +15,13 @@ export interface SettingsResourcesFeatureProps {
 }
 
 export function SettingsResourcesFeature({ service, environment }: SettingsResourcesFeatureProps) {
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId: service.id })
+
   const { mutate: editService, isLoading: isLoadingService } = useEditService({
     environmentId: environment.id,
     logsLink:
       ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-      DEPLOYMENT_LOGS_URL(service.id),
+      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id),
   })
 
   const defaultInstances = match(service)

@@ -33,7 +33,7 @@ import {
   DATABASE_SETTINGS_GENERAL_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
@@ -91,7 +91,7 @@ function MenuManageDeployment({
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const logsLink = environmentLogsLink + DEPLOYMENT_LOGS_URL(service.id)
+  const logsLink = environmentLogsLink + DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus.execution_id)
 
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({

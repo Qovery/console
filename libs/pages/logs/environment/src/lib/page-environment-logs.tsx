@@ -9,7 +9,6 @@ import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'reac
 import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import {
-  DEPLOYMENT_LOGS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
   ENVIRONMENT_PRE_CHECK_LOGS_URL,
@@ -24,40 +23,6 @@ import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-
 import EnvironmentStagesFeature from './feature/environment-stages-feature/environment-stages-feature'
 import PodLogsFeature from './feature/pod-logs-feature/pod-logs-feature'
 import PreCheckLogsFeature from './feature/pre-check-logs-feature/pre-check-logs-feature'
-
-// XXX: This is a workaround to redirect to the last deployment logs with (execution_id/last_deployment_id)
-// We don't authorize to see the deployment without versionId
-function RedirectDeploymentLogs({
-  organizationId,
-  projectId,
-  environmentId,
-}: {
-  organizationId: string
-  projectId: string
-  environmentId: string
-}) {
-  const { serviceId = '' } = useParams()
-  const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId })
-  const lastDeploymentId = deploymentHistory?.[0]?.identifier.execution_id
-
-  if (!lastDeploymentId)
-    return (
-      <div className="h-[calc(100vh-64px)] w-full p-1">
-        <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
-          <EmptyState className="-mt-12" title="No service logs" />
-        </div>
-      </div>
-    )
-
-  return (
-    <Navigate
-      to={
-        ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-        DEPLOYMENT_LOGS_VERSION_URL(serviceId, lastDeploymentId)
-      }
-    />
-  )
-}
 
 export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
@@ -179,16 +144,6 @@ export function PageEnvironmentLogs() {
                 deploymentStages={deploymentStages}
                 environmentStatus={environmentStatus}
                 preCheckStage={preCheckStage}
-              />
-            }
-          />
-          <Route
-            path={DEPLOYMENT_LOGS_URL()}
-            element={
-              <RedirectDeploymentLogs
-                organizationId={organizationId}
-                projectId={projectId}
-                environmentId={environmentId}
               />
             }
           />

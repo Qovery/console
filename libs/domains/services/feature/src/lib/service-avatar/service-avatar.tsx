@@ -32,7 +32,7 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
             alt={service.serviceType}
             height="100%"
             width="100%"
-            className="max-h-full max-w-full"
+            className="max-h-full max-w-full rounded-full object-contain"
           />
         ) : (
           <Icon name={iconName} height="100%" width="100%" />

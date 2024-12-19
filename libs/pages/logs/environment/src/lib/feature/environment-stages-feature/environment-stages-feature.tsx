@@ -14,12 +14,7 @@ import { EnvironmentStages } from '@qovery/domains/environment-logs/feature'
 import { useDeploymentHistory, useDeploymentHistoryExecutionId } from '@qovery/domains/environments/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar, useServices } from '@qovery/domains/services/feature'
-import {
-  DEPLOYMENT_LOGS_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-  ENVIRONMENT_STAGES_URL,
-} from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   Banner,
   Icon,
@@ -222,17 +217,11 @@ export function EnvironmentStagesFeature({
                           <NavLink
                             key={service?.id}
                             to={
-                              executionId
-                                ? ENVIRONMENT_LOGS_URL(
-                                    environment.organization.id,
-                                    environment.project.id,
-                                    environment.id
-                                  ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, executionId)
-                                : ENVIRONMENT_LOGS_URL(
-                                    environment.organization.id,
-                                    environment.project.id,
-                                    environment.id
-                                  ) + DEPLOYMENT_LOGS_URL(service.id)
+                              ENVIRONMENT_LOGS_URL(
+                                environment.organization.id,
+                                environment.project.id,
+                                environment.id
+                              ) + DEPLOYMENT_LOGS_VERSION_URL(service.id, executionId ?? '')
                             }
                             className={clsx(
                               'flex w-full items-center gap-2.5 rounded border border-neutral-400 bg-neutral-550 px-2.5 py-2 hover:border-brand-400',

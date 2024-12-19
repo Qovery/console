@@ -13,10 +13,10 @@ import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Application, type Container } from '@qovery/domains/services/data-access'
-import { useEditService } from '@qovery/domains/services/feature'
+import { useDeploymentStatus, useEditService } from '@qovery/domains/services/feature'
 import { CrudModal, defaultLivenessProbe, isMatchingHealthCheck } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -133,6 +133,11 @@ export function handleSubmit<
 
 export function CrudModalFeature({ service, onClose, port }: CrudModalFeatureProps) {
   const { enableAlertClickOutside } = useModal()
+
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId: service.environment.id,
+    serviceId: service.id,
+  })
   const { data: environment } = useEnvironment({ environmentId: service?.environment?.id || '' })
   const { data: cluster } = useCluster({
     organizationId: environment?.organization.id ?? '',
@@ -142,7 +147,7 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
     environmentId: service.environment?.id || '',
     logsLink:
       ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, service.environment?.id) +
-      DEPLOYMENT_LOGS_URL(service.id),
+      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id),
   })
 
   const livenessType = service.healthchecks?.liveness_probe?.type

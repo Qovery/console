@@ -13,6 +13,11 @@ jest.mock('@qovery/domains/services/feature', () => ({
     mutateAsync: mockEditService,
     isLoading: false,
   }),
+  useDeploymentStatus: () => ({
+    data: {
+      execution_id: '1',
+    },
+  }),
 }))
 
 const props: StorageModalFeatureProps = {

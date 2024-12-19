@@ -5,7 +5,7 @@ import {
   AUDIT_LOGS_PARAMS_URL,
   CLUSTER_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
   INFRA_LOGS_URL,
@@ -36,7 +36,7 @@ export function useQuickActions(): QuickAction[] {
       {
         label: 'See deployment logs',
         iconName: 'scroll',
-        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId),
+        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_VERSION_URL(serviceId),
       },
       {
         label: 'See live logs',
@@ -62,7 +62,7 @@ export function useQuickActions(): QuickAction[] {
       {
         label: 'See deployment logs',
         iconName: 'scroll',
-        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(serviceId),
+        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_VERSION_URL(serviceId),
       },
       {
         label: 'See live logs',

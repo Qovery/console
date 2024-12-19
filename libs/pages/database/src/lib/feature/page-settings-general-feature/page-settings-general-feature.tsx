@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
 import { useAnnotationsGroups, useLabelsGroups } from '@qovery/domains/organizations/feature'
-import { useEditService, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
@@ -15,12 +15,13 @@ export function PageSettingsGeneralFeature() {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: databaseId })
   const { data: database } = useService({ serviceId: databaseId, serviceType: 'DATABASE' })
   const { mutate: editService, isLoading: isLoadingService } = useEditService({
     environmentId,
     logsLink:
       ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-      DEPLOYMENT_LOGS_URL(database?.id),
+      DEPLOYMENT_LOGS_VERSION_URL(database?.id, deploymentStatus?.execution_id),
   })
   const { data: databaseConfigurations, isLoading } = useListDatabaseConfigurations({ environmentId })
 

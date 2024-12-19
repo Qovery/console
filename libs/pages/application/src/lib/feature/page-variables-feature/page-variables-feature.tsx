@@ -1,9 +1,9 @@
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useDeployService, useService } from '@qovery/domains/services/feature'
+import { useDeployService, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { VariableList } from '@qovery/domains/variables/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -15,6 +15,7 @@ export function PageVariablesFeature() {
     environmentId,
     serviceId: applicationId,
   })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
 
   const scope = match(service?.serviceType)
     .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
@@ -25,7 +26,9 @@ export function PageVariablesFeature() {
 
   const { mutate: deployService } = useDeployService({
     environmentId,
-    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service?.id),
+    logsLink:
+      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+      DEPLOYMENT_LOGS_VERSION_URL(service?.id, deploymentStatus?.execution_id),
   })
 
   const toasterCallback = () => {

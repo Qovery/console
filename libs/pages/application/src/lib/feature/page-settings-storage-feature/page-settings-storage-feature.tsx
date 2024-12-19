@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsStorage from '../../ui/page-settings-storage/page-settings-storage'
@@ -13,12 +13,14 @@ export function PageSettingsStorageFeature() {
   const { openModalConfirmation } = useModalConfirmation()
 
   const { data: service } = useService({ environmentId: environmentId, serviceId: applicationId })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
+
   const { mutateAsync: editService } = useEditService({
     environmentId,
     logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, service?.environment.id) + DEPLOYMENT_LOGS_URL(service?.id),
+      ENVIRONMENT_LOGS_URL(organizationId, projectId, service?.environment.id) +
+      DEPLOYMENT_LOGS_VERSION_URL(service?.id, deploymentStatus?.execution_id),
   })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
 
   return match(service)
     .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (service) => {

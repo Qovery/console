@@ -35,7 +35,7 @@ import {
   APPLICATION_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_URL,
+  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
@@ -372,7 +372,10 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               <Tooltip content="See logs">
                 <Link
                   as="button"
-                  to={ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_URL(service.id)}
+                  to={
+                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                    DEPLOYMENT_LOGS_VERSION_URL(service.id, service.deploymentStatus?.execution_id)
+                  }
                   onClick={(e) => e.stopPropagation()}
                   className="gap-2 whitespace-nowrap text-sm"
                   size="md"

@@ -14,8 +14,6 @@ export const ENVIRONMENT_STAGES_URL = (versionId?: string) => (versionId ? `/sta
 export const SERVICE_LOGS_URL = (serviceId = ':serviceId', podName = '') =>
   `/${serviceId}/service-logs${podName ? `?pod_name=${podName}` : ''}`
 
-export const DEPLOYMENT_LOGS_URL = (serviceId = ':serviceId') => `/${serviceId}/deployment-logs`
-
 export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
   `/${serviceId}/deployment-logs/${versionId}`
 
