@@ -34,6 +34,11 @@ jest.mock('@qovery/domains/services/feature', () => ({
     mutate: mockEditService,
     isLoading: false,
   }),
+  useDeploymentStatus: () => ({
+    data: {
+      execution_id: '1',
+    },
+  }),
 }))
 
 describe('PageSettingsResourcesFeature', () => {
