@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   type Cluster,
   type ClusterFeatureKarpenterParametersResponse,
@@ -181,12 +180,6 @@ function KarpenterInstanceForm({
     [dataFiltered, onChange, onClose]
   )
 
-  const resetAll = () => {
-    const values = generateDefaultValues(cloudProviderInstanceTypes)
-    methods.setValue('sizes', values.sizes)
-    methods.setValue('categories', values.categories)
-  }
-
   const selectAllSizes = () => {
     methods.setValue('sizes', instanceSizes)
   }
@@ -259,9 +252,6 @@ function KarpenterInstanceForm({
                               methods.setValue('default_service_architecture', 'ARM64')
                               const clusterArchitecture = getDefaultArchitecture()
                               setShowArchitectureWarning('ARM64' !== clusterArchitecture)
-                            } else {
-                              // Reset all other values
-                              resetAll()
                             }
 
                             field.onChange(checked)
@@ -288,9 +278,6 @@ function KarpenterInstanceForm({
                               methods.setValue('default_service_architecture', 'AMD64')
                               const clusterArchitecture = getDefaultArchitecture()
                               setShowArchitectureWarning('AMD64' !== clusterArchitecture)
-                            } else {
-                              // Reset all other values
-                              resetAll()
                             }
 
                             field.onChange(checked)
