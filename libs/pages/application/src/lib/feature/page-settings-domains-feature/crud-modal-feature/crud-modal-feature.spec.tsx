@@ -20,6 +20,11 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useLinks: () => ({
     data: [],
   }),
+  useDeploymentStatus: () => ({
+    data: {
+      execution_id: 'exec-1',
+    },
+  }),
 }))
 
 const props: CrudModalFeatureProps = {
