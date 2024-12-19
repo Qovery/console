@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import equal from 'fast-deep-equal'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { useState } from 'react'
@@ -5,7 +6,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   CopyToClipboardButtonIcon,
-  InputTextSmall,
+  Icon,
   InputToggle,
   LoaderSpinner,
   Section,
@@ -14,6 +15,7 @@ import {
   type TableEditionRow,
   Tooltip,
 } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface PageSettingsAdvancedProps {
   keys?: string[]
@@ -115,16 +117,30 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   }}
                   defaultValue=""
                   render={({ field, fieldState: { error } }) => (
-                    <InputTextSmall
-                      className="flex-1 shrink-0 grow"
-                      data-testid="value"
-                      name={field.name}
-                      onChange={field.onChange}
-                      value={field.value}
-                      error={error?.message}
-                      errorMessagePosition="left"
-                      label={field.name}
-                    />
+                    <div className="flex gap-3">
+                      {error?.message && (
+                        <Tooltip content={error.message} align="center" side="top">
+                          <div data-testid="warning-icon-left" className="flex items-center">
+                            <Icon iconName="triangle-exclamation" className="block text-sm text-yellow-500" />
+                          </div>
+                        </Tooltip>
+                      )}
+                      <textarea
+                        rows={1}
+                        className={twMerge(
+                          clsx(
+                            'min-h-[34px] w-full appearance-none rounded border border-neutral-250  bg-transparent px-3 py-1.5 pr-3 text-sm text-neutral-400 outline-0 hover:border-brand-500 focus:border-brand-500 focus:outline focus:outline-[3px] focus:outline-brand-100',
+                            {
+                              'border-red-500 hover:border-red-500 focus:border-red-500 focus:outline-1 focus:outline-red-500':
+                                Boolean(error?.message),
+                            }
+                          )
+                        )}
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                      />
+                    </div>
                   )}
                 />
               ),

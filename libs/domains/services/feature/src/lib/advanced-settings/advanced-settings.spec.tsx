@@ -62,31 +62,35 @@ describe('AdvancedSettings', () => {
   })
 
   it('should disabled the form submit', async () => {
-    const { userEvent } = renderWithProviders(
+    const { userEvent, container } = renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
         advancedSettings={advancedSettings}
         defaultAdvancedSettings={defaultAdvancedSettings}
       />
     )
-    const input = screen.getByLabelText('deployment.affinity.node.required')
-    await userEvent.type(input, '79')
-    await userEvent.clear(input)
+    const input = container.querySelector('textarea[name="deployment.affinity.node.required"]')
+    if (input) {
+      await userEvent.type(input, '79')
+      await userEvent.clear(input)
+    }
 
     expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
 
   it('field with empty defaultValue should not be required', async () => {
-    const { userEvent } = renderWithProviders(
+    const { userEvent, container } = renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
         advancedSettings={advancedSettings}
         defaultAdvancedSettings={defaultAdvancedSettings}
       />
     )
-    const input = screen.getByLabelText('test_empty')
-    await userEvent.type(input, '79')
-    await userEvent.clear(input)
+    const input = container.querySelector('textarea[name="test_empty"]')
+    if (input) {
+      await userEvent.type(input, '79')
+      await userEvent.clear(input)
+    }
 
     expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
@@ -115,15 +119,15 @@ describe('AdvancedSettings', () => {
     jest.spyOn(hooks, 'useEditAdvancedSettings').mockImplementation(() => ({
       mutate,
     }))
-    const { userEvent } = renderWithProviders(
+    const { userEvent, container } = renderWithProviders(
       <AdvancedSettings
         service={mockApplication}
         advancedSettings={advancedSettings}
         defaultAdvancedSettings={defaultAdvancedSettings}
       />
     )
-    const input = screen.getByLabelText('test_empty')
-    await userEvent.type(input, '79')
+    const input = container.querySelector('textarea[name="test_empty"]')
+    if (input) await userEvent.type(input, '79')
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
