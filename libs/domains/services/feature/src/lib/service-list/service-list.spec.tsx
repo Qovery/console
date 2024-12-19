@@ -98,6 +98,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
           is_part_last_deployment: false,
           steps: null,
           stateLabel: 'Stopped',
+          execution_id: 'exec-1',
         },
       },
       {
@@ -437,7 +438,7 @@ describe('ServiceList', () => {
     renderWithProviders(<ServiceList {...serviceListProps} />)
     expect(screen.getAllByRole('link', { name: /stopped/i })[1]).toHaveAttribute(
       'href',
-      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs'
+      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs/exec-1'
     )
   })
 })
