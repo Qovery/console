@@ -7,7 +7,7 @@ import {
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Icon, Indicator, Link, LoaderSpinner, TablePrimitives } from '@qovery/shared/ui'
+import { Icon, Indicator, Link, LoaderDots, TablePrimitives } from '@qovery/shared/ui'
 import { HeaderPreCheckLogs } from '../header-pre-check-logs/header-pre-check-logs'
 import { type EnvironmentPreCheckLogId, usePreCheckLogs } from '../hooks/use-pre-check-logs/use-pre-check-logs'
 import { RowPreCheckLogs } from './row-pre-check-logs/row-pre-check-logs'
@@ -61,8 +61,9 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
     return (
       <div className="h-full p-1">
         <HeaderPreCheckLogs preCheckStage={preCheckStage} />
-        <div className="flex h-[calc(100%-44px)] w-full justify-center border border-t-0 border-neutral-500 bg-neutral-600 pt-11">
-          <LoaderSpinner className="h-6 w-6" theme="dark" />
+        <div className="flex h-[calc(100%-44px)] w-full flex-col items-center justify-center gap-5 border border-t-0 border-neutral-500 bg-neutral-600 pt-11">
+          <LoaderDots />
+          <p className="text-neutral-300">Pre-check logs are loading…</p>
         </div>
       </div>
     )
