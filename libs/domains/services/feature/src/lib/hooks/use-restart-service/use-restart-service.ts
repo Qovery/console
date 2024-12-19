@@ -15,6 +15,9 @@ export function useRestartService({ environmentId, logsLink }: { environmentId: 
       queryClient.invalidateQueries({
         queryKey: queries.services.status({ id: serviceId, serviceType }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.environments.deploymentHistoryV2({ environmentId }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {
