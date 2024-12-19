@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { MemberRoleEnum } from '@qovery/shared/enums'
 import { Button, Heading, Icon, Section, Table, type TableFilterProps } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import RowMember from './row-member/row-member'
 
 export interface PageOrganizationMembersProps {
@@ -24,37 +25,6 @@ export interface PageOrganizationMembersProps {
   userId?: string
   onAddMember?: () => void
 }
-
-const membersHead = [
-  {
-    title: 'Member',
-    className: 'px-4 py-2 border-r border-neutral-200 h-full',
-  },
-  {
-    title: 'Roles',
-    filter: [
-      {
-        search: true,
-        title: 'Filter by role',
-        key: 'role_name',
-      },
-    ],
-  },
-  {
-    title: 'Last activity',
-    className: 'px-4',
-    sort: {
-      key: 'last_activity_at',
-    },
-  },
-  {
-    title: 'Member since',
-    className: 'px-4',
-    sort: {
-      key: 'created_at',
-    },
-  },
-]
 
 const inviteMembersHead = [
   {
@@ -92,6 +62,37 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     onAddMember,
     resendInvite,
   } = props
+
+  const membersHead = [
+    {
+      title: `${pluralize(members.length, 'Member', 'Members')} (${members.length})`,
+      className: 'px-4 py-2 border-r border-neutral-200 h-full',
+    },
+    {
+      title: 'Roles',
+      filter: [
+        {
+          search: true,
+          title: 'Filter by role',
+          key: 'role_name',
+        },
+      ],
+    },
+    {
+      title: 'Last activity',
+      className: 'px-4',
+      sort: {
+        key: 'last_activity_at',
+      },
+    },
+    {
+      title: 'Member since',
+      className: 'px-4',
+      sort: {
+        key: 'created_at',
+      },
+    },
+  ]
 
   const columnsWidth = '35% 22% 21% 21%'
 
