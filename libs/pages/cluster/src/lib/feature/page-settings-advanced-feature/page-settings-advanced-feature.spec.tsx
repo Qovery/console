@@ -36,17 +36,24 @@ jest.mock('react-router-dom', () => ({
 
 describe('PageSettingsAdvancedFeature', () => {
   it('should edit ClusterAdvancedSettings if form is submitted', async () => {
-    const { userEvent } = renderWithProviders(<PageSettingsAdvancedFeature />)
+    const { userEvent, container } = renderWithProviders(<PageSettingsAdvancedFeature />)
 
-    fireEvent.input(screen.getByLabelText('loki.log_retention_in_week'), { target: { value: '2' } })
-    fireEvent.input(screen.getByLabelText('aws.vpc.enable_s3_flow_logs'), { target: { value: 'true' } })
-    fireEvent.input(screen.getByLabelText('load_balancer.size'), { target: { value: '/' } })
-    fireEvent.input(screen.getByLabelText('cloud_provider.container_registry.tags'), {
-      target: { value: '{"test":"test"}' },
-    })
+    const retentionInput = container.querySelector('textarea[name="loki.log_retention_in_week"]') as Element
+    const flowLogsInput = container.querySelector('textarea[name="aws.vpc.enable_s3_flow_logs"]') as Element
+    const loadBalancerInput = container.querySelector('textarea[name="load_balancer.size"]') as Element
+    const tagsInput = container.querySelector('textarea[name="cloud_provider.container_registry.tags"]') as Element
+
+    fireEvent.change(retentionInput, { target: { value: '' } })
+    fireEvent.change(flowLogsInput, { target: { value: '' } })
+    fireEvent.change(loadBalancerInput, { target: { value: '' } })
+    fireEvent.change(tagsInput, { target: { value: '' } })
+
+    fireEvent.change(retentionInput, { target: { value: '2' } })
+    fireEvent.change(flowLogsInput, { target: { value: 'true' } })
+    fireEvent.change(loadBalancerInput, { target: { value: '/' } })
+    fireEvent.change(tagsInput, { target: { value: '{"test":"test"}' } })
 
     const button = await screen.findByTestId('submit-button')
-    // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(button).toBeInTheDocument()
     expect(button).toBeEnabled()
     await userEvent.click(screen.getByTestId('submit-button'))

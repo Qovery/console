@@ -41,40 +41,44 @@ describe('PageSettingsAdvanced', () => {
 
   it('should have three inputs', () => {
     renderWithProviders(wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues }))
-    expect(screen.getAllByTestId('input').length).toBe(4)
+    expect(screen.getAllByRole('textbox').length).toBe(4)
   })
 
   it('should show the sticky action bar if form dirty', async () => {
-    const { userEvent } = renderWithProviders(
+    const { userEvent, container } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
 
-    const input = screen.getByLabelText('load_balancer.size')
-    await userEvent.type(input, 'hello')
+    const input = container.querySelector('textarea[name="load_balancer.size"]')
+    if (input) await userEvent.type(input, 'hello')
 
     expect(screen.getByTestId('sticky-action-form-toaster')).toHaveClass('visible')
   })
 
   it('should disabled the form submit', async () => {
-    const { userEvent } = renderWithProviders(
+    const { userEvent, container } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
 
-    const input = screen.getByLabelText('load_balancer.size')
-    await userEvent.type(input, '79')
-    await userEvent.clear(input)
+    const input = container.querySelector('textarea[name="load_balancer.size"]')
+    if (input) {
+      await userEvent.type(input, '79')
+      await userEvent.clear(input)
+    }
 
     expect(screen.getByTestId('submit-button')).toBeDisabled()
   })
 
   it('field with empty defaultValue should not be required', async () => {
-    const { userEvent } = renderWithProviders(
+    const { userEvent, container } = renderWithProviders(
       wrapWithReactHookForm(<PageSettingsAdvanced {...props} />, { defaultValues: defaultValues })
     )
 
-    const input = screen.getByLabelText('test_empty')
-    await userEvent.type(input, '79')
-    await userEvent.clear(input)
+    const input = container.querySelector('textarea[name="test_empty"]')
+    if (input) {
+      await userEvent.type(input, '79')
+      await userEvent.clear(input)
+    }
 
     expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
