@@ -162,12 +162,7 @@ export function CreateCloneEnvironmentModal({
               className="mb-6"
               name={field.name}
               onChange={(event: FormEvent<HTMLInputElement>) => {
-                field.onChange(
-                  event.currentTarget.value
-                    .replace(/[^\w\s\\/]/g, '-') // remove special chars but keep / and \
-                    .toLowerCase()
-                    .replace(/ /g, '-')
-                )
+                field.onChange(event.currentTarget.value)
               }}
               value={field.value}
               label={environmentToClone?.name ? 'New environment name' : 'Environment name'}
