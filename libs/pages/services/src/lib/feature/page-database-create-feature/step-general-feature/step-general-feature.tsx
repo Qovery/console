@@ -123,7 +123,7 @@ export function StepGeneralFeature() {
     defaultValues: {
       ...generalData,
       accessibility: 'PRIVATE',
-      mode: match({ cloudProvider, cluster, generalData })
+      mode: match({ cloudProvider, cluster, generalData, showManagedWithVpcOptions })
         // If 'generalData' has 'mode', use it
         .with({ generalData: { mode: 'CONTAINER' } }, () => DatabaseModeEnum.CONTAINER)
         .with({ generalData: { mode: 'MANAGED' } }, () => DatabaseModeEnum.MANAGED)
@@ -132,6 +132,7 @@ export function StepGeneralFeature() {
           { cloudProvider: 'AWS', cluster: { kubernetes: P.not('SELF_MANAGED') } },
           () => DatabaseModeEnum.CONTAINER
         )
+        .with(P.union({ cloudProvider: 'AWS' }, { showManagedWithVpcOptions: true }), () => DatabaseModeEnum.CONTAINER)
         // If 'cloudProvider' is 'ON_PREMISE', 'GCP' or 'SCW' return 'CONTAINER'
         .with(
           P.union({ cloudProvider: 'ON_PREMISE' }, { cloudProvider: 'GCP' }, { cloudProvider: 'SCW' }),
