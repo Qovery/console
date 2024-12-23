@@ -65,7 +65,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
 
   const membersHead = [
     {
-      title: `${pluralize(members.length, 'Member', 'Members')} (${members.length})`,
+      title: `${pluralize(members.length, 'Member', 'Members')} ${isFetchedMembers ? `(${members.length})` : ''}`,
       className: 'px-4 py-2 border-r border-neutral-200 h-full',
     },
     {
