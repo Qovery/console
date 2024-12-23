@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import {
   type Cluster,
   type ClusterFeatureKarpenterParametersResponse,
@@ -109,16 +108,19 @@ function KarpenterInstanceForm({
 
     cloudProviderInstanceTypes.forEach((instanceType) => {
       const { attributes, architecture } = instanceType
+
       if (!attributes?.instance_size || !architecture) return
       sizes.add(attributes.instance_size)
 
       const category = attributes.instance_category
+
       if (category) {
         if (!categories[architecture]) categories[architecture] = {}
         if (!categories[architecture][category]) categories[architecture][category] = []
 
         const exists = categories[architecture][category].some(
-          (attr) => attr.instance_family === attributes.instance_family
+          (attr) =>
+            attr.instance_family === attributes.instance_family && attr.instance_size === attributes.instance_size
         )
 
         if (!exists) {
@@ -180,12 +182,6 @@ function KarpenterInstanceForm({
     }),
     [dataFiltered, onChange, onClose]
   )
-
-  const resetAll = () => {
-    const values = generateDefaultValues(cloudProviderInstanceTypes)
-    methods.setValue('sizes', values.sizes)
-    methods.setValue('categories', values.categories)
-  }
 
   const selectAllSizes = () => {
     methods.setValue('sizes', instanceSizes)
@@ -259,9 +255,6 @@ function KarpenterInstanceForm({
                               methods.setValue('default_service_architecture', 'ARM64')
                               const clusterArchitecture = getDefaultArchitecture()
                               setShowArchitectureWarning('ARM64' !== clusterArchitecture)
-                            } else {
-                              // Reset all other values
-                              resetAll()
                             }
 
                             field.onChange(checked)
@@ -288,9 +281,6 @@ function KarpenterInstanceForm({
                               methods.setValue('default_service_architecture', 'AMD64')
                               const clusterArchitecture = getDefaultArchitecture()
                               setShowArchitectureWarning('AMD64' !== clusterArchitecture)
-                            } else {
-                              // Reset all other values
-                              resetAll()
                             }
 
                             field.onChange(checked)
@@ -434,17 +424,43 @@ function KarpenterInstanceForm({
                       )
                     ).sort()
 
-                    const attributes: ClusterInstanceAttributesExtended[] = Object.entries(instanceCategories).flatMap(
-                      ([architecture, categories]) =>
+                    // Group attributes by instance_family
+                    const groupedAttributes = Object.entries(instanceCategories)
+                      .flatMap(([architecture, categories]) =>
                         (categories[category] || []).map((attr) => ({
                           ...attr,
                           architecture: architecture as CpuArchitectureEnum,
                           sizes: allSizes,
                         }))
-                    )
+                      )
+                      .reduce(
+                        (acc, curr) => {
+                          const key = curr.instance_family || ''
+                          if (!acc[key]) {
+                            acc[key] = {
+                              ...curr,
+                              // Keep track of all architectures that support this family
+                              architectures: [curr.architecture],
+                            }
+                          } else {
+                            // If this architecture isn't already tracked, add it
+                            if (!acc[key].architectures.includes(curr.architecture)) {
+                              acc[key].architectures.push(curr.architecture)
+                            }
+                          }
+                          return acc
+                        },
+                        {} as Record<
+                          string,
+                          ClusterInstanceAttributesExtended & { architectures: CpuArchitectureEnum[] }
+                        >
+                      )
 
-                    if (attributes.length === 0) return null
-                    return <InstanceCategory key={category} title={category} attributes={attributes} />
+                    // Convert back to array
+                    const mergedAttributes = Object.values(groupedAttributes)
+
+                    if (mergedAttributes.length === 0) return null
+                    return <InstanceCategory key={category} title={category} attributes={mergedAttributes} />
                   })}
               </div>
             </div>
