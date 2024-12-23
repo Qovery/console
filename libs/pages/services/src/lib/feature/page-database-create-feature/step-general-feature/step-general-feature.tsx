@@ -132,8 +132,11 @@ export function StepGeneralFeature() {
           { cloudProvider: 'AWS', cluster: { kubernetes: P.not('SELF_MANAGED') } },
           () => DatabaseModeEnum.CONTAINER
         )
-        // If 'cloudProvider' is 'ON_PREMISE', return 'CONTAINER'
-        .with({ cloudProvider: 'ON_PREMISE' }, () => DatabaseModeEnum.CONTAINER)
+        // If 'cloudProvider' is 'ON_PREMISE', 'GCP' or 'SCW' return 'CONTAINER'
+        .with(
+          P.union({ cloudProvider: 'ON_PREMISE' }, { cloudProvider: 'GCP' }, { cloudProvider: 'SCW' }),
+          () => DatabaseModeEnum.CONTAINER
+        )
         .otherwise(() => DatabaseModeEnum.MANAGED),
     },
     mode: 'onChange',
