@@ -79,7 +79,10 @@ export function StepConfigureFeature() {
 
   const onBack = () => {
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-    if (dockerfileForm.getValues('dockerfile_path') || dockerfileForm.getValues('dockerfile_raw')) {
+    if (
+      (dockerfileForm.getValues('dockerfile_path') || dockerfileForm.getValues('dockerfile_raw')) &&
+      jobType !== 'CRON_JOB'
+    ) {
       navigate(pathCreate + SERVICES_JOB_CREATION_DOCKERFILE_URL)
     } else {
       navigate(pathCreate + SERVICES_JOB_CREATION_GENERAL_URL)

@@ -56,7 +56,8 @@ export function StepGeneralFeature() {
     }
     setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
-    if (data.serviceType === ServiceTypeEnum.APPLICATION) {
+
+    if (data.serviceType === ServiceTypeEnum.APPLICATION && jobType !== 'CRON_JOB') {
       navigate(pathCreate + SERVICES_JOB_CREATION_DOCKERFILE_URL)
     } else {
       navigate(pathCreate + SERVICES_JOB_CREATION_CONFIGURE_URL)

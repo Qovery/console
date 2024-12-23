@@ -1,10 +1,11 @@
+import * as Collapsible from '@radix-ui/react-collapsible'
 import {
   type CronJobResponse,
   type JobLifecycleTypeEnum,
   type LifecycleJobResponse,
   type Organization,
 } from 'qovery-typescript-axios'
-import { type FormEventHandler } from 'react'
+import { type FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -14,7 +15,7 @@ import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, Heading, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
 import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
@@ -27,6 +28,7 @@ export interface StepGeneralProps {
 
 export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
+  const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
   const navigate = useNavigate()
   const { formState, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
@@ -156,11 +158,28 @@ export function StepGeneral(props: StepGeneralProps) {
           </Section>
         )}
 
-        <Section className="gap-4">
-          <Heading>Extra labels/annotations</Heading>
-          <LabelSetting />
-          <AnnotationSetting />
-        </Section>
+        <Collapsible.Root open={openExtraAttributes} onOpenChange={setOpenExtraAttributes} asChild>
+          <Section className="gap-4">
+            <div className="flex justify-between">
+              <Heading>Extra labels/annotations</Heading>
+              <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
+                {openExtraAttributes ? (
+                  <>
+                    Hide <Icon iconName="chevron-up" />
+                  </>
+                ) : (
+                  <>
+                    Show <Icon iconName="chevron-down" />
+                  </>
+                )}
+              </Collapsible.Trigger>
+            </div>{' '}
+            <Collapsible.Content className="flex flex-col gap-4">
+              <LabelSetting />
+              <AnnotationSetting />
+            </Collapsible.Content>
+          </Section>
+        </Collapsible.Root>
 
         <div className="flex justify-between">
           <Button
