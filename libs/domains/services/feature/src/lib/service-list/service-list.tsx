@@ -17,6 +17,7 @@ import type {
   Database,
   Environment,
   HelmSourceRepositoryResponse,
+  Status,
 } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -66,7 +67,12 @@ import {
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
-import { containerRegistryKindToIcon, formatCronExpression, twMerge } from '@qovery/shared/util-js'
+import {
+  containerRegistryKindToIcon,
+  formatCronExpression,
+  twMerge,
+  upperCaseFirstLetter,
+} from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
@@ -79,7 +85,15 @@ import { ServiceListSkeleton } from './service-list-skeleton'
 
 const { Table } = TablePrimitives
 
-function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
+function ServiceNameCell({
+  service,
+  environment,
+  deploymentStatus,
+}: {
+  service: AnyService
+  environment: Environment
+  deploymentStatus?: Status
+}) {
   const navigate = useNavigate()
 
   const serviceLink = match(service)
@@ -95,6 +109,32 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
         SERVICES_GENERAL_URL
     )
 
+  const LinkDeploymentStatus = () => {
+    const logLink =
+      ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
+      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
+
+    return match(deploymentStatus?.state)
+      .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
+        <Link
+          to={logLink}
+          color="brand"
+          underline
+          className="truncate  text-[13px]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+        </Link>
+      ))
+      .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
+        <Link to={logLink} color="red" underline className="truncate text-[13px]" onClick={(e) => e.stopPropagation()}>
+          Last deployment failed
+          <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+        </Link>
+      ))
+      .otherwise(() => null)
+  }
+
   return (
     <div className="flex items-center justify-between">
       <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
@@ -105,23 +145,30 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <Tooltip content={service.name}>
-                  <Link
-                    className="inline max-w-max truncate"
-                    color="current"
-                    to={serviceLink}
-                    underline
-                    onClick={(e) => e.stopPropagation()}
+                <span className="flex items-center justify-center gap-1.5">
+                  <Tooltip content={service.name}>
+                    <Link
+                      className="inline max-w-max truncate"
+                      color="current"
+                      to={serviceLink}
+                      underline
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {service.name}
+                    </Link>
+                  </Tooltip>
+                  <Tooltip
+                    content={match(db.mode)
+                      .with('CONTAINER', () => 'Container DB')
+                      .with('MANAGED', () => 'Cloud Managed DB')
+                      .exhaustive()}
                   >
-                    {service.name}
-                  </Link>
-                </Tooltip>
-                <span className="text-xs font-normal text-neutral-350">
-                  {match(db.mode)
-                    .with('CONTAINER', () => 'Container DB')
-                    .with('MANAGED', () => 'Cloud Managed DB')
-                    .exhaustive()}
+                    <span className="truncate text-sm font-normal">
+                      <Icon iconName="info-circle" iconStyle="regular" />
+                    </span>
+                  </Tooltip>
                 </span>
+                <LinkDeploymentStatus />
               </span>
             )
           })
@@ -143,20 +190,25 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
 
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <Tooltip content={service.name}>
-                  <Link
-                    className="inline max-w-max truncate"
-                    color="current"
-                    to={serviceLink}
-                    underline
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {service.name}
-                  </Link>
-                </Tooltip>
-                <Tooltip content={schedule}>
-                  <span className="truncate text-xs font-normal text-neutral-350">{schedule}</span>
-                </Tooltip>
+                <span className="flex items-center justify-center gap-1.5">
+                  <Tooltip content={service.name}>
+                    <Link
+                      className="inline max-w-max truncate"
+                      color="current"
+                      to={serviceLink}
+                      underline
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {service.name}
+                    </Link>
+                  </Tooltip>
+                  <Tooltip content={schedule}>
+                    <span className="truncate text-sm font-normal">
+                      <Icon iconName="info-circle" iconStyle="regular" />
+                    </span>
+                  </Tooltip>
+                </span>
+                <LinkDeploymentStatus />
               </span>
             )
           })
@@ -173,35 +225,38 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
                   {service.name}
                 </Link>
               </Tooltip>
+              <LinkDeploymentStatus />
             </span>
           ))}
-        <div onClick={(e) => e.stopPropagation()}>
-          <ServiceLinksPopover
-            organizationId={environment.organization.id}
-            projectId={environment.project.id}
-            environmentId={environment.id}
-            serviceId={service.id}
-            align="start"
-          >
-            <Button variant="surface" color="neutral" radius="full">
-              <Tooltip content="Links">
-                <div className="flex items-center gap-1">
-                  <Icon iconName="link" iconStyle="regular" />
-                  <Icon iconName="angle-down" />
-                </div>
-              </Tooltip>
-            </Button>
-          </ServiceLinksPopover>
-        </div>
       </span>
-      <div className="flex shrink-0 items-center gap-4">
-        {'auto_deploy' in service && service.auto_deploy && (
-          <Tooltip content="Auto-deploy">
-            <span>
-              <Icon className="text-neutral-300" iconName="arrows-rotate" />
-            </span>
-          </Tooltip>
-        )}
+      <div className="flex shrink-0 items-center gap-5">
+        <div className="flex items-center">
+          {'auto_deploy' in service && service.auto_deploy && (
+            <Tooltip content="Auto-deploy">
+              <span>
+                <Icon className="text-neutral-300" iconName="arrows-rotate" />
+              </span>
+            </Tooltip>
+          )}
+          <div onClick={(e) => e.stopPropagation()}>
+            <ServiceLinksPopover
+              organizationId={environment.organization.id}
+              projectId={environment.project.id}
+              environmentId={environment.id}
+              serviceId={service.id}
+              align="start"
+            >
+              <Button variant="surface" color="neutral" radius="full" className="ml-3">
+                <Tooltip content="Links">
+                  <div className="flex items-center gap-1">
+                    <Icon iconName="link" iconStyle="regular" />
+                    <Icon iconName="angle-down" />
+                  </div>
+                </Tooltip>
+              </Button>
+            </ServiceLinksPopover>
+          </div>
+        </div>
         <div onClick={(e) => e.stopPropagation()}>
           <ServiceActionToolbar
             serviceId={service.id}
@@ -298,11 +353,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         ),
       }),
       columnHelper.accessor('name', {
-        header: 'Name',
+        header: 'Service',
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 40,
+        size: 45,
         meta: {
           customFacetEntry({ value, row }) {
             const service = row?.original
@@ -312,14 +367,20 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             }
             return (
               <span className="flex items-center gap-2 text-sm font-medium">
-                <ServiceAvatar service={service} className="h-5 w-5" />
+                <ServiceAvatar service={service} size="xs" />
                 {value}
               </span>
             )
           },
         },
         cell: (info) => {
-          return <ServiceNameCell service={info.row.original} environment={environment} />
+          return (
+            <ServiceNameCell
+              service={info.row.original}
+              deploymentStatus={info.row.original.deploymentStatus}
+              environment={environment}
+            />
+          )
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
@@ -357,45 +418,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           )
         },
       }),
-      columnHelper.accessor('deploymentStatus.stateLabel', {
-        id: 'deploymentStatus',
-        header: 'Last deployment',
-        enableColumnFilter: true,
-        enableSorting: false,
-        filterFn: 'arrIncludesSome',
-        size: 15,
-        cell: (info) => {
-          const value = info.getValue()
-          const service = info.row.original
-          return (
-            <Skeleton width={102} height={34} show={!value}>
-              <Tooltip content="See logs">
-                <Link
-                  as="button"
-                  to={
-                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                    DEPLOYMENT_LOGS_VERSION_URL(service.id, service.deploymentStatus?.execution_id)
-                  }
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip status={service.deploymentStatus?.state} />
-                  {value}
-                </Link>
-              </Tooltip>
-            </Skeleton>
-          )
-        },
-      }),
       columnHelper.accessor('version', {
         header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 20,
+        size: 35,
         cell: (info) => {
           const service = info.row.original
 
@@ -538,8 +565,8 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           return cell
         },
       }),
-      columnHelper.accessor('updated_at', {
-        header: 'Last update',
+      columnHelper.accessor('deploymentStatus.last_deployment_date', {
+        header: 'Last deployment',
         enableColumnFilter: false,
         enableSorting: true,
         size: 10,
@@ -550,7 +577,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               <span className="whitespace-nowrap text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
             </Tooltip>
           ) : (
-            <Icon iconName="circle-question" className="text-sm text-neutral-300" />
+            '-'
           )
         },
       }),
@@ -678,7 +705,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
+                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r pl-0' : ''} font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
@@ -688,7 +715,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     <button
                       type="button"
                       className={twMerge(
-                        'flex items-center gap-1',
+                        'flex items-center gap-1 truncate',
                         header.column.getCanSort() ? 'cursor-pointer select-none' : ''
                       )}
                       onClick={header.column.getToggleSortingHandler()}
@@ -732,7 +759,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`${i === 1 ? 'border-r pl-0' : ''} first:relative`}
+                    className={`px-6 ${i === 1 ? 'border-r pl-0' : ''} first:relative`}
                     style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
