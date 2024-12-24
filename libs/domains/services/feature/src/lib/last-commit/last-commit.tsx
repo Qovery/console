@@ -90,14 +90,14 @@ export function LastCommit({ organizationId, projectId, className, service, gitR
             variant="surface"
             color="neutral"
             size="xs"
-            className={twMerge(`group relative justify-between ${delta > 0 ? 'w-[104px] pr-7' : 'gap-1'}`, className)}
+            className={twMerge(`group relative justify-between ${delta > 0 ? 'w-[119px] pr-9' : 'gap-1'}`, className)}
             onClick={deployCommitVersion}
           >
             <Icon iconName="rotate-right" iconStyle="regular" className="hidden w-4 group-hover:inline" />
             <Icon iconName="code-commit" iconStyle="regular" className="w-4 group-hover:hidden" />
             {deployedCommit.git_commit_id.substring(0, 7)}
-            <span className="absolute -right-[1px] -top-[1px] bottom-0 flex h-[calc(100%+2px)] min-w-[22px] items-center justify-center rounded-br rounded-tr bg-brand-500 px-1 text-white">
-              {delta}
+            <span className="absolute -right-[1px] -top-[1px] bottom-0 flex h-[calc(100%+2px)] w-7 items-center justify-center rounded-br rounded-tr bg-brand-500 px-1 text-white">
+              <Icon iconName="clock-rotate-left" iconStyle="regular" />
             </span>
           </Button>
         ) : (

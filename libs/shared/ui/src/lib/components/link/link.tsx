@@ -19,6 +19,7 @@ export const linkVariants = cva(
       size: {
         xs: ['text-xs'],
         sm: ['text-sm'],
+        ssm: ['text-ssm'],
       },
       underline: {
         true: ['hover:underline'],
@@ -38,6 +39,7 @@ const iconVariants = cva([], {
     size: {
       xs: ['text-2xs', 'leading-4'],
       sm: ['text-xs', 'leading-5'],
+      ssm: ['text-ssm', 'leading-6'],
     },
   },
   defaultVariants: {
