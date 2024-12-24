@@ -58,7 +58,6 @@ import {
   Menu,
   MenuAlign,
   type MenuData,
-  Skeleton,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -74,7 +73,6 @@ import {
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
-import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
@@ -116,18 +114,12 @@ function ServiceNameCell({
 
     return match(deploymentStatus?.state)
       .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
-        <Link
-          to={logLink}
-          color="brand"
-          underline
-          className="truncate  text-[13px]"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <Link to={logLink} color="brand" underline size="ssm" className="truncate" onClick={(e) => e.stopPropagation()}>
           {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" className="relative top-[1px]" />
         </Link>
       ))
       .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
-        <Link to={logLink} color="red" underline className="truncate text-[13px]" onClick={(e) => e.stopPropagation()}>
+        <Link to={logLink} color="red" underline size="ssm" className="truncate" onClick={(e) => e.stopPropagation()}>
           Last deployment failed
           <Icon iconName="arrow-up-right" className="relative top-[1px]" />
         </Link>
@@ -428,35 +420,34 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           const gitInfo = (service: Application | Job | Helm, gitRepository?: ApplicationGitRepository) =>
             gitRepository && (
-              <div className="flex flex-row items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                <LastCommitAuthor
-                  gitRepository={gitRepository}
-                  serviceId={service.id}
-                  serviceType={service.serviceType}
-                />
-                <div className="flex flex-col gap-1">
-                  <LastCommit
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    gitRepository={gitRepository}
-                    service={service}
-                  />
+              <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+                <div className="flex w-44 flex-col gap-1.5">
+                  <span className="flex items-center gap-2">
+                    <Icon className="h-3 w-3" name={gitRepository.provider} />
+                    <ExternalLink href={gitRepository.url} color="brand" size="ssm" withIcon={false}>
+                      <Truncate text={gitRepository.name} truncateLimit={20} />
+                    </ExternalLink>
+                  </span>
                   {gitRepository.branch && gitRepository.url && (
-                    <span className="inline-block">
+                    <span className="flex items-center gap-2">
+                      <Icon iconName="code-branch" iconStyle="regular" />
                       <ExternalLink
-                        as="button"
                         href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
-                        onClick={(e) => e.stopPropagation()}
-                        color="neutral"
-                        variant="surface"
-                        className="gap-1 whitespace-nowrap"
+                        color="brand"
+                        size="ssm"
+                        withIcon={false}
                       >
-                        <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
-                        <Truncate text={gitRepository.branch} truncateLimit={18} />
+                        <Truncate text={gitRepository.branch} truncateLimit={20} />
                       </ExternalLink>
                     </span>
                   )}
                 </div>
+                <LastCommit
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  gitRepository={gitRepository}
+                  service={service}
+                />
               </div>
             )
           const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
@@ -486,34 +477,50 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
             datasource && (
-              <Badge variant="surface" className="ml-7 items-center gap-1 whitespace-nowrap">
-                <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-                {datasource.version}
-              </Badge>
+              <div className="flex flex-col gap-1.5 text-ssm text-neutral-400">
+                <span className="flex items-center gap-2">
+                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
+                  {upperCaseFirstLetter(datasource.type).replace('sql', 'SQL').replace('db', 'DB')}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
+                  v.{datasource.version}
+                </span>
+              </div>
             )
 
           const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) =>
             helmRepository && (
-              <div className="ml-7 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
-                <span className="inline-block">
-                  <ExternalLink
-                    as="button"
-                    href={helmRepository.repository?.url}
-                    onClick={(e) => e.stopPropagation()}
-                    color="neutral"
-                    variant="surface"
-                    className="items-center gap-1 whitespace-nowrap"
-                  >
-                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
-                    <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
-                  </ExternalLink>
-                </span>
-                <div>
-                  <Badge variant="surface" className="gap-1 whitespace-nowrap">
-                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
-                    {helmRepository.chart_name}:{helmRepository.chart_version}
-                  </Badge>
+              <div className="flex items-center">
+                <div className="flex w-44 flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex gap-2">
+                    <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
+                    <ExternalLink
+                      href={helmRepository.repository?.url}
+                      onClick={(e) => e.stopPropagation()}
+                      color="brand"
+                      size="ssm"
+                      withIcon={false}
+                      className="items-center gap-1"
+                    >
+                      <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={20} />
+                    </ExternalLink>
+                  </span>
+                  <div className="flex gap-2">
+                    <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
+                    <span>
+                      <Truncate text={helmRepository.chart_name} truncateLimit={20} />
+                    </span>
+                  </div>
                 </div>
+                <Button variant="surface" size="xs" className="gap-1 pr-0">
+                  <span className="flex h-full items-center justify-center pr-1">
+                    <Truncate text={helmRepository.chart_version} truncateLimit={20} />
+                  </span>
+                  <span className="flex h-full w-6 items-center justify-center border-l border-neutral-250">
+                    <Icon iconName="clock-rotate-left" iconStyle="regular" />
+                  </span>
+                </Button>
               </div>
             )
 
