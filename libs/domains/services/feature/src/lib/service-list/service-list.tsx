@@ -48,7 +48,6 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
-  Badge,
   Button,
   Checkbox,
   EmptyState,
@@ -74,6 +73,7 @@ import {
 } from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommit } from '../last-commit/last-commit'
+import LastVersion from '../last-version/last-version'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
@@ -422,20 +422,29 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             gitRepository && (
               <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-44 flex-col gap-1.5">
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-2 text-neutral-400">
                     <Icon className="h-3 w-3" name={gitRepository.provider} />
-                    <ExternalLink href={gitRepository.url} color="brand" size="ssm" withIcon={false}>
+                    <ExternalLink
+                      href={gitRepository.url}
+                      underline
+                      color="current"
+                      size="ssm"
+                      withIcon={false}
+                      className="font-normal"
+                    >
                       <Truncate text={gitRepository.name} truncateLimit={20} />
                     </ExternalLink>
                   </span>
                   {gitRepository.branch && gitRepository.url && (
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 text-neutral-400">
                       <Icon iconName="code-branch" iconStyle="regular" />
                       <ExternalLink
                         href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
-                        color="brand"
+                        underline
+                        color="current"
                         size="ssm"
                         withIcon={false}
+                        className="font-normal"
                       >
                         <Truncate text={gitRepository.branch} truncateLimit={20} />
                       </ExternalLink>
@@ -452,26 +461,34 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             )
           const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
             containerImage && (
-              <div className="ml-7 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
-                <span className="inline-block">
-                  <ExternalLink
-                    as="button"
-                    href={containerImage.registry.url}
-                    onClick={(e) => e.stopPropagation()}
-                    color="neutral"
-                    variant="surface"
-                    className="items-center gap-1 whitespace-nowrap capitalize"
-                  >
+              <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+                <div className="flex w-44 flex-col gap-1.5">
+                  <span className="flex items-center gap-2 text-neutral-400">
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
-                    <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
-                  </ExternalLink>
-                </span>
-                <div>
-                  <Badge variant="surface" className="gap-1 whitespace-nowrap">
+                    <ExternalLink
+                      href={containerImage.registry.url}
+                      underline
+                      color="current"
+                      size="ssm"
+                      withIcon={false}
+                      className="font-normal"
+                    >
+                      <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
+                    </ExternalLink>
+                  </span>
+                  <span className="flex items-center gap-2 text-neutral-400">
                     <Icon width={16} name={IconEnum.CONTAINER} />
-                    <Truncate text={`${containerImage.image_name}:${containerImage.tag}`} truncateLimit={35} />
-                  </Badge>
+                    <Truncate text={`${containerImage.image_name}`} truncateLimit={20} />
+                  </span>
                 </div>
+                {service.serviceType === 'CONTAINER' && (
+                  <LastVersion
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    service={service}
+                    version={containerImage.tag}
+                  />
+                )}
               </div>
             )
 
@@ -498,10 +515,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     <ExternalLink
                       href={helmRepository.repository?.url}
                       onClick={(e) => e.stopPropagation()}
-                      color="brand"
+                      underline
+                      color="current"
                       size="ssm"
                       withIcon={false}
-                      className="items-center gap-1"
+                      className="items-center gap-1 font-normal"
                     >
                       <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={20} />
                     </ExternalLink>
@@ -513,14 +531,14 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     </span>
                   </div>
                 </div>
-                <Button variant="surface" size="xs" className="gap-1 pr-0">
-                  <span className="flex h-full items-center justify-center pr-1">
-                    <Truncate text={helmRepository.chart_version} truncateLimit={20} />
-                  </span>
-                  <span className="flex h-full w-6 items-center justify-center border-l border-neutral-250">
-                    <Icon iconName="clock-rotate-left" iconStyle="regular" />
-                  </span>
-                </Button>
+                {service.serviceType === 'HELM' && (
+                  <LastVersion
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    service={service}
+                    version={helmRepository.chart_version}
+                  />
+                )}
               </div>
             )
 

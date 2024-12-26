@@ -90,7 +90,7 @@ export function LastCommit({ organizationId, projectId, className, service, gitR
             variant="surface"
             color="neutral"
             size="xs"
-            className={twMerge(`group relative justify-between ${delta > 0 ? 'w-[119px] pr-9' : 'gap-1'}`, className)}
+            className={twMerge(`group relative justify-between ${delta > 0 ? 'w-[114px] pr-9' : 'gap-1'}`, className)}
             onClick={deployCommitVersion}
           >
             <Icon iconName="rotate-right" iconStyle="regular" className="hidden w-4 group-hover:inline" />
