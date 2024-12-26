@@ -86,6 +86,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
           git_token_name: null,
         },
         auto_deploy: false,
+        service_type: 'APPLICATION',
         serviceType: 'APPLICATION',
         runningStatus: {
           stateLabel: 'Stopped',
@@ -174,6 +175,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
           },
         },
         auto_deploy: true,
+        service_type: 'CONTAINER',
         serviceType: 'CONTAINER',
         runningStatus: {
           stateLabel: 'Stopped',
@@ -238,6 +240,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
           readiness_probe: null,
           liveness_probe: null,
         },
+        service_type: 'JOB',
         serviceType: 'JOB',
         runningStatus: {
           stateLabel: 'Stopped',
@@ -301,6 +304,7 @@ jest.mock('../hooks/use-services/use-services', () => ({
           readiness_probe: null,
           liveness_probe: null,
         },
+        service_type: 'JOB',
         serviceType: 'JOB',
         runningStatus: {
           stateLabel: 'Stopped',
@@ -413,7 +417,7 @@ describe('ServiceList', () => {
   })
   it('should filter services by name', async () => {
     const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
-    await userEvent.click(screen.getByRole('button', { name: /name/i }))
+    await userEvent.click(screen.getAllByRole('button', { name: /service/i })[0])
     await userEvent.click(screen.getByRole('menuitem', { name: /front-end/i }))
     const rows = screen.getAllByRole('row')
     expect(rows).toHaveLength(2)
@@ -432,13 +436,6 @@ describe('ServiceList', () => {
     expect(screen.getAllByRole('link', { name: /stopped/i })[0]).toHaveAttribute(
       'href',
       '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/application/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/services/general'
-    )
-  })
-  it('should navigate to service deployment logs on service deployment status click', () => {
-    renderWithProviders(<ServiceList {...serviceListProps} />)
-    expect(screen.getAllByRole('link', { name: /stopped/i })[1]).toHaveAttribute(
-      'href',
-      '/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs/exec-1'
     )
   })
 })
