@@ -88,6 +88,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 environment: {
                   id: '',
                 },
+                service_type: 'JOB',
                 serviceType: 'JOB',
                 job_type: 'LIFECYCLE',
                 auto_preview: false,
@@ -107,6 +108,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 environment: {
                   id: '',
                 },
+                service_type: 'JOB',
                 serviceType: 'JOB',
                 job_type: 'CRON',
                 auto_preview: false,

@@ -7,6 +7,7 @@ const chance = new Chance('123')
 export const applicationFactoryMock = (howMany: number): Application[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
+    service_type: 'APPLICATION',
     icon_uri: 'app://qovery-console/application',
     created_at: chance.date({ year: 2023, string: true }).toString(),
     updated_at: chance.date({ year: 2024, string: true }).toString(),

@@ -50,6 +50,7 @@ export const cronjobFactoryMock = (howMany: number, withContainer = false): Job[
 
     return {
       id: `${index}`,
+      service_type: 'JOB',
       serviceType: 'JOB' as const,
       job_type: 'CRON' as const,
       icon_uri: 'app://qovery-console/cron-job',
@@ -132,6 +133,7 @@ export const lifecycleJobFactoryMock = (howMany: number, withContainer = false):
 
     return {
       id: `${index}`,
+      service_type: 'JOB',
       job_type: 'LIFECYCLE' as const,
       icon_uri: 'app://qovery-console/lifecycle-job',
       created_at: new Date().toString(),

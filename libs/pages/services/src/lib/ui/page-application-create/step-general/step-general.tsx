@@ -66,6 +66,7 @@ export function StepGeneral(props: StepGeneralProps) {
               environment: {
                 id: '',
               },
+              service_type: 'APPLICATION',
               serviceType: 'APPLICATION',
               created_at: '',
               healthchecks: {},
