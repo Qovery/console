@@ -624,9 +624,13 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               onClick={(event) => event.stopPropagation()}
             >
               <Tooltip content={dateUTCString(value)} delayDuration={200}>
-                <span className="whitespace-nowrap text-ssm">{timeAgo(new Date(value))}</span>
+                <span className="whitespace-nowrap text-ssm font-normal">{timeAgo(new Date(value))}</span>
               </Tooltip>
-              <Icon iconName="arrow-up-right" className="text-ssm opacity-0 group-hover:opacity-100" />
+              <Icon
+                iconName="arrow-up-right"
+                iconStyle="regular"
+                className="text-ssm opacity-0 group-hover:opacity-100"
+              />
             </Link>
           ) : (
             <span className="block w-full text-right">-</span>
