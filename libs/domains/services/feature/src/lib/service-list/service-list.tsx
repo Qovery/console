@@ -38,6 +38,7 @@ import {
   DATABASE_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_PRE_CHECK_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -108,18 +109,32 @@ function ServiceNameCell({
     )
 
   const LinkDeploymentStatus = () => {
-    const logLink =
-      ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
+    const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
+    const deploymentLog = DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
+    const precheckLog = ENVIRONMENT_PRE_CHECK_LOGS_URL(deploymentStatus?.execution_id ?? '')
 
     return match(deploymentStatus?.state)
       .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
-        <Link to={logLink} color="brand" underline size="ssm" className="truncate" onClick={(e) => e.stopPropagation()}>
+        <Link
+          to={environmentLog + deploymentLog}
+          color="brand"
+          underline
+          size="ssm"
+          className="truncate"
+          onClick={(e) => e.stopPropagation()}
+        >
           {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" className="relative top-[1px]" />
         </Link>
       ))
       .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
-        <Link to={logLink} color="red" underline size="ssm" className="truncate" onClick={(e) => e.stopPropagation()}>
+        <Link
+          to={deploymentStatus?.steps === null ? environmentLog + precheckLog : environmentLog + deploymentLog}
+          color="red"
+          underline
+          size="ssm"
+          className="truncate"
+          onClick={(e) => e.stopPropagation()}
+        >
           Last deployment failed
           <Icon iconName="arrow-up-right" className="relative top-[1px]" />
         </Link>
@@ -420,7 +435,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           const gitInfo = (service: Application | Job | Helm, gitRepository?: ApplicationGitRepository) =>
             gitRepository && (
-              <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-44 flex-col gap-1.5">
                   <span className="flex items-center gap-2 text-neutral-400">
                     <Icon className="h-3 w-3" name={gitRepository.provider} />
@@ -461,7 +476,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             )
           const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
             containerImage && (
-              <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-44 flex-col gap-1.5">
                   <span className="flex items-center gap-2 text-neutral-400">
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
@@ -508,7 +523,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) =>
             helmRepository && (
-              <div className="flex items-center">
+              <div className="flex items-center gap-1">
                 <div className="flex w-44 flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
                   <span className="flex gap-2">
                     <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
@@ -596,13 +611,23 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         enableSorting: true,
         size: 5,
         cell: (info) => {
+          const service = info.row.original
           const value = info.getValue()
+          const linkLog =
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+            DEPLOYMENT_LOGS_VERSION_URL(service?.id, service?.deploymentStatus?.execution_id)
+
           return value ? (
-            <span className="block w-full text-right">
-              <Tooltip content={dateUTCString(value)}>
-                <span className="whitespace-nowrap text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
+            <Link
+              to={linkLog}
+              className="group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Tooltip content={dateUTCString(value)} delayDuration={200}>
+                <span className="whitespace-nowrap text-ssm">{timeAgo(new Date(value))}</span>
               </Tooltip>
-            </span>
+              <Icon iconName="arrow-up-right" className="text-ssm opacity-0 group-hover:opacity-100" />
+            </Link>
           ) : (
             <span className="block w-full text-right">-</span>
           )
@@ -726,7 +751,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className={twMerge('w-full min-w-[980px] text-xs', className)} {...props}>
+      <Table.Root className={twMerge('w-full min-w-[980px] text-ssm', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
@@ -749,8 +774,8 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
-                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                        .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
                         .with(false, () => null)
                         .exhaustive()}
                     </button>

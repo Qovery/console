@@ -6,7 +6,7 @@ exports[`ServiceList should match snapshot 1`] = `
     class="flex grow flex-col justify-between"
   >
     <table
-      class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[980px] text-xs"
+      class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[980px] text-ssm"
     >
       <thead>
         <tr>
@@ -323,7 +323,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 35%;"
           >
             <div
-              class="flex items-center"
+              class="flex items-center gap-1"
             >
               <div
                 class="flex w-44 flex-col gap-1.5"
@@ -402,16 +402,21 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-14 py-0 px-6 first:relative"
             style="width: 5%;"
           >
-            <span
-              class="block w-full text-right"
+            <a
+              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
+              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/037c9e87-e098-4970-8b1f-9a5ffe9e4b89/deployment-logs/exec-1"
             >
               <span
-                class="whitespace-nowrap text-xs text-neutral-350"
+                class="whitespace-nowrap text-ssm"
                 data-state="closed"
               >
                 19 days
               </span>
-            </span>
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+              />
+            </a>
           </td>
         </tr>
         <tr
@@ -651,7 +656,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 35%;"
           >
             <div
-              class="flex items-center"
+              class="flex items-center gap-1"
             >
               <div
                 class="flex w-44 flex-col gap-1.5"
@@ -732,16 +737,21 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-14 py-0 px-6 first:relative"
             style="width: 5%;"
           >
-            <span
-              class="block w-full text-right"
+            <a
+              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
+              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/04308de2-af27-405f-9e95-570fa94ed577/deployment-logs/:versionId"
             >
               <span
-                class="whitespace-nowrap text-xs text-neutral-350"
+                class="whitespace-nowrap text-ssm"
                 data-state="closed"
               >
                 19 days
               </span>
-            </span>
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+              />
+            </a>
           </td>
         </tr>
         <tr
@@ -1283,7 +1293,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 35%;"
           >
             <div
-              class="flex items-center"
+              class="flex items-center gap-1"
             >
               <div
                 class="flex w-44 flex-col gap-1.5"
@@ -1362,16 +1372,21 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-14 py-0 px-6 first:relative"
             style="width: 5%;"
           >
-            <span
-              class="block w-full text-right"
+            <a
+              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
+              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/ebd8be35-d7a2-4d4f-ad82-de4378a83ef4/deployment-logs/:versionId"
             >
               <span
-                class="whitespace-nowrap text-xs text-neutral-350"
+                class="whitespace-nowrap text-ssm"
                 data-state="closed"
               >
                 19 days
               </span>
-            </span>
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+              />
+            </a>
           </td>
         </tr>
         <tr
@@ -1706,7 +1721,7 @@ exports[`ServiceList should match snapshot 1`] = `
             style="width: 35%;"
           >
             <div
-              class="flex items-center"
+              class="flex items-center gap-1"
             >
               <div
                 class="flex w-44 flex-col gap-1.5"
@@ -1785,16 +1800,21 @@ exports[`ServiceList should match snapshot 1`] = `
             class="h-14 py-0 px-6 first:relative"
             style="width: 5%;"
           >
-            <span
-              class="block w-full text-right"
+            <a
+              class="cursor-pointer transition duration-100 font-medium items-center text-sm group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
+              href="/organization/1/project/cf021d82-2c5e-41de-96eb-eb69c022eddc/environment/55867c71-56f9-4b4f-ab22-5904c9dbafda/logs/33962e52-7883-42fd-8613-85e04229a9b6/deployment-logs/:versionId"
             >
               <span
-                class="whitespace-nowrap text-xs text-neutral-350"
+                class="whitespace-nowrap text-ssm"
                 data-state="closed"
               >
                 19 days
               </span>
-            </span>
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-arrow-up-right text-ssm opacity-0 group-hover:opacity-100"
+              />
+            </a>
           </td>
         </tr>
       </tbody>
