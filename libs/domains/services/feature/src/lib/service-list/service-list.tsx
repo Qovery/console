@@ -349,7 +349,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 45,
+        size: 50,
         meta: {
           customFacetEntry({ value, row }) {
             const service = row?.original
@@ -594,15 +594,17 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         header: 'Last deployment',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 10,
+        size: 5,
         cell: (info) => {
           const value = info.getValue()
           return value ? (
-            <Tooltip content={dateUTCString(value)}>
-              <span className="whitespace-nowrap text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
-            </Tooltip>
+            <span className="block w-full text-right">
+              <Tooltip content={dateUTCString(value)}>
+                <span className="whitespace-nowrap text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
+              </Tooltip>
+            </span>
           ) : (
-            '-'
+            <span className="block w-full text-right">-</span>
           )
         },
       }),
@@ -724,7 +726,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className={twMerge('w-full min-w-[800px] text-xs', className)} {...props}>
+      <Table.Root className={twMerge('w-full min-w-[980px] text-xs', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>

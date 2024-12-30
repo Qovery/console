@@ -6,7 +6,7 @@ exports[`ServiceList should match snapshot 1`] = `
     class="flex grow flex-col justify-between"
   >
     <table
-      class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[800px] text-xs"
+      class="divide-y divide-neutral-200 text-neutral-400 w-full min-w-[980px] text-xs"
     >
       <thead>
         <tr>
@@ -29,7 +29,7 @@ exports[`ServiceList should match snapshot 1`] = `
           </th>
           <th
             class="h-11 text-left px-6 border-r pl-0 font-medium"
-            style="width: 45%;"
+            style="width: 50%;"
           >
             <div
               class="relative inline-block"
@@ -81,7 +81,7 @@ exports[`ServiceList should match snapshot 1`] = `
           </th>
           <th
             class="h-11 text-left px-6 font-medium"
-            style="width: 10%;"
+            style="width: 5%;"
           >
             <button
               class="flex items-center gap-1 truncate cursor-pointer select-none"
@@ -117,7 +117,7 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 45%;"
+            style="width: 50%;"
           >
             <div
               class="flex items-center justify-between"
@@ -400,13 +400,17 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 first:relative"
-            style="width: 10%;"
+            style="width: 5%;"
           >
             <span
-              class="whitespace-nowrap text-xs text-neutral-350"
-              data-state="closed"
+              class="block w-full text-right"
             >
-              19 days
+              <span
+                class="whitespace-nowrap text-xs text-neutral-350"
+                data-state="closed"
+              >
+                19 days
+              </span>
             </span>
           </td>
         </tr>
@@ -432,7 +436,7 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 45%;"
+            style="width: 50%;"
           >
             <div
               class="flex items-center justify-between"
@@ -726,13 +730,17 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 first:relative"
-            style="width: 10%;"
+            style="width: 5%;"
           >
             <span
-              class="whitespace-nowrap text-xs text-neutral-350"
-              data-state="closed"
+              class="block w-full text-right"
             >
-              19 days
+              <span
+                class="whitespace-nowrap text-xs text-neutral-350"
+                data-state="closed"
+              >
+                19 days
+              </span>
             </span>
           </td>
         </tr>
@@ -758,7 +766,7 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 45%;"
+            style="width: 50%;"
           >
             <div
               class="flex items-center justify-between"
@@ -1352,13 +1360,17 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 first:relative"
-            style="width: 10%;"
+            style="width: 5%;"
           >
             <span
-              class="whitespace-nowrap text-xs text-neutral-350"
-              data-state="closed"
+              class="block w-full text-right"
             >
-              19 days
+              <span
+                class="whitespace-nowrap text-xs text-neutral-350"
+                data-state="closed"
+              >
+                19 days
+              </span>
             </span>
           </td>
         </tr>
@@ -1384,7 +1396,7 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 border-r pl-0 first:relative"
-            style="width: 45%;"
+            style="width: 50%;"
           >
             <div
               class="flex items-center justify-between"
@@ -1771,13 +1783,17 @@ exports[`ServiceList should match snapshot 1`] = `
           </td>
           <td
             class="h-14 py-0 px-6 first:relative"
-            style="width: 10%;"
+            style="width: 5%;"
           >
             <span
-              class="whitespace-nowrap text-xs text-neutral-350"
-              data-state="closed"
+              class="block w-full text-right"
             >
-              19 days
+              <span
+                class="whitespace-nowrap text-xs text-neutral-350"
+                data-state="closed"
+              >
+                19 days
+              </span>
             </span>
           </td>
         </tr>
