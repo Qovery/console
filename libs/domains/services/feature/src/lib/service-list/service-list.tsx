@@ -137,7 +137,7 @@ function ServiceNameCell({
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <span className="flex items-center justify-center gap-1.5">
+                <span className="flex items-center gap-1.5">
                   <Tooltip content={service.name}>
                     <Link
                       className="inline max-w-max truncate"
@@ -182,7 +182,7 @@ function ServiceNameCell({
 
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <span className="flex items-center justify-center gap-1.5">
+                <span className="flex items-center gap-1.5">
                   <Tooltip content={service.name}>
                     <Link
                       className="inline max-w-max truncate"

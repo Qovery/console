@@ -1163,7 +1163,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
                   <span
-                    class="flex items-center justify-center gap-1.5"
+                    class="flex items-center gap-1.5"
                   >
                     <a
                       class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-current hover:brightness-75 text-sm hover:underline inline max-w-max truncate"
@@ -1586,7 +1586,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   class="flex min-w-0 shrink flex-col truncate pr-2"
                 >
                   <span
-                    class="flex items-center justify-center gap-1.5"
+                    class="flex items-center gap-1.5"
                   >
                     <a
                       class="cursor-pointer transition duration-100 font-medium items-center gap-1 text-current hover:brightness-75 text-sm hover:underline inline max-w-max truncate"
