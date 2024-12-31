@@ -117,7 +117,7 @@ export function PageSettingsAdvanced(props: PageSettingsAdvancedProps) {
                   }}
                   defaultValue=""
                   render={({ field, fieldState: { error } }) => (
-                    <div className="flex gap-3">
+                    <div className="flex w-full gap-3">
                       {error?.message && (
                         <Tooltip content={error.message} align="center" side="top">
                           <div data-testid="warning-icon-left" className="flex items-center">
