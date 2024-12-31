@@ -114,16 +114,34 @@ function ServiceNameCell({
     const precheckLog = ENVIRONMENT_PRE_CHECK_LOGS_URL(deploymentStatus?.execution_id ?? '')
 
     return match(deploymentStatus?.state)
+      .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
+        <span className="flex text-ssm font-normal text-neutral-350">
+          {upperCaseFirstLetter(s).replace('_', ' ')}
+          <span className="flex">
+            <span className="animate-[pulse_1s_ease-in-out_infinite_0ms] opacity-0">.</span>
+            <span className="animate-[pulse_1s_ease-in-out_infinite_300ms] opacity-0">.</span>
+            <span className="animate-[pulse_1s_ease-in-out_infinite_600ms] opacity-0">.</span>
+          </span>
+        </span>
+      ))
       .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
         <Link
           to={environmentLog + deploymentLog}
           color="brand"
           underline
           size="ssm"
-          className="truncate"
+          className="group flex truncate"
           onClick={(e) => e.stopPropagation()}
         >
-          {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+          <span className="flex">
+            {upperCaseFirstLetter(s)}
+            <span className="flex">
+              <span className="animate-[pulse_1s_ease-in-out_infinite_0ms] opacity-0 group-hover:opacity-100">.</span>
+              <span className="animate-[pulse_1s_ease-in-out_infinite_300ms] opacity-0 group-hover:opacity-100">.</span>
+              <span className="animate-[pulse_1s_ease-in-out_infinite_600ms] opacity-0 group-hover:opacity-100">.</span>
+            </span>
+          </span>{' '}
+          <Icon iconName="arrow-up-right" className="relative top-[1px]" />
         </Link>
       ))
       .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
@@ -163,16 +181,6 @@ function ServiceNameCell({
                     >
                       {service.name}
                     </Link>
-                  </Tooltip>
-                  <Tooltip
-                    content={match(db.mode)
-                      .with('CONTAINER', () => 'Container DB')
-                      .with('MANAGED', () => 'Cloud Managed DB')
-                      .exhaustive()}
-                  >
-                    <span className="truncate text-sm font-normal">
-                      <Icon iconName="info-circle" iconStyle="regular" />
-                    </span>
                   </Tooltip>
                 </span>
                 <LinkDeploymentStatus />
@@ -491,7 +499,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                       <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
                     </ExternalLink>
                   </span>
-                  <span className="flex items-center gap-2 text-neutral-400">
+                  <span className="flex items-center gap-2 text-neutral-350">
                     <Icon width={16} name={IconEnum.CONTAINER} />
                     <Truncate text={`${containerImage.image_name}`} truncateLimit={20} />
                   </span>
@@ -509,7 +517,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
             datasource && (
-              <div className="flex flex-col gap-1.5 text-ssm text-neutral-400">
+              <div className="flex flex-col gap-1.5 text-ssm text-neutral-350">
                 <span className="flex items-center gap-2">
                   <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
                   {upperCaseFirstLetter(datasource.type).replace('sql', 'SQL').replace('db', 'DB')}
@@ -541,7 +549,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   </span>
                   <div className="flex gap-2">
                     <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
-                    <span>
+                    <span className="text-neutral-350">
                       <Truncate text={helmRepository.chart_name} truncateLimit={20} />
                     </span>
                   </div>

@@ -123,6 +123,7 @@ export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
+// Waiting to have this implementation available in the edition interfaces.
 export type Application = _Application & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: ApplicationType

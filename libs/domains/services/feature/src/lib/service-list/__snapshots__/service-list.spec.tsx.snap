@@ -688,7 +688,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   </a>
                 </span>
                 <span
-                  class="flex items-center gap-2 text-neutral-400"
+                  class="flex items-center gap-2 text-neutral-350"
                 >
                   <svg
                     class="shrink-0 "
