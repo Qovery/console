@@ -124,13 +124,11 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
 
   return (
     <span className="flex">
-      <Tooltip content="Current version">
-        <Badge variant="surface" className="min-w-7 rounded-r-none border-r-0 border-neutral-250">
-          <span className="flex h-full w-full items-center justify-center">
-            <Truncate text={version} truncateLimit={20} />
-          </span>
-        </Badge>
-      </Tooltip>
+      <Badge variant="surface" className="min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250">
+        <span className="flex h-full w-full items-center justify-center truncate">
+          <Truncate text={version} truncateLimit={10} />
+        </span>
+      </Badge>
       <Tooltip content="Deploy from another version">
         <Button
           type="button"

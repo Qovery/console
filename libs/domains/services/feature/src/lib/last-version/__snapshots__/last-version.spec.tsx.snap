@@ -7,11 +7,10 @@ exports[`LastVersion should match snapshot 1`] = `
       class="flex"
     >
       <span
-        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded bg-neutral-100 text-neutral-400 min-w-7 rounded-r-none border-r-0 border-neutral-250"
-        data-state="closed"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded bg-neutral-100 text-neutral-400 min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
       >
         <span
-          class="flex h-full w-full items-center justify-center"
+          class="flex h-full w-full items-center justify-center truncate"
         >
           1.0
         </span>

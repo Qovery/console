@@ -38,7 +38,6 @@ import {
   DATABASE_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
-  ENVIRONMENT_PRE_CHECK_LOGS_URL,
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
@@ -63,6 +62,7 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
+  truncateText,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
@@ -111,7 +111,7 @@ function ServiceNameCell({
   const LinkDeploymentStatus = () => {
     const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
     const deploymentLog = DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
-    const precheckLog = ENVIRONMENT_PRE_CHECK_LOGS_URL(deploymentStatus?.execution_id ?? '')
+    // const precheckLog = ENVIRONMENT_PRE_CHECK_LOGS_URL(deploymentStatus?.execution_id ?? '')
 
     return match(deploymentStatus?.state)
       .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
@@ -487,18 +487,26 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             containerImage && (
               <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-44 flex-col gap-1.5">
-                  <span className="flex items-center gap-2 text-neutral-400">
+                  <span className="flex items-center gap-2 text-neutral-350">
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
-                    <ExternalLink
-                      href={containerImage.registry.url}
-                      underline
-                      color="current"
-                      size="ssm"
-                      withIcon={false}
-                      className="font-normal"
+                    <Tooltip
+                      content={
+                        <span className="text-center">
+                          {containerImage.registry.name.length >= 20 && (
+                            <>
+                              {containerImage.registry.name} <br />
+                            </>
+                          )}{' '}
+                          {containerImage.registry.url}
+                        </span>
+                      }
                     >
-                      <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
-                    </ExternalLink>
+                      <span className="text-neutral-350">
+                        {containerImage.registry.name.length >= 20
+                          ? truncateText(containerImage.registry.name, 20).toLowerCase()
+                          : containerImage.registry.name.toLowerCase()}
+                      </span>
+                    </Tooltip>
                   </span>
                   <span className="flex items-center gap-2 text-neutral-350">
                     <Icon width={16} name={IconEnum.CONTAINER} />
@@ -536,17 +544,24 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 <div className="flex w-44 flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
                   <span className="flex gap-2">
                     <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
-                    <ExternalLink
-                      href={helmRepository.repository?.url}
-                      onClick={(e) => e.stopPropagation()}
-                      underline
-                      color="current"
-                      size="ssm"
-                      withIcon={false}
-                      className="items-center gap-1 font-normal"
+                    <Tooltip
+                      content={
+                        <span className="text-center">
+                          {helmRepository.repository?.name.length > 20 && (
+                            <>
+                              {helmRepository.repository?.name} <br />
+                            </>
+                          )}
+                          {helmRepository.repository?.url}
+                        </span>
+                      }
                     >
-                      <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={20} />
-                    </ExternalLink>
+                      <span className="text-neutral-350">
+                        {helmRepository.repository?.name.length > 20
+                          ? truncateText(helmRepository.repository?.name, 20).toLowerCase()
+                          : helmRepository.repository?.name.toLowerCase()}
+                      </span>
+                    </Tooltip>
                   </span>
                   <div className="flex gap-2">
                     <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
