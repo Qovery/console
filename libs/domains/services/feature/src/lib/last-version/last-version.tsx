@@ -4,7 +4,7 @@ import { P, match } from 'ts-pattern'
 import { type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Button, Icon, Truncate, useModal } from '@qovery/shared/ui'
+import { Badge, Button, Icon, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import SelectVersionModal from '../select-version-modal/select-version-modal'
@@ -123,14 +123,28 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
   }
 
   return (
-    <Button variant="surface" size="xs" className="gap-1 pr-0" onClick={(e) => deployVersion(e)}>
-      <span className="flex h-full items-center justify-center pr-1">
-        <Truncate text={version} truncateLimit={20} />
-      </span>
-      <span className="flex h-full w-6 items-center justify-center border-l border-neutral-250">
-        <Icon iconName="clock-rotate-left" iconStyle="regular" />
-      </span>
-    </Button>
+    <span className="flex">
+      <Tooltip content="Current version">
+        <Badge variant="surface" className="min-w-7 rounded-r-none border-r-0 border-neutral-250">
+          <span className="flex h-full w-full items-center justify-center">
+            <Truncate text={version} truncateLimit={20} />
+          </span>
+        </Badge>
+      </Tooltip>
+      <Tooltip content="Deploy from another version">
+        <Button
+          type="button"
+          variant="surface"
+          size="xs"
+          className="w-7 justify-center gap-1 rounded-l-none px-1.5"
+          onClick={(e) => deployVersion(e)}
+        >
+          <span className="flex h-full items-center justify-center">
+            <Icon iconName="clock-rotate-left" iconStyle="regular" />
+          </span>
+        </Button>
+      </Tooltip>
+    </span>
   )
 }
 

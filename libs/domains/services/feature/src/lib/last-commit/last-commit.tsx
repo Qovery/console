@@ -1,9 +1,8 @@
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
-import { type MouseEvent } from 'react'
+import { type MouseEvent, useState } from 'react'
 import { type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, CopyToClipboard, Icon, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
@@ -18,6 +17,7 @@ export interface LastCommitProps {
 }
 
 export function LastCommit({ organizationId, projectId, className, service, gitRepository }: LastCommitProps) {
+  const [hover, setHover] = useState(false)
   const { data: deploymentService } = useDeploymentStatus({
     environmentId: service.environment.id,
     serviceId: service.id,
@@ -72,51 +72,53 @@ export function LastCommit({ organizationId, projectId, className, service, gitR
   }
 
   return (
-    <Tooltip
-      content={
-        <>
-          {delta > 0 ? <p>This service has a delay of {delta} commits.</p> : null}
-          <p>Commit at: {deployedCommit.created_at}</p>
-          <p>
-            Message: <Truncate text={deployedCommit.message} truncateLimit={50} />
-          </p>
-        </>
-      }
-    >
-      <span className="relative">
-        {delta > 0 ? (
-          <Button
-            type="button"
-            variant="surface"
-            color="neutral"
-            size="xs"
-            className={twMerge(`group relative justify-between ${delta > 0 ? 'w-[114px] pr-9' : 'gap-1'}`, className)}
-            onClick={deployCommitVersion}
-          >
-            <Icon iconName="rotate-right" iconStyle="regular" className="hidden w-4 group-hover:inline" />
-            <Icon iconName="code-commit" iconStyle="regular" className="w-4 group-hover:hidden" />
-            {deployedCommit.git_commit_id.substring(0, 7)}
-            <span className="absolute -right-[1px] -top-[1px] bottom-0 flex h-[calc(100%+2px)] w-7 items-center justify-center rounded-br rounded-tr bg-brand-500 px-1 text-white">
-              <Icon iconName="clock-rotate-left" iconStyle="regular" />
+    <span className="flex">
+      <Tooltip
+        content={
+          <span className="flex flex-col">
+            <span>Commit at: {deployedCommit.created_at}</span>
+            <span>
+              Message: <Truncate text={deployedCommit.message} truncateLimit={50} />
             </span>
-          </Button>
-        ) : (
-          <CopyToClipboard text={deployedCommit.git_commit_id}>
+          </span>
+        }
+      >
+        <span>
+          <CopyToClipboard text={deployedCommit.git_commit_id} className="flex min-w-[81px] justify-center">
             <Button
               type="button"
               variant="surface"
               color="neutral"
               size="xs"
-              className={twMerge('group justify-between gap-1', className)}
+              className="gap-1 rounded-r-none border-r-0 pl-1"
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
             >
-              <Icon iconName="copy" className="hidden w-4 group-hover:inline" />
-              <Icon iconName="code-commit" iconStyle="regular" className="w-4 group-hover:hidden" />
+              {hover ? (
+                <Icon iconName="copy" iconStyle="solid" className="w-4" />
+              ) : (
+                <Icon iconName="code-commit" iconStyle="regular" className="w-4" />
+              )}
               {deployedCommit.git_commit_id.substring(0, 7)}
             </Button>
           </CopyToClipboard>
-        )}
-      </span>
-    </Tooltip>
+        </span>
+      </Tooltip>
+      <Tooltip content={delta > 0 ? `You have ${delta} commits ahead` : 'Deploy from another version'}>
+        <Button
+          type="button"
+          variant={delta > 0 ? 'solid' : 'surface'}
+          color={delta > 0 ? 'brand' : 'neutral'}
+          size="xs"
+          className="w-7 justify-center gap-1 rounded-l-none px-1.5"
+          onClick={deployCommitVersion}
+        >
+          <span className="flex h-full items-center justify-center">
+            <Icon iconName="clock-rotate-left" iconStyle="regular" />
+          </span>
+        </Button>
+      </Tooltip>
+    </span>
   )
 }
 

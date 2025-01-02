@@ -35,7 +35,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r1r:"
+                aria-controls="radix-:r20:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 whitespace-nowrap text-xs"
@@ -58,7 +58,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="relative inline-block"
             >
               <button
-                aria-controls="radix-:r1u:"
+                aria-controls="radix-:r23:"
                 aria-expanded="false"
                 aria-haspopup="dialog"
                 class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 whitespace-nowrap text-xs"
@@ -241,7 +241,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 >
                   <div>
                     <button
-                      aria-controls="radix-:r20:"
+                      aria-controls="radix-:r25:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
@@ -378,22 +378,36 @@ exports[`ServiceList should match snapshot 1`] = `
                 </span>
               </div>
               <span
-                class="relative"
-                data-state="closed"
+                class="flex"
               >
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <button
+                    class="items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                    type="button"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-code-commit w-4"
+                    />
+                    2f74448
+                  </button>
+                </span>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between gap-1"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
+                  data-state="closed"
                   type="button"
                 >
-                  <i
-                    aria-hidden="true"
-                    class="fa-solid fa-copy hidden w-4 group-hover:inline"
-                  />
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-code-commit w-4 group-hover:hidden"
-                  />
-                  2f74448
+                  <span
+                    class="flex h-full items-center justify-center"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-clock-rotate-left "
+                    />
+                  </span>
                 </button>
               </span>
             </div>
@@ -574,7 +588,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   </span>
                   <div>
                     <button
-                      aria-controls="radix-:r29:"
+                      aria-controls="radix-:r2f:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
@@ -714,23 +728,34 @@ exports[`ServiceList should match snapshot 1`] = `
                   </span>
                 </span>
               </div>
-              <button
-                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-1 pr-0"
+              <span
+                class="flex"
               >
                 <span
-                  class="flex h-full items-center justify-center pr-1"
+                  class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded bg-neutral-100 text-neutral-400 min-w-7 rounded-r-none border-r-0 border-neutral-250"
+                  data-state="closed"
                 >
-                  6.5.2
+                  <span
+                    class="flex h-full w-full items-center justify-center"
+                  >
+                    6.5.2
+                  </span>
                 </span>
-                <span
-                  class="flex h-full w-6 items-center justify-center border-l border-neutral-250"
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
+                  data-state="closed"
+                  type="button"
                 >
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-clock-rotate-left "
-                  />
-                </span>
-              </button>
+                  <span
+                    class="flex h-full items-center justify-center"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-clock-rotate-left "
+                    />
+                  </span>
+                </button>
+              </span>
             </div>
           </td>
           <td
@@ -1211,7 +1236,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   </span>
                   <div>
                     <button
-                      aria-controls="radix-:r2i:"
+                      aria-controls="radix-:r2q:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
@@ -1348,22 +1373,36 @@ exports[`ServiceList should match snapshot 1`] = `
                 </span>
               </div>
               <span
-                class="relative"
-                data-state="closed"
+                class="flex"
               >
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <button
+                    class="items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                    type="button"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-code-commit w-4"
+                    />
+                    10ad354
+                  </button>
+                </span>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between gap-1"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
+                  data-state="closed"
                   type="button"
                 >
-                  <i
-                    aria-hidden="true"
-                    class="fa-solid fa-copy hidden w-4 group-hover:inline"
-                  />
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-code-commit w-4 group-hover:hidden"
-                  />
-                  10ad354
+                  <span
+                    class="flex h-full items-center justify-center"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-clock-rotate-left "
+                    />
+                  </span>
                 </button>
               </span>
             </div>
@@ -1639,7 +1678,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   </span>
                   <div>
                     <button
-                      aria-controls="radix-:r2s:"
+                      aria-controls="radix-:r35:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 ml-3"
@@ -1776,22 +1815,36 @@ exports[`ServiceList should match snapshot 1`] = `
                 </span>
               </div>
               <span
-                class="relative"
-                data-state="closed"
+                class="flex"
               >
+                <span
+                  class=""
+                  data-state="closed"
+                >
+                  <button
+                    class="items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
+                    type="button"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-code-commit w-4"
+                    />
+                    10ad354
+                  </button>
+                </span>
                 <button
-                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 group justify-between gap-1"
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"
+                  data-state="closed"
                   type="button"
                 >
-                  <i
-                    aria-hidden="true"
-                    class="fa-solid fa-copy hidden w-4 group-hover:inline"
-                  />
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-code-commit w-4 group-hover:hidden"
-                  />
-                  10ad354
+                  <span
+                    class="flex h-full items-center justify-center"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-clock-rotate-left "
+                    />
+                  </span>
                 </button>
               </span>
             </div>
@@ -1861,7 +1914,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 aria-haspopup="menu"
                 class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 items-center gap-2"
                 data-state="closed"
-                id="radix-:r34:"
+                id="radix-:r3e:"
                 type="button"
               >
                 More 

@@ -146,7 +146,8 @@ function ServiceNameCell({
       ))
       .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
         <Link
-          to={deploymentStatus?.steps === null ? environmentLog + precheckLog : environmentLog + deploymentLog}
+          // to={deploymentStatus?.steps === null ? environmentLog + precheckLog : environmentLog + deploymentLog}
+          to={environmentLog + deploymentLog}
           color="red"
           underline
           size="ssm"
@@ -171,7 +172,7 @@ function ServiceNameCell({
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
                 <span className="flex items-center gap-1.5">
-                  <Tooltip content={service.name}>
+                  <Tooltip content={db.name}>
                     <Link
                       className="inline max-w-max truncate"
                       color="current"
@@ -179,7 +180,7 @@ function ServiceNameCell({
                       underline
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {service.name}
+                      {db.name}
                     </Link>
                   </Tooltip>
                 </span>
@@ -520,7 +521,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               <div className="flex flex-col gap-1.5 text-ssm text-neutral-350">
                 <span className="flex items-center gap-2">
                   <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-                  {upperCaseFirstLetter(datasource.type).replace('sql', 'SQL').replace('db', 'DB')}
+                  {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}
                 </span>
                 <span className="flex items-center gap-2">
                   <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
