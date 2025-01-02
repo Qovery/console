@@ -1,9 +1,10 @@
 import clsx from 'clsx'
 import { type ServiceStepMetric, type StateEnum, type Status } from 'qovery-typescript-axios'
-import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type FilterType } from '../list-deployment-logs'
@@ -118,14 +119,14 @@ export interface FiltersStageStepProps {
   serviceStatus: Status
   toggleColumnFilter: (type: FilterType) => void
   isFilterActive: (type: FilterType) => boolean
-  serviceType?: ServiceType
+  service?: AnyService
 }
 
 export function FiltersStageStep({
   serviceStatus: { steps, state },
   toggleColumnFilter,
   isFilterActive,
-  serviceType,
+  service,
 }: FiltersStageStepProps) {
   if (!steps?.details) return <div />
 
@@ -145,7 +146,12 @@ export function FiltersStageStep({
 
   return (
     <div className="flex items-center">
-      {serviceType !== 'CONTAINER' && (
+      {match(service)
+        .with({ serviceType: 'CONTAINER' }, () => false)
+        .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => false)
+        .with({ serviceType: 'JOB', source: P.when(isJobContainerSource) }, () => false)
+        .with({ serviceType: 'HELM', values_override: P.when(isHelmRepositorySource) }, () => false)
+        .otherwise(() => true) && (
         <>
           <StageStep
             type="BUILD"
