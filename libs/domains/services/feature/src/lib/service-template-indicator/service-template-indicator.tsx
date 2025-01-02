@@ -34,6 +34,8 @@ export function ServiceTemplateIndicator({
     .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, ({ schedule: { lifecycle_type } }) =>
       lifecycle_type !== 'GENERIC' ? lifecycle_type : undefined
     )
+    .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => 'AWS')
+    .with({ serviceType: 'DATABASE', mode: 'CONTAINER' }, () => 'CONTAINER')
     .otherwise(() => null)
   if (templateType) {
     return (

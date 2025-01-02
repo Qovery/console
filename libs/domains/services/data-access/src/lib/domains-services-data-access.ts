@@ -69,6 +69,7 @@ import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsD
 import { match } from 'ts-pattern'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
+const environmentApi = new EnvironmentMainCallsApi()
 const environmentActionApi = new EnvironmentActionsApi()
 
 const applicationsApi = new ApplicationsApi()
@@ -121,11 +122,28 @@ export type DatabaseType = Extract<ServiceType, 'DATABASE'>
 export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 
-export type Application = _Application & { serviceType: ApplicationType }
-export type Database = _Database & { serviceType: DatabaseType }
-export type Container = _Container & { serviceType: ContainerType }
-export type Job = _Job & { serviceType: JobType }
-export type Helm = _Helm & { serviceType: HelmType }
+// XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
+// Waiting to have this implementation available in the edition interfaces.
+export type Application = _Application & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: ApplicationType
+}
+export type Database = _Database & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: DatabaseType
+}
+export type Container = _Container & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: ContainerType
+}
+export type Job = _Job & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: JobType
+}
+export type Helm = _Helm & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: HelmType
+}
 
 export type AnyService = Application | Database | Container | Job | Helm
 
@@ -136,23 +154,23 @@ export type AdvancedSettings =
   | HelmAdvancedSettings
 
 export function isApplication(service: AnyService): service is Application {
-  return service.serviceType === 'APPLICATION'
+  return service.service_type === 'APPLICATION'
 }
 
 export function isContainer(service: AnyService): service is Container {
-  return service.serviceType === 'CONTAINER'
+  return service.service_type === 'CONTAINER'
 }
 
 export function isDatabase(service: AnyService): service is Database {
-  return service.serviceType === 'DATABASE'
+  return service.service_type === 'DATABASE'
 }
 
 export function isJob(service: AnyService): service is Job {
-  return service.serviceType === 'JOB'
+  return service.service_type === 'JOB'
 }
 
 export function isHelm(service: AnyService): service is Helm {
-  return service.serviceType === 'HELM'
+  return service.service_type === 'HELM'
 }
 
 export const services = createQueryKeys('services', {
@@ -190,28 +208,31 @@ export const services = createQueryKeys('services', {
   list: (environmentId: string) => ({
     queryKey: [environmentId],
     async queryFn() {
-      return [
-        ...((await applicationsApi.listApplication(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: 'APPLICATION' as const,
-        })),
-        ...((await containersApi.listContainer(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: 'CONTAINER' as const,
-        })),
-        ...((await databasesApi.listDatabase(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: 'DATABASE' as const,
-        })),
-        ...((await jobsApi.listJobs(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: 'JOB' as const,
-        })),
-        ...((await helmsApi.listHelms(environmentId)).data.results ?? []).map((entity) => ({
-          ...entity,
-          serviceType: 'HELM' as const,
-        })),
-      ]
+      const response = await environmentApi.listServicesByEnvironmentId(environmentId)
+      return (response.data.results || []).map((service) =>
+        match(service)
+          .with({ service_type: 'APPLICATION' }, (s) => ({
+            ...s,
+            serviceType: 'APPLICATION' as const,
+          }))
+          .with({ service_type: 'CONTAINER' }, (s) => ({
+            ...s,
+            serviceType: 'CONTAINER' as const,
+          }))
+          .with({ service_type: 'DATABASE' }, (s) => ({
+            ...s,
+            serviceType: 'DATABASE' as const,
+          }))
+          .with({ service_type: 'JOB' }, (s) => ({
+            ...s,
+            serviceType: 'JOB' as const,
+          }))
+          .with({ service_type: 'HELM' }, (s) => ({
+            ...s,
+            serviceType: 'HELM' as const,
+          }))
+          .exhaustive()
+      ) as AnyService[]
     },
   }),
   status: ({ id: serviceId, serviceType }: { id: string; serviceType: ServiceType }) => ({

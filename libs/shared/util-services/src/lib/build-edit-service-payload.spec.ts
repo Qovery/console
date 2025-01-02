@@ -6,6 +6,7 @@ describe('testing payload refactoring', () => {
   it('should remove useless application values', () => {
     const response: Application = {
       id: '1',
+      service_type: 'APPLICATION',
       serviceType: 'APPLICATION',
       icon_uri: 'app://qovery-console/application',
       created_at: '',
@@ -62,6 +63,7 @@ describe('testing payload refactoring', () => {
   it('should remove useless container values', () => {
     const response: Container = {
       id: '1',
+      service_type: 'CONTAINER',
       serviceType: 'CONTAINER',
       icon_uri: 'app://qovery-console/container',
       created_at: '',
@@ -136,6 +138,7 @@ describe('testing payload refactoring', () => {
       id: '1',
       name: 'hello',
       description: 'test',
+      service_type: 'DATABASE',
       serviceType: 'DATABASE',
       icon_uri: 'app://qovery-console/database',
       type: DatabaseTypeEnum.POSTGRESQL,
@@ -176,6 +179,7 @@ describe('testing payload refactoring', () => {
       updated_at: '',
       name: 'my-job',
       job_type: 'CRON',
+      service_type: 'JOB',
       serviceType: 'JOB',
       icon_uri: 'app://qovery-console/cron-job',
       description: '',

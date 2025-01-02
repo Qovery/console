@@ -1,25 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LastCommit should match snapshot 1`] = `
+exports[`LastVersion should match snapshot 1`] = `
 <body>
   <div>
     <span
       class="flex"
     >
       <span
-        class=""
-        data-state="closed"
+        class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded bg-neutral-100 text-neutral-400 min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250"
       >
-        <button
-          class="items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 flex min-w-[81px] justify-center gap-1 rounded-r-none border-r-0 pl-1"
-          type="button"
+        <span
+          class="flex h-full w-full items-center justify-center truncate"
         >
-          <i
-            aria-hidden="true"
-            class="fa-regular fa-code-commit w-4"
-          />
-          ddd1cee
-        </button>
+          1.0
+        </span>
       </span>
       <button
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-6 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 w-7 justify-center gap-1 rounded-l-none px-1.5"

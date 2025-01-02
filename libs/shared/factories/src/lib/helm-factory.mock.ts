@@ -6,6 +6,7 @@ const chance = new Chance('123')
 export const helmFactoryMock = (howMany: number): Helm[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
+    service_type: 'HELM',
     icon_uri: 'app://qovery-console/helm',
     created_at: chance.date({ year: 2023, string: true }).toString(),
     updated_at: chance.date({ year: 2024, string: true }).toString(),

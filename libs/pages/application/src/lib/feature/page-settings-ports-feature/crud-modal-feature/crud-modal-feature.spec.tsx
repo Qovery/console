@@ -100,6 +100,7 @@ describe('CrudModalFeature', () => {
           },
         ],
         "serviceType": "APPLICATION",
+        "service_type": "APPLICATION",
         "storage": [
           {
             "id": "5f52f6ff-bba8-5d88-977e-483f3e3109ff",
@@ -187,6 +188,7 @@ describe('CrudModalFeature', () => {
           },
         ],
         "serviceType": "APPLICATION",
+        "service_type": "APPLICATION",
         "storage": [
           {
             "id": "5f52f6ff-bba8-5d88-977e-483f3e3109ff",
@@ -274,6 +276,7 @@ describe('CrudModalFeature', () => {
           },
         ],
         "serviceType": "APPLICATION",
+        "service_type": "APPLICATION",
         "storage": [
           {
             "id": "5f52f6ff-bba8-5d88-977e-483f3e3109ff",

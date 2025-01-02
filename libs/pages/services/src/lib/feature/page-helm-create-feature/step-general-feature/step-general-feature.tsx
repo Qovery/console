@@ -75,6 +75,7 @@ export function StepGeneralFeature() {
               <GeneralSetting
                 label="Service name"
                 service={{
+                  service_type: 'HELM',
                   serviceType: 'HELM',
                   id: '',
                   name: '',

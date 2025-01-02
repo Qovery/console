@@ -310,7 +310,23 @@ function MenuManageDeployment({
         >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
-              <Icon iconName="play" className="mr-4" />
+              {match(state)
+                .with(
+                  'DEPLOYING',
+                  'RESTARTING',
+                  'BUILDING',
+                  'DELETING',
+                  'CANCELING',
+                  'STOPPING',
+                  'DEPLOYMENT_QUEUED',
+                  'DELETE_QUEUED',
+                  'STOP_QUEUED',
+                  'RESTART_QUEUED',
+                  () => <Icon iconName="loader" className="mr-3 animate-spin" />
+                )
+                .otherwise(() => (
+                  <Icon iconName="play" className="mr-4" />
+                ))}
               <Icon iconName="chevron-down" />
             </div>
           </Tooltip>

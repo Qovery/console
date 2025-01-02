@@ -7,6 +7,7 @@ const chance = new Chance('123')
 export const databaseFactoryMock = (howMany: number, mode = DatabaseModeEnum.CONTAINER): Database[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
+    service_type: 'DATABASE',
     icon_uri: 'app://qovery-console/database',
     created_at: new Date().toString(),
     updated_at: new Date().toString(),

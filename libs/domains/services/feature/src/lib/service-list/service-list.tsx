@@ -17,6 +17,7 @@ import type {
   Database,
   Environment,
   HelmSourceRepositoryResponse,
+  Status,
 } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -47,7 +48,6 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
-  Badge,
   Button,
   Checkbox,
   EmptyState,
@@ -57,19 +57,24 @@ import {
   Menu,
   MenuAlign,
   type MenuData,
-  Skeleton,
   StatusChip,
   TableFilter,
   TablePrimitives,
   Tooltip,
   Truncate,
+  truncateText,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
-import { containerRegistryKindToIcon, formatCronExpression, twMerge } from '@qovery/shared/util-js'
+import {
+  containerRegistryKindToIcon,
+  formatCronExpression,
+  twMerge,
+  upperCaseFirstLetter,
+} from '@qovery/shared/util-js'
 import { useServices } from '../hooks/use-services/use-services'
-import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
+import LastVersion from '../last-version/last-version'
 import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
@@ -79,7 +84,15 @@ import { ServiceListSkeleton } from './service-list-skeleton'
 
 const { Table } = TablePrimitives
 
-function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
+function ServiceNameCell({
+  service,
+  environment,
+  deploymentStatus,
+}: {
+  service: AnyService
+  environment: Environment
+  deploymentStatus?: Status
+}) {
   const navigate = useNavigate()
 
   const serviceLink = match(service)
@@ -95,6 +108,59 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
         SERVICES_GENERAL_URL
     )
 
+  const LinkDeploymentStatus = () => {
+    const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
+    const deploymentLog = DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
+    // const precheckLog = ENVIRONMENT_PRE_CHECK_LOGS_URL(deploymentStatus?.execution_id ?? '')
+
+    return match(deploymentStatus?.state)
+      .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
+        <span className="flex text-ssm font-normal text-neutral-350">
+          {upperCaseFirstLetter(s).replace('_', ' ')}
+          <span className="flex">
+            <span className="animate-[pulse_1s_ease-in-out_infinite_0ms] opacity-0">.</span>
+            <span className="animate-[pulse_1s_ease-in-out_infinite_300ms] opacity-0">.</span>
+            <span className="animate-[pulse_1s_ease-in-out_infinite_600ms] opacity-0">.</span>
+          </span>
+        </span>
+      ))
+      .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
+        <Link
+          to={environmentLog + deploymentLog}
+          color="brand"
+          underline
+          size="ssm"
+          className="group flex truncate"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span className="flex">
+            {upperCaseFirstLetter(s)}
+            <span className="flex">
+              <span className="animate-[pulse_1s_ease-in-out_infinite_0ms] opacity-0 group-hover:opacity-100">.</span>
+              <span className="animate-[pulse_1s_ease-in-out_infinite_300ms] opacity-0 group-hover:opacity-100">.</span>
+              <span className="animate-[pulse_1s_ease-in-out_infinite_600ms] opacity-0 group-hover:opacity-100">.</span>
+            </span>
+          </span>{' '}
+          <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+        </Link>
+      ))
+      .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
+        <Link
+          // to={deploymentStatus?.steps === null ? environmentLog + precheckLog : environmentLog + deploymentLog}
+          to={environmentLog + deploymentLog}
+          color="red"
+          underline
+          size="ssm"
+          className="truncate"
+          onClick={(e) => e.stopPropagation()}
+        >
+          Last deployment failed
+          <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+        </Link>
+      ))
+      .otherwise(() => null)
+  }
+
   return (
     <div className="flex items-center justify-between">
       <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
@@ -105,23 +171,20 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
           .with({ serviceType: 'DATABASE' }, (db) => {
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <Tooltip content={service.name}>
-                  <Link
-                    className="inline max-w-max truncate"
-                    color="current"
-                    to={serviceLink}
-                    underline
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {service.name}
-                  </Link>
-                </Tooltip>
-                <span className="text-xs font-normal text-neutral-350">
-                  {match(db.mode)
-                    .with('CONTAINER', () => 'Container DB')
-                    .with('MANAGED', () => 'Cloud Managed DB')
-                    .exhaustive()}
+                <span className="flex items-center gap-1.5">
+                  <Tooltip content={db.name}>
+                    <Link
+                      className="inline max-w-max truncate"
+                      color="current"
+                      to={serviceLink}
+                      underline
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {db.name}
+                    </Link>
+                  </Tooltip>
                 </span>
+                <LinkDeploymentStatus />
               </span>
             )
           })
@@ -143,20 +206,25 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
 
             return (
               <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <Tooltip content={service.name}>
-                  <Link
-                    className="inline max-w-max truncate"
-                    color="current"
-                    to={serviceLink}
-                    underline
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {service.name}
-                  </Link>
-                </Tooltip>
-                <Tooltip content={schedule}>
-                  <span className="truncate text-xs font-normal text-neutral-350">{schedule}</span>
-                </Tooltip>
+                <span className="flex items-center gap-1.5">
+                  <Tooltip content={service.name}>
+                    <Link
+                      className="inline max-w-max truncate"
+                      color="current"
+                      to={serviceLink}
+                      underline
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {service.name}
+                    </Link>
+                  </Tooltip>
+                  <Tooltip content={schedule}>
+                    <span className="truncate text-sm font-normal">
+                      <Icon iconName="info-circle" iconStyle="regular" />
+                    </span>
+                  </Tooltip>
+                </span>
+                <LinkDeploymentStatus />
               </span>
             )
           })
@@ -173,35 +241,38 @@ function ServiceNameCell({ service, environment }: { service: AnyService; enviro
                   {service.name}
                 </Link>
               </Tooltip>
+              <LinkDeploymentStatus />
             </span>
           ))}
-        <div onClick={(e) => e.stopPropagation()}>
-          <ServiceLinksPopover
-            organizationId={environment.organization.id}
-            projectId={environment.project.id}
-            environmentId={environment.id}
-            serviceId={service.id}
-            align="start"
-          >
-            <Button variant="surface" color="neutral" radius="full">
-              <Tooltip content="Links">
-                <div className="flex items-center gap-1">
-                  <Icon iconName="link" iconStyle="regular" />
-                  <Icon iconName="angle-down" />
-                </div>
-              </Tooltip>
-            </Button>
-          </ServiceLinksPopover>
-        </div>
       </span>
-      <div className="flex shrink-0 items-center gap-4">
-        {'auto_deploy' in service && service.auto_deploy && (
-          <Tooltip content="Auto-deploy">
-            <span>
-              <Icon className="text-neutral-300" iconName="arrows-rotate" />
-            </span>
-          </Tooltip>
-        )}
+      <div className="flex shrink-0 items-center gap-5">
+        <div className="flex items-center">
+          {'auto_deploy' in service && service.auto_deploy && (
+            <Tooltip content="Auto-deploy">
+              <span>
+                <Icon className="text-neutral-300" iconName="arrows-rotate" />
+              </span>
+            </Tooltip>
+          )}
+          <div onClick={(e) => e.stopPropagation()}>
+            <ServiceLinksPopover
+              organizationId={environment.organization.id}
+              projectId={environment.project.id}
+              environmentId={environment.id}
+              serviceId={service.id}
+              align="start"
+            >
+              <Button variant="surface" color="neutral" radius="full" className="ml-3">
+                <Tooltip content="Links">
+                  <div className="flex items-center gap-1">
+                    <Icon iconName="link" iconStyle="regular" />
+                    <Icon iconName="angle-down" />
+                  </div>
+                </Tooltip>
+              </Button>
+            </ServiceLinksPopover>
+          </div>
+        </div>
         <div onClick={(e) => e.stopPropagation()}>
           <ServiceActionToolbar
             serviceId={service.id}
@@ -298,11 +369,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         ),
       }),
       columnHelper.accessor('name', {
-        header: 'Name',
+        header: 'Service',
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 40,
+        size: 50,
         meta: {
           customFacetEntry({ value, row }) {
             const service = row?.original
@@ -312,14 +383,20 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             }
             return (
               <span className="flex items-center gap-2 text-sm font-medium">
-                <ServiceAvatar service={service} className="h-5 w-5" />
+                <ServiceAvatar service={service} size="xs" />
                 {value}
               </span>
             )
           },
         },
         cell: (info) => {
-          return <ServiceNameCell service={info.row.original} environment={environment} />
+          return (
+            <ServiceNameCell
+              service={info.row.original}
+              deploymentStatus={info.row.original.deploymentStatus}
+              environment={environment}
+            />
+          )
         },
       }),
       columnHelper.accessor('runningStatus.stateLabel', {
@@ -357,136 +434,150 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           )
         },
       }),
-      columnHelper.accessor('deploymentStatus.stateLabel', {
-        id: 'deploymentStatus',
-        header: 'Last deployment',
-        enableColumnFilter: true,
-        enableSorting: false,
-        filterFn: 'arrIncludesSome',
-        size: 15,
-        cell: (info) => {
-          const value = info.getValue()
-          const service = info.row.original
-          return (
-            <Skeleton width={102} height={34} show={!value}>
-              <Tooltip content="See logs">
-                <Link
-                  as="button"
-                  to={
-                    ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                    DEPLOYMENT_LOGS_VERSION_URL(service.id, service.deploymentStatus?.execution_id)
-                  }
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip status={service.deploymentStatus?.state} />
-                  {value}
-                </Link>
-              </Tooltip>
-            </Skeleton>
-          )
-        },
-      }),
       columnHelper.accessor('version', {
         header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 20,
+        size: 35,
         cell: (info) => {
           const service = info.row.original
 
           const gitInfo = (service: Application | Job | Helm, gitRepository?: ApplicationGitRepository) =>
             gitRepository && (
-              <div className="flex flex-row items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                <LastCommitAuthor
-                  gitRepository={gitRepository}
-                  serviceId={service.id}
-                  serviceType={service.serviceType}
-                />
-                <div className="flex flex-col gap-1">
-                  <LastCommit
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    gitRepository={gitRepository}
-                    service={service}
-                  />
+              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                <div className="flex w-44 flex-col gap-1.5">
+                  <span className="flex items-center gap-2 text-neutral-400">
+                    <Icon className="h-3 w-3" name={gitRepository.provider} />
+                    <ExternalLink
+                      href={gitRepository.url}
+                      underline
+                      color="current"
+                      size="ssm"
+                      withIcon={false}
+                      className="font-normal"
+                    >
+                      <Truncate text={gitRepository.name} truncateLimit={20} />
+                    </ExternalLink>
+                  </span>
                   {gitRepository.branch && gitRepository.url && (
-                    <span className="inline-block">
+                    <span className="flex items-center gap-2 text-neutral-400">
+                      <Icon iconName="code-branch" iconStyle="regular" />
                       <ExternalLink
-                        as="button"
                         href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
-                        onClick={(e) => e.stopPropagation()}
-                        color="neutral"
-                        variant="surface"
-                        className="gap-1 whitespace-nowrap"
+                        underline
+                        color="current"
+                        size="ssm"
+                        withIcon={false}
+                        className="font-normal"
                       >
-                        <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
-                        <Truncate text={gitRepository.branch} truncateLimit={18} />
+                        <Truncate text={gitRepository.branch} truncateLimit={20} />
                       </ExternalLink>
                     </span>
                   )}
                 </div>
+                <LastCommit
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  gitRepository={gitRepository}
+                  service={service}
+                />
               </div>
             )
           const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
             containerImage && (
-              <div className="ml-7 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
-                <span className="inline-block">
-                  <ExternalLink
-                    as="button"
-                    href={containerImage.registry.url}
-                    onClick={(e) => e.stopPropagation()}
-                    color="neutral"
-                    variant="surface"
-                    className="items-center gap-1 whitespace-nowrap capitalize"
-                  >
+              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                <div className="flex w-44 flex-col gap-1.5">
+                  <span className="flex items-center gap-2 text-neutral-350">
                     <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
-                    <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
-                  </ExternalLink>
-                </span>
-                <div>
-                  <Badge variant="surface" className="gap-1 whitespace-nowrap">
+                    <Tooltip
+                      content={
+                        <span className="text-center">
+                          {containerImage.registry.name.length >= 20 && (
+                            <>
+                              {containerImage.registry.name} <br />
+                            </>
+                          )}{' '}
+                          {containerImage.registry.url}
+                        </span>
+                      }
+                    >
+                      <span className="text-neutral-350">
+                        {containerImage.registry.name.length >= 20
+                          ? truncateText(containerImage.registry.name, 20).toLowerCase()
+                          : containerImage.registry.name.toLowerCase()}
+                      </span>
+                    </Tooltip>
+                  </span>
+                  <span className="flex items-center gap-2 text-neutral-350">
                     <Icon width={16} name={IconEnum.CONTAINER} />
-                    <Truncate text={`${containerImage.image_name}:${containerImage.tag}`} truncateLimit={35} />
-                  </Badge>
+                    <Truncate text={`${containerImage.image_name}`} truncateLimit={20} />
+                  </span>
                 </div>
+                {service.serviceType === 'CONTAINER' && (
+                  <LastVersion
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    service={service}
+                    version={containerImage.tag}
+                  />
+                )}
               </div>
             )
 
           const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
             datasource && (
-              <Badge variant="surface" className="ml-7 items-center gap-1 whitespace-nowrap">
-                <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-                {datasource.version}
-              </Badge>
+              <div className="flex flex-col gap-1.5 text-ssm text-neutral-350">
+                <span className="flex items-center gap-2">
+                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
+                  {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
+                  v.{datasource.version}
+                </span>
+              </div>
             )
 
           const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) =>
             helmRepository && (
-              <div className="ml-7 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
-                <span className="inline-block">
-                  <ExternalLink
-                    as="button"
-                    href={helmRepository.repository?.url}
-                    onClick={(e) => e.stopPropagation()}
-                    color="neutral"
-                    variant="surface"
-                    className="items-center gap-1 whitespace-nowrap"
-                  >
-                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
-                    <Truncate text={(helmRepository.repository?.name ?? '').toLowerCase()} truncateLimit={18} />
-                  </ExternalLink>
-                </span>
-                <div>
-                  <Badge variant="surface" className="gap-1 whitespace-nowrap">
-                    <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
-                    {helmRepository.chart_name}:{helmRepository.chart_version}
-                  </Badge>
+              <div className="flex items-center gap-1">
+                <div className="flex w-44 flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
+                  <span className="flex gap-2">
+                    <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
+                    <Tooltip
+                      content={
+                        <span className="text-center">
+                          {helmRepository.repository?.name.length > 20 && (
+                            <>
+                              {helmRepository.repository?.name} <br />
+                            </>
+                          )}
+                          {helmRepository.repository?.url}
+                        </span>
+                      }
+                    >
+                      <span className="text-neutral-350">
+                        {helmRepository.repository?.name.length > 20
+                          ? truncateText(helmRepository.repository?.name, 20).toLowerCase()
+                          : helmRepository.repository?.name.toLowerCase()}
+                      </span>
+                    </Tooltip>
+                  </span>
+                  <div className="flex gap-2">
+                    <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
+                    <span className="text-neutral-350">
+                      <Truncate text={helmRepository.chart_name} truncateLimit={20} />
+                    </span>
+                  </div>
                 </div>
+                {service.serviceType === 'HELM' && (
+                  <LastVersion
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    service={service}
+                    version={helmRepository.chart_version}
+                  />
+                )}
               </div>
             )
 
@@ -538,19 +629,35 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
           return cell
         },
       }),
-      columnHelper.accessor('updated_at', {
-        header: 'Last update',
+      columnHelper.accessor('deploymentStatus.last_deployment_date', {
+        header: 'Last deployment',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 10,
+        size: 5,
         cell: (info) => {
+          const service = info.row.original
           const value = info.getValue()
+          const linkLog =
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+            DEPLOYMENT_LOGS_VERSION_URL(service?.id, service?.deploymentStatus?.execution_id)
+
           return value ? (
-            <Tooltip content={dateUTCString(value)}>
-              <span className="whitespace-nowrap text-xs text-neutral-350">{timeAgo(new Date(value))}</span>
-            </Tooltip>
+            <Link
+              to={linkLog}
+              className="group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Tooltip content={dateUTCString(value)} delayDuration={200}>
+                <span className="whitespace-nowrap text-ssm font-normal">{timeAgo(new Date(value))}</span>
+              </Tooltip>
+              <Icon
+                iconName="arrow-up-right"
+                iconStyle="regular"
+                className="text-ssm opacity-0 group-hover:opacity-100"
+              />
+            </Link>
           ) : (
-            <Icon iconName="circle-question" className="text-sm text-neutral-300" />
+            <span className="block w-full text-right">-</span>
           )
         },
       }),
@@ -672,13 +779,13 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className={twMerge('w-full min-w-[800px] text-xs', className)} {...props}>
+      <Table.Root className={twMerge('w-full min-w-[980px] text-ssm', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`${i === 1 ? 'border-r pl-0' : ''} font-medium`}
+                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r pl-0' : ''} font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
@@ -688,15 +795,15 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                     <button
                       type="button"
                       className={twMerge(
-                        'flex items-center gap-1',
+                        'flex items-center gap-1 truncate',
                         header.column.getCanSort() ? 'cursor-pointer select-none' : ''
                       )}
                       onClick={header.column.getToggleSortingHandler()}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-xs" iconName="arrow-down" />)
-                        .with('desc', () => <Icon className="text-xs" iconName="arrow-up" />)
+                        .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
+                        .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
                         .with(false, () => null)
                         .exhaustive()}
                     </button>
@@ -732,7 +839,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}
-                    className={`${i === 1 ? 'border-r pl-0' : ''} first:relative`}
+                    className={`px-6 ${i === 1 ? 'border-r pl-0' : ''} first:relative`}
                     style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

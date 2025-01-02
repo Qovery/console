@@ -92,6 +92,7 @@ export function StepGeneral({
             service={{
               id: '',
               name: '',
+              service_type: 'DATABASE',
               serviceType: 'DATABASE',
               created_at: '',
               type: 'MONGODB',
