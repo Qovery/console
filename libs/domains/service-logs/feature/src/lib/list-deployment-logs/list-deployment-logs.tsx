@@ -385,8 +385,8 @@ export function ListDeploymentLogs({
         <HeaderLogsComponent />
         <div className="flex h-12 w-full items-center justify-between border-b border-r border-neutral-500 px-4 py-2.5">
           <FiltersStageStep
+            service={service}
             serviceStatus={serviceStatus}
-            serviceType={service?.serviceType}
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
