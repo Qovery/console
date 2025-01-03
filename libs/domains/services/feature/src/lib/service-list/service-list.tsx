@@ -48,6 +48,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import {
+  AnimatedGradientText,
   Button,
   Checkbox,
   EmptyState,
@@ -115,15 +116,14 @@ function ServiceNameCell({
 
     return match(deploymentStatus?.state)
       .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
-        <span className="flex text-ssm font-normal text-neutral-350">
-          {upperCaseFirstLetter(s).replace('_', ' ')}
-          <span className="flex">
-            <span className="animate-[pulse_1s_ease-in-out_infinite_0ms] opacity-0">.</span>
-            <span className="animate-[pulse_1s_ease-in-out_infinite_300ms] opacity-0">.</span>
-            <span className="animate-[pulse_1s_ease-in-out_infinite_600ms] opacity-0">.</span>
-          </span>
-        </span>
+        <AnimatedGradientText
+          shimmerWidth={145}
+          className="flex from-neutral-400 via-neutral-250 to-neutral-400 text-ssm font-normal"
+        >
+          {upperCaseFirstLetter(s).replace('_', ' ')}...
+        </AnimatedGradientText>
       ))
+      .with('CANCELED', () => <span className="text-ssm font-normal text-neutral-350">Last deployment aborted</span>)
       .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
         <Link
           to={environmentLog + deploymentLog}
@@ -133,18 +133,14 @@ function ServiceNameCell({
           className="group flex truncate"
           onClick={(e) => e.stopPropagation()}
         >
-          <span className="flex">
-            {upperCaseFirstLetter(s)}
-            <span className="flex">
-              <span className="animate-[pulse_1s_ease-in-out_infinite_0ms] opacity-0 group-hover:opacity-100">.</span>
-              <span className="animate-[pulse_1s_ease-in-out_infinite_300ms] opacity-0 group-hover:opacity-100">.</span>
-              <span className="animate-[pulse_1s_ease-in-out_infinite_600ms] opacity-0 group-hover:opacity-100">.</span>
+          <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-500">
+            <span className="flex items-center gap-0.5">
+              {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" />
             </span>
-          </span>{' '}
-          <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+          </AnimatedGradientText>
         </Link>
       ))
-      .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
+      .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', 'BUILD_ERROR', () => (
         <Link
           // to={deploymentStatus?.steps === null ? environmentLog + precheckLog : environmentLog + deploymentLog}
           to={environmentLog + deploymentLog}
@@ -373,7 +369,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 50,
+        size: 57,
         meta: {
           customFacetEntry({ value, row }) {
             const service = row?.original
@@ -438,7 +434,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 35,
+        size: 30,
         cell: (info) => {
           const service = info.row.original
 
@@ -532,8 +528,8 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                   {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}
                 </span>
                 <span className="flex items-center gap-2">
-                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-                  v.{datasource.version}
+                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />v
+                  {datasource.version}
                 </span>
               </div>
             )
@@ -633,7 +629,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         header: 'Last deployment',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 5,
+        size: 3,
         cell: (info) => {
           const service = info.row.original
           const value = info.getValue()
@@ -779,7 +775,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className={twMerge('w-full min-w-[980px] text-ssm', className)} {...props}>
+      <Table.Root className={twMerge('w-full min-w-[1080px] overflow-x-scroll text-ssm', className)} {...props}>
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
