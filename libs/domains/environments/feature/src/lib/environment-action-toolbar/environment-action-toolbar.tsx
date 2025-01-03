@@ -1,5 +1,6 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -112,7 +113,23 @@ function MenuManageDeployment({
         >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
-              <Icon iconName="play" className="mr-4" />
+              {match(state)
+                .with(
+                  'DEPLOYING',
+                  'RESTARTING',
+                  'BUILDING',
+                  'DELETING',
+                  'CANCELING',
+                  'STOPPING',
+                  'DEPLOYMENT_QUEUED',
+                  'DELETE_QUEUED',
+                  'STOP_QUEUED',
+                  'RESTART_QUEUED',
+                  () => <Icon iconName="loader" className="mr-3 animate-spin" />
+                )
+                .otherwise(() => (
+                  <Icon iconName="play" className="mr-4" />
+                ))}
               <Icon iconName="chevron-down" />
             </div>
           </Tooltip>
@@ -139,10 +156,28 @@ function MenuManageDeployment({
             Stop
           </DropdownMenu.Item>
         )}
-        <DropdownMenu.Separator />
-        <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
-          Deploy latest version for..
-        </DropdownMenu.Item>
+        {match(state)
+          .with(
+            'DEPLOYING',
+            'RESTARTING',
+            'BUILDING',
+            'DELETING',
+            'CANCELING',
+            'STOPPING',
+            'DEPLOYMENT_QUEUED',
+            'DELETE_QUEUED',
+            'STOP_QUEUED',
+            'RESTART_QUEUED',
+            () => null
+          )
+          .otherwise(() => (
+            <>
+              <DropdownMenu.Separator />
+              <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
+                Deploy latest version for..
+              </DropdownMenu.Item>
+            </>
+          ))}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )

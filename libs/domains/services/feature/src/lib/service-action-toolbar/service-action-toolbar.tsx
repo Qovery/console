@@ -418,19 +418,35 @@ function MenuManageDeployment({
                 .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
                 .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
                 .exhaustive()
-              return (
-                <>
-                  <DropdownMenu.Separator />
-                  {gitRepository && (
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="clock-rotate-left" />}
-                      onSelect={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
-                    >
-                      Deploy another version
-                    </DropdownMenu.Item>
-                  )}
-                </>
-              )
+
+              return match(state)
+                .with(
+                  'DEPLOYING',
+                  'RESTARTING',
+                  'BUILDING',
+                  'DELETING',
+                  'CANCELING',
+                  'STOPPING',
+                  'DEPLOYMENT_QUEUED',
+                  'DELETE_QUEUED',
+                  'STOP_QUEUED',
+                  'RESTART_QUEUED',
+                  () => null
+                )
+                .otherwise(
+                  () =>
+                    gitRepository && (
+                      <>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                          icon={<Icon iconName="clock-rotate-left" />}
+                          onSelect={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
+                        >
+                          Deploy another version
+                        </DropdownMenu.Item>
+                      </>
+                    )
+                )
             }
           )
           .with(
@@ -442,19 +458,35 @@ function MenuManageDeployment({
                 .with({ serviceType: 'CONTAINER' }, (source) => source)
                 .with({ serviceType: 'JOB' }, ({ source: { image } }) => image)
                 .exhaustive()
-              return (
-                containerSource.tag && (
-                  <>
-                    <DropdownMenu.Separator />
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="clock-rotate-left" />}
-                      onSelect={() => deployTagVersion(service, containerSource)}
-                    >
-                      Deploy another version
-                    </DropdownMenu.Item>
-                  </>
+
+              return match(state)
+                .with(
+                  'DEPLOYING',
+                  'RESTARTING',
+                  'BUILDING',
+                  'DELETING',
+                  'CANCELING',
+                  'STOPPING',
+                  'DEPLOYMENT_QUEUED',
+                  'DELETE_QUEUED',
+                  'STOP_QUEUED',
+                  'RESTART_QUEUED',
+                  () => null
                 )
-              )
+                .otherwise(
+                  () =>
+                    containerSource.tag && (
+                      <>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                          icon={<Icon iconName="clock-rotate-left" />}
+                          onSelect={() => deployTagVersion(service, containerSource)}
+                        >
+                          Deploy another version
+                        </DropdownMenu.Item>
+                      </>
+                    )
+                )
             }
           )
           .with(
