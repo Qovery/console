@@ -116,12 +116,7 @@ function ServiceNameCell({
 
     return match(deploymentStatus?.state)
       .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
-        <AnimatedGradientText
-          shimmerWidth={145}
-          className="flex from-neutral-400 via-neutral-250 to-neutral-400 text-ssm font-normal"
-        >
-          {upperCaseFirstLetter(s).replace('_', ' ')}...
-        </AnimatedGradientText>
+        <span className="text-ssm font-normal text-neutral-350">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
       ))
       .with('CANCELED', () => <span className="text-ssm font-normal text-neutral-350">Last deployment aborted</span>)
       .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
