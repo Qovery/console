@@ -42,7 +42,7 @@ export function ServiceTemplateIndicator({
       <Indicator
         className={twMerge(indicatorVariants({ size }), className)}
         content={
-          <Tooltip content={`via ${upperCaseFirstLetter(templateType)}`} disabled={size === 'sm'}>
+          <Tooltip content={`via ${upperCaseFirstLetter(templateType)}`}>
             <span className="flex h-full w-full items-center justify-center">
               <Icon className="h-[calc(100%-2px)] w-[calc(100%-2px)]" name={templateType} />
             </span>
