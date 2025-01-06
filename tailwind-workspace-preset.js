@@ -356,6 +356,14 @@ module.exports = {
               '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0)',
           },
         },
+        'shiny-text': {
+          '0%': {
+            'background-position': 'calc(-100% - var(--shiny-width)) 0',
+          },
+          '100%': {
+            'background-position': 'calc(100% + var(--shiny-width)) 0',
+          },
+        },
         ...slideEntrances(),
         ...slideExits(),
       },

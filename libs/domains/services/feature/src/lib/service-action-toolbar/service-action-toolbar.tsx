@@ -386,24 +386,39 @@ function MenuManageDeployment({
             Restart Service
           </DropdownMenu.Item>
         )}
-        {service.serviceType === 'JOB' && (
-          <DropdownMenu.Item
-            icon={<Icon iconName="play" />}
-            onSelect={() =>
-              openModal({
-                content: (
-                  <ForceRunModalFeature
-                    organizationId={environment.organization.id}
-                    projectId={environment.project.id}
-                    service={service}
-                  />
-                ),
-              })
-            }
-          >
-            Force Run
-          </DropdownMenu.Item>
-        )}
+        {service.serviceType === 'JOB' &&
+          match(state)
+            .with(
+              'DEPLOYING',
+              'RESTARTING',
+              'BUILDING',
+              'DELETING',
+              'CANCELING',
+              'STOPPING',
+              'DEPLOYMENT_QUEUED',
+              'DELETE_QUEUED',
+              'STOP_QUEUED',
+              'RESTART_QUEUED',
+              () => null
+            )
+            .otherwise(() => (
+              <DropdownMenu.Item
+                icon={<Icon iconName="play" />}
+                onSelect={() =>
+                  openModal({
+                    content: (
+                      <ForceRunModalFeature
+                        organizationId={environment.organization.id}
+                        projectId={environment.project.id}
+                        service={service}
+                      />
+                    ),
+                  })
+                }
+              >
+                Force Run
+              </DropdownMenu.Item>
+            ))}
         {isStopAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
             Stop
@@ -418,19 +433,35 @@ function MenuManageDeployment({
                 .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
                 .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
                 .exhaustive()
-              return (
-                <>
-                  <DropdownMenu.Separator />
-                  {gitRepository && (
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="clock-rotate-left" />}
-                      onSelect={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
-                    >
-                      Deploy another version
-                    </DropdownMenu.Item>
-                  )}
-                </>
-              )
+
+              return match(state)
+                .with(
+                  'DEPLOYING',
+                  'RESTARTING',
+                  'BUILDING',
+                  'DELETING',
+                  'CANCELING',
+                  'STOPPING',
+                  'DEPLOYMENT_QUEUED',
+                  'DELETE_QUEUED',
+                  'STOP_QUEUED',
+                  'RESTART_QUEUED',
+                  () => null
+                )
+                .otherwise(
+                  () =>
+                    gitRepository && (
+                      <>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                          icon={<Icon iconName="clock-rotate-left" />}
+                          onSelect={() => deployCommitVersion(service, gitRepository, 'Deploy another version')}
+                        >
+                          Deploy another version
+                        </DropdownMenu.Item>
+                      </>
+                    )
+                )
             }
           )
           .with(
@@ -442,19 +473,35 @@ function MenuManageDeployment({
                 .with({ serviceType: 'CONTAINER' }, (source) => source)
                 .with({ serviceType: 'JOB' }, ({ source: { image } }) => image)
                 .exhaustive()
-              return (
-                containerSource.tag && (
-                  <>
-                    <DropdownMenu.Separator />
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="clock-rotate-left" />}
-                      onSelect={() => deployTagVersion(service, containerSource)}
-                    >
-                      Deploy another version
-                    </DropdownMenu.Item>
-                  </>
+
+              return match(state)
+                .with(
+                  'DEPLOYING',
+                  'RESTARTING',
+                  'BUILDING',
+                  'DELETING',
+                  'CANCELING',
+                  'STOPPING',
+                  'DEPLOYMENT_QUEUED',
+                  'DELETE_QUEUED',
+                  'STOP_QUEUED',
+                  'RESTART_QUEUED',
+                  () => null
                 )
-              )
+                .otherwise(
+                  () =>
+                    containerSource.tag && (
+                      <>
+                        <DropdownMenu.Separator />
+                        <DropdownMenu.Item
+                          icon={<Icon iconName="clock-rotate-left" />}
+                          onSelect={() => deployTagVersion(service, containerSource)}
+                        >
+                          Deploy another version
+                        </DropdownMenu.Item>
+                      </>
+                    )
+                )
             }
           )
           .with(
