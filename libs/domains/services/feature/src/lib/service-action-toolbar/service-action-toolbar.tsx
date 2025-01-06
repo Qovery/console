@@ -386,24 +386,39 @@ function MenuManageDeployment({
             Restart Service
           </DropdownMenu.Item>
         )}
-        {service.serviceType === 'JOB' && (
-          <DropdownMenu.Item
-            icon={<Icon iconName="play" />}
-            onSelect={() =>
-              openModal({
-                content: (
-                  <ForceRunModalFeature
-                    organizationId={environment.organization.id}
-                    projectId={environment.project.id}
-                    service={service}
-                  />
-                ),
-              })
-            }
-          >
-            Force Run
-          </DropdownMenu.Item>
-        )}
+        {service.serviceType === 'JOB' &&
+          match(state)
+            .with(
+              'DEPLOYING',
+              'RESTARTING',
+              'BUILDING',
+              'DELETING',
+              'CANCELING',
+              'STOPPING',
+              'DEPLOYMENT_QUEUED',
+              'DELETE_QUEUED',
+              'STOP_QUEUED',
+              'RESTART_QUEUED',
+              () => null
+            )
+            .otherwise(() => (
+              <DropdownMenu.Item
+                icon={<Icon iconName="play" />}
+                onSelect={() =>
+                  openModal({
+                    content: (
+                      <ForceRunModalFeature
+                        organizationId={environment.organization.id}
+                        projectId={environment.project.id}
+                        service={service}
+                      />
+                    ),
+                  })
+                }
+              >
+                Force Run
+              </DropdownMenu.Item>
+            ))}
         {isStopAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
             Stop
