@@ -47,6 +47,9 @@ export function StepGeneralFeature() {
           default_service_architecture: 'AMD64',
           disk_size_in_gib: 50,
           spot_enabled: false,
+          qovery_node_pools: {
+            requirements: [],
+          },
         },
       }))
     }
