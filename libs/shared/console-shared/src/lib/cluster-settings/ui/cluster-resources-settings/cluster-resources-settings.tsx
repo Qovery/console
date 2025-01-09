@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { CloudProviderEnum, type Cluster, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
@@ -10,6 +10,7 @@ import {
   useCloudProviderInstanceTypes,
   useCloudProviderInstanceTypesKarpenter,
 } from '@qovery/domains/cloud-providers/feature'
+import { NodepoolsResourcesSettings } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import {
@@ -339,6 +340,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
           </BlockContent>
         )}
+
+      {watchKarpenterEnabled && props.cluster && <NodepoolsResourcesSettings cluster={props.cluster} />}
 
       {!watchKarpenterEnabled && (
         <Section className="gap-4">
