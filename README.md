@@ -8,7 +8,7 @@
 </a>
 </p>
 
-<h3 align="center">Enable Developers Self-Service with Qovery IDP (Internal Developer Platform)</h3>
+<h3 align="center">Web Console</h3>
         <p align="center">Website: https://www.qovery.com</p>
 
 <p align="center">
