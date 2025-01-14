@@ -1,26 +1,73 @@
 import {
   type Cluster,
-  ClusterFeatureKarpenterParameters,
-  type KarpenterDefaultNodePoolOverride,
-  type KarpenterStableNodePoolOverride,
+  type ClusterFeatureKarpenterParameters,
+  KarpenterDefaultNodePoolOverride,
+  type KarpenterNodePool,
+  KarpenterStableNodePoolOverride,
   WeekdayEnum,
 } from 'qovery-typescript-axios'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { P, match } from 'ts-pattern'
+import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { useEditCluster } from '../../hooks/use-edit-cluster/use-edit-cluster'
+
+function LimitsFields({ type }: { type: 'default' | 'stable' }) {
+  const { control } = useFormContext()
+
+  const name = `${type === 'default' ? 'default_override' : 'stable_override'}.limits`
+
+  return (
+    <>
+      <Controller
+        name={`${name}.max_cpu_in_vcpu`}
+        control={control}
+        rules={{
+          min: CPU_MIN,
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            type="number"
+            name={field.name}
+            label="vCPU"
+            value={field.value}
+            onChange={field.onChange}
+            hint={`Minimum value is ${CPU_MIN} vCPU`}
+            error={error?.type === 'min' ? `Minimum allowed is: ${CPU_MIN} milli vCPU.` : undefined}
+          />
+        )}
+      />
+      <Controller
+        name={`${name}.max_memory_in_gibibytes`}
+        control={control}
+        rules={{
+          min: MEMORY_MIN,
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            type="number"
+            name={field.name}
+            label="Memory (GiB)"
+            value={field.value}
+            onChange={field.onChange}
+            hint={`Minimum value is ${MEMORY_MIN} GiB`}
+            error={error?.type === 'min' ? `Minimum allowed is: ${MEMORY_MIN} GiB.` : undefined}
+          />
+        )}
+      />
+    </>
+  )
+}
 
 export interface NodepoolModalProps {
   type: 'stable' | 'default'
   cluster: Cluster
+  onChange: (data: KarpenterNodePool) => void
+  defaultValues?: KarpenterStableNodePoolOverride | KarpenterDefaultNodePoolOverride
 }
 
 const CPU_MIN = 6
 const MEMORY_MIN = 10
 
-export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
-  const { mutateAsync: editCluster, isLoading: isLoadingEditCluster } = useEditCluster()
+export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
   const { closeModal } = useModal()
 
   const karpenterNodePools = (
@@ -28,68 +75,49 @@ export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
       ?.value as ClusterFeatureKarpenterParameters
   ).qovery_node_pools
 
-  const methods = useForm<KarpenterStableNodePoolOverride | KarpenterDefaultNodePoolOverride>({
+  const methods = useForm<Omit<KarpenterNodePool, 'requirements'>>({
     mode: 'onChange',
-    defaultValues: type === 'stable' ? karpenterNodePools.stable_override : karpenterNodePools.default_override,
+    defaultValues: {
+      default_override: defaultValues,
+      stable_override: defaultValues,
+    },
   })
 
-  console.log(karpenterNodePools)
-
-  const watchConsolidation = methods.watch('consolidation.enabled')
+  const watchConsolidation = methods.watch('stable_override.consolidation.enabled')
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    // TODO: Fix duration format and other format issues
-    try {
-      await editCluster({
-        organizationId: cluster.organization.id,
-        clusterId: cluster.id,
-        clusterRequest: {
-          ...cluster,
-          features: cluster.features?.map((feature) => {
-            if (feature.id === 'KARPENTER') {
-              return {
-                id: 'KARPENTER',
-                value: {
-                  ...(feature.value_object?.value as ClusterFeatureKarpenterParameters),
-                  ...match({ type, data })
-                    .with(
-                      {
-                        type: 'stable',
-                        data: P.when((d): d is KarpenterStableNodePoolOverride => 'consolidation' in d),
-                      },
-                      ({ data }) => {
-                        return {
-                          qovery_node_pools: {
-                            ...karpenterNodePools,
-                            stable_override: {
-                              ...data,
-                              consolidation: {
-                                ...data.consolidation,
-                                enabled: data.consolidation?.enabled ?? false,
-                                duration: `PT${data.consolidation?.duration}`,
-                              },
-                            },
-                          },
-                        }
-                      }
-                    )
-                    .with({ type: 'default' }, ({ data }) => ({
-                      ...karpenterNodePools,
-                      default_override: data,
-                    }))
-                    .exhaustive(),
-                },
-              }
-            }
-            return feature
+    onChange({
+      ...karpenterNodePools,
+      ...(type === 'default'
+        ? {
+            default_override: {
+              limits: {
+                max_cpu_in_vcpu: data.default_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
+                max_memory_in_gibibytes: data.default_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
+              },
+            },
+          }
+        : {
+            stable_override: {
+              limits: {
+                max_cpu_in_vcpu: data.stable_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
+                max_memory_in_gibibytes: data.stable_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
+              },
+              consolidation: {
+                enabled: data.stable_override?.consolidation?.enabled ?? false,
+                days: data.stable_override?.consolidation?.days ?? [],
+                start_time: data.stable_override?.consolidation?.start_time
+                  ? `PT${data.stable_override?.consolidation?.start_time}`
+                  : '',
+                duration: data.stable_override?.consolidation?.duration
+                  ? `PT${data.stable_override?.consolidation?.duration.toUpperCase()}`
+                  : '',
+              },
+            },
           }),
-        },
-      })
+    })
 
-      // closeModal()
-    } catch (error) {
-      console.error(error)
-    }
+    closeModal()
   })
 
   const daysOptions = Object.keys(WeekdayEnum).map((key) => ({
@@ -104,8 +132,7 @@ export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
         description="Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability."
         onSubmit={onSubmit}
         onClose={closeModal}
-        submitLabel="Save"
-        loading={isLoadingEditCluster}
+        submitLabel="Confirm"
       >
         <div className="mb-6 flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
           <div className="flex justify-between">
@@ -119,42 +146,7 @@ export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
               </span>
             </Tooltip>
           </div>
-          <Controller
-            name="limits.max_cpu_in_vcpu"
-            control={methods.control}
-            rules={{
-              min: CPU_MIN,
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                type="number"
-                name={field.name}
-                label="vCPU"
-                value={field.value}
-                onChange={field.onChange}
-                hint={`Minimum value is ${CPU_MIN} vCPU`}
-                error={error?.type === 'min' ? `Minimum allowed is: ${CPU_MIN} milli vCPU.` : undefined}
-              />
-            )}
-          />
-          <Controller
-            name="limits.max_memory_in_gibibytes"
-            control={methods.control}
-            rules={{
-              min: MEMORY_MIN,
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                type="number"
-                name={field.name}
-                label="Memory (GiB)"
-                value={field.value}
-                onChange={field.onChange}
-                hint={`Minimum value is ${MEMORY_MIN} GiB`}
-                error={error?.type === 'min' ? `Minimum allowed is: ${MEMORY_MIN} GiB.` : undefined}
-              />
-            )}
-          />
+          <LimitsFields type={type} />
         </div>
         <div className="flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
           {type === 'default' && (
@@ -175,7 +167,7 @@ export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
           {type === 'stable' && (
             <>
               <Controller
-                name="consolidation.enabled"
+                name="stable_override.consolidation.enabled"
                 control={methods.control}
                 render={({ field }) => (
                   <InputToggle
@@ -197,7 +189,7 @@ export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
                     <Callout.Text>Some downtime may occur during this process.</Callout.Text>
                   </Callout.Root>
                   <Controller
-                    name="consolidation.start_time"
+                    name="stable_override.consolidation.start_time"
                     control={methods.control}
                     rules={{ required: 'Please enter a start time.' }}
                     render={({ field, fieldState: { error } }) => (
@@ -212,7 +204,7 @@ export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
                     )}
                   />
                   <Controller
-                    name="consolidation.duration"
+                    name="stable_override.consolidation.duration"
                     control={methods.control}
                     rules={{ required: 'Please enter a duration.' }}
                     render={({ field, fieldState: { error } }) => (
@@ -227,7 +219,7 @@ export function NodepoolModal({ type, cluster }: NodepoolModalProps) {
                     )}
                   />
                   <Controller
-                    name="consolidation.days"
+                    name="stable_override.consolidation.days"
                     control={methods.control}
                     rules={{ required: 'Please select at least one day.' }}
                     render={({ field, fieldState: { error } }) => (
