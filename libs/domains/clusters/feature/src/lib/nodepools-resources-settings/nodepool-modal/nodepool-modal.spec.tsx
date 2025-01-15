@@ -87,7 +87,7 @@ describe('NodepoolModal', () => {
     fireEvent.change(startTimeInput, { target: { value: '21:00' } })
 
     const durationInput = screen.getByLabelText('Duration')
-    await userEvent.type(durationInput, '8h')
+    await userEvent.type(durationInput, '8h00m')
 
     const daysSelect = screen.getByLabelText('Days')
     await selectEvent.select(daysSelect, 'Monday', {
@@ -112,7 +112,7 @@ describe('NodepoolModal', () => {
             enabled: true,
             days: ['MONDAY'],
             start_time: 'PT21:00',
-            duration: 'PT8H',
+            duration: 'PT8H00M',
           },
         },
       })

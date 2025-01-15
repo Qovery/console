@@ -230,7 +230,29 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                   <Controller
                     name="stable_override.consolidation.duration"
                     control={methods.control}
-                    rules={{ required: 'Please enter a duration.' }}
+                    rules={{
+                      required: 'Please enter a duration.',
+                      pattern: {
+                        value: /^\d{1,2}[hH]\d{1,2}[mM]$/,
+                        message: 'Please enter the duration in the correct format (e.g., 2h10m).',
+                      },
+                      validate: (value) => {
+                        const match = value.match(/^(\d{1,2})[hH](\d{1,2})[mM]$/)
+                        if (!match) return "Invalid format. Use '2h10m' or '2H10M'."
+
+                        const hours = parseInt(match[1], 10)
+                        const minutes = parseInt(match[2], 10)
+                        const totalMinutes = hours * 60 + minutes
+
+                        if (hours >= 24 || minutes >= 60) {
+                          return 'Hours must be less than 24 and minutes less than 60.'
+                        }
+                        if (totalMinutes >= 1440) {
+                          return 'Duration must be less than 24 hours (1440 minutes).'
+                        }
+                        return true
+                      },
+                    }}
                     render={({ field, fieldState: { error } }) => (
                       <InputText
                         name={field.name}
