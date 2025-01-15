@@ -36,6 +36,7 @@
 
 .input__value[type='time'] {
   overflow: visible;
+  color: transparent;
 }
 
 .dark {
@@ -56,6 +57,9 @@
 .input--label-up {
   label {
     @apply translate-y-0 text-xs;
+  }
+  .input__value[type='time'] {
+    color: theme('colors.neutral.400');
   }
 }
 

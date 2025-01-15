@@ -65,13 +65,10 @@ describe('ClusterResourcesSettings', () => {
         {
           label: 'Managed K8S (EKS)',
           value: 'MANAGED',
-        },
-        {
-          label: 'BETA - Single EC2 (K3S)',
-          value: 'SINGLE',
+          description: 'Multiple node cluster',
         },
       ],
-      fromDetail: false,
+      fromDetail: true,
       cloudProvider: CloudProviderEnum.AWS,
     }
   })
@@ -87,13 +84,12 @@ describe('ClusterResourcesSettings', () => {
 
   it('should render 2 radios, 1 select, 1 input and 1 slider', () => {
     renderWithProviders(
-      wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
+      wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} fromDetail={true} />, {
         defaultValues,
       })
     )
 
-    screen.getByLabelText('Managed K8S (EKS)')
-    screen.getByLabelText('BETA - Single EC2 (K3S)')
+    screen.getByText('Managed K8S (EKS) - Multiple node cluster')
     screen.getByLabelText('Instance type')
     screen.getByLabelText('Disk size (GB)')
     screen.getByTestId('input-slider')
@@ -111,7 +107,7 @@ describe('ClusterResourcesSettings', () => {
 
   it('should display banner box', () => {
     renderWithProviders(
-      wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} />, {
+      wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...props} fromDetail={false} />, {
         defaultValues,
       })
     )

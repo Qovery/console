@@ -3,7 +3,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentProps, type ElementRef, type ReactNode, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const tooltipContentVariants = cva(['rounded-sm', 'px-2', 'py-1', 'text-xs', 'font-medium'], {
+const tooltipContentVariants = cva(['rounded', 'px-2', 'py-1.5', 'text-xs', 'font-medium'], {
   variants: {
     color: {
       neutral: ['bg-neutral-600', 'text-neutral-50', 'dark:bg-neutral-500'],

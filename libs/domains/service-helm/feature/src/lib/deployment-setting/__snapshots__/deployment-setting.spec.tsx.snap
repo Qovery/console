@@ -115,7 +115,7 @@ exports[`DeploymentSetting should match snapshot 1`] = `
           </div>
         </div>
         <div
-          class="relative -top-1 ml-3 cursor-pointer flex flex-col gap-1"
+          class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
         >
           <p
             class="font-medium text-neutral-400"

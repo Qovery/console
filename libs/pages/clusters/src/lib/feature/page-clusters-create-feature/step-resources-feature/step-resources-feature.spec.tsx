@@ -1,8 +1,8 @@
-import { fireEvent, getByLabelText, getByTestId, render, waitFor } from '__tests__/utils/setup-jest'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepResourcesFeature from './step-resources-feature'
 
@@ -57,7 +57,6 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         setResourcesData: mockSetResourceData,
         resourcesData: {
           instance_type: 't2.medium',
-          disk_size: 50,
           cluster_type: 'MANAGED',
           nodes: [1, 3],
           karpenter: {
@@ -84,28 +83,24 @@ describe('StepResourcesFeature', () => {
   })
 
   it('should submit form and navigate', async () => {
-    const { baseElement } = render(
+    renderWithProviders(
       <ContextWrapper>
         <StepResourcesFeature />
       </ContextWrapper>
     )
 
-    const select = getByLabelText(baseElement, 'Instance type')
+    const select = screen.getByLabelText('Instance type')
     await selectEvent.select(select, 't2.small (1CPU - 2GB RAM - arm64)', {
       container: document.body,
     })
 
-    const diskSize = getByLabelText(baseElement, 'Disk size (GB)')
-    fireEvent.input(diskSize, { target: { value: '22' } })
-
-    const button = getByTestId(baseElement, 'button-submit')
+    const button = screen.getByTestId('button-submit')
     button.click()
 
     await waitFor(() => {
       expect(button).toBeEnabled()
       expect(mockSetResourceData).toHaveBeenCalledWith({
         instance_type: 't2.small',
-        disk_size: '22',
         cluster_type: 'MANAGED',
         nodes: [1, 3],
         karpenter: {
