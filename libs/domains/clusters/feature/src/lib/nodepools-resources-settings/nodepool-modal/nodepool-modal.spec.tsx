@@ -4,35 +4,6 @@ import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/
 import { NodepoolModal } from './nodepool-modal'
 
 const mockCluster = {
-  features: [
-    {
-      id: 'KARPENTER',
-      value_object: {
-        value: {
-          qovery_node_pools: {
-            default_override: {
-              limits: {
-                max_cpu_in_vcpu: 8,
-                max_memory_in_gibibytes: 16,
-              },
-            },
-            stable_override: {
-              limits: {
-                max_cpu_in_vcpu: 8,
-                max_memory_in_gibibytes: 16,
-              },
-              consolidation: {
-                enabled: true,
-                days: ['MONDAY'],
-                start_time: 'PT08:20',
-                duration: 'PT8H10M',
-              },
-            },
-          },
-        },
-      },
-    },
-  ],
   region: 'us-east-1',
 }
 
@@ -125,19 +96,13 @@ describe('NodepoolModal', () => {
 
     const submitButton = screen.getByText('Confirm')
     await waitFor(() => {
-      expect(submitButton).not.toBeDisabled()
+      expect(submitButton).toBeEnabled()
     })
 
     await userEvent.click(submitButton)
 
     await waitFor(() => {
       expect(onChangeMock).toHaveBeenCalledWith({
-        default_override: {
-          limits: {
-            max_cpu_in_vcpu: 8,
-            max_memory_in_gibibytes: 16,
-          },
-        },
         stable_override: {
           limits: {
             max_cpu_in_vcpu: '8',

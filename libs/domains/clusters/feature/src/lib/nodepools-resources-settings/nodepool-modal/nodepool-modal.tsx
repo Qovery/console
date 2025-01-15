@@ -1,9 +1,8 @@
 import {
   type Cluster,
-  type ClusterFeatureKarpenterParameters,
-  KarpenterDefaultNodePoolOverride,
+  type KarpenterDefaultNodePoolOverride,
   type KarpenterNodePool,
-  KarpenterStableNodePoolOverride,
+  type KarpenterStableNodePoolOverride,
   WeekdayEnum,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -61,7 +60,7 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
 export interface NodepoolModalProps {
   type: 'stable' | 'default'
   cluster: Cluster
-  onChange: (data: KarpenterNodePool) => void
+  onChange: (data: Omit<KarpenterNodePool, 'requirements'>) => void
   defaultValues?: KarpenterStableNodePoolOverride | KarpenterDefaultNodePoolOverride
 }
 
@@ -70,11 +69,6 @@ const MEMORY_MIN = 10
 
 export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
   const { closeModal } = useModal()
-
-  const karpenterNodePools = (
-    cluster.features?.find((feature) => feature.id === 'KARPENTER')?.value_object
-      ?.value as ClusterFeatureKarpenterParameters
-  ).qovery_node_pools
 
   const methods = useForm<Omit<KarpenterNodePool, 'requirements'>>({
     mode: 'onChange',
@@ -104,7 +98,6 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
 
   const onSubmit = methods.handleSubmit(async (data) => {
     onChange({
-      ...karpenterNodePools,
       ...(type === 'default'
         ? {
             default_override: {

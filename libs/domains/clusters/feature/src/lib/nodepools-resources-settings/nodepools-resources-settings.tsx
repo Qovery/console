@@ -139,7 +139,9 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
                   <NodepoolModal
                     type="stable"
                     cluster={cluster}
-                    onChange={(data) => setValue('karpenter.qovery_node_pools', data)}
+                    onChange={(data) => {
+                      setValue('karpenter.qovery_node_pools.stable_override', data.stable_override)
+                    }}
                     defaultValues={watchStable}
                   />
                 ),
@@ -190,7 +192,9 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
                     type="default"
                     cluster={cluster}
                     defaultValues={watchDefault}
-                    onChange={(data) => setValue('karpenter.qovery_node_pools', data)}
+                    onChange={(data) => {
+                      setValue('karpenter.qovery_node_pools.default_override', data.default_override)
+                    }}
                   />
                 ),
               })
