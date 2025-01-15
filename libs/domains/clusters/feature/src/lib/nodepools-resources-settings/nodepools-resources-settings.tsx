@@ -52,7 +52,11 @@ export const formatWeekdays = (days: string[]): string => {
   })
 
   if (isConsecutive) {
-    return `${upperCaseFirstLetter(days[0])} to ${upperCaseFirstLetter(days[days.length - 1])}`
+    if (days.length > 1) {
+      return `${upperCaseFirstLetter(days[0])} to ${upperCaseFirstLetter(days[days.length - 1])}`
+    } else {
+      return upperCaseFirstLetter(days[0])
+    }
   }
 
   return days.map(shortenDay).join(', ')
@@ -95,8 +99,8 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
           </span>
         </div>
         <div className="flex w-1/2 justify-end gap-3">
-          <div className="flex flex-col gap-4 text-sm text-neutral-400">
-            {watchStable?.consolidation?.days && (
+          <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+            {watchStable?.consolidation?.enabled ? (
               <span className="flex flex-col justify-center">
                 <span className="flex gap-1.5">
                   {formatWeekdays(watchStable?.consolidation?.days)},
@@ -110,6 +114,8 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
                   {start} to {end}
                 </span>
               </span>
+            ) : (
+              <span>Consolidation schedule: disabled</span>
             )}
             {watchStable?.limits && (
               <span>
@@ -151,7 +157,7 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
           </span>
         </div>
         <div className="flex w-1/2 justify-end gap-3">
-          <div className="flex flex-col gap-4 text-sm text-neutral-400">
+          <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
             <span className="flex flex-col justify-center">
               <span className="flex gap-1.5">
                 Operates every day,

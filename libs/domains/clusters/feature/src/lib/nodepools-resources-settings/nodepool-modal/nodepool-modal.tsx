@@ -21,6 +21,7 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
         name={`${name}.max_cpu_in_vcpu`}
         control={control}
         rules={{
+          required: 'Please enter a value.',
           min: CPU_MIN,
         }}
         render={({ field, fieldState: { error } }) => (
@@ -39,6 +40,7 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
         name={`${name}.max_memory_in_gibibytes`}
         control={control}
         rules={{
+          required: 'Please enter a value.',
           min: MEMORY_MIN,
         }}
         render={({ field, fieldState: { error } }) => (
@@ -79,7 +81,16 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
     mode: 'onChange',
     defaultValues: {
       default_override: defaultValues,
-      stable_override: defaultValues,
+      stable_override: {
+        ...defaultValues,
+        ...{
+          consolidation: {
+            ...(defaultValues as KarpenterStableNodePoolOverride).consolidation,
+            start_time: (defaultValues as KarpenterStableNodePoolOverride)?.consolidation?.start_time.replace('PT', ''),
+            duration: (defaultValues as KarpenterStableNodePoolOverride)?.consolidation?.duration.replace('PT', ''),
+          },
+        },
+      },
     },
   })
 
@@ -129,17 +140,24 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
     <FormProvider {...methods}>
       <ModalCrud
         title="Nodepool stable"
-        description="Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability."
+        description={
+          type === 'stable'
+            ? 'Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability.'
+            : 'Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability.'
+        }
         onSubmit={onSubmit}
         onClose={closeModal}
         submitLabel="Confirm"
       >
         <div className="mb-6 flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
           <div className="flex justify-between">
-            <p className="text-sm font-medium text-neutral-400">Nodepool resources limits</p>
+            <div className="flex flex-col gap-1">
+              <p className="text-sm font-medium text-neutral-400">Nodepool resources limits</p>
+              <p className="text-sm text-neutral-350">Limit resources to control usage and avoid unexpected costs. </p>
+            </div>
             <Tooltip
               classNameContent="w-80"
-              content="This section is dedicated to configuring the CPU and memory limits for the NodePool. Nodes can be deployed within these limits, ensuring that their total resources do not exceed the defined maximum. This configuration helps prevent unlimited resource allocation, avoiding excessive costs."
+              content="This section is dedicated to configuring the CPU and memory limits for the Nodepool. Nodes can be deployed within these limits, ensuring that their total resources do not exceed the defined maximum. This configuration helps prevent unlimited resource allocation, avoiding excessive costs."
             >
               <span className="text-neutral-400">
                 <Icon iconName="circle-info" iconStyle="regular" />
@@ -170,22 +188,29 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                 name="stable_override.consolidation.enabled"
                 control={methods.control}
                 render={({ field }) => (
-                  <InputToggle
-                    value={field.value}
-                    onChange={field.onChange}
-                    title="Consolidation schedule"
-                    description="Define when consolidation occurs to optimize resource usage by reducing the number of active nodes."
-                    forceAlignTop
-                    small
-                  />
+                  <div className="flex gap-2">
+                    <InputToggle
+                      value={field.value}
+                      onChange={field.onChange}
+                      title="Consolidation schedule"
+                      description="Define when consolidation occurs to optimize resource usage by reducing the number of active nodes."
+                      forceAlignTop
+                      small
+                    />
+                    <Tooltip
+                      classNameContent="w-80"
+                      content="Consolidation optimizes resource usage by consolidating workloads onto fewer nodes. This schedule applies to Nodepools used by Qovery’s internal applications and single-instance applications (like container databases)"
+                    >
+                      <span className="text-neutral-400">
+                        <Icon iconName="circle-info" iconStyle="regular" />
+                      </span>
+                    </Tooltip>
+                  </div>
                 )}
               />
               {watchConsolidation && (
                 <div className="ml-11 flex flex-col gap-4">
                   <Callout.Root className="items-center" color="yellow">
-                    <Callout.Icon>
-                      <Icon iconName="info-circle" iconStyle="regular" />
-                    </Callout.Icon>
                     <Callout.Text>Some downtime may occur during this process.</Callout.Text>
                   </Callout.Root>
                   <Controller
