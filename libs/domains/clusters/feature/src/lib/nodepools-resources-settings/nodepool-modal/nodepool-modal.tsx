@@ -124,10 +124,10 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                 enabled: data.stable_override?.consolidation?.enabled ?? false,
                 days: data.stable_override?.consolidation?.days ?? [],
                 start_time: data.stable_override?.consolidation?.start_time
-                  ? `PT${data.stable_override?.consolidation?.start_time}`
+                  ? `PT${data.stable_override.consolidation.start_time}`
                   : '',
                 duration: data.stable_override?.consolidation?.duration
-                  ? `PT${data.stable_override?.consolidation?.duration.toUpperCase()}`
+                  ? `PT${data.stable_override.consolidation.duration.toUpperCase()}`
                   : '',
               },
             },
