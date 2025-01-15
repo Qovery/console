@@ -418,7 +418,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 variant="outline"
                 radius="full"
               >
-                <StatusChip status={service.runningStatus?.state} />
+                <StatusChip
+                  status={match(service)
+                    .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
+                    .otherwise((s) => s.runningStatus?.state)}
+                />
                 {value}
               </Link>
             </Tooltip>
