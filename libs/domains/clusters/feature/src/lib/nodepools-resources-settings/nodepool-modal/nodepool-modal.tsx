@@ -7,6 +7,7 @@ import {
   WeekdayEnum,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { P, match } from 'ts-pattern'
 import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
@@ -21,7 +22,6 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
         name={`${name}.max_cpu_in_vcpu`}
         control={control}
         rules={{
-          required: 'Please enter a value.',
           min: CPU_MIN,
         }}
         render={({ field, fieldState: { error } }) => (
@@ -40,7 +40,6 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
         name={`${name}.max_memory_in_gibibytes`}
         control={control}
         rules={{
-          required: 'Please enter a value.',
           min: MEMORY_MIN,
         }}
         render={({ field, fieldState: { error } }) => (
@@ -80,15 +79,22 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
   const methods = useForm<Omit<KarpenterNodePool, 'requirements'>>({
     mode: 'onChange',
     defaultValues: {
-      default_override: defaultValues,
+      default_override: {
+        limits: defaultValues?.limits,
+      },
       stable_override: {
         ...defaultValues,
         ...{
-          consolidation: {
-            ...(defaultValues as KarpenterStableNodePoolOverride).consolidation,
-            start_time: (defaultValues as KarpenterStableNodePoolOverride)?.consolidation?.start_time.replace('PT', ''),
-            duration: (defaultValues as KarpenterStableNodePoolOverride)?.consolidation?.duration.replace('PT', ''),
-          },
+          consolidation: match(defaultValues)
+            .with({ consolidation: P.not(P.nullish) }, ({ consolidation }) => ({
+              ...consolidation,
+              start_time: consolidation.start_time.replace('PT', ''),
+              duration: consolidation.duration.replace('PT', ''),
+            }))
+            .otherwise(() => ({
+              start_time: '',
+              duration: '',
+            })),
         },
       },
     },

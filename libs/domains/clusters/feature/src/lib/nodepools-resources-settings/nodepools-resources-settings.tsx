@@ -13,7 +13,8 @@ export const formatTimeRange = (
   start: string
   end: string
 } => {
-  if (startTime === undefined || duration === undefined) return { start: '', end: '' }
+  if (startTime === undefined || duration === undefined || startTime === '' || duration === '')
+    return { start: '', end: '' }
 
   const baseDate = parse(startTime.replace('PT', ''), 'HH:mm', new Date())
 
@@ -98,7 +99,7 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
             stability.
           </span>
         </div>
-        <div className="flex w-1/2 justify-end gap-3">
+        <div className="flex w-1/2 justify-between gap-3">
           <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
             {watchStable?.consolidation?.enabled ? (
               <span className="flex flex-col justify-center">
@@ -156,7 +157,7 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
             Designed to handle general workloads and serves as the foundation for deploying most applications.
           </span>
         </div>
-        <div className="flex w-1/2 justify-end gap-3">
+        <div className="flex w-1/2 justify-between gap-3">
           <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
             <span className="flex flex-col justify-center">
               <span className="flex gap-1.5">
