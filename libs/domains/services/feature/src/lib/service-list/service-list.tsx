@@ -63,7 +63,6 @@ import {
   TablePrimitives,
   Tooltip,
   Truncate,
-  truncateText,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
@@ -497,9 +496,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                       }
                     >
                       <span className="text-neutral-350">
-                        {containerImage.registry.name.length >= 20
-                          ? truncateText(containerImage.registry.name, 20).toLowerCase()
-                          : containerImage.registry.name.toLowerCase()}
+                        {containerImage.registry.name.length >= 20 ? (
+                          <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
+                        ) : (
+                          containerImage.registry.name.toLowerCase()
+                        )}
                       </span>
                     </Tooltip>
                   </span>
@@ -552,9 +553,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                       }
                     >
                       <span className="text-neutral-350">
-                        {helmRepository.repository?.name.length > 20
-                          ? truncateText(helmRepository.repository?.name, 20).toLowerCase()
-                          : helmRepository.repository?.name.toLowerCase()}
+                        {helmRepository.repository?.name.length > 20 ? (
+                          <Truncate text={helmRepository.repository?.name.toLowerCase()} truncateLimit={20} />
+                        ) : (
+                          helmRepository.repository?.name.toLowerCase()
+                        )}
                       </span>
                     </Tooltip>
                   </span>
