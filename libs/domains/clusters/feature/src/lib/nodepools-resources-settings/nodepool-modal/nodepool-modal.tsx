@@ -233,15 +233,25 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                     rules={{
                       required: 'Please enter a duration.',
                       pattern: {
-                        value: /^\d{1,2}[hH]\d{1,2}[mM]$/,
-                        message: 'Please enter the duration in the correct format (e.g., 2h10m).',
+                        value: /^(\d{1,2}[hH](\d{1,2}[mM])?|(\d{1,2}[mM]))$/,
+                        message: 'Please enter the duration in the correct format (e.g., 2h10m, 1h, or 10m).',
                       },
                       validate: (value) => {
-                        const match = value.match(/^(\d{1,2})[hH](\d{1,2})[mM]$/)
-                        if (!match) return "Invalid format. Use '2h10m' or '2H10M'."
+                        const match = value.match(/^(\d{1,2})h(\d{1,2})?m?$|^(\d{1,2})m$/i)
+                        if (!match) return "Invalid format. Use '2h10m', '1h', or '10m'."
 
-                        const hours = parseInt(match[1], 10)
-                        const minutes = parseInt(match[2], 10)
+                        let hours = 0
+                        let minutes = 0
+
+                        if (match[1]) {
+                          hours = parseInt(match[1], 10)
+                          if (match[2]) {
+                            minutes = parseInt(match[2], 10)
+                          }
+                        } else if (match[3]) {
+                          minutes = parseInt(match[3], 10)
+                        }
+
                         const totalMinutes = hours * 60 + minutes
 
                         if (hours >= 24 || minutes >= 60) {
