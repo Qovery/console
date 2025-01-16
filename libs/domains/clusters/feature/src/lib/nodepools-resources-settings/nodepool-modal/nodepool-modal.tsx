@@ -233,12 +233,13 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                     rules={{
                       required: 'Please enter a duration.',
                       pattern: {
-                        value: /^(\d{1,2}[hH](\d{1,2}[mM])?|(\d{1,2}[mM]))$/,
-                        message: 'Please enter the duration in the correct format (e.g., 2h10m, 1h, or 10m).',
+                        value: /^(\d{1,2}[H](\d{1,2}[M])?|(\d{1,2}[M]))$/,
+                        message: 'Please enter the duration in the correct format (e.g., 2H10M, 1H, or 10M).',
                       },
                       validate: (value) => {
-                        const match = value.match(/^(\d{1,2})h(\d{1,2})?m?$|^(\d{1,2})m$/i)
-                        if (!match) return "Invalid format. Use '2h10m', '1h', or '10m'."
+                        const upperValue = value.toUpperCase()
+                        const match = upperValue.match(/^(\d{1,2})H(\d{1,2})?M?$|^(\d{1,2})M$/)
+                        if (!match) return "Invalid format. Use '2H10M', '1H', or '10M'."
 
                         let hours = 0
                         let minutes = 0
@@ -268,8 +269,8 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                         name={field.name}
                         label="Duration"
                         value={field.value}
-                        onChange={field.onChange}
-                        hint="The duration format uses 'h' for hours and 'm' for minutes, so '2h10m' represents 2 hours and 10 minutes."
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                        hint="The duration format uses 'H' for hours and 'M' for minutes, so '2H10M' represents 2 hours and 10 minutes."
                         error={error?.message}
                       />
                     )}
