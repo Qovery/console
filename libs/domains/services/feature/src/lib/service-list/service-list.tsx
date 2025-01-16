@@ -497,9 +497,11 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                       }
                     >
                       <span className="text-neutral-350">
-                        {containerImage.registry.name.length >= 20
-                          ? `${truncateText(containerImage.registry.name, 20).toLowerCase()}...`
-                          : containerImage.registry.name.toLowerCase()}
+                        {containerImage.registry.name.length >= 20 ? (
+                          <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
+                        ) : (
+                          containerImage.registry.name.toLowerCase()
+                        )}
                       </span>
                     </Tooltip>
                   </span>
