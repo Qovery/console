@@ -124,7 +124,7 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
                   <span>vCPU limit: {watchStable?.limits?.max_cpu_in_vcpu} vCPU; </span>
                 )}
                 {watchStable.limits.max_memory_in_gibibytes && (
-                  <span>Memory list: {watchStable?.limits?.max_memory_in_gibibytes} GiB</span>
+                  <span>Memory limit: {watchStable?.limits?.max_memory_in_gibibytes} GiB</span>
                 )}
               </span>
             )}
@@ -177,7 +177,7 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
                 <span>vCPU limit: {watchDefault?.limits?.max_cpu_in_vcpu} vCPU; </span>
               )}
               {watchDefault?.limits?.max_memory_in_gibibytes && (
-                <span>Memory list: {watchDefault?.limits?.max_memory_in_gibibytes} GiB</span>
+                <span>Memory limit: {watchDefault?.limits?.max_memory_in_gibibytes} GiB</span>
               )}
             </span>
           </div>

@@ -1,3 +1,4 @@
+import { differenceInMinutes, isValid } from 'date-fns'
 import {
   type Cluster,
   type KarpenterDefaultNodePoolOverride,
@@ -232,35 +233,54 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                     control={methods.control}
                     rules={{
                       required: 'Please enter a duration.',
-                      pattern: {
-                        value: /^(\d{1,2}[H](\d{1,2}[M])?|(\d{1,2}[M]))$/,
-                        message: 'Please enter the duration in the correct format (e.g., 2H10M, 1H, or 10M).',
-                      },
                       validate: (value) => {
                         const upperValue = value.toUpperCase()
-                        const match = upperValue.match(/^(\d{1,2})H(\d{1,2})?M?$|^(\d{1,2})M$/)
-                        if (!match) return "Invalid format. Use '2H10M', '1H', or '10M'."
 
+                        if (!/^(\d{1,2}H(\d{1,2}M)?|\d{1,3}M?|\d{1,4}M)$/i.test(upperValue)) {
+                          return 'Please enter the duration in the correct format (e.g., 2H10M, 1H, or 10M).'
+                        }
+
+                        // Extract hours and minutes
                         let hours = 0
                         let minutes = 0
 
-                        if (match[1]) {
-                          hours = parseInt(match[1], 10)
-                          if (match[2]) {
-                            minutes = parseInt(match[2], 10)
+                        if (upperValue.includes('H')) {
+                          const [hoursStr, minutesStr] = upperValue.split('H')
+                          hours = parseInt(hoursStr, 10)
+                          if (minutesStr) {
+                            minutes = parseInt(minutesStr.replace('M', ''), 10)
                           }
-                        } else if (match[3]) {
-                          minutes = parseInt(match[3], 10)
+                        } else {
+                          minutes = parseInt(upperValue.replace('M', ''), 10)
                         }
 
-                        const totalMinutes = hours * 60 + minutes
+                        // Create two dates for comparison
+                        const baseDate = new Date(2000, 0, 1, 0, 0, 0)
+                        const durationDate = new Date(2000, 0, 1, hours, minutes, 0)
 
-                        if (hours >= 24 || minutes >= 60) {
-                          return 'Hours must be less than 24 and minutes less than 60.'
+                        // Validate using date-fns
+                        if (!isValid(durationDate)) {
+                          return 'Invalid duration.'
                         }
+
+                        const totalMinutes = differenceInMinutes(durationDate, baseDate)
+
+                        if (totalMinutes <= 0) {
+                          return 'Duration must be greater than 0 minutes.'
+                        }
+
                         if (totalMinutes >= 1440) {
                           return 'Duration must be less than 24 hours (1440 minutes).'
                         }
+
+                        if (minutes >= 60 && hours > 0) {
+                          return 'Minutes must be less than 60.'
+                        }
+
+                        if (hours >= 24) {
+                          return 'Hours must be less than 24.'
+                        }
+
                         return true
                       },
                     }}

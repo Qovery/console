@@ -118,13 +118,13 @@ describe('NodepoolsResourcesSettings', () => {
 
       // Check stable nodepool values
       expect(screen.getByText('vCPU limit: 16 vCPU;')).toBeInTheDocument()
-      expect(screen.getByText('Memory list: 32 GiB')).toBeInTheDocument()
+      expect(screen.getByText('Memory limit: 32 GiB')).toBeInTheDocument()
       expect(screen.getByText('Mon, Wed, Fri,')).toBeInTheDocument()
       expect(screen.getByText('8:00 pm to 12:00 am')).toBeInTheDocument()
 
       // Check default nodepool values
       expect(screen.getByText('vCPU limit: 12 vCPU;')).toBeInTheDocument()
-      expect(screen.getByText('Memory list: 24 GiB')).toBeInTheDocument()
+      expect(screen.getByText('Memory limit: 24 GiB')).toBeInTheDocument()
     })
   })
 })
