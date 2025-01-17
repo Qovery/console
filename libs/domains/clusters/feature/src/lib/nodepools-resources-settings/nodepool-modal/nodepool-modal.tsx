@@ -52,6 +52,7 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
             control={control}
             rules={{
               min: CPU_MIN,
+              required: 'Please enter a value.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
@@ -61,7 +62,7 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
                 value={field.value}
                 onChange={field.onChange}
                 hint={`Minimum value is ${CPU_MIN} vCPU`}
-                error={error?.type === 'min' ? `Minimum allowed is: ${CPU_MIN} milli vCPU.` : undefined}
+                error={error?.type === 'min' ? `Minimum allowed is: ${CPU_MIN} vCPU.` : undefined}
               />
             )}
           />
@@ -70,6 +71,7 @@ function LimitsFields({ type }: { type: 'default' | 'stable' }) {
             control={control}
             rules={{
               min: MEMORY_MIN,
+              required: 'Please enter a value.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText

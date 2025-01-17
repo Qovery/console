@@ -11,6 +11,11 @@ const defaultProps = {
   type: 'stable' as const,
   cluster: mockCluster as Cluster,
   onChange: jest.fn(),
+  defaultValues: {
+    limits: {
+      enabled: true,
+    },
+  },
 }
 
 describe('NodepoolModal', () => {
@@ -50,7 +55,7 @@ describe('NodepoolModal', () => {
     const submitButton = screen.getByText('Confirm')
     await userEvent.click(submitButton)
 
-    expect(screen.getByText('Minimum allowed is: 6 milli vCPU.')).toBeInTheDocument()
+    expect(screen.getByText('Minimum allowed is: 6 vCPU.')).toBeInTheDocument()
     expect(screen.getByText('Minimum allowed is: 10 GiB.')).toBeInTheDocument()
   })
 
@@ -105,6 +110,7 @@ describe('NodepoolModal', () => {
       expect(onChangeMock).toHaveBeenCalledWith({
         stable_override: {
           limits: {
+            enabled: true,
             max_cpu_in_vcpu: '8',
             max_memory_in_gibibytes: '16',
           },
