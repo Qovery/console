@@ -67,7 +67,7 @@ describe('NodepoolsResourcesSettings', () => {
 
     it('should return "Operates every day" for full week', () => {
       const fullWeek = Object.keys(WeekdayEnum)
-      expect(formatWeekdays(fullWeek)).toBe('Operates every day')
+      expect(formatWeekdays(fullWeek)).toBe('Consolidation operates every day')
     })
 
     it('should format consecutive days with "to"', () => {
@@ -85,19 +85,21 @@ describe('NodepoolsResourcesSettings', () => {
 
   describe('Component', () => {
     it('should display default values from cluster configuration', () => {
-      const { debug, baseElement } = renderWithProviders(
+      renderWithProviders(
         wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} />, {
           defaultValues: {
             karpenter: {
               qovery_node_pools: {
                 default_override: {
                   limits: {
+                    enabled: true,
                     max_cpu_in_vcpu: 12,
                     max_memory_in_gibibytes: 24,
                   },
                 },
                 stable_override: {
                   limits: {
+                    enabled: true,
                     max_cpu_in_vcpu: 16,
                     max_memory_in_gibibytes: 32,
                   },
@@ -114,12 +116,10 @@ describe('NodepoolsResourcesSettings', () => {
         })
       )
 
-      debug(baseElement, 10000)
-
       // Check stable nodepool values
       expect(screen.getByText('vCPU limit: 16 vCPU;')).toBeInTheDocument()
       expect(screen.getByText('Memory limit: 32 GiB')).toBeInTheDocument()
-      expect(screen.getByText('Mon, Wed, Fri,')).toBeInTheDocument()
+      expect(screen.getByText('Consolidation operates: Mon, Wed, Fri,')).toBeInTheDocument()
       expect(screen.getByText('8:00 pm to 12:00 am')).toBeInTheDocument()
 
       // Check default nodepool values
