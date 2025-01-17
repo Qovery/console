@@ -41,7 +41,7 @@ export const formatWeekdays = (days: string[]): string => {
 
   const fullWeek = days.length === 7
   if (fullWeek) {
-    return 'Operates every day'
+    return 'Consolidation operates every day'
   }
 
   const weekdayOrder = Object.keys(WeekdayEnum).map((day) => day)
@@ -99,12 +99,12 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
             stability.
           </span>
         </div>
-        <div className="flex w-1/2 justify-between gap-3">
+        <div className="flex w-1/2 justify-between gap-1">
           <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
             {watchStable?.consolidation?.enabled ? (
               <span className="flex flex-col justify-center">
                 <span className="flex gap-1.5">
-                  {formatWeekdays(watchStable?.consolidation?.days)},
+                  Consolidation operates: {formatWeekdays(watchStable?.consolidation?.days)},
                   <Tooltip content={`Schedule (${cluster.region})`}>
                     <span className="text-sm">
                       <Icon iconName="circle-info" iconStyle="regular" />
@@ -118,7 +118,7 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
             ) : (
               <span>Consolidation schedule: disabled</span>
             )}
-            {watchStable?.limits && (
+            {watchStable?.limits?.enabled ? (
               <span>
                 {watchStable.limits.max_cpu_in_vcpu && (
                   <span>vCPU limit: {watchStable?.limits?.max_cpu_in_vcpu} vCPU; </span>
@@ -127,6 +127,8 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
                   <span>Memory limit: {watchStable?.limits?.max_memory_in_gibibytes} GiB</span>
                 )}
               </span>
+            ) : (
+              <span>No resource limit</span>
             )}
           </div>
           <Button
@@ -159,11 +161,11 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
             Designed to handle general workloads and serves as the foundation for deploying most applications.
           </span>
         </div>
-        <div className="flex w-1/2 justify-between gap-3">
+        <div className="flex w-1/2 justify-between gap-1">
           <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
             <span className="flex flex-col justify-center">
               <span className="flex gap-1.5">
-                Operates every day,
+                Consolidation operates every day,
                 <Tooltip content={`Schedule (${cluster.region})`}>
                   <span className="text-sm">
                     <Icon iconName="circle-info" iconStyle="regular" />
@@ -172,14 +174,18 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
               </span>
               <span>24 hours a day</span>
             </span>
-            <span>
-              {watchDefault?.limits?.max_cpu_in_vcpu && (
-                <span>vCPU limit: {watchDefault?.limits?.max_cpu_in_vcpu} vCPU; </span>
-              )}
-              {watchDefault?.limits?.max_memory_in_gibibytes && (
-                <span>Memory limit: {watchDefault?.limits?.max_memory_in_gibibytes} GiB</span>
-              )}
-            </span>
+            {watchDefault?.limits?.enabled ? (
+              <span>
+                {watchDefault?.limits?.max_cpu_in_vcpu && (
+                  <span>vCPU limit: {watchDefault?.limits?.max_cpu_in_vcpu} vCPU; </span>
+                )}
+                {watchDefault?.limits?.max_memory_in_gibibytes && (
+                  <span>Memory limit: {watchDefault?.limits?.max_memory_in_gibibytes} GiB</span>
+                )}
+              </span>
+            ) : (
+              <span>No resource limit</span>
+            )}
           </div>
           <Button
             type="button"

@@ -12,48 +12,79 @@ import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip,
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 function LimitsFields({ type }: { type: 'default' | 'stable' }) {
-  const { control } = useFormContext()
+  const { control, watch } = useFormContext()
 
   const name = `${type === 'default' ? 'default_override' : 'stable_override'}.limits`
+  const watchLimitsEnabled = watch(`${name}.enabled`)
 
   return (
     <>
-      <Controller
-        name={`${name}.max_cpu_in_vcpu`}
-        control={control}
-        rules={{
-          min: CPU_MIN,
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            name={field.name}
-            label="vCPU"
-            value={field.value}
-            onChange={field.onChange}
-            hint={`Minimum value is ${CPU_MIN} vCPU`}
-            error={error?.type === 'min' ? `Minimum allowed is: ${CPU_MIN} milli vCPU.` : undefined}
+      <div className="flex justify-between">
+        <Controller
+          name={`${name}.enabled`}
+          control={control}
+          render={({ field }) => (
+            <div className="flex gap-2">
+              <InputToggle
+                value={field.value}
+                onChange={field.onChange}
+                title="Nodepool resources limits"
+                description="Limit resources to control usage and avoid unexpected costs."
+                forceAlignTop
+                small
+              />
+              <Tooltip
+                classNameContent="w-80"
+                content="This section is dedicated to configuring the CPU and memory limits for the Nodepool. Nodes can be deployed within these limits, ensuring that their total resources do not exceed the defined maximum. This configuration helps prevent unlimited resource allocation, avoiding excessive costs."
+              >
+                <span className="text-neutral-400">
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </span>
+              </Tooltip>
+            </div>
+          )}
+        />
+      </div>
+      {watchLimitsEnabled && (
+        <div className="ml-11 flex flex-col gap-4">
+          <Controller
+            name={`${name}.max_cpu_in_vcpu`}
+            control={control}
+            rules={{
+              min: CPU_MIN,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                type="number"
+                name={field.name}
+                label="vCPU"
+                value={field.value}
+                onChange={field.onChange}
+                hint={`Minimum value is ${CPU_MIN} vCPU`}
+                error={error?.type === 'min' ? `Minimum allowed is: ${CPU_MIN} milli vCPU.` : undefined}
+              />
+            )}
           />
-        )}
-      />
-      <Controller
-        name={`${name}.max_memory_in_gibibytes`}
-        control={control}
-        rules={{
-          min: MEMORY_MIN,
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            type="number"
-            name={field.name}
-            label="Memory (GiB)"
-            value={field.value}
-            onChange={field.onChange}
-            hint={`Minimum value is ${MEMORY_MIN} GiB`}
-            error={error?.type === 'min' ? `Minimum allowed is: ${MEMORY_MIN} GiB.` : undefined}
+          <Controller
+            name={`${name}.max_memory_in_gibibytes`}
+            control={control}
+            rules={{
+              min: MEMORY_MIN,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                type="number"
+                name={field.name}
+                label="Memory (GiB)"
+                value={field.value}
+                onChange={field.onChange}
+                hint={`Minimum value is ${MEMORY_MIN} GiB`}
+                error={error?.type === 'min' ? `Minimum allowed is: ${MEMORY_MIN} GiB.` : undefined}
+              />
+            )}
           />
-        )}
-      />
+        </div>
+      )}
     </>
   )
 }
@@ -103,6 +134,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
         ? {
             default_override: {
               limits: {
+                enabled: data.default_override?.limits?.enabled ?? false,
                 max_cpu_in_vcpu: data.default_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
                 max_memory_in_gibibytes: data.default_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
               },
@@ -111,6 +143,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
         : {
             stable_override: {
               limits: {
+                enabled: data.stable_override?.limits?.enabled ?? false,
                 max_cpu_in_vcpu: data.stable_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
                 max_memory_in_gibibytes: data.stable_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
               },
@@ -150,20 +183,6 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
         submitLabel="Confirm"
       >
         <div className="mb-6 flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-1">
-              <p className="text-sm font-medium text-neutral-400">Nodepool resources limits</p>
-              <p className="text-sm text-neutral-350">Limit resources to control usage and avoid unexpected costs. </p>
-            </div>
-            <Tooltip
-              classNameContent="w-80"
-              content="This section is dedicated to configuring the CPU and memory limits for the Nodepool. Nodes can be deployed within these limits, ensuring that their total resources do not exceed the defined maximum. This configuration helps prevent unlimited resource allocation, avoiding excessive costs."
-            >
-              <span className="text-neutral-400">
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </span>
-            </Tooltip>
-          </div>
           <LimitsFields type={type} />
         </div>
         <div className="flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
