@@ -41,7 +41,7 @@ export const formatWeekdays = (days: string[]): string => {
 
   const fullWeek = days.length === 7
   if (fullWeek) {
-    return 'Consolidation operates every day'
+    return 'Operates every day'
   }
 
   const weekdayOrder = Object.keys(WeekdayEnum).map((day) => day)
@@ -91,44 +91,53 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
         </Tooltip>
       }
     >
-      <div className="flex gap-4 border-b border-neutral-250 px-4 py-3 text-sm">
-        <div className="w-1/2">
-          <p className="mb-1 font-medium text-neutral-400">Stable nodepool</p>
-          <span className="text-neutral-350">
+      <div className="flex flex-col gap-4 border-b border-neutral-250 p-4 text-sm">
+        <div className="flex flex-col gap-1.5">
+          <p className="font-medium text-neutral-400">Stable nodepool</p>
+          <span className="text-ssm text-neutral-350">
             Used for single instances and internal Qovery applications, such as containerized databases, to maintain
             stability.
           </span>
         </div>
-        <div className="flex w-1/2 justify-between gap-1">
-          <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
-            {watchStable?.consolidation?.enabled ? (
-              <span className="flex flex-col justify-center">
-                <span className="flex gap-1.5">
-                  Consolidation operates: {formatWeekdays(watchStable?.consolidation?.days)},
-                  <Tooltip content={`Schedule (${cluster.region})`}>
-                    <span className="text-sm">
-                      <Icon iconName="circle-info" iconStyle="regular" />
-                    </span>
-                  </Tooltip>
+        <div className="flex justify-between gap-4">
+          <div className="flex w-1/2 flex-col gap-1">
+            <span className="text-neutral-350">Consolidation</span>
+            <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+              {watchStable?.consolidation?.enabled ? (
+                <span className="flex flex-col justify-center">
+                  <span className="flex gap-1.5">
+                    {formatWeekdays(watchStable?.consolidation?.days)},
+                    <Tooltip content={`Schedule (${cluster.region})`}>
+                      <span className="text-sm">
+                        <Icon iconName="circle-info" iconStyle="regular" />
+                      </span>
+                    </Tooltip>
+                  </span>
+                  <span>
+                    {start} to {end}
+                  </span>
                 </span>
-                <span>
-                  {start} to {end}
-                </span>
-              </span>
-            ) : (
-              <span>Consolidation schedule: disabled</span>
-            )}
+              ) : (
+                <span>Disabled</span>
+              )}
+            </div>
+          </div>
+          <div className="flex w-1/2 flex-col gap-1">
+            <span className="text-neutral-350">Resources limit</span>
             {watchStable?.limits?.enabled ? (
               <span>
                 {watchStable.limits.max_cpu_in_vcpu && (
                   <span>vCPU limit: {watchStable?.limits?.max_cpu_in_vcpu} vCPU; </span>
                 )}
                 {watchStable.limits.max_memory_in_gibibytes && (
-                  <span>Memory limit: {watchStable?.limits?.max_memory_in_gibibytes} GiB</span>
+                  <>
+                    <br />
+                    <span>Memory limit: {watchStable?.limits?.max_memory_in_gibibytes} GiB</span>
+                  </>
                 )}
               </span>
             ) : (
-              <span>No resource limit</span>
+              <span>No limit</span>
             )}
           </div>
           <Button
@@ -154,37 +163,46 @@ export function NodepoolsResourcesSettings({ cluster }: NodepoolsResourcesSettin
           </Button>
         </div>
       </div>
-      <div className="flex gap-4 px-4 py-3 text-sm">
-        <div className="w-1/2">
+      <div className="flex flex-col gap-4 p-4 text-sm">
+        <div className="flex flex-col gap-1.5">
           <p className="mb-1 font-medium text-neutral-400">Default nodepool</p>
-          <span className="text-neutral-350">
+          <span className="text-ssm text-neutral-350">
             Designed to handle general workloads and serves as the foundation for deploying most applications.
           </span>
         </div>
-        <div className="flex w-1/2 justify-between gap-1">
-          <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
-            <span className="flex flex-col justify-center">
-              <span className="flex gap-1.5">
-                Consolidation operates every day,
-                <Tooltip content={`Schedule (${cluster.region})`}>
-                  <span className="text-sm">
-                    <Icon iconName="circle-info" iconStyle="regular" />
-                  </span>
-                </Tooltip>
+        <div className="flex gap-4">
+          <div className="flex w-1/2 flex-col gap-1">
+            <span className="text-neutral-350">Consolidation</span>
+            <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+              <span className="flex flex-col justify-center">
+                <span className="flex gap-1.5">
+                  Operates every day,
+                  <Tooltip content={`Schedule (${cluster.region})`}>
+                    <span className="text-sm">
+                      <Icon iconName="circle-info" iconStyle="regular" />
+                    </span>
+                  </Tooltip>
+                </span>
+                <span>24 hours a day</span>
               </span>
-              <span>24 hours a day</span>
-            </span>
+            </div>
+          </div>
+          <div className="flex w-1/2 flex-col gap-1">
+            <span className="text-neutral-350">Resources limit</span>
             {watchDefault?.limits?.enabled ? (
               <span>
-                {watchDefault?.limits?.max_cpu_in_vcpu && (
+                {watchDefault.limits.max_cpu_in_vcpu && (
                   <span>vCPU limit: {watchDefault?.limits?.max_cpu_in_vcpu} vCPU; </span>
                 )}
-                {watchDefault?.limits?.max_memory_in_gibibytes && (
-                  <span>Memory limit: {watchDefault?.limits?.max_memory_in_gibibytes} GiB</span>
+                {watchDefault.limits.max_memory_in_gibibytes && (
+                  <>
+                    <br />
+                    <span>Memory limit: {watchDefault?.limits?.max_memory_in_gibibytes} GiB</span>
+                  </>
                 )}
               </span>
             ) : (
-              <span>No resource limit</span>
+              <span>No limit</span>
             )}
           </div>
           <Button

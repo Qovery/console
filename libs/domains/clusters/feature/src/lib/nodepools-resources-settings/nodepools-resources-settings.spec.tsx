@@ -67,7 +67,7 @@ describe('NodepoolsResourcesSettings', () => {
 
     it('should return "Operates every day" for full week', () => {
       const fullWeek = Object.keys(WeekdayEnum)
-      expect(formatWeekdays(fullWeek)).toBe('Consolidation operates every day')
+      expect(formatWeekdays(fullWeek)).toBe('Operates every day')
     })
 
     it('should format consecutive days with "to"', () => {
@@ -119,7 +119,7 @@ describe('NodepoolsResourcesSettings', () => {
       // Check stable nodepool values
       expect(screen.getByText('vCPU limit: 16 vCPU;')).toBeInTheDocument()
       expect(screen.getByText('Memory limit: 32 GiB')).toBeInTheDocument()
-      expect(screen.getByText('Consolidation operates: Mon, Wed, Fri,')).toBeInTheDocument()
+      expect(screen.getByText('Mon, Wed, Fri,')).toBeInTheDocument()
       expect(screen.getByText('8:00 pm to 12:00 am')).toBeInTheDocument()
 
       // Check default nodepool values
