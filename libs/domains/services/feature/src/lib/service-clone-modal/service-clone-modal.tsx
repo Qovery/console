@@ -4,7 +4,16 @@ import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
-import { ExternalLink, InputSelect, InputText, Callout, Icon, LoaderSpinner, ModalCrud, useModal } from '@qovery/shared/ui'
+import {
+  Callout,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  LoaderSpinner,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
 import { useCloneService } from '../hooks/use-clone-service/use-clone-service'
 import { useEnvironments } from '../hooks/use-environments/use-environments'
 import { useService } from '../hooks/use-service/use-service'
@@ -124,21 +133,19 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
       >
         {service.serviceType === 'HELM' && (
           <Callout.Root color="sky" className="mb-4">
-          <Callout.Icon>
-            <Icon iconName="circle-exclamation" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextDescription>
-              The cloned helm chart won’t be exposed over the internet. Please configure it again within the “Network” section.
-              <ExternalLink
-                size="sm"
-                href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#network"
-              >
-                Click here for more details
-              </ExternalLink>
-            </Callout.TextDescription>
-          </Callout.Text>
-        </Callout.Root>
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextDescription>
+                The cloned helm chart won’t be exposed over the internet. Please configure it again within the “Network”
+                section.
+                <ExternalLink size="sm" href="https://hub.qovery.com/docs/using-qovery/configuration/helm/#network">
+                  Click here for more details
+                </ExternalLink>
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
         )}
         <InputText className="mb-6" name="clone" value={service.name} label="Service to clone" disabled={true} />
 

@@ -185,15 +185,16 @@ function ServiceNameCell({
                 ({ schedule }) =>
                   `Triggered: ${formatCronExpression(schedule.cronjob?.scheduled_at)} (${schedule.cronjob?.timezone})`
               )
-              .with(
-                { job_type: 'LIFECYCLE' },
-                ({ schedule }) => {
-                  const actions = [schedule.on_start && 'Deploy', schedule.on_stop && 'Stop', schedule.on_delete && 'Delete']
-                    .filter(Boolean)
-                    .join(' - ');
-                  return actions ? `Triggered on: ${actions}` : undefined;
-                }
-              )
+              .with({ job_type: 'LIFECYCLE' }, ({ schedule }) => {
+                const actions = [
+                  schedule.on_start && 'Deploy',
+                  schedule.on_stop && 'Stop',
+                  schedule.on_delete && 'Delete',
+                ]
+                  .filter(Boolean)
+                  .join(' - ')
+                return actions ? `Triggered on: ${actions}` : undefined
+              })
               .exhaustive()
 
             return (
