@@ -162,9 +162,6 @@ export function StepSummary(props: StepSummaryProps) {
                           {props.detailInstanceType?.ram_in_gb}GB RAM - {props.detailInstanceType?.architecture})
                         </li>
                         <li>
-                          <strong className="font-medium">Disk size: </strong> {props.resourcesData.disk_size} GB
-                        </li>
-                        <li>
                           <strong className="font-medium">Nodes: </strong>
                           {props.resourcesData.nodes[0]} min - {props.resourcesData.nodes[1]} max
                         </li>
@@ -173,10 +170,6 @@ export function StepSummary(props: StepSummaryProps) {
                       <>
                         <li>
                           <strong className="font-medium">Karpenter: </strong>true
-                        </li>
-                        <li>
-                          <strong className="font-medium">Storage: </strong>
-                          {props.resourcesData.karpenter?.disk_size_in_gib} GB
                         </li>
                         <li>
                           <KarpenterInstanceTypePreview

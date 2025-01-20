@@ -7,6 +7,10 @@ export const databaseStatusFactoryMock = (howMany: number): Status[] =>
   Array.from({ length: howMany }).map((_, index) => ({
     id: `${index}`,
     message: chance.sentence(),
+    status_details: {
+      action: 'DEPLOY',
+      status: 'SUCCESS',
+    },
     service_deployment_status: chance.pickone(
       Object.values([
         ServiceDeploymentStatusEnum.UP_TO_DATE,
