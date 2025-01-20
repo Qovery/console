@@ -258,7 +258,7 @@ export function DeploymentLogsPlaceholder({
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <ErrorIcon />
-        <span className="text-neutral-300">An error occurred during deployment.</span>
+        <span className="text-neutral-300">An error occurred during deployment of another service.</span>
         <Link
           className="gap-1.5"
           as="button"

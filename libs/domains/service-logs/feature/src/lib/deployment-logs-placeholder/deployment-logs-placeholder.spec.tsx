@@ -170,7 +170,7 @@ describe('DeploymentLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByText('An error occurred during deployment.')).toBeInTheDocument()
+    expect(screen.getByText('An error occurred during deployment of another service.')).toBeInTheDocument()
     const pipelineLink = screen.getByText('Open pipeline')
     expect(pipelineLink).toBeInTheDocument()
   })
