@@ -35,6 +35,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         },
         setGeneralData: mockSetGeneralData,
         creationFlowUrl: '/organization/1/clusters/create',
+        setResourcesData: jest.fn(),
       }}
     >
       <StepGeneralFeature />
