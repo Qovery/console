@@ -270,7 +270,7 @@ function MenuManageDeployment({
     openModal({
       content: (
         <SelectCommitModal
-          title="Deploy another override version"
+          title="Deploy another values version"
           description="Select the commit id you want to deploy."
           submitLabel="Deploy"
           serviceId={service.id}
@@ -554,7 +554,7 @@ function MenuManageDeployment({
                   icon={<Icon iconName="clock-rotate-left" />}
                   onSelect={() => deployHelmOverrideVersion(service, gitRepository)}
                 >
-                  Deploy another override version
+                  Deploy another values version
                 </DropdownMenu.Item>
               )
             )
