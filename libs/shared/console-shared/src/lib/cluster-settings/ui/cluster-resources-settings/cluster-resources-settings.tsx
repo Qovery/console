@@ -229,21 +229,23 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     >
                       Documentation link
                     </ExternalLink>
-                    {props.cluster && props.cluster.features?.find((feature) => feature.id === 'STATIC_IP') && (
-                      <div className="mt-5 max-w-[420px]">
-                        <Callout.Root color="yellow">
-                          <Callout.Icon>
-                            <Icon iconName="circle-info" iconStyle="regular" />
-                          </Callout.Icon>
-                          <Callout.Text>
-                            <Callout.TextDescription>
-                              Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are
-                              using an existing VPC.
-                            </Callout.TextDescription>
-                          </Callout.Text>
-                        </Callout.Root>
-                      </div>
-                    )}
+                    {props.cluster &&
+                      !props.hasAlreadyKarpenter &&
+                      props.cluster.features?.find((feature) => feature.id === 'STATIC_IP') && (
+                        <div className="mt-5 max-w-[420px]">
+                          <Callout.Root color="yellow">
+                            <Callout.Icon>
+                              <Icon iconName="circle-info" iconStyle="regular" />
+                            </Callout.Icon>
+                            <Callout.Text>
+                              <Callout.TextDescription>
+                                Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are
+                                using an existing VPC.
+                              </Callout.TextDescription>
+                            </Callout.Text>
+                          </Callout.Root>
+                        </div>
+                      )}
                   </div>
                   <img
                     src={KarpenterImage}
