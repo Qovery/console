@@ -1,5 +1,5 @@
 import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect, useState } from 'react'
+import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
 
@@ -10,6 +10,7 @@ export interface CardClusterFeatureProps extends PropsWithChildren {
   setValue?: UseFormSetValue<FieldValues>
   watch?: UseFormWatch<FieldValues>
   control?: Control<FieldValues>
+  tooltip?: ReactNode
 }
 
 export function CardClusterFeature({
@@ -20,6 +21,7 @@ export function CardClusterFeature({
   setValue,
   control,
   children,
+  tooltip,
 }: CardClusterFeatureProps) {
   const [currentDisabled, setCurrentDisabled] = useState<boolean>(disabled)
 
@@ -53,20 +55,28 @@ export function CardClusterFeature({
     >
       <div className="flex w-full gap-3">
         {control ? (
-          <Controller
-            name={`features.${feature.id}.value`}
-            control={control}
-            render={({ field }) => (
-              <InputToggle disabled={disabled} small className="relative top-[2px]" value={field.value} />
-            )}
-          />
+          <Tooltip content={tooltip} disabled={!tooltip}>
+            <span>
+              <Controller
+                name={`features.${feature.id}.value`}
+                control={control}
+                render={({ field }) => (
+                  <InputToggle disabled={disabled} small className="relative top-[2px]" value={field.value} />
+                )}
+              />
+            </span>
+          </Tooltip>
         ) : (
-          <InputToggle
-            disabled
-            small
-            className="relative top-[2px]"
-            value={getValue(Boolean(feature?.value_object?.value) || false)}
-          />
+          <Tooltip content={tooltip} disabled={!tooltip}>
+            <span>
+              <InputToggle
+                disabled
+                small
+                className="relative top-[2px]"
+                value={getValue(Boolean(feature?.value_object?.value) || false)}
+              />
+            </span>
+          </Tooltip>
         )}
         <div className="basis-full">
           <h4 className="mb-1 flex justify-between text-ssm font-medium text-neutral-400">

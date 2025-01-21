@@ -79,6 +79,11 @@ export function StepFeatures(props: StepFeaturesProps) {
                         watch={watch}
                         setValue={setValue}
                         disabled={feature.id === 'STATIC_IP' && isKarpenter && isProduction}
+                        tooltip={
+                          feature.id === 'STATIC_IP' && isKarpenter && isProduction
+                            ? 'This feature can not be disabled on a production cluster using Karpenter'
+                            : undefined
+                        }
                       >
                         {feature.id === 'STATIC_IP' && (
                           <Callout.Root color="yellow" className="mt-4">

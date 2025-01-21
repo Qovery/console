@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CloudProviderEnum, type Cluster, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
@@ -29,6 +30,7 @@ import {
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
 import KarpenterImage from './karpenter-image.svg'
 
@@ -54,6 +56,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchKarpenterEnabled = watch('karpenter.enabled')
   const watchKarpenter = watch('karpenter')
   const watchDiskSize = watch('disk_size')
+  const watchKarpenterQoveryNodePools = watch('karpenter.qovery_node_pools.requirements')
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudProviderEnum.AWS)
@@ -91,6 +94,26 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       setWarningInstance(instanceType.label?.toString().indexOf('ARM') !== -1)
     }
   }, [watchInstanceType])
+
+  // XXX: Hotfix waiting deprecated managed cluster to be removed
+  useEffect(() => {
+    if (!watchKarpenterEnabled || watchKarpenterQoveryNodePools.length > 0) return
+
+    if (!props.fromDetail) {
+      if (cloudProviderInstanceTypesKarpenter) {
+        setValue(
+          'karpenter.qovery_node_pools.requirements',
+          convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+        )
+      }
+    }
+  }, [
+    watchKarpenterEnabled,
+    watchKarpenterQoveryNodePools,
+    props.fromDetail,
+    cloudProviderInstanceTypesKarpenter,
+    setValue,
+  ])
 
   return (
     <div className="flex flex-col gap-10">
@@ -131,14 +154,14 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       </BlockContent>
       {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <BlockContent
-          title="Reduce your costs with Karpenter"
+          title={props.isProduction ? 'Reduce your costs with Karpenter' : 'Karpenter configuration'}
           className="mb-0"
           classNameContent="p-0"
           headRight={
             <Tooltip
               content={
                 <span>
-                  Karpenter streamlines Kubernetes infrastructure by provisioning theright nodes at the right time.{' '}
+                  Karpenter streamlines Kubernetes infrastructure by provisioning the right nodes at the right time.{' '}
                   <br /> These settings will be applied to both the stable and default nodepools
                 </span>
               }
@@ -158,67 +181,79 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               <div className="flex flex-col">
                 <div className="relative overflow-hidden">
                   <div className="p-4">
-                    <InputToggle
-                      className="max-w-[70%]"
-                      name={field.name}
-                      value={field.value}
-                      onChange={(e) => {
-                        if (!props.fromDetail) {
-                          if (cloudProviderInstanceTypesKarpenter) {
-                            setValue(
-                              'karpenter.qovery_node_pools.requirements',
-                              convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                    {props.isProduction ? (
+                      <InputToggle
+                        className="max-w-[70%]"
+                        name={field.name}
+                        value={field.value}
+                        onChange={(e) => {
+                          if (!props.fromDetail) {
+                            if (cloudProviderInstanceTypesKarpenter) {
+                              setValue(
+                                'karpenter.qovery_node_pools.requirements',
+                                convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                              )
+                            }
+                          } else {
+                            const instanceType = cloudProviderInstanceTypes?.filter(
+                              (option) => option.name === watchInstanceType
                             )
+                            if (instanceType) {
+                              setValue(
+                                'karpenter.qovery_node_pools.requirements',
+                                convertToKarpenterRequirements(instanceType)
+                              )
+                              setValue('karpenter.disk_size_in_gib', watchDiskSize)
+                              setValue(
+                                'karpenter.default_service_architecture',
+                                (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
+                              )
+                            }
                           }
-                        } else {
-                          const instanceType = cloudProviderInstanceTypes?.filter(
-                            (option) => option.name === watchInstanceType
-                          )
-                          if (instanceType) {
-                            setValue(
-                              'karpenter.qovery_node_pools.requirements',
-                              convertToKarpenterRequirements(instanceType)
-                            )
-                            setValue('karpenter.disk_size_in_gib', watchDiskSize)
-                            setValue(
-                              'karpenter.default_service_architecture',
-                              (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
-                            )
-                          }
-                        }
-
-                        field.onChange(e)
-                      }}
-                      title={`Enable Karpenter ${props.isProduction ? '(Beta)' : ''}`}
-                      description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                      forceAlignTop
-                      disabled={props.fromDetail ? props.isProduction || props.hasAlreadyKarpenter : false}
-                      small
-                    />
+                          field.onChange(e)
+                        }}
+                        title="Enable Karpenter"
+                        description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                        forceAlignTop
+                        disabled={props.fromDetail ? props.hasAlreadyKarpenter : false}
+                        small
+                      />
+                    ) : (
+                      <p className="mb-2 max-w-[70%] text-sm text-neutral-400">
+                        Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.
+                      </p>
+                    )}
                     <ExternalLink
-                      className="ml-11"
+                      className={props.isProduction ? 'ml-11' : ''}
                       href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
                     >
                       Documentation link
                     </ExternalLink>
-                    <div className="mt-5 max-w-[420px]">
-                      <Callout.Root color="yellow">
-                        <Callout.Icon>
-                          <Icon iconName="circle-info" iconStyle="regular" />
-                        </Callout.Icon>
-                        <Callout.Text>
-                          <Callout.TextDescription>
-                            Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are using
-                            an existing VPC.
-                          </Callout.TextDescription>
-                        </Callout.Text>
-                      </Callout.Root>
-                    </div>
+                    {props.cluster && props.cluster.features?.find((feature) => feature.id === 'STATIC_IP') && (
+                      <div className="mt-5 max-w-[420px]">
+                        <Callout.Root color="yellow">
+                          <Callout.Icon>
+                            <Icon iconName="circle-info" iconStyle="regular" />
+                          </Callout.Icon>
+                          <Callout.Text>
+                            <Callout.TextDescription>
+                              Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are
+                              using an existing VPC.
+                            </Callout.TextDescription>
+                          </Callout.Text>
+                        </Callout.Root>
+                      </div>
+                    )}
                   </div>
                   <img
                     src={KarpenterImage}
                     alt="Karpenter"
-                    className="pointer-events-none absolute right-0 top-0 h-[174px] select-none"
+                    className={twMerge(
+                      clsx('pointer-events-none absolute right-0 top-0 h-[140px] select-none', {
+                        'h-[174px] ':
+                          props.cluster && props.cluster.features?.find((feature) => feature.id === 'STATIC_IP'),
+                      })
+                    )}
                   />
                 </div>
                 <AnimatePresence>
