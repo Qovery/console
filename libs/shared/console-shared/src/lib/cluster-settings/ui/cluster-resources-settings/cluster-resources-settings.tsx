@@ -253,7 +253,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     className={twMerge(
                       clsx('pointer-events-none absolute right-0 top-0 h-[140px] select-none', {
                         'h-[174px] ':
-                          props.cluster && props.cluster.features?.find((feature) => feature.id === 'STATIC_IP'),
+                          !props.hasAlreadyKarpenter &&
+                          props.cluster &&
+                          props.cluster.features?.find((feature) => feature.id === 'STATIC_IP'),
                       })
                     )}
                   />
