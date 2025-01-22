@@ -36,23 +36,22 @@ export function StepGeneralFeature() {
   }, [setCurrentStep])
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data.production) {
-      setResourcesData((data) => ({
-        cluster_type: data?.cluster_type ?? '',
-        disk_size: data?.disk_size ?? 50,
-        instance_type: data?.instance_type ?? '',
-        nodes: data?.nodes ?? [3, 10],
-        karpenter: {
-          enabled: false,
-          default_service_architecture: 'AMD64',
-          disk_size_in_gib: 50,
-          spot_enabled: false,
-          qovery_node_pools: {
-            requirements: [],
-          },
+    setResourcesData((d) => ({
+      cluster_type: d?.cluster_type ?? '',
+      disk_size: d?.disk_size ?? 50,
+      instance_type: d?.instance_type ?? '',
+      nodes: d?.nodes ?? [3, 10],
+      karpenter: {
+        enabled: data?.production ? false : true,
+        default_service_architecture: 'AMD64',
+        disk_size_in_gib: 50,
+        spot_enabled: false,
+        qovery_node_pools: {
+          requirements: [],
         },
-      }))
-    }
+      },
+    }))
+
     if (credentials.length > 0) {
       // necessary to get the name of credentials
       const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
