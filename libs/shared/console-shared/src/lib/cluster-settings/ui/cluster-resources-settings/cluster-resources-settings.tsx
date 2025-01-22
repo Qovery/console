@@ -55,6 +55,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchKarpenter = watch('karpenter')
   const watchDiskSize = watch('disk_size')
   const watchKarpenterQoveryNodePools = watch('karpenter.qovery_node_pools.requirements')
+  const watchSpotEnabled = watch('karpenter.spot_enabled')
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudProviderEnum.AWS)
@@ -319,7 +320,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               Edit <Icon iconName="pen" iconStyle="solid" />
                             </Button>
                           </div>
-                          <div className="flex border-t border-neutral-250 p-4">
+                          <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
                             <Controller
                               name="karpenter.spot_enabled"
                               control={control}
@@ -333,6 +334,27 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                 />
                               )}
                             />
+                            {props.isProduction && watchSpotEnabled && (
+                              <Callout.Root color="yellow">
+                                <Callout.Icon>
+                                  <Icon iconName="info-circle" iconStyle="regular" />
+                                </Callout.Icon>
+                                <Callout.Text>
+                                  <Callout.TextDescription>
+                                    Activating spot instances on a production cluster may lead to potential downtime for
+                                    applications deployed on the stable node pool. However, you can specify in the
+                                    advanced settings to force the use of on-demand instances for your service or
+                                    database to avoid this risk.{' '}
+                                    <ExternalLink
+                                      size="sm"
+                                      href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/aws-with-karpenter/#assigning-specific-instances-to-services"
+                                    >
+                                      See documentation
+                                    </ExternalLink>
+                                  </Callout.TextDescription>
+                                </Callout.Text>
+                              </Callout.Root>
+                            )}
                           </div>
                           {props.fromDetail && (
                             <div className="flex border-t border-neutral-250 p-4">
@@ -358,6 +380,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                             </div>
                           )}
                         </div>
+                        {watchKarpenterEnabled && props.cluster && (
+                          <NodepoolsResourcesSettings cluster={props.cluster} />
+                        )}
                       </motion.div>
                     </motion.div>
                   )}
@@ -367,8 +392,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           />
         </BlockContent>
       )}
-
-      {watchKarpenterEnabled && props.cluster && <NodepoolsResourcesSettings cluster={props.cluster} />}
 
       {!watchKarpenterEnabled && (
         <Section className="gap-4">
