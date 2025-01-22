@@ -54,7 +54,7 @@ export function useDeleteAllServices() {
         } = variables as Parameters<typeof mutations.deleteAllServices>[0]
         return {
           title: 'Your services are being updated',
-          labelAction: 'See Deployment Logs',
+          labelAction: 'See deployment logs',
           callback() {
             navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
           },

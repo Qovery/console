@@ -25,7 +25,7 @@ export function useStopEnvironment({ projectId, logsLink }: { projectId: string;
         title: 'Your environment is being stopped',
         ...(logsLink
           ? {
-              labelAction: 'See Deployment Logs',
+              labelAction: 'See deployment logs',
               callback: () => navigate(logsLink),
             }
           : {}),

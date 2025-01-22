@@ -21,7 +21,7 @@ export function useDeleteEnvironment({ projectId, logsLink }: { projectId: strin
         title: 'Your environment is being deleted',
         ...(logsLink
           ? {
-              labelAction: 'See Deployment Logs',
+              labelAction: 'See deployment logs',
               callback: () => navigate(logsLink),
             }
           : {}),

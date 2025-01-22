@@ -25,7 +25,7 @@ export function useCancelDeploymentEnvironment({ projectId, logsLink }: { projec
         title: 'Your environment deployment is cancelling',
         ...(logsLink
           ? {
-              labelAction: 'See Deployment Logs',
+              labelAction: 'See deployment logs',
               callback: () => navigate(logsLink),
             }
           : {}),

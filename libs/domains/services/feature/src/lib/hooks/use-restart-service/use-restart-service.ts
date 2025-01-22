@@ -24,7 +24,7 @@ export function useRestartService({ environmentId, logsLink }: { environmentId: 
         title: 'Your service is restarting',
         ...(logsLink
           ? {
-              labelAction: 'See Deployment Logs',
+              labelAction: 'See deployment logs',
               callback: () => navigate(logsLink),
             }
           : {}),
