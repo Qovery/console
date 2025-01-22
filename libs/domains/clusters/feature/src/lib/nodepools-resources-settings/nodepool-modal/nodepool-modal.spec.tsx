@@ -35,7 +35,7 @@ describe('NodepoolModal', () => {
   it('should render correctly for default type', () => {
     renderWithProviders(<NodepoolModal {...defaultProps} type="default" />)
 
-    expect(screen.getByText('Nodepool stable')).toBeInTheDocument()
+    expect(screen.getByText('Nodepool default')).toBeInTheDocument()
     expect(screen.getByLabelText('vCPU')).toBeInTheDocument()
     expect(screen.getByLabelText('Memory (GiB)')).toBeInTheDocument()
     expect(screen.getByText('Operates every day, 24 hours a day')).toBeInTheDocument()
