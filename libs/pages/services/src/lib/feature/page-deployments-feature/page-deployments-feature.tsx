@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { ServiceDeploymentList } from '@qovery/domains/services/feature'
+import { EnvironmentDeploymentList } from '@qovery/domains/environments/feature'
 
 export function PageDeploymentsFeature() {
   const { environmentId = '' } = useParams()
 
-  return <ServiceDeploymentList />
+  return <EnvironmentDeploymentList environmentId={environmentId} />
 }
 
 export default PageDeploymentsFeature

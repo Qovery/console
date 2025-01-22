@@ -40,7 +40,6 @@ export * from './lib/service-deployment-status-label/service-deployment-status-l
 export * from './lib/service-details/service-details'
 export * from './lib/service-links-popover/service-links-popover'
 export * from './lib/service-list/service-list'
-export * from './lib/service-deployment-list/service-deployment-list'
 export * from './lib/service-state-chip/service-state-chip'
 export * from './lib/service-clone-modal/service-clone-modal'
 export * from './lib/service-terminal/service-terminal'
