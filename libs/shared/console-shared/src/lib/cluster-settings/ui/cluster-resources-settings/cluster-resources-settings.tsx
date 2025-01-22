@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CloudProviderEnum, type Cluster, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
@@ -30,7 +29,6 @@ import {
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
 import KarpenterImage from './karpenter-image.svg'
 
@@ -181,7 +179,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               <div className="flex flex-col">
                 <div className="relative overflow-hidden">
                   <div className="p-4">
-                    {props.isProduction ? (
+                    {props.isProduction || props.fromDetail ? (
                       <InputToggle
                         className="max-w-[70%]"
                         name={field.name}
@@ -224,7 +222,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                       </p>
                     )}
                     <ExternalLink
-                      className={props.isProduction ? 'ml-11' : ''}
+                      className={props.isProduction || props.fromDetail ? 'ml-11' : ''}
                       href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/#managing-your-clusters-with-qovery"
                     >
                       Documentation link
@@ -250,14 +248,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   <img
                     src={KarpenterImage}
                     alt="Karpenter"
-                    className={twMerge(
-                      clsx('pointer-events-none absolute right-0 top-0 h-[140px] select-none', {
-                        'h-[174px] ':
-                          !props.hasAlreadyKarpenter &&
-                          props.cluster &&
-                          props.cluster.features?.find((feature) => feature.id === 'STATIC_IP'),
-                      })
-                    )}
+                    className="pointer-events-none absolute right-0 top-0 h-[140px] select-none"
                   />
                 </div>
                 <AnimatePresence>
