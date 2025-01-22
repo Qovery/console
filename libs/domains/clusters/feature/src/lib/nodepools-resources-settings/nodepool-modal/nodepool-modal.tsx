@@ -174,11 +174,11 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title="Nodepool stable"
+        title={type === 'stable' ? 'Nodepool stable' : 'Nodepool default'}
         description={
           type === 'stable'
             ? 'Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability.'
-            : 'Used for single instances and internal Qovery applications, such as containerized databases, to maintain stability.'
+            : 'Designed to handle general workloads and serves as the foundation for deploying most applications.'
         }
         onSubmit={onSubmit}
         onClose={closeModal}

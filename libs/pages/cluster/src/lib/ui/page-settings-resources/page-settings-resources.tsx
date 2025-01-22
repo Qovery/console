@@ -28,7 +28,7 @@ export function PageSettingsResources({ cluster, onSubmit, loading }: PageSettin
             hasAlreadyKarpenter={hasAlreadyKarpenter}
             fromDetail
           />
-          <div className="flex justify-end">
+          <div className="mt-6 flex justify-end">
             <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
             </Button>
