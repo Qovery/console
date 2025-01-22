@@ -24,7 +24,7 @@ export function useStopService({ environmentId, logsLink }: { environmentId: str
         title: 'Your service is stopping',
         ...(logsLink
           ? {
-              labelAction: 'See Deployment Logs',
+              labelAction: 'See deployment logs',
               callback: () => navigate(logsLink),
             }
           : {}),

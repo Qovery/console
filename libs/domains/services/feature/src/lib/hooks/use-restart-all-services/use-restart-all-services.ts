@@ -41,7 +41,7 @@ export function useRestartAllServices() {
         } = variables as Parameters<typeof mutations.restartAllServices>[0]
         return {
           title: 'Your services are being updated',
-          labelAction: 'See Deployment Logs',
+          labelAction: 'See deployment logs',
           callback() {
             navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
           },

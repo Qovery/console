@@ -35,7 +35,7 @@ export function useDeployService({ environmentId, logsLink }: { environmentId: s
         title: 'Your service is deploying',
         ...(logsLink
           ? {
-              labelAction: 'See Deployment Logs',
+              labelAction: 'See deployment logs',
               callback: () => navigate(logsLink),
             }
           : {}),
