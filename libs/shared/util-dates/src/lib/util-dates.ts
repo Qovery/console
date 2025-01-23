@@ -82,3 +82,19 @@ export function setDayOfTheMonth(date: Date, dayOfTheMonth: number) {
   date.setMonth(date.getMonth(), Math.min(dayOfTheMonth, getDaysInMonth(date)))
   return date
 }
+
+// Format ISO 8601 Duration to HH:mm:ss
+export function formatDuration(isoDuration: string): string {
+  const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?/
+  const matches = isoDuration.match(regex)
+
+  if (!matches) {
+    throw new Error('Invalid ISO 8601 duration format')
+  }
+
+  const hours = parseInt(matches[1] || '0', 10)
+  const minutes = parseInt(matches[2] || '0', 10)
+  const seconds = Math.floor(parseFloat(matches[3] || '0'))
+
+  return `${addZero(hours)}:${addZero(minutes)}:${addZero(seconds)}`
+}

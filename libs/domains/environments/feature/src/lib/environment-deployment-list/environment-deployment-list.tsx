@@ -5,10 +5,11 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { StateEnum } from 'qovery-typescript-axios'
+import { OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
 import { Fragment, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -18,10 +19,11 @@ import {
   TableFilter,
   TablePrimitives,
   Tooltip,
+  Truncate,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateFullFormat } from '@qovery/shared/util-dates'
-import { isCancelBuildAvailable, twMerge } from '@qovery/shared/util-js'
+import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
+import { isCancelBuildAvailable, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
@@ -68,13 +70,13 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 57,
+        size: 40,
         cell: (info) => {
           const state = info.row.original.status
 
           return (
             <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium text-neutral-400">
                   {dateFullFormat(info.row.original.auditing_data.created_at, undefined, 'dd MMM, HH:mm a')}
                 </span>
@@ -130,7 +132,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                   )
                   .otherwise(() => null)}
                 <Tooltip content="Logs">
-                  <ActionToolbar.Button asChild>
+                  <ActionToolbar.Button asChild className="justify-center px-2">
                     <Link
                       to={
                         ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
@@ -153,29 +155,78 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 15,
+        size: 10,
         cell: (info) => <span>{info.getValue()}</span>,
       }),
       columnHelper.accessor((row) => row.stages[0]?.name ?? '', {
         header: 'Pipeline',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 30,
+        size: 20,
         cell: (info) => <span>{info.row.original.stages.map((v) => v.name)}</span>,
       }),
       columnHelper.accessor('total_duration', {
         header: 'Duration',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 3,
-        cell: (info) => <p>{info.getValue()}</p>,
+        size: 10,
+        cell: (info) => {
+          const state = info.row.original.status
+
+          return match(state)
+            .with(
+              'DEPLOYING',
+              'RESTARTING',
+              'BUILDING',
+              'DELETING',
+              'CANCELING',
+              'STOPPING',
+              'DEPLOYMENT_QUEUED',
+              'DELETE_QUEUED',
+              'STOP_QUEUED',
+              'RESTART_QUEUED',
+              () => <span className="text-neutral-350">--</span>
+            )
+            .otherwise(() => (
+              <span className="flex items-center gap-1 text-neutral-350">
+                <Icon iconName="clock" iconStyle="regular" />
+                {formatDuration(info.getValue())}
+              </span>
+            ))
+        },
       }),
-      columnHelper.accessor('auditing_data.triggered_by', {
+      columnHelper.accessor('auditing_data.origin', {
         header: 'Trigger by',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 10,
-        cell: (info) => <p>{info.getValue()}</p>,
+        size: 20,
+        cell: (info) => {
+          const origin = info.getValue()
+          const triggeredBy = info.row.original.auditing_data.triggered_by
+
+          return (
+            <div className="flex items-center gap-3">
+              <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-neutral-150 text-neutral-350">
+                {match(origin)
+                  .with(OrganizationEventOrigin.GIT, () => <Icon iconName="code-branch" />)
+                  .with(OrganizationEventOrigin.CONSOLE, () => <Icon iconName="browser" />)
+                  .with(OrganizationEventOrigin.QOVERY_INTERNAL, () => <Icon iconName="wave-pulse" />)
+                  .with(OrganizationEventOrigin.API, () => <Icon iconName="cloud-arrow-up" />)
+                  .with(OrganizationEventOrigin.CLI, () => <Icon iconName="terminal" />)
+                  .with(OrganizationEventOrigin.TERRAFORM_PROVIDER, () => <Icon name={IconEnum.TERRAFORM} width="12" />)
+                  .otherwise(() => null)}
+              </div>
+              <div className="flex flex-col gap-1.5 text-ssm">
+                <span className="text-neutral-400">
+                  <Truncate text={triggeredBy} truncateLimit={20} />
+                </span>
+                <span className="text-neutral-350">
+                  {origin !== 'CLI' && origin !== 'API' ? upperCaseFirstLetter(origin?.replace('_', ' ')) : origin}
+                </span>
+              </div>
+            </div>
+          )
+        },
       }),
     ],
     [columnHelper]
@@ -204,7 +255,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header, i) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r pl-0' : ''} font-medium`}
+                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} font-medium`}
                   key={header.id}
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >

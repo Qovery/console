@@ -7,6 +7,7 @@ import {
   dateToFormat,
   dateToHours,
   dateYearMonthDayHourMinuteSecond,
+  formatDuration,
 } from './util-dates'
 
 describe('util-dates', () => {
@@ -57,5 +58,20 @@ describe('util-dates', () => {
   it('convertDatetoTimestamp', () => {
     const result = convertDatetoTimestamp('2023-08-30T10:23:20Z')
     expect(result).toBe(1693391000)
+  })
+
+  it('should format a duration with hours, minutes, and seconds correctly', () => {
+    const result = formatDuration('PT2H30M15S')
+    expect(result).toBe('02:30:15')
+  })
+
+  it('should format a duration with only minutes and seconds', () => {
+    const result = formatDuration('PT45M20S')
+    expect(result).toBe('00:45:20')
+  })
+
+  it('should format a duration with only seconds', () => {
+    const result = formatDuration('PT50S')
+    expect(result).toBe('00:00:50')
   })
 })
