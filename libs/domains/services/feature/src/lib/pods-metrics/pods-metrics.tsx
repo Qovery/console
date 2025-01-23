@@ -21,6 +21,7 @@ import {
   StatusChip,
   TablePrimitives,
   Tooltip,
+  Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { formatMetric, twMerge } from '@qovery/shared/util-js'
@@ -134,7 +135,7 @@ function PodsMetricsTable({
           value && (
             <Badge variant="surface" className="max-w-full shrink">
               {containerImage ? (
-                <div className="truncate">{value}</div>
+                <Truncate text={value} truncateLimit={20} />
               ) : (
                 <span className="max-w-full truncate">
                   <Icon className="mr-2" iconName="code-commit" iconStyle="regular" />
