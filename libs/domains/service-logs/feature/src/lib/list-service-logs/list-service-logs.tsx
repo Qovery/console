@@ -144,7 +144,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
         const existingFilter = prevFilters.find((f) => f.id === id)
         const updatedFilters = existingFilter ? prevFilters.filter((f) => f.id !== id) : [...prevFilters, { id, value }]
         if (id === 'pod_name') {
-          existingFilter ? searchParams.delete(id) : searchParams.append(id, value)
+          existingFilter ? searchParams.delete(id) : searchParams.append(id, value.trim())
           setSearchParams(searchParams)
         }
         return updatedFilters
