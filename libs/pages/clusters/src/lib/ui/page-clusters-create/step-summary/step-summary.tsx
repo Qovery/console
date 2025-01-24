@@ -96,6 +96,19 @@ export function StepSummary(props: StepSummaryProps) {
             </Callout.Text>
           </Callout.Root>
         )}
+        {props.generalData.cloud_provider == 'GCP' && (
+          <Callout.Root color="yellow" className="mb-2">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              To control your cluster cost, setup a budget alert within your GCP console.
+              <ExternalLink className="mt-1 flex" href="https://cloud.google.com/billing/docs/how-to/budgets">
+                Setup budget alerts
+              </ExternalLink>
+            </Callout.Text>
+          </Callout.Root>
+        )}
         <Section
           data-testid="summary-general"
           className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"

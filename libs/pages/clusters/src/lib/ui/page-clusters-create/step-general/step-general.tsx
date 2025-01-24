@@ -82,26 +82,6 @@ export function StepGeneral(props: StepGeneralProps) {
             <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
             {cloudProviders.length > 0 ? (
               <>
-                {watch('cloud_provider') === CloudProviderEnum.GCP && (
-                  <Callout.Root color="yellow" className="mb-2">
-                    <Callout.Icon>
-                      <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                    </Callout.Icon>
-                    <Callout.Text>
-                      GCP integration is beta, keep an eye on your cluster costs and report any bugs and/or weird
-                      behavior.
-                      <ExternalLink className="mt-1 flex" href="https://cloud.google.com/billing/docs/how-to/budgets">
-                        Setup budget alerts
-                      </ExternalLink>
-                      <ExternalLink
-                        className="mt-1 flex"
-                        href="https://discuss.qovery.com/t/new-feature-google-cloud-platform-gcp-beta-support/2307"
-                      >
-                        More details
-                      </ExternalLink>
-                    </Callout.Text>
-                  </Callout.Root>
-                )}
                 <Controller
                   name="cloud_provider"
                   control={control}
