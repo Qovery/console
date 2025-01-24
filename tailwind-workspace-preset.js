@@ -378,7 +378,9 @@ module.exports = {
     },
   ],
   variants: {
-    extend: {},
+    extend: {
+      after: ['last'],
+    },
   },
   plugins: [],
 }

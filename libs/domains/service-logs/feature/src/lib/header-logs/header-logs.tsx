@@ -14,7 +14,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { ActionTriggerStatusChip, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
-import { pluralize } from '@qovery/shared/util-js'
+import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderLogsProps extends PropsWithChildren {
   type: 'DEPLOYMENT' | 'SERVICE'
@@ -86,10 +86,23 @@ export function HeaderLogs({
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                     <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
                   </svg>
-                  <ActionTriggerStatusChip
-                    status={serviceStatus?.state}
-                    triggerAction={deploymentHistory.trigger_action}
-                  />
+                  <Tooltip
+                    content={
+                      <>
+                        Action: {upperCaseFirstLetter(serviceStatus?.state)} <br /> Status:{' '}
+                        {upperCaseFirstLetter(deploymentHistory.trigger_action).replace(/_/g, ' ')}
+                      </>
+                    }
+                    side="bottom"
+                  >
+                    <span>
+                      <ActionTriggerStatusChip
+                        size="sm"
+                        status={serviceStatus?.state}
+                        triggerAction={deploymentHistory.trigger_action}
+                      />
+                    </span>
+                  </Tooltip>
                 </>
               )}
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">

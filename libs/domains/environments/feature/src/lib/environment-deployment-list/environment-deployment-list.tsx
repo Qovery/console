@@ -13,6 +13,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
+  ActionTriggerStatusChip,
   DropdownMenu,
   Icon,
   Link,
@@ -27,6 +28,7 @@ import { isCancelBuildAvailable, twMerge, upperCaseFirstLetter } from '@qovery/s
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { ServiceDropdown } from './service-dropdown/service-dropdown'
 
 const { Table } = TablePrimitives
 
@@ -67,9 +69,8 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
     () => [
       columnHelper.accessor('identifier.execution_id', {
         header: 'Execution ID',
-        enableColumnFilter: true,
+        enableColumnFilter: false,
         enableSorting: false,
-        filterFn: 'arrIncludesSome',
         size: 40,
         cell: (info) => {
           const state = info.row.original.status
@@ -156,14 +157,29 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         enableSorting: false,
         filterFn: 'arrIncludesSome',
         size: 10,
-        cell: (info) => <span>{info.getValue()}</span>,
+        cell: (info) => {
+          const status = info.getValue()
+          const triggerAction = info.row.original.trigger_action
+
+          return (
+            <div className="flex items-center gap-4">
+              <ActionTriggerStatusChip size="md" status={status} triggerAction={triggerAction} />
+              <div className="flex flex-col gap-1">
+                <span className="font-medium text-neutral-400">{upperCaseFirstLetter(status.replace('_', ' '))}</span>
+                <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(triggerAction)}</span>
+              </div>
+            </div>
+          )
+        },
       }),
       columnHelper.accessor((row) => row.stages[0]?.name ?? '', {
         header: 'Pipeline',
         enableColumnFilter: false,
         enableSorting: false,
         size: 20,
-        cell: (info) => <span>{info.row.original.stages.map((v) => v.name)}</span>,
+        cell: (info) => {
+          return <ServiceDropdown stages={info.row.original.stages} />
+        },
       }),
       columnHelper.accessor('total_duration', {
         header: 'Duration',
@@ -218,7 +234,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
               </div>
               <div className="flex flex-col gap-1.5 text-ssm">
                 <span className="text-neutral-400">
-                  <Truncate text={triggeredBy} truncateLimit={20} />
+                  <Truncate text={triggeredBy} truncateLimit={22} />
                 </span>
                 <span className="text-neutral-350">
                   {origin !== 'CLI' && origin !== 'API' ? upperCaseFirstLetter(origin?.replace('_', ' ')) : origin}

@@ -9,7 +9,8 @@ import {
 import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
-import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip } from '@qovery/shared/ui'
+import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
 export interface EnvironmentStagesProps extends PropsWithChildren {
@@ -66,7 +67,11 @@ export function EnvironmentStages({
                   <>
                     <div className="h-fit w-60 min-w-60 overflow-hidden rounded border border-neutral-500 bg-neutral-650 text-neutral-50">
                       <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
-                        <StageStatusChip status={preCheckStage?.status} />
+                        <Tooltip content={upperCaseFirstLetter(preCheckStage?.status)}>
+                          <span>
+                            <StageStatusChip status={preCheckStage?.status} />
+                          </span>
+                        </Tooltip>
                         <div className="flex flex-col gap-0.5">
                           <span className="flex gap-1.5 text-sm font-medium">Pre-check</span>
                           <span className="text-xs">

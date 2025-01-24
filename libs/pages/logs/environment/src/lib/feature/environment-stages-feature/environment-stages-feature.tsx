@@ -169,7 +169,11 @@ export function EnvironmentStagesFeature({
                         )
                       }
                     >
-                      <StageStatusChip status={s.stage?.status} />
+                      <Tooltip content={upperCaseFirstLetter(s.stage?.status)}>
+                        <span>
+                          <StageStatusChip status={s.stage?.status} />
+                        </span>
+                      </Tooltip>
                     </Indicator>
                     <div className="flex flex-col gap-0.5">
                       <span className="flex gap-1.5 text-sm font-medium">
