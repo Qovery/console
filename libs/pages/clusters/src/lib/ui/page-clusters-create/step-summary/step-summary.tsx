@@ -99,7 +99,7 @@ export function StepSummary(props: StepSummaryProps) {
               <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
-              To keep an eye on your cluster costs, setup a budget alert within your GCP console.
+              To control your cluster cost, setup a budget alert within your GCP console.
               <ExternalLink className="mt-1 flex" href="https://cloud.google.com/billing/docs/how-to/budgets">
                 Setup budget alerts
               </ExternalLink>
