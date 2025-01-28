@@ -113,7 +113,7 @@ export function Container({ children }: PropsWithChildren) {
     },
     {
       icon: <EnvironmentStateChip mode="last-deployment" environmentId={environmentId} />,
-      name: 'Deployments History',
+      name: 'Deployments history',
       active:
         location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,

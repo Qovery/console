@@ -1,5 +1,9 @@
 import { cva } from 'class-variance-authority'
-import { type DeploymentHistoryTriggerAction, type StateEnum } from 'qovery-typescript-axios'
+import {
+  type DeploymentHistoryActionStatus,
+  type DeploymentHistoryTriggerAction,
+  type StateEnum,
+} from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import Icon from '../icon/icon'
 import Indicator from '../indicator/indicator'
@@ -59,7 +63,7 @@ export function TriggerActionIcon({
 export interface ActionTriggerStatusChipInterface {
   size: 'sm' | 'md'
   triggerAction: DeploymentHistoryTriggerAction | undefined
-  status?: StateEnum
+  status?: StateEnum | DeploymentHistoryActionStatus
 }
 
 export function ActionTriggerStatusChip({ size, status, triggerAction }: ActionTriggerStatusChipInterface) {
