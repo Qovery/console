@@ -3,22 +3,31 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   type DeploymentHistoryEnvironmentV2,
+  type DeploymentHistoryService,
   type DeploymentHistoryStage,
   type Environment,
+  type QueuedDeploymentRequestWithStages,
+  type QueuedDeploymentRequestWithStagesStagesInner,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
-import { dateUTCString, formatDuration } from '@qovery/shared/util-dates'
+import { dateUTCString, formatDuration, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { isDeploymentHistory } from '../environment-deployment-list'
 
 export interface DropdownServicesProps {
   environment: Environment
-  deploymentHistory: DeploymentHistoryEnvironmentV2
-  stages: DeploymentHistoryStage[]
+  deploymentHistory: DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages
+  stages: DeploymentHistoryStage[] | QueuedDeploymentRequestWithStagesStagesInner[]
+}
+
+const isDeploymentStageQueue = (data: unknown): data is QueuedDeploymentRequestWithStagesStagesInner => {
+  return typeof data === 'object' && data !== null && 'duration' in data
 }
 
 const MAX_VISIBLE_STAGES = 4
@@ -27,12 +36,13 @@ const MAX_VISIBLE_STAGES = 4
 // for the DropdownMenu when using Radix, inspired by the discussion in this issue:
 // https://github.com/radix-ui/primitives/issues/1294
 export function DropdownServices({ environment, deploymentHistory, stages }: DropdownServicesProps) {
+  const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState<number | undefined>()
   const [direction, setDirection] = useState(0)
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>()
 
-  const setIndex = (stage: DeploymentHistoryStage, index: number) => {
+  const setIndex = (stage: DeploymentHistoryStage | QueuedDeploymentRequestWithStagesStagesInner, index: number) => {
     if (timeoutId) {
       clearTimeout(timeoutId)
     }
@@ -53,10 +63,8 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
     setTimeoutId(newTimeoutId)
   }
 
-  const shouldTruncate = stages.length > 5
-
+  const shouldTruncate = stages.length > MAX_VISIBLE_STAGES + 1
   const visibleStages = shouldTruncate ? stages.slice(0, MAX_VISIBLE_STAGES) : stages
-
   const remainingCount = shouldTruncate ? stages.length - MAX_VISIBLE_STAGES : 0
 
   return (
@@ -80,8 +88,13 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           <Link
             to={
               ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-              ENVIRONMENT_STAGES_URL(deploymentHistory.identifier.execution_id)
+              ENVIRONMENT_STAGES_URL(
+                match(deploymentHistory)
+                  .with(P.when(isDeploymentHistory), (d) => d.identifier.execution_id)
+                  .otherwise(() => undefined)
+              )
             }
+            state={{ prevUrl: pathname }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -98,8 +111,8 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
               <text
                 x="12"
                 y="13"
-                text-anchor="middle"
-                dominant-baseline="middle"
+                textAnchor="middle"
+                dominantBaseline="middle"
                 fill="currentColor"
                 className="text-ssm font-medium text-neutral-350"
               >
@@ -117,8 +130,9 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           'relative flex max-h-96 w-56 flex-col overflow-hidden rounded-md bg-neutral-50 shadow-lg shadow-gray-900/10 data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded',
           {
             'hidden opacity-0': currentIndex === undefined,
-            '-left-10': stages.length === 4,
-            '-left-[52px]': stages.length > 4,
+            '-left-[38px]': stages.length === 4,
+            '-left-[52px]': stages.length === 5,
+            '-left-7': stages.length > 5,
           }
         )}
       >
@@ -179,57 +193,92 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                       </Indicator>
                       <div className="flex flex-col text-neutral-400">
                         <span className="text-ssm font-medium">{upperCaseFirstLetter(stage.name)}</span>
-                        <span className="text-[11px]">{formatDuration(stage.duration)}</span>
+                        {match(stage)
+                          .with(P.when(isDeploymentStageQueue), () => null)
+                          .otherwise((stage) => (
+                            <span className="text-[11px]">{formatDuration(stage.duration)}</span>
+                          ))}
                       </div>
                     </div>
-                    {stage.services.map((service, index) => (
-                      <DropdownMenu.Item
-                        key={index}
-                        className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100"
-                        asChild
-                      >
-                        <Link
-                          to={
-                            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-                            DEPLOYMENT_LOGS_VERSION_URL(service.identifier.service_id, service.identifier.execution_id)
-                          }
+                    {stage.services.map((service, index) => {
+                      const deploymentHistoryService = {
+                        ...service,
+                        identifier: {
+                          ...service.identifier,
+                          execution_id: (service as DeploymentHistoryService).identifier?.execution_id ?? undefined,
+                        },
+                        status_details: {
+                          status: stage.status ?? undefined,
+                        },
+                        total_duration: (service as DeploymentHistoryService).total_duration ?? undefined,
+                      } as DeploymentHistoryService
+
+                      return (
+                        <DropdownMenu.Item
+                          key={index}
+                          className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100"
+                          asChild
                         >
-                          <ServiceAvatar
-                            border="solid"
-                            size="sm"
-                            service={
-                              'job_type' in service.details
-                                ? {
-                                    icon_uri: service.icon_uri,
-                                    serviceType: 'JOB' as const,
-                                    job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
-                                  }
-                                : {
-                                    icon_uri: service.icon_uri,
-                                    serviceType: service.identifier.service_type as Exclude<
-                                      AnyService['service_type'],
-                                      'JOB'
-                                    >,
-                                  }
+                          <Link
+                            to={
+                              ENVIRONMENT_LOGS_URL(
+                                environment.organization.id,
+                                environment.project.id,
+                                environment.id
+                              ) +
+                              DEPLOYMENT_LOGS_VERSION_URL(
+                                service.identifier.service_id,
+                                deploymentHistoryService.identifier.execution_id ?? ''
+                              )
                             }
-                          />
-                          <span className="flex flex-col text-ssm">
-                            <span className="truncate">
-                              <Truncate text={service.identifier.name} truncateLimit={16} />
+                            state={{ prevUrl: pathname }}
+                          >
+                            {service.details && (
+                              <ServiceAvatar
+                                border="solid"
+                                size="sm"
+                                service={
+                                  'job_type' in service.details
+                                    ? {
+                                        icon_uri: service.icon_uri ?? '',
+                                        serviceType: 'JOB' as const,
+                                        job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
+                                      }
+                                    : {
+                                        icon_uri: service.icon_uri ?? '',
+                                        serviceType: service.identifier.service_type as Exclude<
+                                          AnyService['service_type'],
+                                          'JOB'
+                                        >,
+                                      }
+                                }
+                              />
+                            )}
+                            <span className="flex flex-col">
+                              <span className="truncate text-ssm">
+                                <Truncate text={service.identifier.name} truncateLimit={16} />
+                              </span>
+                              {deploymentHistoryService.total_duration &&
+                                deploymentHistoryService.auditing_data.updated_at && (
+                                  <>
+                                    <span
+                                      title={dateUTCString(deploymentHistoryService.auditing_data.updated_at)}
+                                      className="text-[11px]"
+                                    >
+                                      {formatDurationMinutesSeconds(deploymentHistoryService.total_duration ?? '')}
+                                    </span>
+                                  </>
+                                )}
                             </span>
-                            {service.total_duration && (
-                              <span title={dateUTCString(service.auditing_data.updated_at)} className="text-[11px]">
-                                {Math.floor(parseInt(service.total_duration, 10) / 60)}m:
-                                {parseInt(service.total_duration, 10) % 60}s
+                            {deploymentHistoryService.status_details && (
+                              <span className="ml-auto">
+                                <StatusChip status={deploymentHistoryService.status_details.status} />
                               </span>
                             )}
-                          </span>
-                          <span className="ml-auto">
-                            <StatusChip status={service.status_details?.status} />
-                          </span>
-                        </Link>
-                      </DropdownMenu.Item>
-                    ))}
+                          </Link>
+                        </DropdownMenu.Item>
+                      )
+                    })}
                   </div>
                 ))}
               </motion.div>

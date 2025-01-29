@@ -3,18 +3,23 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
-import { Fragment, useMemo, useState } from 'react'
+import { type DeploymentHistoryEnvironmentV2, OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
+import { Fragment, useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
   ActionTriggerStatusChip,
   DropdownMenu,
+  EmptyState,
   Icon,
   Link,
   TableFilter,
@@ -30,6 +35,7 @@ import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deploy
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { DropdownServices } from './dropdown-services/dropdown-services'
+import { EnvironmentDeploymentListSkeleton } from './environment-deployment-list-skeleton'
 
 const { Table } = TablePrimitives
 
@@ -37,8 +43,14 @@ export interface EnvironmentDeploymentListProps {
   environmentId: string
 }
 
+export const isDeploymentHistory = (data: unknown): data is DeploymentHistoryEnvironmentV2 => {
+  return (
+    typeof data === 'object' && data !== null && 'status' in data && 'action_status' in data && 'trigger_action' in data
+  )
+}
+
 export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeploymentListProps) {
-  const { data: environment } = useEnvironment({ environmentId })
+  const { data: environment, isFetched: isFetchedEnvironment } = useEnvironment({ environmentId })
 
   const logsLink =
     ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
@@ -48,6 +60,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
   const { data: deploymentHistoryQueue = [], isFetched: isFetchedDeloymentQueue } = useDeploymentQueue({
     environmentId,
   })
+
   const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
     projectId: environment?.project.id ?? '',
     logsLink,
@@ -57,9 +70,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
 
   const [sorting, setSorting] = useState<SortingState>([])
 
-  console.log(deploymentHistoryQueue)
-
-  const mutationCancelDeployment = () => {
+  const mutationCancelDeployment = useCallback(() => {
     openModalConfirmation({
       mode: environment?.mode,
       title: 'Confirm cancel',
@@ -68,100 +79,124 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
       name: environment?.name,
       action: () => cancelDeploymentEnvironment({ environmentId }),
     })
-  }
+  }, [environment, openModalConfirmation, cancelDeploymentEnvironment, environmentId])
 
-  if (!environment || !isFetchedDeloymentHistory || !isFetchedDeloymentQueue) return null
-
-  const columnHelper = createColumnHelper<(typeof deploymentHistory)[number]>()
+  const columnHelper = createColumnHelper<(typeof deploymentHistory | typeof deploymentHistoryQueue)[number]>()
   const columns = useMemo(
     () => [
-      columnHelper.accessor('identifier.execution_id', {
+      columnHelper.accessor('auditing_data.created_at', {
         header: 'Execution ID',
         enableColumnFilter: false,
-        enableSorting: false,
+        enableSorting: true,
         size: 40,
         cell: (info) => {
           const data = info.row.original
 
-          if ('status' in data) {
-            const state = data.status
+          return match(data)
+            .with(P.when(isDeploymentHistory), (data) => {
+              const state = data.status
 
-            return (
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium text-neutral-400">
-                    {dateFullFormat(data.auditing_data.created_at, undefined, 'dd MMM, HH:mm a')}
-                  </span>
-                  <span className="truncate text-ssm text-neutral-350">{data.identifier.execution_id}</span>
-                </div>
-                <ActionToolbar.Root className="min-w-28 text-right">
-                  {match(state)
-                    .with(
-                      'DEPLOYING',
-                      'RESTARTING',
-                      'BUILDING',
-                      'DELETING',
-                      'CANCELING',
-                      'STOPPING',
-                      'DEPLOYMENT_QUEUED',
-                      'DELETE_QUEUED',
-                      'STOP_QUEUED',
-                      'RESTART_QUEUED',
-                      () => (
-                        <DropdownMenu.Root>
-                          <DropdownMenu.Trigger asChild>
-                            <ActionToolbar.Button
-                              aria-label="Manage Deployment"
-                              color="neutral"
-                              size="md"
-                              variant="outline"
-                            >
-                              <Tooltip content="Manage Deployment">
-                                <div className="flex h-full w-full items-center justify-center">
-                                  {match(state)
-                                    .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
-                                      <Icon iconName="clock" iconStyle="regular" className="mr-3" />
-                                    ))
-                                    .otherwise(() => (
-                                      <Icon iconName="loader" className="mr-3 animate-spin" />
-                                    ))}
-                                  <Icon iconName="chevron-down" />
-                                </div>
-                              </Tooltip>
-                            </ActionToolbar.Button>
-                          </DropdownMenu.Trigger>
-                          <DropdownMenu.Content>
-                            {isCancelBuildAvailable(state) && (
-                              <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
-                                {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING
-                                  ? 'Cancel delete'
-                                  : 'Cancel deployment'}
-                              </DropdownMenu.Item>
-                            )}
-                          </DropdownMenu.Content>
-                        </DropdownMenu.Root>
+              return (
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm font-medium text-neutral-400">
+                      {dateFullFormat(data.auditing_data.created_at, undefined, 'dd MMM, HH:mm a')}
+                    </span>
+                    <span className="truncate text-ssm text-neutral-350">{data.identifier.execution_id}</span>
+                  </div>
+                  <ActionToolbar.Root className="min-w-28 text-right">
+                    {match(state)
+                      .with(
+                        'DEPLOYING',
+                        'RESTARTING',
+                        'BUILDING',
+                        'DELETING',
+                        'CANCELING',
+                        'STOPPING',
+                        'DEPLOYMENT_QUEUED',
+                        'DELETE_QUEUED',
+                        'STOP_QUEUED',
+                        'RESTART_QUEUED',
+                        () => (
+                          <DropdownMenu.Root>
+                            <DropdownMenu.Trigger asChild>
+                              <ActionToolbar.Button
+                                aria-label="Manage Deployment"
+                                color="neutral"
+                                size="md"
+                                variant="outline"
+                              >
+                                <Tooltip content="Manage Deployment">
+                                  <div className="flex h-full w-full items-center justify-center">
+                                    {match(state)
+                                      .with(
+                                        'DEPLOYMENT_QUEUED',
+                                        'DELETE_QUEUED',
+                                        'STOP_QUEUED',
+                                        'RESTART_QUEUED',
+                                        () => <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                                      )
+                                      .otherwise(() => (
+                                        <Icon iconName="loader" className="mr-3 animate-spin" />
+                                      ))}
+                                    <Icon iconName="chevron-down" />
+                                  </div>
+                                </Tooltip>
+                              </ActionToolbar.Button>
+                            </DropdownMenu.Trigger>
+                            <DropdownMenu.Content>
+                              {isCancelBuildAvailable(state) && (
+                                <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
+                                  {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING
+                                    ? 'Cancel delete'
+                                    : 'Cancel deployment'}
+                                </DropdownMenu.Item>
+                              )}
+                            </DropdownMenu.Content>
+                          </DropdownMenu.Root>
+                        )
                       )
-                    )
-                    .otherwise(() => null)}
+                      .otherwise(() => null)}
+                    <Tooltip content="Logs">
+                      <ActionToolbar.Button asChild className="justify-center px-2">
+                        <Link
+                          to={
+                            ENVIRONMENT_LOGS_URL(
+                              environment?.organization.id,
+                              environment?.project.id,
+                              environment?.id
+                            ) + ENVIRONMENT_STAGES_URL(data.identifier.execution_id ?? '')
+                          }
+                          state={{ prevUrl: pathname }}
+                        >
+                          <Icon iconName="timeline" />
+                        </Link>
+                      </ActionToolbar.Button>
+                    </Tooltip>
+                  </ActionToolbar.Root>
+                </div>
+              )
+            })
+            .otherwise(() => (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-neutral-400">In queue...</span>
+                <div className="min-w-28 text-right">
                   <Tooltip content="Logs">
-                    <ActionToolbar.Button asChild className="justify-center px-2">
-                      <Link
-                        to={
-                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          ENVIRONMENT_STAGES_URL(data.identifier.execution_id ?? '')
-                        }
-                        state={{ prevUrl: pathname }}
-                      >
-                        <Icon iconName="timeline" />
-                      </Link>
-                    </ActionToolbar.Button>
+                    <Link
+                      className="w-9 justify-center px-2 text-neutral-350"
+                      as="button"
+                      color="neutral"
+                      variant="outline"
+                      size="md"
+                      to={ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)}
+                      state={{ prevUrl: pathname }}
+                    >
+                      <Icon iconName="timeline" />
+                    </Link>
                   </Tooltip>
-                </ActionToolbar.Root>
+                </div>
               </div>
-            )
-          } else {
-            return <span>In queue...</span>
-          }
+            ))
         },
       }),
       columnHelper.accessor('action_status', {
@@ -171,25 +206,43 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         enableSorting: false,
         filterFn: 'arrIncludesSome',
         size: 15,
+        meta: {
+          customFacetEntry({ value, count }) {
+            return (
+              <>
+                <span className="text-sm font-medium">{upperCaseFirstLetter(value)}</span>
+                <span className="text-xs text-neutral-350">{count}</span>
+              </>
+            )
+          },
+        },
         cell: (info) => {
-          const actionStatus = info.getValue()
-          const triggerAction = info.row.original.trigger_action
+          const data = info.row.original
+          const { trigger_action } = data
 
-          return (
-            <div className="flex items-center gap-4">
-              <ActionTriggerStatusChip
-                size="md"
-                status={actionStatus ? actionStatus : 'QUEUED'}
-                triggerAction={triggerAction}
-              />
-              <div className="flex flex-col gap-1">
-                <span className="font-medium text-neutral-400">{upperCaseFirstLetter(triggerAction)} </span>
-                <span className="text-ssm text-neutral-350">
-                  {actionStatus ? upperCaseFirstLetter(actionStatus) : 'In queue...'}
-                </span>
+          return match(data)
+            .with(P.when(isDeploymentHistory), (data) => {
+              const { action_status } = data
+
+              return (
+                <div className="flex items-center gap-4">
+                  <ActionTriggerStatusChip size="md" status={action_status} triggerAction={trigger_action} />
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium text-neutral-400">{upperCaseFirstLetter(trigger_action)}</span>
+                    <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(action_status)}</span>
+                  </div>
+                </div>
+              )
+            })
+            .otherwise(() => (
+              <div className="flex items-center gap-4">
+                <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={trigger_action} />
+                <div className="flex flex-col gap-1">
+                  <span className="font-medium text-neutral-400">{upperCaseFirstLetter(trigger_action)}</span>
+                  <span className="text-ssm text-neutral-350">In queue...</span>
+                </div>
               </div>
-            </div>
-          )
+            ))
         },
       }),
       columnHelper.accessor('stages', {
@@ -200,17 +253,17 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         cell: (info) => {
           const data = info.row.original
 
-          if ('status' in data) {
-            return (
+          return (
+            environment && (
               <DropdownServices
                 environment={environment}
                 deploymentHistory={data}
-                stages={data.stages.filter((stage) => stage.services.length > 0)}
+                stages={match(data)
+                  .with(P.when(isDeploymentHistory), (d) => d.stages.filter((stage) => stage.services.length > 0))
+                  .otherwise((d) => d.stages)}
               />
             )
-          } else {
-            return <span>In queue...</span>
-          }
+          )
         },
       }),
       columnHelper.accessor('total_duration', {
@@ -221,7 +274,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         cell: (info) => {
           const data = info.row.original
 
-          if ('status' in data) {
+          if (isDeploymentHistory(data)) {
             const state = data.status
 
             return match(state)
@@ -251,9 +304,20 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
       }),
       columnHelper.accessor('auditing_data.origin', {
         header: 'Trigger by',
-        enableColumnFilter: false,
-        enableSorting: true,
+        enableColumnFilter: true,
+        enableSorting: false,
         size: 20,
+        filterFn: 'arrIncludesSome',
+        meta: {
+          customFacetEntry({ value, count }) {
+            return (
+              <>
+                <span className="text-sm font-medium">{upperCaseFirstLetter(value)}</span>
+                <span className="text-xs text-neutral-350">{count}</span>
+              </>
+            )
+          },
+        },
         cell: (info) => {
           const origin = info.getValue()
           const triggeredBy = info.row.original.auditing_data.triggered_by
@@ -283,16 +347,25 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         },
       }),
     ],
-    [columnHelper]
+    [columnHelper, environment, mutationCancelDeployment, pathname]
+  )
+
+  const data = useMemo(
+    () => [...deploymentHistoryQueue, ...deploymentHistory],
+    [deploymentHistory, deploymentHistoryQueue]
   )
 
   const table = useReactTable({
-    data: deploymentHistory,
+    data,
     columns,
     state: {
       sorting,
     },
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     onSortingChange: setSorting,
     // https://github.com/TanStack/table/discussions/3192#discussioncomment-6458134
     defaultColumn: {
@@ -301,6 +374,26 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
       maxSize: Number.MAX_SAFE_INTEGER,
     },
   })
+
+  if (!isFetchedEnvironment || !isFetchedDeloymentHistory || !isFetchedDeloymentQueue)
+    return <EnvironmentDeploymentListSkeleton />
+
+  if (
+    isFetchedEnvironment &&
+    isFetchedDeloymentHistory &&
+    isFetchedDeloymentQueue &&
+    !deploymentHistory.length &&
+    !deploymentHistoryQueue.length
+  ) {
+    return (
+      <EmptyState
+        title="No deployment started"
+        description="Manage the deployments by using the “Play” button in the header above"
+        className="mt-2 rounded-t-sm bg-white pt-10"
+      />
+    )
+  }
+
   return (
     <div className="flex grow flex-col justify-between">
       <Table.Root className="w-full min-w-[1080px] overflow-x-scroll text-ssm">
@@ -342,7 +435,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
             <Fragment key={row.id}>
-              <Table.Row className="h-[68px] border-neutral-250 last:!border-b">
+              <Table.Row className="h-[68px] border-neutral-200 last:!border-b">
                 {row.getVisibleCells().map((cell, i) => (
                   <Table.Cell
                     key={cell.id}

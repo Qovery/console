@@ -98,3 +98,23 @@ export function formatDuration(isoDuration: string): string {
 
   return `${addZero(hours)}:${addZero(minutes)}:${addZero(seconds)}`
 }
+
+// Format ISO 8601 Duration to mm:ss
+export function formatDurationMinutesSeconds(isoDuration: string): string {
+  const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?/
+  const matches = isoDuration.match(regex)
+
+  if (!matches) {
+    throw new Error('Invalid ISO 8601 duration format')
+  }
+
+  const hoursInMinutes = parseInt(matches[1] || '0', 10) * 60
+  const minutes = parseInt(matches[2] || '0', 10) + hoursInMinutes
+  const seconds = Math.floor(parseFloat(matches[3] || '0'))
+
+  if (minutes === 0) {
+    return `${seconds}s`
+  }
+
+  return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`
+}
