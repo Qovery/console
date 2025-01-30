@@ -99,9 +99,9 @@ jobs:
         npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent
         npx nx affected --target=build --parallel=3
       artifacts-path: |
-        dist/**
-        coverage/**
-        !coverage/**/*.{js,css,html,png}
+        ${{ github.workspace }}/dist/**
+        ${{ github.workspace }}/coverage/**
+        !${{ github.workspace }}/coverage/**/*.{js,css,html,png}
       artifacts-name: dist-and-coverage-artifacts
 
   agents:
