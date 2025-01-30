@@ -82,7 +82,7 @@ jobs:
   nx-main:
     needs: [env-vars]
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.15.0
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.nx-cloud-access-token }}
     with:
@@ -110,7 +110,7 @@ jobs:
   agents:
     needs: [env-vars]
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.15.0
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.nx-cloud-access-token }}
     with:
@@ -125,7 +125,7 @@ jobs:
     needs: ['nx-main']
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/upload-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: dist-and-coverage-artifacts
           path: coverage
@@ -147,7 +147,7 @@ jobs:
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
-      - uses: actions/upload-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: dist-and-coverage-artifacts
           path: dist/
