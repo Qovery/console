@@ -3,7 +3,6 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   type DeploymentHistoryEnvironmentV2,
-  type DeploymentHistoryService,
   type DeploymentHistoryStage,
   type Environment,
   type QueuedDeploymentRequestWithStages,
@@ -27,7 +26,7 @@ export interface DropdownServicesProps {
 }
 
 const isDeploymentStageQueue = (data: unknown): data is QueuedDeploymentRequestWithStagesStagesInner => {
-  return typeof data === 'object' && data !== null && 'duration' in data
+  return typeof data === 'object' && data !== null && 'total_duration' in data
 }
 
 const MAX_VISIBLE_STAGES = 4
@@ -58,7 +57,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
       } else {
         setCurrentIndex(undefined)
       }
-    }, 100)
+    }, 250)
 
     setTimeoutId(newTimeoutId)
   }
@@ -124,10 +123,11 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
       </div>
       <DropdownMenu.Content
         loop
+        asChild
         onPointerEnter={() => setOpen(true)}
         onPointerLeave={() => setOpen(false)}
         className={clsx(
-          'relative flex max-h-96 w-56 flex-col overflow-hidden rounded-md bg-neutral-50 shadow-lg shadow-gray-900/10 data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded',
+          'relative flex max-h-96 w-56 flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10 data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded',
           {
             'hidden opacity-0': currentIndex === undefined,
             '-left-[38px]': stages.length === 4,
@@ -136,28 +136,30 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           }
         )}
       >
-        {currentIndex !== undefined && (
-          <div className="h-full overflow-y-scroll p-2">
+        <div className="overflow-hidden">
+          {currentIndex !== undefined && (
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.div
                 key={currentIndex}
+                className="flex"
                 initial={{
-                  x: direction * 110 + '%',
+                  x: direction * 80 + '%',
                   opacity: 0,
                 }}
                 animate={{
-                  opacity: 1,
                   x: 0,
+                  opacity: 1,
                 }}
                 exit={{
-                  x: direction * -110 + '%',
+                  x: direction * -80 + '%',
                   opacity: 0,
+                  filter: 'blur(3px)',
+                  transition: { ease: 'easeOut', duration: 0.22 },
                 }}
                 transition={{
-                  x: { duration: 0.5, type: 'spring', bounce: 0 },
+                  x: { duration: 0.32, type: 'spring', bounce: 0 },
                   opacity: { duration: 0.4 },
                 }}
-                className="flex"
               >
                 {stages.map((stage, index) => (
                   <div
@@ -200,91 +202,128 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                           ))}
                       </div>
                     </div>
-                    {stage.services.map((service, index) => {
-                      const deploymentHistoryService = {
-                        ...service,
-                        identifier: {
-                          ...service.identifier,
-                          execution_id: (service as DeploymentHistoryService).identifier?.execution_id ?? undefined,
-                        },
-                        status_details: {
-                          status: stage.status ?? undefined,
-                        },
-                        total_duration: (service as DeploymentHistoryService).total_duration ?? undefined,
-                      } as DeploymentHistoryService
-
-                      return (
-                        <DropdownMenu.Item
-                          key={index}
-                          className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100"
-                          asChild
-                        >
-                          <Link
-                            to={
-                              ENVIRONMENT_LOGS_URL(
-                                environment.organization.id,
-                                environment.project.id,
-                                environment.id
-                              ) +
-                              DEPLOYMENT_LOGS_VERSION_URL(
-                                service.identifier.service_id,
-                                deploymentHistoryService.identifier.execution_id ?? ''
-                              )
-                            }
-                            state={{ prevUrl: pathname }}
-                          >
-                            {service.details && (
-                              <ServiceAvatar
-                                border="solid"
-                                size="sm"
-                                service={
-                                  'job_type' in service.details
-                                    ? {
-                                        icon_uri: service.icon_uri ?? '',
-                                        serviceType: 'JOB' as const,
-                                        job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
-                                      }
-                                    : {
-                                        icon_uri: service.icon_uri ?? '',
-                                        serviceType: service.identifier.service_type as Exclude<
-                                          AnyService['service_type'],
-                                          'JOB'
-                                        >,
-                                      }
+                    {match(stage)
+                      .with(P.when(isDeploymentStageQueue), (s) =>
+                        s.services.map((service, index) => {
+                          return (
+                            <DropdownMenu.Item
+                              key={index}
+                              className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                              asChild
+                            >
+                              <Link
+                                to={
+                                  ENVIRONMENT_LOGS_URL(
+                                    environment.organization.id,
+                                    environment.project.id,
+                                    environment.id
+                                  ) + ENVIRONMENT_STAGES_URL()
                                 }
-                              />
-                            )}
-                            <span className="flex flex-col">
-                              <span className="truncate text-ssm">
-                                <Truncate text={service.identifier.name} truncateLimit={16} />
-                              </span>
-                              {deploymentHistoryService.total_duration &&
-                                deploymentHistoryService.auditing_data.updated_at && (
+                                state={{ prevUrl: pathname }}
+                              >
+                                {service.details && (
+                                  <ServiceAvatar
+                                    border="solid"
+                                    size="sm"
+                                    service={
+                                      'job_type' in service.details
+                                        ? {
+                                            icon_uri: service.icon_uri ?? '',
+                                            serviceType: 'JOB' as const,
+                                            job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
+                                          }
+                                        : {
+                                            icon_uri: service.icon_uri ?? '',
+                                            serviceType: service.identifier.service_type as Exclude<
+                                              AnyService['service_type'],
+                                              'JOB'
+                                            >,
+                                          }
+                                    }
+                                  />
+                                )}
+                                <span className="flex flex-col">
+                                  <span className="truncate text-ssm">
+                                    <Truncate text={service.identifier.name} truncateLimit={16} />
+                                  </span>
+                                </span>
+                              </Link>
+                            </DropdownMenu.Item>
+                          )
+                        })
+                      )
+                      .otherwise((s) =>
+                        s.services.map((service, index) => (
+                          <DropdownMenu.Item
+                            key={index}
+                            className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                            asChild
+                          >
+                            <Link
+                              to={
+                                ENVIRONMENT_LOGS_URL(
+                                  environment.organization.id,
+                                  environment.project.id,
+                                  environment.id
+                                ) +
+                                DEPLOYMENT_LOGS_VERSION_URL(
+                                  service.identifier.service_id,
+                                  service.identifier.execution_id
+                                )
+                              }
+                              state={{ prevUrl: pathname }}
+                            >
+                              {service.details && (
+                                <ServiceAvatar
+                                  border="solid"
+                                  size="sm"
+                                  service={
+                                    'job_type' in service.details
+                                      ? {
+                                          icon_uri: service.icon_uri ?? '',
+                                          serviceType: 'JOB' as const,
+                                          job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
+                                        }
+                                      : {
+                                          icon_uri: service.icon_uri ?? '',
+                                          serviceType: service.identifier.service_type as Exclude<
+                                            AnyService['service_type'],
+                                            'JOB'
+                                          >,
+                                        }
+                                  }
+                                />
+                              )}
+                              <span className="flex flex-col">
+                                <span className="truncate text-ssm">
+                                  <Truncate text={service.identifier.name} truncateLimit={16} />
+                                </span>
+                                {service.total_duration && (
                                   <>
                                     <span
-                                      title={dateUTCString(deploymentHistoryService.auditing_data.updated_at)}
+                                      title={dateUTCString(service.auditing_data.updated_at)}
                                       className="text-[11px]"
                                     >
-                                      {formatDurationMinutesSeconds(deploymentHistoryService.total_duration ?? '')}
+                                      {formatDurationMinutesSeconds(service.total_duration ?? '')}
                                     </span>
                                   </>
                                 )}
-                            </span>
-                            {deploymentHistoryService.status_details && (
-                              <span className="ml-auto">
-                                <StatusChip status={deploymentHistoryService.status_details.status} />
                               </span>
-                            )}
-                          </Link>
-                        </DropdownMenu.Item>
-                      )
-                    })}
+                              {service.status_details && (
+                                <span className="ml-auto">
+                                  <StatusChip status={service.status_details.status} />
+                                </span>
+                              )}
+                            </Link>
+                          </DropdownMenu.Item>
+                        ))
+                      )}
                   </div>
                 ))}
               </motion.div>
             </AnimatePresence>
-          </div>
-        )}
+          )}
+        </div>
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )

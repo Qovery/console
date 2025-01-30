@@ -111,7 +111,6 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                         'RESTARTING',
                         'BUILDING',
                         'DELETING',
-                        'CANCELING',
                         'STOPPING',
                         'DEPLOYMENT_QUEUED',
                         'DELETE_QUEUED',
