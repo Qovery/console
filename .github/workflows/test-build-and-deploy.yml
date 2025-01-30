@@ -99,12 +99,9 @@ jobs:
         npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent
         npx nx affected --target=build --parallel=3
       artifacts-path: |
-        dist/
-        coverage/
-        !coverage/**/*.js
-        !coverage/**/*.css
-        !coverage/**/*.html
-        !coverage/**/*.png
+        dist/**
+        coverage/**
+        !coverage/**/*.{js,css,html,png}
       artifacts-name: dist-and-coverage-artifacts
 
   agents:
@@ -128,7 +125,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: dist-and-coverage-artifacts
-          pattern: 'coverage/**'
           path: coverage
           merge-multiple: true
       - name: Display structure of downloaded files
@@ -152,7 +148,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: dist-and-coverage-artifacts
-          pattern: 'dist/**'
           path: dist/
           merge-multiple: true
       - name: Copy assets to S3
