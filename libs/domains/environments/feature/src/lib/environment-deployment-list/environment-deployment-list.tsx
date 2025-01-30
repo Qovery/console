@@ -335,7 +335,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
               </div>
               <div className="flex flex-col gap-1.5 text-ssm">
                 <span className="whitespace-nowrap text-neutral-400">
-                  <Truncate text={triggeredBy} truncateLimit={22} />
+                  <Truncate text={triggeredBy} truncateLimit={25} />
                 </span>
                 <span className="text-neutral-350">
                   {origin !== 'CLI' && origin !== 'API' ? upperCaseFirstLetter(origin?.replace('_', ' ')) : origin}

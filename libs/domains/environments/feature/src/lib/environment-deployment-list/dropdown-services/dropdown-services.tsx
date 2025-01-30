@@ -72,6 +72,10 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
         {visibleStages.map((stage, index) => (
           <DropdownMenu.Trigger
             key={index}
+            onClick={() => {
+              setIndex(stage, index)
+              setOpen(true)
+            }}
             onPointerEnter={() => {
               setIndex(stage, index)
               setOpen(true)
