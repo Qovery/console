@@ -297,7 +297,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                 </span>
               ))
           } else {
-            return <span>In queue...</span>
+            return <span className="text-neutral-350">---</span>
           }
         },
       }),
