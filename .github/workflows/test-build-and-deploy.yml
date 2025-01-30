@@ -125,7 +125,7 @@ jobs:
     needs: ['nx-main']
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: dist-and-coverage-artifacts
           path: coverage
@@ -147,7 +147,7 @@ jobs:
     steps:
       - name: Git clone the repository
         uses: actions/checkout@v4
-      - uses: actions/actions/upload-artifact
+      - uses: actions/upload-artifact@v4
         with:
           name: dist-and-coverage-artifacts
           path: dist/
