@@ -99,7 +99,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     if (!watchKarpenterEnabled || watchKarpenterQoveryNodePools.length > 0) return
 
     if (!props.fromDetail) {
-      if (cloudProviderInstanceTypesKarpenter) {
+      if (cloudProviderInstanceTypesKarpenter && props.cloudProvider === 'AWS') {
         setValue(
           'karpenter.qovery_node_pools.requirements',
           convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
@@ -112,6 +112,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     props.fromDetail,
     cloudProviderInstanceTypesKarpenter,
     setValue,
+    props.cloudProvider,
   ])
 
   return (
@@ -393,7 +394,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         </BlockContent>
       )}
 
-      {!watchKarpenterEnabled && (
+      {(!watchKarpenterEnabled || props.cloudProvider !== 'AWS') && (
         <Section className="gap-4">
           <Heading>Resources configuration</Heading>
           <Controller
@@ -498,7 +499,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       )}
 
       {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
-        <Callout.Root className="mb-10 items-center" color="sky" data-testid="aws-cost-banner">
+        <Callout.Root className="items-center" color="sky" data-testid="aws-cost-banner">
           <Callout.Icon className="flex h-12 w-12 items-center justify-center rounded-full bg-white">
             <Icon name={IconEnum.AWS} />
           </Callout.Icon>

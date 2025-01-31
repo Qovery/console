@@ -33,7 +33,7 @@ export function StepResources(props: StepResourcesProps) {
           isProduction={props.isProduction}
         />
 
-        <div className="flex justify-between">
+        <div className="mt-10 flex justify-between">
           <Button
             onClick={() =>
               navigate(`${CLUSTERS_URL(organizationId)}${CLUSTERS_CREATION_URL}${CLUSTERS_CREATION_GENERAL_URL}`)

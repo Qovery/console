@@ -328,6 +328,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                         onChange={field.onChange}
                         error={error?.message}
                         isMulti
+                        portal
                       />
                     )}
                   />
