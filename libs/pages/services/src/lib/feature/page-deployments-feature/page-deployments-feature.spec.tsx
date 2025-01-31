@@ -1,9 +1,9 @@
-import { render } from '__tests__/utils/setup-jest'
-import PageDeploymentsFeature from './page-deployments-feature'
+import { renderWithProviders } from '@qovery/shared/util-tests'
+import { PageDeploymentsFeature } from './page-deployments-feature'
 
-describe('Deployments', () => {
+describe('PageDeploymentsFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageDeploymentsFeature />)
+    const { baseElement } = renderWithProviders(<PageDeploymentsFeature />)
     expect(baseElement).toBeTruthy()
   })
 })

@@ -377,7 +377,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             return (
               <span className="flex items-center gap-2 text-sm font-medium">
                 <ServiceAvatar service={service} size="xs" />
-                {value}
+                <Truncate text={value} truncateLimit={20} />
               </span>
             )
           },

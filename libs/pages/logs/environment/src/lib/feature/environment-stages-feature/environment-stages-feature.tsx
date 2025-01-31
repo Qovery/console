@@ -169,7 +169,11 @@ export function EnvironmentStagesFeature({
                         )
                       }
                     >
-                      <StageStatusChip status={s.stage?.status} />
+                      <Tooltip content={upperCaseFirstLetter(s.stage?.status)}>
+                        <span>
+                          <StageStatusChip status={s.stage?.status} />
+                        </span>
+                      </Tooltip>
                     </Indicator>
                     <div className="flex flex-col gap-0.5">
                       <span className="flex gap-1.5 text-sm font-medium">
@@ -230,33 +234,16 @@ export function EnvironmentStagesFeature({
                               }
                             )}
                           >
-                            <Indicator
-                              align="end"
-                              side="right"
-                              content={
-                                service.is_part_last_deployment && (
-                                  <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
-                                    <span>
-                                      <TriggerActionIcon
-                                        triggerAction={deploymentHistory?.trigger_action}
-                                        className="relative -left-0.5 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-550 text-xs text-neutral-250"
-                                      />
-                                    </span>
-                                  </Tooltip>
-                                )
-                              }
-                            >
-                              <ServiceAvatar
-                                service={fullService}
-                                border="solid"
-                                size="sm"
-                                className={clsx('border-neutral-400', {
-                                  'opacity-50': !service.is_part_last_deployment,
-                                })}
-                              />
-                            </Indicator>
+                            <ServiceAvatar
+                              service={fullService}
+                              border="solid"
+                              size="sm"
+                              className={clsx('border-neutral-400', {
+                                'opacity-50': !service.is_part_last_deployment,
+                              })}
+                            />
                             <span className="flex flex-col gap-0.5 text-sm">
-                              <Truncate text={fullService.name} truncateLimit={18} />
+                              <Truncate text={fullService.name} truncateLimit={16} />
                               {serviceTotalDurationSec && (
                                 <span className="text-xs">
                                   {Math.floor(serviceTotalDurationSec / 60)}m {serviceTotalDurationSec % 60}s

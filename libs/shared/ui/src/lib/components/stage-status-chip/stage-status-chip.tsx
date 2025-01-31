@@ -1,9 +1,7 @@
 import { type StageStatusEnum, type StepMetricStatusEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 import Skeleton from '../skeleton/skeleton'
-import Tooltip from '../tooltip/tooltip'
 
 export interface StageStatusChipProps {
   status: keyof typeof StageStatusEnum | keyof typeof StepMetricStatusEnum | undefined
@@ -115,11 +113,7 @@ export function StageStatusChip({ status, className = '' }: StageStatusChipProps
     ))
     .exhaustive()
 
-  return (
-    <Tooltip content={upperCaseFirstLetter(status)}>
-      <div className={className}>{icon}</div>
-    </Tooltip>
-  )
+  return <div className={className}>{icon}</div>
 }
 
 export default StageStatusChip

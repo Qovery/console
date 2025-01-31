@@ -53,7 +53,7 @@ export function Container({ children }: ContainerProps) {
     },
     {
       icon: <ServiceStateChip mode="deployment" environmentId={service?.environment?.id} serviceId={service?.id} />,
-      name: 'Deployments History',
+      name: 'Deployments history',
       active:
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,

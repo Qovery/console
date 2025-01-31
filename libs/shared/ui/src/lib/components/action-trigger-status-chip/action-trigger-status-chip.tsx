@@ -1,10 +1,44 @@
-import { type DeploymentHistoryTriggerAction, type StateEnum } from 'qovery-typescript-axios'
+import { cva } from 'class-variance-authority'
+import {
+  type DeploymentHistoryActionStatus,
+  type DeploymentHistoryTriggerAction,
+  type StateEnum,
+} from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 import Indicator from '../indicator/indicator'
 import StatusChip from '../status-chip/status-chip'
-import Tooltip from '../tooltip/tooltip'
+
+const triggerActionVariants = cva(
+  [
+    'flex',
+    'items-center',
+    'justify-center',
+    'rounded-full',
+    'border',
+    'border-neutral-200',
+    'text-neutral-350',
+    'dark:border-neutral-400',
+    'dark:text-neutral-250',
+  ],
+  {
+    variants: {
+      size: {
+        sm: ['h-7', 'w-7', 'text-sm'],
+        md: ['h-9', 'w-9', 'text-base'],
+      },
+    },
+  }
+)
+
+const statusChipVariants = cva(['relative', 'rounded-full', 'bg-white', 'dark:bg-neutral-600'], {
+  variants: {
+    size: {
+      sm: ['-left-0.5', '-top-1'],
+      md: ['-top-1.5', '-left-1.5'],
+    },
+  },
+})
 
 export function TriggerActionIcon({
   triggerAction,
@@ -27,33 +61,22 @@ export function TriggerActionIcon({
 }
 
 export interface ActionTriggerStatusChipInterface {
+  size: 'sm' | 'md'
   triggerAction: DeploymentHistoryTriggerAction | undefined
-  status?: StateEnum
+  status?: StateEnum | DeploymentHistoryActionStatus
 }
 
-export function ActionTriggerStatusChip({ status, triggerAction }: ActionTriggerStatusChipInterface) {
+export function ActionTriggerStatusChip({ size, status, triggerAction }: ActionTriggerStatusChipInterface) {
   return (
-    <Tooltip
-      content={
-        <>
-          Action: {upperCaseFirstLetter(triggerAction)} <br /> Status: {upperCaseFirstLetter(status).replace(/_/g, ' ')}
-        </>
-      }
-      side="bottom"
-    >
-      <span>
-        <Indicator
-          align="end"
-          side="right"
-          content={status && <StatusChip className="relative -left-0.5 -top-1" status={status} disabledTooltip />}
-        >
-          <TriggerActionIcon
-            triggerAction={triggerAction}
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-400 text-sm text-neutral-250"
-          />
-        </Indicator>
-      </span>
-    </Tooltip>
+    <div className="relative">
+      <Indicator
+        align="end"
+        side="right"
+        content={status && <StatusChip className={statusChipVariants({ size })} status={status} disabledTooltip />}
+      >
+        <TriggerActionIcon triggerAction={triggerAction} className={triggerActionVariants({ size })} />
+      </Indicator>
+    </div>
   )
 }
 

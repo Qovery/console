@@ -109,7 +109,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
     },
     {
       icon: <ServiceStateChip mode="deployment" environmentId={environmentId} serviceId={databaseId} />,
-      name: 'Deployments History',
+      name: 'Deployments history',
       active:
         location.pathname ===
         DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,

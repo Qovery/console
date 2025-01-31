@@ -4,23 +4,23 @@ exports[`EmptyState should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-grow items-center justify-center"
+      class="flex flex-grow animate-fadein items-center justify-center"
     >
       <div
         class="m-auto mt-12 flex w-[420px] flex-col items-center justify-center text-center"
       >
         <img
           alt="Event placeholder"
-          class="user-none pointer-events-none w-[170px] dark:hidden"
+          class="user-none pointer-events-none h-[196px] w-[253px] dark:hidden"
           src="/assets/images/event-placeholder-light.svg"
         />
         <img
           alt="Event placeholder"
-          class="user-none pointer-events-none hidden w-[170px] dark:block"
+          class="user-none pointer-events-none hidden h-[196px] w-[253px] dark:block"
           src="/assets/images/event-placeholder-dark.svg"
         />
         <p
-          class="text-neutral-400 dark:text-neutral-300"
+          class="text-neutral-350 dark:text-neutral-300"
         >
           No Storage are set
         </p>

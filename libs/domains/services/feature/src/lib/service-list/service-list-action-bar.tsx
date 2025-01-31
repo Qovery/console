@@ -1,5 +1,4 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { useDeployAllServices } from '@qovery/domains/environments/feature'
 import { Button, Callout, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
@@ -12,6 +11,7 @@ import {
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
 import { useDeleteAllServices } from '../hooks/use-delete-all-services/use-delete-all-services'
+import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
 import { useRestartAllServices } from '../hooks/use-restart-all-services/use-restart-all-services'
 import { type useServices } from '../hooks/use-services/use-services'
 import { useStopAllServices } from '../hooks/use-stop-all-services/use-stop-all-services'

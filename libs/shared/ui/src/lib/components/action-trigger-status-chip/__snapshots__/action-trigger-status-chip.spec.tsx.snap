@@ -3,15 +3,14 @@
 exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
 <body>
   <div>
-    <span
-      class=""
-      data-state="closed"
+    <div
+      class="relative"
     >
       <span
         class="relative inline-block"
       >
         <span
-          class="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-400 text-sm text-neutral-250"
+          class="flex items-center justify-center rounded-full border border-neutral-200 text-neutral-350 dark:border-neutral-400 dark:text-neutral-250"
         >
           <i
             aria-hidden="true"
@@ -22,7 +21,7 @@ exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
           class="absolute right-0 bottom-0 translate-x-1/2 translate-y-1/2"
         >
           <div
-            class="relative -left-0.5 -top-1"
+            class="relative rounded-full bg-white dark:bg-neutral-600"
           >
             <svg
               class="text-neutral-300"
@@ -57,7 +56,7 @@ exports[`ActionTriggerStatusChip shoud match size snapshot 1`] = `
           </div>
         </span>
       </span>
-    </span>
+    </div>
   </div>
 </body>
 `;
