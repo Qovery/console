@@ -2,6 +2,8 @@ const nxPreset = require('@nx/jest/preset').default
 
 module.exports = {
   setupFilesAfterEnv: ['./__tests__/mocks.ts', 'jest-canvas-mock'],
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
   collectCoverageFrom: ['<rootDir>/src/**/*.{js,jsx,ts,tsx}'],
   testPathIgnorePatterns: ['./node_modules/', './.next/', './__tests__/utils/setup-jest.tsx'],
   transformIgnorePatterns: [
