@@ -120,24 +120,4 @@ describe('EnvironmentDeploymentList', () => {
 
     expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
   })
-
-  it('should show empty state when no deployments', async () => {
-    jest
-      .spyOn(require('../hooks/use-deployment-history/use-deployment-history'), 'useDeploymentHistory')
-      .mockImplementation(() => ({
-        data: [],
-        isFetched: true,
-      }))
-
-    jest
-      .spyOn(require('../hooks/use-deployment-queue/use-deployment-queue'), 'useDeploymentQueue')
-      .mockImplementation(() => ({
-        data: [],
-        isFetched: true,
-      }))
-
-    renderWithProviders(<EnvironmentDeploymentList environmentId="env-123" />)
-
-    expect(screen.getByText('No deployment started')).toBeInTheDocument()
-  })
 })

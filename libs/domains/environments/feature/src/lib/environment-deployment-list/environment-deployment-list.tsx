@@ -85,7 +85,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
-        header: 'Execution ID',
+        header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
         size: 40,

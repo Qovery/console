@@ -1,5 +1,4 @@
-import { screen, waitFor } from '@testing-library/react'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { DropdownServices } from './dropdown-services'
 
 jest.mock('@radix-ui/react-dropdown-menu', () => ({
