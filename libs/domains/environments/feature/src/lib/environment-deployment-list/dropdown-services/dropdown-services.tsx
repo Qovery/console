@@ -201,9 +201,12 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                         <span className="text-ssm font-medium">{upperCaseFirstLetter(stage.name)}</span>
                         {match(stage)
                           .with(P.when(isDeploymentStageQueue), () => null)
-                          .otherwise((stage) => (
-                            <span className="text-[11px]">{formatDuration(stage.duration)}</span>
-                          ))}
+                          .otherwise((stage) =>
+                            // XXX: Sometimes we don't have directly the duration in the stage object linked to queing
+                            stage.duration ? (
+                              <span className="text-[11px]">{formatDuration(stage.duration)}</span>
+                            ) : null
+                          )}
                       </div>
                     </div>
                     {match(stage)

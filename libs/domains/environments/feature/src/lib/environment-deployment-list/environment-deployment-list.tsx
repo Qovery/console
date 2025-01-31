@@ -36,6 +36,7 @@ import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { DropdownServices } from './dropdown-services/dropdown-services'
 import { EnvironmentDeploymentListSkeleton } from './environment-deployment-list-skeleton'
+import TableFilterTriggerBy from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
 
@@ -406,7 +407,13 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
                   {header.column.getCanFilter() ? (
-                    <TableFilter column={header.column} />
+                    <>
+                      {header.id === 'auditing_data.origin' ? (
+                        <TableFilterTriggerBy column={header.column} />
+                      ) : (
+                        <TableFilter column={header.column} />
+                      )}
+                    </>
                   ) : header.column.getCanSort() ? (
                     <button
                       type="button"
