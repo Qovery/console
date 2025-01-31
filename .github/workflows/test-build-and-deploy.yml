@@ -82,7 +82,7 @@ jobs:
   nx-main:
     needs: [env-vars]
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.13.0
+    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.15.0
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.nx-cloud-access-token }}
     with:
@@ -110,7 +110,7 @@ jobs:
   agents:
     needs: [env-vars]
     name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.13.0
+    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.15.0
     secrets:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.nx-cloud-access-token }}
     with:
@@ -122,13 +122,14 @@ jobs:
   codecoverage:
     runs-on: ubuntu-latest
     name: Code Coverage
-    needs: ['nx-main']
+    needs: [nx-main]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: dist-and-coverage-artifacts
           path: coverage
+          merge-multiple: true
       - name: Display structure of downloaded files
         run: ls -R
       - uses: codecov/codecov-action@v4
@@ -151,6 +152,7 @@ jobs:
         with:
           name: dist-and-coverage-artifacts
           path: dist/
+          merge-multiple: true
       - name: Copy assets to S3
         run: |
           AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
