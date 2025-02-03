@@ -104,7 +104,7 @@ describe('EnvironmentDeploymentList', () => {
   it('should render the deployment list', async () => {
     renderWithProviders(<EnvironmentDeploymentList environmentId="env-123" />)
 
-    expect(screen.getByText('Execution ID')).toBeInTheDocument()
+    expect(screen.getByText('Date')).toBeInTheDocument()
     expect(screen.getByText('Status deployment')).toBeInTheDocument()
     expect(screen.getByText('Pipeline')).toBeInTheDocument()
     expect(screen.getByText('Duration')).toBeInTheDocument()
