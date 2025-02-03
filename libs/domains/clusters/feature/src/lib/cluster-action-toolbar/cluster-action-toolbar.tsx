@@ -183,7 +183,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
 
   const openAccessModal = () => {
     openModal({
-      content: <ClusterAccessModal clusterId={cluster.id} />,
+      content: <ClusterAccessModal clusterId={cluster.id} type={cluster.kubernetes} />,
       options: {
         width: 680,
       },
@@ -204,7 +204,11 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        {cluster.kubernetes !== 'SELF_MANAGED' && (
+        {cluster.kubernetes == 'SELF_MANAGED' ? (
+          <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={() => openAccessModal()}>
+            Connect
+          </DropdownMenu.Item>
+        ) : (
           <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal()}>
             Access info
           </DropdownMenu.Item>
