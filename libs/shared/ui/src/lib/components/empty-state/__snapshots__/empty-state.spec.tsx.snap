@@ -4,7 +4,7 @@ exports[`EmptyState should match snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-grow animate-fadein items-center justify-center"
+      class="flex flex-grow items-center justify-center"
     >
       <div
         class="m-auto mt-12 flex w-[420px] flex-col items-center justify-center text-center"

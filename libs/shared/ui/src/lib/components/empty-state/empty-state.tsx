@@ -9,7 +9,7 @@ export interface EmptyStateProps extends PropsWithChildren {
 
 export function EmptyState({ title, description, className, children }: EmptyStateProps) {
   return (
-    <div className={twMerge('flex flex-grow animate-fadein items-center justify-center', className)}>
+    <div className={twMerge('flex flex-grow items-center justify-center', className)}>
       <div className="m-auto mt-12 flex w-[420px] flex-col items-center justify-center text-center">
         <img
           className="user-none pointer-events-none h-[196px] w-[253px] dark:hidden"

@@ -4,7 +4,7 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { queries } from '@qovery/state/util-queries'
 
-// XXX: Duplicate of the the one in the Services domain
+// XXX: Duplicate with the one in the Services domain
 // Necessary to avoid circular dependencies
 export function useDeployAllServices() {
   const queryClient = useQueryClient()

@@ -1,5 +1,4 @@
 import {
-  FilterFnOption,
   type SortingState,
   createColumnHelper,
   flexRender,
