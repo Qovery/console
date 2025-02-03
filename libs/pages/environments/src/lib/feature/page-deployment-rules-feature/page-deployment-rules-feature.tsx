@@ -12,7 +12,7 @@ import PageDeploymentRules from '../../ui/page-deployment-rules/page-deployment-
 
 export function PageDeploymentRulesFeature() {
   const { projectId = '', organizationId = '' } = useParams()
-  useDocumentTitle('Deployment Rules - Qovery')
+  useDocumentTitle('Deployment rules - Qovery')
 
   const { data: deploymentRules = [], isLoading: isLoadingDeploymentRules } = useListDeploymentRules({ projectId })
   const { mutate: deleteDeploymentRule } = useDeleteDeploymentRule()

@@ -10,6 +10,7 @@ export function useDeploymentQueue({ environmentId }: UseDeploymentQueueProps) {
     ...queries.environments.deploymentQueue({ environmentId }),
     refetchInterval: 5000,
     retryOnMount: true,
+    notifyOnChangeProps: ['data'],
   })
 }
 

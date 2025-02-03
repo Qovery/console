@@ -35,7 +35,7 @@ export function Container({ children }: PropsWithChildren) {
     },
     {
       icon: <Icon iconName="browsers" iconStyle="regular" />,
-      name: 'Deployment Rules',
+      name: 'Deployment rules',
       active: isDeploymentRulesTab,
       link: `${ENVIRONMENTS_URL(organizationId, projectId)}${ENVIRONMENTS_DEPLOYMENT_RULES_URL}`,
     },

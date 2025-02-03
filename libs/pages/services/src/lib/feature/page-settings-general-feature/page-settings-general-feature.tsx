@@ -8,7 +8,7 @@ import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-ge
 
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', environmentId = '' } = useParams()
-  useDocumentTitle('Environment General - Settings - Qovery')
+  useDocumentTitle('Environment - Settings')
   const methods = useForm({
     mode: 'onChange',
   })
