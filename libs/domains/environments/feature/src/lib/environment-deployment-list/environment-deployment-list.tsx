@@ -1,4 +1,5 @@
 import {
+  FilterFnOption,
   type SortingState,
   createColumnHelper,
   flexRender,
@@ -307,19 +308,17 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         enableColumnFilter: true,
         enableSorting: false,
         size: 20,
-        filterFn: 'arrIncludesSome',
-        meta: {
-          customFacetEntry({ value, count }) {
-            return (
-              <>
-                <span className="text-sm font-medium">{upperCaseFirstLetter(value)}</span>
-                <span className="text-xs text-neutral-350">{count}</span>
-              </>
-            )
-          },
+        filterFn: (row, _, filterValue) => {
+          if (!filterValue) return true
+          const { origin, triggeredBy } = filterValue
+
+          const matchOrigin = !origin?.length || origin.includes(row.original.auditing_data.origin)
+          const matchTriggeredBy = !triggeredBy?.length || triggeredBy.includes(row.original.auditing_data.triggered_by)
+
+          return matchOrigin && matchTriggeredBy
         },
         cell: (info) => {
-          const origin = info.getValue()
+          const origin = info.row.original.auditing_data.origin
           const triggeredBy = info.row.original.auditing_data.triggered_by
 
           return (
@@ -408,7 +407,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                 >
                   {header.column.getCanFilter() ? (
                     <>
-                      {header.id === 'auditing_data.origin' ? (
+                      {header.id === 'auditing_data_origin' ? (
                         <TableFilterTriggerBy column={header.column} />
                       ) : (
                         <TableFilter column={header.column} />

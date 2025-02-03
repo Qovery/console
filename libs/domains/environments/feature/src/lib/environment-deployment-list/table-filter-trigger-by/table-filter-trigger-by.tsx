@@ -1,53 +1,94 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import type { Column, Row, RowData } from '@tanstack/react-table'
-import { Fragment, type ReactNode, useMemo, useState } from 'react'
+import { type Column } from '@tanstack/react-table'
+import { type DeploymentHistoryEnvironmentV2, type QueuedDeploymentRequestWithStages } from 'qovery-typescript-axios'
+import { Fragment, useMemo, useState } from 'react'
 import { Button, Icon, Popover, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
-import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { twMerge } from '@qovery/shared/util-js'
 
-// declare module '@tanstack/table-core' {
-//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//   interface ColumnMeta<TData extends RowData, TValue> {
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     customFacetEntry?: ({ value, count, row }: { value: any; count: number; row?: Row<TData> }) => ReactNode
-//     customFilterValue?: ({ filterValue }: { filterValue: string[] }) => ReactNode
-//   }
-// }
+type FilterValue = {
+  origin?: string[]
+  triggeredBy?: string[]
+}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function TableFilterTriggerBy({ column }: { column: Column<any, unknown> }) {
+export function TableFilterTriggerBy({
+  column,
+}: {
+  column: Column<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages, unknown>
+}) {
   const [open, setOpen] = useState(false)
+
+  const triggeredByValues = useMemo(() => {
+    const values = new Set<string>()
+    column.getFacetedRowModel().rows.forEach((row) => {
+      const triggeredBy = row.original.auditing_data?.triggered_by
+      if (triggeredBy) values.add(triggeredBy)
+    })
+    return Array.from(values).sort()
+  }, [column.getFacetedRowModel()])
+
   const sortedUniqueValues = useMemo(
     () => Array.from(column.getFacetedUniqueValues().entries()).sort(([a], [b]) => a?.localeCompare?.(b) ?? 0),
     [column.getFacetedUniqueValues()]
   )
 
-  const hideCount = sortedUniqueValues.every(([, count]) => count === 1)
+  const currentFilter = (column.getFilterValue() as FilterValue) || { origin: [], triggeredBy: [] }
 
-  // XXX: https://github.com/radix-ui/primitives/issues/1342
-  // We are waiting for radix combobox primitives
-  // So we are using DropdownMenu.Root in combination of Popover.Root
-  // to get the flexibility of Popover.Root but keeping the accessiblity of
-  // DropdownMenu.Root for entries.
-  // So both open state should be sync
+  const handleOriginFilter = (value: string) => {
+    const newFilter = {
+      ...currentFilter,
+      triggeredBy: [],
+      origin: [...(currentFilter.origin || []), value],
+    }
+    column.setFilterValue(newFilter)
+  }
+
+  const handleTriggeredByFilter = (value: string) => {
+    const newFilter = {
+      ...currentFilter,
+      origin: [],
+      triggeredBy: [...(currentFilter.triggeredBy || []), value],
+    }
+    column.setFilterValue(newFilter)
+  }
+
+  const clearFilter = () => {
+    column.setFilterValue(undefined)
+  }
+
+  const getDisplayValue = () => {
+    if (!column.getIsFiltered()) return null
+
+    const filter = column.getFilterValue() as FilterValue
+    const parts: string[] = []
+
+    if (filter.origin?.length) {
+      parts.push(filter.origin.join(', '))
+    }
+    if (filter.triggeredBy?.length) {
+      parts.push(filter.triggeredBy.join(', '))
+    }
+
+    return parts.join(' / ')
+  }
+
+  const displayValue = getDisplayValue()
+
   return (
     <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
       <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
         <div className="relative inline-block">
           <Popover.Trigger>
             <Button
-              className={twMerge('gap-1 whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
+              className={twMerge('gap-1 whitespace-nowrap text-xs capitalize', column.getIsFiltered() ? 'pr-6' : '')}
               color={column.getIsFiltered() ? 'brand' : 'neutral'}
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
               {column.getIsFiltered() ? (
-                column.columnDef.meta?.customFilterValue ? (
-                  column.columnDef.meta.customFilterValue({ filterValue: column.getFilterValue() as string[] })
-                ) : (
-                  <Truncate
-                    text={upperCaseFirstLetter((column.getFilterValue() as string[]).join(', '))}
-                    truncateLimit={18}
-                  />
-                )
+                <span className="block max-w-52 truncate">
+                  {displayValue !== 'API' && displayValue !== 'CLI'
+                    ? displayValue?.toLowerCase().replace('_', ' ') ?? ''
+                    : displayValue}
+                </span>
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
@@ -60,7 +101,7 @@ export function TableFilterTriggerBy({ column }: { column: Column<any, unknown> 
             <button
               type="button"
               className="absolute right-0 h-7 cursor-pointer px-2 text-center leading-7 text-white"
-              onClick={() => column.setFilterValue(undefined)}
+              onClick={clearFilter}
             >
               <Icon iconName="xmark" />
             </button>
@@ -68,34 +109,42 @@ export function TableFilterTriggerBy({ column }: { column: Column<any, unknown> 
         </div>
         <DropdownMenu.Content asChild>
           <Popover.Content className="max-h-80 w-60 overflow-y-auto p-2">
+            <span className="px-2 pb-2 pt-1 text-sm text-neutral-350">Trigger by</span>
             {sortedUniqueValues.map(
-              ([value, count]) =>
+              ([value]) =>
                 value != null && (
                   <Fragment key={value}>
                     <Popover.Close>
                       <DropdownMenu.Item
-                        className={twMerge(dropdownMenuItemVariants({ color: 'brand' }), 'justify-between')}
-                        onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
-                      >
-                        {column.columnDef.meta?.customFacetEntry ? (
-                          column.columnDef.meta.customFacetEntry({
-                            value,
-                            count,
-                            row: column
-                              .getFacetedRowModel()
-                              .flatRows.find((rows) => rows.getValue(column.id) === value),
-                          })
-                        ) : (
-                          <>
-                            <span className="text-sm font-medium">{value}aa</span>
-                            <span className="text-xs text-neutral-350">{hideCount ? null : count}</span>
-                          </>
+                        className={twMerge(
+                          dropdownMenuItemVariants({ color: 'brand' }),
+                          'justify-between text-sm font-medium capitalize'
                         )}
+                        onSelect={() => handleOriginFilter(value)}
+                      >
+                        {value !== 'API' && value !== 'CLI' ? value?.toLowerCase().replace('_', ' ') : value}
                       </DropdownMenu.Item>
                     </Popover.Close>
                   </Fragment>
                 )
             )}
+            <hr className="my-2 -ml-2 w-[calc(100%+20px)] border-neutral-200" />
+            <span className="px-2 pb-2 pt-1 text-sm text-neutral-350">From</span>
+            {triggeredByValues.map((value) => (
+              <Fragment key={value}>
+                <Popover.Close>
+                  <DropdownMenu.Item
+                    className={twMerge(
+                      dropdownMenuItemVariants({ color: 'brand' }),
+                      'justify-between text-sm font-medium'
+                    )}
+                    onSelect={() => handleTriggeredByFilter(value)}
+                  >
+                    <Truncate text={value} truncateLimit={25} />
+                  </DropdownMenu.Item>
+                </Popover.Close>
+              </Fragment>
+            ))}
           </Popover.Content>
         </DropdownMenu.Content>
       </Popover.Root>
