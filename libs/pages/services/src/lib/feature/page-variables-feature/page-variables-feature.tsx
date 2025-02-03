@@ -1,3 +1,4 @@
+import { useDocumentTitle } from '@uidotdev/usehooks'
 import { useParams } from 'react-router-dom'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { VariableList } from '@qovery/domains/variables/feature'
@@ -6,6 +7,7 @@ import { toast } from '@qovery/shared/ui'
 
 export function PageVariablesFeature() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
+  useDocumentTitle('Services - Variables')
 
   const { mutate: deployEnvironment } = useDeployEnvironment({
     projectId,
