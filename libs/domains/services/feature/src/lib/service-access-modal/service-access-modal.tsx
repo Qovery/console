@@ -272,6 +272,11 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                   ? 'Run the following command from your terminal.'
                   : 'Replace the local-port/target-port and run the following command from your terminal.'}
               </p>
+              {serviceType === 'DATABASE' && (
+                <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#port-forward-on-a-managed-database">
+                  Learn more
+                </ExternalLink>
+              )}
               <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
                 <div>
                   <span className="select-none">$ </span>
