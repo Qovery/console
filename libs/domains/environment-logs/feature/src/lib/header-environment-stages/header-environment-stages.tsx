@@ -5,6 +5,7 @@ import { EnvironmentActionToolbar } from '@qovery/domains/environments/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { ActionTriggerStatusChip, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderEnvironmentStagesProps extends PropsWithChildren {
   environment: Environment
@@ -66,10 +67,23 @@ export function HeaderEnvironmentStages({
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                 <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
               </svg>
-              <ActionTriggerStatusChip
-                status={environmentStatus?.last_deployment_state}
-                triggerAction={deploymentHistory.trigger_action}
-              />
+              <Tooltip
+                content={
+                  <>
+                    Action: {upperCaseFirstLetter(environmentStatus?.last_deployment_state)} <br /> Status:{' '}
+                    {upperCaseFirstLetter(deploymentHistory.trigger_action).replace(/_/g, ' ')}
+                  </>
+                }
+                side="bottom"
+              >
+                <span>
+                  <ActionTriggerStatusChip
+                    size="sm"
+                    status={environmentStatus?.last_deployment_state}
+                    triggerAction={deploymentHistory.trigger_action}
+                  />
+                </span>
+              </Tooltip>
             </>
           )}
           {environmentStatus?.state !== 'DEPLOYING' && (

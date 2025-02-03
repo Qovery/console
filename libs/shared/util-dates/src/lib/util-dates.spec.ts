@@ -7,6 +7,8 @@ import {
   dateToFormat,
   dateToHours,
   dateYearMonthDayHourMinuteSecond,
+  formatDuration,
+  formatDurationMinutesSeconds,
 } from './util-dates'
 
 describe('util-dates', () => {
@@ -57,5 +59,50 @@ describe('util-dates', () => {
   it('convertDatetoTimestamp', () => {
     const result = convertDatetoTimestamp('2023-08-30T10:23:20Z')
     expect(result).toBe(1693391000)
+  })
+
+  it('should format a duration with hours, minutes, and seconds correctly', () => {
+    const result = formatDuration('PT2H30M15S')
+    expect(result).toBe('02:30:15')
+  })
+
+  it('should format a duration with only minutes and seconds', () => {
+    const result = formatDuration('PT45M20S')
+    expect(result).toBe('00:45:20')
+  })
+
+  it('should format a duration with only seconds', () => {
+    const result = formatDuration('PT50S')
+    expect(result).toBe('00:00:50')
+  })
+
+  it('should format duration with minutes and seconds', () => {
+    const result = formatDurationMinutesSeconds('PT32M13.659S')
+    expect(result).toBe('32m 13s')
+  })
+
+  it('should convert hours to minutes in the output', () => {
+    const result = formatDurationMinutesSeconds('PT1H32M13S')
+    expect(result).toBe('92m 13s')
+  })
+
+  it('should handle duration with only seconds', () => {
+    const result = formatDurationMinutesSeconds('PT45.5S')
+    expect(result).toBe('45s')
+  })
+
+  it('should handle duration with only minutes', () => {
+    const result = formatDurationMinutesSeconds('PT5M')
+    expect(result).toBe('5m')
+  })
+
+  it('should handle duration with hours only', () => {
+    const result = formatDurationMinutesSeconds('PT2H')
+    expect(result).toBe('120m')
+  })
+
+  it('should handle complex duration with hours, minutes and fractional seconds', () => {
+    const result = formatDurationMinutesSeconds('PT1H23M45.678S')
+    expect(result).toBe('83m 45s')
   })
 })

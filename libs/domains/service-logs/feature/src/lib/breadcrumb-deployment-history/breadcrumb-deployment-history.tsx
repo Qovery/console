@@ -38,13 +38,15 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
                     <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
                   </span>
                 </Tooltip>
-              ) : (
+              ) : deploymentHistory.find((h) => h.identifier.execution_id === versionId)?.auditing_data.created_at ? (
                 <span className="mr-2 text-sm font-medium text-neutral-50">
                   {dateFullFormat(
                     deploymentHistory.find((h) => h.identifier.execution_id === versionId)?.auditing_data.created_at ??
                       0
                   )}
                 </span>
+              ) : (
+                <span className="mr-2 text-sm font-medium text-neutral-50">Not available</span>
               )}
               <DropdownMenu.Trigger asChild>
                 <Button type="button" variant="plain" radius="full">

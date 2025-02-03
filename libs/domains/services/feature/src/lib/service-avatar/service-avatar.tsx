@@ -1,11 +1,24 @@
+import { type ServiceTypeEnum } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Avatar, Icon } from '@qovery/shared/ui'
 import { type IconURI, ServiceIcons } from '../service-icon/service-icon'
 
+// XXX: Todo remove `job_type`
+// https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1427
 export interface ServiceAvatarProps extends Omit<ComponentPropsWithoutRef<typeof Avatar>, 'fallback'> {
-  service: AnyService
+  service:
+    | {
+        icon_uri: string
+        serviceType: Extract<AnyService['service_type'], 'JOB'>
+        job_type: 'CRON' | 'LIFECYCLE'
+      }
+    | {
+        icon_uri: string
+        serviceType: Exclude<AnyService['service_type'], 'JOB'>
+        job_type?: never
+      }
 }
 
 export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatarProps>(function ServiceAvatar(

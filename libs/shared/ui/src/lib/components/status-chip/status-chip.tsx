@@ -1,5 +1,6 @@
 import {
   type ClusterStateEnum,
+  type DeploymentHistoryActionStatus,
   type StageStatusEnum,
   type StateEnum,
   type StepMetricStatusEnum,
@@ -29,7 +30,14 @@ import {
 import Tooltip from '../tooltip/tooltip'
 
 export interface StatusChipProps {
-  status: StateEnum | keyof typeof RunningState | ClusterStateEnum | StepMetricStatusEnum | StageStatusEnum | undefined
+  status:
+    | StateEnum
+    | keyof typeof RunningState
+    | ClusterStateEnum
+    | StepMetricStatusEnum
+    | StageStatusEnum
+    | DeploymentHistoryActionStatus
+    | undefined
   className?: string
   appendTooltipMessage?: string
   disabledTooltip?: boolean
@@ -84,7 +92,7 @@ export function StatusChip({
     .with('SKIP', 'SKIPPED', () => <SkipIcon />)
     .with('DELETED', () => <DeletedIcon />)
     // unknow / error / warning
-    .with('UNKNOWN', () => <UnknownIcon />)
+    .with('UNKNOWN', 'NEVER', () => <UnknownIcon />)
     .with('BUILD_ERROR', () => <BuildErrorIcon />)
     .with('WARNING', () => <WarningIcon />)
     .with(

@@ -114,19 +114,12 @@ function MenuManageDeployment({
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center">
               {match(state)
-                .with(
-                  'DEPLOYING',
-                  'RESTARTING',
-                  'BUILDING',
-                  'DELETING',
-                  'CANCELING',
-                  'STOPPING',
-                  'DEPLOYMENT_QUEUED',
-                  'DELETE_QUEUED',
-                  'STOP_QUEUED',
-                  'RESTART_QUEUED',
-                  () => <Icon iconName="loader" className="mr-3 animate-spin" />
-                )
+                .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', () => (
+                  <Icon iconName="loader" className="mr-3 animate-spin" />
+                ))
+                .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
+                  <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                ))
                 .otherwise(() => (
                   <Icon iconName="play" className="mr-4" />
                 ))}
