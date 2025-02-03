@@ -2,6 +2,7 @@ import {
   type Cluster,
   type ClusterStatus,
   EnvironmentModeEnum,
+  type KubernetesEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect } from 'react'
@@ -181,9 +182,9 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
     })
   }
 
-  const openAccessModal = () => {
+  const openAccessModal = (type: Extract<KubernetesEnum, 'MANAGED' | 'SELF_MANAGED'>) => {
     openModal({
-      content: <ClusterAccessModal clusterId={cluster.id} />,
+      content: <ClusterAccessModal clusterId={cluster.id} type={type} />,
       options: {
         width: 680,
       },
@@ -204,8 +205,12 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        {cluster.kubernetes !== 'SELF_MANAGED' && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal()}>
+        {cluster.kubernetes == 'SELF_MANAGED' ? (
+          <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={() => openAccessModal('SELF_MANAGED')}>
+            Connect
+          </DropdownMenu.Item>
+        ) : (
+          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal('MANAGED')}>
             Access info
           </DropdownMenu.Item>
         )}
