@@ -14,7 +14,8 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
       <p
         class="mb-6 mt-2 text-sm text-neutral-350"
       >
-        This section explains how to connect to your cluster using kubectl, k9s.
+        This section explains how to connect to your 
+        cluster using kubectl, k9s.
       </p>
       <ul
         class="flex flex-col gap-4"
@@ -118,7 +119,8 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
           <span
             class="font-medium"
           >
-            4. Use your favorite tool to access your cluster. Examples:
+            4
+            . Use your favorite tool to access your cluster. Examples:
           </span>
           <div
             class="relative flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400"
