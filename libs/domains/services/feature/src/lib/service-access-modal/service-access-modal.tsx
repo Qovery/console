@@ -268,15 +268,17 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
             <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
               <span className="font-medium">2. Connect via port-forward</span>
               <p className="text-neutral-350">
-                {serviceType === 'DATABASE'
-                  ? 'Run the following command from your terminal.'
-                  : 'Replace the local-port/target-port and run the following command from your terminal.'}
+                {serviceType === 'DATABASE' ? (
+                  <>
+                    Run the following command from your terminal. <br />
+                    <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#port-forward-on-a-managed-database">
+                      Learn more
+                    </ExternalLink>
+                  </>
+                ) : (
+                  'Replace the local-port/target-port and run the following command from your terminal.'
+                )}
               </p>
-              {serviceType === 'DATABASE' && (
-                <ExternalLink href="https://hub.qovery.com/docs/using-qovery/interface/cli/#port-forward-on-a-managed-database">
-                  Learn more
-                </ExternalLink>
-              )}
               <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
                 <div>
                   <span className="select-none">$ </span>
