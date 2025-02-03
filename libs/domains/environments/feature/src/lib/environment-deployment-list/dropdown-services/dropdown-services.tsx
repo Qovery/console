@@ -82,7 +82,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             }}
             onPointerLeave={() => setOpen(false)}
             style={{ pointerEvents: 'auto' }}
-            className="flex items-center after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-[''] last:after:hidden"
+            className="flex items-center outline-none after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-[''] last:after:hidden"
           >
             <StageStatusChip status={stage.status} />
           </DropdownMenu.Trigger>
