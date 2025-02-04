@@ -1,6 +1,7 @@
 import {
   type ClusterStateEnum,
   type DeploymentHistoryActionStatus,
+  type ServiceActionEnum,
   type StageStatusEnum,
   type StateEnum,
   type StepMetricStatusEnum,
@@ -37,6 +38,7 @@ export interface StatusChipProps {
     | StepMetricStatusEnum
     | StageStatusEnum
     | DeploymentHistoryActionStatus
+    | ServiceActionEnum
     | undefined
   className?: string
   appendTooltipMessage?: string
@@ -65,8 +67,8 @@ export function StatusChip({
   const icon = match(status)
     // success
     .with('READY', () => <StoppedIcon />)
-    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', 'DONE', () => <DeployedIcon />)
-    .with('RESTARTED', () => <RestartedIcon />)
+    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', 'DONE', 'DEPLOY', () => <DeployedIcon />)
+    .with('RESTARTED', 'RESTART', () => <RestartedIcon />)
     // spinner
     .with(
       'QUEUED',
@@ -87,10 +89,10 @@ export function StatusChip({
     .with('CANCELING', () => <CancelingIcon />)
     .with('DELETING', () => <DeletingIcon />)
     // stopped
-    .with('STOPPED', () => <StoppedIcon />)
+    .with('STOPPED', 'STOP', () => <StoppedIcon />)
     .with('CANCELED', 'CANCEL', () => <CanceledIcon />)
     .with('SKIP', 'SKIPPED', () => <SkipIcon />)
-    .with('DELETED', () => <DeletedIcon />)
+    .with('DELETED', 'DELETE', () => <DeletedIcon />)
     // unknow / error / warning
     .with('UNKNOWN', 'NEVER', () => <UnknownIcon />)
     .with('BUILD_ERROR', () => <BuildErrorIcon />)
