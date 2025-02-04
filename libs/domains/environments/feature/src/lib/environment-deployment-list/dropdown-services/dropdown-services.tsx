@@ -57,7 +57,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
       } else {
         setCurrentIndex(undefined)
       }
-    }, 250)
+    }, 50)
 
     setTimeoutId(newTimeoutId)
   }
@@ -82,7 +82,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             }}
             onPointerLeave={() => setOpen(false)}
             style={{ pointerEvents: 'auto' }}
-            className="flex items-center outline-none after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-[''] last:after:hidden"
+            className="flex items-center outline-none after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-[''] last:after:hidden focus:outline-none"
           >
             <StageStatusChip status={stage.status} />
           </DropdownMenu.Trigger>
@@ -131,7 +131,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
         onPointerEnter={() => setOpen(true)}
         onPointerLeave={() => setOpen(false)}
         className={clsx(
-          'relative flex max-h-96 w-56 flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10 data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded',
+          'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10',
           {
             'hidden opacity-0': currentIndex === undefined,
             '-left-[38px]': stages.length === 4,
@@ -158,11 +158,12 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                   x: direction * -80 + '%',
                   opacity: 0,
                   filter: 'blur(3px)',
-                  transition: { ease: 'easeOut', duration: 0.22 },
+                  transition: { ease: [0.39, 0.24, 0.3, 1], duration: 0.22 },
                 }}
                 transition={{
-                  x: { duration: 0.32, type: 'spring', bounce: 0 },
-                  opacity: { duration: 0.4 },
+                  x: { duration: 0.22, type: 'spring', bounce: 0 },
+                  opacity: { duration: 0.22 },
+                  ease: [0.39, 0.24, 0.3, 1],
                 }}
               >
                 {stages.map((stage, index) => (
