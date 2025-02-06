@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
 import { type DeploymentHistoryEnvironmentV2, OrganizationEventOrigin, StateEnum } from 'qovery-typescript-axios'
 import { Fragment, useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -36,7 +37,7 @@ import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { DropdownServices } from './dropdown-services/dropdown-services'
 import { EnvironmentDeploymentListSkeleton } from './environment-deployment-list-skeleton'
-import TableFilterTriggerBy from './table-filter-trigger-by/table-filter-trigger-by'
+import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
 
@@ -98,7 +99,30 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
               const state = data.status
 
               return (
-                <div className="flex items-center justify-between">
+                <div
+                  className={twMerge(
+                    clsx(
+                      'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
+                      {
+                        'before:bg-brand-500': [
+                          'DEPLOYING',
+                          'RESTARTING',
+                          'BUILDING',
+                          'DELETING',
+                          'STOPPING',
+                          'CANCELING',
+                        ].includes(state),
+                        'before:bg-neutral-300': [
+                          'QUEUED',
+                          'DEPLOYMENT_QUEUED',
+                          'DELETE_QUEUED',
+                          'STOP_QUEUED',
+                          'RESTART_QUEUED',
+                        ].includes(state),
+                      }
+                    )
+                  )}
+                >
                   <div className="flex flex-col gap-1">
                     <span className="text-sm font-medium text-neutral-400">
                       {dateFullFormat(data.auditing_data.created_at, undefined, 'dd MMM, HH:mm a')}
@@ -179,7 +203,10 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
             })
             .otherwise(() => (
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-neutral-400">In queue...</span>
+                <div className="flex flex-col gap-1 text-sm text-neutral-350">
+                  <span className="font-medium">In queue...</span>
+                  <span>--</span>
+                </div>
                 <div className="min-w-28 text-right">
                   <Tooltip content="Logs">
                     <Link

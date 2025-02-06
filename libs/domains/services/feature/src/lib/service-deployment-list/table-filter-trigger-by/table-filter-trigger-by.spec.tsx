@@ -1,5 +1,5 @@
 import { type Column } from '@tanstack/react-table'
-import { type DeploymentHistoryEnvironmentV2 } from 'qovery-typescript-axios'
+import { type DeploymentHistoryEnvironmentV2, type QueuedDeploymentRequestWithStages } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { TableFilterTriggerBy } from './table-filter-trigger-by'
 
@@ -35,7 +35,7 @@ describe('TableFilterTriggerBy', () => {
     columnDef: {
       header: 'Trigger',
     },
-  } as unknown as Column<DeploymentHistoryEnvironmentV2, unknown>
+  } as unknown as Column<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages, unknown>
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -48,7 +48,7 @@ describe('TableFilterTriggerBy', () => {
       getFilterValue: jest.fn().mockReturnValue({
         origin: ['API'],
       }),
-    } as unknown as Column<DeploymentHistoryEnvironmentV2, unknown>
+    } as unknown as Column<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages, unknown>
 
     renderWithProviders(<TableFilterTriggerBy column={filteredColumn} />)
 
@@ -62,7 +62,7 @@ describe('TableFilterTriggerBy', () => {
       getFilterValue: jest.fn().mockReturnValue({
         origin: ['CONSOLE'],
       }),
-    } as unknown as Column<DeploymentHistoryEnvironmentV2, unknown>
+    } as unknown as Column<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages, unknown>
 
     renderWithProviders(<TableFilterTriggerBy column={filteredColumn} />)
 

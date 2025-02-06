@@ -53,30 +53,26 @@ const mockDeploymentHistory = [
   },
 ]
 
-// const mockDeploymentQueue = [
-//   {
-//     trigger_action: 'DEPLOY',
-//     stages: [
-//       {
-//         status: 'QUEUED',
-//         services: [
-//           {
-//             identifier: {
-//               name: 'api-service',
-//               service_id: 'service-456',
-//               service_type: 'APPLICATION',
-//             },
-//           },
-//         ],
-//       },
-//     ],
-//     auditing_data: {
-//       created_at: '2024-01-30T12:02:00Z',
-//       origin: 'CONSOLE',
-//       triggered_by: 'User',
-//     },
-//   },
-// ]
+const mockDeploymentQueue = [
+  {
+    identifier: {
+      service_id: '2f9b67bb-092e-4612-84c3-a426bb401279',
+      service_type: 'JOB',
+      name: 'my-job',
+    },
+    auditing_data: {
+      created_at: '2025-01-23T08:55:20.092474Z',
+      updated_at: '2025-01-23T08:55:42.898794Z',
+      origin: 'CONSOLE',
+      triggered_by: 'John Doe',
+    },
+    status_details: {
+      action: 'DEPLOY',
+      status: 'QUEUED',
+    },
+    icon_uri: 'app://qovery-console/cron-job',
+  },
+]
 
 jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
   useDeploymentHistory: () => ({
@@ -85,12 +81,12 @@ jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
   }),
 }))
 
-// jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
-//   useDeploymentQueue: () => ({
-//     data: mockDeploymentQueue,
-//     isFetched: true,
-//   }),
-// }))
+jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
+  useDeploymentQueue: () => ({
+    data: mockDeploymentQueue,
+    isFetched: true,
+  }),
+}))
 
 describe('ServiceDeploymentList', () => {
   it('should render the deployment list', async () => {
@@ -110,9 +106,9 @@ describe('ServiceDeploymentList', () => {
     expect(screen.getByText('Console')).toBeInTheDocument()
   })
 
-  // it('should render the queue item', async () => {
-  //   renderWithProviders(<ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />)
+  it('should render the queue item', async () => {
+    renderWithProviders(<ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />)
 
-  //   expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
-  // })
+    expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
+  })
 })

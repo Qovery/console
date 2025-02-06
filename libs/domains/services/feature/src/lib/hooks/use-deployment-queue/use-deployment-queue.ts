@@ -4,13 +4,11 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentQueueProps {
   serviceId: string
-  serviceType?: ServiceType
 }
 
-export function useDeploymentQueue({ serviceId, serviceType }: UseDeploymentQueueProps) {
+export function useDeploymentQueue({ serviceId }: UseDeploymentQueueProps) {
   return useQuery({
-    // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-    ...queries.services.deploymentQueue({ serviceId, serviceType: serviceType!! }),
+    ...queries.services.deploymentQueue({ serviceId }),
     refetchInterval: 5000,
     retryOnMount: true,
     notifyOnChangeProps: ['data'],

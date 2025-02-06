@@ -1,6 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { type Column } from '@tanstack/react-table'
-import { type DeploymentHistoryService } from 'qovery-typescript-axios'
+import { type DeploymentHistoryService, type QueuedDeploymentRequestForService } from 'qovery-typescript-axios'
 import { Fragment, useMemo, useState } from 'react'
 import { Button, Icon, Popover, Truncate, dropdownMenuItemVariants } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -10,7 +10,11 @@ type FilterValue = {
   triggeredBy?: string[]
 }
 
-export function TableFilterTriggerBy({ column }: { column: Column<DeploymentHistoryService, unknown> }) {
+export function TableFilterTriggerBy({
+  column,
+}: {
+  column: Column<DeploymentHistoryService | QueuedDeploymentRequestForService, unknown>
+}) {
   const [open, setOpen] = useState(false)
 
   const triggeredByValues = useMemo(() => {

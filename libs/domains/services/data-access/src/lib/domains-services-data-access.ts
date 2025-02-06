@@ -365,30 +365,11 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
-  deploymentQueue: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
+  deploymentQueue: ({ serviceId }: { serviceId: string }) => ({
     queryKey: [serviceId],
     async queryFn() {
-      return await match(serviceType)
-        .with(
-          'APPLICATION',
-          async () => (await applicationDeploymentsApi.listApplicationDeploymentHistoryV2(serviceId)).data.results
-        )
-        .with(
-          'CONTAINER',
-          async () => (await containerDeploymentsApi.listContainerDeploymentHistoryV2(serviceId)).data.results
-        )
-        .with(
-          'DATABASE',
-          async () => (await databaseDeploymentsApi.listDatabaseDeploymentHistoryV2(serviceId)).data.results
-        )
-        .with(
-          'JOB',
-          'CRON_JOB',
-          'LIFECYCLE_JOB',
-          async () => (await jobDeploymentsApi.listJobDeploymentHistoryV2(serviceId)).data.results
-        )
-        .with('HELM', async () => (await helmDeploymentsApi.listHelmDeploymentHistoryV2(serviceId)).data.results)
-        .exhaustive()
+      const response = await environmentMainCallsApi.listDeploymentRequestByServiceId(serviceId)
+      return response.data.results
     },
   }),
   listLinks: ({

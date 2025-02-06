@@ -125,96 +125,145 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           </Link>
         )}
       </div>
-      <DropdownMenu.Content
-        loop
-        asChild
-        onPointerEnter={() => setOpen(true)}
-        onPointerLeave={() => setOpen(false)}
-        className={clsx(
-          'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10',
-          {
-            'hidden opacity-0': currentIndex === undefined,
-            '-left-[26px]': stages.length === 3,
-            '-left-[38px]': stages.length === 4,
-            '-left-[52px]': stages.length === 5,
-            '-left-7': stages.length > 5,
-          }
-        )}
-      >
-        <div className="overflow-hidden">
-          {currentIndex !== undefined && (
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div
-                key={currentIndex}
-                className="flex"
-                initial={{
-                  x: direction * 80 + '%',
-                  opacity: 0,
-                }}
-                animate={{
-                  x: 0,
-                  opacity: 1,
-                }}
-                exit={{
-                  x: direction * -80 + '%',
-                  opacity: 0,
-                  filter: 'blur(3px)',
-                  transition: { ease: [0.39, 0.24, 0.3, 1], duration: 0.22 },
-                }}
-                transition={{
-                  x: { duration: 0.22, type: 'spring', bounce: 0 },
-                  opacity: { duration: 0.22 },
-                  ease: [0.39, 0.24, 0.3, 1],
-                }}
-              >
-                {stages.map((stage, index) => (
-                  <div
-                    key={index}
-                    className={twMerge(
-                      clsx('hidden w-56 rounded border border-neutral-200', {
-                        'flex flex-col': currentIndex === index,
-                      })
-                    )}
-                  >
-                    <div className="flex h-[54px] items-center gap-4 rounded-t bg-neutral-100 px-2 py-2.5">
-                      <Indicator
-                        align="end"
-                        side="right"
-                        content={
-                          stage.status !== 'SKIPPED' && (
-                            <Tooltip content={upperCaseFirstLetter(deploymentHistory.trigger_action)}>
-                              <span>
-                                <TriggerActionIcon
-                                  triggerAction={deploymentHistory.trigger_action}
-                                  className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 text-xs text-neutral-350"
-                                />
-                              </span>
-                            </Tooltip>
-                          )
-                        }
-                      >
-                        <Tooltip content={upperCaseFirstLetter(stage.status)}>
-                          <span>
-                            <StageStatusChip status={stage.status} />
-                          </span>
-                        </Tooltip>
-                      </Indicator>
-                      <div className="flex flex-col text-neutral-400">
-                        <span className="text-ssm font-medium">{upperCaseFirstLetter(stage.name)}</span>
-                        {match(stage)
-                          .with(P.when(isDeploymentStageQueue), () => null)
-                          .otherwise((stage) =>
-                            // XXX: Sometimes we don't have directly the duration in the stage object linked to queing
-                            stage.duration ? (
-                              <span className="text-[11px]">{formatDuration(stage.duration)}</span>
-                            ) : null
-                          )}
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          loop
+          asChild
+          onPointerEnter={() => setOpen(true)}
+          onPointerLeave={() => setOpen(false)}
+          className={clsx(
+            'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10',
+            {
+              'hidden opacity-0': currentIndex === undefined,
+              '-left-[26px]': stages.length === 3,
+              '-left-[38px]': stages.length === 4,
+              '-left-[52px]': stages.length === 5,
+              '-left-7': stages.length > 5,
+            }
+          )}
+        >
+          <div className="overflow-hidden">
+            {currentIndex !== undefined && (
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={currentIndex}
+                  className="flex"
+                  initial={{
+                    x: direction * 80 + '%',
+                    opacity: 0,
+                  }}
+                  animate={{
+                    x: 0,
+                    opacity: 1,
+                  }}
+                  exit={{
+                    x: direction * -80 + '%',
+                    opacity: 0,
+                    filter: 'blur(3px)',
+                    transition: { ease: [0.39, 0.24, 0.3, 1], duration: 0.22 },
+                  }}
+                  transition={{
+                    x: { duration: 0.22, type: 'spring', bounce: 0 },
+                    opacity: { duration: 0.22 },
+                    ease: [0.39, 0.24, 0.3, 1],
+                  }}
+                >
+                  {stages.map((stage, index) => (
+                    <div
+                      key={index}
+                      className={twMerge(
+                        clsx('hidden w-56 rounded border border-neutral-200', {
+                          'flex flex-col': currentIndex === index,
+                        })
+                      )}
+                    >
+                      <div className="flex h-[54px] items-center gap-4 rounded-t bg-neutral-100 px-2 py-2.5">
+                        <Indicator
+                          align="end"
+                          side="right"
+                          content={
+                            stage.status !== 'SKIPPED' && (
+                              <Tooltip content={upperCaseFirstLetter(deploymentHistory.trigger_action)}>
+                                <span>
+                                  <TriggerActionIcon
+                                    triggerAction={deploymentHistory.trigger_action}
+                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 text-xs text-neutral-350"
+                                  />
+                                </span>
+                              </Tooltip>
+                            )
+                          }
+                        >
+                          <Tooltip content={upperCaseFirstLetter(stage.status)}>
+                            <span>
+                              <StageStatusChip status={stage.status} />
+                            </span>
+                          </Tooltip>
+                        </Indicator>
+                        <div className="flex flex-col text-neutral-400">
+                          <span className="text-ssm font-medium">{upperCaseFirstLetter(stage.name)}</span>
+                          {match(stage)
+                            .with(P.when(isDeploymentStageQueue), () => null)
+                            .otherwise((stage) =>
+                              // XXX: Sometimes we don't have directly the duration in the stage object linked to queing
+                              stage.duration ? (
+                                <span className="text-[11px]">{formatDuration(stage.duration)}</span>
+                              ) : null
+                            )}
+                        </div>
                       </div>
-                    </div>
-                    {match(stage)
-                      .with(P.when(isDeploymentStageQueue), (s) =>
-                        s.services.map((service, index) => {
-                          return (
+                      {match(stage)
+                        .with(P.when(isDeploymentStageQueue), (s) =>
+                          s.services.map((service, index) => {
+                            return (
+                              <DropdownMenu.Item
+                                key={index}
+                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                                asChild
+                              >
+                                <Link
+                                  to={
+                                    ENVIRONMENT_LOGS_URL(
+                                      environment.organization.id,
+                                      environment.project.id,
+                                      environment.id
+                                    ) + ENVIRONMENT_STAGES_URL()
+                                  }
+                                  state={{ prevUrl: pathname }}
+                                >
+                                  {service.details && (
+                                    <ServiceAvatar
+                                      border="solid"
+                                      size="sm"
+                                      service={
+                                        'job_type' in service.details
+                                          ? {
+                                              icon_uri: service.icon_uri ?? '',
+                                              serviceType: 'JOB' as const,
+                                              job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
+                                            }
+                                          : {
+                                              icon_uri: service.icon_uri ?? '',
+                                              serviceType: service.identifier.service_type as Exclude<
+                                                AnyService['service_type'],
+                                                'JOB'
+                                              >,
+                                            }
+                                      }
+                                    />
+                                  )}
+                                  <span className="flex flex-col">
+                                    <span className="truncate text-ssm">
+                                      <Truncate text={service.identifier.name} truncateLimit={16} />
+                                    </span>
+                                  </span>
+                                </Link>
+                              </DropdownMenu.Item>
+                            )
+                          })
+                        )
+                        .otherwise((s) =>
+                          s.services.map((service, index) => (
                             <DropdownMenu.Item
                               key={index}
                               className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
@@ -226,7 +275,11 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                     environment.organization.id,
                                     environment.project.id,
                                     environment.id
-                                  ) + ENVIRONMENT_STAGES_URL()
+                                  ) +
+                                  DEPLOYMENT_LOGS_VERSION_URL(
+                                    service.identifier.service_id,
+                                    service.identifier.execution_id
+                                  )
                                 }
                                 state={{ prevUrl: pathname }}
                               >
@@ -255,85 +308,34 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                   <span className="truncate text-ssm">
                                     <Truncate text={service.identifier.name} truncateLimit={16} />
                                   </span>
+                                  {service.total_duration && (
+                                    <>
+                                      <span
+                                        title={dateUTCString(service.auditing_data.updated_at)}
+                                        className="text-[11px]"
+                                      >
+                                        {formatDurationMinutesSeconds(service.total_duration ?? '')}
+                                      </span>
+                                    </>
+                                  )}
                                 </span>
+                                {service.status_details && (
+                                  <span className="ml-auto">
+                                    <StatusChip status={service.status_details.status} />
+                                  </span>
+                                )}
                               </Link>
                             </DropdownMenu.Item>
-                          )
-                        })
-                      )
-                      .otherwise((s) =>
-                        s.services.map((service, index) => (
-                          <DropdownMenu.Item
-                            key={index}
-                            className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
-                            asChild
-                          >
-                            <Link
-                              to={
-                                ENVIRONMENT_LOGS_URL(
-                                  environment.organization.id,
-                                  environment.project.id,
-                                  environment.id
-                                ) +
-                                DEPLOYMENT_LOGS_VERSION_URL(
-                                  service.identifier.service_id,
-                                  service.identifier.execution_id
-                                )
-                              }
-                              state={{ prevUrl: pathname }}
-                            >
-                              {service.details && (
-                                <ServiceAvatar
-                                  border="solid"
-                                  size="sm"
-                                  service={
-                                    'job_type' in service.details
-                                      ? {
-                                          icon_uri: service.icon_uri ?? '',
-                                          serviceType: 'JOB' as const,
-                                          job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
-                                        }
-                                      : {
-                                          icon_uri: service.icon_uri ?? '',
-                                          serviceType: service.identifier.service_type as Exclude<
-                                            AnyService['service_type'],
-                                            'JOB'
-                                          >,
-                                        }
-                                  }
-                                />
-                              )}
-                              <span className="flex flex-col">
-                                <span className="truncate text-ssm">
-                                  <Truncate text={service.identifier.name} truncateLimit={16} />
-                                </span>
-                                {service.total_duration && (
-                                  <>
-                                    <span
-                                      title={dateUTCString(service.auditing_data.updated_at)}
-                                      className="text-[11px]"
-                                    >
-                                      {formatDurationMinutesSeconds(service.total_duration ?? '')}
-                                    </span>
-                                  </>
-                                )}
-                              </span>
-                              {service.status_details && (
-                                <span className="ml-auto">
-                                  <StatusChip status={service.status_details.status} />
-                                </span>
-                              )}
-                            </Link>
-                          </DropdownMenu.Item>
-                        ))
-                      )}
-                  </div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
-          )}
-        </div>
-      </DropdownMenu.Content>
+                          ))
+                        )}
+                    </div>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            )}
+          </div>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
     </DropdownMenu.Root>
   )
 }
