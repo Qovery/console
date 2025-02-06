@@ -1,32 +1,15 @@
-import { type DeploymentHistoryDatabase } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useDeploymentHistory, useService, useServiceType } from '@qovery/domains/services/feature'
-import { databaseDeploymentsFactoryMock } from '@qovery/shared/factories'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { ServiceDeploymentList } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { PageDeployments } from '../../ui/page-deployments/page-deployments'
 
 export function PageDeploymentsFeature() {
-  useDocumentTitle('Database Deployments - Qovery')
+  useDocumentTitle('Database deployments - Qovery')
 
   const { databaseId = '', environmentId = '' } = useParams()
-  const { data: serviceType } = useServiceType({ serviceId: databaseId, environmentId })
-  const { data: deploymentHistory, isLoading: isDeploymentHistoryLoading } = useDeploymentHistory({
-    serviceId: databaseId,
-    serviceType,
-  })
-  const { isLoading: isLoadingDatabase } = useService({ serviceId: databaseId, serviceType: 'DATABASE' })
+  const { data: environment } = useEnvironment({ environmentId })
 
-  const loadingDatabasesDeployments = databaseDeploymentsFactoryMock(3)
-  const isLoading = isLoadingDatabase || isDeploymentHistoryLoading
-
-  return (
-    <PageDeployments
-      deployments={
-        !isLoading ? ((deploymentHistory?.results ?? []) as DeploymentHistoryDatabase[]) : loadingDatabasesDeployments
-      }
-      isLoading={isLoading}
-    />
-  )
+  return <ServiceDeploymentList environment={environment} serviceId={databaseId} />
 }
 
 export default PageDeploymentsFeature

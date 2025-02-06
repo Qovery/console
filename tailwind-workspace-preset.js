@@ -364,6 +364,16 @@ module.exports = {
             'background-position': 'calc(100% + var(--shiny-width)) 0',
           },
         },
+        scalein: {
+          '0%': {
+            opacity: 0,
+            transform: 'scale(.98)',
+          },
+          to: {
+            opacity: 1,
+            transform: 'scale(1)',
+          },
+        },
         ...slideEntrances(),
         ...slideExits(),
       },

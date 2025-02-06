@@ -32,6 +32,7 @@ jest.mock('@radix-ui/react-dropdown-menu', () => ({
       {children}
     </div>
   ),
+  Portal: ({ children }: any) => <div data-testid="dropdown-portal">{children}</div>,
 }))
 
 const mockEnvironment = {

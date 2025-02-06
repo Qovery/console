@@ -343,27 +343,33 @@ export const services = createQueryKeys('services', {
     queryKey: [serviceId],
     async queryFn() {
       return await match(serviceType)
-        .with('APPLICATION', async () => ({
-          ...(await applicationDeploymentsApi.listApplicationDeploymentHistory(serviceId)).data,
-          serviceType: 'APPLICATION' as const,
-        }))
-        .with('CONTAINER', async () => ({
-          ...(await containerDeploymentsApi.listContainerDeploymentHistory(serviceId)).data,
-          serviceType: 'CONTAINER' as const,
-        }))
-        .with('DATABASE', async () => ({
-          ...(await databaseDeploymentsApi.listDatabaseDeploymentHistory(serviceId)).data,
-          serviceType: 'DATABASE' as const,
-        }))
-        .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', async () => ({
-          ...(await jobDeploymentsApi.listJobDeploymentHistory(serviceId)).data,
-          serviceType: 'JOB' as const,
-        }))
-        .with('HELM', async () => ({
-          ...(await helmDeploymentsApi.listHelmDeploymentHistory(serviceId)).data,
-          serviceType: 'HELM' as const,
-        }))
+        .with(
+          'APPLICATION',
+          async () => (await applicationDeploymentsApi.listApplicationDeploymentHistoryV2(serviceId)).data.results
+        )
+        .with(
+          'CONTAINER',
+          async () => (await containerDeploymentsApi.listContainerDeploymentHistoryV2(serviceId)).data.results
+        )
+        .with(
+          'DATABASE',
+          async () => (await databaseDeploymentsApi.listDatabaseDeploymentHistoryV2(serviceId)).data.results
+        )
+        .with(
+          'JOB',
+          'CRON_JOB',
+          'LIFECYCLE_JOB',
+          async () => (await jobDeploymentsApi.listJobDeploymentHistoryV2(serviceId)).data.results
+        )
+        .with('HELM', async () => (await helmDeploymentsApi.listHelmDeploymentHistoryV2(serviceId)).data.results)
         .exhaustive()
+    },
+  }),
+  deploymentQueue: ({ serviceId }: { serviceId: string }) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const response = await environmentMainCallsApi.listDeploymentRequestByServiceId(serviceId)
+      return response.data.results
     },
   }),
   listLinks: ({

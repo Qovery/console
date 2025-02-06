@@ -1,29 +1,15 @@
-import { type DeploymentHistoryApplication } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useDeploymentHistory, useServiceType } from '@qovery/domains/services/feature'
-import { applicationDeploymentsFactoryMock } from '@qovery/shared/factories'
-import { PageDeployments } from '../../ui/page-deployments/page-deployments'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { ServiceDeploymentList } from '@qovery/domains/services/feature'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export function PageDeploymentsFeature() {
+  useDocumentTitle('Service deployments - Qovery')
+
   const { applicationId = '', environmentId = '' } = useParams()
-  const { data: serviceType } = useServiceType({ serviceId: applicationId, environmentId })
-  const { data: deployments, isLoading: isDeploymentHistoryLoading } = useDeploymentHistory({
-    serviceId: applicationId,
-    serviceType,
-  })
+  const { data: environment } = useEnvironment({ environmentId })
 
-  const loadingApplicationsDeployments = applicationDeploymentsFactoryMock(3)
-
-  return (
-    <PageDeployments
-      deployments={
-        !isDeploymentHistoryLoading
-          ? ((deployments?.results ?? []) as DeploymentHistoryApplication[])
-          : loadingApplicationsDeployments
-      }
-      isLoading={isDeploymentHistoryLoading}
-    />
-  )
+  return <ServiceDeploymentList environment={environment} serviceId={applicationId} />
 }
 
 export default PageDeploymentsFeature
