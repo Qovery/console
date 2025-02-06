@@ -63,8 +63,8 @@ const mockDeploymentQueue = [
     auditing_data: {
       created_at: '2025-01-23T08:55:20.092474Z',
       updated_at: '2025-01-23T08:55:42.898794Z',
-      origin: 'CONSOLE',
-      triggered_by: 'John Doe',
+      origin: 'API',
+      triggered_by: 'Jane Doe',
     },
     status_details: {
       action: 'DEPLOY',
