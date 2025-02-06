@@ -149,12 +149,11 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                             </ActionToolbar.Button>
                           </DropdownMenu.Trigger>
                           <DropdownMenu.Content>
-                            {state === 'ONGOING' ||
-                              (state === 'QUEUED' && (
-                                <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
-                                  Cancel deployment
-                                </DropdownMenu.Item>
-                              ))}
+                            {(state === 'ONGOING' || state === 'QUEUED') && (
+                              <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
+                                Cancel deployment
+                              </DropdownMenu.Item>
+                            )}
                           </DropdownMenu.Content>
                         </DropdownMenu.Root>
                       ))
