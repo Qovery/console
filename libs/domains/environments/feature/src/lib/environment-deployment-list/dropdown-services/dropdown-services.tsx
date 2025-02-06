@@ -134,6 +134,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10',
           {
             'hidden opacity-0': currentIndex === undefined,
+            '-left-[26px]': stages.length === 3,
             '-left-[38px]': stages.length === 4,
             '-left-[52px]': stages.length === 5,
             '-left-7': stages.length > 5,

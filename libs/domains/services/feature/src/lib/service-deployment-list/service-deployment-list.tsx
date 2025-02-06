@@ -212,7 +212,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
             ))
         },
       }),
-      columnHelper.accessor('status_details.action', {
+      columnHelper.accessor('status_details.status', {
         id: 'action_status',
         header: 'Status deployment',
         enableColumnFilter: true,

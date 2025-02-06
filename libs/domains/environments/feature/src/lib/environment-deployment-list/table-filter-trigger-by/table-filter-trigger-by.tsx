@@ -79,12 +79,12 @@ export function TableFilterTriggerBy({
         <div className="relative inline-block">
           <Popover.Trigger>
             <Button
-              className={twMerge('gap-1 whitespace-nowrap text-xs capitalize', column.getIsFiltered() ? 'pr-6' : '')}
+              className={twMerge('gap-1 whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
               color={column.getIsFiltered() ? 'brand' : 'neutral'}
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
               {column.getIsFiltered() ? (
-                <span className="block max-w-52 truncate">
+                <span className="block max-w-52 truncate capitalize">
                   {displayValue !== 'API' && displayValue !== 'CLI'
                     ? displayValue?.toLowerCase().replace('_', ' ') ?? ''
                     : displayValue}
