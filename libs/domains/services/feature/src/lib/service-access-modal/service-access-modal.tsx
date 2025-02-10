@@ -88,6 +88,8 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
         `qovery port-forward https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${service.environment.id}/application/${service.id} -p [local-port]:[target-port]`
     )
 
+  const connectShell = `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${service.environment.id}/application/${service.id}`
+
   return (
     <Section className="p-5">
       <Heading className="h4 max-w-sm truncate text-neutral-400">Access from</Heading>
@@ -287,6 +289,19 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 <CopyButton content={connectPortForward} />
               </div>
             </div>
+            {serviceType !== 'DATABASE' && (
+              <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
+                <span className="font-medium">3. Connect via shell</span>
+                <p className="text-neutral-350">Run the following command from your terminal.</p>
+                <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                  <div>
+                    <span className="select-none">$ </span>
+                    {connectShell}
+                  </div>
+                  <CopyButton content={connectShell} />
+                </div>
+              </div>
+            )}
             {serviceType === 'DATABASE' && <SectionDatabaseConnectionUri service={service} />}
           </Tabs.Content>
           {serviceType === 'DATABASE' && (
