@@ -10,7 +10,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { PostHogFeature } from 'posthog-js/react'
 import type {
   ApplicationGitRepository,
   ContainerResponse,
@@ -746,32 +745,15 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         description="You can create a service from the button on the top"
         className="mt-2 rounded-t-sm bg-white pt-10"
       >
-        <PostHogFeature
-          flag="service-dropdown-list"
-          match={true}
-          fallback={
-            <Link
-              as="button"
-              size="lg"
-              className="mt-5 gap-2"
-              to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
-            >
-              New service
-              <Icon iconName="circle-plus" iconStyle="regular" />
-            </Link>
-          }
+        <Link
+          as="button"
+          size="lg"
+          className="mt-5 gap-2"
+          to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
         >
-          <Menu
-            trigger={
-              <Button size="lg" className="mt-5 gap-2">
-                New service
-                <Icon iconName="circle-plus" iconStyle="regular" />
-              </Button>
-            }
-            menus={newServicesMenu}
-            arrowAlign={MenuAlign.CENTER}
-          />
-        </PostHogFeature>
+          New service
+          <Icon iconName="circle-plus" iconStyle="regular" />
+        </Link>
       </EmptyState>
     )
   }

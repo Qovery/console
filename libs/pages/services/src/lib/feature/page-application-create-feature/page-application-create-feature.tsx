@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -13,7 +12,6 @@ import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_APPLICATION_TEMPLATE_CREATION_URL,
   SERVICES_CREATION_GENERAL_URL,
-  SERVICES_GENERAL_URL,
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -94,7 +92,6 @@ export function PageApplicationCreateFeature() {
     slug && option ? SERVICES_APPLICATION_TEMPLATE_CREATION_URL(slug, option) : SERVICES_APPLICATION_CREATION_URL
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
-  const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
   const templateData = findTemplateData(slug, option)
 
   // Sync general data with frontend template data
@@ -129,9 +126,7 @@ export function PageApplicationCreateFeature() {
       <FunnelFlow
         onExit={() => {
           if (window.confirm('Do you really want to leave?')) {
-            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-              flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-            }`
+            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`
             navigate(link)
           }
         }}

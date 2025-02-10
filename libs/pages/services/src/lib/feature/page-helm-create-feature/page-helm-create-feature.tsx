@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type GitProviderEnum, type GitTokenResponse, type HelmRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
@@ -6,7 +5,6 @@ import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-do
 import { type HelmValuesArgumentsData, type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
-  SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_HELM_TEMPLATE_CREATION_URL,
@@ -85,8 +83,6 @@ export function PageHelmCreateFeature() {
   const path = slug && option ? SERVICES_HELM_TEMPLATE_CREATION_URL(slug, option) : SERVICES_HELM_CREATION_URL
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
-  const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
-
   return (
     <HelmCreateContext.Provider
       value={{
@@ -101,9 +97,7 @@ export function PageHelmCreateFeature() {
       <FunnelFlow
         onExit={() => {
           if (window.confirm('Do you really want to leave?')) {
-            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-              flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-            }`
+            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`
             navigate(link)
           }
         }}

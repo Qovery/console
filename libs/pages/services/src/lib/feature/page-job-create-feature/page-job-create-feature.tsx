@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
@@ -138,17 +137,13 @@ export function PageJobCreateFeature() {
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
 
-  const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
-
   const displayIntroductionView = jobType === ServiceTypeEnum.LIFECYCLE_JOB && !getLocalStorageStepIntroduction()
 
   const funnel = (
     <FunnelFlow
       onExit={() => {
         if (window.confirm('Do you really want to leave?')) {
-          const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-            flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-          }`
+          const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`
           navigate(link)
         }
       }}
