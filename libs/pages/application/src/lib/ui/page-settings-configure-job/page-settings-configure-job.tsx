@@ -21,7 +21,7 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
           title={match(service)
             .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
             .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
-            .run()}
+            .otherwise(() => '')}
           description={match(service)
             .with(
               { service_type: 'JOB', job_type: 'CRON' },
@@ -31,7 +31,7 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
               { service_type: 'JOB', job_type: 'LIFECYCLE' },
               () => 'Define the events triggering the execution of this job and the commands to execute.'
             )
-            .run()}
+            .otherwise(() => '')}
         />
         <form onSubmit={onSubmit} className="space-y-10">
           <JobConfigureSettings
