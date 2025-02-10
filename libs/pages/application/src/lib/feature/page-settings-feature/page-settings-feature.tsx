@@ -73,7 +73,10 @@ export function PageSettingsFeature() {
   }
 
   const configureJobSetting = {
-    title: 'Triggers',
+    title: match(service)
+      .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
+      .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
+      .run(),
     icon: IconAwesomeEnum.GEARS,
     url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
   }

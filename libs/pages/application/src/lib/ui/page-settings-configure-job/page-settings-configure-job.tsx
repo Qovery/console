@@ -1,4 +1,5 @@
 import { useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { type Job } from '@qovery/domains/services/data-access'
 import { JobConfigureSettings, SettingsHeading } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
@@ -17,8 +18,20 @@ export function PageSettingsConfigureJob({ service, loading, onSubmit }: PageSet
     <Section className="flex w-full flex-col justify-between">
       <div className="max-w-content-with-navigation-left p-8">
         <SettingsHeading
-          title="Triggers"
-          description="Define the events triggering the execution of this job and the commands to execute."
+          title={match(service)
+            .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
+            .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
+            .run()}
+          description={match(service)
+            .with(
+              { service_type: 'JOB', job_type: 'CRON' },
+              () => 'Job configuration allows you to control the behavior of your service.'
+            )
+            .with(
+              { service_type: 'JOB', job_type: 'LIFECYCLE' },
+              () => 'Define the events triggering the execution of this job and the commands to execute.'
+            )
+            .run()}
         />
         <form onSubmit={onSubmit} className="space-y-10">
           <JobConfigureSettings
