@@ -5,30 +5,22 @@ import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type Application, type Container, type Job } from '@qovery/domains/services/data-access'
-import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { defaultLivenessProbe, defaultReadinessProbe, probeFormatted } from '@qovery/shared/console-shared'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type HealthcheckData } from '@qovery/shared/interfaces'
-import {
-  APPLICATION_SETTINGS_RESOURCES_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-} from '@qovery/shared/routes'
+import { APPLICATION_SETTINGS_RESOURCES_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsHealthchecks from '../../ui/page-settings-healthchecks/page-settings-healthchecks'
 
 export function SettingsHealthchecksFeature({ service }: { service: Application | Container | Job }) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: service.id })
   const { data: environment } = useEnvironment({ environmentId })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
+    organizationId,
+    projectId,
     environmentId,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id),
   })
 
   const methods = useForm({

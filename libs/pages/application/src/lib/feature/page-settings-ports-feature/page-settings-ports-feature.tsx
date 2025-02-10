@@ -11,7 +11,6 @@ import { type Application, type Container } from '@qovery/domains/services/data-
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type PortData } from '@qovery/shared/interfaces'
-import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
@@ -76,9 +75,9 @@ export function SettingsPortsFeature({
   service: Application | Container
 }) {
   const { mutate: editService } = useEditService({
-    environmentId: service.environment?.id || '',
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment?.id) + ENVIRONMENT_LOGS_URL(service.id),
+    organizationId,
+    projectId,
+    environmentId: service.environment.id,
   })
 
   const { openModal, closeModal } = useModal()

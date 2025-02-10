@@ -34,7 +34,7 @@ export function StepSummaryFeature() {
   }, [setCurrentStep])
 
   const { mutateAsync: createHelmService } = useCreateHelmService()
-  const { mutateAsync: deployService } = useDeployService({ environmentId })
+  const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const { data: helmRepositories = [] } = useHelmRepositories({ organizationId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndDeploy, setIsLoadingCreateAndDeploy] = useState(false)

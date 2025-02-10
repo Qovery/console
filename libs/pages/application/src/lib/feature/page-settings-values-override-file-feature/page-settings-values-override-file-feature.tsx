@@ -9,9 +9,8 @@ import {
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
-import { AutoDeploySetting, useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
+import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/services/feature'
 import { isHelmRepositorySource } from '@qovery/shared/enums'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, Callout, Icon, InputText } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -44,12 +43,10 @@ function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileDa
 export function PageSettingsValuesOverrideFileFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useService({ serviceId: applicationId, serviceType: 'HELM' })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
+    organizationId,
+    projectId,
     environmentId,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-      DEPLOYMENT_LOGS_VERSION_URL(service?.id, deploymentStatus?.execution_id),
   })
 
   const valuesOverrideFile = service?.values_override.file

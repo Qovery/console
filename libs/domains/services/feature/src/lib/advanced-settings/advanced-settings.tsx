@@ -37,6 +37,8 @@ interface Entry {
 }
 
 export type AdvancedSettingsProps = {
+  organizationId: string
+  projectId: string
   service: Exclude<AnyService, Database>
 } & (
   | {
@@ -58,6 +60,8 @@ export type AdvancedSettingsProps = {
 )
 
 export function AdvancedSettings({
+  organizationId,
+  projectId,
   service: {
     id: serviceId,
     serviceType,
@@ -79,7 +83,11 @@ export function AdvancedSettings({
   // https://github.com/react-hook-form/react-hook-form/issues/3213
   const isDirty = Boolean(Object.keys(formState.dirtyFields).length)
 
-  const { mutate: editAdvancedSettings, isLoading: isEditAdvancedSettings } = useEditAdvancedSettings({ environmentId })
+  const { mutate: editAdvancedSettings, isLoading: isEditAdvancedSettings } = useEditAdvancedSettings({
+    organizationId,
+    projectId,
+    environmentId,
+  })
 
   const data: Entry[] = useMemo(() => {
     const entries: Entry[] = []

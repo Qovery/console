@@ -33,7 +33,6 @@ import {
   DATABASE_SETTINGS_GENERAL_URL,
   DATABASE_SETTINGS_URL,
   DATABASE_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_URL,
@@ -79,31 +78,36 @@ function MenuManageDeployment({
   deploymentStatus,
   environment,
   service,
-  environmentLogsLink,
   variant,
 }: {
   deploymentStatus: Status
   environment: Environment
   service: AnyService
-  environmentLogsLink: string
   variant: ActionToolbarVariant
 }) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
-  const logsLink = environmentLogsLink + DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus.execution_id)
-
   const { data: runningState } = useRunningStatus({ environmentId: environment.id, serviceId: service.id })
   const { mutate: deployService } = useDeployService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
     environmentId: environment.id,
-    logsLink,
   })
 
-  const { mutate: restartService } = useRestartService({ environmentId: environment.id, logsLink })
-  const { mutate: stopService } = useStopService({ environmentId: environment.id, logsLink })
-  const { mutateAsync: cancelBuild } = useCancelDeploymentService({
+  const { mutate: restartService } = useRestartService({
+    organizationId: environment.organization.id,
     projectId: environment.project.id,
-    logsLink,
+    environmentId: environment.id,
+  })
+  const { mutate: stopService } = useStopService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
+  const { mutateAsync: cancelBuild } = useCancelDeploymentService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
   })
 
   const { state, service_deployment_status } = deploymentStatus
@@ -148,7 +152,6 @@ function MenuManageDeployment({
             <ConfirmationCancelLifecycleModal
               organizationId={environment.organization.id}
               projectId={environment.project.id}
-              serviceId={s.id}
               environmentId={s.environment.id}
               onClose={closeModal}
             />
@@ -745,7 +748,6 @@ export function ServiceActionToolbar({
         deploymentStatus={deploymentStatus}
         environment={environment}
         service={service}
-        environmentLogsLink={environmentLogsLink}
         variant={variant}
       />
       {variant === 'default' && (

@@ -4,16 +4,18 @@ import { queries } from '@qovery/state/util-queries'
 import { useDeployService } from '../use-deploy-service/use-deploy-service'
 
 export function useEditService({
+  organizationId,
+  projectId,
   environmentId,
   silently = false,
-  logsLink,
 }: {
+  organizationId: string
+  projectId: string
   environmentId: string
   silently?: boolean
-  logsLink?: string
 }) {
   const queryClient = useQueryClient()
-  const { mutate: deployService } = useDeployService({ environmentId, logsLink })
+  const { mutate: deployService } = useDeployService({ organizationId, projectId, environmentId })
 
   return useMutation(mutations.editService, {
     onSuccess(response, { payload, serviceId }) {

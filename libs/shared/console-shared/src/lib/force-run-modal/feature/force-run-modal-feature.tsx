@@ -1,8 +1,7 @@
 import { JobForceEvent } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { type Job } from '@qovery/domains/services/data-access'
-import { useDeployService, useDeploymentStatus } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useDeployService } from '@qovery/domains/services/feature'
 import { useModal } from '@qovery/shared/ui'
 import ForceRunModal from '../ui/force-run-modal'
 
@@ -13,15 +12,10 @@ export interface ForceRunModalFeatureProps {
 }
 
 export function ForceRunModalFeature({ organizationId, projectId, service }: ForceRunModalFeatureProps) {
-  const { data: deploymentStatus } = useDeploymentStatus({
-    environmentId: service.environment.id,
-    serviceId: service.id,
-  })
   const { mutateAsync: deployService, isLoading: isLoadingEditService } = useDeployService({
+    organizationId,
+    projectId,
     environmentId: service.environment.id,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id),
   })
   const { closeModal } = useModal()
 

@@ -11,6 +11,7 @@ export function useDeploymentQueue({ serviceId }: UseDeploymentQueueProps) {
     ...queries.services.deploymentQueue({ serviceId }),
     refetchInterval: 5000,
     retryOnMount: true,
+    staleTime: 4500,
     notifyOnChangeProps: ['data'],
   })
 }

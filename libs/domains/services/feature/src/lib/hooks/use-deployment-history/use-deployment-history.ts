@@ -14,6 +14,7 @@ export function useDeploymentHistory({ serviceId, serviceType }: UseDeploymentHi
     enabled: Boolean(serviceId) && Boolean(serviceType),
     refetchInterval: 5000,
     retryOnMount: true,
+    staleTime: 4500,
     notifyOnChangeProps: ['data'],
   })
 }

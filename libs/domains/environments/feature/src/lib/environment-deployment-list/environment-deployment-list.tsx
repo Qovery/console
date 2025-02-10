@@ -181,7 +181,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                         )
                       )
                       .otherwise(() => null)}
-                    <Tooltip content="Logs">
+                    <Tooltip content="Pipeline">
                       <ActionToolbar.Button asChild className="justify-center px-2">
                         <Link
                           to={
