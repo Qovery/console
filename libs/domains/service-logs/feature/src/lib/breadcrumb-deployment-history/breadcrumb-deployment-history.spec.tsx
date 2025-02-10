@@ -18,11 +18,44 @@ const mockDeploymentHistory = [
     identifier: { execution_id: 'version-1' },
     auditing_data: { created_at: '2023-01-01T00:00:00Z' },
     status: 'RUNNING',
+    stages: [
+      {
+        name: 'Build',
+        status: 'SUCCESS',
+        duration: '5m',
+        services: [
+          {
+            identifier: {
+              service_id: 'service-1',
+            },
+          },
+        ],
+      },
+    ],
   },
   {
     identifier: { execution_id: 'version-2' },
     auditing_data: { created_at: '2023-01-01T00:00:00Z' },
     status: 'RUNNING',
+    stages: [
+      {
+        name: 'Build',
+        status: 'SUCCESS',
+        duration: '5m',
+        services: [
+          {
+            identifier: {
+              service_id: 'service-1',
+            },
+          },
+          {
+            identifier: {
+              service_id: 'service-2',
+            },
+          },
+        ],
+      },
+    ],
   },
 ]
 
