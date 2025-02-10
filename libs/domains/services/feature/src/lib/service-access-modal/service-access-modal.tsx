@@ -211,48 +211,42 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                     <LoaderSpinner className="w-5" />
                   </div>
                 ) : (
-                  <>
-                    {variables
-                      ?.filter(
-                        (v) =>
-                          v.service_id === service.id &&
-                          (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
-                      )
-                      ?.map((variable) => (
-                        <div
-                          key={variable.id}
-                          className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
-                        >
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center truncate">
-                              {variable.aliased_variable && (
-                                <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
-                                  ALIAS
+                  variables
+                    ?.filter(
+                      (v) =>
+                        v.service_id === service.id &&
+                        (v.scope === 'BUILT_IN' || v.aliased_variable?.scope === 'BUILT_IN')
+                    )
+                    ?.map((variable) => (
+                      <div
+                        key={variable.id}
+                        className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center truncate">
+                            {variable.aliased_variable && (
+                              <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+                                ALIAS
+                              </span>
+                            )}
+                            <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
+                            {variable.description && (
+                              <Tooltip content={variable.description}>
+                                <span>
+                                  <Icon iconName="circle-info" iconStyle="regular" className="ml-2 text-neutral-350" />
                                 </span>
-                              )}
-                              <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
-                              {variable.description && (
-                                <Tooltip content={variable.description}>
-                                  <span>
-                                    <Icon
-                                      iconName="circle-info"
-                                      iconStyle="regular"
-                                      className="ml-2 text-neutral-350"
-                                    />
-                                  </span>
-                                </Tooltip>
-                              )}
-                            </div>
+                              </Tooltip>
+                            )}
                           </div>
-                          {variable.aliased_variable && (
-                            <div className="flex flex-row gap-1 text-xs text-neutral-350">
-                              <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
-                              <span>{variable.aliased_variable.key}</span>
-                            </div>
-                          )}
                         </div>
-                      ))}
-                  </>
+                        {variable.aliased_variable && (
+                          <div className="flex flex-row gap-1 text-xs text-neutral-350">
+                            <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
+                            <span>{variable.aliased_variable.key}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))
                 )}
               </SectionExpand>
             </Accordion.Root>
@@ -289,7 +283,9 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 <CopyButton content={connectPortForward} />
               </div>
             </div>
-            {serviceType !== 'DATABASE' && (
+            {serviceType === 'DATABASE' ? (
+              <SectionDatabaseConnectionUri service={service} />
+            ) : (
               <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
                 <span className="font-medium">3. Connect via shell</span>
                 <p className="text-neutral-350">Run the following command from your terminal.</p>
@@ -302,7 +298,6 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 </div>
               </div>
             )}
-            {serviceType === 'DATABASE' && <SectionDatabaseConnectionUri service={service} />}
           </Tabs.Content>
           {serviceType === 'DATABASE' && (
             <Tabs.Content className="flex flex-col gap-4" value="public-access">
