@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { type ServiceType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentQueueProps {
