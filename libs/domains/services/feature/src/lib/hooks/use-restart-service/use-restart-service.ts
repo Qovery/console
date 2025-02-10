@@ -4,8 +4,8 @@ import { mutations } from '@qovery/domains/services/data-access'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
+  ENVIRONMENT_STAGES_URL,
 } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
@@ -45,15 +45,13 @@ export function useRestartService({
           'See deployment queue'
         )
       } else {
+        // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
+        // to implement the correct deployment redirection using `execution_id`
         toast(
           'SUCCESS',
           'Your service is restarting',
           undefined,
-          () =>
-            navigate(
-              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                DEPLOYMENT_LOGS_VERSION_URL(data.id, data.execution_id)
-            ),
+          () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL()),
           undefined,
           'See deployment logs'
         )

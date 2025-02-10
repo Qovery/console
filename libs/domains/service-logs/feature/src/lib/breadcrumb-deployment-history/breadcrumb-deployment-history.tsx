@@ -20,7 +20,14 @@ export interface BreadcrumbDeploymentHistoryProps {
 
 export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: BreadcrumbDeploymentHistoryProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({ environmentId })
+  const { data: allDeploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
+    environmentId,
+  })
+  const deploymentHistory = serviceId
+    ? allDeploymentHistory.filter((history) =>
+        history.stages.some((stage) => stage.services.some((service) => service.identifier.service_id === serviceId))
+      )
+    : allDeploymentHistory
 
   if (!isFetchedDeloymentHistory || deploymentHistory.length === 0) return null
 
