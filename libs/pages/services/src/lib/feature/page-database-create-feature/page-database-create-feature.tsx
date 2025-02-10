@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -60,7 +59,6 @@ export function PageDatabaseCreateFeature() {
   const path = slug && option ? SERVICES_DATABASE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_DATABASE_CREATION_URL
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + path
 
-  const flagEnabled = useFeatureFlagEnabled('service-dropdown-list')
   const templateData = findTemplateData(slug, option)
 
   // Sync general data with frontend template data
@@ -93,9 +91,7 @@ export function PageDatabaseCreateFeature() {
       <FunnelFlow
         onExit={() => {
           if (window.confirm('Do you really want to leave?')) {
-            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${
-              flagEnabled ? SERVICES_GENERAL_URL : SERVICES_NEW_URL
-            }`
+            const link = `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`
             navigate(link)
           }
         }}
