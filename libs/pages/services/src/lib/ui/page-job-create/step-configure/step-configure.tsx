@@ -26,11 +26,15 @@ export function StepConfigure(props: StepConfigureProps) {
 
   return (
     <Section>
-      <Heading className="mb-2">Triggers</Heading>
+      <Heading className="mb-2">
+        {props.jobType === ServiceTypeEnum.CRON_JOB ? 'Job configuration' : 'Triggers'}
+      </Heading>
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
         <p className="text-sm text-neutral-350">
-          Define the events triggering the execution of this job and the commands to execute.
+          {props.jobType === ServiceTypeEnum.CRON_JOB
+            ? 'Job configuration allows you to control the behavior of your service.'
+            : 'Define the events triggering the execution of this job and the commands to execute.'}
         </p>
 
         {match(props.templateType)

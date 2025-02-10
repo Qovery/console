@@ -13,7 +13,6 @@ import {
 } from '@qovery/shared/interfaces'
 import {
   SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_GENERAL_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_INTRODUCTION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
@@ -66,10 +65,10 @@ export const useJobContainerCreateContext = () => {
   return applicationContainerCreateContext
 }
 
-export const steps: { title: string }[] = [
+export const steps = (jobType: JobType) => [
   { title: 'Create new job' },
   { title: 'Dockerfile' },
-  { title: 'Triggers' },
+  { title: jobType === ServiceTypeEnum.CRON_JOB ? 'Job configuration' : 'Triggers' },
   { title: 'Set resources' },
   { title: 'Set variable environments' },
   { title: 'Ready to install' },
@@ -147,9 +146,9 @@ export function PageJobCreateFeature() {
           navigate(link)
         }
       }}
-      totalSteps={steps.length}
+      totalSteps={steps(jobType).length}
       currentStep={currentStep}
-      currentTitle={steps[currentStep - 1].title}
+      currentTitle={steps(jobType)[currentStep - 1].title}
     >
       <Routes>
         {ROUTER_SERVICE_JOB_CREATION.map((route) => (
