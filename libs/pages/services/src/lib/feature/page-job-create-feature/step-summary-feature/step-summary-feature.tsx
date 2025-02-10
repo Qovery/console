@@ -184,6 +184,8 @@ export function StepSummaryFeature() {
 
   const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutate: deployService } = useDeployService({
+    organizationId,
+    projectId,
     environmentId,
   })
 

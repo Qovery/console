@@ -10,10 +10,12 @@ import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Section } from '@qovery/shared/ui'
 
 interface SettingsAdvancedFeatureProps {
+  organizationId: string
+  projectId: string
   service: Exclude<AnyService, Database>
 }
 
-function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
+function SettingsAdvancedFeature({ organizationId, projectId, service }: SettingsAdvancedFeatureProps) {
   const { id: serviceId, serviceType } = service
   const { data: defaultAdvancedSettings } = useDefaultAdvancedSettings({ serviceType })
   const { data: advancedSettings } = useAdvancedSettings({ serviceId, serviceType })
@@ -31,6 +33,8 @@ function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
         />
         <AdvancedSettings
           key={JSON.stringify(advancedSettings)}
+          organizationId={organizationId}
+          projectId={projectId}
           service={service}
           defaultAdvancedSettings={defaultAdvancedSettings}
           advancedSettings={advancedSettings}
@@ -41,7 +45,7 @@ function SettingsAdvancedFeature({ service }: SettingsAdvancedFeatureProps) {
 }
 
 export function PageSettingsAdvancedFeature() {
-  const { environmentId = '', applicationId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
   const { data: service } = useService({ environmentId, serviceId: applicationId })
 
@@ -49,7 +53,7 @@ export function PageSettingsAdvancedFeature() {
     return null
   }
 
-  return <SettingsAdvancedFeature service={service} />
+  return <SettingsAdvancedFeature organizationId={organizationId} projectId={projectId} service={service} />
 }
 
 export default PageSettingsAdvancedFeature

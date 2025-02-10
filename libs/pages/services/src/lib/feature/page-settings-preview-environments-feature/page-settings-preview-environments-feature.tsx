@@ -10,14 +10,14 @@ import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { PageSettingsPreviewEnvironments } from '../../ui/page-settings-preview-environments/page-settings-preview-environments'
 
 export function SettingsPreviewEnvironmentsFeature({ services }: { services: AnyService[] }) {
-  const { environmentId = '' } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const [loading, setLoading] = useState(false)
 
   const { isFetched: loadingStatusEnvironmentDeploymentRules, data: environmentDeploymentRules } = useDeploymentRule({
     environmentId,
   })
   const { mutate: editEnvironmentDeploymentRule } = useEditDeploymentRule()
-  const { mutateAsync: editService } = useEditService({ environmentId, silently: true })
+  const { mutateAsync: editService } = useEditService({ organizationId, projectId, environmentId, silently: true })
 
   const methods = useForm({
     mode: 'onChange',

@@ -3,10 +3,8 @@ import { type MouseEvent } from 'react'
 import { P, match } from 'ts-pattern'
 import { type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Badge, Button, Icon, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
-import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import SelectVersionModal from '../select-version-modal/select-version-modal'
 
 export interface LastVersionProps {
@@ -17,15 +15,10 @@ export interface LastVersionProps {
 }
 
 export function LastVersion({ organizationId, projectId, service, version }: LastVersionProps) {
-  const { data: deploymentService } = useDeploymentStatus({
-    environmentId: service.environment.id,
-    serviceId: service.id,
-  })
   const { mutate: deployService } = useDeployService({
+    organizationId,
+    projectId,
     environmentId: service.environment.id,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentService?.execution_id),
   })
 
   const { openModal, closeModal } = useModal()

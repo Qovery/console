@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { mutations } from '@qovery/domains/services/data-access'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { toast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
 /**
@@ -10,12 +12,18 @@ import { queries } from '@qovery/state/util-queries'
  * This is a limitation from our current API which do not let us cancel only one service.
  * It probably gonna evolve over time and that's why it's acceptable at the moment.
  **/
-export function useCancelDeploymentService({ projectId, logsLink }: { projectId: string; logsLink?: string }) {
+export function useCancelDeploymentService({
+  organizationId,
+  projectId,
+}: {
+  organizationId: string
+  projectId: string
+}) {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   return useMutation(mutations.cancelDeploymentService, {
-    onSuccess(_, { environmentId }) {
+    onSuccess(data, { environmentId }) {
       queryClient.invalidateQueries({
         queryKey: queries.environments.listStatuses(projectId).queryKey,
       })
@@ -26,17 +34,21 @@ export function useCancelDeploymentService({ projectId, logsLink }: { projectId:
       queryClient.invalidateQueries({
         queryKey: queries.services.deploymentHistory._def,
       })
+
+      toast(
+        'SUCCESS',
+        'Your environment deployment is cancelling',
+        undefined,
+        () =>
+          navigate(
+            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+              ENVIRONMENT_STAGES_URL(data.last_deployment_id ?? '')
+          ),
+        undefined,
+        'See deployment logs'
+      )
     },
     meta: {
-      notifyOnSuccess: {
-        title: 'Your environment deployment is cancelling',
-        ...(logsLink
-          ? {
-              labelAction: 'See deployment logs',
-              callback: () => navigate(logsLink),
-            }
-          : {}),
-      },
       notifyOnError: true,
     },
   })

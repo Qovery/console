@@ -3,9 +3,17 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { useDeployService } from '@qovery/domains/services/feature'
 import { queries } from '@qovery/state/util-queries'
 
-export function useEditCustomDomain({ environmentId, logsLink }: { environmentId: string; logsLink?: string }) {
+export function useEditCustomDomain({
+  organizationId,
+  projectId,
+  environmentId,
+}: {
+  organizationId: string
+  projectId: string
+  environmentId: string
+}) {
   const queryClient = useQueryClient()
-  const { mutate: deployService } = useDeployService({ environmentId, logsLink })
+  const { mutate: deployService } = useDeployService({ organizationId, projectId, environmentId })
 
   return useMutation(mutations.editCustomDomain, {
     onSuccess(_, { serviceType, serviceId }) {

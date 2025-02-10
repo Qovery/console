@@ -11,7 +11,7 @@ import {
 } from '@tanstack/react-table'
 import clsx from 'clsx'
 import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
-import { Fragment, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
@@ -53,10 +53,6 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
 }
 
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
-  const logsLink =
-    ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-    ENVIRONMENT_STAGES_URL()
-
   const { data: service } = useService({ environmentId: environment?.id, serviceId })
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
@@ -69,8 +65,8 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   })
 
   const { mutate: cancelDeploymentService } = useCancelDeploymentService({
+    organizationId: environment?.organization.id ?? '',
     projectId: environment?.project.id ?? '',
-    logsLink,
   })
   const { pathname } = useLocation()
   const { openModalConfirmation } = useModalConfirmation()
@@ -86,7 +82,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
       name: environment?.name,
       action: () => cancelDeploymentService({ environmentId: environment?.id ?? '' }),
     })
-  }, [environment, openModalConfirmation, cancelDeploymentService, environment])
+  }, [environment, openModalConfirmation, cancelDeploymentService])
 
   const columnHelper = createColumnHelper<(typeof deploymentHistory | typeof deploymentHistoryQueue)[number]>()
   const columns = useMemo(
@@ -158,7 +154,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                         </DropdownMenu.Root>
                       ))
                       .otherwise(() => null)}
-                    <Tooltip content="Logs">
+                    <Tooltip content="Pipeline">
                       <ActionToolbar.Button asChild className="justify-center px-2">
                         <Link
                           to={
@@ -487,13 +483,11 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
                   {header.column.getCanFilter() ? (
-                    <>
-                      {header.id === 'auditing_data_origin' ? (
-                        <TableFilterTriggerBy column={header.column} />
-                      ) : (
-                        <TableFilter column={header.column} />
-                      )}
-                    </>
+                    header.id === 'auditing_data_origin' ? (
+                      <TableFilterTriggerBy column={header.column} />
+                    ) : (
+                      <TableFilter column={header.column} />
+                    )
                   ) : header.column.getCanSort() ? (
                     <button
                       type="button"
@@ -520,19 +514,17 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         </Table.Header>
         <Table.Body>
           {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-              <Table.Row className="h-[68px] border-neutral-200 last:!border-b">
-                {row.getVisibleCells().map((cell, i) => (
-                  <Table.Cell
-                    key={cell.id}
-                    className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} first:relative`}
-                    style={{ width: `${cell.column.getSize()}%` }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.Cell>
-                ))}
-              </Table.Row>
-            </Fragment>
+            <Table.Row key={row.id} className="h-[68px] border-neutral-200 last:!border-b">
+              {row.getVisibleCells().map((cell, i) => (
+                <Table.Cell
+                  key={cell.id}
+                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} first:relative`}
+                  style={{ width: `${cell.column.getSize()}%` }}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Table.Cell>
+              ))}
+            </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>

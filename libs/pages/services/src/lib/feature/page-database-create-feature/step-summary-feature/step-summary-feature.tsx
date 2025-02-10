@@ -25,7 +25,7 @@ export function StepSummaryFeature() {
   const { data: annotationsGroup = [] } = useAnnotationsGroups({ organizationId })
 
   const { mutateAsync: createDatabase } = useCreateService({ organizationId })
-  const { mutate: deployDatabase } = useDeployService({ environmentId })
+  const { mutate: deployDatabase } = useDeployService({ organizationId, projectId, environmentId })
 
   const gotoGlobalInformations = () => {
     navigate(creationFlowUrl + SERVICES_DATABASE_CREATION_GENERAL_URL)

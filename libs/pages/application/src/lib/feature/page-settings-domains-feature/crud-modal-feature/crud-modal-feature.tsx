@@ -3,8 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useCreateCustomDomain, useEditCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { type Application, type Container, type Helm } from '@qovery/domains/services/data-access'
-import { useDeploymentStatus, useLinks } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useLinks } from '@qovery/domains/services/feature'
 import { useModal } from '@qovery/shared/ui'
 import CrudModal from '../../../ui/page-settings-domains/crud-modal/crud-modal'
 
@@ -17,10 +16,6 @@ export interface CrudModalFeatureProps {
 }
 
 export function CrudModalFeature({ organizationId, projectId, customDomain, service, onClose }: CrudModalFeatureProps) {
-  const { data: deploymentStatus } = useDeploymentStatus({
-    environmentId: service.environment.id,
-    serviceId: service.id,
-  })
   const methods = useForm<CustomDomainRequest>({
     defaultValues: {
       domain: customDomain ? customDomain.domain : '',
@@ -30,16 +25,14 @@ export function CrudModalFeature({ organizationId, projectId, customDomain, serv
     mode: 'onChange',
   })
   const { mutateAsync: editCustomDomain, isLoading: isLoadingEditCustomDomain } = useEditCustomDomain({
+    organizationId,
+    projectId,
     environmentId: service.environment.id,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id),
   })
   const { mutateAsync: createCustomDomain, isLoading: isLoadingCreateCustomDomain } = useCreateCustomDomain({
+    organizationId,
+    projectId,
     environmentId: service.environment.id,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-      DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id),
   })
 
   const { enableAlertClickOutside } = useModal()

@@ -16,10 +16,9 @@ export function NeedRedeployFlag() {
     serviceId: service?.id,
   })
   const { mutate: deployService } = useDeployService({
+    organizationId,
+    projectId,
     environmentId,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-      DEPLOYMENT_LOGS_VERSION_URL(service?.id, serviceDeploymentStatus?.execution_id),
   })
 
   if (!serviceDeploymentStatus) return null

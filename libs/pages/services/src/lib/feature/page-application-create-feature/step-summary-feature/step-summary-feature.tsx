@@ -59,7 +59,7 @@ export function StepSummaryFeature() {
 
   const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutateAsync: importVariables } = useImportVariables()
-  const { mutate: deployService } = useDeployService({ environmentId })
+  const { mutate: deployService } = useDeployService({ organizationId, projectId, environmentId })
 
   const variablesData = variablesForm.getValues().variables
 

@@ -292,7 +292,7 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
       )}
       {variant === 'default' && (
         <>
-          <Tooltip content="Logs">
+          <Tooltip content="Pipeline">
             <ActionToolbar.Button asChild>
               <Link
                 to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}

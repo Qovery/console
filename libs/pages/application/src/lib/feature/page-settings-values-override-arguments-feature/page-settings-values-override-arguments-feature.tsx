@@ -5,8 +5,7 @@ import {
   type HelmValuesArgumentsData,
   ValuesOverrideArgumentsSetting,
 } from '@qovery/domains/service-helm/feature'
-import { useDeploymentStatus, useEditService, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { Button } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
@@ -36,13 +35,11 @@ const generateArguments = (
 export function PageSettingsValuesOverrideArgumentsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useService({ serviceId: applicationId, serviceType: 'HELM' })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
 
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
+    organizationId,
+    projectId,
     environmentId,
-    logsLink:
-      ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-      DEPLOYMENT_LOGS_VERSION_URL(service?.id, deploymentStatus?.execution_id),
   })
 
   const methods = useForm<HelmValuesArgumentsData>({
