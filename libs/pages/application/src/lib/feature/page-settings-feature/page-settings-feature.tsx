@@ -76,7 +76,7 @@ export function PageSettingsFeature() {
     title: match(service)
       .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
       .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
-      .run(),
+      .otherwise(() => ''),
     icon: IconAwesomeEnum.GEARS,
     url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
   }
