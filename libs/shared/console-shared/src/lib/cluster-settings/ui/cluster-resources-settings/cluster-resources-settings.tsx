@@ -115,6 +115,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     props.cloudProvider,
   ])
 
+  const hasFeatureStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
+
   return (
     <div className="flex flex-col gap-10">
       <BlockContent title="Cluster" className="mb-0">
@@ -215,7 +217,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         title="Enable Karpenter"
                         description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                         forceAlignTop
-                        disabled={props.fromDetail ? props.hasAlreadyKarpenter : false}
+                        disabled={props.fromDetail ? props.hasAlreadyKarpenter || !hasFeatureStaticIP : false}
                         small
                       />
                     ) : (
@@ -229,6 +231,19 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     >
                       Documentation link
                     </ExternalLink>
+                    {!hasFeatureStaticIP && props.fromDetail && (
+                      <Callout.Root color="yellow" className="mt-5">
+                        <Callout.Icon>
+                          <Icon iconName="circle-info" iconStyle="regular" />
+                        </Callout.Icon>
+                        <Callout.Text>
+                          <Callout.TextDescription>
+                            Karpenter cannot be enabled on this cluster because the Statc IP/NAT Gateway feature is not
+                            activated.
+                          </Callout.TextDescription>
+                        </Callout.Text>
+                      </Callout.Root>
+                    )}
                   </div>
                   <img
                     src={KarpenterImage}

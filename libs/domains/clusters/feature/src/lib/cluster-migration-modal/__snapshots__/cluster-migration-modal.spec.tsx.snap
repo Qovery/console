@@ -1,0 +1,204 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterMigrationModal should match snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="p-5"
+    >
+      <h2
+        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
+      >
+        Cluster update
+      </h2>
+      <form
+        class="mt-6"
+      >
+        <div
+          class="flex flex-col gap-4"
+        >
+          <div
+            class="flex gap-3"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 h-4 w-4 min-w-4"
+              data-state="unchecked"
+              id="activation"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="activation"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="relative -top-1 flex flex-col gap-1 text-sm"
+              for="activation"
+            >
+              <span
+                class="font-medium text-neutral-400"
+              >
+                Karpenter activation is irreversible
+              </span>
+              <span
+                class="text-neutral-350"
+              >
+                To switch back to EKS auto-scaling, you will need to recreate your cluster and migrate your environment to the new cluster.
+              </span>
+            </label>
+          </div>
+          <div
+            class="flex gap-3"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 h-4 w-4 min-w-4"
+              data-state="unchecked"
+              id="downtime"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="downtime"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="relative -top-1 flex flex-col gap-1 text-sm"
+              for="downtime"
+            >
+              <span
+                class="font-medium text-neutral-400"
+              >
+                Downtime may occur
+              </span>
+              <span
+                class="text-neutral-350"
+              >
+                Durring the migration, you may experience some downtime on your services.
+              </span>
+            </label>
+          </div>
+          <div
+            class="flex gap-3"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 h-4 w-4 min-w-4"
+              data-state="unchecked"
+              id="environments"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="environments"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <label
+              class="relative -top-1 flex flex-col gap-1 text-sm"
+              for="environments"
+            >
+              <span
+                class="font-medium text-neutral-400"
+              >
+                Redeploying all environments
+              </span>
+              <span
+                class="text-neutral-350"
+              >
+                After the migration, we recommend redeploying all environments operating on this cluster.
+              </span>
+            </label>
+          </div>
+          <div
+            class="flex gap-3"
+          >
+            <button
+              aria-checked="false"
+              class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-brand-500 dark:hover:border-brand-500 data-[state=checked]:bg-brand-500 dark:data-[state=checked]:bg-brand-500 data-[state=checked]:border-brand-500 dark:data-[state=checked]:border-brand-500 data-[state=indeterminate]:border-brand-500 disabled:data-[state=checked]:border-brand-300 disabled:data-[state=checked]:bg-brand-300 disabled:data-[state=indeterminate]:border-brand-300 h-4 w-4 min-w-4"
+              data-state="unchecked"
+              id="compatibility"
+              role="checkbox"
+              type="button"
+              value="on"
+            />
+            <input
+              aria-hidden="true"
+              name="compatibility"
+              style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+              tabindex="-1"
+              type="checkbox"
+              value="on"
+            />
+            <div
+              class="flex flex-col gap-1"
+            >
+              <label
+                class="relative -top-1 flex flex-col gap-1 text-sm"
+                for="compatibility"
+              >
+                <span
+                  class="font-medium text-neutral-400"
+                >
+                  Daemonset compatibility check
+                </span>
+                <span
+                  class="text-neutral-350"
+                >
+                  If you have Daemonsets deployed via Helm, follow our guide before enabling Karpenter migration.
+                </span>
+              </label>
+              <a
+                class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+                href="https://hub.qovery.com/guides/advanced/deploy-daemonset-with-karpenter/"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Documentation link
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-6 flex justify-end gap-3"
+        >
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+            data-testid="cancel-button"
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+            data-testid="submit-button"
+            disabled=""
+            type="submit"
+          >
+            Confirm
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+`;

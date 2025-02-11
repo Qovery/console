@@ -5,10 +5,10 @@ import {
 } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import { ClusterMigrationModal, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
-import { useModalConfirmation } from '@qovery/shared/ui'
-import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
+import { useModal } from '@qovery/shared/ui'
+import { PageSettingsResources } from '../../ui/page-settings-resources/page-settings-resources'
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   const payload = {
@@ -63,7 +63,7 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
   const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
   ) as ClusterFeatureKarpenterParametersResponse
-  const { openModalConfirmation } = useModalConfirmation()
+  const { openModal, closeModal } = useModal()
 
   const methods = useForm<ClusterResourcesData>({
     mode: 'onChange',
@@ -100,30 +100,8 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
     if (data && cluster) {
       const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
       if (data.karpenter?.enabled === !hasKarpenterFeature) {
-        openModalConfirmation({
-          mode: 'PRODUCTION',
-          title: 'Confirm update',
-          description: (
-            <>
-              <div className="mb-2 flex flex-col gap-2">
-                <p>
-                  <strong>Karpenter activation is irreversible.</strong> To switch back to EKS auto-scaling, you'll need
-                  to recreate your cluster and migrate your environment to the new cluster.
-                </p>
-                <p>
-                  <strong>Downtime may occur.</strong> During the migration, you may experience some downtime on your
-                  services.
-                </p>
-                <p>
-                  After the migration, we recommend <strong>redeploying all environments</strong> operating on this
-                  cluster.
-                </p>
-              </div>
-              Confirm by entering the cluster name:
-            </>
-          ),
-          name: cluster.name,
-          action: () => requestEditCluster(),
+        openModal({
+          content: <ClusterMigrationModal onClose={closeModal} onSubmit={requestEditCluster} />,
         })
       } else {
         requestEditCluster()
