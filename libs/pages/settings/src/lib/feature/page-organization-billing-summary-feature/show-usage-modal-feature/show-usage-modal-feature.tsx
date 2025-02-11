@@ -31,8 +31,10 @@ export function ShowUsageModalFeature({ organizationId, currentCost }: ShowUsage
       const res = await usageBillingReport({
         organizationId,
         usageReportRequest: {
-          from: selectedReportPeriod.from,
-          to: selectedReportPeriod.to ?? new Date().toISOString(),
+          from: new Date(new Date(selectedReportPeriod.from).getTime() + 24 * 60 * 60 * 1000).toISOString(),
+          to: selectedReportPeriod.to
+            ? new Date(new Date(selectedReportPeriod.to).getTime() + 24 * 60 * 60 * 1000).toISOString()
+            : new Date().toISOString(),
           report_expiration_in_seconds: methods.getValues('expires') * 60 * 60, // hours to seconds
         },
       })
