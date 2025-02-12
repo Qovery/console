@@ -2,12 +2,12 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { DropdownServices } from './dropdown-services'
 
 jest.mock('@radix-ui/react-dropdown-menu', () => ({
-  Root: ({ children, open, onOpenChange }: any) => (
+  Root: ({ children, open, onOpenChange }) => (
     <div data-testid="dropdown-root" data-open={open} onClick={() => onOpenChange(!open)}>
       {children}
     </div>
   ),
-  Trigger: ({ children, onClick, onPointerEnter, onPointerLeave }: any) => (
+  Trigger: ({ children, onClick, onPointerEnter, onPointerLeave }) => (
     <button
       data-testid="dropdown-trigger"
       onClick={onClick}
@@ -17,7 +17,7 @@ jest.mock('@radix-ui/react-dropdown-menu', () => ({
       {children}
     </button>
   ),
-  Content: ({ children, onPointerEnter, onPointerLeave, className }: any) => (
+  Content: ({ children, onPointerEnter, onPointerLeave, className }) => (
     <div
       data-testid="dropdown-content"
       className={className}
@@ -27,12 +27,12 @@ jest.mock('@radix-ui/react-dropdown-menu', () => ({
       {children}
     </div>
   ),
-  Item: ({ children, className }: any) => (
+  Item: ({ children, className }) => (
     <div data-testid="dropdown-item" className={className}>
       {children}
     </div>
   ),
-  Portal: ({ children }: any) => <div data-testid="dropdown-portal">{children}</div>,
+  Portal: ({ children }) => <div data-testid="dropdown-portal">{children}</div>,
 }))
 
 const mockEnvironment = {
@@ -108,27 +108,42 @@ describe('DropdownServices', () => {
     jest.clearAllMocks()
   })
 
-  it('should render all stages', () => {
+  it('should render initial visible stages', () => {
     renderWithProviders(
       <DropdownServices environment={mockEnvironment} deploymentHistory={mockDeploymentHistory} stages={mockStages} />
     )
 
     const stageButtons = screen.getAllByTestId('dropdown-trigger')
-    expect(stageButtons).toHaveLength(mockStages.length)
+    expect(stageButtons).toHaveLength(2)
   })
 
-  it('should truncate stages when more than max visible stages', () => {
+  it('should show pagination controls when stages exceed MAX_VISIBLE_STAGES', () => {
     const manyStages = Array(6).fill(mockStages[0])
     renderWithProviders(
       <DropdownServices environment={mockEnvironment} deploymentHistory={mockDeploymentHistory} stages={manyStages} />
     )
 
     const stageButtons = screen.getAllByTestId('dropdown-trigger')
-    expect(stageButtons).toHaveLength(4) // MAX_VISIBLE_STAGES
-    expect(screen.getByText('2')).toBeInTheDocument() // Remaining count
+    expect(stageButtons).toHaveLength(4)
+    expect(screen.getByTitle('Next stage')).toBeInTheDocument()
+    expect(screen.queryByTitle('Previous stage')).not.toBeInTheDocument()
   })
 
-  it('should show dropdown content on hover/click', async () => {
+  it('should navigate between pages when using pagination controls', async () => {
+    const manyStages = Array(6).fill(mockStages[0])
+    const { userEvent } = renderWithProviders(
+      <DropdownServices environment={mockEnvironment} deploymentHistory={mockDeploymentHistory} stages={manyStages} />
+    )
+
+    const nextButton = screen.getByTitle('Next stage')
+    await userEvent.click(nextButton)
+
+    expect(screen.getByTitle('Previous stage')).toBeInTheDocument()
+    const stageButtons = screen.getAllByTestId('dropdown-trigger')
+    expect(stageButtons).toHaveLength(2)
+  })
+
+  it('should show dropdown content on hover/click with correct stage data', async () => {
     const { userEvent } = renderWithProviders(
       <DropdownServices environment={mockEnvironment} deploymentHistory={mockDeploymentHistory} stages={mockStages} />
     )
@@ -139,7 +154,23 @@ describe('DropdownServices', () => {
     await waitFor(() => {
       expect(screen.getByText('Build')).toBeInTheDocument()
       expect(screen.getByText('web-service')).toBeInTheDocument()
-      expect(screen.getAllByText('1m')[0]).toBeInTheDocument()
+      const durationElements = screen.getAllByText('1m')
+      expect(durationElements.length).toBeGreaterThan(0)
     })
+  })
+
+  it('should initialize to the page containing error stage if present', () => {
+    const errorStages = Array(6)
+      .fill(mockStages[0])
+      .map((stage, index) => ({
+        ...stage,
+        status: index === 4 ? 'ERROR' : 'SUCCESS',
+      }))
+
+    renderWithProviders(
+      <DropdownServices environment={mockEnvironment} deploymentHistory={mockDeploymentHistory} stages={errorStages} />
+    )
+
+    expect(screen.queryByTitle('Previous stage')).toBeInTheDocument()
   })
 })

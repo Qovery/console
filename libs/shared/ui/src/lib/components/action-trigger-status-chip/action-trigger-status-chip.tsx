@@ -5,6 +5,7 @@ import {
   type ServiceActionEnum,
   type StateEnum,
 } from 'qovery-typescript-axios'
+import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import Icon from '../icon/icon'
 import Indicator from '../indicator/indicator'
@@ -43,10 +44,12 @@ const statusChipVariants = cva(['relative', 'rounded-full', 'bg-white', 'dark:bg
 
 export function TriggerActionIcon({
   triggerAction,
+  triggerLink,
   className,
 }: {
   triggerAction: DeploymentHistoryTriggerAction | undefined
   className?: string
+  triggerLink?: string
 }) {
   return (
     <span className={className}>
@@ -65,17 +68,20 @@ export interface ActionTriggerStatusChipInterface {
   size: 'sm' | 'md'
   triggerAction: DeploymentHistoryTriggerAction | undefined
   status?: StateEnum | DeploymentHistoryActionStatus | ServiceActionEnum
+  statusLink?: string
 }
 
-export function ActionTriggerStatusChip({ size, status, triggerAction }: ActionTriggerStatusChipInterface) {
+export function ActionTriggerStatusChip({ size, status, triggerAction, statusLink }: ActionTriggerStatusChipInterface) {
+  const statusChip = status && <StatusChip className={statusChipVariants({ size })} status={status} disabledTooltip />
+
   return (
     <div className="relative">
-      <Indicator
-        align="end"
-        side="right"
-        content={status && <StatusChip className={statusChipVariants({ size })} status={status} disabledTooltip />}
-      >
-        <TriggerActionIcon triggerAction={triggerAction} className={triggerActionVariants({ size })} />
+      <Indicator align="end" side="right" content={statusLink ? <Link to={statusLink}>{statusChip}</Link> : statusChip}>
+        <TriggerActionIcon
+          triggerAction={triggerAction}
+          triggerLink={statusLink}
+          className={triggerActionVariants({ size })}
+        />
       </Indicator>
     </div>
   )
