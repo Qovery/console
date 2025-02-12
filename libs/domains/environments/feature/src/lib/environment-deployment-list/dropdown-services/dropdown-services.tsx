@@ -15,9 +15,9 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
-import { dateUTCString, formatDuration, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
+import { Icon } from '@qovery/shared/ui'
+import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { isDeploymentHistory } from '../environment-deployment-list'
 
 export interface DropdownServicesProps {
   environment: Environment
@@ -41,6 +41,10 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
   const [direction, setDirection] = useState(0)
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>()
 
+  const errorIndex = stages.findIndex((stage) => stage.status === 'ERROR')
+  const initialPage = errorIndex !== -1 ? Math.floor(errorIndex / MAX_VISIBLE_STAGES) : 0
+  const [currentPage, setCurrentPage] = useState(initialPage)
+
   const setIndex = (stage: DeploymentHistoryStage | QueuedDeploymentRequestWithStagesStagesInner, index: number) => {
     if (timeoutId) {
       clearTimeout(timeoutId)
@@ -62,22 +66,49 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
     setTimeoutId(newTimeoutId)
   }
 
-  const shouldTruncate = stages.length > MAX_VISIBLE_STAGES + 1
-  const visibleStages = shouldTruncate ? stages.slice(0, MAX_VISIBLE_STAGES) : stages
-  const remainingCount = shouldTruncate ? stages.length - MAX_VISIBLE_STAGES : 0
+  const totalPages = Math.ceil(stages.length / MAX_VISIBLE_STAGES)
+  const startIndex = currentPage * MAX_VISIBLE_STAGES
+  const visibleStages = stages.slice(startIndex, startIndex + MAX_VISIBLE_STAGES)
+
+  const canGoForward = currentPage < totalPages - 1
 
   return (
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
-      <div className="flex">
+      <div className="flex items-center">
+        {currentPage > 0 && (
+          <Tooltip content="See previous stage">
+            <button
+              title="Previous stage"
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="relative flex items-center text-neutral-350 after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-['']"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="flex items-center justify-center"
+              >
+                <path
+                  className="fill-neutral-100 stroke-neutral-250"
+                  d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
+                />
+              </svg>
+              <Icon iconName="arrow-left" className="absolute left-1 top-1 flex h-4 w-4 items-center justify-center" />
+            </button>
+          </Tooltip>
+        )}
+
         {visibleStages.map((stage, index) => (
           <DropdownMenu.Trigger
-            key={index}
+            key={startIndex + index}
             onClick={() => {
-              setIndex(stage, index)
+              setIndex(stage, startIndex + index)
               setOpen(true)
             }}
             onPointerEnter={() => {
-              setIndex(stage, index)
+              setIndex(stage, startIndex + index)
               setOpen(true)
             }}
             onPointerLeave={() => setOpen(false)}
@@ -87,42 +118,33 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             <StageStatusChip status={stage.status} />
           </DropdownMenu.Trigger>
         ))}
-        {shouldTruncate && (
-          <Link
-            to={
-              ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-              ENVIRONMENT_STAGES_URL(
-                match(deploymentHistory)
-                  .with(P.when(isDeploymentHistory), (d) => d.identifier.execution_id)
-                  .otherwise(() => undefined)
-              )
-            }
-            state={{ prevUrl: pathname }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="flex items-center justify-center"
+
+        {canGoForward && (
+          <Tooltip content="See next stage">
+            <button
+              title="Next stage"
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="relative flex items-center text-neutral-350"
             >
-              <path
-                className="fill-neutral-100 stroke-neutral-250"
-                d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
-              />
-              <text
-                x="12"
-                y="13"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="currentColor"
-                className="text-ssm font-medium text-neutral-350"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="flex items-center justify-center"
               >
-                {remainingCount}
-              </text>
-            </svg>
-          </Link>
+                <path
+                  className="fill-neutral-100 stroke-neutral-250"
+                  d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
+                />
+              </svg>
+              <Icon
+                iconName="arrow-right"
+                className="absolute left-1 top-1  flex h-4 w-4 items-center justify-center"
+              />
+            </button>
+          </Tooltip>
         )}
       </div>
       <DropdownMenu.Portal>
@@ -207,7 +229,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                             .otherwise((stage) =>
                               // XXX: Sometimes we don't have directly the duration in the stage object linked to queing
                               stage.duration ? (
-                                <span className="text-[11px]">{formatDuration(stage.duration)}</span>
+                                <span className="text-[11px]">{formatDurationMinutesSeconds(stage.duration)}</span>
                               ) : null
                             )}
                         </div>
@@ -309,14 +331,12 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                     <Truncate text={service.identifier.name} truncateLimit={16} />
                                   </span>
                                   {service.total_duration && (
-                                    <>
-                                      <span
-                                        title={dateUTCString(service.auditing_data.updated_at)}
-                                        className="text-[11px]"
-                                      >
-                                        {formatDurationMinutesSeconds(service.total_duration ?? '')}
-                                      </span>
-                                    </>
+                                    <span
+                                      title={dateUTCString(service.auditing_data.updated_at)}
+                                      className="text-[11px]"
+                                    >
+                                      {formatDurationMinutesSeconds(service.total_duration ?? '')}
+                                    </span>
                                   )}
                                 </span>
                                 {service.status_details && (

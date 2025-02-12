@@ -219,12 +219,24 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
           const triggerAction = data.status_details?.action
 
           return match(data)
-            .with(P.when(isDeploymentHistory), (data) => {
-              const actionStatus = data.status_details?.status
+            .with(P.when(isDeploymentHistory), (d) => {
+              const actionStatus = d.status_details?.status
 
               return (
                 <div className="flex items-center gap-4">
-                  <ActionTriggerStatusChip size="md" status={actionStatus} triggerAction={triggerAction} />
+                  <ActionTriggerStatusChip
+                    size="md"
+                    status={actionStatus}
+                    triggerAction={triggerAction}
+                    statusLink={match(actionStatus)
+                      .with(
+                        'ERROR',
+                        () =>
+                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
+                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
+                      )
+                      .otherwise(() => undefined)}
+                  />
                   <div className="flex flex-col gap-1">
                     <span className="font-medium text-neutral-400">{upperCaseFirstLetter(triggerAction)}</span>
                     <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(actionStatus)}</span>

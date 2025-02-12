@@ -253,7 +253,19 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
 
               return (
                 <div className="flex items-center gap-4">
-                  <ActionTriggerStatusChip size="md" status={action_status} triggerAction={trigger_action} />
+                  <ActionTriggerStatusChip
+                    size="md"
+                    status={action_status}
+                    triggerAction={trigger_action}
+                    statusLink={match(action_status)
+                      .with(
+                        'ERROR',
+                        () =>
+                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
+                          ENVIRONMENT_STAGES_URL(data.identifier.execution_id)
+                      )
+                      .otherwise(() => undefined)}
+                  />
                   <div className="flex flex-col gap-1">
                     <span className="font-medium text-neutral-400">{upperCaseFirstLetter(trigger_action)}</span>
                     <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(action_status)}</span>
@@ -432,13 +444,11 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                   style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
                 >
                   {header.column.getCanFilter() ? (
-                    <>
-                      {header.id === 'auditing_data_origin' ? (
-                        <TableFilterTriggerBy column={header.column} />
-                      ) : (
-                        <TableFilter column={header.column} />
-                      )}
-                    </>
+                    header.id === 'auditing_data_origin' ? (
+                      <TableFilterTriggerBy column={header.column} />
+                    ) : (
+                      <TableFilter column={header.column} />
+                    )
                   ) : header.column.getCanSort() ? (
                     <button
                       type="button"
