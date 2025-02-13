@@ -30,6 +30,7 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
+import { ButtonPopoverSubnets } from './button-popover-subnets/button-popover-subnets'
 import KarpenterImage from './karpenter-image.svg'
 
 export interface ClusterResourcesSettingsProps {
@@ -56,6 +57,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchDiskSize = watch('disk_size')
   const watchKarpenterQoveryNodePools = watch('karpenter.qovery_node_pools.requirements')
   const watchSpotEnabled = watch('karpenter.spot_enabled')
+
+  const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudProviderEnum.AWS)
@@ -184,42 +187,44 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 <div className="relative overflow-hidden">
                   <div className="p-4">
                     {props.isProduction || props.fromDetail ? (
-                      <InputToggle
-                        className="max-w-[70%]"
-                        name={field.name}
-                        value={field.value}
-                        onChange={(e) => {
-                          if (!props.fromDetail) {
-                            if (cloudProviderInstanceTypesKarpenter) {
-                              setValue(
-                                'karpenter.qovery_node_pools.requirements',
-                                convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                      <ButtonPopoverSubnets disabled={!props.fromDetail || isKarpenter}>
+                        <InputToggle
+                          className="max-w-[70%]"
+                          name={field.name}
+                          value={field.value}
+                          onChange={(e) => {
+                            if (!props.fromDetail) {
+                              if (cloudProviderInstanceTypesKarpenter) {
+                                setValue(
+                                  'karpenter.qovery_node_pools.requirements',
+                                  convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                                )
+                              }
+                            } else {
+                              const instanceType = cloudProviderInstanceTypes?.filter(
+                                (option) => option.name === watchInstanceType
                               )
+                              if (instanceType) {
+                                setValue(
+                                  'karpenter.qovery_node_pools.requirements',
+                                  convertToKarpenterRequirements(instanceType)
+                                )
+                                setValue('karpenter.disk_size_in_gib', watchDiskSize)
+                                setValue(
+                                  'karpenter.default_service_architecture',
+                                  (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
+                                )
+                              }
                             }
-                          } else {
-                            const instanceType = cloudProviderInstanceTypes?.filter(
-                              (option) => option.name === watchInstanceType
-                            )
-                            if (instanceType) {
-                              setValue(
-                                'karpenter.qovery_node_pools.requirements',
-                                convertToKarpenterRequirements(instanceType)
-                              )
-                              setValue('karpenter.disk_size_in_gib', watchDiskSize)
-                              setValue(
-                                'karpenter.default_service_architecture',
-                                (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
-                              )
-                            }
-                          }
-                          field.onChange(e)
-                        }}
-                        title="Enable Karpenter"
-                        description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                        forceAlignTop
-                        disabled={props.fromDetail ? props.hasAlreadyKarpenter || !hasFeatureStaticIP : false}
-                        small
-                      />
+                            field.onChange(e)
+                          }}
+                          title="Enable Karpenter"
+                          description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                          forceAlignTop
+                          disabled={props.fromDetail ? props.hasAlreadyKarpenter || !hasFeatureStaticIP : false}
+                          small
+                        />
+                      </ButtonPopoverSubnets>
                     ) : (
                       <p className="mb-2 max-w-[70%] text-sm text-neutral-400">
                         Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.

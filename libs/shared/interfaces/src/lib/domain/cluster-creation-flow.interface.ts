@@ -1,8 +1,4 @@
-import {
-  type CloudProviderEnum,
-  type ClusterFeatureKarpenterParameters,
-  type CpuArchitectureEnum,
-} from 'qovery-typescript-axios'
+import { type CloudProviderEnum, type ClusterFeatureKarpenterParameters } from 'qovery-typescript-axios'
 
 export interface ClusterGeneralData {
   name: string
@@ -31,6 +27,13 @@ export interface ClusterResourcesData {
   nodes: [number, number]
   disk_size: number
   karpenter?: KarpenterData
+}
+
+// XXX: Necessary to have `eks_subnets` for Karpenter migration
+export interface ClusterResourcesEdit extends ClusterResourcesData {
+  aws_existing_vpc?: {
+    eks_subnets?: Subnets[]
+  }
 }
 
 export interface ClusterRemoteData {
