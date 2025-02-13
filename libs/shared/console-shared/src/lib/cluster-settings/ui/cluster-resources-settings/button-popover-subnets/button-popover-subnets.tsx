@@ -103,7 +103,6 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      {callout}
       <h6 className="flex items-center gap-1.5 font-medium text-neutral-400">
         {title}
         <Tooltip content="These subnets are used for AWS Fargate profile">
@@ -112,6 +111,7 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
           </span>
         </Tooltip>
       </h6>
+      {callout}
       {fields.length > 0 && (
         <ul className="flex flex-col gap-3">
           <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350">
@@ -187,10 +187,9 @@ export function ButtonPopoverSubnets({ children, disabled }: ButtonPopoverSubnet
                 <Icon iconName="exclamation-circle" iconStyle="regular" />
               </Callout.Icon>
               <Callout.Text>
-                <Callout.TextDescription>
-                  Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are using an
-                  existing VPC.
-                </Callout.TextDescription>
+                <Callout.TextHeading>
+                  These subnets have to be private and connected to internet through a NAT Gateway.
+                </Callout.TextHeading>
               </Callout.Text>
             </Callout.Root>
           }

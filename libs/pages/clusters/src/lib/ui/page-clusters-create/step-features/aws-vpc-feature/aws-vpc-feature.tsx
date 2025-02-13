@@ -143,7 +143,7 @@ export function AWSVpcFeature({ isKarpenter = false }: AWSVpcFeatureProps) {
                       </Callout.Icon>
                       <Callout.Text>
                         <Callout.TextHeading>
-                          These subnets have to be private and connected to internet through a NAT Gateway
+                          These subnets have to be private and connected to internet through a NAT Gateway.
                         </Callout.TextHeading>
                       </Callout.Text>
                     </Callout.Root>

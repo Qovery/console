@@ -22,7 +22,7 @@ export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
 }
 
 export interface SubnetsProps extends PropsWithChildren {
-  control: Control<FieldValues, any>
+  control: Control<FieldValues>
   title: string
   name: string
   callout?: ReactNode
@@ -107,8 +107,8 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
 
   return (
     <div className="flex flex-col gap-3 p-4">
-      <h6 className="font-medium text-neutral-400">{title}</h6>
       {callout}
+      <h6 className="font-medium text-neutral-400">{title}</h6>
       {fields.length > 0 && (
         <ul className="flex flex-col gap-3">
           <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350">

@@ -35,6 +35,20 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
       <div
         class="flex flex-col gap-3 p-4"
       >
+        <h6
+          class="flex items-center gap-1.5 font-medium text-neutral-400"
+        >
+          EKS private subnet IDs
+          <span
+            class="text-sm0"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info "
+            />
+          </span>
+        </h6>
         <div
           class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700"
           data-accent-color="yellow"
@@ -51,26 +65,12 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
             class="-order-1 mr-auto gap-x-3 text-neutral-400"
           >
             <span
-              class="text-neutral-400"
+              class="block font-medium leading-6"
             >
-              Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are using an existing VPC.
+              These subnets have to be private and connected to internet through a NAT Gateway.
             </span>
           </div>
         </div>
-        <h6
-          class="flex items-center gap-1.5 font-medium text-neutral-400"
-        >
-          EKS private subnet IDs
-          <span
-            class="text-sm0"
-            data-state="closed"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-circle-info "
-            />
-          </span>
-        </h6>
         <ul
           class="flex flex-col gap-3"
         >
@@ -242,6 +242,20 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       <div
         class="flex flex-col gap-3 p-4"
       >
+        <h6
+          class="flex items-center gap-1.5 font-medium text-neutral-400"
+        >
+          EKS private subnet IDs
+          <span
+            class="text-sm0"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info "
+            />
+          </span>
+        </h6>
         <div
           class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700"
           data-accent-color="yellow"
@@ -258,26 +272,12 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
             class="-order-1 mr-auto gap-x-3 text-neutral-400"
           >
             <span
-              class="text-neutral-400"
+              class="block font-medium leading-6"
             >
-              Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are using an existing VPC.
+              These subnets have to be private and connected to internet through a NAT Gateway.
             </span>
           </div>
         </div>
-        <h6
-          class="flex items-center gap-1.5 font-medium text-neutral-400"
-        >
-          EKS private subnet IDs
-          <span
-            class="text-sm0"
-            data-state="closed"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-circle-info "
-            />
-          </span>
-        </h6>
         <ul
           class="flex flex-col gap-3"
         >
