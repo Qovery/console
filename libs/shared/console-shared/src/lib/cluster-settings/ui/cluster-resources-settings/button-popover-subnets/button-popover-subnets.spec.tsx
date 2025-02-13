@@ -6,15 +6,9 @@ describe('ButtonPopoverSubnets', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       wrapWithReactHookForm(
-        <ButtonPopoverSubnets
-          sections={[
-            {
-              title: 'EKS subnets',
-              name: 'eks_subnets',
-            },
-          ]}
-        >
-          EKS
+        <ButtonPopoverSubnets disabled={false}>
+          {' '}
+          <button>children</button>
         </ButtonPopoverSubnets>
       )
     )
@@ -24,19 +18,14 @@ describe('ButtonPopoverSubnets', () => {
   it('should match snapshot', async () => {
     const { container, userEvent } = renderWithProviders(
       wrapWithReactHookForm(
-        <ButtonPopoverSubnets
-          sections={[
-            {
-              title: 'EKS subnets',
-              name: 'eks_subnets',
-            },
-          ]}
-        >
-          EKS
+        <ButtonPopoverSubnets disabled={false}>
+          <button>children</button>
         </ButtonPopoverSubnets>,
         {
           defaultValues: {
-            eks_subnets: [{ A: 'test', B: 'test', C: 'test' }],
+            aws_existing_vpc: {
+              eks_subnets: [{ A: 'test', B: 'test', C: 'test' }],
+            },
           },
         }
       ),
@@ -44,7 +33,7 @@ describe('ButtonPopoverSubnets', () => {
         container: document.body,
       }
     )
-    const button = screen.getByRole('button', { name: /eks/i })
+    const button = screen.getByRole('button', { name: /children/i })
     await userEvent.click(button)
 
     expect(container).toMatchSnapshot()
@@ -53,19 +42,14 @@ describe('ButtonPopoverSubnets', () => {
   it('should match snapshot with invalid state', async () => {
     const { container, userEvent } = renderWithProviders(
       wrapWithReactHookForm(
-        <ButtonPopoverSubnets
-          sections={[
-            {
-              title: 'EKS subnets',
-              name: 'eks_subnets',
-            },
-          ]}
-        >
-          EKS
+        <ButtonPopoverSubnets disabled={false}>
+          <button>children</button>
         </ButtonPopoverSubnets>,
         {
           defaultValues: {
-            eks_subnets: [{ A: 'test', B: 'test', C: '' }],
+            aws_existing_vpc: {
+              eks_subnets: [{ A: 'test', B: 'test', C: '' }],
+            },
           },
         }
       ),
@@ -73,7 +57,7 @@ describe('ButtonPopoverSubnets', () => {
         container: document.body,
       }
     )
-    const button = screen.getByRole('button', { name: /eks/i })
+    const button = screen.getByRole('button', { name: /children/i })
     await userEvent.click(button)
 
     expect(container).toMatchSnapshot()

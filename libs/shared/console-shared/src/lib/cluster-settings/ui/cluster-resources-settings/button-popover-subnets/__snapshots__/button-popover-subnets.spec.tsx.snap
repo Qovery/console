@@ -7,16 +7,17 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
     tabindex="0"
   />
-  <button
-    aria-controls="radix-:rd:"
+  <div
+    aria-controls="radix-:rf:"
     aria-expanded="true"
     aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 self-start border-green-500 bg-white"
     data-state="open"
     type="button"
   >
-    EKS
-  </button>
+    <button>
+      children
+    </button>
+  </div>
   <div
     data-radix-popper-content-wrapper=""
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
@@ -26,7 +27,7 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
       data-align="start"
       data-side="bottom"
       data-state="open"
-      id="radix-:rd:"
+      id="radix-:rf:"
       role="dialog"
       style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
       tabindex="-1"
@@ -34,10 +35,41 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
       <div
         class="flex flex-col gap-3 p-4"
       >
-        <h6
-          class="font-medium text-neutral-400"
+        <div
+          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700"
+          data-accent-color="yellow"
         >
-          EKS subnets
+          <div
+            class="-order-2 text-lg leading-6"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-exclamation-circle "
+            />
+          </div>
+          <div
+            class="-order-1 mr-auto gap-x-3 text-neutral-400"
+          >
+            <span
+              class="text-neutral-400"
+            >
+              Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are using an existing VPC.
+            </span>
+          </div>
+        </div>
+        <h6
+          class="flex items-center gap-1.5 font-medium text-neutral-400"
+        >
+          EKS private subnet IDs
+          <span
+            class="text-sm0"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info "
+            />
+          </span>
         </h6>
         <ul
           class="flex flex-col gap-3"
@@ -73,9 +105,9 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
                 <input
                   class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
-                  name="eks_subnets.0.A"
+                  name="aws_existing_vpc.eks_subnets.0.A"
                   type="text"
-                  value="test"
+                  value=""
                 />
               </div>
             </div>
@@ -93,9 +125,9 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
                 <input
                   class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
-                  name="eks_subnets.0.B"
+                  name="aws_existing_vpc.eks_subnets.0.B"
                   type="text"
-                  value="test"
+                  value=""
                 />
               </div>
             </div>
@@ -113,9 +145,9 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
                 <input
                   class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
-                  name="eks_subnets.0.C"
+                  name="aws_existing_vpc.eks_subnets.0.C"
                   type="text"
-                  value="test"
+                  value=""
                 />
               </div>
             </div>
@@ -156,6 +188,8 @@ exports[`ButtonPopoverSubnets should match snapshot 1`] = `
           >
             <button
               class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-9 px-3 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+              data-state="closed"
+              disabled=""
               type="button"
             >
               Confirm
@@ -180,16 +214,17 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
     style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
     tabindex="0"
   />
-  <button
-    aria-controls="radix-:rk:"
+  <div
+    aria-controls="radix-:ro:"
     aria-expanded="true"
     aria-haspopup="dialog"
-    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded-full border dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 self-start border-red-500 bg-white"
     data-state="open"
     type="button"
   >
-    EKS
-  </button>
+    <button>
+      children
+    </button>
+  </div>
   <div
     data-radix-popper-content-wrapper=""
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: -20px; --radix-popper-available-height: -18px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
@@ -199,7 +234,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       data-align="start"
       data-side="bottom"
       data-state="open"
-      id="radix-:rk:"
+      id="radix-:ro:"
       role="dialog"
       style="width: 648px; --radix-popover-content-transform-origin: var(--radix-popper-transform-origin); --radix-popover-content-available-width: var(--radix-popper-available-width); --radix-popover-content-available-height: var(--radix-popper-available-height); --radix-popover-trigger-width: var(--radix-popper-anchor-width); --radix-popover-trigger-height: var(--radix-popper-anchor-height);"
       tabindex="-1"
@@ -207,10 +242,41 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
       <div
         class="flex flex-col gap-3 p-4"
       >
-        <h6
-          class="font-medium text-neutral-400"
+        <div
+          class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700"
+          data-accent-color="yellow"
         >
-          EKS subnets
+          <div
+            class="-order-2 text-lg leading-6"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-exclamation-circle "
+            />
+          </div>
+          <div
+            class="-order-1 mr-auto gap-x-3 text-neutral-400"
+          >
+            <span
+              class="text-neutral-400"
+            >
+              Karpenter cannot be enabled until the private subnet IDs are added for EKS, as you are using an existing VPC.
+            </span>
+          </div>
+        </div>
+        <h6
+          class="flex items-center gap-1.5 font-medium text-neutral-400"
+        >
+          EKS private subnet IDs
+          <span
+            class="text-sm0"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info "
+            />
+          </span>
         </h6>
         <ul
           class="flex flex-col gap-3"
@@ -246,9 +312,9 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                 <input
                   class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
-                  name="eks_subnets.0.A"
+                  name="aws_existing_vpc.eks_subnets.0.A"
                   type="text"
-                  value="test"
+                  value=""
                 />
               </div>
             </div>
@@ -266,9 +332,9 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                 <input
                   class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
-                  name="eks_subnets.0.B"
+                  name="aws_existing_vpc.eks_subnets.0.B"
                   type="text"
-                  value="test"
+                  value=""
                 />
               </div>
             </div>
@@ -286,7 +352,7 @@ exports[`ButtonPopoverSubnets should match snapshot with invalid state 1`] = `
                 <input
                   class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
                   data-testid="input-value"
-                  name="eks_subnets.0.C"
+                  name="aws_existing_vpc.eks_subnets.0.C"
                   type="text"
                   value=""
                 />
