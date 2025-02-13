@@ -119,6 +119,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   ])
 
   const hasFeatureStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
+  const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
 
   return (
     <div className="flex flex-col gap-10">
@@ -187,7 +188,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 <div className="relative overflow-hidden">
                   <div className="p-4">
                     {props.isProduction || props.fromDetail ? (
-                      <ButtonPopoverSubnets disabled={!props.fromDetail || isKarpenter}>
+                      <ButtonPopoverSubnets disabled={!props.fromDetail || isKarpenter || !hasExistingVPC}>
                         <InputToggle
                           className="max-w-[70%]"
                           name={field.name}
