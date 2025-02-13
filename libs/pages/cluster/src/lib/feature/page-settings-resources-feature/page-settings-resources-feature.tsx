@@ -107,7 +107,7 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
       })
     }
 
-    const updateKarpenterSubnets = async () => {
+    const updateClusterKarpenterSubnets = async () => {
       if (data?.aws_existing_vpc?.eks_subnets) {
         try {
           await updateKarpenterPrivateFargate({
@@ -132,10 +132,10 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
       const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
       if (data.karpenter?.enabled === !hasKarpenterFeature) {
         openModal({
-          content: <ClusterMigrationModal onClose={closeModal} onSubmit={updateKarpenterSubnets} />,
+          content: <ClusterMigrationModal onClose={closeModal} onSubmit={updateClusterKarpenterSubnets} />,
         })
       } else {
-        await updateKarpenterSubnets()
+        await updateClusterKarpenterSubnets()
       }
     }
   })
