@@ -118,7 +118,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     props.cloudProvider,
   ])
 
-  const hasFeatureStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
   const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
 
   return (
@@ -222,7 +221,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           title="Enable Karpenter"
                           description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                           forceAlignTop
-                          disabled={props.fromDetail ? props.hasAlreadyKarpenter || !hasFeatureStaticIP : false}
+                          disabled={props.fromDetail ? props.hasAlreadyKarpenter || !hasExistingVPC : false}
                           small
                         />
                       </ButtonPopoverSubnets>
@@ -237,7 +236,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     >
                       Documentation link
                     </ExternalLink>
-                    {!hasFeatureStaticIP && props.fromDetail && (
+                    {!hasExistingVPC && props.fromDetail && (
                       <Callout.Root color="yellow" className="mt-5">
                         <Callout.Icon>
                           <Icon iconName="circle-info" iconStyle="regular" />
