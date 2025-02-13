@@ -119,6 +119,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   ])
 
   const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
+  const hasStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
 
   return (
     <div className="flex flex-col gap-10">
@@ -187,7 +188,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 <div className="relative overflow-hidden">
                   <div className="p-4">
                     {props.isProduction || props.fromDetail ? (
-                      <ButtonPopoverSubnets disabled={!props.fromDetail || isKarpenter || !hasExistingVPC}>
+                      <ButtonPopoverSubnets
+                        disabled={!props.fromDetail || isKarpenter || (!hasExistingVPC && !hasStaticIP)}
+                      >
                         <InputToggle
                           className="max-w-[70%]"
                           name={field.name}
@@ -221,7 +224,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           title="Enable Karpenter"
                           description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                           forceAlignTop
-                          disabled={props.fromDetail ? props.hasAlreadyKarpenter || !hasExistingVPC : false}
+                          disabled={
+                            props.fromDetail ? props.hasAlreadyKarpenter || (!hasExistingVPC && !hasStaticIP) : false
+                          }
                           small
                         />
                       </ButtonPopoverSubnets>
@@ -236,7 +241,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     >
                       Documentation link
                     </ExternalLink>
-                    {!hasExistingVPC && props.fromDetail && (
+                    {!hasExistingVPC && !hasStaticIP && props.fromDetail && (
                       <Callout.Root color="yellow" className="mt-5">
                         <Callout.Icon>
                           <Icon iconName="circle-info" iconStyle="regular" />
