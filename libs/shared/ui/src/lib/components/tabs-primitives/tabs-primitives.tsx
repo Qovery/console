@@ -97,15 +97,10 @@ interface TabsTriggerProps
     VariantProps<typeof triggerVariants> {}
 
 const TabsTrigger = forwardRef<ElementRef<typeof TabsPrimitive.Trigger>, TabsTriggerProps>(function TabsTrigger(
-  { children, className, radius, size, ...rest },
+  { className, radius, size, ...rest },
   ref
 ) {
-  return (
-    <TabsPrimitive.Trigger {...rest} ref={ref} className={twMerge(triggerVariants({ radius, size }), className)}>
-      <span className="absolute flex items-center justify-center">{children}</span>
-      <span className="invisible flex items-center justify-center">{children}</span>
-    </TabsPrimitive.Trigger>
-  )
+  return <TabsPrimitive.Trigger {...rest} ref={ref} className={twMerge(triggerVariants({ radius, size }), className)} />
 })
 
 interface TabsContentProps extends ComponentPropsWithoutRef<typeof TabsPrimitive.Content> {}
