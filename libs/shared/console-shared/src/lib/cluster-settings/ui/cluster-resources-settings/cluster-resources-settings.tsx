@@ -278,23 +278,25 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         className="overflow-hidden"
                       >
                         <div className="flex flex-col">
-                          <div className="border-t border-neutral-250 p-4">
-                            <Callout.Root color="yellow">
-                              <Callout.Icon>
-                                <Icon iconName="circle-info" iconStyle="regular" />
-                              </Callout.Icon>
-                              <Callout.Text>
-                                <Callout.TextDescription>
-                                  Before deploying your cluster, update the IAM permissions of the Qovery user, make
-                                  sure to use the{' '}
-                                  <ExternalLink size="sm" href="https://hub.qovery.com/files/qovery-iam-aws.json">
-                                    latest version here
-                                  </ExternalLink>{' '}
-                                  (adding the permission on SQS)
-                                </Callout.TextDescription>
-                              </Callout.Text>
-                            </Callout.Root>
-                          </div>
+                          {!watchKarpenterEnabled && (
+                            <div className="border-t border-neutral-250 p-4">
+                              <Callout.Root color="yellow">
+                                <Callout.Icon>
+                                  <Icon iconName="circle-info" iconStyle="regular" />
+                                </Callout.Icon>
+                                <Callout.Text>
+                                  <Callout.TextDescription>
+                                    Before deploying your cluster, update the IAM permissions of the Qovery user, make
+                                    sure to use the{' '}
+                                    <ExternalLink size="sm" href="https://hub.qovery.com/files/qovery-iam-aws.json">
+                                      latest version here
+                                    </ExternalLink>{' '}
+                                    (adding the permission on SQS)
+                                  </Callout.TextDescription>
+                                </Callout.Text>
+                              </Callout.Root>
+                            </div>
+                          )}
                           <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
                             <div className="w-full">
                               <p className="mb-2">
