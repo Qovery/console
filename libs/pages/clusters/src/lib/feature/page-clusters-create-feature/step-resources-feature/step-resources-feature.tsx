@@ -35,8 +35,6 @@ export function StepResourcesFeature() {
     mode: 'onChange',
   })
 
-  console.log(methods.getValues())
-
   const onSubmit = methods.handleSubmit((data) => {
     if (data.cluster_type === KubernetesEnum.K3_S) {
       data['nodes'] = [1, 1]
