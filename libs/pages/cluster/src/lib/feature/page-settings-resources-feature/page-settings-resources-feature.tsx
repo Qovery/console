@@ -5,10 +5,19 @@ import {
 } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
-import { type ClusterResourcesData } from '@qovery/shared/interfaces'
-import { useModalConfirmation } from '@qovery/shared/ui'
-import PageSettingsResources from '../../ui/page-settings-resources/page-settings-resources'
+import {
+  ClusterMigrationModal,
+  useCluster,
+  useEditCluster,
+  useUpdateKarpenterPrivateFargate,
+} from '@qovery/domains/clusters/feature'
+import { type ClusterResourcesEdit } from '@qovery/shared/interfaces'
+import { useModal } from '@qovery/shared/ui'
+import { PageSettingsResources } from '../../ui/page-settings-resources/page-settings-resources'
+
+function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
+  return data.filter((obj) => key in obj).map((obj) => obj[key])
+}
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   const payload = {
@@ -63,9 +72,9 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
   const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
   ) as ClusterFeatureKarpenterParametersResponse
-  const { openModalConfirmation } = useModalConfirmation()
+  const { openModal, closeModal } = useModal()
 
-  const methods = useForm<ClusterResourcesData>({
+  const methods = useForm<ClusterResourcesEdit>({
     mode: 'onChange',
     defaultValues: {
       cluster_type: cluster.kubernetes,
@@ -86,9 +95,10 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
     },
   })
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
+  const { mutateAsync: updateKarpenterPrivateFargate } = useUpdateKarpenterPrivateFargate()
 
-  const onSubmit = methods.handleSubmit((data) => {
-    function requestEditCluster() {
+  const onSubmit = methods.handleSubmit(async (data) => {
+    const updateCluster = async () => {
       const cloneCluster = handleSubmit(data, cluster)
       editCluster({
         clusterId: cluster.id,
@@ -97,36 +107,35 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
       })
     }
 
+    const updateClusterKarpenterSubnets = async () => {
+      if (data?.aws_existing_vpc?.eks_subnets) {
+        try {
+          await updateKarpenterPrivateFargate({
+            organizationId: cluster.organization.id,
+            clusterId: cluster.id,
+            clusterKarpenterPrivateSubnetIdsPutRequest: {
+              eks_karpenter_fargate_subnets_zone_a_ids: getValueByKey('A', data?.aws_existing_vpc?.eks_subnets)!,
+              eks_karpenter_fargate_subnets_zone_b_ids: getValueByKey('B', data?.aws_existing_vpc?.eks_subnets)!,
+              eks_karpenter_fargate_subnets_zone_c_ids: getValueByKey('C', data?.aws_existing_vpc?.eks_subnets)!,
+            },
+          })
+          await updateCluster()
+        } catch (error) {
+          console.error(error)
+        }
+      } else {
+        await updateCluster()
+      }
+    }
+
     if (data && cluster) {
       const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
       if (data.karpenter?.enabled === !hasKarpenterFeature) {
-        openModalConfirmation({
-          mode: 'PRODUCTION',
-          title: 'Confirm update',
-          description: (
-            <>
-              <div className="mb-2 flex flex-col gap-2">
-                <p>
-                  <strong>Karpenter activation is irreversible.</strong> To switch back to EKS auto-scaling, you'll need
-                  to recreate your cluster and migrate your environment to the new cluster.
-                </p>
-                <p>
-                  <strong>Downtime may occur.</strong> During the migration, you may experience some downtime on your
-                  services.
-                </p>
-                <p>
-                  After the migration, we recommend <strong>redeploying all environments</strong> operating on this
-                  cluster.
-                </p>
-              </div>
-              Confirm by entering the cluster name:
-            </>
-          ),
-          name: cluster.name,
-          action: () => requestEditCluster(),
+        openModal({
+          content: <ClusterMigrationModal onClose={closeModal} onSubmit={updateClusterKarpenterSubnets} />,
         })
       } else {
-        requestEditCluster()
+        await updateClusterKarpenterSubnets()
       }
     }
   })

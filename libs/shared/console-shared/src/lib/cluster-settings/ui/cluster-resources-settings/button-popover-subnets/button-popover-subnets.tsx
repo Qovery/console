@@ -1,5 +1,4 @@
-import { clsx } from 'clsx'
-import { type FormEvent, type PropsWithChildren, type ReactNode } from 'react'
+import { type FormEvent, type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import {
   type Control,
   Controller,
@@ -9,25 +8,22 @@ import {
   useFormContext,
 } from 'react-hook-form'
 import { type Subnets } from '@qovery/shared/interfaces'
-import { Button, Icon, InputTextSmall, Popover, Tooltip } from '@qovery/shared/ui'
-import { removeEmptySubnet } from '../../../../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
+import { Button, Callout, Icon, InputTextSmall, Popover, Tooltip } from '@qovery/shared/ui'
 
 export interface ButtonPopoverSubnetsProps extends PropsWithChildren {
-  sections: {
-    title: string
-    name: string
-    callout?: ReactNode
-  }[]
-  required?: boolean
+  disabled: boolean
 }
 
 export interface SubnetsProps extends PropsWithChildren {
   control: Control<FieldValues>
   title: string
   name: string
-  callout?: ReactNode
-  required?: boolean
+  callout: ReactNode
+  required: boolean
 }
+
+export const removeEmptySubnet = (objects?: Subnets[]) =>
+  objects?.filter((field) => field.A !== '' || field.B !== '' || field.C !== '')
 
 function Row({ index, remove, name }: { index: number; remove: UseFieldArrayRemove; name: string }) {
   const { control } = useFormContext()
@@ -107,8 +103,15 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
 
   return (
     <div className="flex flex-col gap-3 p-4">
+      <h6 className="flex items-center gap-1.5 font-medium text-neutral-400">
+        {title}
+        <Tooltip content="These subnets are used for AWS Fargate profile">
+          <span className="text-sm0">
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </span>
+        </Tooltip>
+      </h6>
       {callout}
-      <h6 className="font-medium text-neutral-400">{title}</h6>
       {fields.length > 0 && (
         <ul className="flex flex-col gap-3">
           <li className="grid grid-cols-[6fr_6fr_6fr_1fr] items-center gap-x-2 text-sm font-medium text-neutral-350">
@@ -136,48 +139,37 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
   )
 }
 
-export function ButtonPopoverSubnets({ children, sections, required = false }: ButtonPopoverSubnetsProps) {
-  const { control, watch, setValue, getValues } = useFormContext()
+// XXX: This component is inspired by `/page-clusters-create/step-features/button-popover-subnets/button-popover-subnets.tsx`
+// This component should be removed after Karpenter support
+export function ButtonPopoverSubnets({ children, disabled }: ButtonPopoverSubnetsProps) {
+  const { control, setValue, watch } = useFormContext()
+  const watchKarpenterEnabled = watch('karpenter.enabled')
+  const [isOpen, setIsOpen] = useState(false)
 
-  const watchSubnetsFields = sections.map(({ name }) => removeEmptySubnet(watch(name)))
   // XXX: We cannot rely on `useFormContext` `formState.errors` because `errors` aren't reset when modifying back to a valid state.
   // Probably due to a bug in react-hook-form with nested fields
-  const isValid = watchSubnetsFields.reduce(
-    (acc, watchSubnets) => acc && isFieldValid({ subnets: watchSubnets, required }),
-    true
-  )
+  const isValid = isFieldValid({ subnets: watch('aws_existing_vpc.eks_subnets'), required: true })
+
+  useEffect(() => {
+    setIsOpen(watchKarpenterEnabled && !disabled)
+  }, [watchKarpenterEnabled, disabled])
+
+  if (disabled) return children
 
   return (
-    <Popover.Root>
-      <Popover.Trigger>
-        <Button
-          type="button"
-          radius="full"
-          color="neutral"
-          variant="surface"
-          className={clsx(
-            'self-start',
-            watchSubnetsFields.reduce((acc, watchSubnets) => !!watchSubnets && watchSubnets.length > 0 && acc, true) &&
-              isValid &&
-              'border-green-500 bg-white',
-            !isValid && 'border-red-500 bg-white'
-          )}
-          onClick={() => {
-            for (const { name } of sections) {
-              if (getValues(name)?.length === 0) {
-                setValue(name, [
-                  {
-                    A: '',
-                    B: '',
-                    C: '',
-                  },
-                ])
-              }
-            }
-          }}
-        >
-          {children}
-        </Button>
+    <Popover.Root open={isOpen}>
+      <Popover.Trigger
+        onClick={() => {
+          setValue('aws_existing_vpc.eks_subnets', [
+            {
+              A: '',
+              B: '',
+              C: '',
+            },
+          ])
+        }}
+      >
+        <div>{children}</div>
       </Popover.Trigger>
       <Popover.Content
         side="bottom"
@@ -185,21 +177,45 @@ export function ButtonPopoverSubnets({ children, sections, required = false }: B
         style={{ width: 648 }}
         forceMount
       >
-        {sections.map(({ title, name, callout }) => (
-          <SubnetsForm key={name} control={control} title={title} name={name} callout={callout} required={required} />
-        ))}
+        <SubnetsForm
+          control={control}
+          title="EKS private subnet IDs"
+          name="aws_existing_vpc.eks_subnets"
+          callout={
+            <Callout.Root color="yellow">
+              <Callout.Icon>
+                <Icon iconName="exclamation-circle" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>
+                  These subnets have to be private and connected to internet through a NAT Gateway.
+                </Callout.TextHeading>
+              </Callout.Text>
+            </Callout.Root>
+          }
+          required={true}
+        />
 
         <div className="flex flex-col gap-4 p-4 text-right text-base">
           <div>
             <Popover.Close>
-              <Button type="button" size="md" variant="plain" className="mr-1">
+              <Button
+                type="button"
+                size="md"
+                variant="plain"
+                className="mr-1"
+                onClick={() => {
+                  setValue('karpenter.enabled', false)
+                  setIsOpen(false)
+                }}
+              >
                 Cancel
               </Button>
             </Popover.Close>
             <Popover.Close>
               <span>
                 <Tooltip content="Please fill all fields" disabled={isValid}>
-                  <Button disabled={!isValid} size="md" type="button">
+                  <Button disabled={!isValid} size="md" type="button" onClick={() => setIsOpen(false)}>
                     Confirm
                   </Button>
                 </Tooltip>

@@ -3,6 +3,7 @@ import {
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
+  type ClusterKarpenterPrivateSubnetIdsPutRequest,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
@@ -175,6 +176,22 @@ export const mutations = {
   },
   async upgradeCluster({ clusterId }: { clusterId: string }) {
     const response = await clusterApi.upgradeCluster(clusterId)
+    return response.data
+  },
+  async updateKarpenterPrivateFargate({
+    organizationId,
+    clusterId,
+    clusterKarpenterPrivateSubnetIdsPutRequest,
+  }: {
+    organizationId: string
+    clusterId: string
+    clusterKarpenterPrivateSubnetIdsPutRequest: ClusterKarpenterPrivateSubnetIdsPutRequest
+  }) {
+    const response = await clusterApi.updateKarpenterPrivateFargateSubnetIds(
+      organizationId,
+      clusterId,
+      clusterKarpenterPrivateSubnetIdsPutRequest
+    )
     return response.data
   },
 }

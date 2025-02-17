@@ -30,6 +30,7 @@ import {
   useModal,
 } from '@qovery/shared/ui'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
+import { ButtonPopoverSubnets } from './button-popover-subnets/button-popover-subnets'
 import KarpenterImage from './karpenter-image.svg'
 
 export interface ClusterResourcesSettingsProps {
@@ -56,6 +57,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const watchDiskSize = watch('disk_size')
   const watchKarpenterQoveryNodePools = watch('karpenter.qovery_node_pools.requirements')
   const watchSpotEnabled = watch('karpenter.spot_enabled')
+
+  const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudProviderEnum.AWS)
@@ -114,6 +117,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     setValue,
     props.cloudProvider,
   ])
+
+  const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
+  const hasStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
 
   return (
     <div className="flex flex-col gap-10">
@@ -182,42 +188,48 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 <div className="relative overflow-hidden">
                   <div className="p-4">
                     {props.isProduction || props.fromDetail ? (
-                      <InputToggle
-                        className="max-w-[70%]"
-                        name={field.name}
-                        value={field.value}
-                        onChange={(e) => {
-                          if (!props.fromDetail) {
-                            if (cloudProviderInstanceTypesKarpenter) {
-                              setValue(
-                                'karpenter.qovery_node_pools.requirements',
-                                convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                      <ButtonPopoverSubnets
+                        disabled={!props.fromDetail || isKarpenter || (!hasExistingVPC && !hasStaticIP)}
+                      >
+                        <InputToggle
+                          className="max-w-[70%]"
+                          name={field.name}
+                          value={field.value}
+                          onChange={(e) => {
+                            if (!props.fromDetail) {
+                              if (cloudProviderInstanceTypesKarpenter) {
+                                setValue(
+                                  'karpenter.qovery_node_pools.requirements',
+                                  convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+                                )
+                              }
+                            } else {
+                              const instanceType = cloudProviderInstanceTypes?.filter(
+                                (option) => option.name === watchInstanceType
                               )
+                              if (instanceType) {
+                                setValue(
+                                  'karpenter.qovery_node_pools.requirements',
+                                  convertToKarpenterRequirements(instanceType)
+                                )
+                                setValue('karpenter.disk_size_in_gib', watchDiskSize)
+                                setValue(
+                                  'karpenter.default_service_architecture',
+                                  (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
+                                )
+                              }
                             }
-                          } else {
-                            const instanceType = cloudProviderInstanceTypes?.filter(
-                              (option) => option.name === watchInstanceType
-                            )
-                            if (instanceType) {
-                              setValue(
-                                'karpenter.qovery_node_pools.requirements',
-                                convertToKarpenterRequirements(instanceType)
-                              )
-                              setValue('karpenter.disk_size_in_gib', watchDiskSize)
-                              setValue(
-                                'karpenter.default_service_architecture',
-                                (instanceType[0]?.architecture ?? 'AMD64') as CpuArchitectureEnum
-                              )
-                            }
+                            field.onChange(e)
+                          }}
+                          title="Enable Karpenter"
+                          description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
+                          forceAlignTop
+                          disabled={
+                            props.fromDetail ? props.hasAlreadyKarpenter || (!hasExistingVPC && !hasStaticIP) : false
                           }
-                          field.onChange(e)
-                        }}
-                        title="Enable Karpenter"
-                        description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
-                        forceAlignTop
-                        disabled={props.fromDetail ? props.hasAlreadyKarpenter : false}
-                        small
-                      />
+                          small
+                        />
+                      </ButtonPopoverSubnets>
                     ) : (
                       <p className="mb-2 max-w-[70%] text-sm text-neutral-400">
                         Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time.
@@ -229,6 +241,19 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     >
                       Documentation link
                     </ExternalLink>
+                    {!hasExistingVPC && !hasStaticIP && props.fromDetail && (
+                      <Callout.Root color="yellow" className="mt-5">
+                        <Callout.Icon>
+                          <Icon iconName="circle-info" iconStyle="regular" />
+                        </Callout.Icon>
+                        <Callout.Text>
+                          <Callout.TextDescription>
+                            Karpenter cannot be enabled on this cluster because the Statc IP/NAT Gateway feature is not
+                            activated.
+                          </Callout.TextDescription>
+                        </Callout.Text>
+                      </Callout.Root>
+                    )}
                   </div>
                   <img
                     src={KarpenterImage}
@@ -253,23 +278,25 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                         className="overflow-hidden"
                       >
                         <div className="flex flex-col">
-                          <div className="border-t border-neutral-250 p-4">
-                            <Callout.Root color="yellow">
-                              <Callout.Icon>
-                                <Icon iconName="circle-info" iconStyle="regular" />
-                              </Callout.Icon>
-                              <Callout.Text>
-                                <Callout.TextDescription>
-                                  Before deploying your cluster, update the IAM permissions of the Qovery user, make
-                                  sure to use the{' '}
-                                  <ExternalLink size="sm" href="https://hub.qovery.com/files/qovery-iam-aws.json">
-                                    latest version here
-                                  </ExternalLink>{' '}
-                                  (adding the permission on SQS)
-                                </Callout.TextDescription>
-                              </Callout.Text>
-                            </Callout.Root>
-                          </div>
+                          {!watchKarpenterEnabled && (
+                            <div className="border-t border-neutral-250 p-4">
+                              <Callout.Root color="yellow">
+                                <Callout.Icon>
+                                  <Icon iconName="circle-info" iconStyle="regular" />
+                                </Callout.Icon>
+                                <Callout.Text>
+                                  <Callout.TextDescription>
+                                    Before deploying your cluster, update the IAM permissions of the Qovery user, make
+                                    sure to use the{' '}
+                                    <ExternalLink size="sm" href="https://hub.qovery.com/files/qovery-iam-aws.json">
+                                      latest version here
+                                    </ExternalLink>{' '}
+                                    (adding the permission on SQS)
+                                  </Callout.TextDescription>
+                                </Callout.Text>
+                              </Callout.Root>
+                            </div>
+                          )}
                           <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
                             <div className="w-full">
                               <p className="mb-2">
