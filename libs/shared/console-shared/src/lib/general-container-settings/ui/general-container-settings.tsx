@@ -73,11 +73,6 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
             />
           )}
         />
-        <p className="text-right">
-          <Link to={SETTINGS_URL(organization?.id) + SETTINGS_CONTAINER_REGISTRIES_URL} className="text-ssm">
-            Don't see your registry?
-          </Link>
-        </p>
       </div>
       {organization && watchRegistry && (
         <ImageName
