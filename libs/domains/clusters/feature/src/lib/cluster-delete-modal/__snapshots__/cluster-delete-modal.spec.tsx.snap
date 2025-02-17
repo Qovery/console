@@ -238,7 +238,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
                   the S3 bucket created at cluster installation
                 </li>
                 <li>
-                  the image registry linked to this cluster
+                  the mirroring registry linked to this cluster
                 </li>
                 <li>
                   any resource created by a lifecycle job that will not be properly deleted during the \`environment deletion\` event.
