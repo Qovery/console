@@ -48,7 +48,7 @@ export function PageSettingsFeature() {
   }
 
   const imageRegistryLink = {
-    title: 'Image registry',
+    title: 'Mirroring registry',
     icon: IconAwesomeEnum.BOX,
     url: pathSettings + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   }

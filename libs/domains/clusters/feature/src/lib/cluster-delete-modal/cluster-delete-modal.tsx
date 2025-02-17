@@ -228,7 +228,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
                 <p>Please note that you will have to manually delete on your cloud account:</p>
                 <ul className="list-disc pl-3">
                   <li>the S3 bucket created at cluster installation</li>
-                  <li>the image registry linked to this cluster</li>
+                  <li>the mirroring registry linked to this cluster</li>
                   {clusterDeleteMode === ClusterDeleteMode.DELETE_CLUSTER_AND_QOVERY_CONFIG && (
                     <li>any managed database that was created via Qovery.</li>
                   )}

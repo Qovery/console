@@ -34,8 +34,8 @@ export function SettingsImageRegistryFeature({ containerRegistry }: { containerR
     <div className="flex w-full flex-col justify-between">
       <Section className="max-w-content-with-navigation-left p-8">
         <SettingsHeading
-          title="Image registry"
-          description="This image registry is used to store the built images or mirror the container images deployed on this cluster."
+          title="Mirroring registry"
+          description="This mirroring registry is used to store the built images or mirror the container images deployed on this cluster."
         />
         <FormProvider {...methods}>
           <form className="flex flex-col" onSubmit={onSubmit}>
