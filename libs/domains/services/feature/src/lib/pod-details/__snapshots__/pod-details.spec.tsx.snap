@@ -41,22 +41,10 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             tabindex="-1"
             type="button"
           >
-            <span
-              class="absolute flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
-              />
-              pod-container-1
-            </span>
-            <span
-              class="invisible flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
-              />
-              pod-container-1
-            </span>
+            <div
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+            />
+            pod-container-1
           </button>
           <button
             aria-controls="radix-:rm:-content-pod-container-2"
@@ -70,22 +58,10 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             tabindex="-1"
             type="button"
           >
-            <span
-              class="absolute flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-red-500"
-              />
-              pod-container-2
-            </span>
-            <span
-              class="invisible flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-red-500"
-              />
-              pod-container-2
-            </span>
+            <div
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-red-500"
+            />
+            pod-container-2
           </button>
         </div>
         <div
@@ -210,22 +186,10 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
             tabindex="-1"
             type="button"
           >
-            <span
-              class="absolute flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
-              />
-              pod-container-1
-            </span>
-            <span
-              class="invisible flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
-              />
-              pod-container-1
-            </span>
+            <div
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+            />
+            pod-container-1
           </button>
         </div>
         <div
@@ -378,22 +342,10 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
             tabindex="-1"
             type="button"
           >
-            <span
-              class="absolute flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
-              />
-              pod-container-1
-            </span>
-            <span
-              class="invisible flex items-center justify-center"
-            >
-              <div
-                class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
-              />
-              pod-container-1
-            </span>
+            <div
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+            />
+            pod-container-1
           </button>
         </div>
         <div
