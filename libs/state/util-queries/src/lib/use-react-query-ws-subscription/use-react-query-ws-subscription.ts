@@ -30,6 +30,8 @@ function isInvalidateOperation(data: any): data is InvalidateOperation {
   return Array.isArray(data?.entity)
 }
 
+const MAX_RECONNECT_ATTEMPTS = 10
+
 // TODO: Add better naming for the hook we can use it without ReactQuery
 export function useReactQueryWsSubscription({
   url,
@@ -94,7 +96,7 @@ export function useReactQueryWsSubscription({
         onError?.(queryClient, event)
       }
       websocket.onclose = async (event) => {
-        if (shouldReconnect) {
+        if (shouldReconnect && reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
           timeout = setTimeout(
             function () {
               reconnectCount.current++

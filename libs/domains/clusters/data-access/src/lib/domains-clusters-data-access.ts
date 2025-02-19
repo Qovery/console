@@ -7,6 +7,7 @@ import {
   type ClusterRoutingTableRequest,
   ClustersApi,
 } from 'qovery-typescript-axios'
+import { type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
 
@@ -72,6 +73,14 @@ export const clusters = createQueryKeys('clusters', {
     async queryFn() {
       const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
       return response.data
+    },
+  }),
+  runningStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    // NOTE: Value is set by WebSocket
+    queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      return new Promise<ClusterStatusDto | null>(() => {})
     },
   }),
 })
