@@ -114,7 +114,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             class="h-14 px-4 py-0"
           >
             <span
-              class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded-full border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300 gap-2 capitalize"
+              class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-full border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300 gap-2 capitalize"
             >
               <div
                 class=""

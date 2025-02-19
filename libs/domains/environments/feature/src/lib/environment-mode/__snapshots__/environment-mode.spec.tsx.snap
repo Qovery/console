@@ -4,7 +4,7 @@ exports[`EnvironmentMode should render as development mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
+      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
       data-accent-color="neutral"
     >
       Development
@@ -17,7 +17,7 @@ exports[`EnvironmentMode should render as preview mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 text-purple-500 border rounded border-purple-500"
+      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 text-purple-500 border rounded-md border-purple-500"
       data-accent-color="purple"
     >
       Preview
@@ -30,7 +30,7 @@ exports[`EnvironmentMode should render as production mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 text-red-500 border rounded border-red-500"
+      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 text-red-500 border rounded-md border-red-500"
       data-accent-color="red"
     >
       Production
@@ -43,7 +43,7 @@ exports[`EnvironmentMode should render as staging mode 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 font-medium text-xs h-6 px-2 border rounded border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
+      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300"
       data-accent-color="neutral"
     >
       Staging
