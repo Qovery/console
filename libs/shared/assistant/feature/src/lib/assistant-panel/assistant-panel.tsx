@@ -161,6 +161,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [inputMessage, setInputMessage] = useState('')
   const [withContext, setWithContext] = useState(true)
   const [thread, setThread] = useState<Thread>([])
+  const [currentThreadId, setCurrentThreadId] = useState<string | undefined>()
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -232,10 +233,16 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       try {
         const token = await getAccessTokenSilently()
-        const apiResponse = await submitMessage(trimmedInputMessage, token, withContext ? context : undefined)
+        const apiResponse = await submitMessage(
+          trimmedInputMessage,
+          token,
+          currentThreadId,
+          withContext ? context : undefined
+        )
+        setCurrentThreadId(apiResponse.id)
         const supportMessage: Message = {
           id: Date.now(),
-          text: apiResponse,
+          text: apiResponse.content,
           owner: 'agent',
           timestamp: Date.now(),
         }
