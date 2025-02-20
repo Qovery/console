@@ -219,8 +219,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
     return () => document.removeEventListener('keydown', down)
   }, [])
 
-  const handleSendMessage = async () => {
-    const trimmedInputMessage = inputMessage.trim()
+  const handleSendMessage = async (value?: string) => {
+    const trimmedInputMessage = value ? value.trim() : inputMessage.trim()
 
     if (trimmedInputMessage) {
       const newMessage: Message = {
@@ -401,7 +401,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                           radius="full"
                           onClick={() => {
                             setInputMessage(label)
-                            handleSendMessage()
+                            handleSendMessage(label)
                           }}
                         >
                           <Icon iconName="arrow-right" />
@@ -467,7 +467,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                           className="inline-flex max-w-max gap-2 truncate"
                           onClick={() => {
                             setInputMessage(label)
-                            handleSendMessage()
+                            handleSendMessage(label)
                           }}
                         >
                           <Icon iconName="arrow-right" />
