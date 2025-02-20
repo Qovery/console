@@ -166,7 +166,6 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
-  console.log(current)
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -193,8 +192,9 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       setTimeout(() => {
         if (inputRef.current) {
           adjustTextareaHeight(inputRef.current)
+          inputRef.current.scrollTop = inputRef.current.scrollHeight
         }
-      }, 200)
+      }, 50)
     }
   }, [explainMessage])
 
@@ -230,6 +230,11 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       setInputMessage('')
       setIsLoading(true)
+      setTimeout(() => {
+        if (inputRef.current) {
+          adjustTextareaHeight(inputRef.current)
+        }
+      }, 50)
       try {
         const apiResponse = await simulateApiResponse(trimmedInputMessage)
         const supportMessage: Message = {
