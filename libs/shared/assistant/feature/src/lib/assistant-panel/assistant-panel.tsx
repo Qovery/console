@@ -442,7 +442,13 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                   </div>
                 </div>
               )}
-              <div className="relative pt-[42px]">
+              <div
+                className={twMerge(
+                  clsx('relative pt-3', {
+                    'pt-[42px]': withContext,
+                  })
+                )}
+              >
                 {withContext && (
                   <div className="absolute top-2.5 flex w-full rounded-t-xl border border-neutral-250 bg-neutral-100 pb-4 pl-2 pr-4 pt-2 text-xs text-neutral-400 dark:border-neutral-500 dark:bg-neutral-700 dark:text-neutral-250">
                     <Tooltip content="Your message uses this current context" classNameContent="z-[1]">
