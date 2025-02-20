@@ -16,6 +16,7 @@ import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/share
 import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
+import { AIAnalysisButton } from '../ai-analysis-button/ai-analysis-button'
 
 // XXX: Prevent web-socket invalidations when re-rendering
 const WebSocketListenerMemo = memo(MetricsWebSocketListener)
@@ -113,6 +114,16 @@ export function DeploymentLogsFeature({
 
   const serviceStatus = getServiceStatusesById(deploymentStages, serviceId) as Status
 
+  const handleAIAnalysis = () => {
+    console.log('Starting AI analysis', {
+      service,
+      serviceStatus,
+      environmentStatus,
+      deploymentStages,
+    })
+    // Your AI analysis logic will go here
+  }
+
   if (!serviceStatus && isFetchedService)
     return (
       <div className="flex h-full w-full items-center overflow-y-auto bg-neutral-800 px-1 pt-1">
@@ -178,6 +189,12 @@ export function DeploymentLogsFeature({
             preCheckStage={preCheckStage}
           />
         </SidebarPodStatuses>
+        <AIAnalysisButton
+          onClick={handleAIAnalysis}
+          serviceStatus={serviceStatus}
+          environmentStatus={environmentStatus}
+          environmentId={environment.id}
+        />
         {service && environment && (
           <WebSocketListenerMemo
             organizationId={environment.organization.id}

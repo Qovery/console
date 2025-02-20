@@ -2,10 +2,12 @@ import {
   type DeploymentStageWithServicesStatuses,
   ServiceDeploymentStatusEnum,
   StateEnum,
+  type Status,
 } from 'qovery-typescript-axios'
 import { Route, Routes } from 'react-router-dom'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
+import { AIAnalysisButton } from '../ai-analysis-button/ai-analysis-button'
 import DeploymentLogsFeature, {
   type DeploymentLogsFeatureProps,
   getServiceStatusesById,
@@ -45,7 +47,7 @@ const services: DeploymentStageWithServicesStatuses[] = [
 describe('DeploymentLogsFeature', () => {
   const props: DeploymentLogsFeatureProps = {
     environment: environmentFactoryMock(1)[0],
-    statusStages: services,
+    deploymentStages: services,
   }
 
   it('should render successfully', () => {
@@ -60,6 +62,21 @@ describe('DeploymentLogsFeature', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should handle AI analysis click', () => {
+    const { getByRole } = renderWithProviders(
+      <Routes location="/organization/1/project/2/environment/3/logs/">
+        <Route
+          path="/organization/1/project/2/environment/3/logs/4/deployment-logs"
+          element={<DeploymentLogsFeature {...props} />}
+        />
+      </Routes>
+    )
+
+    const button = getByRole('button', { name: /analyze/i })
+    button.click()
+    // Add your assertions here
+  })
+
   it('should return the service with the given id', () => {
     const serviceId = '052613b3-de4e-4077-8c89-7228bddda8f9'
     const expectedService = {
@@ -70,5 +87,36 @@ describe('DeploymentLogsFeature', () => {
       is_part_last_deployment: false,
     }
     expect(getServiceStatusesById(services, serviceId)).toEqual(expectedService)
+  })
+
+  it('should show AI button when service status is FAILED', () => {
+    const failedProps = {
+      ...props,
+      deploymentStages: [
+        {
+          ...services[0],
+          applications: [
+            {
+              id: '123',
+              state: StateEnum.FAILED,
+              service_deployment_status: ServiceDeploymentStatusEnum.FAILED,
+              last_deployment_date: '2023-04-14T09:40:37.451334Z',
+              is_part_last_deployment: false,
+            },
+          ],
+        },
+      ],
+    }
+
+    const { getByRole } = renderWithProviders(
+      <Routes location="/organization/1/project/2/environment/3/logs/">
+        <Route
+          path="/organization/1/project/2/environment/3/logs/4/deployment-logs"
+          element={<DeploymentLogsFeature {...failedProps} />}
+        />
+      </Routes>
+    )
+
+    expect(getByRole('button', { name: /analyze/i })).toBeTruthy()
   })
 })
