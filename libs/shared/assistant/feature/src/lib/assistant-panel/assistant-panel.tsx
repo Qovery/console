@@ -161,7 +161,7 @@ function useQoveryContext() {
 }
 
 export function AssistantPanel({ onClose }: AssistantPanelProps) {
-  const { message: explainMessage } = useContext(AssistantContext)
+  const { message: explainMessage, setMessage: setExplainMessage } = useContext(AssistantContext)
   const { data } = useQoveryStatus()
   const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
@@ -176,6 +176,12 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [messages, setMessages] = useState<Message[]>([])
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
+
+  const handleOnClose = () => {
+    onClose()
+    setInputMessage('')
+    setExplainMessage('')
+  }
 
   const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
     element.style.height = 'auto'
@@ -207,7 +213,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose()
+        handleOnClose()
       }
     }
 
@@ -265,7 +271,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         {expand && (
           <Dialog.Overlay
             className="absolute left-0 top-0 z-0 h-screen w-screen bg-black/50 backdrop-blur-[2px]"
-            onClick={onClose}
+            onClick={handleOnClose}
           />
         )}
         <Dialog.Content
@@ -300,7 +306,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                       type="button"
                       onClick={() => {
                         showIntercomMessenger()
-                        onClose()
+                        handleOnClose()
                       }}
                     >
                       <span className="w-4">
@@ -349,7 +355,12 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 </Button>
               </Tooltip>
               <Tooltip content="Close" delayDuration={400} classNameContent="z-10">
-                <Button type="button" variant="plain" onClick={onClose} className="text-neutral-500 dark:text-white">
+                <Button
+                  type="button"
+                  variant="plain"
+                  onClick={handleOnClose}
+                  className="text-neutral-500 dark:text-white"
+                >
                   <Icon iconName="xmark" />
                 </Button>
               </Tooltip>
