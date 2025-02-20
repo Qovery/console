@@ -46,7 +46,7 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, .
         ref={ref}
         placeholder="Ask Qovery Copilot"
         autoFocus
-        className="w-full resize-none rounded-xl px-4 py-[13px] text-sm leading-[22px] text-neutral-400 placeholder:text-neutral-350 focus-visible:outline-none dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250"
+        className="w-full resize-none rounded-xl px-4 py-[13px] text-sm leading-[22px] text-neutral-400 transition-[height] placeholder:text-neutral-350 focus-visible:outline-none dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250"
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         {...props}
@@ -475,6 +475,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault()
                       handleSendMessage()
+                    } else {
+                      if (inputRef.current) adjustTextareaHeight(inputRef.current)
                     }
                   }}
                   onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
