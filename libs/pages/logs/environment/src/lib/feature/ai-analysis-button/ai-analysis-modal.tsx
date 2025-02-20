@@ -26,11 +26,6 @@ const aiAnalysisAxios = axios.create({
   withCredentials: false,
 })
 
-aiAnalysisAxios.interceptors.request.use((config) => {
-  config.headers['Access-Control-Allow-Origin'] = '*'
-  return config
-})
-
 export function AIAnalysisModal({
   isOpen,
   onClose,
