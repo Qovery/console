@@ -14,7 +14,7 @@ import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
+import { AnimatedGradientText, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
@@ -70,10 +70,23 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, .
   )
 })
 
+const Loading = () => {
+  const [loadingText, setLoadingText] = useState('Loading...')
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingText('Analyzing...')
+    }, 2000)
+
+    return () => clearTimeout(timer)
+  }, [])
+
+  return <AnimatedGradientText className="mt-auto w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
+}
 const apiCalls = async (message: string, token: string, context?: any): Promise<string> => {
   console.log(token)
   const title = message.substring(0, 12) + '...'
-  await new Promise((resolve) => setTimeout(resolve, 1000))
+  await new Promise((resolve) => setTimeout(resolve, 4000))
   return `
 # Thank you for your message
 
@@ -220,7 +233,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   }, [])
 
   const handleSendMessage = async (value?: string) => {
-    const trimmedInputMessage = value ? value.trim() : inputMessage.trim()
+    const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
     if (trimmedInputMessage) {
       const newMessage: Message = {
@@ -447,6 +460,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     ))
                     .exhaustive()
                 })}
+                {isLoading && <Loading />}
               </ScrollArea>
               <div
                 className={clsx('relative mt-auto flex flex-col gap-2 px-4 pb-4', {
