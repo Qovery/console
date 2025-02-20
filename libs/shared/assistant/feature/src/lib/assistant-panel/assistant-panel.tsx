@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
@@ -12,7 +13,7 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useService } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
+import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -68,7 +69,8 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, .
   )
 })
 
-const simulateApiResponse = async (message: string): Promise<string> => {
+const apiCalls = async (message: string, token: string, context?: any): Promise<string> => {
+  console.log(token)
   const title = message.substring(0, 12) + '...'
   await new Promise((resolve) => setTimeout(resolve, 1000))
   return `
@@ -110,12 +112,6 @@ export interface AssistantPanelProps {
   onClose: () => void
   smaller?: boolean
 }
-
-export const SERVICE_LOGS_URL = (serviceId = ':serviceId', podName = '') =>
-  `/${serviceId}/service-logs${podName ? `?pod_name=${podName}` : ''}`
-
-export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
-  `/${serviceId}/deployment-logs/${versionId}`
 
 function useQoveryContext() {
   const { organizationId, clusterId, projectId, environmentId, databaseId, applicationId, serviceId } = useParams()
@@ -166,6 +162,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
+  const { getAccessTokenSilently } = useAuth0()
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -242,7 +239,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         }
       }, 50)
       try {
-        const apiResponse = await simulateApiResponse(trimmedInputMessage)
+        const token = await getAccessTokenSilently()
+        const apiResponse = await apiCalls(trimmedInputMessage, token, withContext ? context : null)
         const supportMessage: Message = {
           id: Date.now(),
           text: apiResponse,
