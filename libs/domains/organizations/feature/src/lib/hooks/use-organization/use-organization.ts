@@ -2,14 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseOrganizationProps {
-  organizationId: string
+  organizationId?: string
   enabled?: boolean
 }
 
 export function useOrganization({ organizationId, enabled }: UseOrganizationProps) {
   return useQuery({
-    ...queries.organizations.details({ organizationId }),
-    enabled,
+    ...queries.organizations.details({ organizationId: organizationId!! }),
+    enabled: Boolean(organizationId) || enabled,
   })
 }
 
