@@ -281,7 +281,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             )
           )}
         >
-          <div className="flex justify-between border-b border-neutral-200 py-2 pl-4 pr-2 dark:border-neutral-500">
+          <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
             <div className="flex items-center font-bold">
               <span className="text-sm text-neutral-500 dark:text-white">New conversation</span>
             </div>
@@ -365,7 +365,9 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           </div>
           <div className="flex grow flex-col">
             {messages.length === 0 && (
-              <span className="w-full py-4 text-center text-xs">Find everything you need with AI Copilot.</span>
+              <span className="w-full animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-xs opacity-0">
+                Find everything you need with AI Copilot.
+              </span>
             )}
             <ScrollArea
               ref={scrollAreaRef}
@@ -376,6 +378,32 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 })
               )}
             >
+              {messages.length === 0 && docLinks.length > 0 && expand && (
+                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 animate-[fadein_0.4s_ease-in-out_forwards_0.15s] flex-col gap-2 text-center opacity-0">
+                  <Icon iconName="sparkles" iconStyle="light" className="mb-4 text-[48px] text-brand-500" />
+                  <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
+                    Ask for a contextual suggestion:
+                  </span>
+                  <div className="flex max-w-[850px] flex-wrap justify-center gap-3">
+                    {docLinks.map(({ label, link }) => (
+                      <Button
+                        key={`${label}${link}`}
+                        type="button"
+                        variant="surface"
+                        className="inline-flex max-w-max gap-2"
+                        radius="full"
+                        onClick={() => {
+                          setInputMessage(label)
+                          handleSendMessage()
+                        }}
+                      >
+                        <Icon iconName="arrow-right" />
+                        {label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
               {messages.map((message) => {
                 return match(message.sender)
                   .with('user', () => (
@@ -418,8 +446,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': messages.length > 0,
               })}
             >
-              {messages.length === 0 && docLinks.length > 0 && (
-                <div className="flex flex-col gap-2">
+              {messages.length === 0 && docLinks.length > 0 && !expand && (
+                <div className="flex animate-[fadein_0.22s_ease-in-out_forwards_0.10s] flex-col gap-2 opacity-0">
                   <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
                     Ask for a contextual suggestion:
                   </span>
@@ -444,7 +472,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               )}
               <div
                 className={twMerge(
-                  clsx('relative pt-3', {
+                  clsx('relative animate-[fadein_0.22s_ease-in-out_forwards_0.15s] pt-3 opacity-0', {
                     'pt-[42px]': withContext,
                   })
                 )}
@@ -490,7 +518,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               </div>
               {appStatus && appStatus.status ? (
                 <a
-                  className="ml-auto inline-flex max-w-max animate-fadein items-center gap-2 text-xs text-neutral-350 transition hover:text-neutral-600 dark:text-neutral-250"
+                  className="ml-auto inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-350 opacity-0 transition hover:text-neutral-600 dark:text-neutral-250"
                   href={QOVERY_STATUS_URL}
                   target="_blank"
                   rel="noopener noreferrer"

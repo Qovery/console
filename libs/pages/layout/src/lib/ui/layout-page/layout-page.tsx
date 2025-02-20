@@ -43,12 +43,16 @@ function ButtonIA() {
       type="button"
       variant="surface"
       onClick={() => setAssistantOpen(true)}
-      className={clsx('ml-4 mr-4 h-[38px] gap-2 px-3 dark:ml-3 dark:h-9', {
+      className={clsx('ml-4 mr-4 h-[38px] gap-3 px-3 dark:ml-3 dark:h-9', {
         'bg-neutral-50': assistantOpen,
       })}
     >
       <span className="flex items-center gap-1.5 text-neutral-400 dark:text-white">
-        <Icon iconName="sparkles" className="relative top-[1px] text-brand-500 dark:text-white" />
+        <Icon
+          iconName="sparkles"
+          iconStyle="light"
+          className="relative top-[1px] text-sm text-brand-500 dark:text-white"
+        />
         AI Copilot
       </span>
       <div className="ml-auto flex gap-1 text-neutral-400">
