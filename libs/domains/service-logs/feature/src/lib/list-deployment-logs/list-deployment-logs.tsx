@@ -381,6 +381,7 @@ export function ListDeploymentLogs({
       </div>
     )
   }
+  console.log(deploymentStatus?.state)
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden bg-neutral-900 p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
@@ -393,6 +394,20 @@ export function ListDeploymentLogs({
             toggleColumnFilter={toggleColumnFilter}
           />
           <div className="flex gap-2">
+            {deploymentStatus?.state === 'DEPLOYED' && (
+              <Button
+                size="sm"
+                className="flex items-center justify-center gap-1.5"
+                variant="surface"
+                onClick={() => {
+                  setAssistantOpen(true)
+                  setMessage('How can I optimize my deployment speed for my service ?')
+                }}
+              >
+                <Icon iconName="sparkles" iconStyle="light" className="relative top-[1px] text-sm" />
+                Optimize Deployment Speed
+              </Button>
+            )}
             {environmentStatus?.last_deployment_state.includes('ERROR') && (
               <Button
                 size="sm"
