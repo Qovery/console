@@ -170,7 +170,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
-  }, [])
+  }, [messages])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -234,7 +234,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         <Dialog.Content
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-[1] flex w-[480px] max-w-[480px] animate-slidein-up-sm-faded flex-col rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] animate-slidein-up-sm-faded flex-col rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
                 'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)]': expand,
               }
@@ -325,9 +325,9 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             <ScrollArea
               ref={scrollAreaRef}
               className={twMerge(
-                clsx('flex grow flex-col gap-4 overflow-y-scroll p-4', {
-                  'max-h-[500px] min-h-52': !expand,
-                  'h-full max-h-none': expand,
+                clsx('relative flex grow flex-col gap-4 overflow-y-scroll p-4', {
+                  'h-[420px]': !expand && messages.length > 0,
+                  'h-[calc(100vh-316px)]': expand && messages.length > 0,
                 })
               )}
             >
@@ -369,8 +369,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               })}
             </ScrollArea>
             <div
-              className={clsx('mt-auto flex flex-col gap-2 px-4 pb-4', {
-                'absolute bottom-0 w-full rounded-xl bg-white dark:bg-neutral-600': expand,
+              className={clsx('relative mt-auto flex flex-col gap-2 px-4 pb-4', {
+                'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': messages.length > 0,
               })}
             >
               {messages.length === 0 && docLinks.length > 0 && (
@@ -399,10 +399,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               )}
               <div className="relative pt-[42px]">
                 {withContext && (
-                  <div className="absolute top-2.5 flex w-full rounded-t-xl border border-neutral-250 pb-4 pl-2 pr-4 pt-2 text-xs text-neutral-400 dark:border-neutral-500 dark:text-neutral-250">
+                  <div className="absolute top-2.5 flex w-full rounded-t-xl border border-neutral-250 bg-neutral-100 pb-4 pl-2 pr-4 pt-2 text-xs text-neutral-400 dark:border-neutral-500 dark:bg-neutral-700 dark:text-neutral-250">
                     <Tooltip content="Your message uses this current context" classNameContent="z-[1]">
                       <span className="flex items-center gap-2">
-                        <Icon iconName="globe" iconStyle="regular" />
+                        <Icon iconName="plug" iconStyle="regular" />
                         <span>
                           {upperCaseFirstLetter(String(current?.type))}:{' '}
                           <span className="font-medium">{String(current?.name ?? 'No context')}</span>
