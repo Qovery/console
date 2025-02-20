@@ -1,29 +1,27 @@
-import { timeAgo } from '@qovery/shared/util-dates'
-
 const threads = [
   {
     id: 'thread_01HNYP2K3ZGJX8V5D6Q7RMW4NS',
-    title: 'Incident investigation: High CPU usage on production servers',
+    title: 'Incident investigation...',
     created_at: '2024-02-20T08:30:15Z',
   },
   {
     id: 'thread_01HNYP4M7TQJX8V5D6Q7RMW4NT',
-    title: 'Database optimization recommendations',
+    title: 'Database optimization...',
     created_at: '2024-02-19T15:45:22Z',
   },
   {
     id: 'thread_01HNYP6N8WKJX8V5D6Q7RMW4NU',
-    title: 'Security patch deployment planning',
+    title: 'Security patch deployment...',
     created_at: '2024-02-18T11:20:33Z',
   },
   {
     id: 'thread_01HNYP8P9XLJX8V5D6Q7RMW4NV',
-    title: 'Load balancer configuration review',
+    title: 'Load balancer configuration...',
     created_at: '2024-02-17T09:15:47Z',
   },
   {
     id: 'thread_01HNYPAQ0YMJX8V5D6Q7RMW4NW',
-    title: 'CI/CD pipeline performance analysis',
+    title: 'CI/CD pipeline performance...',
     created_at: '2024-02-16T14:50:08Z',
   },
 ]
