@@ -26,7 +26,7 @@ function ButtonIA() {
   // Toggle the menu when ⌘H is pressed
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
-      if (event.key === 'h' && (event.metaKey || event.ctrlKey)) {
+      if (event.key === 'i' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
         setAssistantOpen(true)
       }
@@ -57,7 +57,7 @@ function ButtonIA() {
       </span>
       <div className="ml-auto flex gap-1 text-neutral-400">
         <Kbd>{metaKey}</Kbd>
-        <Kbd className="text-2xs">H</Kbd>
+        <Kbd className="text-2xs">i</Kbd>
       </div>
     </Button>
   )
