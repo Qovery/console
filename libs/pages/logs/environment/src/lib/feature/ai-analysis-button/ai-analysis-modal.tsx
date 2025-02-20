@@ -20,7 +20,6 @@ interface AIAnalysisModalProps {
 const aiAnalysisAxios = axios.create({
   baseURL: 'https://p8080-za2cda663-z3d1a50f1-gtw.zc531a994.rustrocks.cloud',
   headers: {
-    'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json',
   },
   withCredentials: false,
@@ -64,67 +63,71 @@ export function AIAnalysisModal({
     setResult(undefined)
 
     try {
-      const response = await aiAnalysisAxios.get(`/env/${environmentId}`, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-      })
-      console.log('Full response:', response)
+      const response = await aiAnalysisAxios.get(`/env/${environmentId}`)
 
+      // Log raw data for debugging
+      console.log('Raw response data:', response.data)
+
+      // Fonction pour nettoyer le JSON
+      const cleanJSON = (jsonString: string) => {
+        return jsonString
+          .replace(/`/g, "'") // Remplacer les backticks
+          .replace(/\n/g, ' ') // Supprimer les sauts de ligne
+          .replace(/\s+/g, ' ') // Réduire les espaces multiples
+          .trim() // Supprimer les espaces en début/fin
+      }
+
+      let parsedData
+      if (typeof response.data === 'string') {
+        try {
+          // Nettoyer et parser le JSON
+          const cleanedJsonString = cleanJSON(response.data)
+          parsedData = JSON.parse(cleanedJsonString)
+        } catch (parseError) {
+          console.error('JSON Parsing error:', parseError)
+          console.error('Original string:', response.data)
+
+          setResult({
+            error: 'Failed to parse AI response',
+            cause: 'Invalid JSON format',
+            solution: 'Check server response format',
+          })
+          return
+        }
+      } else {
+        parsedData = response.data
+      }
+
+      // Définir le résultat avec des valeurs par défaut
       setResult({
-        error: response.data.error || 'No error details found',
-        cause: response.data.cause || 'No root cause identified',
-        solution: response.data.solution || 'No solution provided',
+        error: parsedData.error || 'No error details found',
+        cause: parsedData.cause || 'No root cause identified',
+        solution: parsedData.solution || 'No solution provided',
       })
     } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        // C'est une erreur Axios
-        console.error('Axios error details:', error.response?.data || error.message)
-        setResult({
-          error: 'Failed to fetch AI analysis',
-          cause: error.response?.data?.message || 'Network or service error',
-          solution: 'Check your local service and network connection',
-        })
-      } else if (error instanceof Error) {
-        // C'est une erreur JavaScript standard
-        console.error('Standard error:', error.message)
-        setResult({
-          error: 'Failed to fetch AI analysis',
-          cause: error.message,
-          solution: 'Check your local service and network connection',
-        })
-      } else {
-        // Erreur inconnue
-        console.error('Unknown error:', error)
-        setResult({
-          error: 'Failed to fetch AI analysis',
-          cause: 'Unknown error occurred',
-          solution: 'Check your local service and network connection',
-        })
-      }
+      console.error('Fetch error:', error)
+
+      setResult({
+        error: 'Failed to fetch AI analysis',
+        cause: 'Network or service error',
+        solution: 'Check your local service and network connection',
+      })
     } finally {
       setLoading(false)
     }
   }
 
   const handleEditService = () => {
-    // Get current URL and extract IDs
     const currentUrl = window.location.pathname
-
-    // Extract IDs using regex
     const matches = currentUrl.match(/organization\/([^/]+)\/project\/([^/]+)\/environment\/([^/]+)\/logs\/([^/]+)/)
 
     if (matches) {
       const [, organizationId, projectId, environmentId, serviceId] = matches
-
-      // Construct the settings URL with the extracted IDs
       const settingsPath = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${serviceId}/settings/general`
-
       navigate(settingsPath)
     }
   }
 
-  // call fetchAIAnalysis
   useEffect(() => {
     if (isOpen) {
       fetchAIAnalysis()
@@ -135,10 +138,7 @@ export function AIAnalysisModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop with blur */}
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
-
-      {/* Stars */}
       <div className="absolute left-[35%] top-[20%] animate-pulse">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFD700">
           <path d="M12 0L14.645 9.355L24 12L14.645 14.645L12 24L9.355 14.645L0 12L9.355 9.355L12 0Z" />
@@ -154,10 +154,7 @@ export function AIAnalysisModal({
           <path d="M12 0L14.645 9.355L24 12L14.645 14.645L12 24L9.355 14.645L0 12L9.355 9.355L12 0Z" />
         </svg>
       </div>
-
-      {/* Modal */}
       <div className="relative z-50 w-[550px] rounded-xl bg-[#1A2031] p-5 text-neutral-50 shadow-xl">
-        {/* Kirby */}
         <div className="absolute -top-24 left-1/2 -translate-x-1/2">
           <div className="relative h-32 w-32">
             <div className="absolute h-full w-full rounded-full border-4 border-pink-500 bg-pink-200">
@@ -171,18 +168,13 @@ export function AIAnalysisModal({
                   <div className="absolute top-1 ml-0.5 h-2 w-3 rounded-full bg-white" />
                 </div>
               </div>
-
               <div className="absolute left-5 top-16 h-5 w-5 rounded-full bg-pink-400" />
               <div className="absolute right-5 top-16 h-5 w-5 rounded-full bg-pink-400" />
-
               <div className="absolute bottom-10 left-1/2 h-3 w-4 -translate-x-1/2 rounded-full bg-red-500" />
             </div>
           </div>
         </div>
-
-        {/* Modal Content */}
         <div className="relative">
-          {/* Additional decorative stars inside modal */}
           <div className="absolute -right-3 top-0 animate-pulse">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFD700">
               <path d="M12 0L14.645 9.355L24 12L14.645 14.645L12 24L9.355 14.645L0 12L9.355 9.355L12 0Z" />
@@ -193,7 +185,6 @@ export function AIAnalysisModal({
               <path d="M12 0L14.645 9.355L24 12L14.645 14.645L12 24L9.355 14.645L0 12L9.355 9.355L12 0Z" />
             </svg>
           </div>
-
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-medium text-white">AI Analysis Results</h2>
             <button onClick={onClose} className="text-neutral-400 hover:text-neutral-200">
@@ -202,7 +193,6 @@ export function AIAnalysisModal({
               </svg>
             </button>
           </div>
-
           {loading ? (
             <div className="flex flex-col items-center justify-center py-8">
               <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-[#5B50D6]/30 border-t-[#5B50D6]" />
@@ -223,8 +213,6 @@ export function AIAnalysisModal({
                   <h3 className="mb-3 text-lg font-medium text-[#5B50D6]">Solution</h3>
                   <p className="text-neutral-300">{result.solution}</p>
                 </div>
-
-                {/* Button Edit Service */}
                 <div className="mt-6 flex justify-end">
                   <Button onClick={handleEditService} className="bg-[#5B50D6] hover:bg-[#6E64D9]">
                     Edit Service Settings
