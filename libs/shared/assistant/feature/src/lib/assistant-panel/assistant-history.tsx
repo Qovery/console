@@ -69,7 +69,7 @@ export function AssistantHistory({ thread }: { thread: Thread }) {
       ? [
           {
             id: '1',
-            title: thread[0].text?.substring(0, 20),
+            title: thread[0].text?.substring(0, 20) + '...',
             created_at: new Date().toDateString(),
           },
         ]
