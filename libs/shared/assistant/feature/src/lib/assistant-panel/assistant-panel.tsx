@@ -23,6 +23,7 @@ import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import AssistantHistory from './assistant-history'
+import { submitMessage } from './submit-message'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
@@ -86,78 +87,6 @@ const Loading = () => {
       {loadingText}
     </AnimatedGradientText>
   )
-}
-
-const API_BASE_URL = 'https://ai-api.qovery.com'
-
-const apiCalls = async (message: string, token: string, context?: any): Promise<string> => {
-  try {
-    // First, create a new thread
-    const createThreadResponse = await fetch(`${API_BASE_URL}/thread`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: message.substring(0, 50), // Use first 50 chars as title
-      }),
-    })
-
-    if (!createThreadResponse.ok) {
-      throw new Error(`Failed to create thread: ${createThreadResponse.status}`)
-    }
-
-    const threadData = await createThreadResponse.json()
-    const threadId = threadData.id
-
-    // Then, send the message to the thread
-    const messageResponse = await fetch(`${API_BASE_URL}/thread/${threadId}/text`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        organization_id: context?.organization?.id,
-        project_id: context?.project?.id,
-        environment_id: context?.environment?.id,
-        service_type: context?.service?.type,
-        service_id: context?.service?.id,
-        text: message,
-        instructions: 'Please provide a concise response in Markdown format',
-      }),
-    })
-
-    if (!messageResponse.ok) {
-      throw new Error(`Failed to send message: ${messageResponse.status}`)
-    }
-
-    // Finally, retrieve the complete thread to get the response
-    const threadResponse = await fetch(`${API_BASE_URL}/thread`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    if (!threadResponse.ok) {
-      throw new Error(`Failed to retrieve thread: ${threadResponse.status}`)
-    }
-
-    const threadContent = await threadResponse.json()
-    const latestMessage = threadContent.results[threadContent.results.length - 1]
-
-    // Return the message content (assuming it's markdown or text)
-    return latestMessage.media_content
-  } catch (error) {
-    console.error('Error in apiCalls:', error)
-    return `
-# An error occurred
-
-I apologize, but I encountered an error while processing your request. Please try again later or contact support if the issue persists.
-`
-  }
 }
 
 export type Message = {
@@ -255,7 +184,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
   useEffect(() => {
     if (inputExplainMessage.length > 0) {
-      setInputMessage('Explain this message from my logs:\n' + inputExplainMessage)
+      setInputMessage(inputExplainMessage)
       setTimeout(() => {
         if (inputRef.current) {
           adjustTextareaHeight(inputRef.current)
@@ -303,7 +232,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       try {
         const token = await getAccessTokenSilently()
-        const apiResponse = await apiCalls(trimmedInputMessage, token, withContext ? context : null)
+        const apiResponse = await submitMessage(trimmedInputMessage, token, withContext ? context : undefined)
         const supportMessage: Message = {
           id: Date.now(),
           text: apiResponse,
@@ -477,12 +406,15 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 {thread.map((thread) => {
                   return match(thread.owner)
                     .with('user', () => (
-                      <div className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500">
+                      <div
+                        key={thread.id}
+                        className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
+                      >
                         <div className="whitespace-pre-wrap">{thread.text}</div>
                       </div>
                     ))
                     .with('agent', () => (
-                      <div className="text-sm">
+                      <div key={thread.id} className="text-sm">
                         <Markdown
                           remarkPlugins={[remarkGfm]}
                           components={{

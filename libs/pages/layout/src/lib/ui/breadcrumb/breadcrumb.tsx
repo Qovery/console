@@ -503,7 +503,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
                 className="gap-1.5"
                 onClick={() => {
                   setAssistantOpen(true)
-                  setMessage(selection.text)
+                  setMessage('Explain this message from my logs:\n' + selection.text)
                 }}
               >
                 <Icon iconName="sparkles" iconStyle="light" />
