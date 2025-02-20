@@ -43,7 +43,7 @@ function ButtonIA() {
       type="button"
       variant="surface"
       onClick={() => setAssistantOpen(true)}
-      className={clsx('ml-4 h-[38px] gap-2 px-3 dark:ml-3 dark:h-9', {
+      className={clsx('ml-4 mr-4 h-[38px] gap-2 px-3 dark:ml-3 dark:h-9', {
         'bg-neutral-50': assistantOpen,
       })}
     >

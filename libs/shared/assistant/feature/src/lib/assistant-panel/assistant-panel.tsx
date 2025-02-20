@@ -3,12 +3,18 @@ import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import { type ComponentProps, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
+import { useParams } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import remarkGfm from 'remark-gfm'
 import { match } from 'ts-pattern'
+import { useCluster } from '@qovery/domains/clusters/feature'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useOrganization } from '@qovery/domains/organizations/feature'
+import { useProject } from '@qovery/domains/projects/feature'
+import { useService } from '@qovery/domains/services/feature'
 import { Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
-import { twMerge } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
@@ -25,9 +31,12 @@ function Input({ onClick, loading, ...props }: InputProps) {
   return (
     <div
       className={twMerge(
-        clsx('flex rounded-xl border border-neutral-250', {
-          'border-brand-500 outline outline-[3px] outline-brand-100 dark:outline-1 dark:outline-brand-500': isFocus,
-        })
+        clsx(
+          'relative z-[1] flex rounded-xl border border-neutral-250 bg-white dark:border-neutral-500 dark:bg-neutral-550',
+          {
+            'border-brand-500 outline outline-[3px] outline-brand-100 dark:outline-1 dark:outline-brand-500': isFocus,
+          }
+        )
       )}
     >
       <textarea
@@ -56,7 +65,8 @@ function Input({ onClick, loading, ...props }: InputProps) {
   )
 }
 
-const simulateApiResponse = async (): Promise<string> => {
+const simulateApiResponse = async (message: string): Promise<string> => {
+  const title = message.substring(0, 12) + '...'
   await new Promise((resolve) => setTimeout(resolve, 1000))
   return `
 # Thank you for your message
@@ -98,15 +108,51 @@ export interface AssistantPanelProps {
   smaller?: boolean
 }
 
+function useQoveryContext() {
+  const { organizationId, clusterId, projectId, environmentId, databaseId, applicationId, serviceId } = useParams()
+
+  const _serviceId = applicationId || serviceId || databaseId
+
+  const { data: organization } = useOrganization({ organizationId })
+  const { data: project } = useProject({ organizationId, projectId })
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: cluster } = useCluster({ organizationId, clusterId: clusterId ?? environment?.cluster_id })
+  const { data: service } = useService({ environmentId, serviceId: _serviceId })
+
+  const entityMap = [
+    [service, 'service'],
+    [environment, 'environment'],
+    [project, 'project'],
+    [cluster, 'cluster'],
+    [organization, 'organization'],
+  ]
+
+  const current = entityMap.find(([entity]) => entity !== undefined)
+
+  return {
+    context: {
+      organization,
+      cluster,
+      project,
+      environment,
+      service,
+    },
+    current: current && typeof current[0] === 'object' ? { ...current[0], type: current[1] } : undefined,
+  }
+}
+
 export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const { data } = useQoveryStatus()
   const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
+  const { context, current } = useQoveryContext()
+  console.log(current)
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const [expand, setExpand] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [inputMessage, setInputMessage] = useState('')
+  const [withContext, setWithContext] = useState(true)
   const [messages, setMessages] = useState<Message[]>([])
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
@@ -153,7 +199,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       setInputMessage('')
       setIsLoading(true)
       try {
-        const apiResponse = await simulateApiResponse()
+        const apiResponse = await simulateApiResponse(trimmedInputMessage)
         const supportMessage: Message = {
           id: Date.now(),
           text: apiResponse,
@@ -328,7 +374,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               })}
             >
               {messages.length === 0 && docLinks.length > 0 && (
-                <div className="flex flex-col gap-2 pb-4">
+                <div className="flex flex-col gap-2">
                   <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
                     Ask for a contextual suggestion:
                   </span>
@@ -351,21 +397,44 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                   </div>
                 </div>
               )}
-              <Input
-                value={inputMessage}
-                rows={1}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onClick={handleSendMessage}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault()
-                    handleSendMessage()
-                  }
-                }}
-                onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
-                ref={(el) => el && adjustTextareaHeight(el)}
-                loading={isLoading}
-              />
+              <div className="relative pt-[42px]">
+                {withContext && (
+                  <div className="absolute top-2.5 flex w-full rounded-t-xl border border-neutral-250 pb-4 pl-2 pr-4 pt-2 text-xs text-neutral-400 dark:border-neutral-500 dark:text-neutral-250">
+                    <Tooltip content="Your message uses this current context" classNameContent="z-[1]">
+                      <span className="flex items-center gap-2">
+                        <Icon iconName="globe" iconStyle="regular" />
+                        <span>
+                          {upperCaseFirstLetter(String(current?.type))}:{' '}
+                          <span className="font-medium">{String(current?.name ?? 'No context')}</span>
+                        </span>
+                      </span>
+                    </Tooltip>
+                    <Button
+                      type="button"
+                      variant="plain"
+                      className="absolute right-2 top-0.5 text-neutral-500 dark:text-white"
+                      onClick={() => setWithContext(false)}
+                    >
+                      <Icon iconName="xmark" />
+                    </Button>
+                  </div>
+                )}
+                <Input
+                  value={inputMessage}
+                  rows={1}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onClick={handleSendMessage}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault()
+                      handleSendMessage()
+                    }
+                  }}
+                  onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
+                  ref={(el) => el && adjustTextareaHeight(el)}
+                  loading={isLoading}
+                />
+              </div>
               {appStatus && appStatus.status ? (
                 <a
                   className="ml-auto inline-flex max-w-max animate-fadein items-center gap-2 text-xs text-neutral-350 transition hover:text-neutral-600 dark:text-neutral-250"
