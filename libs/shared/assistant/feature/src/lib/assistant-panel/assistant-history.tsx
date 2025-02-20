@@ -63,18 +63,21 @@ export function AssistantHistory() {
   const groupedThreads = groupThreadsByTimeAgo(threads)
 
   return (
-    <div className="flex h-full w-80 flex-col justify-between border-r border-neutral-200">
+    <div className="flex h-full w-80 flex-col justify-between border-r border-neutral-200 dark:border-neutral-500">
       <div className="flex h-[45px] animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
         <div className="flex items-center font-bold">
           <span className="text-sm text-neutral-500 dark:text-white">History</span>
         </div>
       </div>
-      <div className="mt-4 flex-1 overflow-y-auto px-4">
+      <div className="mt-2 flex-1 overflow-y-auto px-2">
         {groupedThreads.yesterday && groupedThreads.yesterday.length > 0 && (
           <div className="mb-4">
-            <div className="p-2 text-xs font-medium text-neutral-500">Yesterday</div>
+            <div className="p-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">Yesterday</div>
             {groupedThreads.yesterday.map((thread) => (
-              <div key={thread.id} className="cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200">
+              <div
+                key={thread.id}
+                className="cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+              >
                 <div className="text-sm">{thread.title}</div>
               </div>
             ))}
@@ -83,9 +86,12 @@ export function AssistantHistory() {
 
         {groupedThreads.lastSevenDays && groupedThreads.lastSevenDays.length > 0 && (
           <div className="mb-4">
-            <div className="p-2 text-xs font-medium text-neutral-500">Last 7 days</div>
+            <div className="p-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">Last 7 days</div>
             {groupedThreads.lastSevenDays.map((thread) => (
-              <div key={thread.id} className="cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200">
+              <div
+                key={thread.id}
+                className="cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+              >
                 <div className="text-sm">{thread.title}</div>
               </div>
             ))}
@@ -94,9 +100,12 @@ export function AssistantHistory() {
 
         {groupedThreads.lastThirtyDays && groupedThreads.lastThirtyDays.length > 0 && (
           <div className="mb-4">
-            <div className="p-2 text-xs font-medium text-neutral-500">Last 30 days</div>
+            <div className="p-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">Last 30 days</div>
             {groupedThreads.lastThirtyDays.map((thread) => (
-              <div key={thread.id} className="cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200">
+              <div
+                key={thread.id}
+                className="cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+              >
                 <div className="text-sm">{thread.title}</div>
               </div>
             ))}
