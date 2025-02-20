@@ -281,268 +281,274 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             )
           )}
         >
-          <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
-            <div className="flex items-center font-bold">
-              <span className="text-sm text-neutral-500 dark:text-white">New conversation</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <span>
-                    <Tooltip content="Options" delayDuration={400}>
-                      <Button type="button" variant="plain" className="text-neutral-500 dark:text-white">
-                        <Icon iconName="ellipsis" />
-                      </Button>
-                    </Tooltip>
-                  </span>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content className="z-10 mr-10">
-                  <DropdownMenu.Item asChild>
-                    <button
-                      className="flex h-11 w-full items-center gap-2 text-sm"
-                      type="button"
-                      onClick={() => {
-                        showIntercomMessenger()
-                        handleOnClose()
-                      }}
-                    >
-                      <span className="w-4">
-                        <Icon iconName="robot" className="text-brand-500" />
-                      </span>
-                      <span>Contact support</span>
-                    </button>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item asChild>
-                    <a
-                      className="flex h-11 w-full items-center gap-2 text-sm"
-                      href={QOVERY_FORUM_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span className="w-4">
-                        <Icon iconName="user-group" className="text-brand-500" />
-                      </span>
-                      <span>Community forum</span>
-                    </a>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item asChild>
-                    <a
-                      className="flex h-11 w-full items-center gap-2 text-sm"
-                      href={QOVERY_FEEDBACK_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span className="w-4">
-                        <Icon iconName="comment-lines" className="text-brand-500" />
-                      </span>
-                      <span>Feedback</span>
-                    </a>
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-              <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
-              <Tooltip content="Take conversation to immersive" delayDuration={400} classNameContent="z-10">
-                <Button
-                  type="button"
-                  variant="plain"
-                  className="text-neutral-500 dark:text-white"
-                  onClick={() => setExpand(!expand)}
-                >
-                  <Icon iconName={expand ? 'compress' : 'expand'} />
-                </Button>
-              </Tooltip>
-              <Tooltip content="Close" delayDuration={400} classNameContent="z-10">
-                <Button
-                  type="button"
-                  variant="plain"
-                  onClick={handleOnClose}
-                  className="text-neutral-500 dark:text-white"
-                >
-                  <Icon iconName="xmark" />
-                </Button>
-              </Tooltip>
-            </div>
-          </div>
-          <div className="flex grow flex-col">
-            {messages.length === 0 && (
-              <span className="w-full animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-xs opacity-0">
-                Find everything you need with AI Copilot.
-              </span>
-            )}
-            <ScrollArea
-              ref={scrollAreaRef}
-              className={twMerge(
-                clsx('relative flex grow flex-col gap-4 overflow-y-scroll p-4', {
-                  'h-[420px]': !expand && messages.length > 0,
-                  'h-[calc(100vh-316px)]': expand && messages.length > 0,
-                })
-              )}
-            >
-              {messages.length === 0 && docLinks.length > 0 && expand && (
-                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 animate-[fadein_0.4s_ease-in-out_forwards_0.15s] flex-col gap-2 text-center opacity-0">
-                  <Icon iconName="sparkles" iconStyle="light" className="mb-4 text-[48px] text-brand-500" />
-                  <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
-                    Ask for a contextual suggestion:
-                  </span>
-                  <div className="flex max-w-[850px] flex-wrap justify-center gap-3">
-                    {docLinks.map(({ label, link }) => (
-                      <Button
-                        key={`${label}${link}`}
+          <div className="flex h-full flex-col justify-between">
+            <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
+              <div className="flex items-center font-bold">
+                <span className="text-sm text-neutral-500 dark:text-white">New conversation</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <span>
+                      <Tooltip content="Options" delayDuration={400}>
+                        <Button type="button" variant="plain" className="text-neutral-500 dark:text-white">
+                          <Icon iconName="ellipsis" />
+                        </Button>
+                      </Tooltip>
+                    </span>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content className="z-10 mr-10">
+                    <DropdownMenu.Item asChild>
+                      <button
+                        className="flex h-11 w-full items-center gap-2 text-sm"
                         type="button"
-                        variant="surface"
-                        className="inline-flex max-w-max gap-2"
-                        radius="full"
                         onClick={() => {
-                          setInputMessage(label)
-                          handleSendMessage()
+                          showIntercomMessenger()
+                          handleOnClose()
                         }}
                       >
-                        <Icon iconName="arrow-right" />
-                        {label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
+                        <span className="w-4">
+                          <Icon iconName="robot" className="text-brand-500" />
+                        </span>
+                        <span>Contact support</span>
+                      </button>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item asChild>
+                      <a
+                        className="flex h-11 w-full items-center gap-2 text-sm"
+                        href={QOVERY_FORUM_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span className="w-4">
+                          <Icon iconName="user-group" className="text-brand-500" />
+                        </span>
+                        <span>Community forum</span>
+                      </a>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item asChild>
+                      <a
+                        className="flex h-11 w-full items-center gap-2 text-sm"
+                        href={QOVERY_FEEDBACK_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <span className="w-4">
+                          <Icon iconName="comment-lines" className="text-brand-500" />
+                        </span>
+                        <span>Feedback</span>
+                      </a>
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+                <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
+                <Tooltip content="Take conversation to immersive" delayDuration={400} classNameContent="z-10">
+                  <Button
+                    type="button"
+                    variant="plain"
+                    className="text-neutral-500 dark:text-white"
+                    onClick={() => setExpand(!expand)}
+                  >
+                    <Icon iconName={expand ? 'compress' : 'expand'} />
+                  </Button>
+                </Tooltip>
+                <Tooltip content="Close" delayDuration={400} classNameContent="z-10">
+                  <Button
+                    type="button"
+                    variant="plain"
+                    onClick={handleOnClose}
+                    className="text-neutral-500 dark:text-white"
+                  >
+                    <Icon iconName="xmark" />
+                  </Button>
+                </Tooltip>
+              </div>
+            </div>
+            <div className="flex grow flex-col">
+              {messages.length === 0 && (
+                <span className="w-full animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-xs opacity-0">
+                  Find everything you need with AI Copilot.
+                </span>
               )}
-              {messages.map((message) => {
-                return match(message.sender)
-                  .with('user', () => (
-                    <div className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500">
-                      <div className="whitespace-pre-wrap">{message.text}</div>
-                    </div>
-                  ))
-                  .with('support', () => (
-                    <div className="text-sm">
-                      <Markdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          h1: ({ node, ...props }) => <h1 className="mb-2 text-lg font-bold" {...props} />,
-                          h2: ({ node, ...props }) => <h2 className="mb-2 text-base font-semibold" {...props} />,
-                          p: ({ node, ...props }) => <p className="mb-2" {...props} />,
-                          ul: ({ node, ...props }) => <ul className="mb-2 list-disc pl-4" {...props} />,
-                          ol: ({ node, ...props }) => <ol className="mb-2 list-decimal pl-4" {...props} />,
-                          li: ({ node, ...props }) => <li className="mb-1" {...props} />,
-                          a: ({ node, ...props }) => <a className="text-sky-500 hover:underline" {...props} />,
-                          code: ({ node, inline, ...props }: { inline?: boolean; [key: string]: any }) =>
-                            inline ? (
-                              <code className="rounded bg-gray-200 px-1 dark:bg-gray-800" {...props} />
-                            ) : (
-                              <code
-                                className="mb-2 block overflow-x-auto rounded bg-gray-200 p-2 dark:bg-gray-800"
-                                {...props}
-                              />
-                            ),
-                        }}
-                      >
-                        {message.text}
-                      </Markdown>
-                    </div>
-                  ))
-                  .exhaustive()
-              })}
-            </ScrollArea>
-            <div
-              className={clsx('relative mt-auto flex flex-col gap-2 px-4 pb-4', {
-                'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': messages.length > 0,
-              })}
-            >
-              {messages.length === 0 && docLinks.length > 0 && !expand && (
-                <div className="flex animate-[fadein_0.22s_ease-in-out_forwards_0.10s] flex-col gap-2 opacity-0">
-                  <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
-                    Ask for a contextual suggestion:
-                  </span>
-                  <div className="flex flex-col gap-2 text-neutral-400">
-                    {docLinks.map(({ label, link }) => (
-                      <Button
-                        key={`${label}${link}`}
-                        type="button"
-                        variant="surface"
-                        className="inline-flex max-w-max gap-2 truncate"
-                        onClick={() => {
-                          setInputMessage(label)
-                          handleSendMessage()
-                        }}
-                      >
-                        <Icon iconName="arrow-right" />
-                        {label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <div
+              <ScrollArea
+                ref={scrollAreaRef}
                 className={twMerge(
-                  clsx('relative animate-[fadein_0.22s_ease-in-out_forwards_0.15s] pt-3 opacity-0', {
-                    'pt-[42px]': withContext,
+                  clsx('relative flex grow flex-col gap-4 overflow-y-scroll p-4', {
+                    'h-[420px]': !expand && messages.length > 0,
+                    'h-[calc(100vh-316px)]': expand && messages.length > 0,
                   })
                 )}
               >
-                {withContext && (
-                  <div className="absolute top-2.5 flex w-full rounded-t-xl border border-neutral-250 bg-neutral-100 pb-4 pl-2 pr-4 pt-2 text-xs text-neutral-400 dark:border-neutral-500 dark:bg-neutral-700 dark:text-neutral-250">
-                    <Tooltip content="Your message uses this current context" classNameContent="z-[1]">
-                      <span className="flex items-center gap-2">
-                        <Icon iconName="plug" iconStyle="regular" />
-                        <span>
-                          {upperCaseFirstLetter(String(current?.type))}:{' '}
-                          <span className="font-medium">{String(current?.name ?? 'No context')}</span>
-                        </span>
-                      </span>
-                    </Tooltip>
-                    <Button
-                      type="button"
-                      variant="plain"
-                      className="absolute right-2 top-0.5 text-neutral-500 dark:text-white"
-                      onClick={() => setWithContext(false)}
-                    >
-                      <Icon iconName="xmark" />
-                    </Button>
+                {messages.length === 0 && docLinks.length > 0 && expand && (
+                  <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 text-center">
+                    <Icon
+                      iconName="sparkles"
+                      iconStyle="light"
+                      className="mb-4 animate-[fadein_0.4s_ease-in-out_forwards_0.05s] text-[48px] text-brand-500 opacity-0"
+                    />
+                    <span className="animate-[fadein_0.4s_ease-in-out_forwards_0.05s] text-[11px] font-semibold text-neutral-400 opacity-0 dark:text-white">
+                      Ask for a contextual suggestion:
+                    </span>
+                    <div className="flex max-w-[850px] animate-[fadein_0.4s_ease-in-out_forwards_0.15s] flex-wrap justify-center gap-3 opacity-0">
+                      {docLinks.map(({ label, link }) => (
+                        <Button
+                          key={`${label}${link}`}
+                          type="button"
+                          variant="surface"
+                          className="inline-flex max-w-max gap-2"
+                          radius="full"
+                          onClick={() => {
+                            setInputMessage(label)
+                            handleSendMessage()
+                          }}
+                        >
+                          <Icon iconName="arrow-right" />
+                          {label}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                 )}
-                <Input
-                  ref={inputRef}
-                  value={inputMessage}
-                  rows={1}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onClick={handleSendMessage}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      handleSendMessage()
-                    } else {
-                      if (inputRef.current) adjustTextareaHeight(inputRef.current)
-                    }
-                  }}
-                  onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
-                  loading={isLoading}
-                />
-              </div>
-              {appStatus && appStatus.status ? (
-                <a
-                  className="ml-auto inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-350 opacity-0 transition hover:text-neutral-600 dark:text-neutral-250"
-                  href={QOVERY_STATUS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                {messages.map((message) => {
+                  return match(message.sender)
+                    .with('user', () => (
+                      <div className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500">
+                        <div className="whitespace-pre-wrap">{message.text}</div>
+                      </div>
+                    ))
+                    .with('support', () => (
+                      <div className="text-sm">
+                        <Markdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            h1: ({ node, ...props }) => <h1 className="mb-2 text-lg font-bold" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="mb-2 text-base font-semibold" {...props} />,
+                            p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="mb-2 list-disc pl-4" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="mb-2 list-decimal pl-4" {...props} />,
+                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                            a: ({ node, ...props }) => <a className="text-sky-500 hover:underline" {...props} />,
+                            code: ({ node, inline, ...props }: { inline?: boolean; [key: string]: any }) =>
+                              inline ? (
+                                <code className="rounded bg-gray-200 px-1 dark:bg-gray-800" {...props} />
+                              ) : (
+                                <code
+                                  className="mb-2 block overflow-x-auto rounded bg-gray-200 p-2 dark:bg-gray-800"
+                                  {...props}
+                                />
+                              ),
+                          }}
+                        >
+                          {message.text}
+                        </Markdown>
+                      </div>
+                    ))
+                    .exhaustive()
+                })}
+              </ScrollArea>
+              <div
+                className={clsx('relative mt-auto flex flex-col gap-2 px-4 pb-4', {
+                  'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': messages.length > 0,
+                })}
+              >
+                {messages.length === 0 && docLinks.length > 0 && !expand && (
+                  <div className="flex animate-[fadein_0.22s_ease-in-out_forwards_0.10s] flex-col gap-2 opacity-0">
+                    <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
+                      Ask for a contextual suggestion:
+                    </span>
+                    <div className="flex flex-col gap-2 text-neutral-400">
+                      {docLinks.map(({ label, link }) => (
+                        <Button
+                          key={`${label}${link}`}
+                          type="button"
+                          variant="surface"
+                          className="inline-flex max-w-max gap-2 truncate"
+                          onClick={() => {
+                            setInputMessage(label)
+                            handleSendMessage()
+                          }}
+                        >
+                          <Icon iconName="arrow-right" />
+                          {label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div
+                  className={twMerge(
+                    clsx('relative animate-[fadein_0.22s_ease-in-out_forwards_0.15s] pt-3 opacity-0', {
+                      'pt-[42px]': withContext,
+                    })
+                  )}
                 >
-                  <span>
-                    {match(appStatus)
-                      .with({ status: 'OPERATIONAL' }, () => 'All systems operational')
-                      .with({ status: 'MAJOROUTAGE' }, () => 'Major outage ongoing')
-                      .with({ status: 'MINOROUTAGE' }, () => 'Minor outage ongoing')
-                      .with({ status: 'PARTIALOUTAGE' }, () => 'Partial outage ongoing')
-                      .exhaustive()}
-                  </span>
-                  <DotStatus
-                    color={match(appStatus)
-                      .with({ status: 'OPERATIONAL' }, () => 'green' as const)
-                      .with({ status: 'MAJOROUTAGE' }, () => 'red' as const)
-                      .with({ status: 'MINOROUTAGE' }, () => 'yellow' as const)
-                      .with({ status: 'PARTIALOUTAGE' }, () => 'yellow' as const)
-                      .exhaustive()}
+                  {withContext && (
+                    <div className="absolute top-2.5 flex w-full rounded-t-xl border border-neutral-250 bg-neutral-100 pb-4 pl-2 pr-4 pt-2 text-xs text-neutral-400 dark:border-neutral-500 dark:bg-neutral-700 dark:text-neutral-250">
+                      <Tooltip content="Your message uses this current context" classNameContent="z-[1]">
+                        <span className="flex items-center gap-2">
+                          <Icon iconName="plug" iconStyle="regular" />
+                          <span>
+                            {upperCaseFirstLetter(String(current?.type))}:{' '}
+                            <span className="font-medium">{String(current?.name ?? 'No context')}</span>
+                          </span>
+                        </span>
+                      </Tooltip>
+                      <Button
+                        type="button"
+                        variant="plain"
+                        className="absolute right-2 top-0.5 text-neutral-500 dark:text-white"
+                        onClick={() => setWithContext(false)}
+                      >
+                        <Icon iconName="xmark" />
+                      </Button>
+                    </div>
+                  )}
+                  <Input
+                    ref={inputRef}
+                    value={inputMessage}
+                    rows={1}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    onClick={handleSendMessage}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSendMessage()
+                      } else {
+                        if (inputRef.current) adjustTextareaHeight(inputRef.current)
+                      }
+                    }}
+                    onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
+                    loading={isLoading}
                   />
-                </a>
-              ) : (
-                <div className="h-4" />
-              )}
+                </div>
+                {appStatus && appStatus.status ? (
+                  <a
+                    className="ml-auto inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-350 opacity-0 transition hover:text-neutral-600 dark:text-neutral-250"
+                    href={QOVERY_STATUS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span>
+                      {match(appStatus)
+                        .with({ status: 'OPERATIONAL' }, () => 'All systems operational')
+                        .with({ status: 'MAJOROUTAGE' }, () => 'Major outage ongoing')
+                        .with({ status: 'MINOROUTAGE' }, () => 'Minor outage ongoing')
+                        .with({ status: 'PARTIALOUTAGE' }, () => 'Partial outage ongoing')
+                        .exhaustive()}
+                    </span>
+                    <DotStatus
+                      color={match(appStatus)
+                        .with({ status: 'OPERATIONAL' }, () => 'green' as const)
+                        .with({ status: 'MAJOROUTAGE' }, () => 'red' as const)
+                        .with({ status: 'MINOROUTAGE' }, () => 'yellow' as const)
+                        .with({ status: 'PARTIALOUTAGE' }, () => 'yellow' as const)
+                        .exhaustive()}
+                    />
+                  </a>
+                ) : (
+                  <div className="h-4" />
+                )}
+              </div>
             </div>
           </div>
         </Dialog.Content>
