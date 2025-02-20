@@ -22,6 +22,7 @@ import AssistantContext from '../assistant-context/assistant-context'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
+import AssistantHistory from './assistant-history'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
@@ -274,14 +275,15 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         <Dialog.Content
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] animate-slidein-up-sm-faded flex-col rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] animate-slidein-up-sm-faded rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
                 'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)]': expand,
               }
             )
           )}
         >
-          <div className="flex h-full flex-col justify-between">
+          {expand && <AssistantHistory />}
+          <div className="flex h-full w-full flex-col justify-between">
             <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
               <div className="flex items-center font-bold">
                 <span className="text-sm text-neutral-500 dark:text-white">New conversation</span>
