@@ -119,7 +119,7 @@ export function PageGeneral({
           className="inline-flex max-w-max items-center justify-center gap-1.5"
           onClick={() => {
             setAssistantOpen(true)
-            setMessage('Please generate concise Audit Logs Report with AI')
+            setMessage('Please generate concise Audit Logs Report')
           }}
         >
           <Icon iconName="sparkles" iconStyle="light" className="relative top-[1px] text-sm text-brand-500" />
