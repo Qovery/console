@@ -1,4 +1,3 @@
-// libs/pages/logs/environment/src/lib/feature/ai-analysis-button/ai-analysis-button.tsx
 import { type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useState } from 'react'
 import { AIAnalysisModal, type AIAnalysisResult } from './ai-analysis-modal'
@@ -10,10 +9,10 @@ export interface AIAnalysisButtonProps {
   environmentId: string
 }
 
-export const AIAnalysisButton = memo(({ serviceStatus, environmentId }: AIAnalysisButtonProps) => {
+export const AIAnalysisButton = memo(({ serviceStatus }: AIAnalysisButtonProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState<AIAnalysisResult>()
+  const [result] = useState<AIAnalysisResult>()
 
   const hasError =
     serviceStatus?.state === 'DEPLOYMENT_ERROR' ||
@@ -39,7 +38,6 @@ export const AIAnalysisButton = memo(({ serviceStatus, environmentId }: AIAnalys
           <div className="relative h-8 w-8">
             {/* Kirby face */}
             <div className="absolute h-full w-full rounded-full border-[2px] border-[#FF69B4] bg-[#FFB7C5]">
-              {/* Yeux ovales noirs avec partie bleue */}
               <div className="absolute left-1/2 top-[35%] flex -translate-x-1/2 space-x-1.5">
                 <div className="relative h-2 w-1 overflow-hidden rounded-[100%] bg-black">
                   <div className="absolute bottom-0 h-[35%] w-full bg-[#0066FF]" />
@@ -51,11 +49,9 @@ export const AIAnalysisButton = memo(({ serviceStatus, environmentId }: AIAnalys
                 </div>
               </div>
 
-              {/* Joues très roses */}
               <div className="absolute left-1 top-[60%] h-1.5 w-1.5 rounded-full bg-[#FF9ECD]" />
               <div className="absolute right-1 top-[60%] h-1.5 w-1.5 rounded-full bg-[#FF9ECD]" />
 
-              {/* Bouche rouge */}
               <div className="absolute left-1/2 top-[65%] h-1 w-1.5 -translate-x-1/2 rounded-full bg-[#FF6B8B]" />
             </div>
           </div>
@@ -67,7 +63,6 @@ export const AIAnalysisButton = memo(({ serviceStatus, environmentId }: AIAnalys
           </div>
         </div>
 
-        {/* Étoiles */}
         <div className="absolute -left-1 -top-1 animate-spin">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="#FFD700">
             <path d="M12 0L14.645 9.355L24 12L14.645 14.645L12 24L9.355 14.645L0 12L9.355 9.355L12 0Z" />

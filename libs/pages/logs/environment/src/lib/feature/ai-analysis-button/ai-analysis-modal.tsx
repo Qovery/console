@@ -1,4 +1,3 @@
-// libs/pages/logs/environment/src/lib/feature/ai-analysis-button/ai-analysis-modal.tsx
 import axios from 'axios'
 import { type ReactNode, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -17,6 +16,20 @@ interface AIAnalysisModalProps {
   result?: AIAnalysisResult
   children?: ReactNode
 }
+
+const aiAnalysisAxios = axios.create({
+  baseURL: 'https://p8080-za2cda663-z3d1a50f1-gtw.zc531a994.rustrocks.cloud',
+  headers: {
+    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',
+  },
+  withCredentials: false,
+})
+
+aiAnalysisAxios.interceptors.request.use((config) => {
+  config.headers['Access-Control-Allow-Origin'] = '*'
+  return config
+})
 
 export function AIAnalysisModal({
   isOpen,
@@ -56,20 +69,44 @@ export function AIAnalysisModal({
     setResult(undefined)
 
     try {
-      const response = await axios.get(`http://localhost:8080/env/${environmentId}`)
+      const response = await aiAnalysisAxios.get(`/env/${environmentId}`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      })
+      console.log('Full response:', response)
 
       setResult({
         error: response.data.error || 'No error details found',
         cause: response.data.cause || 'No root cause identified',
         solution: response.data.solution || 'No solution provided',
       })
-    } catch (error) {
-      console.error('Error fetching AI analysis:', error)
-      setResult({
-        error: 'Failed to fetch AI analysis',
-        cause: 'Network or service error',
-        solution: 'Check your local service and network connection',
-      })
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        // C'est une erreur Axios
+        console.error('Axios error details:', error.response?.data || error.message)
+        setResult({
+          error: 'Failed to fetch AI analysis',
+          cause: error.response?.data?.message || 'Network or service error',
+          solution: 'Check your local service and network connection',
+        })
+      } else if (error instanceof Error) {
+        // C'est une erreur JavaScript standard
+        console.error('Standard error:', error.message)
+        setResult({
+          error: 'Failed to fetch AI analysis',
+          cause: error.message,
+          solution: 'Check your local service and network connection',
+        })
+      } else {
+        // Erreur inconnue
+        console.error('Unknown error:', error)
+        setResult({
+          error: 'Failed to fetch AI analysis',
+          cause: 'Unknown error occurred',
+          solution: 'Check your local service and network connection',
+        })
+      }
     } finally {
       setLoading(false)
     }
@@ -92,7 +129,7 @@ export function AIAnalysisModal({
     }
   }
 
-  // Appeler fetchAIAnalysis quand le modal s'ouvre
+  // call fetchAIAnalysis
   useEffect(() => {
     if (isOpen) {
       fetchAIAnalysis()
@@ -128,9 +165,7 @@ export function AIAnalysisModal({
         {/* Kirby */}
         <div className="absolute -top-24 left-1/2 -translate-x-1/2">
           <div className="relative h-32 w-32">
-            {/* Corps principal - rose clair */}
             <div className="absolute h-full w-full rounded-full border-4 border-pink-500 bg-pink-200">
-              {/* Yeux ovales noirs avec partie bleue */}
               <div className="absolute left-1/2 top-8 flex -translate-x-1/2 space-x-6">
                 <div className="relative h-8 w-4 rounded-full bg-black">
                   <div className="absolute bottom-1 h-3 w-4 rounded-full bg-blue-600" />
@@ -142,11 +177,9 @@ export function AIAnalysisModal({
                 </div>
               </div>
 
-              {/* Joues roses */}
               <div className="absolute left-5 top-16 h-5 w-5 rounded-full bg-pink-400" />
               <div className="absolute right-5 top-16 h-5 w-5 rounded-full bg-pink-400" />
 
-              {/* Bouche rouge */}
               <div className="absolute bottom-10 left-1/2 h-3 w-4 -translate-x-1/2 rounded-full bg-red-500" />
             </div>
           </div>
