@@ -1,3 +1,5 @@
+import { type Thread } from './assistant-panel'
+
 const threads = [
   {
     id: 'thread_01HNYP2K3ZGJX8V5D6Q7RMW4NS',
@@ -26,26 +28,30 @@ const threads = [
   },
 ]
 
-interface Thread {
+interface Threads {
   id: string
   title: string
   created_at: string
 }
 
 interface GroupedThreads {
-  yesterday?: Thread[]
-  lastSevenDays?: Thread[]
-  lastThirtyDays?: Thread[]
+  today?: Threads[]
+  yesterday?: Threads[]
+  lastSevenDays?: Threads[]
+  lastThirtyDays?: Threads[]
 }
 
-const groupThreadsByTimeAgo = (threads: Thread[]): GroupedThreads => {
+const groupThreadsByTimeAgo = (threads: Threads[]): GroupedThreads => {
   const now = new Date().getTime()
 
   return threads.reduce((acc: GroupedThreads, thread) => {
     const threadDate = new Date(thread.created_at).getTime()
     const diffInDays = Math.floor((now - threadDate) / (1000 * 60 * 60 * 24))
+    const diffInHours = Math.floor((now - threadDate) / (1000 * 60 * 60))
 
-    if (diffInDays <= 1) {
+    if (diffInHours < 24) {
+      acc.today = [...(acc.today || []), thread]
+    } else if (diffInDays <= 1) {
       acc.yesterday = [...(acc.yesterday || []), thread]
     } else if (diffInDays <= 7) {
       acc.lastSevenDays = [...(acc.lastSevenDays || []), thread]
@@ -57,8 +63,19 @@ const groupThreadsByTimeAgo = (threads: Thread[]): GroupedThreads => {
   }, {})
 }
 
-export function AssistantHistory() {
-  const groupedThreads = groupThreadsByTimeAgo(threads)
+export function AssistantHistory({ thread }: { thread: Thread }) {
+  const groupedThreads = groupThreadsByTimeAgo([
+    ...(thread.length > 0
+      ? [
+          {
+            id: '1',
+            title: thread[0].text?.substring(0, 20),
+            created_at: new Date().toDateString(),
+          },
+        ]
+      : []),
+    ...threads,
+  ])
 
   return (
     <div className="flex h-full w-80 flex-col justify-between border-r border-neutral-200 dark:border-neutral-500">
@@ -68,6 +85,20 @@ export function AssistantHistory() {
         </div>
       </div>
       <div className="mt-2 flex-1 overflow-y-auto px-2">
+        {groupedThreads.today && groupedThreads.today.length > 0 && (
+          <div className="mb-4">
+            <div className="p-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">Today</div>
+            {groupedThreads.today.map((thread) => (
+              <div
+                key={thread.id}
+                className="cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400"
+              >
+                <div className="text-sm">{thread.title}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {groupedThreads.yesterday && groupedThreads.yesterday.length > 0 && (
           <div className="mb-4">
             <div className="p-2 text-xs font-medium text-neutral-500 dark:text-neutral-300">Yesterday</div>

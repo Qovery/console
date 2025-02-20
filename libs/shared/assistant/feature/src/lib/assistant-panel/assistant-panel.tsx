@@ -81,7 +81,11 @@ const Loading = () => {
     return () => clearTimeout(timer)
   }, [])
 
-  return <AnimatedGradientText className="mt-auto w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
+  return (
+    <AnimatedGradientText className="relative top-2 mt-auto w-fit text-ssm font-medium">
+      {loadingText}
+    </AnimatedGradientText>
+  )
 }
 const apiCalls = async (message: string, token: string, context?: any): Promise<string> => {
   console.log(token)
@@ -115,12 +119,14 @@ How else can I assist you today?
 `
 }
 
-type Message = {
+export type Message = {
   id: number
   text: string
-  sender: 'user' | 'support'
+  owner: 'user' | 'agent'
   timestamp: number
 }
+
+export type Thread = Message[]
 
 export interface AssistantPanelProps {
   onClose: () => void
@@ -171,7 +177,7 @@ function useQoveryContext() {
 }
 
 export function AssistantPanel({ onClose }: AssistantPanelProps) {
-  const { message: explainMessage, setMessage: setExplainMessage } = useContext(AssistantContext)
+  const { message: inputExplainMessage, setMessage: setInputExplainMessage } = useContext(AssistantContext)
   const { data } = useQoveryStatus()
   const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
@@ -184,14 +190,14 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [inputMessage, setInputMessage] = useState('')
   const [withContext, setWithContext] = useState(true)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [thread, setThread] = useState<Thread>([])
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
   const handleOnClose = () => {
     onClose()
     setInputMessage('')
-    setExplainMessage('')
+    setInputExplainMessage('')
   }
 
   const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
@@ -204,8 +210,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   }
 
   useEffect(() => {
-    if (explainMessage.length > 0) {
-      setInputMessage('Explain this message from my logs:\n' + explainMessage)
+    if (inputExplainMessage.length > 0) {
+      setInputMessage('Explain this message from my logs:\n' + inputExplainMessage)
       setTimeout(() => {
         if (inputRef.current) {
           adjustTextareaHeight(inputRef.current)
@@ -213,13 +219,13 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         }
       }, 50)
     }
-  }, [explainMessage])
+  }, [inputExplainMessage])
 
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
-  }, [messages])
+  }, [thread])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -239,11 +245,11 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       const newMessage: Message = {
         id: Date.now(),
         text: trimmedInputMessage,
-        sender: 'user',
+        owner: 'user',
         timestamp: Date.now(),
       }
-      const updatedMessages = [...messages, newMessage]
-      setMessages(updatedMessages)
+      const updatedThread = [...thread, newMessage]
+      setThread(updatedThread)
 
       setInputMessage('')
       setIsLoading(true)
@@ -257,11 +263,11 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         const supportMessage: Message = {
           id: Date.now(),
           text: apiResponse,
-          sender: 'support',
+          owner: 'agent',
           timestamp: Date.now(),
         }
-        const updatedMessagesWithSupport = [...updatedMessages, supportMessage]
-        setMessages(updatedMessagesWithSupport)
+        const updatedThreadWithAgent = [...updatedThread, supportMessage]
+        setThread(updatedThreadWithAgent)
       } catch (error) {
         console.error('Error fetching response:', error)
       } finally {
@@ -295,7 +301,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             )
           )}
         >
-          {expand && <AssistantHistory />}
+          {expand && <AssistantHistory thread={thread} />}
           <div className="flex h-full w-full flex-col justify-between">
             <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
               <div className="flex items-center font-bold">
@@ -380,7 +386,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               </div>
             </div>
             <div className="flex grow flex-col">
-              {messages.length === 0 && (
+              {thread.length === 0 && (
                 <span className="w-full animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-xs opacity-0">
                   Find everything you need with AI Copilot.
                 </span>
@@ -389,12 +395,12 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 ref={scrollAreaRef}
                 className={twMerge(
                   clsx('relative flex grow flex-col gap-4 overflow-y-scroll p-4', {
-                    'h-[420px]': !expand && messages.length > 0,
-                    'h-[calc(100vh-316px)]': expand && messages.length > 0,
+                    'h-[420px]': !expand && thread.length > 0,
+                    'h-[calc(100vh-316px)]': expand && thread.length > 0,
                   })
                 )}
               >
-                {messages.length === 0 && docLinks.length > 0 && expand && (
+                {thread.length === 0 && docLinks.length > 0 && expand && (
                   <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col gap-2 text-center">
                     <Icon
                       iconName="sparkles"
@@ -424,14 +430,14 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     </div>
                   </div>
                 )}
-                {messages.map((message) => {
-                  return match(message.sender)
+                {thread.map((thread) => {
+                  return match(thread.owner)
                     .with('user', () => (
                       <div className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500">
-                        <div className="whitespace-pre-wrap">{message.text}</div>
+                        <div className="whitespace-pre-wrap">{thread.text}</div>
                       </div>
                     ))
-                    .with('support', () => (
+                    .with('agent', () => (
                       <div className="text-sm">
                         <Markdown
                           remarkPlugins={[remarkGfm]}
@@ -454,7 +460,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                               ),
                           }}
                         >
-                          {message.text}
+                          {thread.text}
                         </Markdown>
                       </div>
                     ))
@@ -464,10 +470,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               </ScrollArea>
               <div
                 className={clsx('relative mt-auto flex flex-col gap-2 px-4 pb-4', {
-                  'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': messages.length > 0,
+                  'shadow-[0_-8px_16px_-6px_rgba(0,0,0,0.05)]': thread.length > 0,
                 })}
               >
-                {messages.length === 0 && docLinks.length > 0 && !expand && (
+                {thread.length === 0 && docLinks.length > 0 && !expand && (
                   <div className="flex animate-[fadein_0.22s_ease-in-out_forwards_0.10s] flex-col gap-2 opacity-0">
                     <span className="text-[11px] font-semibold text-neutral-400 dark:text-white">
                       Ask for a contextual suggestion:
