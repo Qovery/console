@@ -18,6 +18,7 @@ import { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } f
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ServiceStateChip, useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Button, Icon, Indicator, Link, TablePrimitives } from '@qovery/shared/ui'
 import { DeploymentLogsPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
@@ -144,6 +145,7 @@ export function ListDeploymentLogs({
   const { organizationId, projectId, serviceId, versionId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
   const { updateStageId } = useContext(ServiceStageIdsContext)
+  const { setMessage, setAssistantOpen } = useContext(AssistantContext)
 
   useEffect(() => {
     if (stage) updateStageId(stage.id)
@@ -390,15 +392,34 @@ export function ListDeploymentLogs({
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
-          <Button
-            onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
-            size="sm"
-            variant="surface"
-            color="neutral"
-            className="w-7 justify-center"
-          >
-            <Icon iconName="file-arrow-down" iconStyle="regular" />
-          </Button>
+          <div className="flex gap-2">
+            {environmentStatus?.last_deployment_state.includes('ERROR') && (
+              <Button
+                size="sm"
+                color="red"
+                variant="solid"
+                className="flex items-center justify-center gap-1.5"
+                onClick={() => {
+                  setAssistantOpen(true)
+                  const error = logs.find((l) => l.type === 'error')
+                  const message = error ? 'Please find a fix for my error: \n' + error?.message?.safe_message : ''
+                  setMessage(message)
+                }}
+              >
+                <Icon iconName="sparkles" iconStyle="light" className="relative top-[1px] text-sm" />
+                Explain Error AI Copilot
+              </Button>
+            )}
+            <Button
+              onClick={() => download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')}
+              size="sm"
+              variant="surface"
+              color="neutral"
+              className="w-7 justify-center"
+            >
+              <Icon iconName="file-arrow-down" iconStyle="regular" />
+            </Button>
+          </div>
         </div>
         <div
           className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"
