@@ -233,11 +233,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       setInputMessage('')
       setIsLoading(true)
-      setTimeout(() => {
-        if (inputRef.current) {
-          adjustTextareaHeight(inputRef.current)
-        }
-      }, 50)
+      if (inputRef.current) {
+        inputRef.current.style.height = 'initial'
+      }
+
       try {
         const token = await getAccessTokenSilently()
         const apiResponse = await apiCalls(trimmedInputMessage, token, withContext ? context : null)
