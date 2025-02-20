@@ -35,6 +35,7 @@ export function App() {
   const { isLoading } = useAuth()
   const { redirectToAcceptPageGuard, onSearchUpdate, checkTokenInStorage } = useInviteMember()
   const [assistantOpen, setAssistantOpen] = useState(false)
+  const [message, setMessage] = useState<string>('')
 
   useEffect(() => {
     onSearchUpdate()
@@ -119,7 +120,7 @@ export function App() {
 
   return (
     <GTMProvider state={gtmParams}>
-      <AssistantContext.Provider value={{ assistantOpen, setAssistantOpen }}>
+      <AssistantContext.Provider value={{ assistantOpen, setAssistantOpen, message, setMessage }}>
         <ScrollToTop />
         <Routes>
           <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />

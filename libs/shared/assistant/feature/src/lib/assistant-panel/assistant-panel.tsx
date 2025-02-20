@@ -1,9 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
-import { type ComponentProps, useEffect, useRef, useState } from 'react'
+import { type ComponentProps, forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import Markdown from 'react-markdown'
-import { useParams } from 'react-router-dom'
+import { useMatch, useParams } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
 import remarkGfm from 'remark-gfm'
 import { match } from 'ts-pattern'
@@ -12,10 +12,12 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useService } from '@qovery/domains/services/feature'
+import { ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
+import AssistantContext from '../assistant-context/assistant-context'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
@@ -25,7 +27,7 @@ interface InputProps extends ComponentProps<'textarea'> {
   onClick?: () => void
 }
 
-function Input({ onClick, loading, ...props }: InputProps) {
+const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, ...props }, ref) => {
   const [isFocus, setIsFocus] = useState(false)
 
   return (
@@ -40,6 +42,7 @@ function Input({ onClick, loading, ...props }: InputProps) {
       )}
     >
       <textarea
+        ref={ref}
         placeholder="Ask Qovery Copilot"
         autoFocus
         className="w-full resize-none rounded-xl px-4 py-[13px] text-sm leading-[22px] text-neutral-400 placeholder:text-neutral-350 focus-visible:outline-none dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250"
@@ -63,7 +66,7 @@ function Input({ onClick, loading, ...props }: InputProps) {
       </div>
     </div>
   )
-}
+})
 
 const simulateApiResponse = async (message: string): Promise<string> => {
   const title = message.substring(0, 12) + '...'
@@ -108,10 +111,23 @@ export interface AssistantPanelProps {
   smaller?: boolean
 }
 
+export const SERVICE_LOGS_URL = (serviceId = ':serviceId', podName = '') =>
+  `/${serviceId}/service-logs${podName ? `?pod_name=${podName}` : ''}`
+
+export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
+  `/${serviceId}/deployment-logs/${versionId}`
+
 function useQoveryContext() {
   const { organizationId, clusterId, projectId, environmentId, databaseId, applicationId, serviceId } = useParams()
 
-  const _serviceId = applicationId || serviceId || databaseId
+  const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })?.params
+  const matchDeploymentLogs = useMatch({
+    path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
+    end: false,
+  })?.params
+
+  const _serviceId =
+    applicationId || serviceId || databaseId || matchServiceLogs?.['serviceId'] || matchDeploymentLogs?.['serviceId']
 
   const { data: organization } = useOrganization({ organizationId })
   const { data: project } = useProject({ organizationId, projectId })
@@ -136,12 +152,16 @@ function useQoveryContext() {
       project,
       environment,
       service,
+      deployment: service && {
+        execution_id: matchDeploymentLogs?.['versionId'],
+      },
     },
     current: current && typeof current[0] === 'object' ? { ...current[0], type: current[1] } : undefined,
   }
 }
 
 export function AssistantPanel({ onClose }: AssistantPanelProps) {
+  const { message: explainMessage } = useContext(AssistantContext)
   const { data } = useQoveryStatus()
   const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
@@ -149,6 +169,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   console.log(current)
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
   const [expand, setExpand] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [inputMessage, setInputMessage] = useState('')
@@ -165,6 +186,17 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       element.style.height = '240px'
     }
   }
+
+  useEffect(() => {
+    if (explainMessage.length > 0) {
+      setInputMessage('Explain this message from my logs:\n' + explainMessage)
+      setTimeout(() => {
+        if (inputRef.current) {
+          adjustTextareaHeight(inputRef.current)
+        }
+      }, 200)
+    }
+  }, [explainMessage])
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -420,6 +452,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                   </div>
                 )}
                 <Input
+                  ref={inputRef}
                   value={inputMessage}
                   rows={1}
                   onChange={(e) => setInputMessage(e.target.value)}
@@ -431,7 +464,6 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     }
                   }}
                   onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
-                  ref={(el) => el && adjustTextareaHeight(el)}
                   loading={isLoading}
                 />
               </div>
