@@ -1,10 +1,11 @@
+import clsx from 'clsx'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo } from 'react'
+import { type PropsWithChildren, useContext, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
+import { AssistantContext, AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
@@ -12,10 +13,51 @@ import {
   CLUSTER_URL,
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
-import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
+import { Banner, Button, Icon, Kbd, WarningScreenMobile } from '@qovery/shared/ui'
+import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
+
+function ButtonIA() {
+  const { assistantOpen, setAssistantOpen } = useContext(AssistantContext)
+  const metaKey = useFormatHotkeys('meta')
+
+  // Toggle the menu when ⌘H is pressed
+  useEffect(() => {
+    const down = (event: KeyboardEvent) => {
+      if (event.key === 'h' && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
+        setAssistantOpen(true)
+      }
+    }
+
+    document.addEventListener('keydown', down)
+    return () => document.removeEventListener('keydown', down)
+  }, [])
+
+  if (!metaKey) return null
+
+  return (
+    <Button
+      type="button"
+      variant="surface"
+      onClick={() => setAssistantOpen(true)}
+      className={clsx('ml-4 h-[38px] gap-2 px-3 dark:ml-3 dark:h-9', {
+        'bg-neutral-50': assistantOpen,
+      })}
+    >
+      <span className="flex items-center gap-1.5 text-neutral-400 dark:text-white">
+        <Icon iconName="sparkles" className="relative top-[1px] text-brand-500 dark:text-white" />
+        AI Copilot
+      </span>
+      <div className="ml-auto flex gap-1 text-neutral-400">
+        <Kbd>{metaKey}</Kbd>
+        <Kbd className="text-2xs">H</Kbd>
+      </div>
+    </Button>
+  )
+}
 
 export interface LayoutPageProps {
   defaultOrganizationId: string
@@ -158,7 +200,14 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 ongoing, you can follow it from logs
               </Banner>
             )}
-            {topBar && <TopBar>{spotlight && <SpotlightTrigger />}</TopBar>}
+            {topBar && (
+              <TopBar>
+                <div className="flex items-center">
+                  {spotlight && <SpotlightTrigger />}
+                  <ButtonIA />
+                </div>
+              </TopBar>
+            )}
           </div>
         </div>
       </main>
