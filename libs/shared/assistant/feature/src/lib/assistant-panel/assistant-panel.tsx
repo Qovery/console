@@ -87,36 +87,77 @@ const Loading = () => {
     </AnimatedGradientText>
   )
 }
+
+const API_BASE_URL = 'https://ai-api.qovery.com'
+
 const apiCalls = async (message: string, token: string, context?: any): Promise<string> => {
-  console.log(token)
-  const title = message.substring(0, 12) + '...'
-  await new Promise((resolve) => setTimeout(resolve, 4000))
-  return `
-# Thank you for your message
+  try {
+    // First, create a new thread
+    const createThreadResponse = await fetch(`${API_BASE_URL}/thread`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: message.substring(0, 50), // Use first 50 chars as title
+      }),
+    })
 
-Here's how I can help:
+    if (!createThreadResponse.ok) {
+      throw new Error(`Failed to create thread: ${createThreadResponse.status}`)
+    }
 
-1. First, let's break down your question
-2. Then, we'll explore possible solutions
-3. Finally, we'll implement the best approach
+    const threadData = await createThreadResponse.json()
+    const threadId = threadData.id
 
-## Key points to consider:
+    // Then, send the message to the thread
+    const messageResponse = await fetch(`${API_BASE_URL}/thread/${threadId}/text`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        organization_id: context?.organization?.id,
+        project_id: context?.project?.id,
+        environment_id: context?.environment?.id,
+        service_type: context?.service?.type,
+        service_id: context?.service?.id,
+        text: message,
+        instructions: 'Please provide a concise response in Markdown format',
+      }),
+    })
 
-- Complexity of the task
-- Available resources
-- Time constraints
+    if (!messageResponse.ok) {
+      throw new Error(`Failed to send message: ${messageResponse.status}`)
+    }
 
-\`\`\`javascript
-// Here's a simple example:
-function greet(name) {
-  return \`Hello, \${name}!\`;
-}
-\`\`\`
+    // Finally, retrieve the complete thread to get the response
+    const threadResponse = await fetch(`${API_BASE_URL}/thread`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
-For more information, check out [our documentation](https://example.com).
+    if (!threadResponse.ok) {
+      throw new Error(`Failed to retrieve thread: ${threadResponse.status}`)
+    }
 
-How else can I assist you today?
+    const threadContent = await threadResponse.json()
+    const latestMessage = threadContent.results[threadContent.results.length - 1]
+
+    // Return the message content (assuming it's markdown or text)
+    return latestMessage.media_content
+  } catch (error) {
+    console.error('Error in apiCalls:', error)
+    return `
+# An error occurred
+
+I apologize, but I encountered an error while processing your request. Please try again later or contact support if the issue persists.
 `
+  }
 }
 
 export type Message = {
@@ -202,6 +243,9 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
   const adjustTextareaHeight = (element: HTMLTextAreaElement) => {
     element.style.height = 'auto'
+
+    if (thread.length > 0) return
+
     if (element.scrollHeight < 240) {
       element.style.height = `${element.scrollHeight}px`
     } else {
