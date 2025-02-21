@@ -276,7 +276,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       <Dialog.Portal>
         {expand && (
           <Dialog.Overlay
-            className="absolute left-0 top-0 z-0 h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards] bg-black/50 opacity-0 backdrop-blur-[2px] "
+            className="absolute left-0 top-0 z-0 h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards_0.05s] bg-black/50 opacity-0 backdrop-blur-[2px] "
             onClick={handleOnClose}
           />
         )}
@@ -285,7 +285,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             clsx(
               'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] animate-slidein-up-sm-faded rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
-                'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] animate-[scalein_0.22s_ease_both_0.12s] opacity-0':
+                'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] animate-[scalein_0.22s_ease_both] opacity-0':
                   expand,
               }
             )
@@ -318,7 +318,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
                     <span>
-                      <Tooltip content="Options" delayDuration={400}>
+                      <Tooltip content="Options" delayDuration={400} classNameContent="z-10">
                         <Button type="button" variant="plain" className="text-neutral-500 dark:text-white">
                           <Icon iconName="ellipsis" />
                         </Button>
@@ -326,18 +326,20 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     </span>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content className="z-10 mr-10">
-                    <DropdownMenu.Item asChild>
-                      <button
-                        className="flex h-11 w-full items-center gap-2 text-sm"
-                        type="button"
-                        onClick={() => setExpand(true)}
-                      >
-                        <span className="w-4">
-                          <Icon iconName="file-archive" className="text-brand-500" />
-                        </span>
-                        <span>Show history</span>
-                      </button>
-                    </DropdownMenu.Item>
+                    {!expand && (
+                      <DropdownMenu.Item asChild>
+                        <button
+                          className="flex h-11 w-full items-center gap-2 text-sm"
+                          type="button"
+                          onClick={() => setExpand(true)}
+                        >
+                          <span className="w-4">
+                            <Icon iconName="file-archive" className="text-brand-500" />
+                          </span>
+                          <span>Show history</span>
+                        </button>
+                      </DropdownMenu.Item>
+                    )}
                     <DropdownMenu.Item asChild>
                       <button
                         className="flex h-11 w-full items-center gap-2 text-sm"
@@ -382,7 +384,11 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
                 <div className="mx-1 h-5 w-[1px] bg-neutral-200 dark:bg-neutral-500"></div>
-                <Tooltip content="Take conversation to immersive" delayDuration={400} classNameContent="z-10">
+                <Tooltip
+                  content={expand ? 'Collapse modal' : 'Take conversation to immersive'}
+                  delayDuration={400}
+                  classNameContent="z-10"
+                >
                   <Button
                     type="button"
                     variant="plain"

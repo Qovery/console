@@ -1,6 +1,6 @@
 import clsx from 'clsx'
-import { LoaderSpinner, truncateText } from '@qovery/shared/ui'
-import { type Thread, useThreads } from './use-threads'
+import { Button, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
+import { type Thread } from './use-threads'
 
 interface GroupedThreads {
   today: Thread[]
@@ -22,7 +22,7 @@ export const AssistantHistory = ({
   }
   threadId?: string
   organizationId: string
-  setThreadId: (id: string) => void
+  setThreadId: (id?: string) => void
 }) => {
   const { threads = [], isLoading, error } = data
 
@@ -94,9 +94,9 @@ export const AssistantHistory = ({
             key={thread.id}
             onClick={() => setThreadId(thread.id)}
             className={clsx(
-              'cursor-pointer rounded-md p-2 text-sm transition-colors hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400',
+              'cursor-pointer rounded-md p-2 text-sm transition-colors hover:bg-brand-50 dark:text-neutral-50 dark:hover:bg-neutral-400',
               {
-                'bg-neutral-200 dark:bg-neutral-400': threadId === thread.id,
+                'bg-brand-50 dark:bg-neutral-400': threadId === thread.id,
               }
             )}
           >
@@ -130,8 +130,20 @@ export const AssistantHistory = ({
   return (
     <div className="flex h-full w-80 flex-col justify-between border-r border-neutral-200 dark:border-neutral-500">
       <div className="flex h-[45px] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 dark:border-neutral-500">
-        <div className="flex items-center font-bold">
+        <div className="flex w-full items-center justify-between font-bold">
           <span className="text-sm text-neutral-500 dark:text-white">History</span>
+          <Tooltip side="bottom" content="New chat" delayDuration={400} classNameContent="z-10">
+            <span>
+              <Button
+                type="button"
+                variant="plain"
+                className="text-neutral-500 dark:text-white"
+                onClick={() => setThreadId(undefined)}
+              >
+                <Icon iconName="pen-to-square" iconStyle="regular" />
+              </Button>
+            </span>
+          </Tooltip>
         </div>
       </div>
       <div className="mt-2 flex-1 overflow-y-auto px-2">
