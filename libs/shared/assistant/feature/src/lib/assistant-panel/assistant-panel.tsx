@@ -320,6 +320,20 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     </span>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content className="z-10 mr-10">
+                    {threadId && (
+                      <DropdownMenu.Item asChild>
+                        <button
+                          className="flex h-11 w-full items-center gap-2 text-sm"
+                          type="button"
+                          onClick={() => setThreadId(undefined)}
+                        >
+                          <span className="w-4">
+                            <Icon iconName="pen-to-square" className="text-brand-500" />
+                          </span>
+                          <span>New chat</span>
+                        </button>
+                      </DropdownMenu.Item>
+                    )}
                     {!expand && (
                       <DropdownMenu.Item asChild>
                         <button
