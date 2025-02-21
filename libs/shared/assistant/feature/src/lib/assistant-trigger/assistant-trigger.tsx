@@ -13,11 +13,11 @@ export interface AssistantTriggerProps {
 
 export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps) {
   const { assistantOpen, setAssistantOpen } = useContext(AssistantContext)
-  const [assistantIcon] = useLocalStorage<AssistantIcon>(AssistantIconKey, 'QUESTION_MARK')
+  // const [assistantIcon] = useLocalStorage<AssistantIcon>(AssistantIconKey, 'QUESTION_MARK')
 
   return (
     <>
-      <button
+      {/* <button
         className={clsx(
           'group fixed bottom-8 right-8 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-neutral-50 outline-brand-600 transition hover:animate-[showAssistantTrigger_0.2s_cubic-bezier(0.21,1.02,0.73,1)_forwards]',
           assistantIcon === 'QUESTION_MARK' && 'bg-brand-500 shadow-2xl hover:bg-brand-600',
@@ -29,7 +29,7 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
           .with('QUESTION_MARK', () => (
             <Icon
               iconStyle="regular"
-              iconName="question"
+              iconName="sparkles"
               className="text-2xl group-hover:animate-[shake_0.6s_cubic-bezier(0.36,0.07,0.19,0.97)_both]"
             />
           ))
@@ -42,7 +42,7 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
           ))
           .exhaustive()}
         <span className="pointer-events-none absolute left-0 top-0 h-[150px] w-[150px] bg-gradient-to-b from-transparent from-0% via-neutral-50 via-50% to-transparent to-100% opacity-0 group-hover:animate-[shineAssistantTrigger_1s_linear_forwards] group-hover:opacity-20"></span>
-      </button>
+      </button> */}
 
       {/* XXX: rely on defaultOpen boolean for `smaller` prop as all funnel flows require smaller panel */}
       {assistantOpen && <AssistantPanel onClose={() => setAssistantOpen(false)} smaller={defaultOpen} />}
