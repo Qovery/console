@@ -1,5 +1,7 @@
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { type Thread } from './assistant-panel'
+import { fetchThread } from './use-thread'
 
 type Context = {
   organization?: Organization
@@ -21,7 +23,7 @@ export const submitMessage = async (
   token: string,
   threadId?: string,
   context?: Context | null
-): Promise<{ id: string; content: string }> => {
+): Promise<{ id: string; thread: Thread } | null> => {
   try {
     // Ensure we have an organization ID
     const organizationId = context?.organization?.id
@@ -76,23 +78,28 @@ export const submitMessage = async (
       throw new Error(`Failed to send message: ${messageResponse.status}`)
     }
 
-    const messageResponseContent = await messageResponse.json()
+    if (!_threadId) {
+      throw new Error('Failed to fetch thread')
+    }
+
+    const messages = await fetchThread(organizationId, _threadId, token)
+
+    // Convertir les messages du format API vers le format Thread
+    const formattedMessages: Thread = messages.map((msg: any) => ({
+      id: msg.id,
+      text: msg.media_content,
+      owner: msg.owner,
+      timestamp: new Date(msg.created_at).getTime(),
+    }))
 
     // Return the message content (assuming it's markdown or text)
     return {
-      id: _threadId as string,
-      content: messageResponseContent.media_content,
+      id: _threadId,
+      thread: formattedMessages,
     }
   } catch (error) {
     console.error('Error:', error)
-    return {
-      id: 'error',
-      content: `
-  # An error occurred
-
-  I apologize, but I encountered an error while processing your request. Please try again later or contact support if the issue persists.
-  `,
-    }
+    return null
   }
 }
 

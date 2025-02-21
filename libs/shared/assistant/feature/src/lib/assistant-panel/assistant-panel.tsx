@@ -244,17 +244,11 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       try {
         const token = await getAccessTokenSilently()
-        const apiResponse = await submitMessage(trimmedInputMessage, token, threadId, withContext ? context : undefined)
-        setThreadId(apiResponse.id)
-
-        const supportMessage: Message = {
-          id: Date.now(),
-          text: apiResponse.content,
-          owner: 'assistant',
-          timestamp: Date.now(),
+        const response = await submitMessage(trimmedInputMessage, token, threadId, withContext ? context : undefined)
+        if (response) {
+          setThreadId(response.id)
+          setThread(response.thread)
         }
-        const updatedThreadWithAgent = [...updatedThread, supportMessage]
-        setThread(updatedThreadWithAgent)
       } catch (error) {
         console.error('Error fetching response:', error)
       } finally {
