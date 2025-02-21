@@ -277,10 +277,11 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         <Dialog.Content
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] animate-slidein-up-sm-faded rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
                 'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] animate-[scalein_0.22s_ease_both] opacity-0':
                   expand,
+                'animate-slidein-up-sm-faded': !expand,
               }
             )
           )}
