@@ -24,6 +24,7 @@ import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-con
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import AssistantHistory from './assistant-history'
 import { submitMessage } from './submit-message'
+import { useThreads } from './use-threads'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
@@ -77,7 +78,7 @@ const Loading = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoadingText('Analyzing...')
-    }, 2000)
+    }, 4000)
 
     return () => clearTimeout(timer)
   }, [])
@@ -161,7 +162,13 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [inputMessage, setInputMessage] = useState('')
   const [withContext, setWithContext] = useState(true)
   const [thread, setThread] = useState<Thread>([])
-  const [currentThreadId, setCurrentThreadId] = useState<string | undefined>()
+  const [threadId, setThreadId] = useState<string | undefined>()
+
+  const {
+    threads = [],
+    error: errorThreads,
+    isLoading: isLoadingThreads,
+  } = useThreads(context?.organization?.id ?? '', threadId)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -233,13 +240,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       try {
         const token = await getAccessTokenSilently()
-        const apiResponse = await submitMessage(
-          trimmedInputMessage,
-          token,
-          currentThreadId,
-          withContext ? context : undefined
-        )
-        setCurrentThreadId(apiResponse.id)
+        const apiResponse = await submitMessage(trimmedInputMessage, token, threadId, withContext ? context : undefined)
+        setThreadId(apiResponse.id)
         const supportMessage: Message = {
           id: Date.now(),
           text: apiResponse.content,
@@ -255,6 +257,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       }
     }
   }
+
+  const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
   return (
     <Dialog.Root
@@ -281,11 +285,28 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             )
           )}
         >
-          {expand && <AssistantHistory thread={thread} />}
+          {expand && (
+            <AssistantHistory
+              data={{
+                threads,
+                error: errorThreads,
+                isLoading: isLoadingThreads,
+              }}
+              threadId={threadId}
+              setThreadId={setThreadId}
+              organizationId={context?.organization?.id ?? ''}
+            />
+          )}
           <div className="flex h-full w-full flex-col justify-between">
             <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
               <div className="flex items-center font-bold">
-                <span className="text-sm text-neutral-500 dark:text-white">New conversation</span>
+                <span className="text-sm text-neutral-500 dark:text-white">
+                  {!threadId || threads.length === 0
+                    ? 'New conversation'
+                    : currentThreadHistoryTitle.length >= 50
+                      ? currentThreadHistoryTitle + '...'
+                      : currentThreadHistoryTitle}
+                </span>
               </div>
               <div className="flex items-center gap-1">
                 <DropdownMenu.Root>
@@ -367,8 +388,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             </div>
             <div className="flex grow flex-col">
               {thread.length === 0 && (
-                <span className="w-full animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-xs opacity-0">
-                  Find everything you need with AI Copilot.
+                <span className="mx-auto w-full max-w-[430px] animate-[fadein_0.22s_ease-in-out_forwards_0.05s] py-4 text-center text-ssm opacity-0">
+                  I'm your <span className="font-medium text-brand-500">DevOps AI Copilot</span> - I can help you to fix
+                  your deployments, optimize your infrastructure costs, audit your security and do everything you would
+                  expect from a complete DevOps Engineering team.
                 </span>
               )}
               <ScrollArea
