@@ -25,25 +25,150 @@ const aiAnalysisAxios = axios.create({
   withCredentials: false,
 })
 
+// Composant pour parser et afficher du texte avec des liens markdown
+const MarkdownText = ({ text }: { text: string }) => {
+  if (!text) return null
+
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
+  const parts = []
+  let lastIndex = 0
+  let match
+
+  while ((match = markdownLinkRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index))
+    }
+
+    parts.push(
+      <a
+        key={match.index}
+        href={match[2]}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 underline hover:text-blue-300"
+      >
+        {match[1]}
+      </a>
+    )
+
+    lastIndex = markdownLinkRegex.lastIndex
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex))
+  }
+
+  return <>{parts}</>
+}
+
+const SolutionFeedback = () => {
+  const [rating, setRating] = useState<number | null>(null)
+  const [submitted, setSubmitted] = useState(false)
+
+  if (submitted) {
+    return (
+      <div className="mt-4 border-t border-neutral-700 pt-4">
+        <p className="text-sm text-white">Thanks for your feedback!</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-4 border-t border-neutral-700 pt-4">
+      <p className="text-sm text-white">Was this solution helpful?</p>
+      <div className="mt-2 flex items-center gap-4">
+        <div className="flex gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              onClick={() => {
+                setRating(star)
+                // Ici vous pourriez ajouter une fonction pour envoyer le feedback à votre backend
+                setTimeout(() => setSubmitted(true), 500)
+              }}
+              className={`text-xl transition-colors ${
+                rating && star <= rating ? 'text-yellow-400' : 'text-neutral-600 hover:text-yellow-400'
+              }`}
+            >
+              ★
+            </button>
+          ))}
+        </div>
+        {rating && !submitted && (
+          <span className="text-sm text-white">
+            {rating <= 2 ? 'Sorry to hear that' : rating === 3 ? 'Thanks!' : 'Glad it helped!'}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const ResultSection = ({
+  title,
+  content,
+  isError = false,
+  showFeedback = false,
+}: {
+  title: string
+  content: string
+  isError?: boolean
+  showFeedback?: boolean
+}) => {
+  const [showCopied, setShowCopied] = useState(false)
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(content)
+      setShowCopied(true)
+      setTimeout(() => setShowCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy text:', err)
+    }
+  }
+
+  return (
+    <div className={`rounded-lg p-4 ${isError ? 'bg-red-900/20' : 'bg-[#232A3B]'}`}>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className={`text-lg font-medium ${isError ? 'text-red-400' : 'text-[#5B50D6]'}`}>{title}</h3>
+        <button
+          onClick={handleCopy}
+          className="p-1 text-white transition-colors hover:text-neutral-200"
+          title="Copy to clipboard"
+        >
+          {showCopied ? (
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+              />
+            </svg>
+          )}
+        </button>
+      </div>
+      <div className="text-white">
+        <MarkdownText text={content} />
+      </div>
+      {showFeedback && <SolutionFeedback />}
+    </div>
+  )
+}
+
 export function AIAnalysisModal({
   isOpen,
   onClose,
   loading: initialLoading,
   result: initialResult,
 }: AIAnalysisModalProps) {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [loading, setLoading] = useState(initialLoading)
   const [result, setResult] = useState<AIAnalysisResult | undefined>(initialResult)
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY })
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [])
 
   const extractEnvironmentId = () => {
     const currentUrl = window.location.pathname
@@ -65,28 +190,13 @@ export function AIAnalysisModal({
     try {
       const response = await aiAnalysisAxios.get(`/env/${environmentId}`)
 
-      // Log raw data for debugging
-      console.log('Raw response data:', response.data)
-
-      // Fonction pour nettoyer le JSON
-      const cleanJSON = (jsonString: string) => {
-        return jsonString
-          .replace(/`/g, "'") // Remplacer les backticks
-          .replace(/\n/g, ' ') // Supprimer les sauts de ligne
-          .replace(/\s+/g, ' ') // Réduire les espaces multiples
-          .trim() // Supprimer les espaces en début/fin
-      }
-
       let parsedData
       if (typeof response.data === 'string') {
         try {
-          // Nettoyer et parser le JSON
-          const cleanedJsonString = cleanJSON(response.data)
+          const cleanedJsonString = response.data.replace(/`/g, "'").replace(/\n/g, ' ').replace(/\s+/g, ' ').trim()
           parsedData = JSON.parse(cleanedJsonString)
         } catch (parseError) {
           console.error('JSON Parsing error:', parseError)
-          console.error('Original string:', response.data)
-
           setResult({
             error: 'Failed to parse AI response',
             cause: 'Invalid JSON format',
@@ -98,7 +208,6 @@ export function AIAnalysisModal({
         parsedData = response.data
       }
 
-      // Définir le résultat avec des valeurs par défaut
       setResult({
         error: parsedData.error || 'No error details found',
         cause: parsedData.cause || 'No root cause identified',
@@ -106,7 +215,6 @@ export function AIAnalysisModal({
       })
     } catch (error: unknown) {
       console.error('Fetch error:', error)
-
       setResult({
         error: 'Failed to fetch AI analysis',
         cause: 'Network or service error',
@@ -157,21 +265,11 @@ export function AIAnalysisModal({
       <div className="relative z-50 w-[550px] rounded-xl bg-[#1A2031] p-5 text-neutral-50 shadow-xl">
         <div className="absolute -top-24 left-1/2 -translate-x-1/2">
           <div className="relative h-32 w-32">
-            <div className="absolute h-full w-full rounded-full border-4 border-pink-500 bg-pink-200">
-              <div className="absolute left-1/2 top-8 flex -translate-x-1/2 space-x-6">
-                <div className="relative h-8 w-4 rounded-full bg-black">
-                  <div className="absolute bottom-1 h-3 w-4 rounded-full bg-blue-600" />
-                  <div className="absolute top-1 ml-0.5 h-2 w-3 rounded-full bg-white" />
-                </div>
-                <div className="relative h-8 w-4 rounded-full bg-black">
-                  <div className="absolute bottom-1 h-3 w-4 rounded-full bg-blue-600" />
-                  <div className="absolute top-1 ml-0.5 h-2 w-3 rounded-full bg-white" />
-                </div>
-              </div>
-              <div className="absolute left-5 top-16 h-5 w-5 rounded-full bg-pink-400" />
-              <div className="absolute right-5 top-16 h-5 w-5 rounded-full bg-pink-400" />
-              <div className="absolute bottom-10 left-1/2 h-3 w-4 -translate-x-1/2 rounded-full bg-red-500" />
-            </div>
+            <img
+              src="https://s-media-cache-ak0.pinimg.com/originals/6a/b3/2c/6ab32c8801ecebba2850f175b389d5fc.png"
+              alt="Kirby"
+              className="h-full w-full"
+            />
           </div>
         </div>
         <div className="relative">
@@ -187,7 +285,7 @@ export function AIAnalysisModal({
           </div>
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-xl font-medium text-white">AI Analysis Results</h2>
-            <button onClick={onClose} className="text-neutral-400 hover:text-neutral-200">
+            <button onClick={onClose} className="text-white hover:text-neutral-200">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M18 6L6 18M6 6l12 12" />
               </svg>
@@ -196,23 +294,22 @@ export function AIAnalysisModal({
           {loading ? (
             <div className="flex flex-col items-center justify-center py-8">
               <div className="mb-4 h-8 w-8 animate-spin rounded-full border-4 border-[#5B50D6]/30 border-t-[#5B50D6]" />
-              <p className="text-neutral-300">AI is analyzing your deployment error...</p>
+              <p className="text-white">AI is analyzing your deployment error...</p>
             </div>
           ) : (
             result && (
               <div className="space-y-5">
-                <div className="rounded-lg bg-[#232A3B] p-4">
-                  <h3 className="mb-3 text-lg font-medium text-[#5B50D6]">Error Analysis</h3>
-                  <p className="text-neutral-300">{result.error}</p>
-                </div>
-                <div className="rounded-lg bg-[#232A3B] p-4">
-                  <h3 className="mb-3 text-lg font-medium text-[#5B50D6]">Root Cause</h3>
-                  <p className="text-neutral-300">{result.cause}</p>
-                </div>
-                <div className="rounded-lg bg-[#232A3B] p-4">
-                  <h3 className="mb-3 text-lg font-medium text-[#5B50D6]">Solution</h3>
-                  <p className="text-neutral-300">{result.solution}</p>
-                </div>
+                <ResultSection
+                  title="Error Analysis"
+                  content={result.error}
+                  isError={result.error.includes('Failed to')}
+                />
+                <ResultSection
+                  title="Root Cause"
+                  content={result.cause}
+                  isError={result.cause.includes('Network or service error')}
+                />
+                <ResultSection title="Solution" content={result.solution} showFeedback={true} />
                 <div className="mt-6 flex justify-end">
                   <Button onClick={handleEditService} className="bg-[#5B50D6] hover:bg-[#6E64D9]">
                     Edit Service Settings
