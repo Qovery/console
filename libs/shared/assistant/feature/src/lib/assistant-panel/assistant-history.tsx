@@ -100,7 +100,7 @@ export const AssistantHistory = ({
               }
             )}
           >
-            {thread.title.length >= 30 ? `${truncateText(thread.title, 30)}...` : thread.title}
+            {thread.title.length >= 28 ? `${truncateText(thread.title, 28)}...` : thread.title}
           </div>
         ))}
       </div>
@@ -129,7 +129,7 @@ export const AssistantHistory = ({
 
   return (
     <div className="flex h-full w-80 flex-col justify-between border-r border-neutral-200 dark:border-neutral-500">
-      <div className="flex h-[45px] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 opacity-0 dark:border-neutral-500">
+      <div className="flex h-[45px] justify-between border-b border-neutral-200 py-2 pl-4 pr-2 dark:border-neutral-500">
         <div className="flex items-center font-bold">
           <span className="text-sm text-neutral-500 dark:text-white">History</span>
         </div>

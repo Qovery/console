@@ -162,7 +162,6 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [inputMessage, setInputMessage] = useState('')
   const [withContext, setWithContext] = useState(true)
-  // const [thread, setThread] = useState<Thread>([])
   const [threadId, setThreadId] = useState<string | undefined>()
 
   const {
@@ -170,17 +169,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
     error: errorThreads,
     isLoading: isLoadingThreads,
   } = useThreads(context?.organization?.id ?? '', threadId)
-  const {
-    thread,
-    setThread,
-    isLoading: isLoadingThread,
-    error: threadError,
-  } = useThread({
+  const { thread, setThread } = useThread({
     organizationId: context?.organization?.id ?? '',
     threadId,
   })
-
-  // console.log(thread)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -254,6 +246,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         const token = await getAccessTokenSilently()
         const apiResponse = await submitMessage(trimmedInputMessage, token, threadId, withContext ? context : undefined)
         setThreadId(apiResponse.id)
+
         const supportMessage: Message = {
           id: Date.now(),
           text: apiResponse.content,
@@ -283,7 +276,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       <Dialog.Portal>
         {expand && (
           <Dialog.Overlay
-            className="absolute left-0 top-0 z-0 h-screen w-screen bg-black/50 backdrop-blur-[2px]"
+            className="absolute left-0 top-0 z-0 h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards] bg-black/50 opacity-0 backdrop-blur-[2px] "
             onClick={handleOnClose}
           />
         )}
@@ -292,7 +285,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             clsx(
               'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] animate-slidein-up-sm-faded rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
-                'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)]': expand,
+                'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] animate-[scalein_0.22s_ease_both_0.12s] opacity-0':
+                  expand,
               }
             )
           )}
@@ -332,6 +326,18 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     </span>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content className="z-10 mr-10">
+                    <DropdownMenu.Item asChild>
+                      <button
+                        className="flex h-11 w-full items-center gap-2 text-sm"
+                        type="button"
+                        onClick={() => setExpand(true)}
+                      >
+                        <span className="w-4">
+                          <Icon iconName="file-archive" className="text-brand-500" />
+                        </span>
+                        <span>Show history</span>
+                      </button>
+                    </DropdownMenu.Item>
                     <DropdownMenu.Item asChild>
                       <button
                         className="flex h-11 w-full items-center gap-2 text-sm"
@@ -422,7 +428,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                       iconStyle="light"
                       className="mb-4 animate-[fadein_0.4s_ease-in-out_forwards_0.05s] text-[48px] text-brand-500 opacity-0"
                     />
-                    <span className="animate-[fadein_0.4s_ease-in-out_forwards_0.05s] text-[11px] font-semibold text-neutral-400 opacity-0 dark:text-white">
+                    <span className="animate-[fadein_0.4s_ease-in-out_forwards_0.22s] text-[11px] font-semibold text-neutral-400 opacity-0 dark:text-white">
                       Ask for a contextual suggestion:
                     </span>
                     <div className="flex max-w-[850px] animate-[fadein_0.4s_ease-in-out_forwards_0.15s] flex-wrap justify-center gap-3 opacity-0">
@@ -460,19 +466,30 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                         <Markdown
                           remarkPlugins={[remarkGfm]}
                           components={{
-                            h1: ({ node, ...props }) => <h1 className="mb-2 text-lg font-bold" {...props} />,
-                            h2: ({ node, ...props }) => <h2 className="mb-2 text-base font-semibold" {...props} />,
-                            p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                            h1: ({ node, ...props }) => <h1 className="my-2 text-lg font-semibold" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="my-2 text-lg font-semibold" {...props} />,
+                            h3: ({ node, ...props }) => <h3 className="my-2 text-base font-semibold" {...props} />,
+                            h4: ({ node, ...props }) => <h3 className="my-2 text-base font-semibold" {...props} />,
+                            p: ({ node, ...props }) => <p className="my-2" {...props} />,
                             ul: ({ node, ...props }) => <ul className="mb-2 list-disc pl-4" {...props} />,
                             ol: ({ node, ...props }) => <ol className="mb-2 list-decimal pl-4" {...props} />,
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
                             a: ({ node, ...props }) => <a className="text-sky-500 hover:underline" {...props} />,
+                            pre: ({ node, ...props }) => (
+                              <pre
+                                className="max-w-max rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+                                {...props}
+                              />
+                            ),
                             code: ({ node, inline, ...props }: { inline?: boolean; [key: string]: any }) =>
                               inline ? (
-                                <code className="rounded bg-gray-200 px-1 dark:bg-gray-800" {...props} />
+                                <code
+                                  className="rounded bg-neutral-200 px-1 font-code text-ssm dark:bg-neutral-800"
+                                  {...props}
+                                />
                               ) : (
                                 <code
-                                  className="mb-2 block overflow-x-auto rounded bg-gray-200 p-2 dark:bg-gray-800"
+                                  className="mb-2 block overflow-x-auto rounded bg-neutral-200 p-2 font-code text-ssm dark:bg-neutral-800"
                                   {...props}
                                 />
                               ),

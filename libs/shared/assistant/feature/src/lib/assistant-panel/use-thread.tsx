@@ -49,7 +49,6 @@ export function useThread({ organizationId, threadId }: UseCurrentThreadOptions)
       try {
         const token = await getAccessTokenSilently()
         const messages = await fetchThread(organizationId, threadId, token)
-        console.log(messages)
 
         // Convertir les messages du format API vers le format Thread
         const formattedMessages: Thread = messages.map((msg: any) => ({
