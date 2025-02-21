@@ -15,7 +15,7 @@ interface UseCurrentThreadResult {
   error: Error | null
 }
 
-async function fetchThread(organizationId: string, threadId: string, token: string) {
+export async function fetchThread(organizationId: string, threadId: string, token: string) {
   const response = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread/${threadId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
