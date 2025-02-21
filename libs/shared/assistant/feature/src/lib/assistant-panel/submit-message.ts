@@ -14,7 +14,7 @@ type Context = {
     | undefined
 }
 
-const API_BASE_URL = 'https://p8080-z73d0931c-z3112284e-gtw.zc531a994.rustrocks.cloud'
+export const HACKATHON_API_BASE_URL = 'https://p8080-z73d0931c-z3112284e-gtw.zc531a994.rustrocks.cloud'
 
 export const submitMessage = async (
   message: string,
@@ -32,7 +32,7 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const createThreadResponse = await fetch(`${API_BASE_URL}/organization/${organizationId}/thread`, {
+      const createThreadResponse = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,46 +52,36 @@ export const submitMessage = async (
     }
 
     // Then, send the message to the thread
-    const messageResponse = await fetch(`${API_BASE_URL}/organization/${organizationId}/thread/${_threadId}/text`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        organization_id: organizationId,
-        project_id: context?.project?.id,
-        environment_id: context?.environment?.id,
-        service_type: context?.service?.service_type,
-        service_id: context?.service?.id,
-        text: message,
-        instructions: 'Please provide a concise response in Markdown format',
-      }),
-    })
+    const messageResponse = await fetch(
+      `${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread/${_threadId}/text`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          organization_id: organizationId,
+          project_id: context?.project?.id,
+          environment_id: context?.environment?.id,
+          service_type: context?.service?.service_type,
+          service_id: context?.service?.id,
+          text: message,
+          instructions: 'Please provide a concise response in Markdown format',
+        }),
+      }
+    )
 
     if (!messageResponse.ok) {
       throw new Error(`Failed to send message: ${messageResponse.status}`)
     }
 
-    // Finally, retrieve the complete thread to get the response
-    const threadResponse = await fetch(`${API_BASE_URL}/organization/${organizationId}/thread`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-
-    if (!threadResponse.ok) {
-      throw new Error(`Failed to retrieve thread: ${threadResponse.status}`)
-    }
-
-    const threadContent = await threadResponse.json()
-    const latestMessage = threadContent.results[threadContent.results.length - 1]
+    const messageResponseContent = await messageResponse.json()
 
     // Return the message content (assuming it's markdown or text)
     return {
       id: _threadId as string,
-      content: latestMessage.media_content,
+      content: messageResponseContent.media_content,
     }
   } catch (error) {
     console.error('Error:', error)
