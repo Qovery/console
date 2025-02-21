@@ -244,7 +244,12 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       try {
         const token = await getAccessTokenSilently()
-        const response = await submitMessage(trimmedInputMessage, token, threadId, withContext ? context : undefined)
+        const response = await submitMessage(
+          trimmedInputMessage,
+          token,
+          threadId,
+          withContext ? context : { organization: context.organization }
+        )
         if (response) {
           setThreadId(response.id)
           setThread(response.thread)
@@ -489,22 +494,24 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                             ul: ({ node, ...props }) => <ul className="mb-2 list-disc pl-4" {...props} />,
                             ol: ({ node, ...props }) => <ol className="mb-2 list-decimal pl-4" {...props} />,
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
-                            a: ({ node, ...props }) => <a className="text-sky-500 hover:underline" {...props} />,
+                            a: ({ node, ...props }) => (
+                              <a target="_blank" className="text-sky-500 hover:underline" {...props} />
+                            ),
                             pre: ({ node, ...props }) => (
                               <pre
-                                className="max-w-max rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+                                className="max-w-max whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
                                 {...props}
                               />
                             ),
                             code: ({ node, inline, ...props }: { inline?: boolean; [key: string]: any }) =>
                               inline ? (
                                 <code
-                                  className="rounded bg-neutral-200 px-1 font-code text-ssm dark:bg-neutral-800"
+                                  className="whitespace-pre-wrap rounded bg-neutral-200 px-1 font-code text-ssm dark:bg-neutral-800"
                                   {...props}
                                 />
                               ) : (
                                 <code
-                                  className="mb-2 block overflow-x-auto rounded bg-neutral-200 p-2 font-code text-ssm dark:bg-neutral-800"
+                                  className="mb-2 block overflow-x-auto whitespace-pre-wrap rounded bg-neutral-200 p-2 font-code text-ssm dark:bg-neutral-800"
                                   {...props}
                                 />
                               ),
