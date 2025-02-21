@@ -94,9 +94,9 @@ export const AssistantHistory = ({
             key={thread.id}
             onClick={() => setThreadId(thread.id)}
             className={clsx(
-              'cursor-pointer rounded-md p-2 text-sm hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400',
+              'cursor-pointer rounded-md p-2 text-sm transition-colors hover:bg-neutral-200 dark:text-neutral-50 dark:hover:bg-neutral-400',
               {
-                'bg-neutral-200': threadId === thread.id,
+                'bg-neutral-200 dark:bg-neutral-400': threadId === thread.id,
               }
             )}
           >

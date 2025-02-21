@@ -24,6 +24,7 @@ import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-con
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import AssistantHistory from './assistant-history'
 import { submitMessage } from './submit-message'
+import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
 
 interface InputProps extends ComponentProps<'textarea'> {
@@ -93,7 +94,7 @@ const Loading = () => {
 export type Message = {
   id: number
   text: string
-  owner: 'user' | 'agent'
+  owner: 'user' | 'assistant'
   timestamp: number
 }
 
@@ -161,7 +162,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [inputMessage, setInputMessage] = useState('')
   const [withContext, setWithContext] = useState(true)
-  const [thread, setThread] = useState<Thread>([])
+  // const [thread, setThread] = useState<Thread>([])
   const [threadId, setThreadId] = useState<string | undefined>()
 
   const {
@@ -169,6 +170,17 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
     error: errorThreads,
     isLoading: isLoadingThreads,
   } = useThreads(context?.organization?.id ?? '', threadId)
+  const {
+    thread,
+    setThread,
+    isLoading: isLoadingThread,
+    error: threadError,
+  } = useThread({
+    organizationId: context?.organization?.id ?? '',
+    threadId,
+  })
+
+  // console.log(thread)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -245,7 +257,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         const supportMessage: Message = {
           id: Date.now(),
           text: apiResponse.content,
-          owner: 'agent',
+          owner: 'assistant',
           timestamp: Date.now(),
         }
         const updatedThreadWithAgent = [...updatedThread, supportMessage]
@@ -303,7 +315,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 <span className="text-sm text-neutral-500 dark:text-white">
                   {!threadId || threads.length === 0
                     ? 'New conversation'
-                    : currentThreadHistoryTitle.length >= 50
+                    : currentThreadHistoryTitle.length >= 45
                       ? currentThreadHistoryTitle + '...'
                       : currentThreadHistoryTitle}
                 </span>
@@ -443,7 +455,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                         <div className="whitespace-pre-wrap">{thread.text}</div>
                       </div>
                     ))
-                    .with('agent', () => (
+                    .with('assistant', () => (
                       <div key={thread.id} className="text-sm">
                         <Markdown
                           remarkPlugins={[remarkGfm]}
