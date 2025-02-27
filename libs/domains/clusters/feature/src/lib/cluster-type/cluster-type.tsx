@@ -27,7 +27,7 @@ export function ClusterType({ cloudProvider, kubernetes, ...props }: ClusterType
     .with(['IBM', P._], () => 'IBM')
     .exhaustive()
   return (
-    <Badge color="neutral" {...props}>
+    <Badge color="neutral" variant="surface" {...props}>
       {clusterType}
     </Badge>
   )
