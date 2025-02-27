@@ -188,9 +188,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                 <div className="relative overflow-hidden">
                   <div className="p-4">
                     {props.isProduction || props.fromDetail ? (
-                      <ButtonPopoverSubnets
-                        disabled={!props.fromDetail || isKarpenter || (!hasExistingVPC && !hasStaticIP)}
-                      >
+                      <ButtonPopoverSubnets disabled={!props.fromDetail || isKarpenter || !hasExistingVPC}>
                         <InputToggle
                           className="max-w-[70%]"
                           name={field.name}
