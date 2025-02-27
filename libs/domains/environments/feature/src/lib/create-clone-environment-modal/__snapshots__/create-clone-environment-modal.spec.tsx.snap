@@ -175,7 +175,7 @@ exports[`CreateCloneEnvironmentModal should match snapshots 1`] = `
               data-testid="selected-icon"
             >
               <span
-                class="items-center shrink-0 text-xs border rounded-md border-neutral-250 text-neutral-350 dark:border-neutral-350 dark:text-neutral-300 flex h-4 w-4 justify-center p-0 font-semibold"
+                class="items-center shrink-0 text-xs border rounded-md border-neutral-250 text-neutral-400 dark:border-neutral-350 dark:text-neutral-300 flex h-4 w-4 justify-center p-0 font-semibold"
                 data-accent-color="neutral"
               >
                 D

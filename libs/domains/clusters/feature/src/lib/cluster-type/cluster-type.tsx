@@ -20,7 +20,7 @@ export function ClusterType({ cloudProvider, kubernetes, ...props }: ClusterType
     .with(['ON_PREMISE', P._], () => 'On-premise')
     .exhaustive()
   return (
-    <Badge color="neutral" {...props}>
+    <Badge color="neutral" variant="surface" {...props}>
       {clusterType}
     </Badge>
   )

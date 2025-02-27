@@ -1,6 +1,5 @@
 import download from 'downloadjs'
 import { type Cluster } from 'qovery-typescript-axios'
-import { match } from 'ts-pattern'
 import { Button, Callout, ExternalLink, Icon } from '@qovery/shared/ui'
 import { ClusterSetup } from '../cluster-setup/cluster-setup'
 import { useInstallationHelmValues } from '../hooks/use-installation-helm-values/use-installation-helm-values'

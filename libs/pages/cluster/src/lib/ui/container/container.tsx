@@ -25,13 +25,13 @@ export function Container({ children }: PropsWithChildren) {
 
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
-      {/* <Skeleton width={150} height={36} show={isLoading}>
+      <Skeleton width={150} height={36} show={isLoading}>
         {cluster && clusterStatus ? (
           <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} noSettings />
         ) : (
           <div />
         )}
-      </Skeleton> */}
+      </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
         {cluster?.production && <Badge color="neutral">Production</Badge>}
