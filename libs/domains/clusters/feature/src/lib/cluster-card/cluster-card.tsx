@@ -12,11 +12,6 @@ import { ClusterRunningStatusBadge } from '../cluster-running-status-badge/clust
 import { ClusterType } from '../cluster-type/cluster-type'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
-export interface ClusterCardProps {
-  cluster: Cluster
-  clusterDeploymentStatus?: ClusterStatus
-}
-
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
     .with('BUILDING', 'DEPLOYING', 'CANCELING', (s) => (
@@ -39,6 +34,11 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
       () =>
         cluster.created_at && <span className="text-sm text-neutral-350">{timeAgo(new Date(cluster.created_at))}</span>
     )
+}
+
+export interface ClusterCardProps {
+  cluster: Cluster
+  clusterDeploymentStatus?: ClusterStatus
 }
 
 export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardProps) {
