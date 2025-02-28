@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ClusterCard should render correctly 1`] = `
+exports[`ClusterCard should match snapshot 1`] = `
 <div>
   <a
     class="duration-50 flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm outline outline-2 outline-transparent transition-all hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
     href="/organization/org-id/cluster/cluster-id/settings"
   >
     <div
-      class="flex items-start justify-between gap-1"
+      class="flex items-start justify-between gap-3"
     >
       <div
         class="flex items-center gap-3"
@@ -140,24 +140,21 @@ exports[`ClusterCard should render correctly 1`] = `
           >
             Test Cluster
           </span>
+          <span
+            class="text-sm text-neutral-350"
+          >
+            2 months ago
+          </span>
         </div>
       </div>
       <div
-        class="mt-2 flex min-w-28 items-center justify-end gap-1.5"
+        class="mt-1.5"
       >
-        <span
-          class="inline-flex shrink-0 text-xs h-6 px-1.5 text-red-500 border rounded-md bg-red-50 items-center gap-2 border-[#FF62404D] pr-2"
-          data-accent-color="red"
-        >
-          <span
-            class="text-neutral-400"
-          >
-            Status unavailable
-          </span>
-          <span
-            class="block h-2 w-2 rounded-full bg-current"
-          />
-        </span>
+        <div
+          aria-busy="true"
+          class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637] rounded"
+          style="width: 80px; height: 24px;"
+        />
       </div>
     </div>
     <div
@@ -274,10 +271,96 @@ exports[`ClusterCard should render correctly 1`] = `
       class="flex items-center justify-between"
     >
       <div
-        aria-busy="true"
-        class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637] rounded min-w-max"
-        style="width: 146px; height: 36px;"
-      />
+        aria-busy="false"
+        class="flex rounded min-w-max"
+      >
+        <div>
+          <div
+            aria-orientation="horizontal"
+            data-orientation="horizontal"
+            dir="ltr"
+            role="toolbar"
+            style="outline: none;"
+            tabindex="0"
+          >
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              aria-label="Manage Deployment"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-yellow-600 h-9 px-3 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
+              data-orientation="horizontal"
+              data-radix-collection-item=""
+              data-state="closed"
+              id="radix-:rq:"
+              tabindex="-1"
+              type="button"
+            >
+              <div
+                class="flex h-full w-full items-center justify-center"
+                data-state="closed"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-play mr-4"
+                />
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-chevron-down "
+                />
+              </div>
+            </button>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+              data-orientation="horizontal"
+              data-radix-collection-item=""
+              data-state="closed"
+              tabindex="-1"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-scroll "
+              />
+            </button>
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+              data-orientation="horizontal"
+              data-radix-collection-item=""
+              data-state="closed"
+              tabindex="-1"
+              type="button"
+            >
+              <i
+                aria-hidden="true"
+                class="fa-solid fa-gear "
+              />
+            </button>
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              aria-label="Other actions"
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
+              data-orientation="horizontal"
+              data-radix-collection-item=""
+              data-state="closed"
+              id="radix-:r12:"
+              tabindex="-1"
+              type="button"
+            >
+              <div
+                class="flex h-full w-full items-center justify-center"
+                data-state="closed"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-ellipsis-v "
+                  width="20"
+                />
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
       <span
         class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 text-red-500 border rounded-md bg-red-50 border-red-500"
         data-accent-color="red"

@@ -2,6 +2,7 @@ import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
 export interface ClusterRunningStatusBadgeProps {
@@ -21,18 +22,17 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
   })
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (!runningStatus) {
-        setIsTimeout(true)
-      }
-    }, 3000)
+    if (runningStatus === undefined) {
+      const timeoutId = setTimeout(() => {
+        if (runningStatus === undefined) {
+          setIsTimeout(true)
+        }
+      }, 3000)
 
-    return () => clearTimeout(timeoutId)
+      return () => clearTimeout(timeoutId)
+    }
+    return
   }, [runningStatus])
-
-  if (isLoading && !isTimeout && !runningStatus) {
-    return <Skeleton width={80} height={24} />
-  }
 
   if (isNotInstalled) {
     return (
@@ -41,6 +41,10 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
         <span className="block h-2 w-2 rounded-full bg-neutral-300" />
       </Badge>
     )
+  }
+
+  if (isLoading && !runningStatus) {
+    return <Skeleton width={80} height={24} />
   }
 
   if (isTimeout && !runningStatus) {
@@ -67,7 +71,9 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
 
   return (
     <Tooltip
-      content={<span>Deployment status: {clusterDeploymentStatus?.status}</span>}
+      content={
+        <span>Deployment status: {upperCaseFirstLetter(clusterDeploymentStatus?.status?.replace('_', ' '))}</span>
+      }
       disabled={!clusterDeploymentStatus}
     >
       <span>
