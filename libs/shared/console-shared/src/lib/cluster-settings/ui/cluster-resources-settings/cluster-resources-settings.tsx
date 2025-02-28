@@ -223,7 +223,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           description="Karpenter simplifies Kubernetes infrastructure with the right nodes at the right time."
                           forceAlignTop
                           disabled={
-                            props.fromDetail ? props.hasAlreadyKarpenter || (!hasExistingVPC && !hasStaticIP) : false
+                            props.fromDetail
+                              ? props.hasAlreadyKarpenter || (props.isProduction && !hasStaticIP && !hasExistingVPC)
+                              : false
                           }
                           small
                         />
@@ -239,15 +241,15 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     >
                       Documentation link
                     </ExternalLink>
-                    {!hasExistingVPC && !hasStaticIP && props.fromDetail && (
+                    {props.isProduction && !hasStaticIP && !hasExistingVPC && props.fromDetail && (
                       <Callout.Root color="yellow" className="mt-5">
                         <Callout.Icon>
                           <Icon iconName="circle-info" iconStyle="regular" />
                         </Callout.Icon>
                         <Callout.Text>
                           <Callout.TextDescription>
-                            Karpenter cannot be enabled on this cluster because the Statc IP/NAT Gateway feature is not
-                            activated.
+                            Karpenter cannot be enabled on this production cluster because the Static IP/NAT Gateway
+                            feature is not activated.
                           </Callout.TextDescription>
                         </Callout.Text>
                       </Callout.Root>
