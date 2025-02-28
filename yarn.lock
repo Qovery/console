@@ -19426,12 +19426,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:^1.1.558":
-  version: 1.1.558
-  resolution: "qovery-typescript-axios@npm:1.1.558"
+"qovery-typescript-axios@npm:^1.1.546":
+  version: 1.1.546
+  resolution: "qovery-typescript-axios@npm:1.1.546"
   dependencies:
     axios: ^0.27.2
-  checksum: 6b5a30673bda21d991beb46c3f1276f177e163f986150c2e5668901c64dd5976147429eb0fee094b23b7985609d06e6739e774a9e634d4f73079d84477f75a38
+  checksum: 054de1c11a2d576c6f5d84f79b2c4ad38a9cff2c674d2cebced3a4f5c8029e32288beb7703bbaf46ed14ee6b7f6fe5620f08d737df21eec0aec6f762527f9465
   languageName: node
   linkType: hard
 
