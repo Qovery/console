@@ -224,7 +224,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           forceAlignTop
                           disabled={
                             props.fromDetail
-                              ? props.hasAlreadyKarpenter || (props.isProduction && !hasStaticIP && !hasExistingVPC)
+                              ? props.hasAlreadyKarpenter ||
+                                (props.isProduction && !hasStaticIP && !hasExistingVPC) ||
+                                props.isProduction
                               : false
                           }
                           small
