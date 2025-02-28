@@ -10,7 +10,7 @@ import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-t
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { ClusterRunningStatusBadge } from '../cluster-running-status-badge/cluster-running-status-badge'
 import { ClusterType } from '../cluster-type/cluster-type'
-import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status/use-cluster-running-status'
+import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
@@ -73,7 +73,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           </div>
         </div>
         <div className="mt-1.5">
-          <ClusterRunningStatusBadge cluster={cluster} />
+          <ClusterRunningStatusBadge cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus} />
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -121,6 +121,11 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
         {cluster.production && (
           <Badge variant="surface" color="red">
             Production
+          </Badge>
+        )}
+        {cluster.is_demo && (
+          <Badge variant="surface" color="sky">
+            Demo
           </Badge>
         )}
       </div>
