@@ -110,7 +110,7 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
                     key={key}
                     className="flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-yellow-500 last:border-0"
                   >
-                    <span className="py-1">
+                    <span className="py-1 pr-1">
                       {key}: {message}
                     </span>
                   </div>
@@ -150,7 +150,7 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
                     key={c.component_name}
                     className="flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-red-500 last:border-0"
                   >
-                    <span className="py-1">
+                    <span className="py-1 pr-1">
                       {c.type}: {c.component_name}
                     </span>
                   </div>
