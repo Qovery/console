@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import Container, { type ContainerProps } from './container'
 
 describe('Container', () => {
@@ -7,7 +7,7 @@ describe('Container', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = render(<Container {...props} />)
+    const { baseElement } = renderWithProviders(<Container {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })
