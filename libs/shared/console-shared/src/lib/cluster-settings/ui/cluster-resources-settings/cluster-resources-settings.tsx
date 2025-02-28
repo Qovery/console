@@ -224,7 +224,9 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                           forceAlignTop
                           disabled={
                             props.fromDetail
-                              ? props.hasAlreadyKarpenter || (props.isProduction && !hasStaticIP && !hasExistingVPC)
+                              ? props.hasAlreadyKarpenter ||
+                                (props.isProduction && !hasStaticIP && !hasExistingVPC) ||
+                                props.isProduction
                               : false
                           }
                           small
@@ -515,7 +517,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     )}
                     <Slider onChange={field.onChange} value={field.value} max={200} min={3} step={1} />
                     <p className="mt-3 text-xs text-neutral-350">
-                      Cluster can scale up to “max” nodes depending on its usage
+                      Cluster can scale up to "max" nodes depending on its usage
                     </p>
                   </div>
                 )}
