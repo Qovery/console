@@ -16,7 +16,7 @@ type Context = {
     | undefined
 }
 
-export const HACKATHON_API_BASE_URL = 'https://p8080-z73d0931c-z3112284e-gtw.zc531a994.rustrocks.cloud'
+export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
 
 export const submitMessage = async (
   message: string,
