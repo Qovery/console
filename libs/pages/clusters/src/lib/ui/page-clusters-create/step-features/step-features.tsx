@@ -99,6 +99,7 @@ export function StepFeatures(props: StepFeaturesProps) {
                                 <ExternalLink
                                   href="https://aws.amazon.com/blogs/aws/new-aws-public-ipv4-address-charge-public-ip-insights/"
                                   className="mt-1"
+                                  onClick={(e) => e.stopPropagation()}
                                 >
                                   Check this link for more information
                                 </ExternalLink>
