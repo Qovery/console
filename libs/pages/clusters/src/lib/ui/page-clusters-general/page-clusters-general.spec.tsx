@@ -33,7 +33,7 @@ describe('PageClustersGeneral', () => {
     props.clusters = []
 
     renderWithProviders(<PageClustersGeneral {...props} />)
-    const emptyStateElement = screen.getByText('No cluster set')
+    const emptyStateElement = screen.getByText('Create your first cluster')
     expect(emptyStateElement).toBeInTheDocument()
   })
 
