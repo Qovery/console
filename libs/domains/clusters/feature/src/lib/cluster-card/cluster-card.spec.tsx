@@ -115,6 +115,7 @@ describe('ClusterCard', () => {
   it('should not display region for on-premise', () => {
     const onPremiseCluster = {
       ...mockCluster,
+      cloud_provider: 'ON_PREMISE',
       region: 'on-premise',
     } as Cluster
 
