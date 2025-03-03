@@ -1,6 +1,7 @@
 import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useServices } from '@qovery/domains/services/feature'
 import { AUDIT_LOGS_PARAMS_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   ActionToolbar,
@@ -56,6 +57,9 @@ function MenuManageDeployment({
     projectId: environment.project.id,
     logsLink,
   })
+  // XXX: Required to display a warning for managed Database
+  // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1416
+  const { data: services = [] } = useServices({ environmentId: environment.id })
 
   const mutationDeploy = () =>
     deployEnvironment({
@@ -73,10 +77,20 @@ function MenuManageDeployment({
   }
 
   const mutationStop = () => {
+    const hasDatabase = services.some(
+      (service) =>
+        service.serviceType === 'DATABASE' &&
+        service.mode === 'MANAGED' &&
+        (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+    )
+
     openModalConfirmation({
       mode: environment.mode,
       title: 'Confirm stop',
       description: 'To confirm the stopping of your environment, please type the name:',
+      warning: hasDatabase
+        ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
+        : null,
       name: environment.name,
       action: () => stopEnvironment({ environmentId: environment.id }),
     })
