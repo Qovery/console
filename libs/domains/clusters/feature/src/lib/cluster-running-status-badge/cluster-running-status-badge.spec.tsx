@@ -1,4 +1,4 @@
-import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
+import { type Cluster } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { ClusterRunningStatusBadge } from './cluster-running-status-badge'
@@ -13,10 +13,6 @@ const mockCluster = {
   status: 'DEPLOYED',
   is_demo: false,
 } as Cluster
-
-const mockClusterDeploymentStatus = {
-  status: 'DEPLOYED',
-} as ClusterStatus
 
 describe('ClusterRunningStatusBadge', () => {
   beforeEach(() => {
@@ -34,9 +30,7 @@ describe('ClusterRunningStatusBadge', () => {
       isLoading: false,
     })
 
-    renderWithProviders(
-      <ClusterRunningStatusBadge cluster={readyCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    renderWithProviders(<ClusterRunningStatusBadge cluster={readyCluster} />)
 
     expect(screen.getByText('Not installed')).toBeInTheDocument()
   })
@@ -54,9 +48,7 @@ describe('ClusterRunningStatusBadge', () => {
 
     jest.useFakeTimers()
 
-    renderWithProviders(
-      <ClusterRunningStatusBadge cluster={demoCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    renderWithProviders(<ClusterRunningStatusBadge cluster={demoCluster} />)
 
     jest.advanceTimersByTime(3100)
 
@@ -75,9 +67,7 @@ describe('ClusterRunningStatusBadge', () => {
 
     jest.useFakeTimers()
 
-    renderWithProviders(
-      <ClusterRunningStatusBadge cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    renderWithProviders(<ClusterRunningStatusBadge cluster={mockCluster} />)
 
     jest.advanceTimersByTime(3100)
 
@@ -98,9 +88,7 @@ describe('ClusterRunningStatusBadge', () => {
       isLoading: false,
     })
 
-    renderWithProviders(
-      <ClusterRunningStatusBadge cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    renderWithProviders(<ClusterRunningStatusBadge cluster={mockCluster} />)
 
     expect(screen.getByText('running')).toBeInTheDocument()
   })
@@ -119,9 +107,7 @@ describe('ClusterRunningStatusBadge', () => {
       isLoading: false,
     })
 
-    renderWithProviders(
-      <ClusterRunningStatusBadge cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    renderWithProviders(<ClusterRunningStatusBadge cluster={mockCluster} />)
 
     expect(screen.getByText('warning')).toBeInTheDocument()
     expect(screen.getByText('2')).toBeInTheDocument()
@@ -141,9 +127,7 @@ describe('ClusterRunningStatusBadge', () => {
       isLoading: false,
     })
 
-    renderWithProviders(
-      <ClusterRunningStatusBadge cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    renderWithProviders(<ClusterRunningStatusBadge cluster={mockCluster} />)
 
     expect(screen.getByText('error')).toBeInTheDocument()
     expect(screen.getByText('2')).toBeInTheDocument()
@@ -159,9 +143,7 @@ describe('ClusterRunningStatusBadge', () => {
       isLoading: false,
     })
 
-    renderWithProviders(
-      <ClusterRunningStatusBadge cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    renderWithProviders(<ClusterRunningStatusBadge cluster={mockCluster} />)
 
     expect(screen.getByText('Status unavailable')).toBeInTheDocument()
   })
@@ -179,9 +161,7 @@ describe('ClusterRunningStatusBadge', () => {
       isLoading: false,
     })
 
-    const { userEvent } = renderWithProviders(
-      <ClusterRunningStatusBadge cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    const { userEvent } = renderWithProviders(<ClusterRunningStatusBadge cluster={mockCluster} />)
 
     const badge = screen.getByText('warning')
     await userEvent.click(badge)
@@ -202,9 +182,7 @@ describe('ClusterRunningStatusBadge', () => {
       isLoading: false,
     })
 
-    const { userEvent } = renderWithProviders(
-      <ClusterRunningStatusBadge cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
-    )
+    const { userEvent } = renderWithProviders(<ClusterRunningStatusBadge cluster={mockCluster} />)
 
     const badge = screen.getByText('error')
     await userEvent.click(badge)

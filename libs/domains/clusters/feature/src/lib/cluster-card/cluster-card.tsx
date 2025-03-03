@@ -102,7 +102,11 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
               <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
               Qovery managed
             </Badge>
-            <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+            <ClusterType
+              cloudProvider={cluster.cloud_provider}
+              kubernetes={cluster.kubernetes}
+              instanceType={cluster.instance_type}
+            />
             {cluster.cloud_provider !== 'ON_PREMISE' && (
               <Badge color="neutral" variant="surface">
                 {cluster.region}
