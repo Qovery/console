@@ -139,6 +139,14 @@ function MenuManageDeployment({
       mode: environment?.mode,
       title: 'Confirm stop',
       description: 'To confirm the stopping of your service, please type the name:',
+      warning: match({ service })
+        .with({ service: P.intersection({ serviceType: 'DATABASE' }) }, ({ service }) => {
+          if (service.mode === 'MANAGED' && (service.type === 'POSTGRESQL' || service.type === 'MYSQL')) {
+            return "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
+          }
+          return null
+        })
+        .otherwise(() => null),
       name: service.name,
       action: () => stopService({ serviceId: service.id, serviceType: service.serviceType }),
     })
