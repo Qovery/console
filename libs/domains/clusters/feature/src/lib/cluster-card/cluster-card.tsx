@@ -14,7 +14,7 @@ import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-stat
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
-    .with('BUILDING', 'DEPLOYING', 'CANCELING', (s) => (
+    .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', (s) => (
       <LinkQ
         to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="brand"
