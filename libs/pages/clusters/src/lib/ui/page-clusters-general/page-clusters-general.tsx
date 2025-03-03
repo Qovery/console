@@ -46,12 +46,10 @@ export function PageClustersGeneral({ loading, clusters, clusterStatuses }: Page
           ) : (
             !loading &&
             clusters?.length === 0 && (
-              <EmptyState
-                title="No cluster set"
-                description="A cluster is necessary to run your applications with Qovery"
-              >
-                <Link as="button" to={goToCreateCluster} className="mt-5" size="lg">
-                  Add Cluster
+              <EmptyState title="Create your first cluster">
+                <Link as="button" to={goToCreateCluster} className="mt-4 items-center gap-2" size="md">
+                  New Cluster
+                  <Icon iconName="circle-plus" iconStyle="regular" />
                 </Link>
               </EmptyState>
             )
