@@ -144,8 +144,7 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
                 </Badge>
               </Popover.Trigger>
               <Popover.Content className="w-full max-w-96 border border-neutral-400 bg-neutral-700 p-0 text-sm text-white">
-                {/* TODO: remove cast when API is ready */}
-                {(s.qovery_components_in_failure as { type: string; component_name: string }[]).map((c) => (
+                {s.qovery_components_in_failure.map((c) => (
                   <div
                     key={c.component_name}
                     className="flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-red-500 last:border-0"

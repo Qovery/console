@@ -56,7 +56,7 @@ describe('ClusterCard', () => {
     expect(screen.getByText('Test Cluster')).toBeInTheDocument()
   })
 
-  it('should display creation time when status is not building/deploying/canceling', () => {
+  it('should display creation time when status is not building/deploying/canceling/deleting', () => {
     renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
 
     expect(screen.getByText('2 months ago')).toBeInTheDocument()
