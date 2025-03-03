@@ -77,14 +77,8 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
       mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm stop',
       description: 'To confirm the stop of your cluster, please type the name:',
-      warning: (
-        <ul>
-          <li>
-            Please note that by stopping your cluster, some resources will still be used on your cloud provider account
-            and still be added to your bill. To completely remove them, please use the “Remove” feature.
-          </li>
-        </ul>
-      ),
+      warning:
+        'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the “Remove” feature',
       name: cluster.name,
       action: () =>
         stopCluster({
