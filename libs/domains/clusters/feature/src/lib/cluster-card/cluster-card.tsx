@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
-import { AnimatedGradientText, Badge, Icon, Indicator, Link as LinkQ, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { AnimatedGradientText, Badge, Icon, Indicator, Link as LinkUI, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
@@ -15,7 +15,7 @@ import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-stat
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', (s) => (
-      <LinkQ
+      <LinkUI
         to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="brand"
         underline
@@ -28,7 +28,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
             {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" />
           </span>
         </AnimatedGradientText>
-      </LinkQ>
+      </LinkUI>
     ))
     .otherwise(
       () =>
@@ -83,7 +83,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
               <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
               Self managed
             </Badge>
-            {cluster.region !== 'on-premise' && (
+            {cluster.cloud_provider !== 'ON_PREMISE' && (
               <Badge color="neutral" variant="surface">
                 {cluster.region}
               </Badge>
@@ -96,7 +96,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
               Qovery managed
             </Badge>
             <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
-            {cluster.region !== 'on-premise' && (
+            {cluster.cloud_provider !== 'ON_PREMISE' && (
               <Badge color="neutral" variant="surface">
                 {cluster.region}
               </Badge>
