@@ -15,13 +15,13 @@ export function AssistantIconSwitcher() {
           {match(assistantIcon)
             .with('PAPERCLIP', () => (
               <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-brand-500 text-neutral-50 shadow-2xl outline-brand-600 transition">
-                <Icon iconStyle="regular" iconName="question" className="text-xs" />
+                <Icon iconStyle="regular" iconName="sparkles" className="text-xs" />
               </div>
             ))
 
             .with('QUESTION_MARK', () => (
               <div className="flex h-6 w-6 items-center justify-center overflow-hidden rounded-full bg-brand-500 text-neutral-50 shadow-2xl outline-brand-600 transition">
-                <Icon iconStyle="regular" iconName="question" className="text-xs" />
+                <Icon iconStyle="regular" iconName="sparkles" className="text-xs" />
               </div>
             ))
             .exhaustive()}
@@ -42,7 +42,7 @@ export function AssistantIconSwitcher() {
             onClick={() => setAssistantIcon('QUESTION_MARK')}
           >
             <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-brand-500 text-neutral-50 shadow-2xl outline-brand-600 ">
-              <Icon iconStyle="regular" iconName="question" className="text-2xl" />
+              <Icon iconStyle="regular" iconName="sparkles" className="text-2xl" />
             </div>
           </div>
         </Popover.Close>
