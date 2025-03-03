@@ -32,7 +32,14 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .otherwise(
       () =>
-        cluster.created_at && <span className="text-sm text-neutral-350">{timeAgo(new Date(cluster.created_at))}</span>
+        cluster.created_at && (
+          <Tooltip
+            content={`Deployment status: ${upperCaseFirstLetter(clusterDeploymentStatus?.status?.replace('_', ' '))}`}
+            disabled={!clusterDeploymentStatus}
+          >
+            <span className="max-w-max text-sm text-neutral-350">{timeAgo(new Date(cluster.created_at))}</span>
+          </Tooltip>
+        )
     )
 }
 
@@ -73,7 +80,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           </div>
         </div>
         <div className="mt-1.5">
-          <ClusterRunningStatusBadge cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus} />
+          <ClusterRunningStatusBadge cluster={cluster} />
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
