@@ -1,7 +1,6 @@
 import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import {
   ClusterActionToolbar,
   ClusterAvatar,
@@ -52,7 +51,11 @@ export function Container({ children }: PropsWithChildren) {
                 <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
                 Qovery managed
               </Badge>
-              <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+              <ClusterType
+                cloudProvider={cluster.cloud_provider}
+                kubernetes={cluster.kubernetes}
+                instanceType={cluster.instance_type}
+              />
             </>
           )
         ) : (
