@@ -2,9 +2,7 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { Link } from '@qovery/shared/ui'
 import { Button, Callout, Dropzone, ExternalLink, Icon, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CreateEditCredentialsModalProps {
@@ -18,8 +16,6 @@ export interface CreateEditCredentialsModalProps {
 
 export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProps) {
   const { control, setValue, formState } = useFormContext()
-  const location = useLocation()
-  const imageRegistryPath = location.pathname.replace(/\/credentials$/, '/image-registry')
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -79,6 +75,7 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
         </>
       }
       onSubmit={props.onSubmit}
+      submitLabel="Confirm and update mirroring registry"
       onClose={props.onClose}
       onDelete={props.onDelete}
       deleteButtonLabel="Delete credentials"
@@ -86,25 +83,14 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       isEdit={props.isEdit}
     >
       <div className="flex flex-col gap-y-4">
-        <Callout.Root color="yellow" className="mb-4">
+        <Callout.Root color="yellow">
           <Callout.Icon>
             <Icon iconName="circle-exclamation" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>
             <Callout.TextDescription>
               The credential change won't be applied to the mirroring registry of this cluster. Make sure to update the
-              credentials properly in this cluster's Mirroring registry section
-              <br />
-              <Link
-                as="button"
-                className="gap-1.5"
-                variant="surface"
-                to={imageRegistryPath}
-                onClick={() => props.onClose()}
-              >
-                Go to Mirroring registry section
-                <Icon iconName="arrow-right" />
-              </Link>
+              credentials properly in this cluster's Mirroring registry section.
             </Callout.TextDescription>
           </Callout.Text>
         </Callout.Root>
