@@ -39,10 +39,11 @@ export function EmptyState({ environmentId, serviceId }: EmptyStateProps) {
 
   return match({
     service,
-    deploymentState: deploymentStatus.service_deployment_status,
+    deploymentState: deploymentStatus.state,
+    serviceDeploymentState: deploymentStatus.service_deployment_status,
     runningState: runningStatus?.state,
   })
-    .with({ service: { serviceType: 'JOB', job_type: 'LIFECYCLE' }, deploymentState: 'NEVER_DEPLOYED' }, () => (
+    .with({ service: { serviceType: 'JOB', job_type: 'LIFECYCLE' }, serviceDeploymentState: 'NEVER_DEPLOYED' }, () => (
       <Box title="Lifecycle job not deployed" description="Deploy it first." />
     ))
     .with({ service: { serviceType: 'JOB', job_type: 'LIFECYCLE' } }, () => (
@@ -52,9 +53,18 @@ export function EmptyState({ environmentId, serviceId }: EmptyStateProps) {
       />
     ))
     .with(
-      { service: { serviceType: 'JOB', job_type: 'CRON' }, deploymentState: 'NEVER_DEPLOYED' },
-      { service: { serviceType: 'JOB', job_type: 'CRON' }, deploymentState: 'UP_TO_DATE', runningState: 'STOPPED' },
-      { service: { serviceType: 'JOB', job_type: 'CRON' }, deploymentState: 'UP_TO_DATE', runningState: undefined },
+      { service: { serviceType: 'JOB', job_type: 'CRON' }, serviceDeploymentState: 'NEVER_DEPLOYED' },
+      {
+        service: { serviceType: 'JOB', job_type: 'CRON' },
+        serviceDeploymentState: 'UP_TO_DATE',
+        runningState: 'STOPPED',
+      },
+      {
+        service: { serviceType: 'JOB', job_type: 'CRON' },
+        serviceDeploymentState: 'UP_TO_DATE',
+        deploymentState: P.not('DEPLOYED'),
+        runningState: undefined,
+      },
       () => <Box title="Cronjob not deployed" description="Deploy it first." />
     )
     .with({ service: { serviceType: 'JOB', job_type: 'CRON' } }, () => (
