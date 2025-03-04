@@ -1,7 +1,10 @@
+import clsx from 'clsx'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
 export interface ClusterRunningStatusBadgeProps {
@@ -9,6 +12,8 @@ export interface ClusterRunningStatusBadgeProps {
 }
 
 export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadgeProps) {
+  const isFeatureFlag = useFeatureFlagVariantKey('cluster-running-status')
+
   const [isTimeout, setIsTimeout] = useState(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -79,7 +84,7 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
         <Popover.Trigger>
           <Badge
             variant="surface"
-            color="yellow"
+            color={isFeatureFlag ? 'yellow' : 'green'}
             className="items-center gap-1.5 border-[#D1A0024D] pr-2 capitalize"
             onClick={(e) => {
               // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
@@ -88,17 +93,38 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
               setIsPopoverOpen((prev) => !prev)
             }}
           >
-            <span className="flex h-4 w-4 items-center justify-center rounded bg-yellow-700 text-xs font-semibold text-white">
+            <span
+              className={twMerge(
+                clsx(
+                  'flex h-4 w-4 items-center justify-center rounded bg-yellow-700 text-xs font-semibold text-white',
+                  {
+                    'bg-green-500': !isFeatureFlag,
+                  }
+                )
+              )}
+            >
               {Object.keys(s.node_warnings).length}
             </span>
-            <span className="text-neutral-400">{s.global_status.toLowerCase()}</span>
+            <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
+            {Object.entries(s.node_warnings).length === 0 ? (
+              <span className="block h-2 w-2 rounded-full bg-current" />
+            ) : (
+              <Icon iconName="chevron-down" className="text-neutral-400" />
+            )}
           </Badge>
         </Popover.Trigger>
         <Popover.Content className="w-full max-w-96 border border-neutral-400 bg-neutral-700 p-0 text-sm text-white">
           {Object.entries(s.node_warnings).map(([key, message]) => (
             <div
               key={key}
-              className="flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-yellow-500 last:border-0"
+              className={twMerge(
+                clsx(
+                  'flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-yellow-500 last:border-0',
+                  {
+                    'before:bg-green-500': !isFeatureFlag,
+                  }
+                )
+              )}
             >
               <span className="py-1 pr-1">
                 {key}: {message}
@@ -113,8 +139,12 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
         <Popover.Trigger>
           <Badge
             variant="surface"
-            color="red"
-            className="items-center gap-1.5 border-[#FF62404D] pr-2 capitalize"
+            color={isFeatureFlag ? 'red' : 'green'}
+            className={twMerge(
+              clsx('items-center gap-1.5 border-[#FF62404D] pr-2 capitalize', {
+                'border-[#44C9794D]': !isFeatureFlag,
+              })
+            )}
             onClick={(e) => {
               // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
               e.preventDefault()
@@ -122,10 +152,16 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
               setIsPopoverOpen((prev) => !prev)
             }}
           >
-            <span className="flex h-4 w-4 items-center justify-center rounded bg-red-500 text-xs font-semibold text-white">
+            <span
+              className={twMerge(
+                clsx('flex h-4 w-4 items-center justify-center rounded bg-red-500 text-xs font-semibold text-white', {
+                  'bg-green-500': !isFeatureFlag,
+                })
+              )}
+            >
               {s.qovery_components_in_failure.length}
             </span>
-            <span className="text-neutral-400">{s.global_status.toLowerCase()}</span>
+            <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
             {s.qovery_components_in_failure.length === 0 ? (
               <span className="block h-2 w-2 rounded-full bg-current" />
             ) : (
@@ -137,7 +173,14 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
           {s.qovery_components_in_failure.map((c) => (
             <div
               key={c.component_name}
-              className="flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-red-500 last:border-0"
+              className={twMerge(
+                clsx(
+                  'flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-red-500 last:border-0',
+                  {
+                    'before:bg-green-500': !isFeatureFlag,
+                  }
+                )
+              )}
             >
               <span className="py-1 pr-1">
                 {c.type}: {c.component_name}
@@ -148,8 +191,16 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
       </Popover.Root>
     ))
     .otherwise(() => (
-      <Badge variant="surface" color="red" className="items-center gap-2 border-[#FF62404D] pr-2">
-        <span className="truncate text-neutral-400">Status unavailable</span>
+      <Badge
+        variant="surface"
+        color={isFeatureFlag ? 'red' : 'green'}
+        className={twMerge(
+          clsx('items-center gap-2 border-[#FF62404D] pr-2', {
+            'border-[#44C9794D]': !isFeatureFlag,
+          })
+        )}
+      >
+        <span className="truncate text-neutral-400">{isFeatureFlag ? 'Status unavailable' : 'Running'}</span>
         <span className="block h-2 w-2 rounded-full bg-current" />
       </Badge>
     ))
