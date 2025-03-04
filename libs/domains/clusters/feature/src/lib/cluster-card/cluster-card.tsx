@@ -33,11 +33,10 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     .otherwise(
       () =>
         cluster.created_at && (
-          <Tooltip
-            content={`Deployment status: ${upperCaseFirstLetter(clusterDeploymentStatus?.status?.replace('_', ' '))}`}
-            disabled={!clusterDeploymentStatus}
-          >
-            <span className="max-w-max text-sm text-neutral-350">{timeAgo(new Date(cluster.created_at))}</span>
+          <Tooltip content={`Last deployment: ${cluster.updated_at}`} disabled={!cluster.updated_at}>
+            <span className="max-w-max text-sm text-neutral-350">
+              {cluster.updated_at ? timeAgo(new Date(cluster.updated_at)) : timeAgo(new Date(cluster.created_at))}
+            </span>
           </Tooltip>
         )
     )
@@ -56,7 +55,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
       to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}
       className="duration-50 flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm outline outline-2 outline-transparent transition-all hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-1">
         <div className="flex items-center gap-3">
           <Indicator
             align="end"
