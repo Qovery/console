@@ -28,33 +28,33 @@ export function PageClustersGeneral({ loading, clusters, clusterStatuses }: Page
             <Icon iconName="circle-plus" iconStyle="regular" />
           </Link>
         </div>
-        {loading && clusters?.length === 0 ? (
-          <div data-testid="clusters-loader" className="flex justify-center">
-            <LoaderSpinner className="w-6" />
-          </div>
-        ) : clusters && clusters.length > 0 ? (
-          <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
-            {clusters.map((cluster) => (
-              <ClusterCard
-                key={cluster.id}
-                cluster={cluster}
-                clusterStatus={clusterStatuses.find((c) => c.cluster_id === cluster.id)}
-              />
-            ))}
-          </div>
-        ) : (
-          !loading &&
-          clusters?.length === 0 && (
-            <EmptyState
-              title="No cluster set"
-              description="A cluster is necessary to run your applications with Qovery"
-            >
-              <Link as="button" to={goToCreateCluster} className="mt-5" size="lg">
-                Add Cluster
-              </Link>
-            </EmptyState>
-          )
-        )}
+        <div>
+          {loading && clusters?.length === 0 ? (
+            <div data-testid="clusters-loader" className="flex justify-center">
+              <LoaderSpinner className="w-6" />
+            </div>
+          ) : clusters && clusters.length > 0 ? (
+            <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+              {clusters.map((cluster) => (
+                <ClusterCard
+                  key={cluster.id}
+                  cluster={cluster}
+                  clusterDeploymentStatus={clusterStatuses.find((c) => c.cluster_id === cluster.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            !loading &&
+            clusters?.length === 0 && (
+              <EmptyState title="Create your first cluster">
+                <Link as="button" to={goToCreateCluster} className="mt-4 items-center gap-2" size="md">
+                  New Cluster
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                </Link>
+              </EmptyState>
+            )
+          )}
+        </div>
       </Section>
     </div>
   )
