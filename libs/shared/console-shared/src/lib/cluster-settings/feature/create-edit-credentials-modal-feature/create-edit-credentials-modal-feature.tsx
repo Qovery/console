@@ -1,14 +1,12 @@
 import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   useCreateCloudProviderCredential,
   useDeleteCloudProviderCredential,
   useEditCloudProviderCredential,
 } from '@qovery/domains/cloud-providers/feature'
-import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { useModal } from '@qovery/shared/ui'
 import CreateEditCredentialsModal from '../../ui/create-edit-credentials-modal/create-edit-credentials-modal'
 
@@ -60,7 +58,6 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
 
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
   const { cloudProvider, onClose, currentCredential, organizationId, clusterId } = props
-  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
   const { enableAlertClickOutside } = useModal()
@@ -110,7 +107,6 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
           credentialId: currentCredential.id,
           ...credentials,
         })
-        navigate(CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL)
         onClose(response)
       } else {
         const response = await createCloudProviderCredential({
@@ -150,6 +146,8 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
         isEdit={!!currentCredential}
         onDelete={onDelete}
         loading={loading}
+        organizationId={organizationId}
+        clusterId={clusterId}
       />
     </FormProvider>
   )

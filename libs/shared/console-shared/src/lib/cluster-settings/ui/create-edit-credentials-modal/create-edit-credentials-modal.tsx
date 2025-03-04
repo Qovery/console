@@ -3,9 +3,12 @@ import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Button, Callout, Dropzone, ExternalLink, Icon, InputText, ModalCrud } from '@qovery/shared/ui'
 
 export interface CreateEditCredentialsModalProps {
+  organizationId: string
+  clusterId: string
   cloudProvider: CloudProviderEnum
   onSubmit: () => void
   onClose: () => void
@@ -75,7 +78,6 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
         </>
       }
       onSubmit={props.onSubmit}
-      submitLabel="Confirm and update mirroring registry"
       onClose={props.onClose}
       onDelete={props.onDelete}
       deleteButtonLabel="Delete credentials"
@@ -88,9 +90,19 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
             <Icon iconName="circle-exclamation" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>
-            <Callout.TextDescription>
+            <Callout.TextDescription className="flex flex-col gap-1">
               The credential change won't be applied to the mirroring registry of this cluster. Make sure to update the
-              credentials properly in this cluster's Mirroring registry section.
+              credentials properly in this cluster's mirroring registry section.
+              <ExternalLink
+                className="items-center"
+                href={
+                  CLUSTER_URL(props.organizationId, props.clusterId) +
+                  CLUSTER_SETTINGS_URL +
+                  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
+                }
+              >
+                Go to mirroring registry section
+              </ExternalLink>
             </Callout.TextDescription>
           </Callout.Text>
         </Callout.Root>
