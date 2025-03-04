@@ -14,6 +14,7 @@ export interface CreateEditCredentialsModalFeatureProps {
   onClose: (response?: ClusterCredentials) => void
   cloudProvider: CloudProviderEnum
   organizationId: string
+  clusterId: string
   currentCredential?: ClusterCredentials
 }
 
@@ -56,7 +57,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
 }
 
 export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsModalFeatureProps) {
-  const { cloudProvider, onClose, currentCredential, organizationId } = props
+  const { cloudProvider, onClose, currentCredential, organizationId, clusterId } = props
   const [loading, setLoading] = useState(false)
 
   const { enableAlertClickOutside } = useModal()
@@ -145,6 +146,8 @@ export function CreateEditCredentialsModalFeature(props: CreateEditCredentialsMo
         isEdit={!!currentCredential}
         onDelete={onDelete}
         loading={loading}
+        organizationId={organizationId}
+        clusterId={clusterId}
       />
     </FormProvider>
   )
