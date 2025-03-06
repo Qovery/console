@@ -126,14 +126,6 @@ export function PageSettingsDockerfileFeature() {
       }
     })
 
-    const watchDockerfilePath = dockerfileForm.watch('dockerfile_path')
-    const watchDockerfileRaw = dockerfileForm.watch('dockerfile_raw')
-    const watchDockerfileSource = dockerfileForm.watch('dockerfile_source')
-
-    // HACK: Circonvent pitfall of formState.isValid issues, specially in test
-    // https://github.com/react-hook-form/react-hook-form/issues/2755
-    const isValid = watchDockerfileSource === 'DOCKERFILE_RAW' ? !!watchDockerfileRaw : !!watchDockerfilePath
-
     const DockerfileSettingsWrapper =
       service?.job_type === 'LIFECYCLE' && service.schedule.lifecycle_type !== 'GENERIC'
         ? ({ children }: { children: ReactNode }) => (
@@ -173,12 +165,7 @@ export function PageSettingsDockerfileFeature() {
           />
           <DockerfileSettingsWrapper>
             <div className="flex justify-end">
-              <Button
-                type="submit"
-                size="lg"
-                disabled={isLoadingCheckDockerfile || !isValid}
-                loading={isLoadingEditService}
-              >
+              <Button type="submit" size="lg" loading={isLoadingEditService || isLoadingCheckDockerfile}>
                 Save
               </Button>
             </div>
