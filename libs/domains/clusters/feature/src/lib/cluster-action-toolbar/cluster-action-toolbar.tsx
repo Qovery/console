@@ -21,6 +21,7 @@ import {
 import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
+import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
@@ -205,7 +206,7 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        {cluster.kubernetes == 'SELF_MANAGED' ? (
+        {cluster.kubernetes === 'SELF_MANAGED' ? (
           <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={() => openAccessModal('SELF_MANAGED')}>
             Connect
           </DropdownMenu.Item>
@@ -266,6 +267,10 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
   const showSelfManagedGuideKey = 'show-self-managed-guide'
   const [searchParams, setSearchParams] = useSearchParams()
   const { openModal, closeModal } = useModal()
+  const { data: runningStatus } = useClusterRunningStatus({
+    organizationId: cluster.organization.id,
+    clusterId: cluster.id,
+  })
 
   const openInstallationGuideModal = ({ type = 'MANAGED' }: { type?: 'MANAGED' | 'ON_PREMISE' } = {}) =>
     openModal({
@@ -306,7 +311,10 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
     ))
     .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
-        <ActionToolbar.Button onClick={() => openInstallationGuideModal({ type: 'ON_PREMISE' })}>
+        <ActionToolbar.Button
+          onClick={() => openInstallationGuideModal({ type: 'ON_PREMISE' })}
+          color={!runningStatus ? 'yellow' : 'neutral'}
+        >
           <Icon iconName="circle-info" />
         </ActionToolbar.Button>
       </Tooltip>

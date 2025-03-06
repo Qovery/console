@@ -4,11 +4,15 @@ import { ClusterType } from './cluster-type'
 
 describe('ClusterType', () => {
   it('should render as K3S', () => {
-    const { baseElement } = renderWithProviders(<ClusterType cloudProvider="AWS" kubernetes={KubernetesEnum.K3_S} />)
+    const { baseElement } = renderWithProviders(
+      <ClusterType cloudProvider="AWS" kubernetes={KubernetesEnum.K3_S} instanceType="KARPENTER" />
+    )
     expect(baseElement).toMatchSnapshot()
   })
   it('should render as EKS', () => {
-    const { baseElement } = renderWithProviders(<ClusterType cloudProvider="AWS" kubernetes={KubernetesEnum.MANAGED} />)
+    const { baseElement } = renderWithProviders(
+      <ClusterType cloudProvider="AWS" kubernetes={KubernetesEnum.MANAGED} instanceType="KARPENTER" />
+    )
     expect(baseElement).toMatchSnapshot()
   })
   it('should render as SCW', () => {
