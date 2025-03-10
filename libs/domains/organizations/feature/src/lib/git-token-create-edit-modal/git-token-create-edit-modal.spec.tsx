@@ -31,7 +31,7 @@ describe('GitTokenCreateEditModal', () => {
 
   it('should display the ID field when in edit mode', () => {
     const gitToken = {
-      id: 'c041a7ce-069c-4282-9188-36ae09634d54',
+      id: '1111-1111-1111',
       created_at: '',
       updated_at: '',
       name: 'my-token',
@@ -43,7 +43,7 @@ describe('GitTokenCreateEditModal', () => {
 
     const idInput = screen.getByLabelText('Token ID')
     expect(idInput).toBeInTheDocument()
-    expect(idInput).toHaveValue('c041a7ce-069c-4282-9188-36ae09634d54')
+    expect(idInput).toHaveValue('1111-1111-1111')
     expect(idInput).toBeDisabled()
   })
 
