@@ -87,6 +87,34 @@ describe('ContainerRegistryCreateEditModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should display the ID field when in edit mode', () => {
+    renderWithProviders(
+      <ContainerRegistryCreateEditModal
+        {...props}
+        isEdit
+        registry={{
+          id: '1111-1111-1111',
+          created_at: '',
+          updated_at: '',
+          name: 'my-registry',
+          description: '',
+          url: 'https://docker.io',
+          kind: ContainerRegistryKindEnum.DOCKER_HUB,
+        }}
+      />
+    )
+
+    const idInput = screen.getByLabelText('Qovery ID')
+    expect(idInput).toBeInTheDocument()
+    expect(idInput).toHaveValue('1111-1111-1111')
+    expect(idInput).toBeDisabled()
+  })
+
+  it('should not display the ID field when in create mode', () => {
+    renderWithProviders(<ContainerRegistryCreateEditModal {...props} />)
+    expect(screen.queryByLabelText('Qovery ID')).not.toBeInTheDocument()
+  })
+
   it('should render the form with DOCKER_HUB', async () => {
     renderWithProviders(
       <ContainerRegistryCreateEditModal
@@ -105,7 +133,7 @@ describe('ContainerRegistryCreateEditModal', () => {
     screen.getByDisplayValue('hello')
     screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://docker.io')
-
+    screen.getByDisplayValue('1111-1111-1111')
     screen.getByLabelText('Login type')
   })
 

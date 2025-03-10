@@ -160,7 +160,7 @@ export function HelmRepositoryCreateEditModal({
                 value={field.value || ''}
                 error={error?.message}
                 disabled
-                hint="This is the Qovery ID to be used via the API, CLI or Terraform"
+                hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
               />
             )}
           />

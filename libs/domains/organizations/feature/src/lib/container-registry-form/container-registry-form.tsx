@@ -38,7 +38,26 @@ export function ContainerRegistryForm({
   cluster,
   isEdit = false,
 }: ContainerRegistryFormProps) {
-  const methods = useFormContext()
+  const methods = useFormContext<{
+    name: string
+    description?: string
+    url?: string
+    kind?: ContainerRegistryKindEnum
+    skip_tls_verification?: boolean
+    id?: string
+    config?: {
+      username?: string
+      password?: string
+      access_key_id?: string
+      secret_access_key?: string
+      region?: string
+      scaleway_access_key?: string
+      scaleway_secret_key?: string
+      scaleway_project_id?: string
+      json_credentials?: string
+      login_type?: 'ACCOUNT' | 'ANONYMOUS'
+    }
+  }>()
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -86,6 +105,23 @@ export function ContainerRegistryForm({
 
   return (
     <div className="flex flex-col gap-y-4">
+      {isEdit && (
+        <Controller
+          name="id"
+          control={methods.control}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-5"
+              label="Qovery ID"
+              name={field.name}
+              value={field.value || ''}
+              error={error?.message}
+              disabled
+              hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
+            />
+          )}
+        />
+      )}
       <Controller
         name="name"
         control={methods.control}
