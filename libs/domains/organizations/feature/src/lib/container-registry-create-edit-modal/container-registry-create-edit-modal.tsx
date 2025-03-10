@@ -19,9 +19,10 @@ export function ContainerRegistryCreateEditModal({
   onClose,
 }: ContainerRegistryCreateEditModalProps) {
   const { enableAlertClickOutside } = useModal()
-  const methods = useForm<ContainerRegistryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } }>({
+  const methods = useForm<ContainerRegistryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' }; id?: string }>({
     mode: 'onChange',
     defaultValues: {
+      id: registry?.id,
       name: registry?.name,
       description: registry?.description,
       url: registry?.url,
@@ -99,7 +100,7 @@ export function ContainerRegistryCreateEditModal({
             <p>
               Connect your private container registry to directly deploy your images. You can also access public
               container registries like DockerHub or AWS ECR. If the registry you need is not in the list and it
-              supports the docker login format you can use the “Generic” registry.
+              supports the docker login format you can use the "Generic" registry.
             </p>
             <ExternalLink
               className="mt-2"

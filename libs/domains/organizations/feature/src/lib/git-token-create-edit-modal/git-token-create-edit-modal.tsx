@@ -22,6 +22,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       description: gitToken?.description ?? '',
       workspace: gitToken?.workspace ?? undefined,
       token: '',
+      id: gitToken?.id ?? '',
     },
   })
 
@@ -86,6 +87,23 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           </>
         }
       >
+        {isEdit && (
+          <Controller
+            name="id"
+            control={methods.control}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-5"
+                label="Qovery ID"
+                name={field.name}
+                value={field.value}
+                error={error?.message}
+                disabled
+                hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
+              />
+            )}
+          />
+        )}
         <Controller
           name="type"
           control={methods.control}

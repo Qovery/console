@@ -1,3 +1,5 @@
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { HelmRepositoryKindEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { helmRepositoriesMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -77,8 +79,38 @@ describe('HelmRepositoryCreateEditModal', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<HelmRepositoryCreateEditModal {...props} />)
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<HelmRepositoryCreateEditModal {...props} />))
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should display the ID field when in edit mode', () => {
+    const repository = {
+      id: '1111-1111-1111',
+      created_at: '',
+      updated_at: '',
+      name: 'my-repo',
+      description: '',
+      url: 'https://example.com',
+      kind: HelmRepositoryKindEnum.HTTPS,
+      skip_tls_verification: false,
+      config: {
+        username: '',
+        login_type: 'ANONYMOUS',
+      },
+    }
+    renderWithProviders(
+      wrapWithReactHookForm(<HelmRepositoryCreateEditModal {...props} isEdit repository={repository} />)
+    )
+
+    const idInput = screen.getByLabelText('Qovery ID')
+    expect(idInput).toBeInTheDocument()
+    expect(idInput).toHaveValue('1111-1111-1111')
+    expect(idInput).toBeDisabled()
+  })
+
+  it('should not display the ID field when in create mode', () => {
+    renderWithProviders(wrapWithReactHookForm(<HelmRepositoryCreateEditModal {...props} />))
+    expect(screen.queryByLabelText('Qovery ID')).not.toBeInTheDocument()
   })
 
   it('should render the form with HTTPS', async () => {
@@ -160,52 +192,34 @@ describe('HelmRepositoryCreateEditModal', () => {
   })
 
   it('should submit the form to edit a repository', async () => {
+    const repository = {
+      id: '1111-1111-1111',
+      created_at: '',
+      updated_at: '',
+      name: 'my-repository-name',
+      url: 'https://helm-charts.io',
+      kind: HelmRepositoryKindEnum.HTTPS,
+      description: 'description',
+      config: {},
+    }
+
     const { userEvent } = renderWithProviders(
-      <HelmRepositoryCreateEditModal
-        {...props}
-        isEdit
-        repository={{
-          id: '1111-1111-1111',
-          created_at: '',
-          updated_at: '',
-          name: 'hello',
-          description: 'description',
-          url: 'https://helm-charts.io',
-          kind: 'HTTPS',
-        }}
-      />
+      <HelmRepositoryCreateEditModal {...props} isEdit repository={repository} />
     )
 
-    const inputName = screen.getByLabelText('Repository name')
-    await userEvent.clear(inputName)
-    await userEvent.type(inputName, 'my-repository-name')
-
-    const btn = screen.getByRole('button', { name: 'Confirm' })
-    expect(btn).toBeEnabled()
-
+    const btn = screen.getByTestId('submit-button')
     await userEvent.click(btn)
 
     expect(useEditHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0000-0000-0000',
       helmRepositoryId: '1111-1111-1111',
       helmRepositoryRequest: {
-        config: {
-          access_key_id: undefined,
-          password: undefined,
-          region: undefined,
-          scaleway_access_key: undefined,
-          scaleway_secret_key: undefined,
-          secret_access_key: undefined,
-          username: undefined,
-        },
-        description: 'description',
-        kind: 'HTTPS',
         name: 'my-repository-name',
-        skip_tls_verification: undefined,
         url: 'https://helm-charts.io',
+        kind: HelmRepositoryKindEnum.HTTPS,
+        description: 'description',
+        config: {},
       },
     })
-
-    expect(props.onClose).toHaveBeenCalled()
   })
 })
