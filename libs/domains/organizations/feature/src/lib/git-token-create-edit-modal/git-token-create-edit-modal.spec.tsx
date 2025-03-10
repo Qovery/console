@@ -29,6 +29,29 @@ describe('GitTokenCreateEditModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should display the ID field when in edit mode', () => {
+    const gitToken = {
+      id: 'c041a7ce-069c-4282-9188-36ae09634d54',
+      created_at: '',
+      updated_at: '',
+      name: 'my-token',
+      description: '',
+      type: GitProviderEnum.GITHUB,
+      associated_services_count: 0,
+    }
+    renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={gitToken} />))
+
+    const idInput = screen.getByLabelText('Token ID')
+    expect(idInput).toBeInTheDocument()
+    expect(idInput).toHaveValue('c041a7ce-069c-4282-9188-36ae09634d54')
+    expect(idInput).toBeDisabled()
+  })
+
+  it('should not display the ID field when in create mode', () => {
+    renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} />))
+    expect(screen.queryByLabelText('Token ID')).not.toBeInTheDocument()
+  })
+
   it('should submit the form to create a git token', async () => {
     const { userEvent } = renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} />))
 
