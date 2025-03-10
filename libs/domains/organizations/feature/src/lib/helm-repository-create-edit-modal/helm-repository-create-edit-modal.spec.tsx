@@ -1,3 +1,5 @@
+import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { HelmRepositoryKindEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { helmRepositoriesMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -77,8 +79,38 @@ describe('HelmRepositoryCreateEditModal', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<HelmRepositoryCreateEditModal {...props} />)
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<HelmRepositoryCreateEditModal {...props} />))
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should display the ID field when in edit mode', () => {
+    const repository = {
+      id: '1111-1111-1111',
+      created_at: '',
+      updated_at: '',
+      name: 'my-repo',
+      description: '',
+      url: 'https://example.com',
+      kind: HelmRepositoryKindEnum.HTTPS,
+      skip_tls_verification: false,
+      config: {
+        username: '',
+        login_type: 'ANONYMOUS',
+      },
+    }
+    renderWithProviders(
+      wrapWithReactHookForm(<HelmRepositoryCreateEditModal {...props} isEdit repository={repository} />)
+    )
+
+    const idInput = screen.getByLabelText('Qovery ID')
+    expect(idInput).toBeInTheDocument()
+    expect(idInput).toHaveValue('1111-1111-1111')
+    expect(idInput).toBeDisabled()
+  })
+
+  it('should not display the ID field when in create mode', () => {
+    renderWithProviders(wrapWithReactHookForm(<HelmRepositoryCreateEditModal {...props} />))
+    expect(screen.queryByLabelText('Qovery ID')).not.toBeInTheDocument()
   })
 
   it('should render the form with HTTPS', async () => {

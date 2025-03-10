@@ -51,7 +51,9 @@ export function HelmRepositoryCreateEditModal({
   const { mutateAsync: createHelmRepository, isLoading: isCreateHelmRepositoryLoading } = useCreateHelmRepository()
   const loading = isEditHelmRepositoryLoading || isCreateHelmRepositoryLoading
 
-  const methods = useForm<HelmRepositoryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } }>({
+  const methods = useForm<
+    HelmRepositoryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } } & { id?: string }
+  >({
     defaultValues: {
       name: repository?.name,
       description: repository?.description,
@@ -69,6 +71,7 @@ export function HelmRepositoryCreateEditModal({
         secret_access_key: undefined,
         login_type: repository?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
       },
+      id: repository?.id,
     },
     mode: 'onChange',
   })
@@ -145,6 +148,23 @@ export function HelmRepositoryCreateEditModal({
           </>
         }
       >
+        {isEdit && (
+          <Controller
+            name="id"
+            control={methods.control}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-5"
+                label="Qovery ID"
+                name={field.name}
+                value={field.value || ''}
+                error={error?.message}
+                disabled
+                hint="This is the Qovery ID to be used via the API, CLI or Terraform"
+              />
+            )}
+          />
+        )}
         <div className="flex flex-col gap-y-4">
           <Controller
             name="name"
