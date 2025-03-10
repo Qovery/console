@@ -22,7 +22,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       description: gitToken?.description ?? '',
       workspace: gitToken?.workspace ?? undefined,
       token: '',
-      id: gitToken?.id ?? '',
+      gitTokenId: gitToken?.id ?? '',
     },
   })
 
@@ -89,7 +89,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       >
         {isEdit && (
           <Controller
-            name="id"
+            name="gitTokenId"
             control={methods.control}
             render={({ field, fieldState: { error } }) => (
               <InputText

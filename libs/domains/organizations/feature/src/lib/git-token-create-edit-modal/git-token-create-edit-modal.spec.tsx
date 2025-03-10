@@ -51,7 +51,7 @@ describe('GitTokenCreateEditModal', () => {
     expect(useCreateGitTokenMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0000-0000-0000',
       gitTokenRequest: {
-        id: '',
+        gitTokenId: '',
         type: GitProviderEnum.GITLAB,
         name: 'my-token-name',
         token: 'my-token-value',
@@ -98,7 +98,7 @@ describe('GitTokenCreateEditModal', () => {
       organizationId: '0000-0000-0000',
       gitTokenId: '1111-1111-1111',
       gitTokenRequest: {
-        id: '1111-1111-1111',
+        gitTokenId: '1111-1111-1111',
         type: GitProviderEnum.GITHUB,
         name: 'my-token-name',
         token: 'my-token-value',
