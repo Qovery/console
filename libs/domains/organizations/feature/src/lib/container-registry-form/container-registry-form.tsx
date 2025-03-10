@@ -2,6 +2,7 @@ import {
   type AvailableContainerRegistryResponse,
   type Cluster,
   ContainerRegistryKindEnum,
+  type ContainerRegistryResponse,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
@@ -16,6 +17,7 @@ export interface ContainerRegistryFormProps {
   fromEditClusterSettings?: boolean
   cluster?: Cluster
   isEdit?: boolean
+  registry?: ContainerRegistryResponse
 }
 
 export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) =>
@@ -37,6 +39,7 @@ export function ContainerRegistryForm({
   fromEditClusterSettings = false,
   cluster,
   isEdit = false,
+  registry,
 }: ContainerRegistryFormProps) {
   const methods = useFormContext()
 
@@ -86,6 +89,23 @@ export function ContainerRegistryForm({
 
   return (
     <div className="flex flex-col gap-y-4">
+      {isEdit && (
+        <Controller
+          name="id"
+          control={methods.control}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              className="mb-5"
+              label="Qovery ID"
+              name={field.name}
+              value={registry?.id || ''}
+              error={error?.message}
+              disabled
+              hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
+            />
+          )}
+        />
+      )}
       <Controller
         name="name"
         control={methods.control}
