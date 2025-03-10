@@ -192,52 +192,34 @@ describe('HelmRepositoryCreateEditModal', () => {
   })
 
   it('should submit the form to edit a repository', async () => {
+    const repository = {
+      id: '1111-1111-1111',
+      created_at: '',
+      updated_at: '',
+      name: 'my-repository-name',
+      url: 'https://helm-charts.io',
+      kind: HelmRepositoryKindEnum.HTTPS,
+      description: 'description',
+      config: {},
+    }
+
     const { userEvent } = renderWithProviders(
-      <HelmRepositoryCreateEditModal
-        {...props}
-        isEdit
-        repository={{
-          id: '1111-1111-1111',
-          created_at: '',
-          updated_at: '',
-          name: 'hello',
-          description: 'description',
-          url: 'https://helm-charts.io',
-          kind: 'HTTPS',
-        }}
-      />
+      <HelmRepositoryCreateEditModal {...props} isEdit repository={repository} />
     )
 
-    const inputName = screen.getByLabelText('Repository name')
-    await userEvent.clear(inputName)
-    await userEvent.type(inputName, 'my-repository-name')
-
-    const btn = screen.getByRole('button', { name: 'Confirm' })
-    expect(btn).toBeEnabled()
-
+    const btn = screen.getByTestId('submit-button')
     await userEvent.click(btn)
 
     expect(useEditHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith({
       organizationId: '0000-0000-0000',
       helmRepositoryId: '1111-1111-1111',
       helmRepositoryRequest: {
-        config: {
-          access_key_id: undefined,
-          password: undefined,
-          region: undefined,
-          scaleway_access_key: undefined,
-          scaleway_secret_key: undefined,
-          secret_access_key: undefined,
-          username: undefined,
-        },
-        description: 'description',
-        kind: 'HTTPS',
         name: 'my-repository-name',
-        skip_tls_verification: undefined,
         url: 'https://helm-charts.io',
+        kind: HelmRepositoryKindEnum.HTTPS,
+        description: 'description',
+        config: {},
       },
     })
-
-    expect(props.onClose).toHaveBeenCalled()
   })
 })

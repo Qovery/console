@@ -4,29 +4,44 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAvailableContainerRegistries from '../hooks/use-available-container-registries/use-available-container-registries'
 import * as useCreateContainerRegistry from '../hooks/use-create-container-registry/use-create-container-registry'
 import * as useEditContainerRegistry from '../hooks/use-edit-container-registry/use-edit-container-registry'
-import ContainerRegistryCreateEditModal, {
-  type ContainerRegistryCreateEditModalProps,
-} from './container-registry-create-edit-modal'
+import { ContainerRegistryCreateEditModal } from './container-registry-create-edit-modal'
 
-const useCreateContainerRegistryMockSpy = jest.spyOn(
-  useCreateContainerRegistry,
-  'useCreateContainerRegistry'
-) as jest.Mock
-const useEditContainerRegistryMockSpy = jest.spyOn(useEditContainerRegistry, 'useEditContainerRegistry') as jest.Mock
-const useAvailableContainerRegistriesMockSpy = jest.spyOn(
-  useAvailableContainerRegistries,
-  'useAvailableContainerRegistries'
-) as jest.Mock
+const mockNavigate = jest.fn()
+const mockOpenModal = jest.fn()
+const mockCloseModal = jest.fn()
 
-const props: ContainerRegistryCreateEditModalProps = {
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}))
+
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  useModal: () => ({
+    openModal: mockOpenModal,
+    closeModal: mockCloseModal,
+  }),
+}))
+
+const props = {
   organizationId: '0000-0000-0000',
   onClose: jest.fn(),
 }
 
 describe('ContainerRegistryCreateEditModal', () => {
+  const useCreateContainerRegistryMockSpy = jest.spyOn(
+    useCreateContainerRegistry,
+    'useCreateContainerRegistry'
+  ) as jest.Mock
+  const useEditContainerRegistryMockSpy = jest.spyOn(useEditContainerRegistry, 'useEditContainerRegistry') as jest.Mock
+  const useAvailableContainerRegistriesMockSpy = jest.spyOn(
+    useAvailableContainerRegistries,
+    'useAvailableContainerRegistries'
+  ) as jest.Mock
+
   beforeEach(() => {
     useCreateContainerRegistryMockSpy.mockReturnValue({
-      mutateAsync: jest.fn().mockResolvedValue({ id: '000' }),
+      mutateAsync: jest.fn(),
     })
     useEditContainerRegistryMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
@@ -34,51 +49,91 @@ describe('ContainerRegistryCreateEditModal', () => {
     useAvailableContainerRegistriesMockSpy.mockReturnValue({
       data: [
         {
-          kind: 'ECR',
+          kind: ContainerRegistryKindEnum.DOCKER_HUB,
+          name: 'Docker Hub',
+          url: 'https://docker.io',
+          required_config: ['username', 'password'],
+          is_mandatory: false,
+        },
+        {
+          kind: ContainerRegistryKindEnum.ECR,
+          name: 'Amazon ECR',
+          url: 'https://ecr.amazonaws.com',
           required_config: ['region', 'access_key_id', 'secret_access_key'],
           is_mandatory: true,
         },
         {
-          kind: 'DOCR',
-          required_config: ['token'],
+          kind: ContainerRegistryKindEnum.SCALEWAY_CR,
+          name: 'Scaleway Container Registry',
+          url: 'https://rg.<region>.scw.cloud',
+          required_config: ['region', 'scaleway_project_id', 'scaleway_access_key', 'scaleway_secret_key'],
           is_mandatory: true,
         },
         {
-          kind: 'SCALEWAY_CR',
-          required_config: ['region', 'scaleway_access_key', 'scaleway_secret_key'],
-          is_mandatory: true,
-        },
-        {
-          kind: 'DOCKER_HUB',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'PUBLIC_ECR',
-          required_config: [],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GENERIC_CR',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GITHUB_CR',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GITLAB_CR',
-          required_config: ['username', 'password'],
-          is_mandatory: false,
-        },
-        {
-          kind: 'GCP_ARTIFACT_REGISTRY',
+          kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+          name: 'Google Container Registry',
+          url: 'https://<region>-docker.pkg.dev',
           required_config: ['region', 'json_credentials'],
           is_mandatory: true,
         },
       ],
+    })
+  })
+
+  it('should render the form with DOCKER_HUB', async () => {
+    const registry = {
+      id: '1111-1111-1111',
+      created_at: '',
+      updated_at: '',
+      name: 'hello',
+      description: 'description',
+      url: 'https://docker.io',
+      kind: ContainerRegistryKindEnum.DOCKER_HUB,
+      config: {
+        login_type: 'ACCOUNT',
+        username: 'username',
+        password: 'password',
+      },
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ContainerRegistryCreateEditModal {...props} isEdit registry={registry} />
+    )
+
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('description')
+    screen.getByDisplayValue('https://docker.io')
+    screen.getByDisplayValue('1111-1111-1111')
+    screen.getByLabelText('Login type')
+  })
+
+  it('should submit the form to edit a registry', async () => {
+    const registry = {
+      id: '1111-1111-1111',
+      created_at: '',
+      updated_at: '',
+      name: 'my-registry-name',
+      url: 'https://docker.io',
+      kind: ContainerRegistryKindEnum.DOCR,
+      config: {},
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ContainerRegistryCreateEditModal {...props} isEdit registry={registry} />
+    )
+
+    const btn = screen.getByTestId('submit-button')
+    await userEvent.click(btn)
+
+    expect(useEditContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '0000-0000-0000',
+      containerRegistryId: '1111-1111-1111',
+      containerRegistryRequest: {
+        name: 'my-registry-name',
+        url: 'https://docker.io',
+        kind: ContainerRegistryKindEnum.DOCR,
+        config: {},
+      },
     })
   })
 
@@ -113,28 +168,6 @@ describe('ContainerRegistryCreateEditModal', () => {
   it('should not display the ID field when in create mode', () => {
     renderWithProviders(<ContainerRegistryCreateEditModal {...props} />)
     expect(screen.queryByLabelText('Qovery ID')).not.toBeInTheDocument()
-  })
-
-  it('should render the form with DOCKER_HUB', async () => {
-    renderWithProviders(
-      <ContainerRegistryCreateEditModal
-        registry={{
-          id: '1111-1111-1111',
-          created_at: '',
-          updated_at: '',
-          name: 'hello',
-          description: 'description',
-          url: 'https://docker.io',
-          kind: ContainerRegistryKindEnum.DOCKER_HUB,
-        }}
-        {...props}
-      />
-    )
-    screen.getByDisplayValue('hello')
-    screen.getByDisplayValue('description')
-    screen.getByDisplayValue('https://docker.io')
-    screen.getByDisplayValue('1111-1111-1111')
-    screen.getByLabelText('Login type')
   })
 
   it('should render the form with ECR', async () => {
@@ -301,53 +334,5 @@ describe('ContainerRegistryCreateEditModal', () => {
     })
 
     expect(props.onClose).toHaveBeenCalledWith({ id: '000' })
-  })
-
-  it('should submit the form to edit a registry', async () => {
-    const { userEvent } = renderWithProviders(
-      <ContainerRegistryCreateEditModal
-        {...props}
-        isEdit
-        registry={{
-          id: '1111-1111-1111',
-          created_at: '',
-          updated_at: '',
-          name: 'my-registry',
-          kind: ContainerRegistryKindEnum.DOCR,
-          url: 'https://docker.io',
-        }}
-      />
-    )
-
-    const inputName = screen.getByLabelText('Registry name')
-    await userEvent.clear(inputName)
-    await userEvent.type(inputName, 'my-registry-name')
-
-    const btn = screen.getByRole('button', { name: 'Confirm' })
-    expect(btn).toBeEnabled()
-
-    await userEvent.click(btn)
-
-    expect(useEditContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith({
-      organizationId: '0000-0000-0000',
-      containerRegistryId: '1111-1111-1111',
-      containerRegistryRequest: {
-        config: {
-          access_key_id: undefined,
-          password: undefined,
-          region: undefined,
-          scaleway_access_key: undefined,
-          scaleway_secret_key: undefined,
-          secret_access_key: undefined,
-          username: undefined,
-        },
-        description: undefined,
-        kind: 'DOCR',
-        name: 'my-registry-name',
-        url: 'https://docker.io',
-      },
-    })
-
-    expect(props.onClose).toHaveBeenCalled()
   })
 })

@@ -4,6 +4,7 @@ import {
   ContainerRegistryKindEnum,
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
+import type { FC } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -12,10 +13,32 @@ import { Button, Dropzone, ExternalLink, Icon, InputSelect, InputText, InputText
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
 
+interface ContainerRegistryFormData {
+  name: string
+  description?: string
+  url: string
+  kind: ContainerRegistryKindEnum
+  skip_tls_verification?: boolean
+  id?: string
+  config: {
+    login_type?: 'ACCOUNT' | 'ANONYMOUS'
+    username?: string
+    password?: string
+    region?: string
+    access_key_id?: string
+    secret_access_key?: string
+    scaleway_project_id?: string
+    scaleway_access_key?: string
+    scaleway_secret_key?: string
+    json_credentials?: string
+  }
+}
+
 export interface ContainerRegistryFormProps {
+  isEdit?: boolean
   fromEditClusterSettings?: boolean
   cluster?: Cluster
-  isEdit?: boolean
+  defaultValues?: ContainerRegistryFormData
 }
 
 export const getOptionsContainerRegistry = (containerRegistry: AvailableContainerRegistryResponse[]) =>
@@ -33,11 +56,16 @@ export const getOptionsContainerRegistry = (containerRegistry: AvailableContaine
     }))
     .filter(Boolean)
 
-export function ContainerRegistryForm({
-  fromEditClusterSettings = false,
+export const ContainerRegistryForm: FC<ContainerRegistryFormProps> = ({
+  isEdit,
+  fromEditClusterSettings,
   cluster,
-  isEdit = false,
-}: ContainerRegistryFormProps) {
+  defaultValues,
+}) => {
+  const { control, watch } = useFormContext<ContainerRegistryFormData>()
+  const kind = watch('kind')
+  const loginType = watch('config.login_type')
+
   const methods = useFormContext<{
     name: string
     description?: string

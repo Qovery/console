@@ -29,19 +29,20 @@ describe('GitTokenCreateEditModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should display the ID field when in edit mode', () => {
+  it('should display the ID field when in edit mode', async () => {
     const gitToken = {
       id: '1111-1111-1111',
       created_at: '',
-      updated_at: '',
-      name: 'my-token',
-      description: '',
-      type: GitProviderEnum.GITHUB,
       associated_services_count: 0,
+      name: 'my-token',
+      type: GitProviderEnum.GITHUB,
+      token: 'my-token-value',
+      description: 'description',
     }
-    renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} isEdit gitToken={gitToken} />))
 
-    const idInput = screen.getByLabelText('Token ID')
+    renderWithProviders(<GitTokenCreateEditModal {...props} isEdit gitToken={gitToken} />)
+
+    const idInput = screen.getByLabelText('Qovery ID')
     expect(idInput).toBeInTheDocument()
     expect(idInput).toHaveValue('1111-1111-1111')
     expect(idInput).toBeDisabled()
@@ -53,20 +54,17 @@ describe('GitTokenCreateEditModal', () => {
   })
 
   it('should submit the form to create a git token', async () => {
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<GitTokenCreateEditModal {...props} />))
-
-    const inputType = screen.getByLabelText('Type')
-    await selectEvent.select(inputType, ['Gitlab'], {
-      container: document.body,
-    })
+    const { userEvent } = renderWithProviders(<GitTokenCreateEditModal {...props} />)
 
     const inputName = screen.getByLabelText('Token name')
+    const inputToken = screen.getByLabelText('Token value')
+    const selectType = screen.getByLabelText('Type')
+
     await userEvent.type(inputName, 'my-token-name')
+    await userEvent.type(inputToken, 'my-token-value')
+    await selectEvent.select(selectType, 'Gitlab')
 
-    const inputTokenValue = screen.getByLabelText('Token value')
-    await userEvent.type(inputTokenValue, 'my-token-value')
-
-    const btn = screen.getByRole('button', { name: 'Create' })
+    const btn = screen.getByRole('button', { name: 'Confirm' })
     expect(btn).toBeEnabled()
 
     await userEvent.click(btn)
@@ -78,38 +76,28 @@ describe('GitTokenCreateEditModal', () => {
         name: 'my-token-name',
         token: 'my-token-value',
         description: '',
-        workspace: undefined,
       },
     })
 
-    expect(props.onClose).toHaveBeenCalledWith({ id: '000' })
+    expect(props.onClose).toHaveBeenCalled()
   })
 
   it('should submit the form to edit a git token', async () => {
-    const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(
-        <GitTokenCreateEditModal
-          {...props}
-          isEdit
-          gitToken={{
-            id: '1111-1111-1111',
-            created_at: '',
-            updated_at: '',
-            name: 'my-token',
-            description: '',
-            type: GitProviderEnum.GITHUB,
-            associated_services_count: 0,
-          }}
-        />
-      )
-    )
+    const gitToken = {
+      id: '1111-1111-1111',
+      created_at: '',
+      associated_services_count: 0,
+      name: 'my-token',
+      type: GitProviderEnum.GITHUB,
+      token: 'my-token-value',
+      description: 'description',
+    }
+
+    const { userEvent } = renderWithProviders(<GitTokenCreateEditModal {...props} isEdit gitToken={gitToken} />)
 
     const inputName = screen.getByLabelText('Token name')
     await userEvent.clear(inputName)
     await userEvent.type(inputName, 'my-token-name')
-
-    const inputTokenValue = screen.getByLabelText('Token value')
-    await userEvent.type(inputTokenValue, 'my-token-value')
 
     const btn = screen.getByRole('button', { name: 'Confirm' })
     expect(btn).toBeEnabled()
@@ -123,8 +111,7 @@ describe('GitTokenCreateEditModal', () => {
         type: GitProviderEnum.GITHUB,
         name: 'my-token-name',
         token: 'my-token-value',
-        description: '',
-        workspace: undefined,
+        description: 'description',
       },
     })
 

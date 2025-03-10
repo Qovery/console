@@ -108,7 +108,7 @@ describe('ContainerRegistryForm', () => {
           url: 'https://docker.io',
           kind: ContainerRegistryKindEnum.DOCKER_HUB,
           config: {
-            login_type: 'ANONYMOUS',
+            login_type: 'ANONYMOUS' as const,
           },
         },
       })
@@ -121,24 +121,26 @@ describe('ContainerRegistryForm', () => {
   })
 
   it('should render the form with ECR', async () => {
+    const defaultValues = {
+      name: 'hello',
+      kind: ContainerRegistryKindEnum.ECR,
+      url: 'https://qovery.com',
+      config: {
+        region: 'region',
+        access_key_id: 'access_key_id',
+        secret_access_key: 'secret_access_key',
+      },
+    }
+
     renderWithProviders(
-      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit />, {
-        defaultValues: {
-          id: '1111-1111-1111',
-          name: 'hello',
-          url: 'https://qovery.com',
-          kind: ContainerRegistryKindEnum.ECR,
-          config: {},
-        },
-      })
+      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit defaultValues={defaultValues} />)
     )
+
     screen.getByDisplayValue('hello')
     screen.getByDisplayValue('https://qovery.com')
-    screen.getByDisplayValue('1111-1111-1111')
-
-    screen.getByLabelText('Region')
-    screen.getByLabelText('Access key')
-    screen.getByLabelText('Secret key')
+    screen.getByDisplayValue('region')
+    screen.getByDisplayValue('access_key_id')
+    screen.getByDisplayValue('secret_access_key')
   })
 
   it('should render the form with PUBLIC_ECR', async () => {
@@ -160,24 +162,28 @@ describe('ContainerRegistryForm', () => {
   })
 
   it('should render the form with SCALEWAY_CR', async () => {
+    const defaultValues = {
+      name: 'hello',
+      kind: ContainerRegistryKindEnum.SCALEWAY_CR,
+      url: 'https://qovery.com',
+      config: {
+        region: 'region',
+        scaleway_project_id: 'scaleway_project_id',
+        scaleway_access_key: 'scaleway_access_key',
+        scaleway_secret_key: 'scaleway_secret_key',
+      },
+    }
+
     renderWithProviders(
-      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit />, {
-        defaultValues: {
-          id: '1111-1111-1111',
-          name: 'hello',
-          url: 'https://qovery.com',
-          kind: ContainerRegistryKindEnum.SCALEWAY_CR,
-          config: {},
-        },
-      })
+      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit defaultValues={defaultValues} />)
     )
+
     screen.getByDisplayValue('hello')
     screen.getByDisplayValue('https://qovery.com')
-    screen.getByDisplayValue('1111-1111-1111')
-
-    screen.getByLabelText('Region')
-    screen.getByLabelText('Access key')
-    screen.getByLabelText('Secret key')
+    screen.getByDisplayValue('region')
+    screen.getByDisplayValue('scaleway_project_id')
+    screen.getByDisplayValue('scaleway_access_key')
+    screen.getByDisplayValue('scaleway_secret_key')
   })
 
   it('should render the form with GITHUB_CR', async () => {
@@ -190,7 +196,7 @@ describe('ContainerRegistryForm', () => {
           url: 'https://ghcr.io',
           kind: ContainerRegistryKindEnum.GITHUB_CR,
           config: {
-            login_type: 'ANONYMOUS',
+            login_type: 'ANONYMOUS' as const,
           },
         },
       })
@@ -233,7 +239,7 @@ describe('ContainerRegistryForm', () => {
           description: 'description',
           kind: ContainerRegistryKindEnum.GENERIC_CR,
           config: {
-            login_type: 'ANONYMOUS',
+            login_type: 'ANONYMOUS' as const,
           },
         },
       })
@@ -246,78 +252,25 @@ describe('ContainerRegistryForm', () => {
   })
 
   it('should render the form with DOCKER_HUB and login type ACCOUNT', async () => {
+    const defaultValues = {
+      name: 'hello',
+      kind: ContainerRegistryKindEnum.DOCKER_HUB,
+      url: 'https://docker.io',
+      config: {
+        login_type: 'ACCOUNT' as const,
+        username: 'username',
+        password: 'password',
+      },
+    }
+
     renderWithProviders(
-      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit />, {
-        defaultValues: {
-          id: '1111-1111-1111',
-          name: 'hello',
-          description: 'description',
-          url: 'https://docker.io',
-          kind: ContainerRegistryKindEnum.DOCKER_HUB,
-          config: {
-            login_type: 'ACCOUNT',
-            username: 'username',
-            password: 'password',
-          },
-        },
-      })
+      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit defaultValues={defaultValues} />)
     )
+
     screen.getByDisplayValue('hello')
-    screen.getByDisplayValue('description')
     screen.getByDisplayValue('https://docker.io')
-    screen.getByDisplayValue('1111-1111-1111')
     screen.getByDisplayValue('username')
     screen.getByDisplayValue('password')
-  })
-
-  it('should render the form with ECR and credentials', async () => {
-    renderWithProviders(
-      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit />, {
-        defaultValues: {
-          id: '1111-1111-1111',
-          name: 'hello',
-          url: 'https://qovery.com',
-          kind: ContainerRegistryKindEnum.ECR,
-          config: {
-            region: 'region',
-            access_key_id: 'access_key_id',
-            secret_access_key: 'secret_access_key',
-          },
-        },
-      })
-    )
-    screen.getByDisplayValue('hello')
-    screen.getByDisplayValue('https://qovery.com')
-    screen.getByDisplayValue('1111-1111-1111')
-    screen.getByDisplayValue('region')
-    screen.getByDisplayValue('access_key_id')
-    screen.getByDisplayValue('secret_access_key')
-  })
-
-  it('should render the form with SCALEWAY_CR and credentials', async () => {
-    renderWithProviders(
-      wrapWithReactHookForm(<ContainerRegistryForm {...props} isEdit />, {
-        defaultValues: {
-          id: '1111-1111-1111',
-          name: 'hello',
-          url: 'https://qovery.com',
-          kind: ContainerRegistryKindEnum.SCALEWAY_CR,
-          config: {
-            region: 'region',
-            scaleway_project_id: 'scaleway_project_id',
-            scaleway_access_key: 'scaleway_access_key',
-            scaleway_secret_key: 'scaleway_secret_key',
-          },
-        },
-      })
-    )
-    screen.getByDisplayValue('hello')
-    screen.getByDisplayValue('https://qovery.com')
-    screen.getByDisplayValue('1111-1111-1111')
-    screen.getByDisplayValue('region')
-    screen.getByDisplayValue('scaleway_project_id')
-    screen.getByDisplayValue('scaleway_access_key')
-    screen.getByDisplayValue('scaleway_secret_key')
   })
 
   it('should render the form with GCP_ARTIFACT_REGISTRY and credentials', async () => {
