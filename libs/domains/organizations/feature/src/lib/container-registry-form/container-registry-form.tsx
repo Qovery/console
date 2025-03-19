@@ -95,10 +95,9 @@ export function ContainerRegistryForm({
           control={methods.control}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              className="mb-5"
               label="Qovery ID"
               name={field.name}
-              value={registry?.id || ''}
+              value={registry?.id}
               error={error?.message}
               disabled
               hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
