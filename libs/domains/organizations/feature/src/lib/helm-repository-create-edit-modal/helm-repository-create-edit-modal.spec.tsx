@@ -198,6 +198,7 @@ describe('HelmRepositoryCreateEditModal', () => {
           secret_access_key: undefined,
           username: undefined,
         },
+        id: '1111-1111-1111',
         description: 'description',
         kind: 'HTTPS',
         name: 'my-repository-name',
