@@ -155,7 +155,6 @@ export function HelmRepositoryCreateEditModal({
               control={methods.control}
               render={({ field, fieldState: { error } }) => (
                 <InputText
-                  className="mb-5"
                   label="Qovery ID"
                   name={field.name}
                   value={field.value || ''}
