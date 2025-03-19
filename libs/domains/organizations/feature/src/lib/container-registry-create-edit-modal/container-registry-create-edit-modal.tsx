@@ -99,7 +99,7 @@ export function ContainerRegistryCreateEditModal({
             <p>
               Connect your private container registry to directly deploy your images. You can also access public
               container registries like DockerHub or AWS ECR. If the registry you need is not in the list and it
-              supports the docker login format you can use the “Generic” registry.
+              supports the docker login format you can use the "Generic" registry.
             </p>
             <ExternalLink
               className="mt-2"
@@ -110,7 +110,7 @@ export function ContainerRegistryCreateEditModal({
           </>
         }
       >
-        <ContainerRegistryForm isEdit={isEdit} />
+        <ContainerRegistryForm isEdit={isEdit} registry={registry} />
       </ModalCrud>
     </FormProvider>
   )
