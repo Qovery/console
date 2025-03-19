@@ -359,7 +359,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 {
                   image_name: P.string,
                   tag: P.string,
-                  job_type: P.string,
                 },
                 ({ image_name, tag }) => (
                   <Tooltip
@@ -381,7 +380,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                           <span className="hidden group-hover:block">
                             <Icon iconName="code-commit" iconStyle="regular" className="w-4" />
                           </span>
-                          {truncateText(tag, 18)}
+                          {tag.length >= 8 ? truncateText(tag, 8) + '...' : tag}
                         </Button>
                       </CopyToClipboard>
                     </span>
