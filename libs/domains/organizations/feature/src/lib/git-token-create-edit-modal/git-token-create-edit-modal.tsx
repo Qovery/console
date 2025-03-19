@@ -17,12 +17,12 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
+      id: gitToken?.id ?? '',
       type: gitToken?.type ?? GitProviderEnum.GITHUB,
       name: gitToken?.name ?? '',
       description: gitToken?.description ?? '',
       workspace: gitToken?.workspace ?? undefined,
       token: '',
-      gitTokenId: gitToken?.id ?? '',
     },
   })
 
@@ -89,7 +89,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       >
         {isEdit && (
           <Controller
-            name="gitTokenId"
+            name="id"
             control={methods.control}
             render={({ field, fieldState: { error } }) => (
               <InputText
