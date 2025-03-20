@@ -81,7 +81,7 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
     ))
     .with({ global_status: 'WARNING' }, (s) => (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-        <Popover.Trigger>
+        <Popover.Trigger disabled={!isFeatureFlag}>
           <Badge
             variant="surface"
             color={isFeatureFlag ? 'yellow' : 'green'}
@@ -93,18 +93,11 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
               setIsPopoverOpen((prev) => !prev)
             }}
           >
-            <span
-              className={twMerge(
-                clsx(
-                  'flex h-4 w-4 items-center justify-center rounded bg-yellow-700 text-xs font-semibold text-white',
-                  {
-                    'bg-green-500': !isFeatureFlag,
-                  }
-                )
-              )}
-            >
-              {Object.keys(s.node_warnings).length}
-            </span>
+            {isFeatureFlag && (
+              <span className="flex h-4 w-4 items-center justify-center rounded bg-yellow-700 text-xs font-semibold text-white">
+                {Object.keys(s.node_warnings).length}
+              </span>
+            )}
             <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
             {Object.entries(s.node_warnings).length === 0 ? (
               <span className="block h-2 w-2 rounded-full bg-current" />
@@ -136,7 +129,7 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
     ))
     .with({ global_status: 'ERROR' }, (s) => (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-        <Popover.Trigger>
+        <Popover.Trigger disabled={!isFeatureFlag}>
           <Badge
             variant="surface"
             color={isFeatureFlag ? 'red' : 'green'}
@@ -152,20 +145,20 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
               setIsPopoverOpen((prev) => !prev)
             }}
           >
-            <span
-              className={twMerge(
-                clsx('flex h-4 w-4 items-center justify-center rounded bg-red-500 text-xs font-semibold text-white', {
-                  'bg-green-500': !isFeatureFlag,
-                })
-              )}
-            >
-              {s.qovery_components_in_failure.length}
-            </span>
+            {isFeatureFlag && (
+              <span className="flex h-4 w-4 items-center justify-center rounded bg-red-500 text-xs font-semibold text-white">
+                {s.qovery_components_in_failure.length}
+              </span>
+            )}
             <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
-            {s.qovery_components_in_failure.length === 0 ? (
-              <span className="block h-2 w-2 rounded-full bg-current" />
-            ) : (
-              <Icon iconName="chevron-down" className="text-neutral-400" />
+            {isFeatureFlag && (
+              <>
+                {s.qovery_components_in_failure.length === 0 ? (
+                  <span className="block h-2 w-2 rounded-full bg-current" />
+                ) : (
+                  <Icon iconName="chevron-down" className="text-neutral-400" />
+                )}
+              </>
             )}
           </Badge>
         </Popover.Trigger>
@@ -200,7 +193,7 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
           })
         )}
       >
-        <span className="truncate text-neutral-400">{isFeatureFlag ? 'Status unavailable' : 'Running'}</span>
+        <span className="truncate text-neutral-400">Status unavailable</span>
         <span className="block h-2 w-2 rounded-full bg-current" />
       </Badge>
     ))
