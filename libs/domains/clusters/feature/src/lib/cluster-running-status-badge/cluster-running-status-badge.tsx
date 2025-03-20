@@ -101,8 +101,10 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
             <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
             {Object.entries(s.node_warnings).length === 0 ? (
               <span className="block h-2 w-2 rounded-full bg-current" />
-            ) : (
+            ) : isFeatureFlag ? (
               <Icon iconName="chevron-down" className="text-neutral-400" />
+            ) : (
+              <span className="block h-2 w-2 rounded-full bg-current" />
             )}
           </Badge>
         </Popover.Trigger>
@@ -151,14 +153,12 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
               </span>
             )}
             <span className="text-neutral-400">{isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}</span>
-            {isFeatureFlag && (
-              <>
-                {s.qovery_components_in_failure.length === 0 ? (
-                  <span className="block h-2 w-2 rounded-full bg-current" />
-                ) : (
-                  <Icon iconName="chevron-down" className="text-neutral-400" />
-                )}
-              </>
+            {s.qovery_components_in_failure.length === 0 ? (
+              <span className="block h-2 w-2 rounded-full bg-current" />
+            ) : isFeatureFlag ? (
+              <Icon iconName="chevron-down" className="text-neutral-400" />
+            ) : (
+              <span className="block h-2 w-2 rounded-full bg-current" />
             )}
           </Badge>
         </Popover.Trigger>
