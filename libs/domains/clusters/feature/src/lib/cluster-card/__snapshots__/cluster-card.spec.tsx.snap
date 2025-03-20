@@ -7,7 +7,7 @@ exports[`ClusterCard should match snapshot 1`] = `
     href="/organization/org-id/cluster/cluster-id/settings"
   >
     <div
-      class="flex items-start justify-between gap-3"
+      class="flex items-start justify-between gap-1"
     >
       <div
         class="flex items-center gap-3"
@@ -142,7 +142,6 @@ exports[`ClusterCard should match snapshot 1`] = `
           </span>
           <span
             class="max-w-max text-sm text-neutral-350"
-            data-state="closed"
           >
             2 months ago
           </span>
@@ -292,7 +291,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
-              id="radix-:rs:"
+              id="radix-:rq:"
               tabindex="-1"
               type="button"
             >
@@ -344,7 +343,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
-              id="radix-:r14:"
+              id="radix-:r12:"
               tabindex="-1"
               type="button"
             >
