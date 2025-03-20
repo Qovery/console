@@ -122,7 +122,7 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
               )}
             >
               <span className="py-1 pr-1">
-                {key}: {message}
+                {key}: {message?.message || message?.reason || JSON.stringify(message) || ''}
               </span>
             </div>
           ))}
@@ -186,15 +186,21 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
     .otherwise(() => (
       <Badge
         variant="surface"
-        color={isFeatureFlag ? 'red' : 'green'}
+        color={isFeatureFlag ? 'red' : 'neutral'}
         className={twMerge(
           clsx('items-center gap-2 border-[#FF62404D] pr-2', {
-            'border-[#44C9794D]': !isFeatureFlag,
+            'border-[#A0AFC54D]': !isFeatureFlag,
           })
         )}
       >
         <span className="truncate text-neutral-400">Status unavailable</span>
-        <span className="block h-2 w-2 rounded-full bg-current" />
+        <span
+          className={twMerge(
+            clsx('block h-2 w-2 rounded-full bg-current', {
+              'bg-neutral-300': !isFeatureFlag,
+            })
+          )}
+        />
       </Badge>
     ))
 }
