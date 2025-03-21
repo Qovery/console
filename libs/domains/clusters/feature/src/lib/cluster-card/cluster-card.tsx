@@ -30,6 +30,19 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
         </AnimatedGradientText>
       </LinkUI>
     ))
+    .with('BUILD_ERROR', 'DELETE_ERROR', () => (
+      <LinkUI
+        to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        color="red"
+        underline
+        size="sm"
+        className="truncate"
+        onClick={(e) => e.stopPropagation()}
+      >
+        Last deployment failed
+        <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+      </LinkUI>
+    ))
     .otherwise(
       () =>
         cluster.created_at && (
