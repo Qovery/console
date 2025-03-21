@@ -258,7 +258,7 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
       >
         <Button
           className="mt-5"
-          size="lg"
+          size="md"
           onClick={() => {
             clusterAvailable
               ? openModal({
@@ -276,7 +276,8 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
               : navigate(CLUSTERS_URL(project.organization?.id) + CLUSTERS_NEW_URL)
           }}
         >
-          {clusterAvailable ? 'New environment' : 'Create a Cluster'} <Icon className="ml-2" iconName="circle-plus" />
+          {clusterAvailable ? 'New environment' : 'Create a Cluster'}{' '}
+          <Icon className="ml-2" iconName="circle-plus" iconStyle="regular" />
         </Button>
       </EmptyState>
     )

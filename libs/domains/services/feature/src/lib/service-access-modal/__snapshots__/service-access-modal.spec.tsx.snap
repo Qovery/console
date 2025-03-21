@@ -39,16 +39,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
           tabindex="-1"
           type="button"
         >
-          <span
-            class="absolute flex items-center justify-center"
-          >
-            Another service
-          </span>
-          <span
-            class="invisible flex items-center justify-center"
-          >
-            Another service
-          </span>
+          Another service
         </button>
         <button
           aria-controls="radix-:r6:-content-local-machine"
@@ -62,16 +53,7 @@ exports[`ServiceAccessModal should match snapshot with Application 1`] = `
           tabindex="-1"
           type="button"
         >
-          <span
-            class="absolute flex items-center justify-center"
-          >
-            Local machine
-          </span>
-          <span
-            class="invisible flex items-center justify-center"
-          >
-            Local machine
-          </span>
+          Local machine
         </button>
       </div>
       <div
@@ -252,16 +234,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
           tabindex="-1"
           type="button"
         >
-          <span
-            class="absolute flex items-center justify-center"
-          >
-            Another service
-          </span>
-          <span
-            class="invisible flex items-center justify-center"
-          >
-            Another service
-          </span>
+          Another service
         </button>
         <button
           aria-controls="radix-:rj:-content-local-machine"
@@ -275,16 +248,7 @@ exports[`ServiceAccessModal should match snapshot with Database 1`] = `
           tabindex="-1"
           type="button"
         >
-          <span
-            class="absolute flex items-center justify-center"
-          >
-            Local machine
-          </span>
-          <span
-            class="invisible flex items-center justify-center"
-          >
-            Local machine
-          </span>
+          Local machine
         </button>
       </div>
       <div
