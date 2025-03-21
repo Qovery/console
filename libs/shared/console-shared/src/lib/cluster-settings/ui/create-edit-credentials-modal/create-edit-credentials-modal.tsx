@@ -85,27 +85,29 @@ export function CreateEditCredentialsModal(props: CreateEditCredentialsModalProp
       isEdit={props.isEdit}
     >
       <div className="flex flex-col gap-y-4">
-        <Callout.Root color="yellow">
-          <Callout.Icon>
-            <Icon iconName="circle-exclamation" iconStyle="regular" />
-          </Callout.Icon>
-          <Callout.Text>
-            <Callout.TextDescription className="flex flex-col gap-1">
-              The credential change won't be applied to the mirroring registry of this cluster. Make sure to update the
-              credentials properly in this cluster's mirroring registry section.
-              <ExternalLink
-                className="items-center"
-                href={
-                  CLUSTER_URL(props.organizationId, props.clusterId) +
-                  CLUSTER_SETTINGS_URL +
-                  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
-                }
-              >
-                Go to mirroring registry section
-              </ExternalLink>
-            </Callout.TextDescription>
-          </Callout.Text>
-        </Callout.Root>
+        {props.isEdit && (
+          <Callout.Root color="yellow">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextDescription className="flex flex-col gap-1">
+                The credential change won't be applied to the mirroring registry of this cluster. Make sure to update
+                the credentials properly in this cluster's mirroring registry section.
+                <ExternalLink
+                  className="items-center"
+                  href={
+                    CLUSTER_URL(props.organizationId, props.clusterId) +
+                    CLUSTER_SETTINGS_URL +
+                    CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
+                  }
+                >
+                  Go to mirroring registry section
+                </ExternalLink>
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
         <Controller
           name="name"
           control={control}
