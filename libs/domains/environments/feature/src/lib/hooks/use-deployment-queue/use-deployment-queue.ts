@@ -12,6 +12,12 @@ export function useDeploymentQueue({ environmentId }: UseDeploymentQueueProps) {
     retryOnMount: true,
     staleTime: 4500,
     notifyOnChangeProps: ['data'],
+    select: (data) => {
+      if (!data || !Array.isArray(data)) return data
+      return [...data].sort((a, b) =>
+        b.identifier.deployment_request_id.localeCompare(a.identifier.deployment_request_id)
+      )
+    },
   })
 }
 

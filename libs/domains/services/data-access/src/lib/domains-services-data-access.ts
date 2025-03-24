@@ -30,6 +30,7 @@ import {
   type DatabaseRequest,
   DatabasesApi,
   type DeployAllRequest,
+  DeploymentQueueActionsApi,
   type Environment,
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
@@ -109,6 +110,8 @@ const jobConfigurationApi = new JobConfigurationApi()
 const customDomainApplicationApi = new ApplicationCustomDomainApi()
 const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
+
+const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -902,6 +905,10 @@ export const mutations = {
   },
   async cancelDeploymentService({ environmentId, force = false }: { environmentId: string; force?: boolean }) {
     const result = await environmentActionApi.cancelEnvironmentDeployment(environmentId, { force_cancel: force })
+    return result.data
+  },
+  async cancelDeploymentQueueService({ deploymentRequestId }: { deploymentRequestId: string }) {
+    const result = await deploymentQueueActionsApi.cancelDeploymentRequest(deploymentRequestId)
     return result.data
   },
   async editAdvancedSettings({ serviceId, payload }: EditAdvancedSettingsRequest) {

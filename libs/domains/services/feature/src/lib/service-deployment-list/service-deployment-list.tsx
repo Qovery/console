@@ -34,6 +34,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
@@ -68,21 +69,30 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     organizationId: environment?.organization.id ?? '',
     projectId: environment?.project.id ?? '',
   })
+  const { mutate: cancelDeploymentQueueService } = useCancelDeploymentQueueService({
+    serviceId,
+  })
   const { pathname } = useLocation()
   const { openModalConfirmation } = useModalConfirmation()
 
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const mutationCancelDeployment = useCallback(() => {
-    openModalConfirmation({
-      mode: environment?.mode,
-      title: 'Confirm cancel',
-      description:
-        'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
-      name: environment?.name,
-      action: () => cancelDeploymentService({ environmentId: environment?.id ?? '' }),
-    })
-  }, [environment, openModalConfirmation, cancelDeploymentService])
+  const mutationCancelDeployment = useCallback(
+    ({ deploymentRequestId }: { deploymentRequestId?: string }) => {
+      openModalConfirmation({
+        mode: environment?.mode,
+        title: 'Confirm cancel',
+        description:
+          'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
+        name: environment?.name,
+        action: () =>
+          deploymentRequestId
+            ? cancelDeploymentQueueService({ deploymentRequestId })
+            : cancelDeploymentService({ environmentId: environment?.id ?? '' }),
+      })
+    },
+    [environment, openModalConfirmation, cancelDeploymentService, cancelDeploymentQueueService]
+  )
 
   const columnHelper = createColumnHelper<(typeof deploymentHistory | typeof deploymentHistoryQueue)[number]>()
   const columns = useMemo(
@@ -146,7 +156,16 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                           </DropdownMenu.Trigger>
                           <DropdownMenu.Content>
                             {(state === 'ONGOING' || state === 'QUEUED') && (
-                              <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
+                              <DropdownMenu.Item
+                                icon={<Icon iconName="xmark" />}
+                                onSelect={() =>
+                                  mutationCancelDeployment({
+                                    deploymentRequestId: !isDeploymentHistory(data)
+                                      ? data.identifier.deployment_request_id
+                                      : undefined,
+                                  })
+                                }
+                              >
                                 Cancel deployment
                               </DropdownMenu.Item>
                             )}
