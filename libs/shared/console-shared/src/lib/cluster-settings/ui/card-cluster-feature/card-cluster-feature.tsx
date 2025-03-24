@@ -1,11 +1,11 @@
-import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
+import { type CloudVendorEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
 
 export interface CardClusterFeatureProps extends PropsWithChildren {
   feature: ClusterFeatureResponse
-  cloudProvider?: CloudProviderEnum
+  cloudProvider?: CloudVendorEnum
   disabled?: boolean
   setValue?: UseFormSetValue<FieldValues>
   watch?: UseFormWatch<FieldValues>
