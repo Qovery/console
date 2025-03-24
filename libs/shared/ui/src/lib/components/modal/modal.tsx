@@ -80,16 +80,33 @@ export const Modal = (props: ModalProps) => {
     setAlertModalChoice,
   ])
 
+  const handleOutsideClick = (event: React.MouseEvent) => {
+    if (alertClickOutside) {
+      event.preventDefault()
+      setModalAlertOpen(true)
+    } else {
+      setExternalOpen ? setExternalOpen(false) : setOpen(false)
+    }
+  }
+
   return (
     <Dialog.Root
       open={externalOpen ? externalOpen : open}
       onOpenChange={
         setExternalOpen
           ? () => {
-              setExternalOpen(!externalOpen)
+              if (alertClickOutside) {
+                setModalAlertOpen(true)
+              } else {
+                setExternalOpen(!externalOpen)
+              }
             }
           : () => {
-              setOpen(!open)
+              if (alertClickOutside) {
+                setModalAlertOpen(true)
+              } else {
+                setOpen(!open)
+              }
             }
       }
       modal={!fakeModal}
@@ -98,27 +115,13 @@ export const Modal = (props: ModalProps) => {
       <Dialog.Portal>
         <Dialog.Overlay
           data-testid="overlay"
-          onClick={(event) => {
-            if (alertClickOutside) {
-              event.preventDefault()
-              setModalAlertOpen(true)
-            } else {
-              setExternalOpen ? setExternalOpen(false) : setOpen(false)
-            }
-          }}
+          onClick={handleOutsideClick}
           className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20"
         />
         {fakeModal && (
           <div
             className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20"
-            onClick={(event) => {
-              if (alertClickOutside) {
-                event.preventDefault()
-                setModalAlertOpen(true)
-              } else {
-                setExternalOpen ? setExternalOpen(false) : setOpen(false)
-              }
-            }}
+            onClick={handleOutsideClick}
           />
         )}
         <Dialog.Content

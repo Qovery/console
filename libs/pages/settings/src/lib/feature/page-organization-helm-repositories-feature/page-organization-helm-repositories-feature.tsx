@@ -28,7 +28,12 @@ export function PageOrganizationHelmRepositoriesFeature() {
       helmRepositories={helmRepositories}
       isFetched={isFetchedHelmRepositories}
       onAddRepository={() => {
-        openModal({ content: <HelmRepositoryCreateEditModal organizationId={organizationId} onClose={closeModal} /> })
+        openModal({
+          content: <HelmRepositoryCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+          options: {
+            fakeModal: true,
+          },
+        })
       }}
       onEdit={(repository: HelmRepositoryResponse) => {
         openModal({
@@ -40,6 +45,9 @@ export function PageOrganizationHelmRepositoriesFeature() {
               isEdit
             />
           ),
+          options: {
+            fakeModal: true,
+          },
         })
       }}
       onDelete={(repository: HelmRepositoryResponse) => {
