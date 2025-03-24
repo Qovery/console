@@ -1,4 +1,4 @@
-import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
+import { type CloudVendorEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, LoaderSpinner, Section } from '@qovery/shared/ui'
@@ -8,7 +8,7 @@ import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 export interface PageSettingsFeaturesProps {
   loading: boolean
   features?: ClusterFeatureResponse[]
-  cloudProvider?: CloudProviderEnum
+  cloudProvider?: CloudVendorEnum
 }
 
 export function PageSettingsFeatures(props: PageSettingsFeaturesProps) {

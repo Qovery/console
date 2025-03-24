@@ -194,6 +194,13 @@ export function CreateCloneEnvironmentModal({
                     .with(['GCP', KubernetesEnum.SELF_MANAGED], () => 'Self-managed')
                     .with(['GCP', P._], () => 'GKE (Autopilot)')
                     .with(['ON_PREMISE', P._], () => 'On-premise')
+                    .with(['AZURE', P._], () => 'Azure')
+                    .with(['DO', P._], () => 'DO')
+                    .with(['OVH', P._], () => 'OVH')
+                    .with(['CIVO', P._], () => 'CIVO')
+                    .with(['HETZNER', P._], () => 'Hetzner')
+                    .with(['ORACLE', P._], () => 'Oracle')
+                    .with(['IBM', P._], () => 'IBM')
                     .exhaustive()
 
                   return {

@@ -1,4 +1,4 @@
-import { CloudProviderEnum, type Cluster, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudVendorEnum, type Cluster, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
@@ -7,7 +7,7 @@ import ClusterResourcesSettings from '../../ui/cluster-resources-settings/cluste
 export interface ClusterResourcesSettingsFeatureProps {
   cluster?: Cluster
   fromDetail?: boolean
-  cloudProvider?: CloudProviderEnum
+  cloudProvider?: CloudVendorEnum
   clusterRegion?: string
   isProduction?: boolean
   hasAlreadyKarpenter?: boolean
@@ -20,11 +20,11 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
 
   useEffect(() => {
     let clusterTypeOptions: Value[] = []
-    if (props?.cloudProvider === CloudProviderEnum.AWS) {
+    if (props?.cloudProvider === CloudVendorEnum.AWS) {
       clusterTypeOptions = [
         { label: 'Managed K8S (EKS)', value: KubernetesEnum.MANAGED, description: 'Multiple node cluster' },
       ]
-    } else if (props?.cloudProvider === CloudProviderEnum.GCP) {
+    } else if (props?.cloudProvider === CloudVendorEnum.GCP) {
       clusterTypeOptions = [
         {
           label: 'Managed K8S (GKE with Autopilot)',

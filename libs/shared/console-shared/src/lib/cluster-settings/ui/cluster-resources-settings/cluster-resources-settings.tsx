@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { CloudProviderEnum, type Cluster, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { CloudVendorEnum, type Cluster, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -37,7 +37,7 @@ export interface ClusterResourcesSettingsProps {
   cluster?: Cluster
   fromDetail?: boolean
   clusterTypeOptions?: Value[]
-  cloudProvider?: CloudProviderEnum
+  cloudProvider?: CloudVendorEnum
   clusterRegion?: string
   showWarningInstance?: boolean
   hasAlreadyKarpenter?: boolean
@@ -61,7 +61,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
-    match(props.cloudProvider || CloudProviderEnum.AWS)
+    match(props.cloudProvider || CloudVendorEnum.AWS)
       .with('AWS', (cloudProvider) => ({
         cloudProvider,
         clusterType: (watchClusterType || 'MANAGED') as (typeof KubernetesEnum)[keyof typeof KubernetesEnum],
@@ -76,8 +76,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         cloudProvider,
         clusterType: 'MANAGED' as const,
       }))
-      .with('ON_PREMISE', (cloudProvider) => ({
-        cloudProvider,
+      .with('ON_PREMISE', 'DO', 'AZURE', 'OVH', 'CIVO', 'HETZNER', 'ORACLE', 'IBM', () => ({
+        cloudProvider: CloudVendorEnum.ON_PREMISE,
         clusterType: 'MANAGED' as const,
       }))
       .exhaustive()
@@ -525,7 +525,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         </Section>
       )}
 
-      {!props.fromDetail && props.cloudProvider === CloudProviderEnum.AWS && (
+      {!props.fromDetail && props.cloudProvider === CloudVendorEnum.AWS && (
         <Callout.Root className="items-center" color="sky" data-testid="aws-cost-banner">
           <Callout.Icon className="flex h-12 w-12 items-center justify-center rounded-full bg-white">
             <Icon name={IconEnum.AWS} />
