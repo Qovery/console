@@ -30,7 +30,6 @@ export function PageOrganizationBillingFeature() {
       title: 'Delete credit card',
       name: creditCard.last_digit,
       isDelete: true,
-      placeholder: 'Enter the last digits',
       action: async () => {
         await deleteCreditCard({ organizationId, creditCardId: creditCard.id })
       },
