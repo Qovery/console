@@ -220,6 +220,9 @@ export function SourceSetting({ disabled = false }: { disabled?: boolean }) {
                               }}
                             />
                           ),
+                          options: {
+                            fakeModal: true,
+                          },
                         })
                       },
                     }}
