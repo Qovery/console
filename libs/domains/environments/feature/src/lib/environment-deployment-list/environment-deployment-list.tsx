@@ -32,6 +32,7 @@ import {
 import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
 import { isCancelBuildAvailable, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
+import { useCancelDeploymentQueueEnvironment } from '../hooks/use-cancel-deployment-queue-environment/use-cancel-deployment-queue-environment'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
@@ -67,21 +68,31 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
     projectId: environment?.project.id ?? '',
     logsLink,
   })
+  const { mutate: cancelDeploymentQueueService } = useCancelDeploymentQueueEnvironment({
+    environmentId,
+  })
+
   const { pathname } = useLocation()
   const { openModalConfirmation } = useModalConfirmation()
 
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const mutationCancelDeployment = useCallback(() => {
-    openModalConfirmation({
-      mode: environment?.mode,
-      title: 'Confirm cancel',
-      description:
-        'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
-      name: environment?.name,
-      action: () => cancelDeploymentEnvironment({ environmentId }),
-    })
-  }, [environment, openModalConfirmation, cancelDeploymentEnvironment, environmentId])
+  const mutationCancelDeployment = useCallback(
+    ({ deploymentRequestId }: { deploymentRequestId?: string }) => {
+      openModalConfirmation({
+        mode: environment?.mode,
+        title: 'Confirm cancel',
+        description:
+          'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
+        name: environment?.name,
+        action: () =>
+          deploymentRequestId
+            ? cancelDeploymentQueueService({ deploymentRequestId })
+            : cancelDeploymentEnvironment({ environmentId }),
+      })
+    },
+    [environment, openModalConfirmation, cancelDeploymentEnvironment, cancelDeploymentQueueService, environmentId]
+  )
 
   const columnHelper = createColumnHelper<(typeof deploymentHistory | typeof deploymentHistoryQueue)[number]>()
   const columns = useMemo(
@@ -170,7 +181,16 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                             </DropdownMenu.Trigger>
                             <DropdownMenu.Content>
                               {isCancelBuildAvailable(state) && (
-                                <DropdownMenu.Item icon={<Icon iconName="xmark" />} onSelect={mutationCancelDeployment}>
+                                <DropdownMenu.Item
+                                  icon={<Icon iconName="xmark" />}
+                                  onSelect={() =>
+                                    mutationCancelDeployment({
+                                      deploymentRequestId: !isDeploymentHistory(data)
+                                        ? data.identifier.deployment_request_id
+                                        : undefined,
+                                    })
+                                  }
+                                >
                                   {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING
                                     ? 'Cancel delete'
                                     : 'Cancel deployment'}

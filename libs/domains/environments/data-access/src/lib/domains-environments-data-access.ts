@@ -3,6 +3,7 @@ import {
   type CloneEnvironmentRequest,
   type CreateEnvironmentRequest,
   DatabasesApi,
+  DeploymentQueueActionsApi,
   DeploymentStageMainCallsApi,
   type DeploymentStageRequest,
   type DeploymentStageWithServicesStatuses,
@@ -31,6 +32,7 @@ const environmentDeploymentRulesApi = new EnvironmentDeploymentRuleApi()
 const databasesApi = new DatabasesApi()
 const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
 const lifecycleTemplateMainCallsApi = new LifecycleTemplateMainCallsApi()
+const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
 
 export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket
@@ -159,6 +161,10 @@ export const mutations = {
   },
   async cancelDeploymentEnvironment({ environmentId }: { environmentId: string }) {
     const result = await environmentActionApi.cancelEnvironmentDeployment(environmentId, { force_cancel: false })
+    return result.data
+  },
+  async cancelDeploymentQueueEnvironment({ deploymentRequestId }: { deploymentRequestId: string }) {
+    const result = await deploymentQueueActionsApi.cancelDeploymentRequest(deploymentRequestId)
     return result.data
   },
   async deleteEnvironment({ environmentId }: { environmentId: string }) {
