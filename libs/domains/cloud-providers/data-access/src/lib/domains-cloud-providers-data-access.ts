@@ -4,6 +4,7 @@ import {
   CloudProviderApi,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
+  type CloudVendorEnum,
   type GcpCredentialsRequest,
   type KubernetesEnum,
   type ScalewayCredentialsRequest,
@@ -132,20 +133,20 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
   listDatabaseInstanceTypes: (
     args:
       | {
-          cloudProvider: Extract<CloudProviderEnum, 'AWS'>
+          cloudProvider: Extract<CloudVendorEnum, 'AWS'>
           databaseType: string
           region: string
         }
       | {
-          cloudProvider: Extract<CloudProviderEnum, 'SCW'>
+          cloudProvider: Extract<CloudVendorEnum, 'SCW'>
           databaseType: string
         }
       | {
-          cloudProvider: Extract<CloudProviderEnum, 'GCP'>
+          cloudProvider: Extract<CloudVendorEnum, 'GCP'>
           databaseType: string
         }
       | {
-          cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
+          cloudProvider: Extract<CloudVendorEnum, 'ON_PREMISE'>
           databaseType: string
         }
   ) => ({

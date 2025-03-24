@@ -43,8 +43,8 @@ export function SettingsResourcesInstanceTypesFeature({
         cloudProvider,
         databaseType,
       }))
-      .with('ON_PREMISE', (cloudProvider) => ({
-        cloudProvider,
+      .with('ON_PREMISE', 'DO', 'AZURE', 'CIVO', 'HETZNER', 'IBM', 'ORACLE', 'OVH', () => ({
+        cloudProvider: CloudProviderEnum.ON_PREMISE,
         databaseType,
       }))
       .exhaustive()

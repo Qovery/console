@@ -1,7 +1,6 @@
 import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import {
   ClusterActionToolbar,
   ClusterAvatar,
