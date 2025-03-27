@@ -92,7 +92,7 @@ const CommandItem = forwardRef<ElementRef<typeof CmdK.Item>, CommandItemProps>(f
     <CmdK.Item
       ref={ref}
       className={twMerge(
-        'flex h-9 cursor-pointer items-center gap-2 rounded px-2 text-sm font-medium text-neutral-400 data-[selected]:bg-brand-50 data-[selected]:text-brand-500',
+        'flex h-9 cursor-pointer items-center gap-2 rounded px-2 text-sm font-medium text-neutral-400 data-[selected]:bg-neutral-150',
         className
       )}
       {...props}
