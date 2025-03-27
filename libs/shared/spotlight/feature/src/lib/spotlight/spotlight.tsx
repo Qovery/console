@@ -1,9 +1,15 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
+  APPLICATION_URL,
+  DATABASE_URL,
+  ENVIRONMENTS_URL,
+  ORGANIZATION_URL,
+  SERVICES_URL,
   SETTINGS_API_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_GIT_REPOSITORY_ACCESS_URL,
@@ -13,9 +19,10 @@ import {
   SETTINGS_WEBHOOKS,
   USER_URL,
 } from '@qovery/shared/routes'
-import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
+import { Command, type CommandDialogProps, Icon, Link } from '@qovery/shared/ui'
 import { QOVERY_DOCS_URL, QOVERY_FORUM_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
-import useQuickActions from '../hooks/use-quick-actions/use-quick-actions'
+import { useQuickActions } from '../hooks/use-quick-actions/use-quick-actions'
+import { useServicesSearch } from '../hooks/use-services-search/use-services-search'
 
 type Item = {
   label: string
@@ -37,6 +44,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const navigate = useNavigate()
   const quickActions = useQuickActions()
   const { setAssistantOpen } = useContext(AssistantContext)
+  const { data: services = [] } = useServicesSearch({ organizationId })
 
   const iconClassName = 'text-brand-500 text-base text-center w-6'
   const navigateTo = (link: string) => () => {
@@ -111,7 +119,10 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
 
   return (
     <Command.Dialog label="Console Spotlight" open={open} onOpenChange={onOpenChange}>
-      <Command.Input autoFocus placeholder="What do you need?" />
+      <div className="flex w-full items-center border-b border-neutral-200 pl-4 text-base text-neutral-350">
+        <Icon iconName="magnifying-glass" iconStyle="regular" />
+        <Command.Input autoFocus placeholder="Search for actions or services..." className="border-b-0" />
+      </div>
       <Command.List>
         <Command.Empty>
           <div className="px-3 pb-4 pt-6 text-center">
@@ -119,6 +130,52 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
             <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
           </div>
         </Command.Empty>
+
+        <Command.Group heading="Services">
+          {services.map(({ id, name, service_type, job_type, icon_uri, project_id, environment_id, ...props }) => (
+            <Command.Item
+              key={id}
+              onSelect={() => {
+                navigate(
+                  service_type === 'DATABASE'
+                    ? DATABASE_URL(organizationId, project_id, environment_id, id)
+                    : APPLICATION_URL(organizationId, project_id, environment_id, id)
+                )
+                onOpenChange?.(false)
+              }}
+              className="w-full justify-between"
+            >
+              <span className="flex items-center gap-3">
+                <ServiceAvatar
+                  size="xs"
+                  service={
+                    service_type === 'JOB'
+                      ? {
+                          icon_uri,
+                          serviceType: 'JOB' as const,
+                          job_type: job_type ?? 'CRON',
+                        }
+                      : {
+                          icon_uri,
+                          serviceType: service_type,
+                        }
+                  }
+                />
+                {name}
+              </span>
+              <span className="text-ssm">
+                <Link color="brand" to={ENVIRONMENTS_URL(organizationId, project_id)}>
+                  {props.project_name}
+                </Link>{' '}
+                /
+                <Link color="brand" to={SERVICES_URL(organizationId, project_id, environment_id)}>
+                  {props.environment_name}
+                </Link>
+              </span>
+            </Command.Item>
+          ))}
+        </Command.Group>
+
         {quickActions.length > 0 && (
           <Command.Group heading="Quick actions">
             {quickActions.map(({ label, iconName, link }) => (

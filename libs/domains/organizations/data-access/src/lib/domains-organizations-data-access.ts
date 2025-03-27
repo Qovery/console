@@ -373,6 +373,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
+  servicesSearch: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.listServicesByOrganizationId(organizationId)
+      return response.data.results
+    },
+  }),
 })
 
 export const mutations = {
