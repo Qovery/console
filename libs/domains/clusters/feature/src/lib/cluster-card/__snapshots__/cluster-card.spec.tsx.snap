@@ -142,6 +142,7 @@ exports[`ClusterCard should match snapshot 1`] = `
           </span>
           <span
             class="max-w-max text-sm text-neutral-350"
+            data-state="closed"
           >
             2 months ago
           </span>
@@ -291,7 +292,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
-              id="radix-:rq:"
+              id="radix-:rs:"
               tabindex="-1"
               type="button"
             >
@@ -343,7 +344,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               data-orientation="horizontal"
               data-radix-collection-item=""
               data-state="closed"
-              id="radix-:r12:"
+              id="radix-:r14:"
               tabindex="-1"
               type="button"
             >

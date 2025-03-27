@@ -7,6 +7,7 @@ import { ClusterCard } from './cluster-card'
 jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket')
 jest.mock('@qovery/shared/util-dates', () => ({
   timeAgo: jest.fn(),
+  dateFullFormat: jest.fn(),
 }))
 
 const mockUseClusterRunningStatusSocket = useClusterRunningStatusSocket as jest.MockedFunction<
@@ -29,6 +30,7 @@ const mockCluster = {
 
 const mockClusterDeploymentStatus = {
   status: 'DEPLOYED',
+  last_deployment_date: '2025-03-25T10:52:36.745539Z',
 } as ClusterStatus
 
 describe('ClusterCard', () => {
@@ -60,7 +62,7 @@ describe('ClusterCard', () => {
     renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
 
     expect(screen.getByText('2 months ago')).toBeInTheDocument()
-    expect(timeAgo).toHaveBeenCalledWith(new Date('2023-01-01T12:00:00Z'))
+    expect(timeAgo).toHaveBeenCalledWith(new Date('2025-03-25T10:52:36.745Z'))
   })
 
   it('should display status text when status is building', () => {

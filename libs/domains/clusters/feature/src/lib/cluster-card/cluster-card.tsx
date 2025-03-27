@@ -4,7 +4,7 @@ import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Badge, Icon, Indicator, Link as LinkUI, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { timeAgo } from '@qovery/shared/util-dates'
+import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterActionToolbar } from '../cluster-action-toolbar/cluster-action-toolbar'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
@@ -45,10 +45,13 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .otherwise(
       () =>
-        cluster.created_at && (
-          <Tooltip content={`Last deployment: ${cluster.updated_at}`} disabled={!cluster.updated_at}>
+        clusterDeploymentStatus?.last_deployment_date && (
+          <Tooltip
+            content={`Last deployment: ${dateFullFormat(clusterDeploymentStatus.last_deployment_date)}`}
+            disabled={!clusterDeploymentStatus.last_deployment_date}
+          >
             <span className="max-w-max text-sm text-neutral-350">
-              {cluster.updated_at ? timeAgo(new Date(cluster.updated_at)) : timeAgo(new Date(cluster.created_at))}
+              {timeAgo(new Date(clusterDeploymentStatus.last_deployment_date))}
             </span>
           </Tooltip>
         )
