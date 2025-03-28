@@ -289,7 +289,12 @@ export function ContainerRegistryForm({
               {isEditDirty && (
                 <>
                   <hr />
-                  <span className="text-sm text-neutral-350">Confirm your password</span>
+                  <span className="text-sm text-neutral-350">
+                    {watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
+                    watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                      ? 'Confirm your personal access token'
+                      : 'Confirm your password'}
+                  </span>
                 </>
               )}
               {(!isEdit || isEditDirty) && (
@@ -297,7 +302,11 @@ export function ContainerRegistryForm({
                   name="config.password"
                   control={methods.control}
                   rules={{
-                    required: 'Please enter a password.',
+                    required:
+                      watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
+                      watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                        ? 'Please enter a personal access token.'
+                        : 'Please enter a password.',
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <>
@@ -307,7 +316,12 @@ export function ContainerRegistryForm({
                         name={field.name}
                         onChange={field.onChange}
                         value={field.value}
-                        label="Password"
+                        label={
+                          watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
+                          watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                            ? 'Personal Access Token'
+                            : 'Password'
+                        }
                         error={error?.message}
                       />
                       {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
