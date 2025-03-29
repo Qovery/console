@@ -29,7 +29,18 @@ export function PageSettingsResources({ cluster, onSubmit, loading }: PageSettin
             fromDetail
           />
           <div className="mt-10 flex justify-end">
-            <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
+            {/* 
+              Adding `hasAlreadyKarpenter` is an hotfix to avoid weird disabled button with all Karpenter fields
+              TODO: This should be improved to handle the form validation in a cleaner way
+              https://qovery.slack.com/archives/C02P2JB4SEM/p1743234920794219
+            */}
+            <Button
+              data-testid="submit-button"
+              type="submit"
+              size="lg"
+              loading={loading}
+              disabled={hasAlreadyKarpenter && !formState.isValid}
+            >
               Save
             </Button>
           </div>
