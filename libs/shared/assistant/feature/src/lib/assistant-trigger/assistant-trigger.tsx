@@ -45,7 +45,11 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
       </button> */}
 
       {/* XXX: rely on defaultOpen boolean for `smaller` prop as all funnel flows require smaller panel */}
-      {assistantOpen && <AssistantPanel onClose={() => setAssistantOpen(false)} smaller={defaultOpen} />}
+      <AssistantPanel
+        onClose={() => setAssistantOpen(false)}
+        smaller={defaultOpen}
+        style={{ display: assistantOpen ? 'block' : 'none' }}
+      />
     </>
   )
 }
