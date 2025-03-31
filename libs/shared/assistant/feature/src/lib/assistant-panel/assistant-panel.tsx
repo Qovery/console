@@ -109,6 +109,7 @@ export type Thread = Message[]
 export interface AssistantPanelProps {
   onClose: () => void
   smaller?: boolean
+  style?: React.CSSProperties
 }
 
 function useQoveryContext() {
@@ -154,7 +155,7 @@ function useQoveryContext() {
   }
 }
 
-export function AssistantPanel({ onClose }: AssistantPanelProps) {
+export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const { message: inputExplainMessage, setMessage: setInputExplainMessage } = useContext(AssistantContext)
   const { data } = useQoveryStatus()
   const { showMessages: showIntercomMessenger } = useIntercom()
@@ -171,8 +172,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [threadId, setThreadId] = useState<string | undefined>()
 
   const [streamingMessage, setStreamingMessage] = useState('')
-  const [currentChunk, setCurrentChunk] = useState('')
+  const [displayedStreamingMessage, setDisplayedStreamingMessage] = useState('')
   const [isScrollFocus, setIsScrollFocus] = useState(false)
+
+  const pendingThreadId = useRef<string>()
 
   const {
     threads = [],
@@ -248,7 +251,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       top: node.scrollHeight,
       behavior: 'auto',
     })
-  }, [thread, streamingMessage, isScrollFocus, currentChunk])
+  }, [thread, isScrollFocus, displayedStreamingMessage])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -262,8 +265,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   }, [])
 
   const handleSendMessage = async (value?: string) => {
-    setCurrentChunk('')
     setStreamingMessage('')
+    setDisplayedStreamingMessage('')
     let fullContent = ''
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
@@ -297,7 +300,6 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               if (parsed.type === 'chunk' && parsed.content) {
                 fullContent += parsed.content
                 setStreamingMessage(fullContent)
-                setCurrentChunk(parsed.content)
               }
             } catch (error) {
               console.error('Erreur parsing chunk:', error)
@@ -306,26 +308,48 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
         )
 
         if (response) {
-          setThreadId(response.id)
+          pendingThreadId.current = response.id
+        }
+      } catch (error) {
+        console.error('Error fetching response:', error)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
+
+    let i = displayedStreamingMessage.length
+    let interval: NodeJS.Timeout
+
+    interval = setInterval(() => {
+
+      setDisplayedStreamingMessage((prev) => {
+        if (i >= streamingMessage.length) {
+          clearInterval(interval)
           setThread([
-            ...updatedThread,
+            ...thread,
             {
               id: Date.now() + 1,
-              text: fullContent,
+              text: streamingMessage,
               owner: 'assistant',
               timestamp: Date.now(),
             },
           ])
+          setThreadId(pendingThreadId.current)
+          setIsLoading(false)
+          setStreamingMessage('')
+          return prev
         }
-      } catch (error) {
-        console.error('Error fetching response:', error)
-      } finally {
-        setIsLoading(false)
-        setStreamingMessage('')
-        setCurrentChunk('')
-      }
-    }
-  }
+
+        const nextChar = streamingMessage[i]
+        i++
+        return prev + nextChar
+      })
+    }, 5)
+
+    return () => clearInterval(interval)
+  }, [streamingMessage, displayedStreamingMessage])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
@@ -355,6 +379,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
               }
             )
           )}
+          style={style}
         >
           {expand && (
             <AssistantHistory
@@ -624,7 +649,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     ))
                     .exhaustive()
                 })}
-                {/* {isLoading && <Loading />} */}
+                {isLoading && streamingMessage.length == 0 && < Loading />}
                 {isLoading && (
                   <div className="streaming text-sm">
                     <Markdown
@@ -697,7 +722,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                         ),
                       }}
                     >
-                      {streamingMessage}
+                      {displayedStreamingMessage}
                     </Markdown>
                   </div>
                 )}
