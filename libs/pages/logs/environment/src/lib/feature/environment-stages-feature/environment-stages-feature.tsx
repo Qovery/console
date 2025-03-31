@@ -68,7 +68,7 @@ export function EnvironmentStagesFeature({
     executionId,
   })
 
-  const [hideSkipped, setHideSkipped] = useState<CheckedState>(false)
+  const [hideSkipped, setHideSkipped] = useState<CheckedState>(true)
   const navigate = useNavigate()
 
   const getServiceById = (id: string) => services.find((service) => service.id === id) as AnyService

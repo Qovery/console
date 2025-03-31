@@ -87,10 +87,12 @@ describe('EnvironmentStagesFeature', () => {
   it('does not render skipped services when hideSkipped is true', async () => {
     const { userEvent } = renderWithProviders(<EnvironmentStagesFeature {...defaultProps} />)
 
-    await userEvent.click(screen.getByLabelText('Hide skipped'))
-
     expect(screen.getByText('App 1')).toBeInTheDocument()
     expect(screen.queryByText('App 2')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByLabelText('Hide skipped'))
+
+    expect(screen.queryByText('App 2')).toBeInTheDocument()
   })
 
   it('should correctly map services and stages', () => {
