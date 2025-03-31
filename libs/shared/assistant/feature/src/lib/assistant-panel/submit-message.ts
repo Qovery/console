@@ -39,7 +39,7 @@ export const submitMessage = async (
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title: message.substring(0, 50), // Use first 50 chars as title
@@ -62,7 +62,7 @@ export const submitMessage = async (
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
-          Accept: 'text/event-stream'
+          Accept: 'text/event-stream',
         },
         body: JSON.stringify({
           organization_id: organizationId,
@@ -86,35 +86,35 @@ export const submitMessage = async (
     }
 
     if (onStream && messageResponse.body) {
-      const reader = messageResponse.body.getReader();
-      const decoder = new TextDecoder();
-      let accumulatedResponse = '';
+      const reader = messageResponse.body.getReader()
+      const decoder = new TextDecoder()
+      let accumulatedResponse = ''
 
       while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        const { done, value } = await reader.read()
+        if (done) break
 
-        const chunk = decoder.decode(value, { stream: true });
-        accumulatedResponse += chunk;
-        onStream(chunk);
+        const chunk = decoder.decode(value, { stream: true })
+        accumulatedResponse += chunk
+        onStream(chunk)
       }
 
-      const messages = await fetchThread(organizationId, _threadId, token);
+      const messages = await fetchThread(organizationId, _threadId, token)
 
       const formattedMessages: Thread = messages.map((msg: any) => ({
         id: msg.id,
         text: msg.media_content,
         owner: msg.owner,
         timestamp: new Date(msg.created_at).getTime(),
-      }));
+      }))
 
       return {
         id: _threadId,
         thread: formattedMessages,
-      };
+      }
     }
 
-    const messages = await fetchThread(organizationId, _threadId, token);
+    const messages = await fetchThread(organizationId, _threadId, token)
 
     const formattedMessages: Thread = messages.map((msg: any) => ({
       id: msg.id,
