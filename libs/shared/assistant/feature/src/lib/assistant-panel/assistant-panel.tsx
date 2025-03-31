@@ -174,6 +174,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const [streamingMessage, setStreamingMessage] = useState('')
   const [displayedStreamingMessage, setDisplayedStreamingMessage] = useState('')
   const [isScrollFocus, setIsScrollFocus] = useState(false)
+  const [isFinish, setIsFinish] = useState(false)
 
   const pendingThreadId = useRef<string>()
 
@@ -265,6 +266,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }, [])
 
   const handleSendMessage = async (value?: string) => {
+    setIsFinish(false)
     setStreamingMessage('')
     setDisplayedStreamingMessage('')
     let fullContent = ''
@@ -312,11 +314,27 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
         }
       } catch (error) {
         console.error('Error fetching response:', error)
+      } finally {
+        setIsFinish(true)
       }
     }
   }
 
   useEffect(() => {
+    if (isFinish && displayedStreamingMessage.length >= streamingMessage.length) {
+      setThread([
+        ...thread,
+        {
+          id: Date.now() + 1,
+          text: streamingMessage,
+          owner: 'assistant',
+          timestamp: Date.now(),
+        },
+      ])
+      setThreadId(pendingThreadId.current)
+      setIsLoading(false)
+      setStreamingMessage('')
+    }
     if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
 
     let i = displayedStreamingMessage.length
@@ -325,23 +343,6 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     interval = setInterval(() => {
 
       setDisplayedStreamingMessage((prev) => {
-        if (i >= streamingMessage.length) {
-          clearInterval(interval)
-          setThread([
-            ...thread,
-            {
-              id: Date.now() + 1,
-              text: streamingMessage,
-              owner: 'assistant',
-              timestamp: Date.now(),
-            },
-          ])
-          setThreadId(pendingThreadId.current)
-          setIsLoading(false)
-          setStreamingMessage('')
-          return prev
-        }
-
         const nextChar = streamingMessage[i]
         i++
         return prev + nextChar
