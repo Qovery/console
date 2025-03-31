@@ -26,10 +26,16 @@ import AssistantHistory from './assistant-history'
 import { submitMessage } from './submit-message'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
+import React from 'react'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
   onClick?: () => void
+}
+
+interface CodeProps extends React.HTMLAttributes<HTMLElement> {
+  inline?: boolean;
+  node?: any;
 }
 
 const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, ...props }, ref) => {
@@ -164,6 +170,10 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [withContext, setWithContext] = useState(true)
   const [threadId, setThreadId] = useState<string | undefined>()
 
+  const [streamingMessage, setStreamingMessage] = useState('');
+  const [currentChunk, setCurrentChunk] = useState('');
+  const [isScrollFocus, setIsScrollFocus] = useState(false)
+
   const {
     threads = [],
     error: errorThreads,
@@ -206,11 +216,41 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
     }
   }, [inputExplainMessage])
 
+  const isProgrammaticScroll = useRef(false);
+
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
-    }
-  }, [thread])
+    const node = scrollAreaRef.current;
+    if (!node) return;
+
+    const handleScroll = () => {
+
+      if (isProgrammaticScroll.current) {
+        console.log("mtn c false");
+
+        isProgrammaticScroll.current = false;
+        return;
+      }
+
+      const { scrollTop, clientHeight, scrollHeight } = node;
+      const isAtBottom = Math.abs(scrollTop + clientHeight - scrollHeight) < 2;
+
+      setIsScrollFocus(!isAtBottom);
+    };
+
+    node.addEventListener('scroll', handleScroll);
+    return () => node.removeEventListener('scroll', handleScroll);
+  }, [scrollAreaRef, scrollAreaRef.current]);
+
+  useEffect(() => {
+    const node = scrollAreaRef.current;
+    if (!node || isScrollFocus) return;
+
+    isProgrammaticScroll.current = true;
+    node.scrollTo({
+      top: node.scrollHeight,
+      behavior: 'auto'
+    });
+  }, [thread, streamingMessage, isScrollFocus, currentChunk]);
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -224,6 +264,9 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   }, [])
 
   const handleSendMessage = async (value?: string) => {
+    setCurrentChunk("")
+    setStreamingMessage("")
+    let fullContent = ""
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
     if (trimmedInputMessage) {
@@ -238,6 +281,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
 
       setInputMessage('')
       setIsLoading(true)
+      setStreamingMessage('')
       if (inputRef.current) {
         inputRef.current.style.height = 'initial'
       }
@@ -248,16 +292,37 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           trimmedInputMessage,
           token,
           threadId,
-          withContext ? context : { organization: context.organization }
-        )
+          withContext ? context : { organization: context.organization },
+          (chunk) => {
+            try {
+              const parsed = JSON.parse(chunk.replace(/^data: /, ""));
+              if (parsed.type === "chunk" && parsed.content) {
+                fullContent += parsed.content;
+                setStreamingMessage(fullContent);
+                setCurrentChunk(parsed.content);
+              }
+            } catch (error) {
+              console.error("Erreur parsing chunk:", error);
+            }
+          }
+
+        );
+
         if (response) {
           setThreadId(response.id)
-          setThread(response.thread)
+          setThread([...updatedThread, {
+            id: Date.now() + 1,
+            text: fullContent,
+            owner: 'assistant',
+            timestamp: Date.now(),
+          }]);
         }
       } catch (error) {
         console.error('Error fetching response:', error)
       } finally {
         setIsLoading(false)
+        setStreamingMessage('')
+        setCurrentChunk('')
       }
     }
   }
@@ -486,35 +551,68 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                         <Markdown
                           remarkPlugins={[remarkGfm]}
                           components={{
-                            h1: ({ node, ...props }) => <h1 className="my-2 text-lg font-semibold" {...props} />,
-                            h2: ({ node, ...props }) => <h2 className="my-2 text-lg font-semibold" {...props} />,
-                            h3: ({ node, ...props }) => <h3 className="my-2 text-base font-semibold" {...props} />,
-                            h4: ({ node, ...props }) => <h3 className="my-2 text-base font-semibold" {...props} />,
-                            p: ({ node, ...props }) => <p className="my-2" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="mb-2 list-disc pl-4" {...props} />,
-                            ol: ({ node, ...props }) => <ol className="mb-2 list-decimal pl-4" {...props} />,
-                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                            h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
+                            h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
+                            h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
+                            h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
+                            p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="my-3 list-disc pl-6 space-y-1" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="my-3 list-decimal pl-6 space-y-1" {...props} />,
+                            li: ({ node, ...props }) => <li className="my-1" {...props} />,
                             a: ({ node, ...props }) => (
-                              <a target="_blank" className="text-sky-500 hover:underline" {...props} />
-                            ),
-                            pre: ({ node, ...props }) => (
-                              <pre
-                                className="max-w-max whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+                              <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                                 {...props}
                               />
                             ),
-                            code: ({ node, inline, ...props }: { inline?: boolean; [key: string]: any }) =>
-                              inline ? (
+                            pre: ({ node, children, ...props }) => {
+                              const codeContent = React.isValidElement(children)
+                                ? (children.props as { children?: string })?.children
+                                : null;
+
+                              return (
+                                <div className="relative my-4">
+                                  <pre
+                                    className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+                                    {...props}
+                                  >
+                                    {children}
+                                  </pre>
+                                  {typeof codeContent === 'string' && (
+                                    <Button variant={'surface'} className='absolute top-2 right-2' onClick={() => navigator.clipboard.writeText(codeContent)}>
+                                      <Icon iconName="copy" />
+                                    </Button>
+
+                                  )}
+                                </div>
+                              );
+                            },
+                            code: ({ node, inline, className, children, ...props }: CodeProps) => {
+                              const isInline = inline ?? false;
+                              return isInline ? (
                                 <code
-                                  className="whitespace-pre-wrap rounded bg-neutral-200 px-1 font-code text-ssm dark:bg-neutral-800"
+                                  className={`px-1.5 py-0.5 rounded dark:bg-gray-700 text-sm font-mono ${className || ''}`}
                                   {...props}
-                                />
+                                >
+                                  {children}
+                                </code>
                               ) : (
                                 <code
-                                  className="mb-2 block overflow-x-auto whitespace-pre-wrap rounded bg-neutral-200 p-2 font-code text-ssm dark:bg-neutral-800"
+                                  className={`block my-2 p-3 rounded-lg dark:bg-gray-800 text-sm font-mono overflow-x-auto ${className || ''}`}
                                   {...props}
-                                />
-                              ),
+                                >
+                                  {children}
+                                </code>
+                              );
+                            },
+                            blockquote: ({ node, ...props }) => (
+                              <blockquote
+                                className="my-4 pl-4 border-l-4 border-gray-300 dark:border-gray-600 italic"
+                                {...props}
+                              />
+                            ),
                           }}
                         >
                           {thread.text}
@@ -523,7 +621,90 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     ))
                     .exhaustive()
                 })}
-                {isLoading && <Loading />}
+                {/* {isLoading && <Loading />} */}
+                {isLoading && (
+                  <div className="text-sm streaming">
+                    <Markdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
+                        h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
+                        h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
+                        h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
+                        p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
+                        ul: ({ node, ...props }) => <ul className="my-3 list-disc pl-6 space-y-1" {...props} />,
+                        ol: ({ node, ...props }) => <ol className="my-3 list-decimal pl-6 space-y-1" {...props} />,
+                        li: ({ node, ...props }) => <li className="my-1" {...props} />,
+                        a: ({ node, ...props }) => (
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                            {...props}
+                          />
+                        ),
+                        pre: ({ node, children, ...props }) => {
+                          const codeContent = React.isValidElement(children)
+                            ? (children.props as { children?: string })?.children
+                            : null;
+
+                          return (
+                            <div className="relative my-4">
+                              <pre
+                                className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+                                {...props}
+                              >
+                                {children}
+                              </pre>
+                              {typeof codeContent === 'string' && (
+                                <Button variant={'surface'} className='absolute top-2 right-2' onClick={() => navigator.clipboard.writeText(codeContent)}>
+                                  <Icon iconName="copy" />
+                                </Button>
+
+                              )}
+                            </div>
+                          );
+                        },
+                        code: ({ node, inline, className, children, ...props }: CodeProps) => {
+                          const isInline = inline ?? false;
+                          return isInline ? (
+                            <code
+                              className={`px-1.5 py-0.5 rounded dark:bg-gray-700 text-sm font-mono ${className || ''}`}
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          ) : (
+                            <code
+                              className={`block my-2 p-3 rounded-lg dark:bg-gray-800 text-sm font-mono overflow-x-auto ${className || ''}`}
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          );
+                        },
+                        blockquote: ({ node, ...props }) => (
+                          <blockquote
+                            className="my-4 pl-4 border-l-4 border-gray-300 dark:border-gray-600 italic"
+                            {...props}
+                          />
+                        ),
+                      }}
+                    >
+                      {streamingMessage}
+                    </Markdown>
+                  </div>
+                )}
+                <div className="sticky bottom-0 left-full ml-[-40px] w-fit z-10">
+                  {isScrollFocus && (
+                    <Button
+                      onClick={() => setIsScrollFocus(false)}
+                      className="m-2 rounded-full aspect-square flex items-center justify-center"
+                    >
+                      <Icon iconName="arrow-down" iconStyle="light" />
+                    </Button>
+                  )}
+                </div>
               </ScrollArea>
               <div
                 className={clsx('relative mt-auto flex flex-col gap-2 px-4 pb-4', {
