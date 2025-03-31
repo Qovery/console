@@ -3,6 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import { type ComponentProps, forwardRef, useContext, useEffect, useRef, useState } from 'react'
+import React from 'react'
 import Markdown from 'react-markdown'
 import { useMatch, useParams } from 'react-router-dom'
 import { useIntercom } from 'react-use-intercom'
@@ -26,7 +27,6 @@ import AssistantHistory from './assistant-history'
 import { submitMessage } from './submit-message'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
-import React from 'react'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
@@ -34,8 +34,8 @@ interface InputProps extends ComponentProps<'textarea'> {
 }
 
 interface CodeProps extends React.HTMLAttributes<HTMLElement> {
-  inline?: boolean;
-  node?: any;
+  inline?: boolean
+  node?: any
 }
 
 const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, ...props }, ref) => {
@@ -170,8 +170,8 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const [withContext, setWithContext] = useState(true)
   const [threadId, setThreadId] = useState<string | undefined>()
 
-  const [streamingMessage, setStreamingMessage] = useState('');
-  const [currentChunk, setCurrentChunk] = useState('');
+  const [streamingMessage, setStreamingMessage] = useState('')
+  const [currentChunk, setCurrentChunk] = useState('')
   const [isScrollFocus, setIsScrollFocus] = useState(false)
 
   const {
@@ -216,41 +216,39 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
     }
   }, [inputExplainMessage])
 
-  const isProgrammaticScroll = useRef(false);
+  const isProgrammaticScroll = useRef(false)
 
   useEffect(() => {
-    const node = scrollAreaRef.current;
-    if (!node) return;
+    const node = scrollAreaRef.current
+    if (!node) return
 
     const handleScroll = () => {
-
       if (isProgrammaticScroll.current) {
-        console.log("mtn c false");
 
-        isProgrammaticScroll.current = false;
-        return;
+        isProgrammaticScroll.current = false
+        return
       }
 
-      const { scrollTop, clientHeight, scrollHeight } = node;
-      const isAtBottom = Math.abs(scrollTop + clientHeight - scrollHeight) < 2;
+      const { scrollTop, clientHeight, scrollHeight } = node
+      const isAtBottom = Math.abs(scrollTop + clientHeight - scrollHeight) < 2
 
-      setIsScrollFocus(!isAtBottom);
-    };
+      setIsScrollFocus(!isAtBottom)
+    }
 
-    node.addEventListener('scroll', handleScroll);
-    return () => node.removeEventListener('scroll', handleScroll);
-  }, [scrollAreaRef, scrollAreaRef.current]);
+    node.addEventListener('scroll', handleScroll)
+    return () => node.removeEventListener('scroll', handleScroll)
+  }, [scrollAreaRef, scrollAreaRef.current])
 
   useEffect(() => {
-    const node = scrollAreaRef.current;
-    if (!node || isScrollFocus) return;
+    const node = scrollAreaRef.current
+    if (!node || isScrollFocus) return
 
-    isProgrammaticScroll.current = true;
+    isProgrammaticScroll.current = true
     node.scrollTo({
       top: node.scrollHeight,
-      behavior: 'auto'
-    });
-  }, [thread, streamingMessage, isScrollFocus, currentChunk]);
+      behavior: 'auto',
+    })
+  }, [thread, streamingMessage, isScrollFocus, currentChunk])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -264,9 +262,9 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   }, [])
 
   const handleSendMessage = async (value?: string) => {
-    setCurrentChunk("")
-    setStreamingMessage("")
-    let fullContent = ""
+    setCurrentChunk('')
+    setStreamingMessage('')
+    let fullContent = ''
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
     if (trimmedInputMessage) {
@@ -295,27 +293,29 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           withContext ? context : { organization: context.organization },
           (chunk) => {
             try {
-              const parsed = JSON.parse(chunk.replace(/^data: /, ""));
-              if (parsed.type === "chunk" && parsed.content) {
-                fullContent += parsed.content;
-                setStreamingMessage(fullContent);
-                setCurrentChunk(parsed.content);
+              const parsed = JSON.parse(chunk.replace(/^data: /, ''))
+              if (parsed.type === 'chunk' && parsed.content) {
+                fullContent += parsed.content
+                setStreamingMessage(fullContent)
+                setCurrentChunk(parsed.content)
               }
             } catch (error) {
-              console.error("Erreur parsing chunk:", error);
+              console.error('Erreur parsing chunk:', error)
             }
           }
-
-        );
+        )
 
         if (response) {
           setThreadId(response.id)
-          setThread([...updatedThread, {
-            id: Date.now() + 1,
-            text: fullContent,
-            owner: 'assistant',
-            timestamp: Date.now(),
-          }]);
+          setThread([
+            ...updatedThread,
+            {
+              id: Date.now() + 1,
+              text: fullContent,
+              owner: 'assistant',
+              timestamp: Date.now(),
+            },
+          ])
         }
       } catch (error) {
         console.error('Error fetching response:', error)
@@ -556,21 +556,21 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                             h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
                             h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
                             p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="my-3 list-disc pl-6 space-y-1" {...props} />,
-                            ol: ({ node, ...props }) => <ol className="my-3 list-decimal pl-6 space-y-1" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
+                            ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
                             li: ({ node, ...props }) => <li className="my-1" {...props} />,
                             a: ({ node, ...props }) => (
                               <a
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                                className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
                                 {...props}
                               />
                             ),
                             pre: ({ node, children, ...props }) => {
                               const codeContent = React.isValidElement(children)
                                 ? (children.props as { children?: string })?.children
-                                : null;
+                                : null
 
                               return (
                                 <div className="relative my-4">
@@ -581,35 +581,38 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                                     {children}
                                   </pre>
                                   {typeof codeContent === 'string' && (
-                                    <Button variant={'surface'} className='absolute top-2 right-2' onClick={() => navigator.clipboard.writeText(codeContent)}>
+                                    <Button
+                                      variant={'surface'}
+                                      className="absolute right-2 top-2"
+                                      onClick={() => navigator.clipboard.writeText(codeContent)}
+                                    >
                                       <Icon iconName="copy" />
                                     </Button>
-
                                   )}
                                 </div>
-                              );
+                              )
                             },
                             code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                              const isInline = inline ?? false;
+                              const isInline = inline ?? false
                               return isInline ? (
                                 <code
-                                  className={`px-1.5 py-0.5 rounded dark:bg-gray-700 text-sm font-mono ${className || ''}`}
+                                  className={`rounded px-1.5 py-0.5 font-mono text-sm dark:bg-gray-700 ${className || ''}`}
                                   {...props}
                                 >
                                   {children}
                                 </code>
                               ) : (
                                 <code
-                                  className={`block my-2 p-3 rounded-lg dark:bg-gray-800 text-sm font-mono overflow-x-auto ${className || ''}`}
+                                  className={`my-2 block overflow-x-auto rounded-lg p-3 font-mono text-sm dark:bg-gray-800 ${className || ''}`}
                                   {...props}
                                 >
                                   {children}
                                 </code>
-                              );
+                              )
                             },
                             blockquote: ({ node, ...props }) => (
                               <blockquote
-                                className="my-4 pl-4 border-l-4 border-gray-300 dark:border-gray-600 italic"
+                                className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
                                 {...props}
                               />
                             ),
@@ -623,7 +626,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                 })}
                 {/* {isLoading && <Loading />} */}
                 {isLoading && (
-                  <div className="text-sm streaming">
+                  <div className="streaming text-sm">
                     <Markdown
                       remarkPlugins={[remarkGfm]}
                       components={{
@@ -632,21 +635,21 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                         h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
                         h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
                         p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
-                        ul: ({ node, ...props }) => <ul className="my-3 list-disc pl-6 space-y-1" {...props} />,
-                        ol: ({ node, ...props }) => <ol className="my-3 list-decimal pl-6 space-y-1" {...props} />,
+                        ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
+                        ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
                         li: ({ node, ...props }) => <li className="my-1" {...props} />,
                         a: ({ node, ...props }) => (
                           <a
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+                            className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
                             {...props}
                           />
                         ),
                         pre: ({ node, children, ...props }) => {
                           const codeContent = React.isValidElement(children)
                             ? (children.props as { children?: string })?.children
-                            : null;
+                            : null
 
                           return (
                             <div className="relative my-4">
@@ -657,35 +660,38 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                                 {children}
                               </pre>
                               {typeof codeContent === 'string' && (
-                                <Button variant={'surface'} className='absolute top-2 right-2' onClick={() => navigator.clipboard.writeText(codeContent)}>
+                                <Button
+                                  variant={'surface'}
+                                  className="absolute right-2 top-2"
+                                  onClick={() => navigator.clipboard.writeText(codeContent)}
+                                >
                                   <Icon iconName="copy" />
                                 </Button>
-
                               )}
                             </div>
-                          );
+                          )
                         },
                         code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                          const isInline = inline ?? false;
+                          const isInline = inline ?? false
                           return isInline ? (
                             <code
-                              className={`px-1.5 py-0.5 rounded dark:bg-gray-700 text-sm font-mono ${className || ''}`}
+                              className={`rounded px-1.5 py-0.5 font-mono text-sm dark:bg-gray-700 ${className || ''}`}
                               {...props}
                             >
                               {children}
                             </code>
                           ) : (
                             <code
-                              className={`block my-2 p-3 rounded-lg dark:bg-gray-800 text-sm font-mono overflow-x-auto ${className || ''}`}
+                              className={`my-2 block overflow-x-auto rounded-lg p-3 font-mono text-sm dark:bg-gray-800 ${className || ''}`}
                               {...props}
                             >
                               {children}
                             </code>
-                          );
+                          )
                         },
                         blockquote: ({ node, ...props }) => (
                           <blockquote
-                            className="my-4 pl-4 border-l-4 border-gray-300 dark:border-gray-600 italic"
+                            className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
                             {...props}
                           />
                         ),
@@ -695,11 +701,11 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
                     </Markdown>
                   </div>
                 )}
-                <div className="sticky bottom-0 left-full ml-[-40px] w-fit z-10">
+                <div className="sticky bottom-0 left-full z-10 ml-[-40px] w-fit">
                   {isScrollFocus && (
                     <Button
                       onClick={() => setIsScrollFocus(false)}
-                      className="m-2 rounded-full aspect-square flex items-center justify-center"
+                      className="m-2 flex aspect-square items-center justify-center rounded-full"
                     >
                       <Icon iconName="arrow-down" iconStyle="light" />
                     </Button>
