@@ -365,6 +365,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
       <Dialog.Portal>
         {expand && (
           <Dialog.Overlay
+            style={style}
             className="absolute left-0 top-0 z-0 h-screen w-screen animate-[fadein_0.22s_ease-in-out_forwards_0.05s] bg-black/50 opacity-0 backdrop-blur-[2px] "
             onClick={handleOnClose}
           />
