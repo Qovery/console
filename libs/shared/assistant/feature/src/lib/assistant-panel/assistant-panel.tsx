@@ -156,6 +156,7 @@ function useQoveryContext() {
 }
 
 export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
+  const STORAGE_KEY = 'assistant-panel-size'
   const { message: inputExplainMessage, setMessage: setInputExplainMessage } = useContext(AssistantContext)
   const { data } = useQoveryStatus()
   const { showMessages: showIntercomMessenger } = useIntercom()
@@ -354,6 +355,81 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+
+    if (expand) {
+      panel.style.width = 'calc(100vw - 32px)'
+      panel.style.height = 'calc(100vh - 32px)'
+      panel.style.top = '1rem'
+      panel.style.left = '1rem'
+    } else {
+      const size = localStorage.getItem(STORAGE_KEY)
+      if (size) {
+        try {
+          const { width, height } = JSON.parse(size)
+          panel.style.width = `${width}px`
+          panel.style.height = `${height}px`
+          panel.style.bottom = '8px'
+          panel.style.right = '8px'
+          panel.style.top = ''
+          panel.style.left = ''
+        } catch (e) {
+          console.error('Failed to apply panel size from localStorage', e)
+        }
+      } else {
+        panel.style.top = ''
+        panel.style.left = ''
+        panel.style.bottom = '8px'
+        panel.style.right = '8px'
+        panel.style.width = `480px`
+        panel.style.height = `600px`
+      }
+    }
+  }, [expand, style])
+
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const panel = panelRef.current
+    if (!panel) return
+
+    setIsResizing(true)
+
+    const startX = e.clientX
+    const startY = e.clientY
+    const startWidth = panel.offsetWidth
+    const startHeight = panel.offsetHeight
+    const startLeft = panel.getBoundingClientRect().left
+    const startTop = panel.getBoundingClientRect().top
+
+    const onMouseMove = (e: MouseEvent) => {
+      const dx = startX - e.clientX
+      const dy = startY - e.clientY
+      panel.style.width = `${startWidth + dx}px`
+      panel.style.height = `${startHeight + dy}px`
+      panel.style.left = `${startLeft - dx}px`
+      panel.style.top = `${startTop - dy}px`
+    }
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ width: panel.offsetWidth, height: panel.offsetHeight })
+      )
+      setIsResizing(false)
+    }
+
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+  }
+
+  const [isResizing, setIsResizing] = useState(false)
+
   return (
     <Dialog.Root
       open={true}
@@ -371,18 +447,25 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
           />
         )}
         <Dialog.Content
+          ref={panelRef}
           className={twMerge(
             clsx(
-              'fixed bottom-2 right-2 z-[1] flex h-[600px] w-[480px] max-w-[480px] rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
+              'fixed bottom-2 right-2 z-[1] flex rounded-xl border border-neutral-200 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] dark:border-neutral-500 dark:bg-neutral-600',
               {
-                'left-4 top-4 h-[calc(100vh-32px)] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] animate-[scalein_0.22s_ease_both] opacity-0':
-                  expand,
+                'left-4 top-4 animate-[scalein_0.22s_ease_both] opacity-0': expand,
                 'animate-slidein-up-sm-faded': !expand,
+                'border-2 border-brand-500': !expand && isResizing
               }
             )
           )}
           style={style}
         >
+          {!expand && (
+            <div
+              className="absolute left-1 top-1 z-10 cursor-nw-resize p-1"
+              onMouseDown={startResize}
+            />
+          )}
           {expand && (
             <AssistantHistory
               data={{
