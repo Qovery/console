@@ -48,7 +48,7 @@ export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps)
       <AssistantPanel
         onClose={() => setAssistantOpen(false)}
         smaller={defaultOpen}
-        style={{ display: assistantOpen ? 'block' : 'none' }}
+        style={{ display: assistantOpen ? '' : 'none' }}
       />
     </>
   )
