@@ -2,7 +2,7 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medium', 'text-xs', 'h-6', 'px-2'], {
+const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs', 'h-6', 'px-1.5'], {
   variants: {
     color: {
       neutral: [],
@@ -18,7 +18,7 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
       surface: ['border'],
     },
     radius: {
-      rounded: ['rounded'],
+      rounded: ['rounded-md'],
       full: ['rounded-full'],
     },
   },
@@ -31,7 +31,7 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'font-medi
     {
       variant: 'outline',
       color: 'neutral',
-      className: ['border-neutral-250', 'text-neutral-350', 'dark:border-neutral-350', 'dark:text-neutral-300'],
+      className: ['border-neutral-250', 'text-neutral-400', 'dark:border-neutral-350', 'dark:text-neutral-300'],
     },
     /*
     // Generate all colors

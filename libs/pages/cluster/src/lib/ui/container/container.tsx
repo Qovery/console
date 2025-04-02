@@ -33,7 +33,11 @@ export function Container({ children }: PropsWithChildren) {
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
-        {cluster?.production && <Badge color="neutral">Production</Badge>}
+        {cluster?.production && (
+          <Badge variant="surface" color="red">
+            Production
+          </Badge>
+        )}
         {cluster?.is_default && <Badge color="sky">Default</Badge>}
         {cluster ? (
           cluster.kubernetes === 'SELF_MANAGED' ? (
@@ -47,23 +51,37 @@ export function Container({ children }: PropsWithChildren) {
                 <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
                 Qovery managed
               </Badge>
-              <ClusterType cloudProvider={cluster.cloud_provider} kubernetes={cluster.kubernetes} />
+              <ClusterType
+                cloudProvider={cluster.cloud_provider}
+                kubernetes={cluster.kubernetes}
+                instanceType={cluster.instance_type}
+              />
             </>
           )
         ) : (
           <Skeleton width={120} height={22} show />
         )}
-        <Skeleton width={120} height={22} show={!cluster}>
-          <Badge color="neutral">{cluster?.region}</Badge>
-        </Skeleton>
+        {cluster?.region !== 'on-premise' && (
+          <Skeleton width={120} height={22} show={!cluster}>
+            <Badge color="neutral" variant="surface">
+              {cluster?.region}
+            </Badge>
+          </Skeleton>
+        )}
         {cluster?.kubernetes !== 'SELF_MANAGED' && (
           <>
             <Skeleton width={120} height={22} show={!cluster}>
-              {cluster?.version && <Badge color="neutral">{cluster?.version}</Badge>}
+              {cluster?.version && (
+                <Badge color="neutral" variant="surface">
+                  {cluster?.version}
+                </Badge>
+              )}
             </Skeleton>
             <Skeleton width={120} height={22} show={!cluster}>
               {cluster?.instance_type && (
-                <Badge color="neutral">{cluster?.instance_type?.toLowerCase().replace('_', '.')}</Badge>
+                <Badge color="neutral" variant="surface">
+                  {cluster?.instance_type?.toLowerCase().replace('_', '.')}
+                </Badge>
               )}
             </Skeleton>
           </>

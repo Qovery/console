@@ -11,9 +11,14 @@ export const ClusterAvatar = forwardRef<ElementRef<typeof Avatar>, ClusterAvatar
   { cluster, ...props },
   ref
 ) {
-  const iconName = match(cluster.cloud_provider)
-    .with('ON_PREMISE', () => 'KUBERNETES')
-    .otherwise((cloud_provider) => cloud_provider)
+  const fallback = match(cluster)
+    .with({ is_demo: true }, () => (
+      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-sky-50">
+        <Icon iconName="laptop-code" className="text-sky-500" />
+      </div>
+    ))
+    .with({ cloud_provider: 'ON_PREMISE' }, () => <Icon name="KUBERNETES" height="65%" width="65%" />)
+    .otherwise((c) => <Icon name={c.cloud_provider} height="65%" width="65%" />)
 
-  return <Avatar ref={ref} fallback={<Icon name={iconName} height="65%" width="65%" />} {...props} />
+  return <Avatar ref={ref} fallback={fallback} {...props} />
 })
