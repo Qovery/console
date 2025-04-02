@@ -14,7 +14,7 @@ export function SpotlightTrigger() {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
-        setOpenSpotlight((open) => !open)
+        setOpenSpotlight(true)
       }
     }
 

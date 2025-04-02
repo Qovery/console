@@ -109,6 +109,15 @@ const CommandSeparator = forwardRef<ElementRef<typeof CmdK.Separator>, CommandSe
   return <CmdK.Separator ref={ref} className={twMerge('', className)} {...props} />
 })
 
+interface CommandLoadingProps extends ComponentPropsWithoutRef<typeof CmdK.Loading> {}
+
+const CommandLoading = forwardRef<ElementRef<typeof CmdK.Separator>, CommandLoadingProps>(function CommandLoading(
+  { className, ...props },
+  ref
+) {
+  return <CmdK.Loading ref={ref} className={twMerge('', className)} {...props} />
+})
+
 const Command = Object.assign(
   {},
   {
@@ -119,6 +128,7 @@ const Command = Object.assign(
     Group: CommandGroup,
     Item: CommandItem,
     Separator: CommandSeparator,
+    Loading: CommandLoading,
   }
 )
 
@@ -130,6 +140,7 @@ export type {
   CommandGroupProps,
   CommandItemProps,
   CommandSeparatorProps,
+  CommandLoadingProps,
 }
 
 export { Command, CommandDialog, CommandInput }
