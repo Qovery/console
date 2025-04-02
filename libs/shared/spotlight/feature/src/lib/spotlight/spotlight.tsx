@@ -2,7 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
 import { useContext, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ServiceAvatar } from '@qovery/domains/services/feature'
+import { ServiceAvatar, useFavoriteServices, useRecentServices } from '@qovery/domains/services/feature'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -17,9 +17,8 @@ import {
   SETTINGS_WEBHOOKS,
   USER_URL,
 } from '@qovery/shared/routes'
-import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
+import { Command, type CommandDialogProps, Icon, Truncate } from '@qovery/shared/ui'
 import { QOVERY_DOCS_URL, QOVERY_FORUM_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
-import { useFavoriteServices, useRecentServices } from '@qovery/shared/util-hooks'
 import { useQuickActions } from '../hooks/use-quick-actions/use-quick-actions'
 import { useServicesSearch } from '../hooks/use-services-search/use-services-search'
 import { SubCommand } from '../sub-command/sub-command'
@@ -52,10 +51,11 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const [selectedValue, setSelectedValue] = useState('')
 
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const listRef = useRef(null)
   const recentServices = getRecentServices()
   const favoriteServices = getFavoriteServices()
 
-  const iconClassName = 'text-brand-500 text-base text-center w-6'
+  const iconClassName = 'text-brand-500 text-sm text-center w-6'
 
   const navigateTo = (link: string) => () => {
     navigate(link)
@@ -174,12 +174,13 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
                   }
             }
           />
-          {name}
+          <Truncate text={name} truncateLimit={30} />
         </span>
 
         <span className="flex items-center gap-3">
-          <span className="text-ssm text-neutral-350">
-            {project_name} {environment_name}
+          <span className="flex gap-1 text-ssm text-neutral-350">
+            <Truncate text={project_name} truncateLimit={30} /> <span className="text-neutral-300">/</span>{' '}
+            <Truncate text={environment_name} truncateLimit={30} />
           </span>
         </span>
       </Command.Item>
@@ -230,7 +231,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           onValueChange={setSearchInput}
         />
       </div>
-      <Command.List>
+      <Command.List ref={listRef}>
         {isLoadingServices && <Command.Loading>Fetching</Command.Loading>}
         <Command.Empty>
           <div className="px-3 pb-4 pt-6 text-center">
@@ -302,8 +303,13 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       <SubCommand
         organizationId={organizationId}
         inputRef={inputRef}
+        listRef={listRef}
         service={selectedService}
         onOpenChange={onOpenChange}
+        reset={() => {
+          setSelectedService(undefined)
+          setSearchInput('')
+        }}
       />
     </Command.Dialog>
   )

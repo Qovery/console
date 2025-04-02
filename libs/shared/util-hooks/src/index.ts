@@ -12,5 +12,3 @@ import {
 export { useDocumentTitle, useClickAway, useCopyToClipboard, useDebounce, useLocalStorage, useNetworkState }
 
 export * from './lib/use-format-hotkeys/use-format-hotkeys'
-export * from './lib/use-recent-services/use-recent-services'
-export * from './lib/use-favorite-services/use-favorite-services'

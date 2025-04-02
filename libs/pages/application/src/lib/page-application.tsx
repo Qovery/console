@@ -7,12 +7,13 @@ import {
   ServiceTerminal,
   ServiceTerminalContext,
   ServiceTerminalProvider,
+  useRecentServices,
   useService,
   useServiceType,
 } from '@qovery/domains/services/feature'
 import { NotFoundPage } from '@qovery/pages/layout'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL } from '@qovery/shared/routes'
-import { useDocumentTitle, useRecentServices } from '@qovery/shared/util-hooks'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_APPLICATION } from './router/router'
 import Container from './ui/container/container'
 
