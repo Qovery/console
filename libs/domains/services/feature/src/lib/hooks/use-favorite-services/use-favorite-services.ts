@@ -1,6 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { useLocalStorage } from '@uidotdev/usehooks'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 
 const MAX_FAVORITE_SERVICES = 5
 
