@@ -155,7 +155,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     return (
       <Command.Item
         onSelect={() => navigateToService(service)}
-        value={`service-${type}-#${service.id}`}
+        value={`service-${type}-${name}-#${service.id}`}
         className="w-full justify-between"
       >
         <span className="flex items-center gap-3">
