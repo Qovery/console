@@ -14,7 +14,7 @@ import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-stat
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
-    .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', (s) => (
+    .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', (s) => (
       <LinkUI
         to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="brand"
@@ -30,7 +30,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
         </AnimatedGradientText>
       </LinkUI>
     ))
-    .with('BUILD_ERROR', 'DELETE_ERROR', () => (
+    .with('BUILD_ERROR', 'DELETE_ERROR', 'DEPLOYMENT_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
       <LinkUI
         to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="red"
