@@ -14,7 +14,7 @@ const CustomKbd = ({ children, className }: PropsWithChildren<{ className?: stri
   return (
     <Kbd
       className={twMerge(
-        'h-4 w-4 justify-center border border-neutral-250 bg-neutral-150 text-2xs text-neutral-350',
+        'h-4 min-w-4 justify-center border border-neutral-250 bg-neutral-150 text-2xs text-neutral-350',
         className
       )}
     >
@@ -117,7 +117,7 @@ export function SubCommand({
           </span>
           <span className="flex gap-1.5 text-xs text-neutral-350">
             Enter to open
-            <CustomKbd>
+            <CustomKbd className="w-4">
               <Icon iconName="arrow-turn-down-left" />
             </CustomKbd>
           </span>
