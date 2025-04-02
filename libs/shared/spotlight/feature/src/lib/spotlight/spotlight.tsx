@@ -1,5 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useContext } from 'react'
+import { type ServiceLightResponse } from 'qovery-typescript-axios'
+import { useContext, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
@@ -7,9 +8,6 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_URL,
   DATABASE_URL,
-  ENVIRONMENTS_URL,
-  ORGANIZATION_URL,
-  SERVICES_URL,
   SETTINGS_API_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
   SETTINGS_GIT_REPOSITORY_ACCESS_URL,
@@ -19,10 +17,12 @@ import {
   SETTINGS_WEBHOOKS,
   USER_URL,
 } from '@qovery/shared/routes'
-import { Command, type CommandDialogProps, Icon, Link } from '@qovery/shared/ui'
+import { Command, type CommandDialogProps, Icon } from '@qovery/shared/ui'
 import { QOVERY_DOCS_URL, QOVERY_FORUM_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
+import { useFavoriteServices, useRecentServices } from '@qovery/shared/util-hooks'
 import { useQuickActions } from '../hooks/use-quick-actions/use-quick-actions'
 import { useServicesSearch } from '../hooks/use-services-search/use-services-search'
+import { SubCommand } from '../sub-command/sub-command'
 
 type Item = {
   label: string
@@ -44,16 +44,41 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const navigate = useNavigate()
   const quickActions = useQuickActions()
   const { setAssistantOpen } = useContext(AssistantContext)
-  const { data: services = [] } = useServicesSearch({ organizationId })
+  const { data: services = [], isLoading: isLoadingServices } = useServicesSearch({ organizationId })
+  const [searchInput, setSearchInput] = useState('')
+  const { getRecentServices, addToRecentServices } = useRecentServices({ organizationId })
+  const { getFavoriteServices } = useFavoriteServices({ organizationId })
+  const [selectedService, setSelectedService] = useState<ServiceLightResponse | undefined>(undefined)
+  const [selectedValue, setSelectedValue] = useState('')
+
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const recentServices = getRecentServices()
+  const favoriteServices = getFavoriteServices()
 
   const iconClassName = 'text-brand-500 text-base text-center w-6'
+
   const navigateTo = (link: string) => () => {
     navigate(link)
     onOpenChange?.(false)
   }
+
   const openExternalLink = (externalLink: string) => () => {
     window.open(externalLink, '_blank')
   }
+
+  const navigateToService = (service: ServiceLightResponse) => {
+    const serviceLink =
+      service.service_type === 'DATABASE'
+        ? DATABASE_URL(organizationId, service.project_id, service.environment_id, service.id)
+        : APPLICATION_URL(organizationId, service.project_id, service.environment_id, service.id)
+
+    addToRecentServices(service)
+    setSelectedService(undefined)
+
+    navigate(serviceLink)
+    onOpenChange?.(false)
+  }
+
   const settingsItems: Item[] = [
     {
       label: 'View my container registries',
@@ -91,6 +116,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       iconName: 'gear-complex',
     },
   ]
+
   const helpItems: Item[] = [
     {
       label: 'Go to documentation',
@@ -117,13 +143,95 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     },
   ]
 
+  const ServiceItem = ({
+    type = 'original',
+    service,
+  }: {
+    type?: 'favorite' | 'recent' | 'original'
+    service: ServiceLightResponse
+  }) => {
+    const { name, service_type, job_type, icon_uri, project_name, environment_name } = service
+
+    return (
+      <Command.Item
+        onSelect={() => navigateToService(service)}
+        value={`service-${type}-#${service.id}`}
+        className="w-full justify-between"
+      >
+        <span className="flex items-center gap-3">
+          <ServiceAvatar
+            size="xs"
+            service={
+              service_type === 'JOB'
+                ? {
+                    icon_uri,
+                    serviceType: 'JOB' as const,
+                    job_type: job_type ?? 'CRON',
+                  }
+                : {
+                    icon_uri,
+                    serviceType: service_type,
+                  }
+            }
+          />
+          {name}
+        </span>
+
+        <span className="flex items-center gap-3">
+          <span className="text-ssm text-neutral-350">
+            {project_name} {environment_name}
+          </span>
+        </span>
+      </Command.Item>
+    )
+  }
+
+  const getFilteredServices = () => {
+    if (searchInput === '') return []
+
+    return services
+      .filter((service) => {
+        if (!service.name) return false
+        return service.name.toLowerCase().includes(searchInput.toLowerCase())
+      })
+      .slice(0, 20)
+  }
+
+  const filteredServices = getFilteredServices()
+
   return (
-    <Command.Dialog label="Console Spotlight" open={open} onOpenChange={onOpenChange}>
+    <Command.Dialog
+      label="Search"
+      open={open}
+      onOpenChange={onOpenChange}
+      value={selectedValue}
+      onValueChange={(value) => {
+        if (value.startsWith('service')) {
+          const serviceId = value.split('-#').pop()
+          const foundService = services.find((service) => service.id === serviceId)
+
+          if (foundService) {
+            setSelectedService(foundService)
+          }
+        } else {
+          setSelectedService(undefined)
+        }
+        setSelectedValue(value)
+      }}
+    >
       <div className="flex w-full items-center border-b border-neutral-200 pl-4 text-base text-neutral-350">
         <Icon iconName="magnifying-glass" iconStyle="regular" />
-        <Command.Input autoFocus placeholder="Search for actions or services..." className="border-b-0" />
+        <Command.Input
+          autoFocus
+          ref={inputRef}
+          placeholder="Search for actions or services..."
+          className="border-b-0"
+          value={searchInput}
+          onValueChange={setSearchInput}
+        />
       </div>
       <Command.List>
+        {isLoadingServices && <Command.Loading>Fetching</Command.Loading>}
         <Command.Empty>
           <div className="px-3 pb-4 pt-6 text-center">
             <Icon iconName="wave-pulse" className="text-neutral-350" />
@@ -131,50 +239,29 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           </div>
         </Command.Empty>
 
-        <Command.Group heading="Services">
-          {services.map(({ id, name, service_type, job_type, icon_uri, project_id, environment_id, ...props }) => (
-            <Command.Item
-              key={id}
-              onSelect={() => {
-                navigate(
-                  service_type === 'DATABASE'
-                    ? DATABASE_URL(organizationId, project_id, environment_id, id)
-                    : APPLICATION_URL(organizationId, project_id, environment_id, id)
-                )
-                onOpenChange?.(false)
-              }}
-              className="w-full justify-between"
-            >
-              <span className="flex items-center gap-3">
-                <ServiceAvatar
-                  size="xs"
-                  service={
-                    service_type === 'JOB'
-                      ? {
-                          icon_uri,
-                          serviceType: 'JOB' as const,
-                          job_type: job_type ?? 'CRON',
-                        }
-                      : {
-                          icon_uri,
-                          serviceType: service_type,
-                        }
-                  }
-                />
-                {name}
-              </span>
-              <span className="text-ssm">
-                <Link color="brand" to={ENVIRONMENTS_URL(organizationId, project_id)}>
-                  {props.project_name}
-                </Link>{' '}
-                /
-                <Link color="brand" to={SERVICES_URL(organizationId, project_id, environment_id)}>
-                  {props.environment_name}
-                </Link>
-              </span>
-            </Command.Item>
-          ))}
-        </Command.Group>
+        {searchInput.length === 0 && favoriteServices.length > 0 && (
+          <Command.Group heading="Favorites services">
+            {favoriteServices.map((service) => (
+              <ServiceItem type="favorite" key={'favorite-' + service.id} service={service} />
+            ))}
+          </Command.Group>
+        )}
+
+        {searchInput.length === 0 && recentServices.length > 0 && (
+          <Command.Group heading="Last services opened">
+            {recentServices.map((service) => (
+              <ServiceItem type="recent" key={'recent-' + service.id} service={service} />
+            ))}
+          </Command.Group>
+        )}
+
+        {searchInput.length > 0 && (
+          <Command.Group heading="Services">
+            {filteredServices.map((service) => (
+              <ServiceItem key={'service-' + service.id} service={service} />
+            ))}
+          </Command.Group>
+        )}
 
         {quickActions.length > 0 && (
           <Command.Group heading="Quick actions">
@@ -212,6 +299,12 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           ))}
         </Command.Group>
       </Command.List>
+      <SubCommand
+        organizationId={organizationId}
+        inputRef={inputRef}
+        service={selectedService}
+        onOpenChange={onOpenChange}
+      />
     </Command.Dialog>
   )
 }
