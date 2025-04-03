@@ -118,8 +118,15 @@ export function SubCommand({
       </span>
       {service && (
         <Popover.Root open={open} onOpenChange={setOpen} modal>
-          <Popover.Trigger asChild onClick={() => setOpen(true)} aria-expanded={open}>
-            <Button size="xs" variant="surface" color="neutral" className="gap-1.5 font-normal text-neutral-350">
+          <Popover.Trigger asChild onClick={() => setOpen((open) => !open)} aria-expanded={open}>
+            <Button
+              size="xs"
+              variant={open ? 'solid' : 'outline'}
+              color={open ? 'brand' : 'neutral'}
+              className={clsx('gap-1.5 font-normal', {
+                'border border-brand-500': open,
+              })}
+            >
               Actions
               <CustomKbd className="text-[12px]">{metaKey}</CustomKbd>
               <CustomKbd>K</CustomKbd>

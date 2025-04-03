@@ -212,6 +212,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       open={open}
       onOpenChange={onOpenChange}
       value={selectedValue}
+      disablePointerSelection={true}
       onValueChange={(value) => {
         if (value.startsWith('service')) {
           const serviceId = value.split('-#').pop()
@@ -238,7 +239,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         />
       </div>
       <Command.List ref={listRef}>
-        {isLoadingServices && <Command.Loading>Fetching</Command.Loading>}
+        {isLoadingServices && <Command.Loading />}
         <Command.Empty>
           <div className="px-3 pb-4 pt-6 text-center">
             <Icon iconName="wave-pulse" className="text-neutral-350" />
@@ -249,7 +250,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         {searchInput.length === 0 && favoriteServices.length > 0 && (
           <Command.Group heading="Favorites services">
             {favoriteServices.map((service) => (
-              <ServiceItem type="favorite" key={'favorite-' + service.id} service={service} />
+              <ServiceItem key={'favorite-' + service.id} type="favorite" service={service} />
             ))}
           </Command.Group>
         )}
@@ -257,7 +258,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         {searchInput.length === 0 && recentServices.length > 0 && (
           <Command.Group heading="Last services opened">
             {recentServices.map((service) => (
-              <ServiceItem type="recent" key={'recent-' + service.id} service={service} />
+              <ServiceItem key={'recent-' + service.id} type="recent" service={service} />
             ))}
           </Command.Group>
         )}
@@ -273,7 +274,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         {quickActions.length > 0 && (
           <Command.Group heading="Quick actions">
             {quickActions.map(({ label, iconName, link }) => (
-              <Command.Item key={link} onSelect={navigateTo(link)}>
+              <Command.Item key={link} onSelect={navigateTo(link)} value={label}>
                 <Icon className={iconClassName} iconName={iconName} />
                 {label}
               </Command.Item>
@@ -283,7 +284,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
 
         <Command.Group heading="Settings">
           {settingsItems.map(({ label, onSelect, ...props }) => (
-            <Command.Item key={label} onSelect={onSelect}>
+            <Command.Item key={label} onSelect={onSelect} value={label}>
               {'iconName' in props ? (
                 <Icon className={iconClassName} iconName={props.iconName} />
               ) : (
@@ -295,7 +296,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         </Command.Group>
         <Command.Group heading="Help">
           {helpItems.map(({ label, onSelect, ...props }) => (
-            <Command.Item key={label} onSelect={onSelect}>
+            <Command.Item key={label} onSelect={onSelect} value={label}>
               {'iconName' in props ? (
                 <Icon className={iconClassName} iconName={props.iconName} />
               ) : (
