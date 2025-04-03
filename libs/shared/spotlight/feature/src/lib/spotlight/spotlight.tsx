@@ -74,6 +74,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
 
     addToRecentServices(service)
     setSelectedService(undefined)
+    setSearchInput('')
 
     navigate(serviceLink)
     onOpenChange?.(false)
