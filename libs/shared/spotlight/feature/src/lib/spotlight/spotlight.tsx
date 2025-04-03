@@ -150,7 +150,9 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     type?: 'favorite' | 'recent' | 'original'
     service: ServiceLightResponse
   }) => {
-    const { name, service_type, job_type, icon_uri, project_name, environment_name } = service
+    const { id, name, service_type, job_type, icon_uri, project_name, environment_name } = service
+
+    const isFavorite = favoriteServices?.find((s) => s.id === id)
 
     return (
       <Command.Item
@@ -178,9 +180,12 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         </span>
 
         <span className="flex items-center gap-3">
-          <span className="flex gap-1 text-ssm text-neutral-350">
+          <span className="flex items-center gap-1 text-ssm text-neutral-350">
             <Truncate text={project_name} truncateLimit={30} /> <span className="text-neutral-300">/</span>{' '}
             <Truncate text={environment_name} truncateLimit={30} />
+            {type === 'original' && isFavorite && (
+              <Icon iconName="star" iconStyle="solid" className="ml-2 text-yellow-500" />
+            )}
           </span>
         </span>
       </Command.Item>
