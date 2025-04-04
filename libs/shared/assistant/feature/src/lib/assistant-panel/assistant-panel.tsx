@@ -79,17 +79,7 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, .
   )
 })
 
-const Loading = () => {
-  const [loadingText, setLoadingText] = useState('Loading...')
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoadingText('Analyzing...')
-    }, 4000)
-
-    return () => clearTimeout(timer)
-  }, [])
-
+const Loading = ({ loadingText }: { loadingText: string }) => {
   return (
     <AnimatedGradientText className="relative top-2 mt-auto w-fit text-ssm font-medium">
       {loadingText}
@@ -176,6 +166,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const [displayedStreamingMessage, setDisplayedStreamingMessage] = useState('')
   const [isScrollFocus, setIsScrollFocus] = useState(false)
   const [isFinish, setIsFinish] = useState(false)
+  const [loadingText, setLoadingText] = useState('Loading...')
 
   const pendingThreadId = useRef<string>()
 
@@ -270,6 +261,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     setIsFinish(false)
     setStreamingMessage('')
     setDisplayedStreamingMessage('')
+    setLoadingText("Loading...")
     let fullContent = ''
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
@@ -301,8 +293,13 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
             try {
               const parsed = JSON.parse(chunk.replace(/^data: /, ''))
               if (parsed.type === 'chunk' && parsed.content) {
-                fullContent += parsed.content
-                setStreamingMessage(fullContent)
+                if (parsed.content.includes('__step__:')) {
+                  const step = parsed.content.replace('__step__:', '').replaceAll('_', ' ')
+                  setLoadingText(step.charAt(0).toUpperCase() + step.slice(1))
+                } else {
+                  fullContent += parsed.content
+                  setStreamingMessage(fullContent)
+                }
               }
             } catch (error) {
               console.error('Erreur parsing chunk:', error)
@@ -734,7 +731,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                     ))
                     .exhaustive()
                 })}
-                {isLoading && streamingMessage.length == 0 && < Loading />}
+                {isLoading && streamingMessage.length === 0 && <Loading loadingText={loadingText} />}
                 {isLoading && (
                   <div className="streaming text-sm">
                     <Markdown
