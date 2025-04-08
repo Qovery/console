@@ -103,6 +103,7 @@ describe('CreateCloneEnvironmentModal', () => {
           cluster_id: mockClusters[2].id,
           mode: EnvironmentModeEnum.STAGING,
           name: 'test',
+          project_id: '1',
         },
       })
     })
