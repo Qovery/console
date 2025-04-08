@@ -175,27 +175,29 @@ export function CreateCloneEnvironmentModal({
             />
           )}
         />
-        <Controller
-          name="project_id"
-          control={methods.control}
-          rules={{
-            required: 'Please select a target project.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              className="mb-6"
-              onChange={field.onChange}
-              value={field.value}
-              label="Target project"
-              error={error?.message}
-              options={projects.map((p) => ({
-                value: p.id,
-                label: p.name,
-              }))}
-              portal
-            />
-          )}
-        />
+        {environmentToClone && (
+          <Controller
+            name="project_id"
+            control={methods.control}
+            rules={{
+              required: 'Please select a target project.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputSelect
+                className="mb-6"
+                onChange={field.onChange}
+                value={field.value}
+                label="Target project"
+                error={error?.message}
+                options={projects.map((p) => ({
+                  value: p.id,
+                  label: p.name,
+                }))}
+                portal
+              />
+            )}
+          />
+        )}
         <Controller
           name="cluster"
           control={methods.control}
