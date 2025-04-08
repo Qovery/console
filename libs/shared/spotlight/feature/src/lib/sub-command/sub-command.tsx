@@ -2,7 +2,7 @@ import * as Popover from '@radix-ui/react-popover'
 import clsx from 'clsx'
 import { Command as Cmdk } from 'cmdk'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect, useRef, useState } from 'react'
+import { type PropsWithChildren, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFavoriteServices } from '@qovery/domains/services/feature'
 import { ENVIRONMENTS_URL, SERVICES_URL } from '@qovery/shared/routes'
@@ -29,52 +29,79 @@ export function SubCommand({
   inputRef,
   listRef,
   service,
-  onOpenChange,
+  open,
+  setOpen,
+  onOpenChangeSpotlight,
   reset,
 }: {
   organizationId: string
   inputRef: React.RefObject<HTMLInputElement>
   listRef: React.RefObject<HTMLElement>
   reset: () => void
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  open: boolean
   service?: ServiceLightResponse
-  onOpenChange?: (open: boolean) => void
+  onOpenChangeSpotlight?: (open: boolean) => void
 }) {
   const navigate = useNavigate()
   const metaKey = useFormatHotkeys('meta')
   const { toggleFavoriteService, isServiceFavorite } = useFavoriteServices({ organizationId })
   const subInputRef = useRef<HTMLInputElement | null>(null)
-  const [open, setOpen] = useState(false)
 
   const iconClassName = 'text-brand-500 text-sm text-center w-5'
+  const isFavorite = service && isServiceFavorite(service.id)
 
   useEffect(() => {
-    const down = (event: KeyboardEvent) => {
+    if (!service) return
+
+    // Handler for keyboard shortcuts
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Meta+K toggle
       if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
-        setOpen((o) => !o)
+        setOpen(!open)
+      }
+
+      // Escape to close
+      if (event.key === 'Escape' && open) {
+        setOpen(false)
       }
     }
 
-    document.addEventListener('keydown', down)
-    return () => document.removeEventListener('keydown', down)
-  }, [])
-
-  useEffect(() => {
-    const el = listRef.current
-    if (!el) return
-    if (open) {
-      el.style.overflow = 'hidden'
-      el.style.pointerEvents = 'none'
-    } else {
-      el.style.overflow = ''
-      el.style.pointerEvents = 'initial'
+    // Handler for right-clicks on service items
+    const handleRightClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      if (target && target?.getAttribute('data-value')?.includes('service-')) {
+        event.preventDefault()
+        setOpen(!open)
+      }
     }
-  }, [open, listRef, service])
 
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('contextmenu', handleRightClick)
+
+    // Handle list styling when popup is open
+    if (listRef.current) {
+      if (open) {
+        listRef.current.style.overflow = 'hidden'
+        listRef.current.style.pointerEvents = 'none'
+      } else {
+        listRef.current.style.overflow = ''
+        listRef.current.style.pointerEvents = 'initial'
+      }
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('contextmenu', handleRightClick)
+    }
+  }, [service, open, setOpen, listRef])
+
+  // Navigation and action handlers
   const navigateToProject = () => {
     if (service?.project_id) {
       navigate(ENVIRONMENTS_URL(organizationId, service.project_id))
-      onOpenChange?.(false)
+      onOpenChangeSpotlight?.(false)
       setOpen(false)
       reset()
     }
@@ -83,7 +110,7 @@ export function SubCommand({
   const navigateToEnvironment = () => {
     if (service?.project_id && service?.environment_id) {
       navigate(SERVICES_URL(organizationId, service.project_id, service.environment_id))
-      onOpenChange?.(false)
+      onOpenChangeSpotlight?.(false)
       setOpen(false)
       reset()
     }
@@ -95,8 +122,6 @@ export function SubCommand({
       setOpen(false)
     }
   }
-
-  const isFavorite = service && isServiceFavorite(service.id)
 
   return (
     <div className="flex h-9 items-center justify-end gap-4 border-t border-neutral-200 bg-neutral-100 px-2.5">
@@ -117,7 +142,7 @@ export function SubCommand({
       </span>
       {service && (
         <Popover.Root open={open} onOpenChange={setOpen} modal>
-          <Popover.Trigger asChild onClick={() => setOpen((open) => !open)} aria-expanded={open}>
+          <Popover.Trigger asChild aria-expanded={open}>
             <Button
               size="sm"
               variant={open ? 'solid' : 'outline'}
@@ -142,10 +167,10 @@ export function SubCommand({
               inputRef?.current?.focus()
             }}
           >
-            <Cmdk>
-              <Command.List className="m-2">
+            <Cmdk loop>
+              <Command.List className="m-2 mt-1 p-0 [&>[cmdk-list-sizer]]:m-0">
                 <Command.Empty>
-                  <div className="pt-2 text-center">
+                  <div className="pt-3 text-center">
                     <p className="text-xs font-medium text-neutral-350">No result</p>
                   </div>
                 </Command.Empty>
@@ -155,11 +180,11 @@ export function SubCommand({
                 >
                   <Command.Item onSelect={navigateToProject} className="text-ssm">
                     <Icon iconName="arrow-right" className={iconClassName} />
-                    Go to Project
+                    Go to project
                   </Command.Item>
                   <Command.Item onSelect={navigateToEnvironment} className="text-ssm">
                     <Icon iconName="arrow-right" className={iconClassName} />
-                    Go to Environment
+                    Go to environment
                   </Command.Item>
                   <Command.Item onSelect={handleToggleFavorite} className="text-ssm">
                     <Icon
@@ -171,7 +196,7 @@ export function SubCommand({
                         })
                       )}
                     />
-                    {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                    {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                   </Command.Item>
                 </Command.Group>
               </Command.List>

@@ -1,7 +1,7 @@
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
-const MAX_FAVORITE_SERVICES = 5
+const MAX_FAVORITE_SERVICES = 50
 
 interface StoredService extends ServiceLightResponse {
   organizationId: string

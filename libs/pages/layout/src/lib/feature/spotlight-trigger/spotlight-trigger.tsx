@@ -9,7 +9,6 @@ export function SpotlightTrigger() {
   const metaKey = useFormatHotkeys('meta')
   const { organizationId = '' } = useParams()
 
-  // Toggle the menu when ⌘K is pressed
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {

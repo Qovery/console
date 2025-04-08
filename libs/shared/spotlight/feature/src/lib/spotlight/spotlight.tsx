@@ -35,6 +35,55 @@ type Item = {
     }
 )
 
+const ServiceItem = ({
+  type = 'original',
+  service,
+  isFavorite,
+  onSelect,
+}: {
+  service: ServiceLightResponse
+  onSelect: () => void
+  type?: 'favorite' | 'recent' | 'original'
+  isFavorite?: boolean
+}) => {
+  const { name, service_type, job_type, icon_uri, project_name, environment_name } = service
+
+  return (
+    <Command.Item
+      onSelect={onSelect}
+      value={`service-${type}-${name}-#${service.id}`}
+      className="w-full justify-between"
+    >
+      <span className="flex items-center gap-3">
+        <ServiceAvatar
+          size="xs"
+          service={
+            service_type === 'JOB'
+              ? {
+                  icon_uri,
+                  serviceType: 'JOB' as const,
+                  job_type: job_type ?? 'CRON',
+                }
+              : {
+                  icon_uri,
+                  serviceType: service_type,
+                }
+          }
+        />
+        <Truncate text={name} truncateLimit={30} />
+      </span>
+
+      <span className="flex items-center gap-3">
+        <span className="flex items-center gap-1 text-ssm text-neutral-350">
+          <Truncate text={project_name} truncateLimit={30} /> <span className="text-neutral-300">/</span>{' '}
+          <Truncate text={environment_name} truncateLimit={30} />
+          {isFavorite && <Icon iconName="star" iconStyle="solid" className="ml-2 text-yellow-500" />}
+        </span>
+      </span>
+    </Command.Item>
+  )
+}
+
 export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpenChange'> {
   organizationId: string
 }
@@ -49,9 +98,10 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const { getFavoriteServices } = useFavoriteServices({ organizationId })
   const [selectedService, setSelectedService] = useState<ServiceLightResponse | undefined>(undefined)
   const [selectedValue, setSelectedValue] = useState('')
+  const [openSubCommand, setOpenSubCommand] = useState(false)
 
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const listRef = useRef(null)
+  const listRef = useRef<HTMLDivElement | null>(null)
   const recentServices = getRecentServices()
   const favoriteServices = getFavoriteServices()
 
@@ -144,55 +194,6 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     },
   ]
 
-  const ServiceItem = ({
-    type = 'original',
-    service,
-  }: {
-    type?: 'favorite' | 'recent' | 'original'
-    service: ServiceLightResponse
-  }) => {
-    const { id, name, service_type, job_type, icon_uri, project_name, environment_name } = service
-
-    const isFavorite = favoriteServices?.find((s) => s.id === id)
-
-    return (
-      <Command.Item
-        onSelect={() => navigateToService(service)}
-        value={`service-${type}-${name}-#${service.id}`}
-        className="w-full justify-between"
-      >
-        <span className="flex items-center gap-3">
-          <ServiceAvatar
-            size="xs"
-            service={
-              service_type === 'JOB'
-                ? {
-                    icon_uri,
-                    serviceType: 'JOB' as const,
-                    job_type: job_type ?? 'CRON',
-                  }
-                : {
-                    icon_uri,
-                    serviceType: service_type,
-                  }
-            }
-          />
-          <Truncate text={name} truncateLimit={30} />
-        </span>
-
-        <span className="flex items-center gap-3">
-          <span className="flex items-center gap-1 text-ssm text-neutral-350">
-            <Truncate text={project_name} truncateLimit={30} /> <span className="text-neutral-300">/</span>{' '}
-            <Truncate text={environment_name} truncateLimit={30} />
-            {type === 'original' && isFavorite && (
-              <Icon iconName="star" iconStyle="solid" className="ml-2 text-yellow-500" />
-            )}
-          </span>
-        </span>
-      </Command.Item>
-    )
-  }
-
   const getFilteredServices = () => {
     if (searchInput === '') return []
 
@@ -210,9 +211,8 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     <Command.Dialog
       label="Search"
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={openSubCommand ? undefined : onOpenChange}
       value={selectedValue}
-      disablePointerSelection={true}
       onValueChange={(value) => {
         if (value.startsWith('service')) {
           const serviceId = value.split('-#').pop()
@@ -226,6 +226,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         }
         setSelectedValue(value)
       }}
+      loop
     >
       <div className="flex w-full items-center border-b border-neutral-200 pl-4 text-base text-neutral-350">
         <Icon iconName="magnifying-glass" iconStyle="regular" />
@@ -235,51 +236,81 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           placeholder="Search for actions or services..."
           className="border-b-0"
           value={searchInput}
-          onValueChange={setSearchInput}
+          onValueChange={(value) => {
+            if (listRef.current) listRef.current.scrollTop = 0
+            setSearchInput(value)
+          }}
         />
       </div>
       <Command.List ref={listRef}>
         {isLoadingServices && <Command.Loading />}
         <Command.Empty>
-          <div className="px-3 pb-4 pt-6 text-center">
+          <div className="px-3 pb-8 pt-6 text-center">
             <Icon iconName="wave-pulse" className="text-neutral-350" />
             <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
           </div>
         </Command.Empty>
 
         {searchInput.length === 0 && favoriteServices.length > 0 && (
-          <Command.Group heading="Favorites services">
-            {favoriteServices.map((service) => (
-              <ServiceItem key={'favorite-' + service.id} type="favorite" service={service} />
-            ))}
-          </Command.Group>
+          <>
+            <Command.Group heading="Favorites services">
+              {favoriteServices.map((service) => (
+                <ServiceItem
+                  key={'favorite-' + service.id}
+                  type="favorite"
+                  service={service}
+                  onSelect={() => navigateToService(service)}
+                />
+              ))}
+            </Command.Group>
+            <Command.Separator />
+          </>
         )}
 
         {searchInput.length === 0 && recentServices.length > 0 && (
-          <Command.Group heading="Last services opened">
-            {recentServices.map((service) => (
-              <ServiceItem key={'recent-' + service.id} type="recent" service={service} />
-            ))}
-          </Command.Group>
+          <>
+            <Command.Group heading="Last services opened">
+              {recentServices.map((service) => (
+                <ServiceItem
+                  key={'recent-' + service.id}
+                  type="recent"
+                  service={service}
+                  onSelect={() => navigateToService(service)}
+                />
+              ))}
+            </Command.Group>
+            <Command.Separator />
+          </>
         )}
 
-        {searchInput.length > 0 && (
-          <Command.Group heading="Services">
-            {filteredServices.map((service) => (
-              <ServiceItem key={'service-' + service.id} service={service} />
-            ))}
-          </Command.Group>
+        {filteredServices.length > 0 && (
+          <>
+            <Command.Group heading="Services">
+              {filteredServices.map((service) => (
+                <ServiceItem
+                  key={'service-' + service.id}
+                  service={service}
+                  onSelect={() => navigateToService(service)}
+                  isFavorite={!!favoriteServices?.find((s) => s.id === service.id)}
+                />
+              ))}
+            </Command.Group>
+            <Command.Separator />
+          </>
         )}
 
         {quickActions.length > 0 && (
-          <Command.Group heading="Quick actions">
-            {quickActions.map(({ label, iconName, link }) => (
-              <Command.Item key={link} onSelect={navigateTo(link)} value={label}>
-                <Icon className={iconClassName} iconName={iconName} />
-                {label}
-              </Command.Item>
-            ))}
-          </Command.Group>
+          <>
+            <Command.Group heading="Quick actions">
+              {quickActions.map(({ label, iconName, link }) => (
+                <Command.Item key={link} onSelect={navigateTo(link)} value={label}>
+                  <Icon className={iconClassName} iconName={iconName} />
+                  {label}
+                </Command.Item>
+              ))}
+            </Command.Group>
+            <Command.Separator />
+          </>
         )}
 
         <Command.Group heading="Settings">
@@ -294,6 +325,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
             </Command.Item>
           ))}
         </Command.Group>
+        <Command.Separator />
         <Command.Group heading="Help">
           {helpItems.map(({ label, onSelect, ...props }) => (
             <Command.Item key={label} onSelect={onSelect} value={label}>
@@ -312,7 +344,9 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         inputRef={inputRef}
         listRef={listRef}
         service={selectedService}
-        onOpenChange={onOpenChange}
+        open={openSubCommand}
+        setOpen={setOpenSubCommand}
+        onOpenChangeSpotlight={onOpenChange}
         reset={() => {
           setSelectedService(undefined)
           setSearchInput('')

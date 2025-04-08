@@ -1,7 +1,7 @@
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
-const MAX_RECENT_SERVICES = 5
+const MAX_RECENT_SERVICES = 3
 
 interface StoredService extends ServiceLightResponse {
   timestamp: number

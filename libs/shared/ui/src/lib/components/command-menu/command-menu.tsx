@@ -44,7 +44,7 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
     <CmdK.List
       ref={ref}
       className={twMerge(
-        'mx-2 my-3 max-h-[400px] overflow-auto overscroll-y-contain transition-all duration-100',
+        'max-h-[480px] overflow-auto overscroll-y-contain transition-all duration-100 [&>[cmdk-list-sizer]]:mx-2 [&>[cmdk-list-sizer]]:my-3',
         className
       )}
       style={{
@@ -106,7 +106,13 @@ const CommandSeparator = forwardRef<ElementRef<typeof CmdK.Separator>, CommandSe
   { className, ...props },
   ref
 ) {
-  return <CmdK.Separator ref={ref} className={twMerge('', className)} {...props} />
+  return (
+    <CmdK.Separator
+      ref={ref}
+      className={twMerge('my-2.5 -ml-2 h-[1px] w-[calc(100%+16px)] bg-neutral-200', className)}
+      {...props}
+    />
+  )
 })
 
 interface CommandLoadingProps extends ComponentPropsWithoutRef<typeof CmdK.Loading> {}
