@@ -47,7 +47,6 @@ export function SubCommand({
 
   const iconClassName = 'text-brand-500 text-sm text-center w-5'
 
-  // Toggle the menu when ⌘K is pressed
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
@@ -103,10 +102,10 @@ export function SubCommand({
     <div className="flex h-9 items-center justify-end gap-4 border-t border-neutral-200 bg-neutral-100 px-2.5">
       <span className="flex gap-1.5 text-xs text-neutral-350">
         Arrow to navigate
-        <CustomKbd>
+        <CustomKbd className="w-4">
           <Icon iconName="arrow-up" />
         </CustomKbd>
-        <CustomKbd>
+        <CustomKbd className="w-4">
           <Icon iconName="arrow-down" />
         </CustomKbd>
       </span>
@@ -120,7 +119,7 @@ export function SubCommand({
         <Popover.Root open={open} onOpenChange={setOpen} modal>
           <Popover.Trigger asChild onClick={() => setOpen((open) => !open)} aria-expanded={open}>
             <Button
-              size="xs"
+              size="sm"
               variant={open ? 'solid' : 'outline'}
               color={open ? 'brand' : 'neutral'}
               className={clsx('gap-1.5 font-normal', {
@@ -128,8 +127,8 @@ export function SubCommand({
               })}
             >
               Actions
-              <CustomKbd className="text-[12px]">{metaKey}</CustomKbd>
-              <CustomKbd>K</CustomKbd>
+              <CustomKbd className="text-xs">{metaKey}</CustomKbd>
+              <CustomKbd className="w-4">K</CustomKbd>
             </Button>
           </Popover.Trigger>
           <Popover.Content
