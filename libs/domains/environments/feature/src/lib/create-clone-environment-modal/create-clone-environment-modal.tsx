@@ -43,12 +43,12 @@ export function CreateCloneEnvironmentModal({
       name: environmentToClone?.name ? environmentToClone.name + '-clone' : '',
       cluster: clusters.find(({ is_default }) => is_default)?.id,
       mode: EnvironmentModeEnum.DEVELOPMENT,
-      targetProjectId: projectId,
+      project_id: projectId,
     },
   })
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
-  const onSubmit = methods.handleSubmit(async ({ name, cluster, mode, targetProjectId }) => {
+  const onSubmit = methods.handleSubmit(async ({ name, cluster, mode, project_id }) => {
     if (environmentToClone) {
       const result = await cloneEnvironment({
         environmentId: environmentToClone.id,
@@ -56,21 +56,21 @@ export function CreateCloneEnvironmentModal({
           name,
           mode: mode as EnvironmentModeEnum,
           cluster_id: cluster,
-          project_id: targetProjectId,
+          project_id,
         },
       })
 
-      navigate(SERVICES_URL(organizationId, targetProjectId, result.id) + SERVICES_GENERAL_URL)
+      navigate(SERVICES_URL(organizationId, project_id, result.id) + SERVICES_GENERAL_URL)
     } else {
       const result = await createEnvironment({
-        projectId: targetProjectId,
+        projectId: project_id,
         payload: {
           name: name,
           mode: mode as CreateEnvironmentModeEnum,
           cluster: cluster,
         },
       })
-      navigate(SERVICES_URL(organizationId, targetProjectId, result.id) + SERVICES_GENERAL_URL)
+      navigate(SERVICES_URL(organizationId, project_id, result.id) + SERVICES_GENERAL_URL)
     }
     onClose()
   })
@@ -176,28 +176,23 @@ export function CreateCloneEnvironmentModal({
           )}
         />
         <Controller
-          name="targetProjectId"
+          name="project_id"
           control={methods.control}
           rules={{
             required: 'Please select a target project.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputSelect
-              dataTestId="input-select-target-project"
               className="mb-6"
               onChange={field.onChange}
               value={field.value}
-              label="Target Project"
+              label="Target project"
               error={error?.message}
-              options={
-                projects?.map((p) => {
-                  return {
-                    value: p.id,
-                    label: p.name,
-                  }
-                }) ?? []
-              }
-              portal={true}
+              options={projects.map((p) => ({
+                value: p.id,
+                label: p.name,
+              }))}
+              portal
             />
           )}
         />
