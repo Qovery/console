@@ -9,7 +9,7 @@ import { EntrypointCmdInputs, GeneralContainerSettings, GitRepositorySettings } 
 import { IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, Heading, Icon, InputSelect, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
 import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
@@ -115,6 +115,25 @@ export function StepGeneral(props: StepGeneralProps) {
             <Section className="gap-4">
               <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
               {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings />}
+
+              {/* Add Dockerfile stage field when source is Git provider */}
+              {watchServiceType === ServiceTypeEnum.APPLICATION && (
+                <Controller
+                  name="docker_target_build_stage"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      label="Dockerfile stage (optional)"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value || ''}
+                      error={error?.message}
+                      hint="Specify the target stage to build in a multi-stage Dockerfile"
+                    />
+                  )}
+                />
+              )}
+
               <EntrypointCmdInputs />
               {!watchIsPublicRepository && (
                 <AutoDeploySetting

@@ -76,6 +76,23 @@ export function PageSettingsGeneral({
           )}
         />
       )}
+
+      {!isLifecycleJob && (
+        <Controller
+          name="docker_target_build_stage"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value || ''}
+              label="Dockerfile stage (optional)"
+              error={error?.message}
+              hint="Specify the target stage to build in a multi-stage Dockerfile"
+            />
+          )}
+        />
+      )}
     </>
   )
 
