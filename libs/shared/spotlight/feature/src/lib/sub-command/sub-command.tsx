@@ -14,7 +14,7 @@ const CustomKbd = ({ children, className }: PropsWithChildren<{ className?: stri
   return (
     <Kbd
       className={twMerge(
-        'h-4 min-w-4 justify-center border border-neutral-250 bg-neutral-150 text-2xs text-neutral-350',
+        'h-4 min-w-4 justify-center border border-neutral-250 bg-neutral-150 px-0.5 text-2xs text-neutral-350',
         className
       )}
     >
@@ -145,14 +145,24 @@ export function SubCommand({
           <Popover.Trigger asChild aria-expanded={open}>
             <Button
               size="sm"
-              variant={open ? 'solid' : 'outline'}
-              color={open ? 'brand' : 'neutral'}
-              className={clsx('gap-1.5 font-normal', {
-                'border border-brand-500': open,
+              variant="outline"
+              className={clsx('gap-1.5 bg-transparent font-normal', {
+                'bg-neutral-150': open,
               })}
             >
               Actions
-              <CustomKbd className="text-xs">{metaKey}</CustomKbd>
+              <CustomKbd className="w-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="none" viewBox="0 0 10 10">
+                  <path
+                    fill="#67778E"
+                    d="M5.167 4.861H2.042v1.667a2.43 2.43 0 0 0 2.43 2.43h1.39a2.43 2.43 0 0 0 2.43-2.43V4.86zM9.333 3.82v2.709A3.47 3.47 0 0 1 5.861 10H4.472A3.47 3.47 0 0 1 1 6.528V3.472A3.47 3.47 0 0 1 4.472 0h1.389a3.47 3.47 0 0 1 3.472 3.472zM4.646 1.042h-.174a2.43 2.43 0 0 0-2.43 2.43v.347h2.604z"
+                  ></path>
+                </svg>
+              </CustomKbd>
+              <span className="block h-3 w-[1px] bg-neutral-250"></span>
+              <CustomKbd className="w-4 text-sm">
+                <span className="relative top-[1px]">{metaKey}</span>
+              </CustomKbd>
               <CustomKbd className="w-4">K</CustomKbd>
             </Button>
           </Popover.Trigger>
