@@ -31,17 +31,17 @@ export function SubCommand({
   service,
   open,
   setOpen,
-  onOpenChangeSpotlight,
-  reset,
+  onSpotlightOpenChange,
+  resetSelection,
 }: {
   organizationId: string
   inputRef: React.RefObject<HTMLInputElement>
   listRef: React.RefObject<HTMLElement>
-  reset: () => void
+  resetSelection: () => void
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
   open: boolean
   service?: ServiceLightResponse
-  onOpenChangeSpotlight?: (open: boolean) => void
+  onSpotlightOpenChange?: (open: boolean) => void
 }) {
   const navigate = useNavigate()
   const metaKey = useFormatHotkeys('meta')
@@ -101,18 +101,18 @@ export function SubCommand({
   const navigateToProject = () => {
     if (service?.project_id) {
       navigate(ENVIRONMENTS_URL(organizationId, service.project_id))
-      onOpenChangeSpotlight?.(false)
+      onSpotlightOpenChange?.(false)
       setOpen(false)
-      reset()
+      resetSelection()
     }
   }
 
   const navigateToEnvironment = () => {
     if (service?.project_id && service?.environment_id) {
       navigate(SERVICES_URL(organizationId, service.project_id, service.environment_id))
-      onOpenChangeSpotlight?.(false)
+      onSpotlightOpenChange?.(false)
       setOpen(false)
-      reset()
+      resetSelection()
     }
   }
 

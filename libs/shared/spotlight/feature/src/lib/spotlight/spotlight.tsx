@@ -1,6 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
-import { useContext, useRef, useState } from 'react'
+import { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ServiceAvatar, useFavoriteServices, useRecentServices } from '@qovery/domains/services/feature'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
@@ -102,99 +102,115 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
 
   const inputRef = useRef<HTMLInputElement | null>(null)
   const listRef = useRef<HTMLDivElement | null>(null)
-  const recentServices = getRecentServices()
-  const favoriteServices = getFavoriteServices()
+
+  const recentServices = useMemo(() => getRecentServices(), [getRecentServices])
+  const favoriteServices = useMemo(() => getFavoriteServices(), [getFavoriteServices])
 
   const iconClassName = 'text-brand-500 text-sm text-center w-6'
 
-  const navigateTo = (link: string) => () => {
-    navigate(link)
-    onOpenChange?.(false)
-  }
+  const navigateTo = useCallback(
+    (link: string) => () => {
+      navigate(link)
+      onOpenChange?.(false)
+    },
+    [navigate, onOpenChange]
+  )
 
-  const openExternalLink = (externalLink: string) => () => {
-    window.open(externalLink, '_blank')
-  }
+  const openExternalLink = useCallback(
+    (externalLink: string) => () => {
+      window.open(externalLink, '_blank')
+    },
+    []
+  )
 
-  const navigateToService = (service: ServiceLightResponse) => {
-    const serviceLink =
-      service.service_type === 'DATABASE'
-        ? DATABASE_URL(organizationId, service.project_id, service.environment_id, service.id)
-        : APPLICATION_URL(organizationId, service.project_id, service.environment_id, service.id)
+  const navigateToService = useCallback(
+    (service: ServiceLightResponse) => {
+      const serviceLink =
+        service.service_type === 'DATABASE'
+          ? DATABASE_URL(organizationId, service.project_id, service.environment_id, service.id)
+          : APPLICATION_URL(organizationId, service.project_id, service.environment_id, service.id)
 
-    addToRecentServices(service)
-    setSelectedService(undefined)
-    setSearchInput('')
+      addToRecentServices(service)
+      setSelectedService(undefined)
+      setSearchInput('')
 
-    navigate(serviceLink)
-    onOpenChange?.(false)
-  }
+      navigate(serviceLink)
+      onOpenChange?.(false)
+    },
+    [addToRecentServices, navigate, onOpenChange, organizationId]
+  )
 
-  const settingsItems: Item[] = [
-    {
-      label: 'View my container registries',
-      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
-      iconName: 'box',
-    },
-    {
-      label: 'View my helm repositories',
-      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_HELM_REPOSITORIES_URL),
-      iconEnum: IconEnum.HELM_OFFICIAL,
-    },
-    {
-      label: 'View my git tokens',
-      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL),
-      iconName: 'key',
-    },
-    {
-      label: 'View my webhooks',
-      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
-      iconName: 'tower-broadcast',
-    },
-    {
-      label: 'View my API tokens',
-      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_API_URL),
-      iconName: 'cloud-arrow-up',
-    },
-    {
-      label: 'View my team members',
-      onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
-      iconName: 'user-group',
-    },
-    {
-      label: 'Go to personal settings',
-      onSelect: navigateTo(USER_URL),
-      iconName: 'gear-complex',
-    },
-  ]
-
-  const helpItems: Item[] = [
-    {
-      label: 'Go to documentation',
-      onSelect: openExternalLink(QOVERY_DOCS_URL),
-      iconName: 'book-open',
-    },
-    {
-      label: 'Community Forum',
-      onSelect: openExternalLink(QOVERY_FORUM_URL),
-      iconName: 'people',
-    },
-    {
-      label: 'Roadmap',
-      onSelect: openExternalLink(QOVERY_ROADMAP_URL),
-      iconName: 'road',
-    },
-    {
-      label: 'Get help',
-      onSelect: () => {
-        setAssistantOpen(true)
-        onOpenChange?.(false)
+  const settingsItems: Item[] = useMemo(
+    () => [
+      {
+        label: 'View my container registries',
+        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
+        iconName: 'box',
       },
-      iconName: 'robot',
-    },
-  ]
+      {
+        label: 'View my helm repositories',
+        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_HELM_REPOSITORIES_URL),
+        iconEnum: IconEnum.HELM_OFFICIAL,
+      },
+      {
+        label: 'View my git tokens',
+        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL),
+        iconName: 'key',
+      },
+      {
+        label: 'View my webhooks',
+        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
+        iconName: 'tower-broadcast',
+      },
+      {
+        label: 'View my API tokens',
+        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_API_URL),
+        iconName: 'cloud-arrow-up',
+      },
+      {
+        label: 'View my team members',
+        onSelect: navigateTo(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
+        iconName: 'user-group',
+      },
+      {
+        label: 'Go to personal settings',
+        onSelect: navigateTo(USER_URL),
+        iconName: 'gear-complex',
+      },
+    ],
+    [navigateTo, organizationId]
+  )
 
-  const getFilteredServices = () => {
+  const helpItems: Item[] = useMemo(
+    () => [
+      {
+        label: 'Go to documentation',
+        onSelect: openExternalLink(QOVERY_DOCS_URL),
+        iconName: 'book-open',
+      },
+      {
+        label: 'Community Forum',
+        onSelect: openExternalLink(QOVERY_FORUM_URL),
+        iconName: 'people',
+      },
+      {
+        label: 'Roadmap',
+        onSelect: openExternalLink(QOVERY_ROADMAP_URL),
+        iconName: 'road',
+      },
+      {
+        label: 'Get help',
+        onSelect: () => {
+          setAssistantOpen(true)
+          onOpenChange?.(false)
+        },
+        iconName: 'robot',
+      },
+    ],
+    [openExternalLink, onOpenChange, setAssistantOpen]
+  )
+
+  const filteredServices = useMemo(() => {
     if (searchInput === '') return []
 
     return services
@@ -203,9 +219,34 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         return service.name.toLowerCase().includes(searchInput.toLowerCase())
       })
       .slice(0, 20)
-  }
+  }, [searchInput, services])
 
-  const filteredServices = getFilteredServices()
+  const resetState = useCallback(() => {
+    setSelectedService(undefined)
+    setSearchInput('')
+  }, [])
+
+  const handleValueChange = useCallback(
+    (value: string) => {
+      if (value.startsWith('service')) {
+        const serviceId = value.split('-#').pop()
+        const foundService = services.find((service) => service.id === serviceId)
+
+        if (foundService) {
+          setSelectedService(foundService)
+        }
+      } else {
+        setSelectedService(undefined)
+      }
+      setSelectedValue(value)
+    },
+    [services]
+  )
+
+  const handleSearchChange = useCallback((value: string) => {
+    if (listRef.current) listRef.current.scrollTop = 0
+    setSearchInput(value)
+  }, [])
 
   return (
     <Command.Dialog
@@ -213,19 +254,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       open={open}
       onOpenChange={openSubCommand ? undefined : onOpenChange}
       value={selectedValue}
-      onValueChange={(value) => {
-        if (value.startsWith('service')) {
-          const serviceId = value.split('-#').pop()
-          const foundService = services.find((service) => service.id === serviceId)
-
-          if (foundService) {
-            setSelectedService(foundService)
-          }
-        } else {
-          setSelectedService(undefined)
-        }
-        setSelectedValue(value)
-      }}
+      onValueChange={handleValueChange}
       loop
     >
       <div className="flex w-full items-center border-b border-neutral-200 pl-4 text-base text-neutral-350">
@@ -236,10 +265,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           placeholder="Search for actions or services..."
           className="border-b-0"
           value={searchInput}
-          onValueChange={(value) => {
-            if (listRef.current) listRef.current.scrollTop = 0
-            setSearchInput(value)
-          }}
+          onValueChange={handleSearchChange}
         />
       </div>
       <Command.List ref={listRef}>
@@ -344,13 +370,10 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         inputRef={inputRef}
         listRef={listRef}
         service={selectedService}
+        onSpotlightOpenChange={onOpenChange}
+        resetSelection={resetState}
         open={openSubCommand}
         setOpen={setOpenSubCommand}
-        onOpenChangeSpotlight={onOpenChange}
-        reset={() => {
-          setSelectedService(undefined)
-          setSearchInput('')
-        }}
       />
     </Command.Dialog>
   )
