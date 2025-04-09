@@ -31,6 +31,7 @@ export interface JobGeneralData {
   root_path?: string
   // only for cron job, lifecycle job dockerfile info are in DockerfileSettingsData
   dockerfile_path?: string
+  docker_target_build_stage?: string
 }
 
 export interface JobConfigureData {

@@ -98,6 +98,9 @@ export function StepSummary({
                   <li>
                     <strong className="font-medium">Dockerfile path:</strong> {generalData.dockerfile_path}
                   </li>
+                  <li>
+                    <strong className="font-medium">Dockerfile stage:</strong> {generalData.docker_target_build_stage}
+                  </li>
                 </>
               )}
               {generalData.serviceType === 'CONTAINER' && (

@@ -53,6 +53,7 @@ export function StepGeneralFeature() {
     if (data.serviceType === 'CONTAINER') {
       dockerfileForm.setValue('dockerfile_path', undefined)
       dockerfileForm.setValue('dockerfile_raw', undefined)
+      dockerfileForm.setValue('docker_target_build_stage', undefined)
     }
     setGeneralData(cloneData)
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`

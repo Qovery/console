@@ -188,6 +188,12 @@ export function StepSummary(props: StepSummaryProps) {
                     <strong className="font-medium">Dockerfile path:</strong> {props.dockerfileData.dockerfile_path}
                   </li>
                 )}
+                {props.dockerfileData.dockerfile_path && (
+                  <li>
+                    <strong className="font-medium">Dockerfile target stage:</strong>{' '}
+                    {props.dockerfileData.docker_target_build_stage}
+                  </li>
+                )}
                 {props.dockerfileData.dockerfile_raw && (
                   <li>
                     <strong className="font-medium">From raw Dockerfile:</strong> {}
