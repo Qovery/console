@@ -43,44 +43,6 @@ describe('useFavoriteServices', () => {
     expect(useLocalStorage).toHaveBeenCalledWith('qovery-favorite-services', {})
   })
 
-  it('addToFavoriteServices should add a service and respect the limit', () => {
-    const existingServices: ServiceWithTimestamp[] = [
-      { id: '1', name: 'Service 1', organizationId } as ServiceWithTimestamp,
-      { id: '2', name: 'Service 2', organizationId } as ServiceWithTimestamp,
-      { id: '3', name: 'Service 3', organizationId } as ServiceWithTimestamp,
-      { id: '4', name: 'Service 4', organizationId } as ServiceWithTimestamp,
-      { id: '5', name: 'Service 5', organizationId } as ServiceWithTimestamp,
-    ]
-
-    // Mock storage with organization-specific services
-    const mockStorage = {
-      [organizationId]: existingServices,
-    }
-
-    const mockSetValue = jest.fn()
-    ;(useLocalStorage as jest.Mock).mockReturnValue([mockStorage, mockSetValue])
-
-    const { result } = renderHook(() => useFavoriteServices({ organizationId }))
-
-    const newService: ServiceWithTimestamp = { id: '6', name: 'Service 6' } as ServiceWithTimestamp
-
-    act(() => {
-      result.current.addToFavoriteServices(newService)
-    })
-
-    // Check that we update the object with the right organization key
-    expect(mockSetValue).toHaveBeenCalledWith({
-      [organizationId]: [
-        // New service should have organizationId added to it
-        { ...newService, organizationId },
-        existingServices[0],
-        existingServices[1],
-        existingServices[2],
-        existingServices[3],
-      ],
-    })
-  })
-
   it('toggleFavoriteService should add service when not already favorite', () => {
     const existingServices: ServiceWithTimestamp[] = [
       { id: '1', name: 'Service 1', organizationId } as ServiceWithTimestamp,

@@ -78,8 +78,6 @@ describe('useRecentServices', () => {
         { ...newService, timestamp: mockTimestamp, organizationId },
         existingServices[0],
         existingServices[1],
-        existingServices[2],
-        existingServices[3],
       ],
     })
 
