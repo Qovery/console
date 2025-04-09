@@ -25,6 +25,7 @@ import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-con
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import AssistantHistory from './assistant-history'
 import { submitMessage } from './submit-message'
+import { submitVote } from './submit-vote'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
 
@@ -92,6 +93,7 @@ export type Message = {
   text: string
   owner: 'user' | 'assistant'
   timestamp: number
+  vote?: 'upvote' | 'downvote'
 }
 
 export type Thread = Message[]
@@ -256,6 +258,41 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
   }, [])
+
+  const handleVote = async (messageId: number, vote: 'upvote' | 'downvote') => {
+    const currentMessage = thread.find((msg) => msg.id === messageId)
+    const currentVote = currentMessage?.vote
+    const nextVote = currentVote === vote ? undefined : vote
+
+    const updatedThread = thread.map((msg) =>
+      msg.id === messageId ? { ...msg, vote: nextVote } : msg
+    )
+    setThread(updatedThread)
+
+    try {
+
+      const token = await getAccessTokenSilently()
+      const response = await submitVote(
+        messageId,
+        vote,
+        token,
+        withContext ? context : { organization: context.organization }
+      )
+
+      if (!response) {
+        const updatedThread = thread.map((msg) =>
+          msg.id === messageId ? { ...msg, vote: currentVote } : msg
+        )
+        setThread(updatedThread)
+      }
+    } catch (error) {
+      console.error('Erro r sending vote:', error)
+      const updatedThread = thread.map((msg) =>
+        msg.id === messageId ? { ...msg, vote: currentVote } : msg
+      )
+      setThread(updatedThread)
+    }
+  }
 
   const handleSendMessage = async (value?: string) => {
     setIsFinish(false)
@@ -727,6 +764,27 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                         >
                           {thread.text}
                         </Markdown>
+                        <div className="mt-2 flex gap-2 text-xs text-neutral-400">
+                          <Button
+                            type="button"
+                            variant="surface"
+                            className={clsx('flex items-center gap-1 px-2 py-1', {
+                              'text-brand-500': thread.vote === 'upvote',
+                            })}
+                            onClick={() => handleVote(thread.id, 'upvote')}
+                          >
+                            <Icon iconName="thumbs-up" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="surface"
+                            className={clsx('flex items-center gap-1 px-2 py-1', {
+                              'text-brand-500': thread.vote === 'downvote',
+                            })}
+                            onClick={() => handleVote(thread.id, 'downvote')}>
+                            <Icon iconName="thumbs-down" />
+                          </Button>
+                        </div>
                       </div>
                     ))
                     .exhaustive()
@@ -929,5 +987,3 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     </Dialog.Root>
   )
 }
-
-export default AssistantPanel

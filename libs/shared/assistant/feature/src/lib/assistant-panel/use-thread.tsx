@@ -56,6 +56,7 @@ export function useThread({ organizationId, threadId }: UseCurrentThreadOptions)
           text: msg.media_content,
           owner: msg.owner,
           timestamp: new Date(msg.created_at).getTime(),
+          vote: msg.vote_type,
         }))
 
         setThread(formattedMessages)
