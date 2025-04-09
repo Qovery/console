@@ -287,7 +287,9 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
         )
         setThread(updatedThread)
       } else {
-        if (nextVote !== null) {
+        console.log(nextVote);
+
+        if (nextVote) {
           toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
         }
       }
