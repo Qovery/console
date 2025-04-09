@@ -44,11 +44,11 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
     <CmdK.List
       ref={ref}
       className={twMerge(
-        'mx-2 my-3 max-h-[400px] overflow-auto overscroll-y-contain transition-all duration-100',
+        'max-h-[480px] overflow-auto overscroll-y-contain transition-all duration-100 [&>[cmdk-list-sizer]]:mx-2 [&>[cmdk-list-sizer]]:my-3',
         className
       )}
       style={{
-        height: 'min(300px, var(--cmdk-list-height))',
+        height: 'min(400px, var(--cmdk-list-height))',
       }}
       {...props}
     />
@@ -92,7 +92,7 @@ const CommandItem = forwardRef<ElementRef<typeof CmdK.Item>, CommandItemProps>(f
     <CmdK.Item
       ref={ref}
       className={twMerge(
-        'flex h-9 cursor-pointer items-center gap-2 rounded px-2 text-sm font-medium text-neutral-400 data-[selected]:bg-brand-50 data-[selected]:text-brand-500',
+        'flex h-9 cursor-pointer items-center gap-2 rounded px-2 text-sm font-medium text-neutral-400 hover:bg-neutral-150 data-[selected="true"]:bg-brand-50 data-[selected="true"]:text-brand-500',
         className
       )}
       {...props}
@@ -106,7 +106,22 @@ const CommandSeparator = forwardRef<ElementRef<typeof CmdK.Separator>, CommandSe
   { className, ...props },
   ref
 ) {
-  return <CmdK.Separator ref={ref} className={twMerge('', className)} {...props} />
+  return (
+    <CmdK.Separator
+      ref={ref}
+      className={twMerge('my-2.5 -ml-2 h-[1px] w-[calc(100%+16px)] bg-neutral-200', className)}
+      {...props}
+    />
+  )
+})
+
+interface CommandLoadingProps extends ComponentPropsWithoutRef<typeof CmdK.Loading> {}
+
+const CommandLoading = forwardRef<ElementRef<typeof CmdK.Separator>, CommandLoadingProps>(function CommandLoading(
+  { className, ...props },
+  ref
+) {
+  return <CmdK.Loading ref={ref} className={twMerge('', className)} {...props} />
 })
 
 const Command = Object.assign(
@@ -119,6 +134,7 @@ const Command = Object.assign(
     Group: CommandGroup,
     Item: CommandItem,
     Separator: CommandSeparator,
+    Loading: CommandLoading,
   }
 )
 
@@ -130,6 +146,7 @@ export type {
   CommandGroupProps,
   CommandItemProps,
   CommandSeparatorProps,
+  CommandLoadingProps,
 }
 
 export { Command, CommandDialog, CommandInput }

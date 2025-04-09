@@ -9,12 +9,11 @@ export function SpotlightTrigger() {
   const metaKey = useFormatHotkeys('meta')
   const { organizationId = '' } = useParams()
 
-  // Toggle the menu when ⌘K is pressed
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
-        setOpenSpotlight((open) => !open)
+        setOpenSpotlight(true)
       }
     }
 
@@ -27,7 +26,7 @@ export function SpotlightTrigger() {
   return (
     <>
       <button
-        className="group flex w-full items-center gap-2 rounded border border-neutral-250 bg-white px-3 py-2 text-sm transition-colors hover:border-neutral-350 lg:min-w-[268px] lg:max-w-max"
+        className="group flex w-full items-center gap-2 rounded border border-neutral-250 bg-white px-3 py-2 text-sm transition-colors hover:border-neutral-350 lg:min-w-[200px] lg:max-w-max"
         onClick={() => setOpenSpotlight(!openSpotlight)}
       >
         <Icon
@@ -35,7 +34,7 @@ export function SpotlightTrigger() {
           iconStyle="regular"
           className="text-neutral-350 group-hover:text-neutral-400"
         />
-        <span className="text-neutral-350">Search for help</span>
+        <span className="text-neutral-350">Search</span>
         <div className="ml-auto flex gap-1 text-neutral-350">
           <Kbd>{metaKey}</Kbd>
           <Kbd>
