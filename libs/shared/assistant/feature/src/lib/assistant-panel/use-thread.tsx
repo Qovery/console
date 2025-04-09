@@ -15,8 +15,9 @@ interface UseCurrentThreadResult {
   error: Error | null
 }
 
-export async function fetchThread(organizationId: string, threadId: string, token: string) {
-  const response = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread/${threadId}`, {
+export async function fetchThread(userSub: string, organizationId: string, threadId: string, token: string) {
+
+  const response = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread/${threadId}?user_sub=${userSub}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -34,7 +35,8 @@ export function useThread({ organizationId, threadId }: UseCurrentThreadOptions)
   const [thread, setThread] = useState<Thread>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
-  const { getAccessTokenSilently } = useAuth0()
+  const { getAccessTokenSilently, user } = useAuth0()
+  const userSub = user?.sub || ''
 
   useEffect(() => {
     if (!threadId) {
@@ -48,7 +50,7 @@ export function useThread({ organizationId, threadId }: UseCurrentThreadOptions)
 
       try {
         const token = await getAccessTokenSilently()
-        const messages = await fetchThread(organizationId, threadId, token)
+        const messages = await fetchThread(userSub, organizationId, threadId, token)
 
         // Convertir les messages du format API vers le format Thread
         const formattedMessages: Thread = messages.map((msg: any) => ({
