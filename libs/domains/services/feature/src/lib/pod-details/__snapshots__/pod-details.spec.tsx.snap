@@ -4,7 +4,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
 <body>
   <div>
     <div
-      class="relative pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
     >
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
@@ -149,7 +149,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
 <body>
   <div>
     <div
-      class="relative pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
     >
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
@@ -305,7 +305,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
 <body>
   <div>
     <div
-      class="relative pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
     >
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
@@ -413,7 +413,7 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
 <body>
   <div>
     <div
-      class="relative pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
     >
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"

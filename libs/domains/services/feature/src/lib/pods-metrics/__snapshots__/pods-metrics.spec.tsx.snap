@@ -81,6 +81,16 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               class="flex items-center gap-1 cursor-pointer select-none"
               type="button"
             >
+              Restart
+            </button>
+          </th>
+          <th
+            class="h-11 px-4 text-left font-medium first:w-1/4 first:pl-[52px]"
+          >
+            <button
+              class="flex items-center gap-1 cursor-pointer select-none"
+              type="button"
+            >
               Age
             </button>
           </th>
@@ -167,6 +177,11 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
             class="h-14 px-4 py-0"
           >
             12 mCPU (5%)
+          </td>
+          <td
+            class="h-14 px-4 py-0"
+          >
+            -
           </td>
           <td
             class="h-14 px-4 py-0"

@@ -177,6 +177,14 @@ function PodsMetricsTable({
       },
     })
 
+    const restartColumns = columnHelper.accessor('restart_count', {
+      header: 'Restart',
+      cell: (info) => {
+        const value = info.getValue()
+        return value ?? '-'
+      },
+    })
+
     const startedAtColumn = (header = 'Age', dateFormat: 'relative' | 'absolute' = 'relative') =>
       columnHelper.accessor('started_at', {
         header,
@@ -203,6 +211,7 @@ function PodsMetricsTable({
             versionColumn,
             memoryColumn,
             cpuColumn,
+            restartColumns,
             podsColumn,
           ])
           .with({ job_type: 'LIFECYCLE' }, () => [
@@ -211,6 +220,7 @@ function PodsMetricsTable({
             versionColumn,
             memoryColumn,
             cpuColumn,
+            restartColumns,
             podsColumn,
           ])
           .exhaustive()
@@ -230,6 +240,7 @@ function PodsMetricsTable({
         memoryColumn,
         cpuColumn,
         storageColumn,
+        restartColumns,
         startedAtColumn(),
       ])
   }, [service, pods.length])
