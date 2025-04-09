@@ -20,6 +20,7 @@ describe('PodDetails', () => {
     const { baseElement } = renderWithProviders(<PodDetails pod={pod} serviceId="1" serviceType="APPLICATION" />)
     expect(baseElement).toMatchSnapshot()
   })
+
   it('should match snapshot with git based pod and with last_terminated_state', () => {
     const pod: Pod = {
       podName: 'foobar',
