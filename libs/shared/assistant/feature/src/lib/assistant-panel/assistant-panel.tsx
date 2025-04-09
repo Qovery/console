@@ -287,7 +287,9 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
         )
         setThread(updatedThread)
       } else {
-        toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
+        if (nextVote !== null) {
+          toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
+        }
       }
     } catch (error) {
       console.error('Erro r sending vote:', error)
