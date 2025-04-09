@@ -4126,8 +4126,6 @@ __metadata:
     pretty-quick: ^4.0.0
     qovery-typescript-axios: 1.1.566
     qovery-ws-typescript-axios: ^0.1.266
-    qovery-typescript-axios: ^1.1.562
-    qovery-ws-typescript-axios: ^0.1.264
     react: 18.3.1
     react-country-flag: ^3.0.2
     react-datepicker: ^4.12.0
@@ -19426,12 +19424,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:^1.1.558":
-  version: 1.1.558
-  resolution: "qovery-typescript-axios@npm:1.1.558"
+"qovery-typescript-axios@npm:1.1.566":
+  version: 1.1.566
+  resolution: "qovery-typescript-axios@npm:1.1.566"
   dependencies:
     axios: ^0.27.2
-  checksum: 6b5a30673bda21d991beb46c3f1276f177e163f986150c2e5668901c64dd5976147429eb0fee094b23b7985609d06e6739e774a9e634d4f73079d84477f75a38
+  checksum: 864b3e3498bce374820aa4627b0a8b28432b0a9e76a01e420967f843463b041f4fb2be489f8c62ba455257b255cec8831fe75259990b72b60c686fea00c6757c
   languageName: node
   linkType: hard
 
