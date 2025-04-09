@@ -51,7 +51,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const defaultContainer = filteredContainers[0]?.name
 
   return (
-    <div className="relative pb-4 pl-4 pr-20 pt-3">
+    <div className="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3">
       <Link
         to={
           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -113,7 +113,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
                       <span>✅ Running</span>
                     ) : (
                       <span>
-                        {pod.state === 'ERROR' ? '❌ ' : ''}
+                        {pod.state === 'ERROR' ? '❌  ' : ''}
                         {current_state?.state_reason}
                         {current_state?.state_message ? `:${current_state.state_message}` : ''}
                         {restart_count && !last_terminated_state ? (
@@ -182,6 +182,26 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
           </Dd>
         </Dl>
       )}
+      {pod.last_events &&
+        pod.last_events?.length > 0 &&
+        pod.last_events?.map((event, index) => (
+          <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0" key={event.created_at + index}>
+            <div className="relative flex flex-col items-center">
+              <div className="grid items-center gap-2">
+                <TimelineCircle />
+              </div>
+            </div>
+            <Dt>{dateFullFormat(event.created_at, undefined, 'dd MMM, HH:mm:ss')}</Dt>
+            <Dd>
+              {event.type.includes('Warning') ? (
+                <Icon iconName="warning" className="mr-1 text-yellow-500" />
+              ) : (
+                <Icon iconName="info-circle" iconStyle="regular" className="mr-1" />
+              )}
+              {event.reason} - {event.message}
+            </Dd>
+          </Dl>
+        ))}
     </div>
   )
 }
