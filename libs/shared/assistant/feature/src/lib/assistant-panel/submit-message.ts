@@ -10,15 +10,16 @@ type Context = {
   environment?: Environment
   service?: AnyService
   deployment?:
-    | {
-        execution_id?: string
-      }
-    | undefined
+  | {
+    execution_id?: string
+  }
+  | undefined
 }
 
 export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
 
 export const submitMessage = async (
+  userSub: string,
   message: string,
   token: string,
   threadId?: string,
@@ -99,7 +100,7 @@ export const submitMessage = async (
         onStream(chunk)
       }
 
-      const messages = await fetchThread(organizationId, _threadId, token)
+      const messages = await fetchThread(userSub, organizationId, _threadId, token)
 
       const formattedMessages: Thread = messages.map((msg: any) => ({
         id: msg.id,
@@ -114,7 +115,7 @@ export const submitMessage = async (
       }
     }
 
-    const messages = await fetchThread(organizationId, _threadId, token)
+    const messages = await fetchThread(userSub, organizationId, _threadId, token)
 
     const formattedMessages: Thread = messages.map((msg: any) => ({
       id: msg.id,

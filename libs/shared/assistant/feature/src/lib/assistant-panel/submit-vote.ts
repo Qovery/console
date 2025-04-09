@@ -16,6 +16,7 @@ type Context = {
 }
 
 export async function submitVote(
+    userSub: string,
     messageId: number,
     vote: 'upvote' | 'downvote',
     token: string,
@@ -37,7 +38,7 @@ export async function submitVote(
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ vote_type: vote, current_page_url: window.location.href }),
+            body: JSON.stringify({ user_sub: userSub, vote_type: vote, current_page_url: window.location.href }),
         })
 
         if (!response.ok) {

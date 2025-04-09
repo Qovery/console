@@ -155,7 +155,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
-  const { getAccessTokenSilently } = useAuth0()
+  const { user, getAccessTokenSilently } = useAuth0()
 
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -274,6 +274,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
 
       const token = await getAccessTokenSilently()
       const response = await submitVote(
+        user?.sub ?? '',
         messageId,
         vote,
         token,
@@ -325,6 +326,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
       try {
         const token = await getAccessTokenSilently()
         const response = await submitMessage(
+          user?.sub ?? '',
           trimmedInputMessage,
           token,
           threadId,
@@ -445,10 +447,12 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     const onMouseMove = (e: MouseEvent) => {
       const dx = startX - e.clientX
       const dy = startY - e.clientY
-      panel.style.width = `${startWidth + dx}px`
-      panel.style.height = `${startHeight + dy}px`
-      panel.style.left = `${startLeft - dx}px`
-      panel.style.top = `${startTop - dy}px`
+      const newWidth = Math.max(startWidth + dx, 450)
+      const newHeight = Math.max(startHeight + dy, 450)
+      panel.style.width = `${newWidth}px`
+      panel.style.height = `${newHeight}px`
+      panel.style.left = `${startLeft - (newWidth - startWidth)}px`
+      panel.style.top = `${startTop - (newHeight - startHeight)}px`
     }
 
     const onMouseUp = () => {
@@ -648,7 +652,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                 ref={scrollAreaRef}
                 className={twMerge(
                   clsx('relative flex grow flex-col gap-4 overflow-y-scroll p-4', {
-                    'h-[420px]': !expand && thread.length > 0,
+                    'h-[220px]': !expand && thread.length > 0,
                     'h-[calc(100vh-316px)]': expand && thread.length > 0,
                   })
                 )}
