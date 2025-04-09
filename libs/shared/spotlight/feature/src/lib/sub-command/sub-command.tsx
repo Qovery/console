@@ -144,9 +144,9 @@ export function SubCommand({
         <Popover.Root open={open} onOpenChange={setOpen}>
           <Popover.Trigger asChild aria-expanded={open}>
             <Button
-              size="sm"
+              size="xs"
               variant="outline"
-              className={clsx('gap-1.5 bg-transparent font-normal', {
+              className={clsx('gap-1.5 bg-transparent px-1.5 font-normal', {
                 'bg-neutral-150': open,
               })}
             >
@@ -159,7 +159,7 @@ export function SubCommand({
                   ></path>
                 </svg>
               </CustomKbd>
-              <span className="block h-3 w-[1px] bg-neutral-250"></span>
+              <span className="mx-0.5 block h-3 w-[1px] bg-neutral-250"></span>
               <CustomKbd className="w-4 text-sm">
                 <span className="relative top-[1px]">{metaKey}</span>
               </CustomKbd>
