@@ -141,7 +141,7 @@ export function SubCommand({
         </CustomKbd>
       </span>
       {service && (
-        <Popover.Root open={open} onOpenChange={setOpen} modal>
+        <Popover.Root open={open} onOpenChange={setOpen}>
           <Popover.Trigger asChild aria-expanded={open}>
             <Button
               size="sm"
