@@ -252,7 +252,16 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
     <Command.Dialog
       label="Search"
       open={open}
-      onOpenChange={openSubCommand ? undefined : onOpenChange}
+      onOpenChange={(isOpen) => {
+        if (openSubCommand) return
+        onOpenChange?.(isOpen)
+
+        if (!isOpen) {
+          resetState()
+          setSelectedValue('')
+          setOpenSubCommand(false)
+        }
+      }}
       value={selectedValue}
       onValueChange={handleValueChange}
       loop
