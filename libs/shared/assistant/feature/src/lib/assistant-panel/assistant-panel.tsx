@@ -28,6 +28,7 @@ import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
+import { toast, ToastEnum } from '@qovery/shared/ui'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
@@ -284,6 +285,8 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
           msg.id === messageId ? { ...msg, vote: currentVote } : msg
         )
         setThread(updatedThread)
+      } else {
+        toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
       }
     } catch (error) {
       console.error('Erro r sending vote:', error)

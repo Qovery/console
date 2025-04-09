@@ -37,7 +37,7 @@ export async function submitVote(
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ vote_type: vote }),
+            body: JSON.stringify({ vote_type: vote, current_page_url: window.location.href }),
         })
 
         if (!response.ok) {
