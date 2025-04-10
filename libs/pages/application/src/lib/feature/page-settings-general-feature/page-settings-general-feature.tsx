@@ -31,7 +31,7 @@ export const handleGitApplicationSubmit = (
   let cloneApplication: ApplicationEditRequest = {
     ...application,
     dockerfile_path: undefined,
-    docker_target_build_stage: data.docker_target_build_stage || undefined,
+    docker_target_build_stage: undefined,
     git_repository: undefined,
     name: data.name,
     description: data.description || '',
@@ -45,8 +45,10 @@ export const handleGitApplicationSubmit = (
 
     if (data.build_mode === BuildModeEnum.DOCKER) {
       cloneApplication.dockerfile_path = data.dockerfile_path
+      cloneApplication.docker_target_build_stage = data.docker_target_build_stage || null
     } else {
       cloneApplication.dockerfile_path = undefined
+      cloneApplication.docker_target_build_stage = undefined
     }
 
     const git_repository = {

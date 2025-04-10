@@ -118,7 +118,7 @@ export function PageSettingsDockerfileFeature() {
                   git_repository: gitRepository,
                   dockerfile_path: data.dockerfile_path,
                   dockerfile_raw: null,
-                  docker_target_build_stage: data.docker_target_build_stage || undefined,
+                  docker_target_build_stage: data.docker_target_build_stage || null,
                 },
               },
             },

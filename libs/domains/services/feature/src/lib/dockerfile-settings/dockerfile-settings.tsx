@@ -61,6 +61,7 @@ export function DockerfileSettings({
       setValue('dockerfile_raw', null)
     } else {
       setValue('dockerfile_path', null)
+      setValue('docker_target_build_stage', null)
     }
     onSubmit()
   }
