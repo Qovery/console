@@ -702,7 +702,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                       </div>
                     ))
                     .with('assistant', () => (
-                      <div key={thread.id} className="text-sm">
+                      <div key={thread.id} className="text-sm group">
                         <Markdown
                           remarkPlugins={[remarkGfm]}
                           components={{
@@ -775,7 +775,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                         >
                           {thread.text}
                         </Markdown>
-                        <div className="mt-2 flex gap-2 text-xs text-neutral-400">
+                        <div className="mt-2 flex gap-2 text-xs text-neutral-400 invisible group-hover:visible">
                           <Button
                             type="button"
                             variant="surface"
