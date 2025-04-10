@@ -365,7 +365,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }
 
   useEffect(() => {
-    if (isFinish && displayedStreamingMessage.length >= streamingMessage.length) {
+    if (isLoading && isFinish && displayedStreamingMessage.length >= streamingMessage.length) {
       setThread([
         ...thread,
         {
