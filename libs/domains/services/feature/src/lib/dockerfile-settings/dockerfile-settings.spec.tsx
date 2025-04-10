@@ -22,6 +22,7 @@ type FormValues = {
   dockerfile_source: 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
   dockerfile_path: string | null
   dockerfile_raw: string | null
+  docker_target_build_stage?: string | null
 }
 
 function DockerfileSettingsWithForm({
@@ -66,13 +67,36 @@ describe('DockerfileSettings', () => {
         <button type="submit">Submit</button>
       </DockerfileSettingsWithForm>
     )
-    await userEvent.clear(screen.getByRole('textbox'))
-    await userEvent.type(screen.getByRole('textbox'), 'CustomDockerfile')
+    await userEvent.clear(screen.getByRole('textbox', { name: /Dockerfile path/i }))
+    await userEvent.type(screen.getByRole('textbox', { name: /Dockerfile path/i }), 'CustomDockerfile')
     await userEvent.click(screen.getByRole('button', { name: /Submit/i }))
     expect(onSubmit).toHaveBeenCalledWith({
       dockerfile_source: 'GIT_REPOSITORY',
       dockerfile_raw: null,
       dockerfile_path: 'CustomDockerfile',
+      docker_target_build_stage: undefined,
+    })
+  })
+
+  it('should submit dockerfile path with build stage', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <DockerfileSettingsWithForm onSubmit={onSubmit}>
+        <button type="submit">Submit</button>
+      </DockerfileSettingsWithForm>
+    )
+    await userEvent.clear(screen.getByRole('textbox', { name: /Dockerfile path/i }))
+    await userEvent.type(screen.getByRole('textbox', { name: /Dockerfile path/i }), 'CustomDockerfile')
+
+    // Fill the docker_target_build_stage field
+    await userEvent.type(screen.getByRole('textbox', { name: /Dockerfile stage/i }), 'build-stage')
+
+    await userEvent.click(screen.getByRole('button', { name: /Submit/i }))
+    expect(onSubmit).toHaveBeenCalledWith({
+      dockerfile_source: 'GIT_REPOSITORY',
+      dockerfile_raw: null,
+      dockerfile_path: 'CustomDockerfile',
+      docker_target_build_stage: 'build-stage',
     })
   })
 
@@ -93,6 +117,7 @@ describe('DockerfileSettings', () => {
       dockerfile_source: 'DOCKERFILE_RAW',
       dockerfile_path: null,
       dockerfile_raw: 'my dockerfile content',
+      docker_target_build_stage: null,
     })
   })
 })
