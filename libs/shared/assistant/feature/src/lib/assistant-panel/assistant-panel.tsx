@@ -303,6 +303,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }
 
   const handleSendMessage = async (value?: string) => {
+    setIsScrollFocus(false)
     setIsFinish(false)
     setStreamingMessage('')
     setDisplayedStreamingMessage('')
