@@ -104,146 +104,130 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
         size: 40,
         cell: (info) => {
           const data = info.row.original
-
-          return match(data)
-            .with(P.when(isDeploymentHistory), (data) => {
-              const state = data.status
-
-              return (
-                <div
-                  className={twMerge(
-                    clsx(
-                      'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
-                      {
-                        'before:bg-brand-500': [
-                          'DEPLOYING',
-                          'RESTARTING',
-                          'BUILDING',
-                          'DELETING',
-                          'STOPPING',
-                          'CANCELING',
-                        ].includes(state),
-                        'before:bg-neutral-300': [
-                          'QUEUED',
-                          'DEPLOYMENT_QUEUED',
-                          'DELETE_QUEUED',
-                          'STOP_QUEUED',
-                          'RESTART_QUEUED',
-                        ].includes(state),
-                      }
-                    )
-                  )}
-                >
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium text-neutral-400">
-                      {dateFullFormat(data.auditing_data.created_at, undefined, 'dd MMM, HH:mm a')}
-                    </span>
-                    <span className="truncate text-ssm text-neutral-350">{data.identifier.execution_id}</span>
-                  </div>
-                  <ActionToolbar.Root className="min-w-28 text-right">
-                    {match(state)
-                      .with(
-                        'DEPLOYING',
-                        'RESTARTING',
-                        'BUILDING',
-                        'DELETING',
-                        'STOPPING',
-                        'DEPLOYMENT_QUEUED',
-                        'DELETE_QUEUED',
-                        'STOP_QUEUED',
-                        'RESTART_QUEUED',
-                        () => (
-                          <DropdownMenu.Root>
-                            <DropdownMenu.Trigger asChild>
-                              <ActionToolbar.Button
-                                aria-label="Manage Deployment"
-                                color="neutral"
-                                size="md"
-                                variant="outline"
-                              >
-                                <Tooltip content="Manage Deployment">
-                                  <div className="flex h-full w-full items-center justify-center">
-                                    {match(state)
-                                      .with(
-                                        'DEPLOYMENT_QUEUED',
-                                        'DELETE_QUEUED',
-                                        'STOP_QUEUED',
-                                        'RESTART_QUEUED',
-                                        () => <Icon iconName="clock" iconStyle="regular" className="mr-3" />
-                                      )
-                                      .otherwise(() => (
-                                        <Icon iconName="loader" className="mr-3 animate-spin" />
-                                      ))}
-                                    <Icon iconName="chevron-down" />
-                                  </div>
-                                </Tooltip>
-                              </ActionToolbar.Button>
-                            </DropdownMenu.Trigger>
-                            <DropdownMenu.Content>
-                              {isCancelBuildAvailable(state) && (
-                                <DropdownMenu.Item
-                                  icon={<Icon iconName="xmark" />}
-                                  onSelect={() =>
-                                    mutationCancelDeployment({
-                                      deploymentRequestId: !isDeploymentHistory(data)
-                                        ? data.identifier.deployment_request_id
-                                        : undefined,
-                                    })
-                                  }
-                                >
-                                  {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING
-                                    ? 'Cancel delete'
-                                    : 'Cancel deployment'}
-                                </DropdownMenu.Item>
-                              )}
-                            </DropdownMenu.Content>
-                          </DropdownMenu.Root>
-                        )
-                      )
-                      .otherwise(() => null)}
-                    <Tooltip content="Pipeline">
-                      <ActionToolbar.Button asChild className="justify-center px-2">
-                        <Link
-                          to={
-                            ENVIRONMENT_LOGS_URL(
-                              environment?.organization.id,
-                              environment?.project.id,
-                              environment?.id
-                            ) + ENVIRONMENT_STAGES_URL(data.identifier.execution_id ?? '')
-                          }
-                          state={{ prevUrl: pathname }}
-                        >
-                          <Icon iconName="timeline" />
-                        </Link>
-                      </ActionToolbar.Button>
-                    </Tooltip>
-                  </ActionToolbar.Root>
-                </div>
-              )
-            })
-            .otherwise(() => (
-              <div className="flex items-center justify-between">
+          const state = isDeploymentHistory(data) ? data.status : 'QUEUED'
+          return (
+            <div
+              className={twMerge(
+                clsx(
+                  'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
+                  {
+                    'before:bg-brand-500': [
+                      'DEPLOYING',
+                      'RESTARTING',
+                      'BUILDING',
+                      'DELETING',
+                      'STOPPING',
+                      'CANCELING',
+                    ].includes(state),
+                    'before:bg-neutral-300': [
+                      'QUEUED',
+                      'DEPLOYMENT_QUEUED',
+                      'DELETE_QUEUED',
+                      'STOP_QUEUED',
+                      'RESTART_QUEUED',
+                    ].includes(state),
+                  }
+                )
+              )}
+            >
+              {state === 'QUEUED' ? (
                 <div className="flex flex-col gap-1 text-sm text-neutral-350">
                   <span className="font-medium">In queue...</span>
                   <span>--</span>
                 </div>
-                <div className="min-w-28 text-right">
-                  <Tooltip content="Logs">
+              ) : (
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-neutral-400">
+                    {dateFullFormat(
+                      isDeploymentHistory(data) ? data.auditing_data.created_at : '',
+                      undefined,
+                      'dd MMM, HH:mm a'
+                    )}
+                  </span>
+                  <span className="truncate text-ssm text-neutral-350">
+                    {isDeploymentHistory(data) ? data.identifier.execution_id : '--'}
+                  </span>
+                </div>
+              )}
+              <ActionToolbar.Root className="min-w-28 text-right">
+                {match(state)
+                  .with(
+                    'DEPLOYING',
+                    'RESTARTING',
+                    'BUILDING',
+                    'DELETING',
+                    'STOPPING',
+                    'DEPLOYMENT_QUEUED',
+                    'DELETE_QUEUED',
+                    'STOP_QUEUED',
+                    'RESTART_QUEUED',
+                    () => (
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger asChild>
+                          <ActionToolbar.Button
+                            aria-label="Manage Deployment"
+                            color="neutral"
+                            size="md"
+                            variant="outline"
+                          >
+                            <Tooltip content="Manage Deployment">
+                              <div className="flex h-full w-full items-center justify-center">
+                                {match(state)
+                                  .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
+                                    <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                                  ))
+                                  .otherwise(() => (
+                                    <Icon iconName="loader" className="mr-3 animate-spin" />
+                                  ))}
+                                <Icon iconName="chevron-down" />
+                              </div>
+                            </Tooltip>
+                          </ActionToolbar.Button>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content>
+                          {isCancelBuildAvailable(state) && (
+                            <DropdownMenu.Item
+                              icon={<Icon iconName="xmark" />}
+                              onSelect={() =>
+                                mutationCancelDeployment({
+                                  deploymentRequestId: !isDeploymentHistory(data)
+                                    ? data.identifier.deployment_request_id
+                                    : undefined,
+                                })
+                              }
+                            >
+                              {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING
+                                ? 'Cancel delete'
+                                : 'Cancel deployment'}
+                            </DropdownMenu.Item>
+                          )}
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
+                    )
+                  )
+                  .otherwise(() => null)}
+                <Tooltip content="Pipeline">
+                  <ActionToolbar.Button asChild className="justify-center px-2">
                     <Link
-                      className="w-9 justify-center px-2 text-neutral-350"
-                      as="button"
-                      color="neutral"
-                      variant="outline"
-                      size="md"
-                      to={ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)}
+                      to={
+                        state === 'QUEUED'
+                          ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
+                          : ENVIRONMENT_LOGS_URL(
+                              environment?.organization.id,
+                              environment?.project.id,
+                              environment?.id
+                            ) +
+                            ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id ?? '' : '')
+                      }
                       state={{ prevUrl: pathname }}
                     >
                       <Icon iconName="timeline" />
                     </Link>
-                  </Tooltip>
-                </div>
-              </div>
-            ))
+                  </ActionToolbar.Button>
+                </Tooltip>
+              </ActionToolbar.Root>
+            </div>
+          )
         },
       }),
       columnHelper.accessor('action_status', {
