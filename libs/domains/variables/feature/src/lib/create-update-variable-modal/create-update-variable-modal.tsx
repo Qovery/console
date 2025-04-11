@@ -252,7 +252,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     )
     .otherwise(
       () =>
-        'Variable are used at build/run time. Secrets are special variables, their value can only be accessed by the application.'
+        "Environment variables can be accessed at both build and run time. Set them as ARGS in your Dockerfile to use them during build processes. At runtime, they're available to your application automatically. Secrets value can only be accessed by your application."
     )
 
   return (
