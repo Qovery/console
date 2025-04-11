@@ -38,6 +38,50 @@ describe('PageSettingsGeneralFeature', () => {
     expect(app.name).toBe('hello')
     expect(app.description).toBe('description')
     expect(app.dockerfile_path).toBe('/')
+    expect(app.docker_target_build_stage).toBeUndefined()
+  })
+
+  it('should update the application with Docker and target build stage', () => {
+    const app = handleGitApplicationSubmit(
+      {
+        name: 'hello',
+        description: 'description',
+        build_mode: BuildModeEnum.DOCKER,
+        dockerfile_path: '/',
+        docker_target_build_stage: 'build-stage',
+        provider: GitProviderEnum.GITHUB,
+        repository: 'qovery/console',
+        branch: 'main',
+        root_path: '/',
+      },
+      application,
+      [],
+      []
+    )
+    expect(app.name).toBe('hello')
+    expect(app.description).toBe('description')
+    expect(app.dockerfile_path).toBe('/')
+    expect(app.docker_target_build_stage).toBe('build-stage')
+  })
+
+  it('should handle empty docker_target_build_stage', () => {
+    const app = handleGitApplicationSubmit(
+      {
+        name: 'hello',
+        description: 'description',
+        build_mode: BuildModeEnum.DOCKER,
+        dockerfile_path: '/',
+        docker_target_build_stage: '', // Empty string
+        provider: GitProviderEnum.GITHUB,
+        repository: 'qovery/console',
+        branch: 'main',
+        root_path: '/',
+      },
+      application,
+      [],
+      []
+    )
+    expect(app.docker_target_build_stage).toBeUndefined()
   })
 
   it('should update the application with git repository', () => {
@@ -81,6 +125,31 @@ describe('PageSettingsGeneralFeature', () => {
     expect(app.source?.docker?.git_repository?.branch).toBe('main')
     expect(app.source?.docker?.git_repository?.root_path).toBe('/')
     expect(app.source?.docker?.git_repository?.url).toBe('https://github.com/qovery/console.git')
+    expect(app.source?.docker?.docker_target_build_stage).toBeUndefined()
+  })
+
+  it('should update the job with git repository and docker target build stage', () => {
+    const job = cronjobFactoryMock(1)[0]
+    const app = handleJobSubmit(
+      {
+        name: 'hello',
+        description: 'description',
+        dockerfile_path: '/',
+        docker_target_build_stage: 'production',
+        provider: GitProviderEnum.GITHUB,
+        repository: 'qovery/console',
+        branch: 'main',
+        root_path: '/',
+      },
+      job,
+      [],
+      []
+    )
+
+    expect(app.source?.docker?.git_repository?.branch).toBe('main')
+    expect(app.source?.docker?.git_repository?.root_path).toBe('/')
+    expect(app.source?.docker?.git_repository?.url).toBe('https://github.com/qovery/console.git')
+    expect(app.source?.docker?.docker_target_build_stage).toBe('production')
   })
 
   it('should update the job with image', () => {
