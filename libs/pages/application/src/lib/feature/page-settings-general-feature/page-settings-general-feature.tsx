@@ -140,7 +140,8 @@ export const handleJobSubmit = (
           // whereas lifecycle job info are in DockerfileSettingsData
           // so we need to keep existing data
           dockerfile_path: data.dockerfile_path ?? job.source.docker.dockerfile_path,
-          docker_target_build_stage: data.docker_target_build_stage ?? job.source.docker.docker_target_build_stage,
+          docker_target_build_stage:
+            data.docker_target_build_stage || job.source.docker.docker_target_build_stage || null,
           dockerfile_raw: job.source.docker.dockerfile_raw,
         },
       },
@@ -232,7 +233,7 @@ export function PageSettingsGeneralFeature() {
     .with({ serviceType: 'APPLICATION' }, (service) => ({
       auto_deploy: service.auto_deploy,
       dockerfile_path: service.dockerfile_path ?? 'Dockerfile',
-      docker_target_build_stage: service.docker_target_build_stage || '',
+      docker_target_build_stage: service.docker_target_build_stage || undefined,
       build_mode: service.build_mode,
       image_entry_point: service.entrypoint,
       cmd_arguments: service.arguments?.length ? joinArgsWithQuotes(service.arguments) : '',
@@ -269,6 +270,9 @@ export function PageSettingsGeneralFeature() {
         auto_deploy: service.auto_deploy,
         build_mode: BuildModeEnum.DOCKER,
         dockerfile_path: isJobGitSource(service.source) ? service.source.docker?.dockerfile_path : 'Dockerfile',
+        docker_target_build_stage: isJobGitSource(service.source)
+          ? service.source.docker?.docker_target_build_stage
+          : undefined,
         registry: jobContainerSource?.registry_id,
         image_name: jobContainerSource?.image_name,
         image_tag: jobContainerSource?.tag,

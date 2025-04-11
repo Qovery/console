@@ -68,7 +68,7 @@ export function PageSettingsDockerfileFeature() {
           : undefined,
       docker_target_build_stage:
         service?.job_type === 'LIFECYCLE' && isJobGitSource(service.source)
-          ? service.source.docker.docker_target_build_stage ?? ''
+          ? service.source.docker.docker_target_build_stage ?? null
           : undefined,
       dockerfile_raw:
         service?.job_type === 'LIFECYCLE' && isJobGitSource(service.source)
