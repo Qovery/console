@@ -116,24 +116,6 @@ export function StepGeneral(props: StepGeneralProps) {
               <Heading>{watchServiceType === ServiceTypeEnum.APPLICATION ? 'Build and deploy' : 'Deploy'}</Heading>
               {watchServiceType === ServiceTypeEnum.APPLICATION && <BuildSettings />}
 
-              {/* Add Dockerfile stage field when source is Git provider */}
-              {watchServiceType === ServiceTypeEnum.APPLICATION && (
-                <Controller
-                  name="docker_target_build_stage"
-                  control={control}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      label="Dockerfile stage (optional)"
-                      name={field.name}
-                      onChange={field.onChange}
-                      value={field.value || ''}
-                      error={error?.message}
-                      hint="Specify the target stage to build in a multi-stage Dockerfile"
-                    />
-                  )}
-                />
-              )}
-
               <EntrypointCmdInputs />
               {!watchIsPublicRepository && (
                 <AutoDeploySetting
