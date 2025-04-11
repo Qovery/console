@@ -106,6 +106,63 @@ describe('PageSettingsGeneral', () => {
     })
   })
 
+  it('should render Dockerfile stage input with empty value', async () => {
+    const service = {
+      ...mockApplication,
+      dockerfile_path: 'Dockerfile',
+      build_mode: BuildModeEnum.DOCKER,
+      docker_target_build_stage: '',
+    }
+
+    renderWithProviders(
+      wrapWithReactHookForm(<PageSettingsGeneral service={service} {...props} />, {
+        defaultValues: service,
+      })
+    )
+
+    const stageInput = screen.getByLabelText('Dockerfile stage (optional)')
+    expect(stageInput).toBeInTheDocument()
+    expect(stageInput).toHaveValue('')
+  })
+
+  it('should render Dockerfile stage input with a value', async () => {
+    const service = {
+      ...mockApplication,
+      dockerfile_path: 'Dockerfile',
+      build_mode: BuildModeEnum.DOCKER,
+      docker_target_build_stage: 'build',
+    }
+
+    renderWithProviders(
+      wrapWithReactHookForm(<PageSettingsGeneral service={service} {...props} />, {
+        defaultValues: service,
+      })
+    )
+
+    const stageInput = screen.getByLabelText('Dockerfile stage (optional)')
+    expect(stageInput).toBeInTheDocument()
+    expect(stageInput).toHaveValue('build')
+  })
+
+  it('should allow Dockerfile stage input to be cleared', async () => {
+    const service = {
+      ...mockApplication,
+      dockerfile_path: 'Dockerfile',
+      build_mode: BuildModeEnum.DOCKER,
+      docker_target_build_stage: 'build',
+    }
+
+    const { user } = renderWithProviders(
+      wrapWithReactHookForm(<PageSettingsGeneral service={service} {...props} />, {
+        defaultValues: service,
+      })
+    )
+
+    const stageInput = screen.getByLabelText('Dockerfile stage (optional)')
+    await user.clear(stageInput)
+    expect(stageInput).toHaveValue('')
+  })
+
   it('should render helm general settings fields', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<PageSettingsGeneral {...props} service={mockJob} />, {
