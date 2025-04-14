@@ -73,6 +73,19 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
           clusterId: cluster.id,
         }),
     })
+  const mutationDryRunUpdate = () =>
+    openModalConfirmation({
+      mode: EnvironmentModeEnum.PRODUCTION,
+      title: 'Confirm dry-run update',
+      description: 'To confirm the dry-run update of your cluster, please type the name:',
+      name: cluster.name,
+      action: () =>
+        deployCluster({
+          organizationId: cluster.organization.id,
+          clusterId: cluster.id,
+          dry_run: true,
+        }),
+    })
   const mutationStop = () =>
     openModalConfirmation({
       mode: EnvironmentModeEnum.PRODUCTION,
@@ -122,6 +135,25 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
       >
         Update
         {tooltipClusterNeedUpdate}
+      </DropdownMenu.Item>
+    ),
+    isRedeployAvailable(clusterStatus.status) && clusterNeedUpdate && (
+      <DropdownMenu.Item
+        key="1-dry-run"
+        icon={<Icon iconName="glasses" />}
+        onSelect={mutationDryRunUpdate}
+        className="relative"
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
+      >
+        Update (Dry-run)
+        <Tooltip
+          side="bottom"
+          content="Preview the changes that would be applied without actually updating the cluster"
+        >
+          <div className="absolute right-2">
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </div>
+        </Tooltip>
       </DropdownMenu.Item>
     ),
     cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (

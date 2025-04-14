@@ -115,8 +115,16 @@ export const mutations = {
     const response = await clusterApi.deleteCluster(organizationId, clusterId, clusterDeleteMode)
     return response.data
   },
-  async deployCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
-    const response = await clusterApi.deployCluster(organizationId, clusterId)
+  async deployCluster({
+    organizationId,
+    clusterId,
+    dry_run,
+  }: {
+    organizationId: string
+    clusterId: string
+    dry_run?: boolean
+  }) {
+    const response = await clusterApi.deployCluster(organizationId, clusterId, dry_run)
     return response.data
   },
   async stopCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
