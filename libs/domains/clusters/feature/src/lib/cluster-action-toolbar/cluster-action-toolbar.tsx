@@ -27,6 +27,8 @@ import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-down
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
 
+let isDryRunRef = false
+
 function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deployCluster } = useDeployCluster()
@@ -61,38 +63,31 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
       organizationId: cluster.organization.id,
       clusterId: cluster.id,
     })
-  const mutationUpdate = () =>
+
+  const mutationUpdate = () => {
     openModalConfirmation({
       mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm update',
       description: 'To confirm the update of your cluster, please type the name:',
       name: cluster.name,
-      action: () =>
+      isDryRunEnabled: true,
+      action: (isDryRun) => {
         deployCluster({
           organizationId: cluster.organization.id,
           clusterId: cluster.id,
-        }),
+          dry_run: isDryRun,
+        })
+      },
     })
-  const mutationDryRunUpdate = () =>
-    openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
-      title: 'Confirm dry-run update',
-      description: 'To confirm the dry-run update of your cluster, please type the name:',
-      name: cluster.name,
-      action: () =>
-        deployCluster({
-          organizationId: cluster.organization.id,
-          clusterId: cluster.id,
-          dry_run: true,
-        }),
-    })
+  }
+
   const mutationStop = () =>
     openModalConfirmation({
       mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm stop',
       description: 'To confirm the stop of your cluster, please type the name:',
       warning:
-        'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the “Remove” feature',
+        'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the "Remove" feature',
       name: cluster.name,
       action: () =>
         stopCluster({
@@ -135,25 +130,6 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
       >
         Update
         {tooltipClusterNeedUpdate}
-      </DropdownMenu.Item>
-    ),
-    isRedeployAvailable(clusterStatus.status) && clusterNeedUpdate && (
-      <DropdownMenu.Item
-        key="1-dry-run"
-        icon={<Icon iconName="glasses" />}
-        onSelect={mutationDryRunUpdate}
-        className="relative"
-        color={clusterNeedUpdate ? 'yellow' : 'brand'}
-      >
-        Update (Dry-run)
-        <Tooltip
-          side="bottom"
-          content="Preview the changes that would be applied without actually updating the cluster"
-        >
-          <div className="absolute right-2">
-            <Icon iconName="circle-info" iconStyle="regular" />
-          </div>
-        </Tooltip>
       </DropdownMenu.Item>
     ),
     cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (
