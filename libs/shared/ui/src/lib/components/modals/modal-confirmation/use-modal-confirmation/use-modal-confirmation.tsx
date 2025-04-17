@@ -6,12 +6,11 @@ import { ModalConfirmation } from '../modal-confirmation'
 export interface UseModalConfirmationProps {
   title: string
   description?: ReactNode
-  action: (isDryRun?: boolean) => void
+  action: () => void
   name?: string
   mode?: keyof typeof EnvironmentModeEnum | string | undefined
   warning?: ReactNode
   isDelete?: boolean
-  isDryRunEnabled?: boolean
   placeholder?: string
 }
 
@@ -32,10 +31,9 @@ export function useModalConfirmation() {
             description={modalConfirmation.description}
             name={modalConfirmation.name}
             warning={modalConfirmation.warning}
-            callback={(isDryRun) => modalConfirmation.action(isDryRun)}
+            callback={modalConfirmation.action}
             placeholder={modalConfirmation.placeholder}
             isDelete={modalConfirmation?.isDelete}
-            isDryRunEnabled={modalConfirmation?.isDryRunEnabled}
           />
         ),
       })

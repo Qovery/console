@@ -21,16 +21,16 @@ import {
 import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
+import { ClusterUpdateModal } from '../cluster-update-modal/cluster-update-modal'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
 
-let isDryRunRef = false
-
 function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const { openModalConfirmation } = useModalConfirmation()
+  const { openModal } = useModal()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
   const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
@@ -65,19 +65,8 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
     })
 
   const mutationUpdate = () => {
-    openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
-      title: 'Confirm update',
-      description: 'To confirm the update of your cluster, please type the name:',
-      name: cluster.name,
-      isDryRunEnabled: true,
-      action: (isDryRun) => {
-        deployCluster({
-          organizationId: cluster.organization.id,
-          clusterId: cluster.id,
-          dry_run: isDryRun,
-        })
-      },
+    openModal({
+      content: <ClusterUpdateModal cluster={cluster} />,
     })
   }
 

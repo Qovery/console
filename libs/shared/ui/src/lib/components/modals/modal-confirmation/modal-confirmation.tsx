@@ -1,6 +1,5 @@
-import { type PropsWithChildren, type ReactNode, useRef, useState } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { Checkbox } from '@qovery/shared/ui'
 import Button from '../../button/button'
 import { Callout } from '../../callout/callout'
 import { Icon } from '../../icon/icon'
@@ -12,13 +11,12 @@ export interface ModalConfirmationProps extends PropsWithChildren {
   title: string
   description?: ReactNode
   name?: string
-  callback: (isDryRun?: boolean) => void
+  callback: () => void
   warning?: ReactNode
   placeholder?: string
   ctaButton?: string
   ctaButtonDisabled?: boolean
   isDelete?: boolean
-  isDryRunEnabled?: boolean
 }
 
 export function ModalConfirmation({
@@ -32,23 +30,19 @@ export function ModalConfirmation({
   ctaButton = 'Confirm',
   ctaButtonDisabled,
   children,
-  isDryRunEnabled = false,
 }: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
-  const isDryRunRef = useRef(false)
 
   const onSubmit = handleSubmit((data) => {
     if (data) {
       closeModal()
-      callback(isDryRunRef.current)
+      callback()
     }
   })
 
   const copyToClipboard = () => {
-    if (name) {
-      navigator.clipboard.writeText(name)
-    }
+    name && navigator.clipboard.writeText(name)
   }
 
   return (
@@ -100,33 +94,6 @@ export function ModalConfirmation({
             />
           )}
         />
-
-        {isDryRunEnabled && (
-          <Controller
-            name="dryRun"
-            control={control}
-            defaultValue={false}
-            render={({ field }) => (
-              <div className="mb-5 flex gap-3 pt-4">
-                <Checkbox
-                  id={field.name}
-                  className="h-4 w-4 min-w-4"
-                  name={field.name}
-                  checked={field.value}
-                  onCheckedChange={(value) => {
-                    field.onChange(value)
-                    isDryRunRef.current = !!value
-                  }}
-                />
-                <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                  <span className="font-medium text-neutral-400">Dry-run</span>
-                  <span className="text-neutral-350">Preview changes without applying them</span>
-                </label>
-              </div>
-            )}
-          />
-        )}
-
         {children}
         {warning && (
           <Callout.Root className="mb-5" color="yellow">

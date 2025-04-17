@@ -118,13 +118,13 @@ export const mutations = {
   async deployCluster({
     organizationId,
     clusterId,
-    dry_run,
+    dryRun,
   }: {
     organizationId: string
     clusterId: string
-    dry_run?: boolean
+    dryRun?: boolean
   }) {
-    const response = await clusterApi.deployCluster(organizationId, clusterId, dry_run)
+    const response = await clusterApi.deployCluster(organizationId, clusterId, dryRun)
     return response.data
   },
   async stopCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
