@@ -14,6 +14,9 @@ import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-stat
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
+    .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
+      <span className="text-ssm font-normal text-neutral-350">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
+    ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', (s) => (
       <LinkUI
         to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
@@ -94,9 +97,19 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
             <Subtitle cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus} />
           </div>
         </div>
-        <div className="mt-1.5">
-          <ClusterRunningStatusBadge cluster={cluster} />
-        </div>
+        {match(clusterDeploymentStatus?.status)
+          .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', () => null)
+          .otherwise(
+            () =>
+              clusterDeploymentStatus?.is_deployed && (
+                <div className="mt-1.5">
+                  <ClusterRunningStatusBadge
+                    cluster={cluster}
+                    clusterDeploymentStatus={clusterDeploymentStatus?.status}
+                  />
+                </div>
+              )
+          )}
       </div>
       <div className="flex flex-wrap gap-2">
         {cluster.kubernetes === 'SELF_MANAGED' ? (
