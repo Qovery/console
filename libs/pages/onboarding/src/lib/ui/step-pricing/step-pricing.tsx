@@ -30,7 +30,7 @@ export function StepPricing(props: StepPricingProps) {
         </a>
       </p>
       <form>
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-2">
           {plans.map((plan: OrganizationPlan) => (
             <PlanCard key={plan.name} onClick={() => onSubmit(plan.name)} loading={loading} {...plan} />
           ))}

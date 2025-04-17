@@ -1,7 +1,7 @@
 import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
 import { type Params, useNavigate } from 'react-router-dom'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
-import { ONBOARDING_PRICING_URL, ONBOARDING_PROJECT_URL, type Route } from '@qovery/shared/routes'
+import { ONBOARDING_PROJECT_URL, type Route } from '@qovery/shared/routes'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 import { ROUTER_ONBOARDING_STEP_1, ROUTER_ONBOARDING_STEP_2 } from '../../router/router'
 import OnboardingRightContent from '../../ui/onboarding-right-content/onboarding-right-content'
@@ -43,7 +43,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
     routes.findIndex((route: Route) => route.path.replace('/:plan', '') === `/${step?.split('/')[0]}`) + 1
 
   const stepProject = `/${step}` === ONBOARDING_PROJECT_URL
-  const stepPricing = `/${step}` === ONBOARDING_PRICING_URL
 
   return (
     <ContextOnboarding.Provider
@@ -67,7 +66,6 @@ export function Container(props: PropsWithChildren<ContainerProps>) {
         <FunnelFlowBody
           helpSectionClassName="!p-0 !bg-transparent !border-transparent"
           helpSection={stepProject && <OnboardingRightContent step={step} />}
-          customContentWidth={stepPricing ? 'max-w-[1096px]' : undefined}
         >
           {children}
         </FunnelFlowBody>
