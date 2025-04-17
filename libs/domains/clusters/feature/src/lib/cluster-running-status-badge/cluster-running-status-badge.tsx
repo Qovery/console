@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterStateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -9,9 +9,10 @@ import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use
 
 export interface ClusterRunningStatusBadgeProps {
   cluster: Cluster
+  clusterDeploymentStatus?: ClusterStateEnum
 }
 
-export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadgeProps) {
+export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: ClusterRunningStatusBadgeProps) {
   const isFeatureFlag = useFeatureFlagVariantKey('cluster-running-status')
 
   const [isTimeout, setIsTimeout] = useState(false)
@@ -36,6 +37,15 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
     }
     return
   }, [runningStatus])
+
+  if (clusterDeploymentStatus === 'STOPPED') {
+    return (
+      <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
+        <span className="text-neutral-400">Stopped</span>
+        <span className="block h-2 w-2 rounded-full bg-neutral-300" />
+      </Badge>
+    )
+  }
 
   if (isNotInstalled) {
     return (
