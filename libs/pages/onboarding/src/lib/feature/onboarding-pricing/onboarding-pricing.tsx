@@ -21,20 +21,6 @@ export interface OrganizationPlan {
 
 const PLANS: OrganizationPlan[] = [
   {
-    name: PlanEnum.FREE,
-    title: 'Free plan',
-    text: 'Free Forever. No CC required',
-    price: 0,
-    list: [
-      'Deploy on your cluster',
-      'Up to 25 users',
-      'Up to 3 Self-Managed clusters',
-      'Up to 20 services',
-      '1,000 free deployment minutes',
-      'Community support',
-    ],
-  },
-  {
     name: PlanEnum.TEAM,
     title: 'Team plan',
     text: 'Ideal for teams',
