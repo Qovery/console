@@ -30,6 +30,7 @@ export interface ApplicationGeneralData {
   git_token_id?: GitTokenResponse['id']
   root_path?: string
   dockerfile_path?: string | null
+  docker_target_build_stage?: string | null
 }
 
 export interface ApplicationResourcesData {
