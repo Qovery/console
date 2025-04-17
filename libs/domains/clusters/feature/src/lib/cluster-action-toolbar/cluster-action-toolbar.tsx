@@ -21,6 +21,7 @@ import {
 import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
+import { ClusterUpdateModal } from '../cluster-update-modal/cluster-update-modal'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
@@ -29,6 +30,7 @@ import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-clus
 
 function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; clusterStatus: ClusterStatus }) {
   const { openModalConfirmation } = useModalConfirmation()
+  const { openModal } = useModal()
   const { mutate: deployCluster } = useDeployCluster()
   const { mutate: stopCluster } = useStopCluster()
   const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
@@ -61,25 +63,20 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
       organizationId: cluster.organization.id,
       clusterId: cluster.id,
     })
-  const mutationUpdate = () =>
-    openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
-      title: 'Confirm update',
-      description: 'To confirm the update of your cluster, please type the name:',
-      name: cluster.name,
-      action: () =>
-        deployCluster({
-          organizationId: cluster.organization.id,
-          clusterId: cluster.id,
-        }),
+
+  const mutationUpdate = () => {
+    openModal({
+      content: <ClusterUpdateModal cluster={cluster} />,
     })
+  }
+
   const mutationStop = () =>
     openModalConfirmation({
       mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm stop',
       description: 'To confirm the stop of your cluster, please type the name:',
       warning:
-        'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the “Remove” feature',
+        'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the "Remove" feature',
       name: cluster.name,
       action: () =>
         stopCluster({
