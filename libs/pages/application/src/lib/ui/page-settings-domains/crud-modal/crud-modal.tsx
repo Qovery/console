@@ -96,7 +96,7 @@ export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, li
               }
               field.onChange(value)
             }}
-            title="Domain behind a CDN"
+            title="Domain behind a CDN (e.g. Cloudflare, CloudFront)"
             description="Check this if the traffic on this domain is managed by a CDN."
             forceAlignTop
             small
