@@ -4124,8 +4124,8 @@ __metadata:
     prettier: ^3.2.5
     prettier-plugin-tailwindcss: ^0.5.14
     pretty-quick: ^4.0.0
-    qovery-typescript-axios: ^1.1.566
-    qovery-ws-typescript-axios: ^0.1.273
+    qovery-typescript-axios: ^1.1.569
+    qovery-ws-typescript-axios: ^0.1.276
     react: 18.3.1
     react-country-flag: ^3.0.2
     react-datepicker: ^4.12.0
@@ -19424,21 +19424,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:^1.1.566":
-  version: 1.1.566
-  resolution: "qovery-typescript-axios@npm:1.1.566"
+"qovery-typescript-axios@npm:^1.1.569":
+  version: 1.1.569
+  resolution: "qovery-typescript-axios@npm:1.1.569"
   dependencies:
-    axios: ^0.27.2
-  checksum: 864b3e3498bce374820aa4627b0a8b28432b0a9e76a01e420967f843463b041f4fb2be489f8c62ba455257b255cec8831fe75259990b72b60c686fea00c6757c
+    axios: 1.8.2
+  checksum: df43e3579fb3ed389a6f4769f40aa402a93b46dda41458f8d62555c0fb76038b3f7ac8499e1225a85692c3292bac17ae43823e5b9512e2e02b438b156780640c
   languageName: node
   linkType: hard
 
-"qovery-ws-typescript-axios@npm:^0.1.273":
-  version: 0.1.273
-  resolution: "qovery-ws-typescript-axios@npm:0.1.273"
+"qovery-ws-typescript-axios@npm:^0.1.276":
+  version: 0.1.276
+  resolution: "qovery-ws-typescript-axios@npm:0.1.276"
   dependencies:
-    axios: ^0.27.2
-  checksum: c1203e6cbcb09c9666806103d2866a87507a87720b71fe56ba9e8f844e0ad6131ba1756bbc6c66a9f3227a16b9d54dcd294344048cf85e94ca8c01f34a41b3f7
+    axios: 1.8.2
+  checksum: 19c2c0a25699d151829088e266bde06b006945411bbd0956e78f406b0f39b7196bc7d5d3ce7d1d0e1e4dc7fbe16629680c273650679a1467c89d849e46bd92aa
   languageName: node
   linkType: hard
 

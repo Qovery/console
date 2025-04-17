@@ -122,7 +122,11 @@ export function ClusterRunningStatusBadge({ cluster }: ClusterRunningStatusBadge
               )}
             >
               <span className="py-1 pr-1">
-                {key}: {message?.message || message?.reason || JSON.stringify(message) || ''}
+                {message.map((value, index) => (
+                  <div className="mb-1 flex items-center last:mb-0" key={index}>
+                    {key}: {value.reason} {value.message}
+                  </div>
+                ))}
               </span>
             </div>
           ))}
