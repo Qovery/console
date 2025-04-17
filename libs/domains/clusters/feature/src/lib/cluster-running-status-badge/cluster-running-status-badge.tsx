@@ -73,9 +73,9 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
     } else {
       return (
         <Tooltip content="Cannot fetch the cluster status. Please contact us if the issue persists">
-          <Badge variant="surface" color="red" className="items-center gap-2 border-[#FF62404D] pr-2">
-            <span className="truncate text-neutral-400">Status unavailable</span>
-            <span className="block h-2 w-2 rounded-full bg-current" />
+          <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
+            <span className="text-neutral-400">Status unavailable</span>
+            <span className="block h-2 w-2 rounded-full bg-neutral-300" />
           </Badge>
         </Tooltip>
       )
@@ -198,23 +198,9 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
       </Popover.Root>
     ))
     .otherwise(() => (
-      <Badge
-        variant="surface"
-        color={isFeatureFlag ? 'red' : 'neutral'}
-        className={twMerge(
-          clsx('items-center gap-2 border-[#FF62404D] pr-2', {
-            'border-[#A0AFC54D]': !isFeatureFlag,
-          })
-        )}
-      >
-        <span className="truncate text-neutral-400">Status unavailable</span>
-        <span
-          className={twMerge(
-            clsx('block h-2 w-2 rounded-full bg-current', {
-              'bg-neutral-300': !isFeatureFlag,
-            })
-          )}
-        />
+      <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
+        <span className="text-neutral-400">Status unavailable</span>
+        <span className="block h-2 w-2 rounded-full bg-neutral-300" />
       </Badge>
     ))
 }

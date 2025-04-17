@@ -148,15 +148,6 @@ exports[`ClusterCard should match snapshot 1`] = `
           </span>
         </div>
       </div>
-      <div
-        class="mt-1.5"
-      >
-        <div
-          aria-busy="true"
-          class="block animate-pulse bg-gradient-to-r from-[#f8f9fc] via-[#e2e9f3] to-[#f8f9fc] bg-[length:400%_100%] duration-[6s] dark:from-[#2A3041] dark:via-[#1F2637] dark:to-[#1F2637] rounded"
-          style="width: 80px; height: 24px;"
-        />
-      </div>
     </div>
     <div
       class="flex flex-wrap gap-2"

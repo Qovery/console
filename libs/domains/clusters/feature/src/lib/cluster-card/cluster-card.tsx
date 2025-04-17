@@ -97,13 +97,18 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
             <Subtitle cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus} />
           </div>
         </div>
-        {!['BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING'].includes(
-          clusterDeploymentStatus?.status ?? ''
-        ) &&
-          clusterDeploymentStatus?.is_deployed && (
-            <div className="mt-1.5">
-              <ClusterRunningStatusBadge cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus?.status} />
-            </div>
+        {match(clusterDeploymentStatus?.status)
+          .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', () => null)
+          .otherwise(
+            () =>
+              clusterDeploymentStatus?.is_deployed && (
+                <div className="mt-1.5">
+                  <ClusterRunningStatusBadge
+                    cluster={cluster}
+                    clusterDeploymentStatus={clusterDeploymentStatus?.status}
+                  />
+                </div>
+              )
           )}
       </div>
       <div className="flex flex-wrap gap-2">
