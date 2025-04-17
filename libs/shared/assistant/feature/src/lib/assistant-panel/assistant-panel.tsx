@@ -33,6 +33,7 @@ import { toast, ToastEnum } from '@qovery/shared/ui'
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
   onClick?: () => void
+  stop?: () => void
 }
 
 interface CodeProps extends React.HTMLAttributes<HTMLElement> {
@@ -64,13 +65,19 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, loading, .
         {...props}
       />
       <div className="flex items-end justify-end p-2">
-        <Tooltip content="Send now" delayDuration={400} classNameContent="z-10">
+        <Tooltip content={loading ? "Stop generation" : "Send now"} delayDuration={400} classNameContent="z-10">
           <Button
             type="button"
             variant="surface"
             radius="full"
             className="relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 dark:text-white"
-            onClick={onClick}
+            onClick={() => {
+              if (loading) {
+                stop?.()
+              } else {
+                onClick?.()
+              }
+            }}
             loading={loading}
           >
             <Icon iconName="arrow-up" className={loading ? 'opacity-0' : ''} />
@@ -169,6 +176,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const [displayedStreamingMessage, setDisplayedStreamingMessage] = useState('')
   const [isScrollFocus, setIsScrollFocus] = useState(false)
   const [isFinish, setIsFinish] = useState(false)
+  const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
 
   const pendingThreadId = useRef<string>()
@@ -307,6 +315,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     setIsFinish(false)
     setStreamingMessage('')
     setDisplayedStreamingMessage('')
+    setIsStopped(false)
     setLoadingText("Loading...")
     let fullContent = ''
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
@@ -337,6 +346,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
           threadId,
           withContext ? context : { organization: context.organization },
           (chunk) => {
+            if (isStopped) return
             try {
               const parsed = JSON.parse(chunk.replace(/^data: /, ''))
               if (parsed.type === 'chunk' && parsed.content) {
@@ -382,20 +392,33 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     }
     if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
 
-    let i = displayedStreamingMessage.length
+  }, [streamingMessage, displayedStreamingMessage])
+
+
+  useEffect(() => {
+    if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) return
     let interval: NodeJS.Timeout
+    let indexRef = { current: displayedStreamingMessage.length }
 
     interval = setInterval(() => {
+      const nextChar = streamingMessage[indexRef.current]
+      if (nextChar === undefined) {
+        clearInterval(interval)
+        return
+      }
 
       setDisplayedStreamingMessage((prev) => {
-        const nextChar = streamingMessage[i]
-        i++
+        if (!streamingMessage.startsWith(prev + nextChar)) {
+          clearInterval(interval)
+          return streamingMessage
+        }
+        indexRef.current++
         return prev + nextChar
       })
-    }, 5)
+    }, 1)
 
     return () => clearInterval(interval)
-  }, [streamingMessage, displayedStreamingMessage])
+  }, [streamingMessage])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 
@@ -960,6 +983,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                     }}
                     onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
                     loading={isLoading}
+                    stop={() => setIsStopped(true)}
                   />
                 </div>
                 {appStatus && appStatus.status ? (
