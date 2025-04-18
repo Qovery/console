@@ -197,10 +197,9 @@ export function ClusterCredentialsModal({
       <ModalCrud
         title={`${isEdit ? `Edit` : 'Create new'} credentials`}
         description={
-          <>
+          <span className="flex flex-col gap-2">
             Follow these steps and give Qovery access to your {cloudProvider?.cloud_provider ?? 'AWS'} account.
             <ExternalLink
-              className="mt-2"
               href={match(cloudProvider?.cloud_provider ?? 'AWS')
                 .with(
                   'AWS',
@@ -223,7 +222,7 @@ export function ClusterCredentialsModal({
             >
               Documentation
             </ExternalLink>
-          </>
+          </span>
         }
         onSubmit={onSubmit}
         onClose={onClose}
@@ -275,6 +274,39 @@ export function ClusterCredentialsModal({
               />
             )}
           />
+          {watchType === 'STATIC' && (
+            <>
+              {cloudProvider?.cloud_provider === 'AWS' && (
+                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                  <h2 className="text-sm font-medium text-neutral-400">1. Create a user for Qovery</h2>
+                  <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
+                  <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
+                    How to create new credentials
+                  </ExternalLink>
+                </div>
+              )}
+              {cloudProvider?.cloud_provider === 'GCP' && (
+                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                  <h2 className="text-sm font-medium text-neutral-400">
+                    1. Connect to your GCP Console and create/open a project
+                  </h2>
+                  <p className="text-sm text-neutral-350">Make sure you are connected to the right GCP account</p>
+                  <ExternalLink href="https://console.cloud.google.com/" size="sm">
+                    https://console.cloud.google.com/
+                  </ExternalLink>
+                </div>
+              )}
+              {cloudProvider?.cloud_provider === 'SCW' && (
+                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                  <h2 className="text-sm font-medium text-neutral-400">1. Generate Access key Id/Secret Access Key</h2>
+                  <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
+                  <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
+                    How to create new credentials
+                  </ExternalLink>
+                </div>
+              )}
+            </>
+          )}
           {watchType === 'STS' ? (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
@@ -319,7 +351,7 @@ export function ClusterCredentialsModal({
                   name="role_arn"
                   control={methods.control}
                   rules={{
-                    required: 'Please enter a role ARN.',
+                    required: 'Please enter a role ARN',
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
@@ -334,7 +366,8 @@ export function ClusterCredentialsModal({
               </div>
             </div>
           ) : (
-            <>
+            <div className="flex flex-col gap-4 rounded border border-neutral-250 p-4">
+              <h2 className="text-sm font-medium text-neutral-400">2. Fill these information</h2>
               <Controller
                 name="name"
                 control={methods.control}
@@ -520,7 +553,7 @@ export function ClusterCredentialsModal({
                   )}
                 />
               )}
-            </>
+            </div>
           )}
         </div>
       </ModalCrud>
