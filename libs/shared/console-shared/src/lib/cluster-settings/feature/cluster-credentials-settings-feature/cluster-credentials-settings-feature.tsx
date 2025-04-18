@@ -1,9 +1,9 @@
 import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
+import { ClusterCredentialsModal } from '@qovery/domains/clusters/feature'
 import { useModal } from '@qovery/shared/ui'
-import ClusterCredentialsSettings from '../../ui/cluster-credentials-settings/cluster-credentials-settings'
-import CreateEditCredentialsModalFeature from '../create-edit-credentials-modal-feature/create-edit-credentials-modal-feature'
+import { ClusterCredentialsSettings } from '../../ui/cluster-credentials-settings/cluster-credentials-settings'
 
 export interface ClusterCredentialsSettingsFeatureProps {
   cloudProvider?: CloudProviderEnum
@@ -20,17 +20,19 @@ export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCred
   const openCredentialsModal = (id?: string, onChange?: (e: string | string[]) => void) => {
     openModal({
       content: (
-        <CreateEditCredentialsModalFeature
-          currentCredential={credentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
-          cloudProvider={cloudProvider!}
+        <ClusterCredentialsModal
+          organizationId={organizationId}
+          clusterId={clusterId}
           onClose={(response) => {
             response && onChange?.(response.id)
             closeModal()
           }}
-          organizationId={organizationId}
-          clusterId={clusterId}
+          credential={credentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
         />
       ),
+      options: {
+        width: 680,
+      },
     })
   }
 

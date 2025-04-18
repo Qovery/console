@@ -1,11 +1,11 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import CreateEditCredentialsModal, { type CreateEditCredentialsModalProps } from './create-edit-credentials-modal'
+import ClusterCredentialsModal, { type ClusterCredentialsModalProps } from './cluster-credentials-modal'
 
-let props: CreateEditCredentialsModalProps
+let props: ClusterCredentialsModalProps
 
-describe('CreateEditCredentialsModal', () => {
+describe('ClusterCredentialsModal', () => {
   beforeEach(() => {
     props = {
       onClose: jest.fn(),
@@ -22,7 +22,7 @@ describe('CreateEditCredentialsModal', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
@@ -30,7 +30,7 @@ describe('CreateEditCredentialsModal', () => {
     props.cloudProvider = CloudProviderEnum.AWS
 
     renderWithProviders(
-      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
           access_key_id: 'access-key-id',
@@ -48,7 +48,7 @@ describe('CreateEditCredentialsModal', () => {
     props.cloudProvider = CloudProviderEnum.SCW
 
     renderWithProviders(
-      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
           scaleway_access_key: 'scaleway-access-key',
@@ -69,7 +69,7 @@ describe('CreateEditCredentialsModal', () => {
     props.cloudProvider = CloudProviderEnum.GCP
 
     const { getByDisplayValue } = renderWithProviders(
-      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
           gcp_credentials: 'gcp-credentials-json',
@@ -82,7 +82,7 @@ describe('CreateEditCredentialsModal', () => {
 
   it('should submit the form on click AWS', async () => {
     const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<CreateEditCredentialsModal {...props} />, {
+      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
         defaultValues: {
           name: 'credentials',
         },
