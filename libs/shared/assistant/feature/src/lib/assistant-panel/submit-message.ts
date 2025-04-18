@@ -96,8 +96,23 @@ export const submitMessage = async (
         if (done) break
 
         const chunk = decoder.decode(value, { stream: true })
-        accumulatedResponse += chunk
-        onStream(chunk)
+
+        const parseSSE = (data: string): string[] => {
+          return data
+            .split('\n\n')
+            .map(block =>
+              block
+                .split('\n')
+                .filter(line => line.startsWith('data:'))
+                .map(line => line.slice(5).trim())
+                .join('')
+            )
+            .filter(Boolean)
+        }
+
+        for (const cleanChunk of parseSSE(chunk)) {
+          onStream(cleanChunk)
+        }
       }
 
       const messages = await fetchThread(userSub, organizationId, _threadId, token)
