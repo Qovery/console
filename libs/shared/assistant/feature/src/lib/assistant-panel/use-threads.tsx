@@ -17,7 +17,7 @@ interface UseThreadsReturn {
   refetchThreads: () => Promise<void>
 }
 
-export const useThreads = (organizationId: string, threadId?: string): UseThreadsReturn => {
+export const useThreads = (organizationId: string, owner: string, threadId?: string): UseThreadsReturn => {
   const { getAccessTokenSilently } = useAuth0()
   const [threads, setThreads] = useState<Thread[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -29,7 +29,7 @@ export const useThreads = (organizationId: string, threadId?: string): UseThread
       setError(null)
 
       const token = await getAccessTokenSilently()
-      const response = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread`, {
+      const response = await fetch(`${HACKATHON_API_BASE_URL}/owner/${owner}/organization/${organizationId}/thread`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
