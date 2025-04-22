@@ -428,37 +428,43 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const panel = panelRef.current
-    if (!panel) return
+    const applyPanelSize = () => {
+      const panel = panelRef.current
+      if (!panel) return
 
-    if (expand) {
-      panel.style.width = 'calc(100vw - 32px)'
-      panel.style.height = 'calc(100vh - 32px)'
-      panel.style.top = '1rem'
-      panel.style.left = '1rem'
-    } else {
-      const size = localStorage.getItem(STORAGE_KEY)
-      if (size) {
-        try {
-          const { width, height } = JSON.parse(size)
-          panel.style.width = `${width}px`
-          panel.style.height = `${height}px`
-          panel.style.bottom = '8px'
-          panel.style.right = '8px'
-          panel.style.top = ''
-          panel.style.left = ''
-        } catch (e) {
-          console.error('Failed to apply panel size from localStorage', e)
-        }
+      if (expand) {
+        panel.style.width = 'calc(100vw - 32px)'
+        panel.style.height = 'calc(100vh - 32px)'
+        panel.style.top = '1rem'
+        panel.style.left = '1rem'
+        panel.style.bottom = ''
+        panel.style.right = ''
       } else {
+        const size = localStorage.getItem(STORAGE_KEY)
+        if (size) {
+          try {
+            const { width, height } = JSON.parse(size)
+            panel.style.width = `${Math.min(width, window.innerWidth * 0.9)}px`
+            panel.style.height = `${Math.min(height, window.innerHeight * 0.9)}px`
+          } catch (e) {
+            console.error('Failed to apply panel size from localStorage', e)
+            panel.style.width = `${Math.min(480, window.innerWidth * 0.9)}px`
+            panel.style.height = `${Math.min(600, window.innerHeight * 0.9)}px`
+          }
+        } else {
+          panel.style.width = `${Math.min(480, window.innerWidth * 0.9)}px`
+          panel.style.height = `${Math.min(600, window.innerHeight * 0.9)}px`
+        }
         panel.style.top = ''
         panel.style.left = ''
         panel.style.bottom = '8px'
         panel.style.right = '8px'
-        panel.style.width = `480px`
-        panel.style.height = `600px`
       }
     }
+
+    applyPanelSize()
+    window.addEventListener('resize', applyPanelSize)
+    return () => window.removeEventListener('resize', applyPanelSize)
   }, [expand, style])
 
   const startResize = (e: React.MouseEvent) => {
@@ -478,8 +484,10 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     const onMouseMove = (e: MouseEvent) => {
       const dx = startX - e.clientX
       const dy = startY - e.clientY
-      const newWidth = Math.max(startWidth + dx, 450)
-      const newHeight = Math.max(startHeight + dy, 450)
+      const maxWidth = window.innerWidth * 0.9
+      const maxHeight = window.innerHeight * 0.9
+      const newWidth = Math.min(Math.max(startWidth + dx, 450), maxWidth)
+      const newHeight = Math.min(Math.max(startHeight + dy, 600), maxHeight)
       panel.style.width = `${newWidth}px`
       panel.style.height = `${newHeight}px`
       panel.style.left = `${startLeft - (newWidth - startWidth)}px`
