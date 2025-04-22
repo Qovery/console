@@ -187,7 +187,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     threads = [],
     error: errorThreads,
     isLoading: isLoadingThreads,
-  } = useThreads(context?.organization?.id ?? '', threadId)
+  } = useThreads(context?.organization?.id ?? '', user?.sub ?? '', threadId)
   const { thread, setThread } = useThread({
     organizationId: context?.organization?.id ?? '',
     threadId,

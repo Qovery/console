@@ -36,7 +36,7 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const createThreadResponse = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread`, {
+      const createThreadResponse = await fetch(`${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ export const submitMessage = async (
 
     // Then, send the message to the thread
     const messageResponse = await fetch(
-      `${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread/${_threadId}/text`,
+      `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${_threadId}/text`,
       {
         method: 'POST',
         headers: {

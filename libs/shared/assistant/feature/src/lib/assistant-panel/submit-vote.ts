@@ -32,7 +32,7 @@ export async function submitVote(
             throw new Error('Message ID is required but not provided')
         }
 
-        const response = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/message/${messageId}/vote`, {
+        const response = await fetch(`${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/message/${messageId}/vote`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,

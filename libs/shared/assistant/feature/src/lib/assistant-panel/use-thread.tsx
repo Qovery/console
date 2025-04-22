@@ -17,7 +17,7 @@ interface UseCurrentThreadResult {
 
 export async function fetchThread(userSub: string, organizationId: string, threadId: string, token: string) {
 
-  const response = await fetch(`${HACKATHON_API_BASE_URL}/organization/${organizationId}/thread/${threadId}?user_sub=${userSub}`, {
+  const response = await fetch(`${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
