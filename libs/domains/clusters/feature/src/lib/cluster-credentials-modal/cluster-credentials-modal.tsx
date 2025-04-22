@@ -40,6 +40,7 @@ export interface ClusterCredentialsModalProps {
   clusterId: string
   onClose: (response?: ClusterCredentials) => void
   credential?: ClusterCredentials
+  cloudProvider?: CloudProviderEnum
 }
 
 export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum) => {
@@ -48,14 +49,26 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
   }
 
   return match(cloudProvider)
-    .with('AWS', (cp) => ({
-      cloudProvider: cp,
-      payload: {
-        ...currentData,
-        access_key_id: data['access_key_id'],
-        secret_access_key: data['secret_access_key'],
-      },
-    }))
+    .with('AWS', (cp) => {
+      if (data['type'] === 'STS') {
+        return {
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            role_arn: data['role_arn'],
+          },
+        }
+      }
+
+      return {
+        cloudProvider: cp,
+        payload: {
+          ...currentData,
+          access_key_id: data['access_key_id'],
+          secret_access_key: data['secret_access_key'],
+        },
+      }
+    })
     .with('SCW', (cp) => ({
       cloudProvider: cp,
       payload: {
@@ -80,18 +93,55 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
     .exhaustive()
 }
 
+function CalloutEdit({
+  isEdit,
+  organizationId,
+  clusterId,
+}: {
+  isEdit: boolean
+  organizationId: string
+  clusterId: string
+}) {
+  if (!isEdit) return null
+
+  return (
+    <Callout.Root color="yellow">
+      <Callout.Icon>
+        <Icon iconName="circle-exclamation" iconStyle="regular" />
+      </Callout.Icon>
+      <Callout.Text>
+        <Callout.TextDescription className="flex flex-col gap-1">
+          The credential change won't be applied to the mirroring registry of this cluster. Make sure to update the
+          credentials properly in this cluster's mirroring registry section.
+          <ExternalLink
+            className="items-center"
+            href={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL}
+          >
+            Go to mirroring registry section
+          </ExternalLink>
+        </Callout.TextDescription>
+      </Callout.Text>
+    </Callout.Root>
+  )
+}
+
 export function ClusterCredentialsModal({
   organizationId,
   clusterId,
   onClose,
   credential,
+  cloudProvider = 'AWS',
 }: ClusterCredentialsModalProps) {
   const { enableAlertClickOutside } = useModal()
 
-  const { data: cloudProvider } = useClusterCloudProviderInfo({
+  const { data: cloudProviderInfo } = useClusterCloudProviderInfo({
     organizationId,
     clusterId,
+    disabled: !!cloudProvider,
   })
+
+  const cloudProviderLocal = cloudProviderInfo?.cloud_provider ?? cloudProvider
+
   const { mutateAsync: createCloudProviderCredential, isLoading: isLoadingCreate } = useCreateCloudProviderCredential()
   const { mutateAsync: editCloudProviderCredential, isLoading: isLoadingEdit } = useEditCloudProviderCredential()
   const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
@@ -119,29 +169,37 @@ export function ClusterCredentialsModal({
     },
   })
 
+  const isEdit = !!credential
+
   const methods = useForm<ClusterCredentialsFormValues>({
     mode: 'onChange',
-    defaultValues: {
-      type: 'STS',
-      name: credential?.name || '',
-      access_key_id: match(credential)
-        .with({ access_key_id: P.string }, (c) => c.access_key_id)
-        .otherwise(() => undefined),
-      scaleway_organization_id: match(credential)
-        .with({ scaleway_organization_id: P.string }, (c) => c.scaleway_organization_id)
-        .otherwise(() => undefined),
-      scaleway_project_id: match(credential)
-        .with({ scaleway_project_id: P.string }, (c) => c.scaleway_project_id)
-        .otherwise(() => undefined),
-      scaleway_access_key: match(credential)
-        .with({ scaleway_access_key: P.string }, (c) => c.scaleway_access_key)
-        .otherwise(() => undefined),
-      scaleway_secret_key: undefined,
-      gcp_credentials: undefined,
-    },
+    defaultValues:
+      credential?.object_type === 'AWS_ROLE' || (!isEdit && cloudProviderLocal === 'AWS')
+        ? {
+            type: 'STS',
+            name: credential?.name || '',
+            role_arn: credential?.role_arn || '',
+          }
+        : {
+            type: 'STATIC',
+            name: credential?.name || '',
+            access_key_id: match(credential)
+              .with({ access_key_id: P.string }, (c) => c.access_key_id)
+              .otherwise(() => undefined),
+            scaleway_organization_id: match(credential)
+              .with({ scaleway_organization_id: P.string }, (c) => c.scaleway_organization_id)
+              .otherwise(() => undefined),
+            scaleway_project_id: match(credential)
+              .with({ scaleway_project_id: P.string }, (c) => c.scaleway_project_id)
+              .otherwise(() => undefined),
+            scaleway_access_key: match(credential)
+              .with({ scaleway_access_key: P.string }, (c) => c.scaleway_access_key)
+              .otherwise(() => undefined),
+            scaleway_secret_key: undefined,
+            gcp_credentials: undefined,
+          },
   })
 
-  const isEdit = !!credential
   const isEditDirty = isEdit && methods.formState.isDirty
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
@@ -153,7 +211,7 @@ export function ClusterCredentialsModal({
       return
     }
 
-    const credentials = handleSubmit(data, cloudProvider?.cloud_provider ?? 'AWS')
+    const credentials = handleSubmit(data, cloudProviderLocal)
 
     try {
       if (credential) {
@@ -180,7 +238,7 @@ export function ClusterCredentialsModal({
       try {
         await deleteCloudProviderCredential({
           organizationId,
-          cloudProvider: cloudProvider?.cloud_provider ?? 'AWS',
+          cloudProvider: cloudProviderLocal ?? 'AWS',
           credentialId: credential.id,
         })
         onClose()
@@ -198,9 +256,9 @@ export function ClusterCredentialsModal({
         title={`${isEdit ? `Edit` : 'Create new'} credentials`}
         description={
           <span className="flex flex-col gap-2">
-            Follow these steps and give Qovery access to your {cloudProvider?.cloud_provider ?? 'AWS'} account.
+            Follow these steps and give Qovery access to your {cloudProviderLocal ?? 'AWS'} account.
             <ExternalLink
-              href={match(cloudProvider?.cloud_provider ?? 'AWS')
+              href={match(cloudProviderLocal ?? 'AWS')
                 .with(
                   'AWS',
                   () =>
@@ -227,56 +285,34 @@ export function ClusterCredentialsModal({
         onSubmit={onSubmit}
         onClose={onClose}
         onDelete={onDelete}
-        deleteButtonLabel="Delete credentials"
         loading={isLoadingCreate || isLoadingEdit}
         isEdit={isEdit}
       >
         <div className="flex flex-col gap-y-4">
-          {isEdit && (
-            <Callout.Root color="yellow">
-              <Callout.Icon>
-                <Icon iconName="circle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextDescription className="flex flex-col gap-1">
-                  The credential change won't be applied to the mirroring registry of this cluster. Make sure to update
-                  the credentials properly in this cluster's mirroring registry section.
-                  <ExternalLink
-                    className="items-center"
-                    href={
-                      CLUSTER_URL(organizationId, clusterId) +
-                      CLUSTER_SETTINGS_URL +
-                      CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
-                    }
-                  >
-                    Go to mirroring registry section
-                  </ExternalLink>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
+          {cloudProviderLocal === 'AWS' && (
+            <Controller
+              name="type"
+              control={methods.control}
+              rules={{
+                required: 'Please enter a name.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Authentication type"
+                  error={error?.message}
+                  options={[
+                    { label: 'Assume role via STS (preferred)', value: 'STS' },
+                    { label: 'Static credentials', value: 'STATIC' },
+                  ]}
+                />
+              )}
+            />
           )}
-          <Controller
-            name="type"
-            control={methods.control}
-            rules={{
-              required: 'Please enter a name.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                onChange={field.onChange}
-                value={field.value}
-                label="Authentication type"
-                error={error?.message}
-                options={[
-                  { label: 'Assume role via STS (preferred)', value: 'STS' },
-                  { label: 'Static credentials', value: 'STATIC' },
-                ]}
-              />
-            )}
-          />
           {watchType === 'STATIC' && (
             <>
-              {cloudProvider?.cloud_provider === 'AWS' && (
+              {cloudProviderLocal === 'AWS' && (
                 <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
                   <h2 className="text-sm font-medium text-neutral-400">1. Create a user for Qovery</h2>
                   <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
@@ -285,7 +321,7 @@ export function ClusterCredentialsModal({
                   </ExternalLink>
                 </div>
               )}
-              {cloudProvider?.cloud_provider === 'GCP' && (
+              {cloudProviderLocal === 'GCP' && (
                 <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
                   <h2 className="text-sm font-medium text-neutral-400">
                     1. Connect to your GCP Console and create/open a project
@@ -296,11 +332,11 @@ export function ClusterCredentialsModal({
                   </ExternalLink>
                 </div>
               )}
-              {cloudProvider?.cloud_provider === 'SCW' && (
+              {cloudProviderLocal === 'SCW' && (
                 <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
                   <h2 className="text-sm font-medium text-neutral-400">1. Generate Access key Id/Secret Access Key</h2>
                   <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
-                  <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
+                  <ExternalLink href="https://www.scaleway.com/en/docs/iam/how-to/create-application/" size="sm">
                     How to create new credentials
                   </ExternalLink>
                 </div>
@@ -323,7 +359,10 @@ export function ClusterCredentialsModal({
                 <p className="text-sm text-neutral-350">
                   Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
                 </p>
-                <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
+                <ExternalLink
+                  href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacks.html"
+                  size="sm"
+                >
                   Cloudformation stack
                 </ExternalLink>
               </div>
@@ -363,6 +402,7 @@ export function ClusterCredentialsModal({
                     />
                   )}
                 />
+                <CalloutEdit isEdit={isEdit} organizationId={organizationId} clusterId={clusterId} />
               </div>
             </div>
           ) : (
@@ -385,7 +425,7 @@ export function ClusterCredentialsModal({
                   />
                 )}
               />
-              {cloudProvider?.cloud_provider === 'AWS' && (
+              {cloudProviderLocal === 'AWS' && (
                 <>
                   <Controller
                     name="access_key_id"
@@ -432,7 +472,7 @@ export function ClusterCredentialsModal({
                   )}
                 </>
               )}
-              {cloudProvider?.cloud_provider === 'SCW' && (
+              {cloudProviderLocal === 'SCW' && (
                 <>
                   <Controller
                     name="scaleway_access_key"
@@ -513,7 +553,7 @@ export function ClusterCredentialsModal({
                   />
                 </>
               )}
-              {cloudProvider?.cloud_provider === 'GCP' && (
+              {cloudProviderLocal === 'GCP' && (
                 <Controller
                   name="gcp_credentials"
                   control={methods.control}
@@ -553,6 +593,7 @@ export function ClusterCredentialsModal({
                   )}
                 />
               )}
+              <CalloutEdit isEdit={isEdit} organizationId={organizationId} clusterId={clusterId} />
             </div>
           )}
         </div>

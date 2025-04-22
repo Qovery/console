@@ -15,18 +15,32 @@ export function SettingsImageRegistryFeature({ containerRegistry }: { containerR
   const { mutate: editContainerRegistry, isLoading: isLoadingEditContainerRegistry } = useEditContainerRegistry()
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const methods = useForm<ContainerRegistryRequest>({
+  const methods = useForm<ContainerRegistryRequest & { type: 'STATIC' | 'STS' }>({
     mode: 'onChange',
     defaultValues: {
+      type: containerRegistry.config?.role_arn ? 'STS' : 'STATIC',
       ...containerRegistry,
     },
   })
 
   const onSubmit = methods.handleSubmit((containerRegistryRequest) => {
+    const { type, ...rest } = containerRegistryRequest
     editContainerRegistry({
       organizationId: organizationId,
       containerRegistryId: containerRegistry.id,
-      containerRegistryRequest,
+      containerRegistryRequest: {
+        ...rest,
+        config:
+          type === 'STS'
+            ? {
+                role_arn: containerRegistryRequest.config?.role_arn,
+                region: containerRegistryRequest.config?.region,
+              }
+            : {
+                role_arn: undefined,
+                ...containerRegistryRequest.config,
+              },
+      },
     })
   })
 

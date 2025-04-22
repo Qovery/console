@@ -28,6 +28,7 @@ export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCred
             closeModal()
           }}
           credential={credentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
+          cloudProvider={cloudProvider}
         />
       ),
       options: {
