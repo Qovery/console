@@ -74,7 +74,7 @@ const ServiceItem = ({
       </span>
 
       <span className="flex items-center gap-3">
-        <span className="flex items-center gap-1 text-ssm text-neutral-350">
+        <span className="flex items-center gap-1 text-ssm font-normal text-neutral-350">
           <Truncate text={project_name} truncateLimit={30} /> <span className="text-neutral-300">/</span>{' '}
           <Truncate text={environment_name} truncateLimit={30} />
           {isFavorite && <Icon iconName="star" iconStyle="solid" className="ml-2 text-yellow-500" />}

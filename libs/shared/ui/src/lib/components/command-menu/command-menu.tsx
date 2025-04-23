@@ -14,7 +14,7 @@ const CommandDialog = forwardRef<ElementRef<typeof CmdK.Dialog>, CommandDialogPr
       contentClassName="modal__content fixed top-[84px] left-1/2"
       overlayClassName="modal__overlay fixed w-full h-screen top-0 left-0 bg-neutral-700/20"
       className={twMerge(
-        'mx-auto w-[516px] overflow-hidden rounded-lg border border-neutral-150 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] transition-transform duration-100',
+        'mx-auto w-[640px] overflow-hidden rounded-lg border border-neutral-150 bg-white shadow-[0_16px_70px_rgba(0,0,0,0.2)] transition-transform duration-100',
         className
       )}
       {...props}
