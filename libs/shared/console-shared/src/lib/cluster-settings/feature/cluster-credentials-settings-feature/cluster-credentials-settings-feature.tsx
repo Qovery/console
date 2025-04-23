@@ -10,7 +10,7 @@ export interface ClusterCredentialsSettingsFeatureProps {
 }
 
 export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCredentialsSettingsFeatureProps) {
-  const { organizationId = '', clusterId = '' } = useParams()
+  const { organizationId = '', clusterId } = useParams()
   const { openModal, closeModal } = useModal()
   const { data: credentials = [], isLoading: isLoadingCloudProviderCredentials } = useCloudProviderCredentials({
     organizationId,

@@ -18,16 +18,12 @@ export function Dropzone({ isDragActive, typeFile = '.env', className }: Dropzon
         className
       )}
     >
-      <div className="flex h-full flex-col items-center justify-center text-center">
-        <Icon iconName="file-arrow-down" className="mb-2 text-xl" />
+      <div className="flex h-full flex-col items-center justify-center text-center text-neutral-350">
+        <Icon iconName="file-arrow-down" iconStyle="regular" className="mb-2 text-xl" />
         {!isDragActive ? (
-          <p>
-            Click to import your {typeFile} file or
-            <br />
-            drag and drop it
-          </p>
+          <p className="text-ssm">Click to import your {typeFile} file or drag and drop it</p>
         ) : (
-          <p>Here!</p>
+          <p className="text-ssm">Here!</p>
         )}
       </div>
     </div>

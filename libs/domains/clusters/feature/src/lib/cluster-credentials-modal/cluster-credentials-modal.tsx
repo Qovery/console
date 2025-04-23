@@ -20,6 +20,7 @@ import {
   ModalCrud,
   useModal,
 } from '@qovery/shared/ui'
+import CopyButton from '../cluster-setup/copy-button/copy-button'
 import { useClusterCloudProviderInfo } from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 
 type ClusterCredentialsFormValues = {
@@ -37,7 +38,7 @@ type ClusterCredentialsFormValues = {
 
 export interface ClusterCredentialsModalProps {
   organizationId: string
-  clusterId: string
+  clusterId?: string
   onClose: (response?: ClusterCredentials) => void
   credential?: ClusterCredentials
   cloudProvider?: CloudProviderEnum
@@ -100,7 +101,7 @@ function CalloutEdit({
 }: {
   isEdit: boolean
   organizationId: string
-  clusterId: string
+  clusterId?: string
 }) {
   if (!isEdit) return null
 
@@ -113,12 +114,14 @@ function CalloutEdit({
         <Callout.TextDescription className="flex flex-col gap-1">
           The credential change won't be applied to the mirroring registry of this cluster. Make sure to update the
           credentials properly in this cluster's mirroring registry section.
-          <ExternalLink
-            className="items-center"
-            href={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL}
-          >
-            Go to mirroring registry section
-          </ExternalLink>
+          {clusterId && (
+            <ExternalLink
+              className="items-center"
+              href={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL}
+            >
+              Go to mirroring registry section
+            </ExternalLink>
+          )}
         </Callout.TextDescription>
       </Callout.Text>
     </Callout.Root>
@@ -136,7 +139,7 @@ export function ClusterCredentialsModal({
 
   const { data: cloudProviderInfo } = useClusterCloudProviderInfo({
     organizationId,
-    clusterId,
+    clusterId: clusterId ?? '',
     disabled: !!cloudProvider,
   })
 
@@ -322,15 +325,33 @@ export function ClusterCredentialsModal({
                 </div>
               )}
               {cloudProviderLocal === 'GCP' && (
-                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
-                  <h2 className="text-sm font-medium text-neutral-400">
-                    1. Connect to your GCP Console and create/open a project
-                  </h2>
-                  <p className="text-sm text-neutral-350">Make sure you are connected to the right GCP account</p>
-                  <ExternalLink href="https://console.cloud.google.com/" size="sm">
-                    https://console.cloud.google.com/
-                  </ExternalLink>
-                </div>
+                <>
+                  <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                    <h2 className="text-sm font-medium text-neutral-400">
+                      1. Connect to your GCP Console and create/open a project
+                    </h2>
+                    <p className="text-sm text-neutral-350">Make sure you are connected to the right GCP account</p>
+                    <ExternalLink href="https://console.cloud.google.com/" size="sm">
+                      https://console.cloud.google.com/
+                    </ExternalLink>
+                  </div>
+                  <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                    <h2 className="text-sm font-medium text-neutral-400">
+                      2. Open the embedded Google shell and run the following command
+                    </h2>
+                    <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                      <div>
+                        <span className="select-none">$ </span>
+                        curl https://hub.qovery.com/files/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
+                        qovery_role qovery-service-account{' '}
+                      </div>
+                      <CopyButton
+                        content=" curl https://hub.qovery.com/files/create_credentials_gcp.sh | \
+bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
+                      />
+                    </div>
+                  </div>
+                </>
               )}
               {cloudProviderLocal === 'SCW' && (
                 <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
@@ -407,7 +428,11 @@ export function ClusterCredentialsModal({
             </div>
           ) : (
             <div className="flex flex-col gap-4 rounded border border-neutral-250 p-4">
-              <h2 className="text-sm font-medium text-neutral-400">2. Fill these information</h2>
+              <h2 className="text-sm font-medium text-neutral-400">
+                {cloudProviderLocal === 'GCP'
+                  ? '3. Download the key.json generated and drag and drop it here'
+                  : '2. Fill these information'}
+              </h2>
               <Controller
                 name="name"
                 control={methods.control}
