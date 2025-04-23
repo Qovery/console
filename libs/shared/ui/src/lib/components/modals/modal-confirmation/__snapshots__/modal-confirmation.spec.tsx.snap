@@ -117,7 +117,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-red-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
           type="submit"
         >
           Confirm
@@ -179,7 +179,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-red-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
           type="submit"
         >
           Confirm

@@ -1,24 +1,59 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import * as useCreateCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
+import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
+import * as useDeleteCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import ClusterCredentialsModal, { type ClusterCredentialsModalProps } from './cluster-credentials-modal'
+import * as useClusterCloudProviderInfoHook from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
+import ClusterCredentialsModal, { type ClusterCredentialsModalProps, handleSubmit } from './cluster-credentials-modal'
+
+jest.mock('@qovery/domains/cloud-providers/feature', () => ({
+  useCreateCloudProviderCredential: jest.fn(),
+  useEditCloudProviderCredential: jest.fn(),
+  useDeleteCloudProviderCredential: jest.fn(),
+}))
+
+jest.mock('../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info', () => ({
+  useClusterCloudProviderInfo: jest.fn(),
+}))
 
 let props: ClusterCredentialsModalProps
+
+const mockCreateCredential = jest.fn()
+const mockEditCredential = jest.fn()
+const mockDeleteCredential = jest.fn()
 
 describe('ClusterCredentialsModal', () => {
   beforeEach(() => {
     props = {
+      organizationId: '000',
+      clusterId: '000',
       onClose: jest.fn(),
-      onSubmit: jest.fn((e) => e.preventDefault()),
-      loading: false,
-      isEdit: false,
       cloudProvider: CloudProviderEnum.AWS,
     }
+
+    jest.spyOn(useCreateCloudProviderCredentialHook, 'useCreateCloudProviderCredential').mockReturnValue({
+      mutateAsync: mockCreateCredential,
+      isLoading: false,
+    })
+
+    jest.spyOn(useEditCloudProviderCredentialHook, 'useEditCloudProviderCredential').mockReturnValue({
+      mutateAsync: mockEditCredential,
+      isLoading: false,
+    })
+
+    jest.spyOn(useDeleteCloudProviderCredentialHook, 'useDeleteCloudProviderCredential').mockReturnValue({
+      mutateAsync: mockDeleteCredential,
+    })
+
+    jest.spyOn(useClusterCloudProviderInfoHook, 'useClusterCloudProviderInfo').mockReturnValue({
+      data: { cloud_provider: 'AWS' },
+      isLoading: false,
+    })
   })
 
   afterEach(() => {
     jest.clearAllMocks()
-    jest.restoreAllMocks()
   })
 
   it('should render successfully', () => {
@@ -26,81 +61,72 @@ describe('ClusterCredentialsModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the form with fields AWS', async () => {
-    props.cloudProvider = CloudProviderEnum.AWS
+  it('should render AWS credential form with STS as default', () => {
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
 
-    renderWithProviders(
-      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
-        defaultValues: {
-          name: 'credentials',
-          access_key_id: 'access-key-id',
-          secret_access_key: 'secret-access-key',
-        },
-      })
-    )
-
-    screen.getByDisplayValue('credentials')
-    screen.getByDisplayValue('access-key-id')
-    screen.getByDisplayValue('secret-access-key')
+    expect(screen.getByText('Authentication type')).toBeInTheDocument()
+    expect(screen.getByText('3. Insert here the role ARN')).toBeInTheDocument()
+    expect(screen.getByLabelText('Name')).toBeInTheDocument()
   })
 
-  it('should render the form with fields SCW', async () => {
-    props.cloudProvider = CloudProviderEnum.SCW
+  it('should handle STS form submission', async () => {
+    mockCreateCredential.mockResolvedValue({ id: 'new-cred' })
 
-    renderWithProviders(
-      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
-        defaultValues: {
-          name: 'credentials',
-          scaleway_access_key: 'scaleway-access-key',
-          scaleway_secret_key: 'scaleway-secret-key',
-          scaleway_project_id: 'scaleway-project-id',
-          scaleway_organization_id: 'scaleway-organization-id',
-        },
-      })
-    )
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
 
-    screen.getByDisplayValue('credentials')
-    screen.getByDisplayValue('scaleway-access-key')
-    screen.getByDisplayValue('scaleway-secret-key')
-    screen.getByDisplayValue('scaleway-project-id')
+    const nameInput = screen.getByTestId('input-name')
+    const roleArnInput = screen.getByTestId('input-text')
+    const submitButton = screen.getByTestId('submit-button')
+
+    await userEvent.type(nameInput, 'test-credential')
+    await userEvent.type(roleArnInput, 'arn:aws:iam::123456789012:role/test-role')
+    await userEvent.click(submitButton)
+
+    // Verify API was called
+    expect(mockCreateCredential).toHaveBeenCalled()
+    expect(props.onClose).toHaveBeenCalled()
   })
 
-  it('should render the form with fields GCP', async () => {
-    props.cloudProvider = CloudProviderEnum.GCP
+  it('should handle edit mode', async () => {
+    mockEditCredential.mockResolvedValue({ id: 'cred-123', name: 'updated-name' })
 
-    const { getByDisplayValue } = renderWithProviders(
-      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
-        defaultValues: {
-          name: 'credentials',
-          gcp_credentials: 'gcp-credentials-json',
-        },
-      })
-    )
+    props.credential = {
+      id: 'cred-123',
+      name: 'existing-cred',
+      role_arn: 'arn:aws:role',
+      object_type: 'AWS_ROLE',
+    }
 
-    getByDisplayValue('credentials')
+    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+    expect(screen.getByText('Edit credentials')).toBeInTheDocument()
+    expect(screen.getByText(/The credential change won't be applied/)).toBeInTheDocument()
+
+    const nameInput = screen.getByTestId('input-name')
+    await userEvent.clear(nameInput)
+    await userEvent.type(nameInput, 'updated-name')
+
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
+
+    expect(mockEditCredential).toHaveBeenCalled()
   })
 
-  it('should submit the form on click AWS', async () => {
-    const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<ClusterCredentialsModal {...props} />, {
-        defaultValues: {
-          name: 'credentials',
-        },
-      })
-    )
+  it('should format AWS STS credentials correctly with handleSubmit', () => {
+    const data = {
+      name: 'test-cred',
+      type: 'STS',
+      role_arn: 'arn:aws:iam::123456789012:role/test-role',
+    }
 
-    const button = screen.getByTestId('submit-button')
-    const inputName = screen.getByTestId('input-name')
-    const inputAccessKey = screen.getByTestId('input-access-key')
-    const inputSecretKey = screen.getByTestId('input-secret-key')
+    const result = handleSubmit(data, CloudProviderEnum.AWS)
 
-    await userEvent.type(inputName, 'test')
-    await userEvent.type(inputAccessKey, 'access')
-    await userEvent.type(inputSecretKey, 'secret')
-
-    await userEvent.click(button)
-
-    expect(button).toBeEnabled()
-    expect(props.onSubmit).toHaveBeenCalled()
+    expect(result).toEqual({
+      cloudProvider: 'AWS',
+      payload: {
+        name: 'test-cred',
+        role_arn: 'arn:aws:iam::123456789012:role/test-role',
+      },
+    })
   })
 })
