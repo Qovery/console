@@ -258,31 +258,27 @@ export function ClusterCredentialsModal({
       <ModalCrud
         title={`${isEdit ? `Edit` : 'Create new'} credentials`}
         description={
-          <span className="flex flex-col gap-2">
+          <span className="flex gap-1">
             Follow these steps and give Qovery access to your {cloudProviderLocal} account.
-            <ExternalLink
-              href={match(cloudProviderLocal)
-                .with(
-                  'AWS',
-                  () =>
-                    'https://hub.qovery.com/docs/getting-started/install-qovery/aws/cluster-managed-by-qovery/create-credentials'
-                )
-                .with(
-                  'SCW',
-                  () =>
-                    'https://hub.qovery.com/docs/getting-started/install-qovery/scaleway/cluster-managed-by-qovery/create-credentials'
-                )
-                .with(
-                  'GCP',
-                  () =>
-                    'https://hub.qovery.com/docs/getting-started/install-qovery/gcp/cluster-managed-by-qovery/create-credentials/'
-                )
-                .with('ON_PREMISE', () => '')
-                .exhaustive()}
-              size="sm"
-            >
-              Documentation
-            </ExternalLink>
+            {((watchType === 'STS' && cloudProviderLocal === 'AWS') || cloudProviderLocal === 'GCP') && (
+              <ExternalLink
+                href={match(cloudProviderLocal)
+                  .with(
+                    'AWS',
+                    () =>
+                      'https://hub.qovery.com/docs/getting-started/install-qovery/aws/cluster-managed-by-qovery/create-credentials'
+                  )
+                  .with(
+                    'GCP',
+                    () =>
+                      'https://hub.qovery.com/docs/getting-started/install-qovery/gcp/cluster-managed-by-qovery/create-credentials/'
+                  )
+                  .exhaustive()}
+                size="sm"
+              >
+                Learn more
+              </ExternalLink>
+            )}
           </span>
         }
         onSubmit={onSubmit}
@@ -316,17 +312,20 @@ export function ClusterCredentialsModal({
           {watchType === 'STATIC' && (
             <>
               {cloudProviderLocal === 'AWS' && (
-                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                   <h2 className="text-sm font-medium text-neutral-400">1. Create a user for Qovery</h2>
                   <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
-                  <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
+                  <ExternalLink
+                    href="https://hub.qovery.com/docs/getting-started/install-qovery/aws/cluster-managed-by-qovery/create-credentials"
+                    size="sm"
+                  >
                     How to create new credentials
                   </ExternalLink>
                 </div>
               )}
               {cloudProviderLocal === 'GCP' && (
                 <>
-                  <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                  <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                     <h2 className="text-sm font-medium text-neutral-400">
                       1. Connect to your GCP Console and create/open a project
                     </h2>
@@ -335,7 +334,7 @@ export function ClusterCredentialsModal({
                       https://console.cloud.google.com/
                     </ExternalLink>
                   </div>
-                  <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                  <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                     <h2 className="text-sm font-medium text-neutral-400">
                       2. Open the embedded Google shell and run the following command
                     </h2>
@@ -354,10 +353,13 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                 </>
               )}
               {cloudProviderLocal === 'SCW' && (
-                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+                <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                   <h2 className="text-sm font-medium text-neutral-400">1. Generate Access key Id/Secret Access Key</h2>
                   <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
-                  <ExternalLink href="https://www.scaleway.com/en/docs/iam/how-to/create-application/" size="sm">
+                  <ExternalLink
+                    href="https://hub.qovery.com/docs/getting-started/install-qovery/scaleway/cluster-managed-by-qovery/create-credentials"
+                    size="sm"
+                  >
                     How to create new credentials
                   </ExternalLink>
                 </div>
@@ -366,14 +368,14 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           )}
           {watchType === 'STS' ? (
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                 <h2 className="text-sm font-medium text-neutral-400">1. Connect to your AWS Console</h2>
                 <p className="text-sm text-neutral-350">Make sure you are connected to the right AWS account</p>
                 <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
                   https://aws.amazon.com/fr/console/
                 </ExternalLink>
               </div>
-              <div className="flex flex-col gap-1.5 rounded border border-neutral-250 p-4">
+              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
                 <h2 className="text-sm font-medium text-neutral-400">
                   2. Create a role for Qovery and grant assume role permissions
                 </h2>
