@@ -143,7 +143,7 @@ export function ClusterCredentialsModal({
     disabled: !!cloudProvider,
   })
 
-  const cloudProviderLocal = cloudProviderInfo?.cloud_provider ?? cloudProvider
+  const cloudProviderLocal = cloudProviderInfo?.cloud_provider ?? cloudProvider ?? 'AWS'
 
   const { mutateAsync: createCloudProviderCredential, isLoading: isLoadingCreate } = useCreateCloudProviderCredential()
   const { mutateAsync: editCloudProviderCredential, isLoading: isLoadingEdit } = useEditCloudProviderCredential()
@@ -241,7 +241,7 @@ export function ClusterCredentialsModal({
       try {
         await deleteCloudProviderCredential({
           organizationId,
-          cloudProvider: cloudProviderLocal ?? 'AWS',
+          cloudProvider: cloudProviderLocal,
           credentialId: credential.id,
         })
         onClose()
@@ -259,9 +259,9 @@ export function ClusterCredentialsModal({
         title={`${isEdit ? `Edit` : 'Create new'} credentials`}
         description={
           <span className="flex flex-col gap-2">
-            Follow these steps and give Qovery access to your {cloudProviderLocal ?? 'AWS'} account.
+            Follow these steps and give Qovery access to your {cloudProviderLocal} account.
             <ExternalLink
-              href={match(cloudProviderLocal ?? 'AWS')
+              href={match(cloudProviderLocal)
                 .with(
                   'AWS',
                   () =>
