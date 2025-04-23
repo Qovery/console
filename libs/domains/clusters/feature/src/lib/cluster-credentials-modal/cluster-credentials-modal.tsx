@@ -360,7 +360,7 @@ export function ClusterCredentialsModal({
                   Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
                 </p>
                 <ExternalLink
-                  href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacks.html"
+                  href="https://console.aws.amazon.com/cloudformation/home?#/stacks/quickcreate?templateURL=https%3A%2F%2Fs3.amazonaws.com%2Fcloudformation-qovery-role-creation%2Ftemplate.json&stackName=qovery-role-creation"
                   size="sm"
                 >
                   Cloudformation stack
