@@ -4,7 +4,7 @@ import {
   ContainerRegistryKindEnum,
   type ContainerRegistryResponse,
 } from 'qovery-typescript-axios'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -366,7 +366,7 @@ export function ContainerRegistryForm({
 
       <hr />
 
-      {cluster?.cloud_provider === 'AWS' && (
+      {(cluster?.cloud_provider === 'AWS' || watchKind === ContainerRegistryKindEnum.ECR) && (
         <Controller
           name="type"
           control={methods.control}
