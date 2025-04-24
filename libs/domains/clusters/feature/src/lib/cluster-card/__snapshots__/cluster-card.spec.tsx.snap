@@ -7,10 +7,10 @@ exports[`ClusterCard should match snapshot 1`] = `
     href="/organization/org-id/cluster/cluster-id/settings"
   >
     <div
-      class="flex items-start justify-between gap-1"
+      class="flex items-start justify-between gap-2"
     >
       <div
-        class="flex items-center gap-3"
+        class="flex min-w-0 flex-1 items-center gap-3"
       >
         <span
           class="relative inline-block"
@@ -42,7 +42,7 @@ exports[`ClusterCard should match snapshot 1`] = `
             </span>
           </span>
           <span
-            class="absolute bottom-0 translate-x-1/2 translate-y-1/2 right-4 top-0"
+            class="absolute bottom-0 translate-x-1/2 translate-y-1/2 right-4 top-0 flex-shrink-0"
           >
             <div
               class="flex h-6 w-6 items-center justify-center rounded-full bg-white p-0.5"
@@ -132,10 +132,10 @@ exports[`ClusterCard should match snapshot 1`] = `
           </span>
         </span>
         <div
-          class="flex flex-col gap-1.5"
+          class="flex min-w-0 flex-1 flex-col gap-1"
         >
           <span
-            class=" block text-base font-semibold leading-snug text-neutral-400"
+            class="block truncate text-base font-semibold leading-snug text-neutral-400"
             data-state="closed"
           >
             Test Cluster

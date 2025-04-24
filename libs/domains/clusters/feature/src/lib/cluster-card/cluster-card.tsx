@@ -74,12 +74,12 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
       to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}
       className="duration-50 flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm outline outline-2 outline-transparent transition-all hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
     >
-      <div className="flex items-start justify-between gap-1">
-        <div className="flex items-center gap-3">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <Indicator
             align="end"
             side="right"
-            className="right-4 top-0"
+            className="right-4 top-0 flex-shrink-0"
             content={
               cluster.cloud_provider !== 'ON_PREMISE' && (
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white p-0.5">
@@ -90,9 +90,11 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           >
             <ClusterAvatar cluster={cluster} className="h-9 w-9" />
           </Indicator>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <Tooltip content={cluster.id} side="bottom">
-              <span className=" block text-base font-semibold leading-snug text-neutral-400">{cluster.name}</span>
+              <span className="block truncate text-base font-semibold leading-snug text-neutral-400">
+                {cluster.name}
+              </span>
             </Tooltip>
             <Subtitle cluster={cluster} clusterDeploymentStatus={clusterDeploymentStatus} />
           </div>
@@ -102,7 +104,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           .otherwise(
             () =>
               clusterDeploymentStatus?.is_deployed && (
-                <div className="mt-1.5">
+                <div className="mt-1.5 flex-shrink-0">
                   <ClusterRunningStatusBadge
                     cluster={cluster}
                     clusterDeploymentStatus={clusterDeploymentStatus?.status}
