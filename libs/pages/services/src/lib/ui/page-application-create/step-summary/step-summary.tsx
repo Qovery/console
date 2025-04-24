@@ -116,9 +116,11 @@ export function StepSummary({
                   </li>
                 </>
               )}
-              <li>
-                <strong className="font-medium">Image entrypoint:</strong> {generalData.image_entry_point}
-              </li>
+              {generalData.image_entry_point && (
+                <li>
+                  <strong className="font-medium">Image entrypoint:</strong> {generalData.image_entry_point}
+                </li>
+              )}
               {generalData.cmd_arguments && (
                 <li>
                   <strong className="font-medium">CMD arguments:</strong>{' '}

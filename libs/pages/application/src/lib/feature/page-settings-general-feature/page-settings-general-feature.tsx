@@ -45,7 +45,7 @@ export const handleGitApplicationSubmit = (
 
     if (data.build_mode === BuildModeEnum.DOCKER) {
       cloneApplication.dockerfile_path = data.dockerfile_path
-      cloneApplication.docker_target_build_stage = data.docker_target_build_stage
+      cloneApplication.docker_target_build_stage = data.docker_target_build_stage || undefined
     } else {
       cloneApplication.dockerfile_path = undefined
       cloneApplication.docker_target_build_stage = undefined
@@ -140,7 +140,8 @@ export const handleJobSubmit = (
           // whereas lifecycle job info are in DockerfileSettingsData
           // so we need to keep existing data
           dockerfile_path: data.dockerfile_path ?? job.source.docker.dockerfile_path,
-          docker_target_build_stage: data.docker_target_build_stage ?? job.source.docker.docker_target_build_stage,
+          docker_target_build_stage:
+            (data.docker_target_build_stage ?? job.source.docker.docker_target_build_stage) || undefined,
           dockerfile_raw: job.source.docker.dockerfile_raw,
         },
       },

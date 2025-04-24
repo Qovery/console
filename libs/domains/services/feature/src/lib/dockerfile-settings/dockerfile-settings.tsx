@@ -245,7 +245,6 @@ export function DockerfileSettings({
               )}
             />
             <Controller
-              key="docker_target_build_stage"
               name="docker_target_build_stage"
               control={control}
               render={({ field, fieldState: { error } }) => (

@@ -116,6 +116,7 @@ function refactoApplication({ service: application, request = {} }: applicationP
     auto_deploy: application.auto_deploy,
     ports: application.ports,
     dockerfile_path: application.dockerfile_path || undefined,
+    docker_target_build_stage: application.docker_target_build_stage || undefined,
     healthchecks: application.healthchecks ?? {},
     max_running_instances: application.max_running_instances,
     min_running_instances: application.min_running_instances,
@@ -171,7 +172,7 @@ function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
     jobRequest.source = {
       docker: {
         dockerfile_path: job.source.docker?.dockerfile_path,
-        docker_target_build_stage: job.source.docker?.docker_target_build_stage,
+        docker_target_build_stage: job.source.docker?.docker_target_build_stage || undefined,
         dockerfile_raw: job.source.docker?.dockerfile_raw,
         git_repository: {
           provider: job.source.docker?.git_repository?.provider,

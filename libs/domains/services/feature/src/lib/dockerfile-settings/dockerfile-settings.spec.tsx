@@ -87,8 +87,6 @@ describe('DockerfileSettings', () => {
     )
     await userEvent.clear(screen.getByRole('textbox', { name: /Dockerfile path/i }))
     await userEvent.type(screen.getByRole('textbox', { name: /Dockerfile path/i }), 'CustomDockerfile')
-
-    // Fill the docker_target_build_stage field
     await userEvent.type(screen.getByRole('textbox', { name: /Dockerfile stage/i }), 'build-stage')
 
     await userEvent.click(screen.getByRole('button', { name: /Submit/i }))

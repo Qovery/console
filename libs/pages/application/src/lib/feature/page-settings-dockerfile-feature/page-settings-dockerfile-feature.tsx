@@ -68,7 +68,7 @@ export function PageSettingsDockerfileFeature() {
           : undefined,
       docker_target_build_stage:
         service?.job_type === 'LIFECYCLE' && isJobGitSource(service.source)
-          ? service.source.docker.docker_target_build_stage ?? null
+          ? service.source.docker.docker_target_build_stage ?? ''
           : undefined,
       dockerfile_raw:
         service?.job_type === 'LIFECYCLE' && isJobGitSource(service.source)
@@ -109,6 +109,7 @@ export function PageSettingsDockerfileFeature() {
               dockerfile_path: data.dockerfile_path,
             },
           })
+
           editService({
             serviceId: applicationId,
             payload: {
@@ -117,8 +118,8 @@ export function PageSettingsDockerfileFeature() {
                 docker: {
                   git_repository: gitRepository,
                   dockerfile_path: data.dockerfile_path,
-                  dockerfile_raw: null,
                   docker_target_build_stage: data.docker_target_build_stage || null,
+                  dockerfile_raw: null,
                 },
               },
             },
