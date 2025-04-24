@@ -24,7 +24,8 @@ export const submitMessage = async (
   token: string,
   threadId?: string,
   context?: Context | null,
-  onStream?: (chunk: string) => void
+  onStream?: (chunk: string) => void,
+  signal?: AbortSignal
 ): Promise<{ id: string; thread: Thread } | null> => {
   try {
     // Ensure we have an organization ID
@@ -75,6 +76,7 @@ export const submitMessage = async (
           instructions: 'Please provide a concise response in Markdown format',
           stream: true,
         }),
+        signal,
       }
     )
 

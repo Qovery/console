@@ -158,6 +158,7 @@ function useQoveryContext() {
 }
 
 export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
+  const controllerRef = useRef<AbortController | null>(null)
   const STORAGE_KEY = 'assistant-panel-size'
   const { message: inputExplainMessage, setMessage: setInputExplainMessage } = useContext(AssistantContext)
   const { data } = useQoveryStatus()
@@ -313,6 +314,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }
 
   const handleSendMessage = async (value?: string) => {
+    controllerRef.current = new AbortController()
     setIsScrollFocus(false)
     setIsFinish(false)
     setStreamingMessage('')
@@ -353,6 +355,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
               const parsed = JSON.parse(chunk.replace(/^data: /, ''))
               if (parsed.type === 'start' && parsed.content.thread_id) {
                 pendingThreadId.current = parsed.content.thread_id
+                setThreadId(parsed.content.thread_id)
                 return
               }
               if (parsed.type === 'chunk' && parsed.content) {
@@ -367,9 +370,9 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
             } catch (error) {
               console.error('Erreur parsing chunk:', error)
             }
-          }
+          },
+          controllerRef.current.signal
         )
-
       } catch (error) {
         console.error('Error fetching response:', error)
       } finally {
@@ -380,6 +383,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
 
   useEffect(() => {
     if ((isLoading && isFinish && displayedStreamingMessage.length >= streamingMessage.length) || (isStopped && isLoading && isFinish)) {
+      controllerRef.current?.abort();
       setThread([
         ...thread,
         {
@@ -389,7 +393,6 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
           timestamp: Date.now(),
         },
       ])
-      setThreadId(pendingThreadId.current)
       setIsLoading(false)
       setStreamingMessage('')
     }
@@ -585,7 +588,12 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                       <button
                         className="flex h-11 w-full items-center gap-2 text-sm"
                         type="button"
-                        onClick={() => setThreadId(undefined)}
+                        onClick={() => {
+                          controllerRef.current?.abort();
+                          setThread([])
+                          setThreadId(undefined);
+                          setIsLoading(false);
+                        }}
                       >
                         <span className="w-4">
                           <Icon iconName="pen-to-square" className="text-brand-500" />
