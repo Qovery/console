@@ -34,7 +34,7 @@ export function PageClustersGeneral({ loading, clusters, clusterStatuses }: Page
               <LoaderSpinner className="w-6" />
             </div>
           ) : clusters && clusters.length > 0 ? (
-            <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-5 lg:grid-cols-2 2xl:grid-cols-3">
               {clusters.map((cluster) => (
                 <ClusterCard
                   key={cluster.id}
