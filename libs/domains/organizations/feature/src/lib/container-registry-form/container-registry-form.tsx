@@ -81,6 +81,7 @@ export function ContainerRegistryForm({
 
   const isEditDirty = isEdit && methods.formState.isDirty
   const watchKind: undefined | ContainerRegistryKindEnum = methods.watch('kind')
+  const watchType = methods.watch('type')
   const watchLoginType = methods.watch('config.login_type')
   const isClusterManaged = cluster?.kubernetes === 'MANAGED'
   const isClusterSelfManaged = cluster?.kubernetes === 'SELF_MANAGED'
@@ -362,7 +363,51 @@ export function ContainerRegistryForm({
           )}
         />
       )}
-      {watchKind === ContainerRegistryKindEnum.ECR && (
+
+      <hr />
+
+      {(cluster?.cloud_provider === 'AWS' || watchKind === ContainerRegistryKindEnum.ECR) && (
+        <Controller
+          name="type"
+          control={methods.control}
+          rules={{
+            required: 'Please enter a name.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              onChange={field.onChange}
+              value={field.value}
+              label="Authentication type"
+              error={error?.message}
+              options={[
+                { label: 'Assume role via STS (preferred)', value: 'STS' },
+                { label: 'Static credentials', value: 'STATIC' },
+              ]}
+            />
+          )}
+        />
+      )}
+
+      {watchKind === ContainerRegistryKindEnum.ECR && watchType === 'STS' && (
+        <Controller
+          name="config.role_arn"
+          control={methods.control}
+          rules={{
+            required: 'Please enter a role ARN',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Role ARN"
+              error={error?.message}
+            />
+          )}
+        />
+      )}
+
+      {watchKind === ContainerRegistryKindEnum.ECR && watchType === 'STATIC' && (
         <>
           <Controller
             name="config.access_key_id"

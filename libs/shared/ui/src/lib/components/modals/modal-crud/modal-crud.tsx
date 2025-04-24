@@ -76,20 +76,19 @@ export function ModalCrud(props: ModalCrudProps) {
       <form className="mt-6" onSubmit={onSubmit}>
         {children}
         <div className="mt-6 flex justify-end gap-3">
-          {isEdit && onDelete ? (
-            <Button data-testid="delete-button" color="red" size="lg" onClick={() => onDelete()}>
+          <Button
+            data-testid="cancel-button"
+            type="button"
+            variant="plain"
+            color="neutral"
+            size="lg"
+            onClick={() => onClose()}
+          >
+            Cancel
+          </Button>
+          {isEdit && onDelete && (
+            <Button data-testid="delete-button" variant="outline" color="red" size="lg" onClick={() => onDelete()}>
               {deleteButtonLabel || 'Delete'}
-            </Button>
-          ) : (
-            <Button
-              data-testid="cancel-button"
-              type="button"
-              variant="plain"
-              color="neutral"
-              size="lg"
-              onClick={() => onClose()}
-            >
-              Cancel
             </Button>
           )}
           <Button

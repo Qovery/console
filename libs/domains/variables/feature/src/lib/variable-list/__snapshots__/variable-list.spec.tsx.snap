@@ -1521,7 +1521,7 @@ exports[`VariableList should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-9 px-3 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100 items-center gap-2"
+                class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-red-500 text-sm h-9 px-3 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100 items-center gap-2"
                 data-state="closed"
                 disabled=""
               >

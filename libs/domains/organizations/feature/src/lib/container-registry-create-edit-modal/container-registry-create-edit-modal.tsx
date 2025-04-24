@@ -19,13 +19,16 @@ export function ContainerRegistryCreateEditModal({
   onClose,
 }: ContainerRegistryCreateEditModalProps) {
   const { enableAlertClickOutside } = useModal()
-  const methods = useForm<ContainerRegistryRequest & { config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } }>({
+  const methods = useForm<
+    ContainerRegistryRequest & { type: 'STATIC' | 'STS'; config: { login_type: 'ACCOUNT' | 'ANONYMOUS' } }
+  >({
     mode: 'onChange',
     defaultValues: {
       name: registry?.name,
       description: registry?.description,
       url: registry?.url,
       kind: registry?.kind,
+      type: registry ? (registry.config?.role_arn ? 'STS' : 'STATIC') : 'STS',
       config: {
         username: registry?.config?.username,
         password: undefined,
@@ -58,16 +61,28 @@ export function ContainerRegistryCreateEditModal({
       return
     }
 
-    // Omit `login_type` in the request
-    const { login_type, ...config } = containerRegistryRequest.config
+    const {
+      type,
+      config: { login_type, ...config },
+      ...rest
+    } = containerRegistryRequest
     try {
       if (registry) {
         const response = await editContainerRegistry({
           organizationId: organizationId,
           containerRegistryId: registry.id,
           containerRegistryRequest: {
-            ...containerRegistryRequest,
-            config: config,
+            ...rest,
+            config:
+              type === 'STS'
+                ? {
+                    role_arn: config?.role_arn,
+                    region: config?.region,
+                  }
+                : {
+                    role_arn: undefined,
+                    ...config,
+                  },
           },
         })
         onClose(response)
@@ -75,8 +90,17 @@ export function ContainerRegistryCreateEditModal({
         const response = await createContainerRegistry({
           organizationId: organizationId,
           containerRegistryRequest: {
-            ...containerRegistryRequest,
-            config: config,
+            ...rest,
+            config:
+              type === 'STS'
+                ? {
+                    role_arn: config?.role_arn,
+                    region: config?.region,
+                  }
+                : {
+                    role_arn: undefined,
+                    ...config,
+                  },
           },
         })
         onClose(response)

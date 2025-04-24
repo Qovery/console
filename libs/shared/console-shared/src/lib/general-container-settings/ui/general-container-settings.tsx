@@ -1,8 +1,7 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { ContainerRegistryCreateEditModal, useContainerRegistries } from '@qovery/domains/organizations/feature'
-import { SETTINGS_CONTAINER_REGISTRIES_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { InputSelect, Link, useModal } from '@qovery/shared/ui'
+import { InputSelect, useModal } from '@qovery/shared/ui'
 import ImageName from './image-name'
 import { ImageTag } from './image-tag'
 

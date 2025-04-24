@@ -92,13 +92,14 @@ describe('ContainerRegistryForm', () => {
     screen.getByLabelText('Login type')
   })
 
-  it('should render the form with ECR', async () => {
+  it('should render the form with ECR STS', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<ContainerRegistryForm {...props} />, {
         defaultValues: {
           name: 'hello',
           url: 'https://qovery.com',
           kind: ContainerRegistryKindEnum.ECR,
+          type: 'STS',
         },
       })
     )
@@ -106,6 +107,26 @@ describe('ContainerRegistryForm', () => {
     screen.getByDisplayValue('https://qovery.com')
 
     screen.getByLabelText('Region')
+    screen.getByLabelText('Authentication type')
+    screen.getByLabelText('Role ARN')
+  })
+
+  it('should render the form with ECR STATIC', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ContainerRegistryForm {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.ECR,
+          type: 'STATIC',
+        },
+      })
+    )
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://qovery.com')
+
+    screen.getByLabelText('Region')
+    screen.getByLabelText('Authentication type')
     screen.getByLabelText('Access key')
     screen.getByLabelText('Secret key')
   })
