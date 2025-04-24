@@ -115,7 +115,7 @@ describe('DockerfileSettings', () => {
       dockerfile_source: 'DOCKERFILE_RAW',
       dockerfile_path: null,
       dockerfile_raw: 'my dockerfile content',
-      docker_target_build_stage: undefined,
+      docker_target_build_stage: null,
     })
   })
 })
