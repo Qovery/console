@@ -8,7 +8,6 @@ export function BuildSettings() {
   return (
     <>
       <Controller
-        data-testid="input-text-dockerfile-path"
         key="dockerfile_path"
         name="dockerfile_path"
         defaultValue="Dockerfile"
@@ -28,13 +27,10 @@ export function BuildSettings() {
         )}
       />
       <Controller
-        data-testid="input-text-dockerfile-target"
-        key="docker_target_build_stage"
         name="docker_target_build_stage"
         control={control}
         render={({ field, fieldState: { error } }) => (
           <InputText
-            dataTestId="input-text-dockerfile-target"
             label="Dockerfile stage (optional)"
             name={field.name}
             onChange={field.onChange}

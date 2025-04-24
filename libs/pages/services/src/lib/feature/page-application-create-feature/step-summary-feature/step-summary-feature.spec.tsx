@@ -91,6 +91,7 @@ describe('PageApplicationPostFeature', () => {
             serviceType: ServiceTypeEnum.APPLICATION,
             provider: 'GITHUB',
             dockerfile_path: 'Dockerfile',
+            docker_target_build_stage: 'build-stage',
             repository: 'Qovery/test_http_server',
             branch: 'master',
             root_path: '/',
@@ -129,48 +130,10 @@ describe('PageApplicationPostFeature', () => {
         auto_deploy: true,
         build_mode: 'DOCKER',
         dockerfile_path: 'Dockerfile',
+        docker_target_build_stage: 'build-stage',
         annotations_groups: [],
         labels_groups: [],
       },
-    })
-  })
-
-  it('should create an application with docker_target_build_stage', async () => {
-    const { userEvent } = renderWithProviders(
-      <ApplicationContainerCreateContext.Provider
-        value={{
-          ...mockContext,
-          variablesForm: variablesForm.current,
-          generalData: {
-            ...mockContext.generalData,
-            name: 'test',
-            serviceType: ServiceTypeEnum.APPLICATION,
-            provider: 'GITHUB',
-            dockerfile_path: 'Dockerfile',
-            docker_target_build_stage: 'build-stage',
-            repository: 'Qovery/test_http_server',
-            branch: 'master',
-            root_path: '/',
-            annotations_groups: [],
-            labels_groups: [],
-          },
-        }}
-      >
-        <StepSummaryFeature />
-      </ApplicationContainerCreateContext.Provider>
-    )
-
-    const submitButton = screen.getByTestId('button-create')
-    await userEvent.click(submitButton)
-
-    expect(mockCreateService).toHaveBeenCalledWith({
-      environmentId: '',
-      payload: expect.objectContaining({
-        serviceType: 'APPLICATION',
-        name: 'test',
-        docker_target_build_stage: 'build-stage',
-        dockerfile_path: 'Dockerfile',
-      }),
     })
   })
 

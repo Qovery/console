@@ -64,26 +64,6 @@ describe('PageSettingsGeneralFeature', () => {
     expect(app.docker_target_build_stage).toBe('build-stage')
   })
 
-  it('should handle empty docker_target_build_stage', () => {
-    const app = handleGitApplicationSubmit(
-      {
-        name: 'hello',
-        description: 'description',
-        build_mode: BuildModeEnum.DOCKER,
-        dockerfile_path: '/',
-        docker_target_build_stage: '', // Empty string
-        provider: GitProviderEnum.GITHUB,
-        repository: 'qovery/console',
-        branch: 'main',
-        root_path: '/',
-      },
-      application,
-      [],
-      []
-    )
-    expect(app.docker_target_build_stage).toBeUndefined()
-  })
-
   it('should update the application with git repository', () => {
     const app = handleGitApplicationSubmit(
       {

@@ -252,7 +252,7 @@ export function DockerfileSettings({
                 <InputText
                   name={field.name}
                   onChange={field.onChange}
-                  value={field.value || undefined}
+                  value={field.value ?? undefined}
                   label="Dockerfile stage (optional)"
                   error={error?.message}
                   hint="Specify the target stage to build in a multi-stage Dockerfile"

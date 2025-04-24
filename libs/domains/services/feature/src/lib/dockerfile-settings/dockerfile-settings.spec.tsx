@@ -22,7 +22,7 @@ type FormValues = {
   dockerfile_source: 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
   dockerfile_path: string | null
   dockerfile_raw: string | null
-  docker_target_build_stage?: string | null
+  docker_target_build_stage?: string
 }
 
 function DockerfileSettingsWithForm({
@@ -117,7 +117,7 @@ describe('DockerfileSettings', () => {
       dockerfile_source: 'DOCKERFILE_RAW',
       dockerfile_path: null,
       dockerfile_raw: 'my dockerfile content',
-      docker_target_build_stage: null,
+      docker_target_build_stage: undefined,
     })
   })
 })

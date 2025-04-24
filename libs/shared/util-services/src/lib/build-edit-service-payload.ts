@@ -171,7 +171,7 @@ function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
     jobRequest.source = {
       docker: {
         dockerfile_path: job.source.docker?.dockerfile_path,
-        docker_target_build_stage: job.source.docker?.docker_target_build_stage || undefined,
+        docker_target_build_stage: job.source.docker?.docker_target_build_stage,
         dockerfile_raw: job.source.docker?.dockerfile_raw,
         git_repository: {
           provider: job.source.docker?.git_repository?.provider,

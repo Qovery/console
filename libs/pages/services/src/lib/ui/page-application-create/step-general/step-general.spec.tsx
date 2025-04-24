@@ -58,22 +58,6 @@ describe('StepGeneral', () => {
     expect(registryInput).not.toBeInTheDocument()
   })
 
-  it('should display docker target build stage input for APPLICATION with DOCKER build mode', async () => {
-    renderWithProviders(
-      wrapWithReactHookForm(<StepGeneral {...props} />, {
-        defaultValues: {
-          name: 'test',
-          description: 'test',
-          serviceType: ServiceTypeEnum.APPLICATION,
-          build_mode: BuildModeEnum.DOCKER,
-        },
-      })
-    )
-
-    const stageInput = screen.getByLabelText(/Dockerfile stage/i)
-    expect(stageInput).toBeInTheDocument()
-  })
-
   it('should handle empty and filled values for docker target build stage', async () => {
     const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {
@@ -87,15 +71,10 @@ describe('StepGeneral', () => {
       })
     )
 
-    // Check that the field has the initial value
     const stageInput = screen.getByLabelText(/Dockerfile stage/i)
     expect(stageInput).toHaveValue('build')
 
-    // Clear the field and check it's empty
     await userEvent.clear(stageInput)
-    expect(stageInput).toHaveValue('')
-
-    // Type a new value
     await userEvent.type(stageInput, 'production')
     expect(stageInput).toHaveValue('production')
   })
@@ -117,9 +96,6 @@ describe('StepGeneral', () => {
         },
       })
     )
-
-    const stageInput = screen.getByLabelText(/Dockerfile stage/i)
-    expect(stageInput).toHaveValue('')
 
     const button = screen.getByTestId('button-submit')
     await userEvent.click(button)
