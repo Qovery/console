@@ -130,6 +130,7 @@ export function StepSummaryFeature() {
           auto_deploy: generalData.auto_deploy,
           annotations_groups: annotationsGroup.filter((group) => generalData.annotations_groups?.includes(group.id)),
           labels_groups: labelsGroup.filter((group) => generalData.labels_groups?.includes(group.id)),
+          docker_target_build_stage: generalData.docker_target_build_stage || undefined,
         }
 
         applicationRequest.dockerfile_path = generalData.dockerfile_path

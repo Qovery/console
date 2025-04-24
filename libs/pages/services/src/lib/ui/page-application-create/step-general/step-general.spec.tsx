@@ -58,6 +58,52 @@ describe('StepGeneral', () => {
     expect(registryInput).not.toBeInTheDocument()
   })
 
+  it('should handle empty and filled values for docker target build stage', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          name: 'test',
+          description: 'test',
+          serviceType: ServiceTypeEnum.APPLICATION,
+          build_mode: BuildModeEnum.DOCKER,
+          docker_target_build_stage: 'build',
+        },
+      })
+    )
+
+    const stageInput = screen.getByLabelText(/Dockerfile stage/i)
+    expect(stageInput).toHaveValue('build')
+
+    await userEvent.clear(stageInput)
+    await userEvent.type(stageInput, 'production')
+    expect(stageInput).toHaveValue('production')
+  })
+
+  it('should submit form with empty docker target build stage', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<StepGeneral {...props} />, {
+        defaultValues: {
+          name: 'test',
+          description: 'test',
+          serviceType: ServiceTypeEnum.APPLICATION,
+          build_mode: BuildModeEnum.DOCKER,
+          branch: 'main',
+          repository: 'qovery/console',
+          provider: GitProviderEnum.GITHUB,
+          root_path: '/',
+          dockerfile_path: '/dockerfile',
+          docker_target_build_stage: '',
+        },
+      })
+    )
+
+    const button = screen.getByTestId('button-submit')
+    await userEvent.click(button)
+
+    expect(button).toBeEnabled()
+    expect(props.onSubmit).toHaveBeenCalled()
+  })
+
   it('should display git application inputs for CONTAINER', async () => {
     renderWithProviders(
       wrapWithReactHookForm(<StepGeneral {...props} />, {

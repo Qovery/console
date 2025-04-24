@@ -98,6 +98,9 @@ export function StepSummary({
                   <li>
                     <strong className="font-medium">Dockerfile path:</strong> {generalData.dockerfile_path}
                   </li>
+                  <li>
+                    <strong className="font-medium">Dockerfile stage:</strong> {generalData.docker_target_build_stage}
+                  </li>
                 </>
               )}
               {generalData.serviceType === 'CONTAINER' && (
@@ -113,9 +116,11 @@ export function StepSummary({
                   </li>
                 </>
               )}
-              <li>
-                <strong className="font-medium">Image entrypoint:</strong> {generalData.image_entry_point}
-              </li>
+              {generalData.image_entry_point && (
+                <li>
+                  <strong className="font-medium">Image entrypoint:</strong> {generalData.image_entry_point}
+                </li>
+              )}
               {generalData.cmd_arguments && (
                 <li>
                   <strong className="font-medium">CMD arguments:</strong>{' '}

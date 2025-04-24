@@ -115,6 +115,12 @@ export function StepSummary(props: StepSummaryProps) {
                       <strong className="font-medium">Dockerfile path:</strong> {props.generalData.dockerfile_path}
                     </li>
                   )}
+                  {props.generalData.docker_target_build_stage && (
+                    <li>
+                      <strong className="font-medium">Dockerfile stage:</strong>{' '}
+                      {props.generalData.docker_target_build_stage}
+                    </li>
+                  )}
                   <li>
                     <strong className="font-medium">Auto-deploy:</strong> {props.generalData.auto_deploy.toString()}
                   </li>
@@ -133,6 +139,12 @@ export function StepSummary(props: StepSummaryProps) {
                   </li>
                   {props.jobType === ServiceTypeEnum.CRON_JOB && (
                     <>
+                      {props.generalData.docker_target_build_stage && (
+                        <li>
+                          <strong className="font-medium">Dockerfile stage:</strong>{' '}
+                          {props.generalData.docker_target_build_stage}
+                        </li>
+                      )}
                       {props.generalData.image_entry_point && (
                         <li>
                           <strong className="font-medium">Image entrypoint:</strong>{' '}
@@ -186,6 +198,12 @@ export function StepSummary(props: StepSummaryProps) {
                 {props.dockerfileData.dockerfile_path && (
                   <li>
                     <strong className="font-medium">Dockerfile path:</strong> {props.dockerfileData.dockerfile_path}
+                  </li>
+                )}
+                {props.dockerfileData.docker_target_build_stage && (
+                  <li>
+                    <strong className="font-medium">Dockerfile stage:</strong>{' '}
+                    {props.dockerfileData.docker_target_build_stage}
                   </li>
                 )}
                 {props.dockerfileData.dockerfile_raw && (

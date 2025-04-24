@@ -61,20 +61,36 @@ export function PageSettingsGeneral({
       )}
 
       {!isLifecycleJob && (
-        <Controller
-          name="dockerfile_path"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-text-dockerfile"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Dockerfile path"
-              error={error?.message}
-            />
-          )}
-        />
+        <>
+          <Controller
+            name="dockerfile_path"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-text-dockerfile"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Dockerfile path"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="docker_target_build_stage"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Dockerfile stage (optional)"
+                error={error?.message}
+                hint="Specify the target stage to build in a multi-stage Dockerfile"
+              />
+            )}
+          />
+        </>
       )}
     </>
   )

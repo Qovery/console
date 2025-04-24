@@ -25,6 +25,7 @@ export interface DockerfileSettingsData {
   dockerfile_source: FileSource
   dockerfile_path?: string | null
   dockerfile_raw?: string | null
+  docker_target_build_stage?: string | null
 }
 
 export interface DockerfileSettingsProps extends PropsWithChildren {
@@ -60,6 +61,7 @@ export function DockerfileSettings({
       setValue('dockerfile_raw', null)
     } else {
       setValue('dockerfile_path', null)
+      setValue('docker_target_build_stage', null)
     }
     onSubmit()
   }
@@ -239,6 +241,20 @@ export function DockerfileSettings({
                       <ExternalLink size="xs">Create one with Docker init</ExternalLink>
                     </>
                   }
+                />
+              )}
+            />
+            <Controller
+              name="docker_target_build_stage"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value ?? undefined}
+                  label="Dockerfile stage (optional)"
+                  error={error?.message}
+                  hint="Specify the target stage to build in a multi-stage Dockerfile"
                 />
               )}
             />

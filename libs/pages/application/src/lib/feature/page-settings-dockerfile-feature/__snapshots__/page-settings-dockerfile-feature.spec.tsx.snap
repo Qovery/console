@@ -204,6 +204,43 @@ exports[`PageSettingsDockerfileFeature should match snapshot 1`] = `
                   </a>
                 </p>
               </div>
+              <div
+                class=""
+                data-testid="input-text-wrapper"
+              >
+                <div
+                  class="relative"
+                >
+                  <div
+                    aria-label="input-container"
+                    class="input     "
+                  >
+                    <div
+                      class=""
+                    >
+                      <label
+                        class="translate-y-2 text-sm"
+                        for="Dockerfile stage (optional)"
+                      >
+                        Dockerfile stage (optional)
+                      </label>
+                      <input
+                        class="input__value "
+                        data-testid="input-text"
+                        id="Dockerfile stage (optional)"
+                        name="docker_target_build_stage"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+                <p
+                  class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+                >
+                  Specify the target stage to build in a multi-stage Dockerfile
+                </p>
+              </div>
             </section>
             <div
               class="flex justify-end"
