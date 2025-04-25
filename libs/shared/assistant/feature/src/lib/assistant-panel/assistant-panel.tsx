@@ -350,7 +350,6 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
           threadId,
           withContext ? context : { organization: context.organization },
           (chunk) => {
-            if (isStopped) return
             try {
               const parsed = JSON.parse(chunk.replace(/^data: /, ''))
               if (parsed.type === 'start' && parsed.content.thread_id) {
