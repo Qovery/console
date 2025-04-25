@@ -17,7 +17,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
       <span className="text-ssm font-normal text-neutral-350">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
     ))
-    .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', (s) => (
+    .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
       <LinkUI
         to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
         color="brand"
@@ -28,7 +28,8 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
       >
         <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-500">
           <span className="flex items-center gap-0.5">
-            {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" />
+            {s === 'DRY_RUN' ? 'Evaluating changes (dry-run) ' : upperCaseFirstLetter(s) + '...'}{' '}
+            <Icon iconName="arrow-up-right" className="relative top-[1px]" />
           </span>
         </AnimatedGradientText>
       </LinkUI>

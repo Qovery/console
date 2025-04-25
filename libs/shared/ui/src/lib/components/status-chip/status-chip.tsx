@@ -82,7 +82,7 @@ export function StatusChip({
       'WAITING_STOPPING',
       () => <QueuedIcon />
     )
-    .with('DEPLOYING', 'STARTING', 'ONGOING', () => <DeployingIcon />)
+    .with('DEPLOYING', 'STARTING', 'ONGOING', 'DRY_RUN', () => <DeployingIcon />)
     .with('RESTARTING', () => <RestartingIcon />)
     .with('BUILDING', () => <BuildingIcon />)
     .with('STOPPING', () => <StoppingIcon />)
