@@ -313,8 +313,10 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     }
   }
 
+  const lastSubmitResult = useRef<any>(null);
   const handleSendMessage = async (value?: string) => {
     controllerRef.current = new AbortController()
+    lastSubmitResult.current = null;
     setIsScrollFocus(false)
     setIsFinish(false)
     setStreamingMessage('')
@@ -372,6 +374,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
           },
           controllerRef.current.signal
         )
+        lastSubmitResult.current = response
       } catch (error) {
         console.error('Error fetching response:', error)
       } finally {
@@ -381,24 +384,49 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }
 
   useEffect(() => {
+    // Once the animation is finished, we can stop the loading and set the message
     if ((isLoading && isFinish && displayedStreamingMessage.length >= streamingMessage.length) || (isStopped && isLoading && isFinish)) {
       controllerRef.current?.abort();
-      setThread([
-        ...thread,
-        {
-          id: Date.now() + 1,
-          text: streamingMessage,
-          owner: 'assistant',
-          timestamp: Date.now(),
-        },
-      ])
+      if (
+        pendingThreadId.current &&
+        lastSubmitResult.current &&
+        lastSubmitResult.current.thread.length >= 2
+      ) {
+        const result = lastSubmitResult.current;
+        const updatedThread = [...thread];
+
+        const resultThread: Message[] = [
+          {
+            ...updatedThread[updatedThread.length - 1],
+            id: result.thread[result.thread.length - 2].id,
+            owner: 'user',
+          },
+          {
+            id: result.thread[result.thread.length - 1].id,
+            text: streamingMessage,
+            owner: 'assistant',
+            timestamp: Date.now(),
+          },
+        ];
+
+        setThread(updatedThread.slice(0, -1).concat(resultThread));
+      } else {
+        setThread([
+          ...thread,
+          {
+            id: Date.now() + 1,
+            text: streamingMessage,
+            owner: 'assistant',
+            timestamp: Date.now(),
+          },
+        ]);
+      }
       setIsLoading(false)
       setStreamingMessage('')
     }
     if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
 
-  }, [streamingMessage, displayedStreamingMessage, isStopped])
-
+  }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish])
 
   useEffect(() => {
     if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) return
