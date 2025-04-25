@@ -17,7 +17,8 @@ export interface UseReactQueryWsSubscriptionProps {
   onError?: (queryClient: QueryClient, event: Event) => void
   onClose?: (QueryClient: QueryClient, event: CloseEvent) => void
   enabled?: boolean
-  shouldReconnect?: boolean
+  /* `boolean` to enable or disable reconnection or `number` to set the maximum number of attempts */
+  shouldReconnect?: boolean | number
 }
 
 interface InvalidateOperation {
@@ -29,8 +30,6 @@ interface InvalidateOperation {
 function isInvalidateOperation(data: any): data is InvalidateOperation {
   return Array.isArray(data?.entity)
 }
-
-const MAX_RECONNECT_ATTEMPTS = 10
 
 // TODO: Add better naming for the hook we can use it without ReactQuery
 export function useReactQueryWsSubscription({
@@ -45,6 +44,8 @@ export function useReactQueryWsSubscription({
 }: UseReactQueryWsSubscriptionProps) {
   const queryClient = useQueryClient()
   const { getAccessTokenSilently } = useAuth0()
+
+  const MAX_RECONNECT_ATTEMPTS = typeof shouldReconnect === 'number' ? shouldReconnect : Infinity
 
   let _urlSearchParams: string[][] | Record<string, string> | string | URLSearchParams
 
@@ -96,7 +97,7 @@ export function useReactQueryWsSubscription({
         onError?.(queryClient, event)
       }
       websocket.onclose = async (event) => {
-        if (shouldReconnect || reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
+        if (shouldReconnect && reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
           timeout = setTimeout(
             function () {
               reconnectCount.current++
