@@ -227,6 +227,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }, [inputExplainMessage])
 
   const isProgrammaticScroll = useRef(false)
+  const lastScrollTime = useRef<number>(0)
 
   useEffect(() => {
     const node = scrollAreaRef.current
@@ -250,15 +251,18 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }, [scrollAreaRef, scrollAreaRef.current])
 
   useEffect(() => {
+    const now = Date.now()
     const node = scrollAreaRef.current
     if (!node || isScrollFocus) return
+    if (now - lastScrollTime.current < 200) return
 
+    lastScrollTime.current = now
     isProgrammaticScroll.current = true
     node.scrollTo({
       top: node.scrollHeight,
       behavior: 'auto',
     })
-  }, [thread, isScrollFocus, displayedStreamingMessage])
+  }, [thread, displayedStreamingMessage, isScrollFocus])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
