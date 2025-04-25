@@ -87,31 +87,30 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           </>
         }
       >
-        {isEdit && (
+        <div className="flex flex-col gap-5">
+          {isEdit && (
+            <Controller
+              name="id"
+              control={methods.control}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  label="Qovery ID"
+                  name={field.name}
+                  value={field.value}
+                  error={error?.message}
+                  disabled
+                  hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
+                />
+              )}
+            />
+          )}
           <Controller
-            name="id"
+            name="type"
             control={methods.control}
+            rules={{
+              required: 'Please enter a git type.',
+            }}
             render={({ field, fieldState: { error } }) => (
-              <InputText
-                className="mb-5"
-                label="Qovery ID"
-                name={field.name}
-                value={field.value}
-                error={error?.message}
-                disabled
-                hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
-              />
-            )}
-          />
-        )}
-        <Controller
-          name="type"
-          control={methods.control}
-          rules={{
-            required: 'Please enter a git type.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <div className="mb-5">
               <InputSelect
                 label="Type"
                 onChange={(event) => {
@@ -127,68 +126,17 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
                 }))}
                 portal
               />
-            </div>
-          )}
-        />
-        <Controller
-          name="name"
-          control={methods.control}
-          rules={{
-            required: 'Please enter a token name.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-5"
-              label="Token name"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="description"
-          control={methods.control}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextArea
-              className="mb-5"
-              label="Description"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="token"
-          control={methods.control}
-          rules={{
-            required: true,
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-5"
-              label="Token value"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        {gitType === GitProviderEnum.BITBUCKET && (
+            )}
+          />
           <Controller
-            name="workspace"
+            name="name"
             control={methods.control}
             rules={{
-              required: 'Please enter a correct workspace.',
+              required: 'Please enter a token name.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                className="mb-5"
-                label="Workspace"
+                label="Token name"
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -196,7 +144,54 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
               />
             )}
           />
-        )}
+          <Controller
+            name="description"
+            control={methods.control}
+            render={({ field, fieldState: { error } }) => (
+              <InputTextArea
+                label="Description"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="token"
+            control={methods.control}
+            rules={{
+              required: true,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                label="Token value"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+              />
+            )}
+          />
+          {gitType === GitProviderEnum.BITBUCKET && (
+            <Controller
+              name="workspace"
+              control={methods.control}
+              rules={{
+                required: 'Please enter a correct workspace.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  label="Workspace"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                />
+              )}
+            />
+          )}
+        </div>
       </ModalCrud>
     </FormProvider>
   )

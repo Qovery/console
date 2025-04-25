@@ -250,7 +250,6 @@ export function CreateCloneEnvironmentModal({
           }}
           render={({ field }) => (
             <InputSelect
-              className="mb-6"
               dataTestId="input-select-mode"
               options={environmentModes}
               onChange={field.onChange}

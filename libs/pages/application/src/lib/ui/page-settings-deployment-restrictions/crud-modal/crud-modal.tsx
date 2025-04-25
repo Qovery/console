@@ -86,7 +86,6 @@ export function CrudModal({ onClose, onSubmit, isEdit, isLoading }: CrudModalPro
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
-            className="mb-3"
             name={field.name}
             onChange={field.onChange}
             value={field.value}

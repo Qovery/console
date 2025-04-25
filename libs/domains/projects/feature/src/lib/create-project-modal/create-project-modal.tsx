@@ -72,7 +72,6 @@ export function CreateProjectModal(props: CreateProjectModalProps) {
           control={methods.control}
           render={({ field }) => (
             <InputText
-              className="mb-6"
               dataTestId="input-description"
               label="Description"
               name={field.name}

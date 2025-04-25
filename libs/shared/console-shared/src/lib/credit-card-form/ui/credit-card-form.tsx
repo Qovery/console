@@ -63,7 +63,6 @@ export function CreditCardForm(props: CreditCardFormProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputCreditCard
-            className="mb-3"
             type="cvc"
             name={field.name}
             onChange={field.onChange}

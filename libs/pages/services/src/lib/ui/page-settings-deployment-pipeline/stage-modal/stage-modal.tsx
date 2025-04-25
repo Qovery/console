@@ -49,7 +49,6 @@ export function StageModal(props: StageModalProps) {
           control={control}
           render={({ field, fieldState: { error } }) => (
             <InputTextArea
-              className="mb-6"
               name={field.name}
               onChange={field.onChange}
               value={field.value}

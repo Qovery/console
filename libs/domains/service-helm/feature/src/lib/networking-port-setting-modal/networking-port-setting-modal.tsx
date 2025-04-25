@@ -252,17 +252,15 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
-                      className="mb-1"
                       name={field.name}
                       onChange={field.onChange}
                       value={field.value}
                       label="Port name"
                       error={error?.message}
+                      hint="Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>-<service_name>"
                     />
                   )}
                 />
-                <p className="mb-5 ml-3 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application
-port from the internet. Default value is p<port_number>-<service_name>`}</p>
               </div>
             </>
           )}

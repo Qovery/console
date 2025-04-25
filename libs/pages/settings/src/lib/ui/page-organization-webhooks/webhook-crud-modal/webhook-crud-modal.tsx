@@ -170,41 +170,39 @@ export function WebhookCrudModal(props: WebhookCrudModalProps) {
         </p>
       </div>
 
-      <div className="mb-3">
-        <Controller
-          name="environment_types_filter"
-          control={control}
-          render={({ field }) => (
-            <InputSelect
-              portal
-              onChange={field.onChange}
-              isMulti
-              options={[
-                {
-                  label: EnvironmentModeEnum.DEVELOPMENT,
-                  value: EnvironmentModeEnum.DEVELOPMENT,
-                },
-                {
-                  label: EnvironmentModeEnum.STAGING,
-                  value: EnvironmentModeEnum.STAGING,
-                },
-                {
-                  label: EnvironmentModeEnum.PREVIEW,
-                  value: EnvironmentModeEnum.PREVIEW,
-                },
-                {
-                  label: EnvironmentModeEnum.PRODUCTION,
-                  value: EnvironmentModeEnum.PRODUCTION,
-                },
-              ]}
-              value={field.value}
-              label="Environment type filter"
-              dataTestId="environment-type-input"
-              hint="Webhook will be triggered only for events happening on the environment with the selected environment type."
-            />
-          )}
-        />
-      </div>
+      <Controller
+        name="environment_types_filter"
+        control={control}
+        render={({ field }) => (
+          <InputSelect
+            portal
+            onChange={field.onChange}
+            isMulti
+            options={[
+              {
+                label: EnvironmentModeEnum.DEVELOPMENT,
+                value: EnvironmentModeEnum.DEVELOPMENT,
+              },
+              {
+                label: EnvironmentModeEnum.STAGING,
+                value: EnvironmentModeEnum.STAGING,
+              },
+              {
+                label: EnvironmentModeEnum.PREVIEW,
+                value: EnvironmentModeEnum.PREVIEW,
+              },
+              {
+                label: EnvironmentModeEnum.PRODUCTION,
+                value: EnvironmentModeEnum.PRODUCTION,
+              },
+            ]}
+            value={field.value}
+            label="Environment type filter"
+            dataTestId="environment-type-input"
+            hint="Webhook will be triggered only for events happening on the environment with the selected environment type."
+          />
+        )}
+      />
     </ModalCrud>
   )
 }

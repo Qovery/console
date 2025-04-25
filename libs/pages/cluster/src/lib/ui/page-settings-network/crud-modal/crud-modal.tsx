@@ -66,7 +66,6 @@ export function CrudModal(props: CrudModalProps) {
         }}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
-            className="mb-3"
             name={field.name}
             onChange={field.onChange}
             value={field.value}
