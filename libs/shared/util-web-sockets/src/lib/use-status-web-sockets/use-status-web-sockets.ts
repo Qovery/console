@@ -34,6 +34,7 @@ export function useStatusWebSockets({
       version: versionId,
     },
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
+    shouldReconnect: true,
     onMessage(queryClient, message: WSDeploymentStatus) {
       if (environmentId) {
         queryClient.setQueryData(

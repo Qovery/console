@@ -96,7 +96,7 @@ export function useReactQueryWsSubscription({
         onError?.(queryClient, event)
       }
       websocket.onclose = async (event) => {
-        if (shouldReconnect && reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
+        if (shouldReconnect || reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
           timeout = setTimeout(
             function () {
               reconnectCount.current++
