@@ -161,6 +161,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                     'DELETE_QUEUED',
                     'STOP_QUEUED',
                     'RESTART_QUEUED',
+                    'QUEUED',
                     () => (
                       <DropdownMenu.Root>
                         <DropdownMenu.Trigger asChild>
@@ -173,9 +174,14 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                             <Tooltip content="Manage Deployment">
                               <div className="flex h-full w-full items-center justify-center">
                                 {match(state)
-                                  .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
-                                    <Icon iconName="clock" iconStyle="regular" className="mr-3" />
-                                  ))
+                                  .with(
+                                    'DEPLOYMENT_QUEUED',
+                                    'DELETE_QUEUED',
+                                    'STOP_QUEUED',
+                                    'RESTART_QUEUED',
+                                    'QUEUED',
+                                    () => <Icon iconName="clock" iconStyle="regular" className="mr-3" />
+                                  )
                                   .otherwise(() => (
                                     <Icon iconName="loader" className="mr-3 animate-spin" />
                                   ))}
@@ -185,7 +191,7 @@ export function EnvironmentDeploymentList({ environmentId }: EnvironmentDeployme
                           </ActionToolbar.Button>
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content>
-                          {isCancelBuildAvailable(state) && (
+                          {(isCancelBuildAvailable(state) || state === 'QUEUED') && (
                             <DropdownMenu.Item
                               icon={<Icon iconName="xmark" />}
                               onSelect={() =>
