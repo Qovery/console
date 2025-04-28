@@ -182,6 +182,11 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
 
+  const [plan, setPlan] = useState<
+    { description: string; toolName: string; status: 'not_started' | 'in_progress' | 'completed' }[]
+  >([]);
+  const [showPlan, setShowPlan] = useState(false);
+
   const pendingThreadId = useRef<string>()
 
   const {
@@ -327,6 +332,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     setDisplayedStreamingMessage('')
     setIsStopped(false)
     setLoadingText("Loading...")
+    setPlan([])
     let fullContent = ''
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
@@ -364,9 +370,37 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                 return
               }
               if (parsed.type === 'chunk' && parsed.content) {
-                if (parsed.content.includes('__step__:')) {
-                  const step = parsed.content.replace('__step__:', '').replaceAll('_', ' ')
-                  setLoadingText(step.charAt(0).toUpperCase() + step.slice(1))
+                if (parsed.content.includes('__plan__:')) {
+                  try {
+                    const planArray = JSON.parse(parsed.content.replace('__plan__:', ''));
+                    setPlan(planArray.map((step: any) => ({
+                      description: step.description,
+                      toolName: step.tool_name,
+                      status: 'not_started'
+                    })));
+                  } catch (e) {
+                  }
+                } else if (parsed.content.includes('__step__:')) {
+                  const stepDescription = parsed.content.replace('__step__:', '').replaceAll('_', ' ');
+                  setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1));
+                } else if (parsed.content.includes('__stepPlan__:')) {
+                  const stepDescription = parsed.content.replace('__stepPlan__:', '').replaceAll('_', ' ');
+                  console.log('STEP', stepDescription);
+                  setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1));
+                  setPlan(prev =>
+                    prev.map((step, index) => {
+                      if (step.status === 'in_progress') {
+                        return { ...step, status: 'completed' };
+                      }
+                      if (
+                        step.description.toLowerCase().includes(stepDescription.toLowerCase()) &&
+                        step.status === 'not_started'
+                      ) {
+                        return { ...step, status: 'in_progress' };
+                      }
+                      return step;
+                    })
+                  );
                 } else {
                   fullContent += parsed.content
                   setStreamingMessage(fullContent)
@@ -901,14 +935,60 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                               'text-brand-500': thread.vote === 'downvote',
                             })}
                             onClick={() => handleVote(thread.id, 'downvote')}>
-                            <Icon iconName="thumbs-down" />
+                            <Icon iconName="arrow-down" />
                           </Button>
                         </div>
                       </div>
                     ))
                     .exhaustive()
                 })}
-                {isLoading && streamingMessage.length === 0 && <Loading loadingText={loadingText} />}
+                {isLoading && streamingMessage.length === 0 && (
+                  plan.length > 0 ? (
+                    <div className='relative top-2 mt-auto'>
+                      <div className="flex items-center gap-2">
+                        <AnimatedGradientText className="w-fit text-ssm font-medium">
+                          {loadingText}
+                        </AnimatedGradientText>
+                        <Icon
+                          onClick={() => setShowPlan((prev) => !prev)}
+                          iconName="arrow-down"
+                          iconStyle="regular"
+                          className="cursor-pointer"
+                        />
+                      </div>
+                      {showPlan && (
+                        <div className="plan-details mt-2 flex flex-col gap-2">
+                          {plan.map((step, index) => (
+                            <div key={index} className="flex items-start gap-2 text-sm">
+                              <Icon
+                                iconName={
+                                  step.status === 'completed' ? 'check-circle' :
+                                    step.status === 'in_progress' ? 'spinner' :
+                                      'circle'
+                                }
+                                className={
+                                  step.status === 'completed' ? 'text-green-500' :
+                                    step.status === 'in_progress' ? 'text-yellow-500 animate-spin' :
+                                      'text-gray-400'
+                                }
+                              />
+                              <div className="flex flex-col">
+                                <span className={step.status === 'completed' ? 'line-through text-neutral-400' : ''}>
+                                  {step.description}
+                                </span>
+                                <span className="text-2xs text-neutral-400">
+                                  {step.status.replace('_', ' ')}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Loading loadingText={loadingText} />
+                  )
+                )}
                 {isLoading && (
                   <div className="streaming text-sm">
                     <Markdown
