@@ -161,4 +161,17 @@ describe('ClusterCard', () => {
       clusterId: 'cluster-id',
     })
   })
+
+  it('should display invalid credentials link', async () => {
+    renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'INVALID_CREDENTIALS' }}
+      />
+    )
+
+    const link = screen.getByText('Invalid cloud credentials')
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', `/organization/org-id/cluster/cluster-id/logs`)
+  })
 })
