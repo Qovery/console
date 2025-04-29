@@ -182,10 +182,8 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
 
-  const [plan, setPlan] = useState<
-    { description: string; toolName: string; status: 'not_started' | 'in_progress' | 'completed' }[]
-  >([]);
-  const [showPlan, setShowPlan] = useState(false);
+  const [plan, setPlan] = useState<{ messageId: number; description: string; toolName: string; status: 'not_started' | 'in_progress' | 'completed' }[]>([]);
+  const [showPlans, setShowPlans] = useState<Record<number, boolean>>({});
 
   const pendingThreadId = useRef<string>()
 
@@ -307,7 +305,6 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
         )
         setThread(updatedThread)
       } else {
-        console.log(nextVote);
 
         if (nextVote) {
           toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
@@ -332,7 +329,6 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     setDisplayedStreamingMessage('')
     setIsStopped(false)
     setLoadingText("Loading...")
-    setPlan([])
     let fullContent = ''
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
@@ -373,11 +369,15 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                 if (parsed.content.includes('__plan__:')) {
                   try {
                     const planArray = JSON.parse(parsed.content.replace('__plan__:', ''));
-                    setPlan(planArray.map((step: any) => ({
-                      description: step.description,
-                      toolName: step.tool_name,
-                      status: 'not_started'
-                    })));
+                    setPlan(prev => ([
+                      ...prev,
+                      ...planArray.map((step: any) => ({
+                        messageId: -2,
+                        description: step.description,
+                        toolName: step.tool_name,
+                        status: 'not_started',
+                      }))
+                    ]));
                   } catch (e) {
                   }
                 } else if (parsed.content.includes('__step__:')) {
@@ -385,11 +385,12 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                   setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1));
                 } else if (parsed.content.includes('__stepPlan__:')) {
                   const stepDescription = parsed.content.replace('__stepPlan__:', '').replaceAll('_', ' ');
-                  console.log('STEP', stepDescription);
                   setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1));
-                  setPlan(prev =>
-                    prev.map((step, index) => {
-                      if (step.status === 'in_progress') {
+                  setPlan(prev => {
+                    let foundInProgress = false;
+                    return prev.map((step) => {
+                      if (!foundInProgress && step.status === 'in_progress') {
+                        foundInProgress = true;
                         return { ...step, status: 'completed' };
                       }
                       if (
@@ -399,8 +400,8 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                         return { ...step, status: 'in_progress' };
                       }
                       return step;
-                    })
-                  );
+                    });
+                  });
                 } else {
                   fullContent += parsed.content
                   setStreamingMessage(fullContent)
@@ -448,6 +449,12 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
         ];
 
         setThread(updatedThread.slice(0, -1).concat(resultThread));
+        const newAssistantMessageId = result.thread[result.thread.length - 1].id;
+        setPlan((prev) =>
+          prev.map((step) =>
+            step.messageId === -2 ? { ...step, messageId: newAssistantMessageId } : step
+          )
+        );
       } else {
         setThread([
           ...thread,
@@ -798,6 +805,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                   </div>
                 )}
                 {thread.map((thread) => {
+
                   return match(thread.owner)
                     .with('user', () => (
                       <div
@@ -809,6 +817,50 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                     ))
                     .with('assistant', () => (
                       <div key={thread.id} className="text-sm group">
+                        {plan.filter(p => p.messageId === thread.id).length > 0 && (
+                          <div className="plan-toggle mt-2 flex items-center gap-2 group cursor-pointer"
+                            onClick={() => setShowPlans((prev) => ({ ...prev, [thread.id]: !prev[thread.id] }))}
+                          >
+                            <div className="italic text-gray-600 w-fit text-ssm font-medium">
+                              Plan steps
+                            </div>
+                            <div className="">
+                              <Icon
+                                iconName={showPlans[thread.id] ? "chevron-circle-up" : "chevron-circle-down"}
+                                iconStyle="regular"
+                                className="transform transition-transform group-hover:scale-110"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {plan.filter(p => p.messageId === thread.id).length > 0 && showPlans[thread.id] && (
+                          <div className="mt-2 flex flex-col gap-2">
+                            {plan.filter(p => p.messageId === thread.id).map((step, index) => (
+                              <div key={index} className="flex items-start gap-2 text-sm">
+                                <Icon
+                                  iconName={
+                                    step.status === 'completed' ? 'check-circle' :
+                                      step.status === 'in_progress' ? 'spinner' :
+                                        'circle'
+                                  }
+                                  className={
+                                    step.status === 'completed' ? 'text-green-500' :
+                                      step.status === 'in_progress' ? 'text-yellow-500 animate-spin' :
+                                        'text-gray-400'
+                                  }
+                                />
+                                <div className="flex flex-col">
+                                  <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                    {step.description}
+                                  </span>
+                                  <span className="text-2xs text-neutral-400">
+                                    {step.status.replace('_', ' ')}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         <Markdown
                           remarkPlugins={[remarkGfm]}
                           components={{
@@ -935,7 +987,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                               'text-brand-500': thread.vote === 'downvote',
                             })}
                             onClick={() => handleVote(thread.id, 'downvote')}>
-                            <Icon iconName="arrow-down" />
+                            <Icon iconName="thumbs-down" />
                           </Button>
                         </div>
                       </div>
@@ -943,54 +995,98 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                     .exhaustive()
                 })}
                 {isLoading && streamingMessage.length === 0 && (
-                  plan.length > 0 ? (
-                    <div className='relative top-2 mt-auto'>
-                      <div className="flex items-center gap-2">
-                        <AnimatedGradientText className="w-fit text-ssm font-medium">
-                          {loadingText}
-                        </AnimatedGradientText>
+                  <div className="relative top-2 mt-auto">
+                    <div className="flex items-center gap-2 group cursor-pointer"
+                      onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}
+                    >
+                      <AnimatedGradientText className="w-fit text-ssm font-medium">
+                        {loadingText}
+                      </AnimatedGradientText>
+                      {plan.filter(p => p.messageId === -2).length > 0 && (
                         <Icon
-                          onClick={() => setShowPlan((prev) => !prev)}
-                          iconName="arrow-down"
+                          iconName={showPlans[-1] ? "chevron-circle-up" : "chevron-circle-down"}
                           iconStyle="regular"
-                          className="cursor-pointer"
+                          className="transform transition-transform group-hover:scale-110"
                         />
-                      </div>
-                      {showPlan && (
-                        <div className="plan-details mt-2 flex flex-col gap-2">
-                          {plan.map((step, index) => (
-                            <div key={index} className="flex items-start gap-2 text-sm">
-                              <Icon
-                                iconName={
-                                  step.status === 'completed' ? 'check-circle' :
-                                    step.status === 'in_progress' ? 'spinner' :
-                                      'circle'
-                                }
-                                className={
-                                  step.status === 'completed' ? 'text-green-500' :
-                                    step.status === 'in_progress' ? 'text-yellow-500 animate-spin' :
-                                      'text-gray-400'
-                                }
-                              />
-                              <div className="flex flex-col">
-                                <span className={step.status === 'completed' ? 'line-through text-neutral-400' : ''}>
-                                  {step.description}
-                                </span>
-                                <span className="text-2xs text-neutral-400">
-                                  {step.status.replace('_', ' ')}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
                       )}
                     </div>
-                  ) : (
-                    <Loading loadingText={loadingText} />
-                  )
+                    {showPlans[-2] && plan.filter(p => p.messageId === -2).length > 0 && (
+                      <div className="mt-2 flex flex-col gap-2">
+                        {plan.filter(p => p.messageId === -2).map((step, index) => (
+                          <div key={index} className="flex items-start gap-2 text-sm">
+                            <Icon
+                              iconName={
+                                step.status === 'completed'
+                                  ? 'check-circle'
+                                  : step.status === 'in_progress'
+                                    ? 'spinner'
+                                    : 'circle'
+                              }
+                              className={
+                                step.status === 'completed'
+                                  ? 'text-green-500'
+                                  : step.status === 'in_progress'
+                                    ? 'text-yellow-500 animate-spin'
+                                    : 'text-gray-400'
+                              }
+                            />
+                            <div className="flex flex-col">
+                              <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                {step.description}
+                              </span>
+                              <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 )}
-                {isLoading && (
+                {isLoading && streamingMessage.length > 0 && (
                   <div className="streaming text-sm">
+                    {plan.filter(p => p.messageId === -2).length > 0 && (
+                      <div className="plan-toggle mt-2 flex items-center gap-2 cursor-pointer group"
+                        onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}>
+                        <div className="italic text-gray-600 w-fit text-ssm font-medium">
+                          Plan steps
+                        </div>
+                        <Icon
+                          iconName={(showPlans[-2] !== undefined && showPlans[-2]) ? "chevron-circle-up" : "chevron-circle-down"}
+                          iconStyle="regular"
+                          className="transform transition-transform group-hover:scale-110"
+                        />
+                      </div>
+                    )}
+                    {plan.filter(p => p.messageId === -2).length > 0 && showPlans[-2] !== undefined && showPlans[-2] && (
+                      <div className="mt-2 flex flex-col gap-2">
+                        {plan.filter(p => p.messageId === -2).map((step, index) => (
+                          <div key={index} className="flex items-start gap-2 text-sm">
+                            <Icon
+                              iconName={
+                                step.status === 'completed'
+                                  ? 'check-circle'
+                                  : step.status === 'in_progress'
+                                    ? 'spinner'
+                                    : 'circle'
+                              }
+                              className={
+                                step.status === 'completed'
+                                  ? 'text-green-500'
+                                  : step.status === 'in_progress'
+                                    ? 'text-yellow-500 animate-spin'
+                                    : 'text-gray-400'
+                              }
+                            />
+                            <div className="flex flex-col">
+                              <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                {step.description}
+                              </span>
+                              <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     <Markdown
                       remarkPlugins={[remarkGfm]}
                       components={{
