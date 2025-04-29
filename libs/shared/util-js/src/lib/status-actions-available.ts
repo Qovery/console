@@ -1,4 +1,4 @@
-import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
+import { type ClusterStateEnum, type StateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { RunningState } from '@qovery/shared/enums'
 
@@ -112,45 +112,4 @@ export const isCancelBuildAvailable = (status: keyof typeof StateEnum | keyof ty
       () => true
     )
     .otherwise(() => false)
-}
-
-// TODO: differentiate service state from cluster state
-export const getStatusClusterMessage = (status?: StateEnum | ClusterStateEnum, isAlreadyDeployed?: boolean): string => {
-  switch (status) {
-    case ClusterStateEnum.INVALID_CREDENTIALS:
-      return 'Invalid credentials'
-    case StateEnum.DEPLOYMENT_QUEUED:
-      if (!isAlreadyDeployed) return 'Installation queued'
-      else return 'Update queued'
-    case StateEnum.DEPLOYMENT_ERROR:
-      if (!isAlreadyDeployed) return 'Installation error'
-      else return 'Update error'
-    case StateEnum.DEPLOYING:
-      if (!isAlreadyDeployed) return 'Installing...'
-      else return 'Updating...'
-    case StateEnum.QUEUED:
-      if (!isAlreadyDeployed) return 'Installing queued'
-      else return 'Updating queued'
-    case StateEnum.STOP_QUEUED:
-      return 'Pause queued'
-    case StateEnum.BUILD_ERROR:
-      return 'Build error'
-    case StateEnum.STOP_ERROR:
-      return 'Pause error'
-    case StateEnum.STOPPING:
-      return 'Pausing...'
-    case StateEnum.STOPPED:
-      return 'Paused'
-    case StateEnum.DELETE_QUEUED:
-      return 'Deletion queued'
-    case StateEnum.DELETING:
-      return 'Deleting...'
-    case StateEnum.DELETE_ERROR:
-      return 'Deletion error'
-    case StateEnum.READY:
-    case StateEnum.DELETED:
-    case StateEnum.DEPLOYED:
-    default:
-      return ''
-  }
 }

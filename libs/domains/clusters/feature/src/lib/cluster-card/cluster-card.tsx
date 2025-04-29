@@ -47,6 +47,18 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
         <Icon iconName="arrow-up-right" className="relative top-[1px]" />
       </LinkUI>
     ))
+    .with('INVALID_CREDENTIALS', () => (
+      <LinkUI
+        to={INFRA_LOGS_URL(cluster.organization.id, cluster.id)}
+        color="red"
+        underline
+        size="sm"
+        onClick={(e) => e.stopPropagation()}
+      >
+        Invalid cloud credentials
+        <Icon iconName="arrow-up-right" className="relative top-[1px]" />
+      </LinkUI>
+    ))
     .otherwise(
       () =>
         clusterDeploymentStatus?.last_deployment_date && (

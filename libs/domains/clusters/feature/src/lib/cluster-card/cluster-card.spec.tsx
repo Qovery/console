@@ -1,4 +1,5 @@
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
+import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
@@ -160,5 +161,18 @@ describe('ClusterCard', () => {
       organizationId: 'org-id',
       clusterId: 'cluster-id',
     })
+  })
+
+  it('should display invalid credentials link', async () => {
+    renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'INVALID_CREDENTIALS' }}
+      />
+    )
+
+    const link = screen.getByText('Invalid cloud credentials')
+    expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('href', INFRA_LOGS_URL(mockCluster.organization.id, mockCluster.id))
   })
 })

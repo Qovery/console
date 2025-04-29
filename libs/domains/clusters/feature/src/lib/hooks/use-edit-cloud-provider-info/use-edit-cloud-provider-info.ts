@@ -5,7 +5,7 @@ import { useDeployCluster } from '../use-deploy-cluster/use-deploy-cluster'
 
 export function useEditCloudProviderInfo({ silently = false } = {}) {
   const queryClient = useQueryClient()
-  const { mutateAsync: deployCluster } = useDeployCluster()
+  const { mutate: deployCluster } = useDeployCluster()
 
   return useMutation(mutations.editCloudProviderInfo, {
     onSuccess(_, { organizationId, clusterId }) {
