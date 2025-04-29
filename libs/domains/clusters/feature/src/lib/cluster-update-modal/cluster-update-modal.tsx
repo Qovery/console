@@ -1,5 +1,7 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Checkbox, Icon, InputTextSmall, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
@@ -12,7 +14,8 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
   const { closeModal } = useModal()
   const { mutateAsync: deployCluster, isLoading } = useDeployCluster()
   const [, copyToClipboard] = useCopyToClipboard()
-
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
   const methods = useForm<{ name: string; dryRun: boolean }>({
     mode: 'onChange',
     defaultValues: {
@@ -28,6 +31,12 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
         dryRun: data['dryRun'],
       })
       closeModal()
+      // Redirecting to cluster's logs page if dry-run was selected
+      if (data['dryRun']) {
+        navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
+          state: { prevUrl: pathname },
+        })
+      }
     } catch (error) {
       console.error(error)
     }
