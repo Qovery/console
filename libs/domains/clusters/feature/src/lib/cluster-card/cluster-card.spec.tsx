@@ -1,4 +1,5 @@
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
+import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
@@ -172,6 +173,6 @@ describe('ClusterCard', () => {
 
     const link = screen.getByText('Invalid cloud credentials')
     expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('href', `/organization/org-id/cluster/cluster-id/logs`)
+    expect(link).toHaveAttribute('href', INFRA_LOGS_URL(mockCluster.organization.id, mockCluster.id))
   })
 })
