@@ -82,8 +82,6 @@ export interface ClusterCardProps {
 export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardProps) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
 
-  console.log(clusterDeploymentStatus)
-
   return (
     <Link
       to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}
