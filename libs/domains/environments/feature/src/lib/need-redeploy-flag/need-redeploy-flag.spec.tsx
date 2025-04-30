@@ -122,6 +122,6 @@ describe('NeedRedeployFlag', () => {
     })
 
     const { container } = renderWithProviders(<NeedRedeployFlag />)
-    expect(container.firstChild).toBeNull()
+    expect(container).toBeEmptyDOMElement()
   })
 })
