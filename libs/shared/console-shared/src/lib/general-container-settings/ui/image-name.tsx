@@ -96,19 +96,21 @@ export function ImageName({
         <InputSelect
           onInputChange={(value) => setSearchParams(value)}
           onChange={(value) => {
+            const lowercasedValue = String(value).toLowerCase()
+
             // If the value doesn't exist in options, it's a new creation
-            const existingOption = options.find((opt) => opt.value === value)
-            if (!existingOption && value) {
+            const existingOption = options.find((opt) => opt.value === lowercasedValue)
+            if (!existingOption && lowercasedValue) {
               const newOption: Value = {
-                value: String(value),
-                label: String(value),
+                value: lowercasedValue,
+                label: lowercasedValue,
               }
               setCustomOptions((prev) => [...prev, newOption])
             }
 
             // Reset image tag when image name changes
             setValue('image_tag', containerImages.find((c) => c.image_name === value)?.versions?.[0] ?? '')
-            field.onChange(value)
+            field.onChange(lowercasedValue)
           }}
           value={field.value}
           options={options}
@@ -116,7 +118,7 @@ export function ImageName({
           label="Image name"
           minInputLength={3}
           isLoading={isFetching || searchParams !== debouncedImageName}
-          formatCreateLabel={(inputValue) => `Select "${inputValue}" - not found in registry`}
+          formatCreateLabel={(inputValue) => `Select "${inputValue.toLowerCase()}" - not found in registry`}
           isValidNewOption={isValidNewOption}
           filterOption="startsWith"
           isCreatable
