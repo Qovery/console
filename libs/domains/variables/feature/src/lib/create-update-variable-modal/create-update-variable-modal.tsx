@@ -4,6 +4,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
   Button,
+  Callout,
   Icon,
   InputSelect,
   InputText,
@@ -121,6 +122,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   })
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
+  const watchScope = methods.watch('scope')
 
   const _onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = { ...data }
@@ -460,6 +462,17 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               )}
             />
           </div>
+        )}
+
+        {scope === 'APPLICATION' && watchScope !== 'APPLICATION' && (
+          <Callout.Root color="yellow" className="mb-3">
+            <Callout.Icon>
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text className="relative top-0.5">
+              Environment will need to be redeployed to apply this variable
+            </Callout.Text>
+          </Callout.Root>
         )}
 
         <Controller
