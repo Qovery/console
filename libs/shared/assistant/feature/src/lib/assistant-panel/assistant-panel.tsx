@@ -665,6 +665,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                           setThread([])
                           setThreadId(undefined);
                           setIsLoading(false);
+                          setPlan([]);
                         }}
                       >
                         <span className="w-4">
