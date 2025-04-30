@@ -52,8 +52,6 @@ function MenuManageDeployment({
   const environmentNeedUpdate = deploymentStatus?.deployment_status !== EnvironmentDeploymentStatusEnum.UP_TO_DATE
   const displayYellowColor = environmentNeedUpdate && state !== 'STOPPED'
 
-  console.log(displayYellowColor)
-
   const tooltipEnvironmentNeedUpdate = displayYellowColor && (
     <Tooltip side="bottom" content="Environment has changed and needs to be applied">
       <div className="absolute right-2">
