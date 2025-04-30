@@ -1,4 +1,10 @@
-import { type Environment, OrganizationEventTargetType, StateEnum } from 'qovery-typescript-axios'
+import {
+  type Environment,
+  EnvironmentDeploymentStatusEnum,
+  type EnvironmentStatus,
+  OrganizationEventTargetType,
+  StateEnum,
+} from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useServices } from '@qovery/domains/services/feature'
@@ -35,13 +41,25 @@ type ActionToolbarVariant = 'default' | 'deployment'
 
 function MenuManageDeployment({
   environment,
-  state,
+  deploymentStatus,
   variant,
 }: {
   environment: Environment
-  state: StateEnum
+  deploymentStatus: EnvironmentStatus
   variant: ActionToolbarVariant
 }) {
+  const state = deploymentStatus.state
+  const environmentNeedUpdate = deploymentStatus?.deployment_status !== EnvironmentDeploymentStatusEnum.UP_TO_DATE
+  const displayYellowColor = environmentNeedUpdate && state !== 'STOPPED'
+
+  const tooltipEnvironmentNeedUpdate = displayYellowColor && (
+    <Tooltip side="bottom" content="Environment has changed and needs to be applied">
+      <div className="absolute right-2">
+        <Icon iconName="circle-exclamation" iconStyle="regular" />
+      </div>
+    </Tooltip>
+  )
+
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -121,6 +139,7 @@ function MenuManageDeployment({
       <DropdownMenu.Trigger asChild>
         <ActionToolbar.Button
           aria-label="Manage Deployment"
+          color={displayYellowColor ? 'yellow' : 'neutral'}
           size={variant === 'default' ? 'md' : 'sm'}
           variant={variant === 'default' ? 'outline' : 'surface'}
           radius={variant === 'deployment' ? 'rounded' : 'none'}
@@ -149,13 +168,25 @@ function MenuManageDeployment({
           </DropdownMenu.Item>
         )}
         {isDeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="play" />} onSelect={mutationDeploy}>
+          <DropdownMenu.Item
+            icon={<Icon iconName="play" />}
+            onSelect={mutationDeploy}
+            className="relative"
+            color={displayYellowColor ? 'yellow' : 'brand'}
+          >
             Deploy
+            {tooltipEnvironmentNeedUpdate}
           </DropdownMenu.Item>
         )}
         {isRedeployAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="rotate-right" />} onSelect={mutationRedeploy}>
+          <DropdownMenu.Item
+            icon={<Icon iconName="rotate-right" />}
+            onSelect={mutationRedeploy}
+            className="relative"
+            color={displayYellowColor ? 'yellow' : 'brand'}
+          >
             Redeploy
+            {tooltipEnvironmentNeedUpdate}
           </DropdownMenu.Item>
         )}
         {isStopAvailable(state) && (
@@ -302,7 +333,7 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
   return (
     <ActionToolbar.Root>
       {hasServices && (
-        <MenuManageDeployment environment={environment} state={deploymentStatus.state} variant={variant} />
+        <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant={variant} />
       )}
       {variant === 'default' && (
         <>
