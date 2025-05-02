@@ -182,7 +182,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
 
-  const [plan, setPlan] = useState<{ messageId: number; description: string; toolName: string; status: 'not_started' | 'in_progress' | 'completed' }[]>([]);
+  const [plan, setPlan] = useState<{ messageId: number; description: string; toolName: string; status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error' }[]>([]);
   const [showPlans, setShowPlans] = useState<Record<number, boolean>>({});
 
   const pendingThreadId = useRef<string>()
@@ -384,24 +384,18 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                   const stepDescription = parsed.content.replace('__step__:', '').replaceAll('_', ' ');
                   setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1));
                 } else if (parsed.content.includes('__stepPlan__:')) {
-                  const stepDescription = parsed.content.replace('__stepPlan__:', '').replaceAll('_', ' ');
-                  setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1));
-                  setPlan(prev => {
-                    let foundInProgress = false;
-                    return prev.map((step) => {
-                      if (!foundInProgress && step.status === 'in_progress') {
-                        foundInProgress = true;
-                        return { ...step, status: 'completed' };
-                      }
-                      if (
-                        step.description.toLowerCase().includes(stepDescription.toLowerCase()) &&
-                        step.status === 'not_started'
-                      ) {
-                        return { ...step, status: 'in_progress' };
-                      }
-                      return step;
-                    });
-                  });
+                  try {
+                    const stepObj = JSON.parse(parsed.content.replace('__stepPlan__:', ''));
+                    const { description, status } = stepObj;
+                    setLoadingText(description.charAt(0).toUpperCase() + description.slice(1));
+                    setPlan(prev => prev.map(step =>
+                      step.description.toLowerCase().includes(description.toLowerCase())
+                        ? { ...step, status }
+                        : step
+                    ));
+                  } catch (e) {
+                    console.error("Failed to parse stepPlan object", e);
+                  }
                 } else {
                   fullContent += parsed.content
                   setStreamingMessage(fullContent)
@@ -842,12 +836,16 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                                   iconName={
                                     step.status === 'completed' ? 'check-circle' :
                                       step.status === 'in_progress' ? 'spinner' :
-                                        'circle'
+                                        step.status === 'waiting' ? 'pause-circle' :
+                                          step.status === 'error' ? 'exclamation-circle' :
+                                            'circle'
                                   }
                                   className={
                                     step.status === 'completed' ? 'text-green-500' :
                                       step.status === 'in_progress' ? 'text-yellow-500 animate-spin' :
-                                        'text-gray-400'
+                                        step.status === 'waiting' ? 'text-blue-500' :
+                                          step.status === 'error' ? 'text-red-500' :
+                                            'text-gray-400'
                                   }
                                 />
                                 <div className="flex flex-col">
@@ -1021,14 +1019,22 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                                   ? 'check-circle'
                                   : step.status === 'in_progress'
                                     ? 'spinner'
-                                    : 'circle'
+                                    : step.status === 'waiting'
+                                      ? 'pause-circle'
+                                      : step.status === 'error'
+                                        ? 'exclamation-circle'
+                                        : 'circle'
                               }
                               className={
                                 step.status === 'completed'
                                   ? 'text-green-500'
                                   : step.status === 'in_progress'
                                     ? 'text-yellow-500 animate-spin'
-                                    : 'text-gray-400'
+                                    : step.status === 'waiting'
+                                      ? 'text-blue-500'
+                                      : step.status === 'error'
+                                        ? 'text-red-500'
+                                        : 'text-gray-400'
                               }
                             />
                             <div className="flex flex-col">
@@ -1068,14 +1074,22 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                                   ? 'check-circle'
                                   : step.status === 'in_progress'
                                     ? 'spinner'
-                                    : 'circle'
+                                    : step.status === 'waiting'
+                                      ? 'pause-circle'
+                                      : step.status === 'error'
+                                        ? 'exclamation-circle'
+                                        : 'circle'
                               }
                               className={
                                 step.status === 'completed'
                                   ? 'text-green-500'
                                   : step.status === 'in_progress'
                                     ? 'text-yellow-500 animate-spin'
-                                    : 'text-gray-400'
+                                    : step.status === 'waiting'
+                                      ? 'text-blue-500'
+                                      : step.status === 'error'
+                                        ? 'text-red-500'
+                                        : 'text-gray-400'
                               }
                             />
                             <div className="flex flex-col">
