@@ -11,6 +11,7 @@ import {
   useDeployEnvironment,
   useDeploymentStatus,
   useEnvironment,
+  useServiceCount,
 } from '@qovery/domains/environments/feature'
 import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -50,6 +51,7 @@ import {
 export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: countServices = 0 } = useServiceCount({ environmentId })
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -255,7 +257,8 @@ export function Container({ children }: PropsWithChildren) {
             {environment && <EnvironmentAvatar environment={environment} />}
           </Header>
           <Tabs items={tabsItems} contentRight={contentTabs} />
-          {cancelOnGoing ? <Banner color="yellow">Deployment cancel ongoing...</Banner> : <NeedRedeployFlag />}
+          {Boolean(countServices) &&
+            (cancelOnGoing ? <Banner color="yellow">Deployment cancel ongoing...</Banner> : <NeedRedeployFlag />)}
           <div className="mt-2 flex min-h-0 flex-grow flex-col items-stretch rounded-b-none rounded-t-sm bg-white">
             <ErrorBoundary key={tabsItems.find(({ active }) => active)?.link}>{children}</ErrorBoundary>
           </div>
