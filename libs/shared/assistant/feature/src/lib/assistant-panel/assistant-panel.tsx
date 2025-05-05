@@ -31,6 +31,7 @@ import { submitVote } from './submit-vote'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
 import { toast, ToastEnum } from '@qovery/shared/ui'
+import mermaid from 'mermaid'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
@@ -98,6 +99,36 @@ const Loading = ({ loadingText }: { loadingText: string }) => {
   )
 }
 
+const MermaidChart = ({ code }: { code: string }) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    const id = 'mermaid-' + Math.random().toString(36).slice(2)
+    try {
+      mermaid
+        .render(id, code)
+        .then(({ svg }) => {
+          if (containerRef.current) {
+            containerRef.current.innerHTML = svg
+          }
+        })
+        .catch(() => {
+          if (containerRef.current) {
+            containerRef.current.innerHTML = '<pre>' + code + '</pre>'
+          }
+        })
+    } catch (e) {
+      if (containerRef.current) {
+        containerRef.current.innerHTML = '<pre>' + code + '</pre>'
+      }
+    }
+  }, [code])
+
+  return <div className="mermaid" ref={containerRef} />
+}
+
 export type Message = {
   id: number
   text: string
@@ -157,7 +188,195 @@ function useQoveryContext() {
   }
 }
 
+const normalizeMermaid = (text: string) => {
+  return text.replace(/\[start mermaid block\]/g, '```mermaid')
+    .replace(/\[end mermaid block\]/g, '```')
+}
+
+const renderStreamingMessageWithMermaid = (input: string) => {
+  const parts = []
+  let lastIndex = 0
+  const regex = /\[start mermaid block\]([\s\S]*?)\[end mermaid block\]/g
+  let match
+
+  while ((match = regex.exec(input)) !== null) {
+    const start = match.index
+    const end = regex.lastIndex
+    const mermaidCode = match[1].trim()
+
+    if (start > lastIndex) {
+      const textPart = input.slice(lastIndex, start)
+      if (textPart) {
+        parts.push(
+          <Markdown
+            key={'md-' + lastIndex}
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
+              h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
+              h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
+              h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
+              p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
+              ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
+              ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
+              li: ({ node, ...props }) => <li className="my-1" {...props} />,
+              a: ({ node, ...props }) => (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+                  {...props}
+                />
+              ),
+              pre: ({ node, children, ...props }) => {
+                const codeContent = React.isValidElement(children)
+                  ? (children.props as { children?: string })?.children
+                  : null
+                return (
+                  <div className="relative my-4">
+                    <pre
+                      className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+                      {...props}
+                    >
+                      {children}
+                    </pre>
+                  </div>
+                )
+              },
+              code: ({ node, inline, className, children, ...props }: CodeProps) => {
+                const match = /language-(\w+)/.exec(className || '')
+                if (match && match[1] === 'mermaid') {
+                  return <MermaidChart code={String(children).replace(/\n$/, '')} />
+                }
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    language={match[1]}
+                    style={materialDark as any}
+                    PreTag="div"
+                    customStyle={{
+                      borderRadius: '0.5rem',
+                      padding: '1rem',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                    }}
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code
+                    className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm dark:bg-neutral-800"
+                    {...props}
+                  >
+                    {children}
+                  </code>
+                )
+              },
+              blockquote: ({ node, ...props }) => (
+                <blockquote
+                  className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
+                  {...props}
+                />
+              ),
+            }}
+          >
+            {normalizeMermaid(textPart)}
+          </Markdown>
+        )
+      }
+    }
+    parts.push(<MermaidChart key={'mermaid-' + start} code={mermaidCode} />)
+    lastIndex = end
+  }
+
+  if (lastIndex < input.length) {
+    const textPart = input.slice(lastIndex)
+    if (textPart) {
+      parts.push(
+        <Markdown
+          key={'md-' + lastIndex}
+          remarkPlugins={[remarkGfm]}
+          components={{
+            h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
+            h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
+            h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
+            h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
+            p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
+            ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
+            ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
+            li: ({ node, ...props }) => <li className="my-1" {...props} />,
+            a: ({ node, ...props }) => (
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+                {...props}
+              />
+            ),
+            pre: ({ node, children, ...props }) => {
+              const codeContent = React.isValidElement(children)
+                ? (children.props as { children?: string })?.children
+                : null
+              return (
+                <div className="relative my-4">
+                  <pre
+                    className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+                    {...props}
+                  >
+                    {children}
+                  </pre>
+                </div>
+              )
+            },
+            code: ({ node, inline, className, children, ...props }: CodeProps) => {
+              const match = /language-(\w+)/.exec(className || '')
+              if (match && match[1] === 'mermaid') {
+                return <MermaidChart code={String(children).replace(/\n$/, '')} />
+              }
+              return !inline && match ? (
+                <SyntaxHighlighter
+                  language={match[1]}
+                  style={materialDark as any}
+                  PreTag="div"
+                  customStyle={{
+                    borderRadius: '0.5rem',
+                    padding: '1rem',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.5',
+                  }}
+                  {...props}
+                >
+                  {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+              ) : (
+                <code
+                  className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm dark:bg-neutral-800"
+                  {...props}
+                >
+                  {children}
+                </code>
+              )
+            },
+            blockquote: ({ node, ...props }) => (
+              <blockquote
+                className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
+                {...props}
+              />
+            ),
+          }}
+        >
+          {normalizeMermaid(textPart)}
+        </Markdown>
+      )
+    }
+  }
+  return parts
+}
+
 export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
+  useEffect(() => {
+    mermaid.initialize({ startOnLoad: true });
+  }, []);
   const controllerRef = useRef<AbortController | null>(null)
   const STORAGE_KEY = 'assistant-panel-size'
   const { message: inputExplainMessage, setMessage: setInputExplainMessage } = useContext(AssistantContext)
@@ -177,7 +396,6 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
 
   const [streamingMessage, setStreamingMessage] = useState('')
   const [displayedStreamingMessage, setDisplayedStreamingMessage] = useState('')
-  const [isScrollFocus, setIsScrollFocus] = useState(false)
   const [isFinish, setIsFinish] = useState(false)
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
@@ -230,42 +448,6 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }, [inputExplainMessage])
 
   const isProgrammaticScroll = useRef(false)
-  const lastScrollTime = useRef<number>(0)
-
-  useEffect(() => {
-    const node = scrollAreaRef.current
-    if (!node) return
-
-    const handleScroll = () => {
-      if (isProgrammaticScroll.current) {
-
-        isProgrammaticScroll.current = false
-        return
-      }
-
-      const { scrollTop, clientHeight, scrollHeight } = node
-      const isAtBottom = Math.abs(scrollTop + clientHeight - scrollHeight) < 2
-
-      setIsScrollFocus(!isAtBottom)
-    }
-
-    node.addEventListener('scroll', handleScroll)
-    return () => node.removeEventListener('scroll', handleScroll)
-  }, [scrollAreaRef, scrollAreaRef.current])
-
-  useEffect(() => {
-    const now = Date.now()
-    const node = scrollAreaRef.current
-    if (!node || isScrollFocus) return
-    if (now - lastScrollTime.current < 200) return
-
-    lastScrollTime.current = now
-    isProgrammaticScroll.current = true
-    node.scrollTo({
-      top: node.scrollHeight,
-      behavior: 'auto',
-    })
-  }, [thread, displayedStreamingMessage, isScrollFocus])
 
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
@@ -323,7 +505,13 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const handleSendMessage = async (value?: string) => {
     controllerRef.current = new AbortController()
     lastSubmitResult.current = null;
-    setIsScrollFocus(false)
+    const node = scrollAreaRef.current
+    if (node) {
+      node.scrollTo({
+        top: node.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
     setIsFinish(false)
     setStreamingMessage('')
     setDisplayedStreamingMessage('')
@@ -493,6 +681,28 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   }, [streamingMessage])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
+
+  const [isAtBottom, setIsAtBottom] = useState(true)
+
+  useEffect(() => {
+    const node = scrollAreaRef.current
+    console.log('node', node);
+
+    if (!node) return
+
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } = node
+      const atBottom = Math.abs(scrollTop + clientHeight - scrollHeight) < 2
+      setIsAtBottom(atBottom)
+    }
+
+    node.addEventListener('scroll', handleScroll)
+    handleScroll()
+
+    return () => {
+      node.removeEventListener('scroll', handleScroll)
+    }
+  }, [threadId, displayedStreamingMessage])
 
   const panelRef = useRef<HTMLDivElement>(null)
 
@@ -934,6 +1144,9 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                             },
                             code: ({ node, inline, className, children, ...props }: CodeProps) => {
                               const match = /language-(\w+)/.exec(className || '')
+                              if (match && match[1] === 'mermaid') {
+                                return <MermaidChart code={String(children).replace(/\n$/, '')} />
+                              }
                               return !inline && match ? (
                                 <SyntaxHighlighter
                                   language={match[1]}
@@ -966,7 +1179,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                             ),
                           }}
                         >
-                          {thread.text}
+                          {normalizeMermaid(thread.text)}
                         </Markdown>
                         <div className="mt-2 flex gap-2 text-xs text-neutral-400 invisible group-hover:visible">
                           <Button
@@ -1102,120 +1315,34 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                         ))}
                       </div>
                     )}
-                    <Markdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
-                        h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
-                        h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
-                        h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
-                        p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
-                        ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
-                        ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
-                        li: ({ node, ...props }) => <li className="my-1" {...props} />,
-                        a: ({ node, ...props }) => (
-                          <a
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
-                            {...props}
-                          />
-                        ),
-                        pre: ({ node, children, ...props }) => {
-                          const codeContent = React.isValidElement(children)
-                            ? (children.props as { children?: string })?.children
-                            : null
-
-                          return (
-                            <div className="relative my-4">
-                              <pre
-                                className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
-                                {...props}
-                              >
-                                {children}
-                              </pre>
-                              {typeof codeContent === 'string' && (
-                                <Button
-                                  variant="surface"
-                                  className="absolute right-2 top-2 aspect-square p-0 flex items-center justify-center"
-                                  onClick={async (e) => {
-                                    const btn = e.currentTarget
-                                    const copyIcon = btn.querySelector('.copy-icon') as HTMLElement
-                                    const checkIcon = btn.querySelector('.check-icon') as HTMLElement
-                                    if (!copyIcon || !checkIcon) return
-
-                                    await navigator.clipboard.writeText(codeContent)
-
-                                    copyIcon.classList.add('opacity-0', 'scale-75')
-                                    copyIcon.classList.remove('opacity-100', 'scale-100')
-
-                                    checkIcon.classList.remove('opacity-0', 'scale-75')
-                                    checkIcon.classList.add('opacity-100', 'scale-100')
-
-                                    setTimeout(() => {
-                                      checkIcon.classList.remove('opacity-100', 'scale-100')
-                                      checkIcon.classList.add('opacity-0', 'scale-75')
-
-                                      copyIcon.classList.remove('opacity-0', 'scale-75')
-                                      copyIcon.classList.add('opacity-100', 'scale-100')
-                                    }, 1000)
-                                  }}
-                                >
-                                  <Icon
-                                    iconName="copy"
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 copy-icon transition-all duration-300 ease-in-out transform opacity-100 scale-100"
-                                  />
-                                  <Icon
-                                    iconName="check"
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 check-icon opacity-0 scale-75 pointer-events-none transition-all duration-300 ease-in-out transform"
-                                  />
-                                </Button>
-                              )}
-                            </div>
-                          )
-                        },
-                        code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                          const match = /language-(\w+)/.exec(className || '')
-                          return !inline && match ? (
-                            <SyntaxHighlighter
-                              language={match[1]}
-                              style={materialDark as any}
-                              PreTag="div"
-                              customStyle={{
-                                borderRadius: '0.5rem',
-                                padding: '1rem',
-                                fontSize: '0.875rem',
-                                lineHeight: '1.5',
-                              }}
-                              {...props}
-                            >
-                              {String(children).replace(/\n$/, '')}
-                            </SyntaxHighlighter>
-                          ) : (
-                            <code
-                              className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm dark:bg-neutral-800"
-                              {...props}
-                            >
-                              {children}
-                            </code>
-                          )
-                        },
-                        blockquote: ({ node, ...props }) => (
-                          <blockquote
-                            className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
-                            {...props}
-                          />
-                        ),
-                      }}
-                    >
-                      {displayedStreamingMessage}
-                    </Markdown>
+                    {(() => {
+                      const input = displayedStreamingMessage
+                      const startMatches = [...input.matchAll(/\[start mermaid block\]/g)]
+                      const endMatches = [...input.matchAll(/\[end mermaid block\]/g)]
+                      let renderInput = input
+                      if (startMatches.length > endMatches.length) {
+                        const lastStart = startMatches.at(-1)
+                        if (lastStart) {
+                          const cutoffIndex = lastStart.index ?? input.length
+                          renderInput = input.slice(0, cutoffIndex) + 'Generating charts…'
+                        }
+                      }
+                      return renderStreamingMessageWithMermaid(renderInput)
+                    })()}
                   </div>
                 )}
                 <div className="sticky bottom-0 left-full z-10 ml-[-40px] w-fit">
-                  {isScrollFocus && (
+                  {!isAtBottom && (
                     <Button
-                      onClick={() => setIsScrollFocus(false)}
+                      onClick={() => {
+                        const node = scrollAreaRef.current
+                        if (node) {
+                          node.scrollTo({
+                            top: node.scrollHeight,
+                            behavior: 'smooth',
+                          })
+                        }
+                      }}
                       className="m-2 flex aspect-square items-center justify-center rounded-full"
                     >
                       <Icon iconName="arrow-down" iconStyle="light" />
