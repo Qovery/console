@@ -48,6 +48,7 @@ import {
 } from '@qovery/shared/routes'
 import {
   AnimatedGradientText,
+  Badge,
   Button,
   Checkbox,
   EmptyState,
@@ -68,6 +69,7 @@ import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import {
   containerRegistryKindToIcon,
   formatCronExpression,
+  pluralize,
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
@@ -93,6 +95,8 @@ function ServiceNameCell({
   deploymentStatus?: Status
 }) {
   const navigate = useNavigate()
+
+  const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
 
   const serviceLink = match(service)
     .with(
@@ -236,6 +240,17 @@ function ServiceNameCell({
               <LinkDeploymentStatus />
             </span>
           ))}
+
+        {deploymentRequestsCount > 0 && (
+          <Tooltip
+            content={`This service has ${deploymentRequestsCount} queued ${pluralize(deploymentRequestsCount, 'deployment')}`}
+          >
+            <Badge className="flex items-center gap-1">
+              <Icon iconName="clock-eight" iconStyle="regular" />
+              {deploymentRequestsCount}
+            </Badge>
+          </Tooltip>
+        )}
       </span>
       <div className="flex shrink-0 items-center gap-5">
         <div className="flex items-center">
@@ -314,6 +329,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     organization: { id: organizationId },
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
+  console.log(' services:', services)
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
