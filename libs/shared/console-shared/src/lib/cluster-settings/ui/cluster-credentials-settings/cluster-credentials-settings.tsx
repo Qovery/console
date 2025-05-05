@@ -21,8 +21,6 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
     onClickEditable: () => openCredentialsModal(item.id),
   }))
 
-  const formIsDirty = formState.isDirty
-
   return (
     <div>
       {loading ? (
@@ -56,7 +54,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
               />
             )}
           />
-          {formIsDirty && (
+          {formState.isDirty && (
             <Callout.Root color="yellow">
               <Callout.Icon>
                 <Icon iconName="circle-exclamation" iconStyle="regular" />
