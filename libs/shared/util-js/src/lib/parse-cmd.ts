@@ -11,11 +11,27 @@ import { parse } from 'shell-quote'
   https://www.npmjs.com/package/shell-quote
 */
 export const parseCmd = (cmd: string): string[] => {
-  const args = parse(cmd, extractEnvVariables(cmd))
+  const placeholders: Record<string, string> = {}
+  let i = 0
 
+  // Replace all $(VAR_NAME) with placeholders
+  // https://qovery.slack.com/archives/C02P2JB4SEM/p1746428425575539
+  const cmdWithPlaceholders = cmd.replace(/\$\(([^)]+)\)/g, (_, varName) => {
+    const placeholder = `__ENV_VAR_PLACEHOLDER_${i++}__`
+    placeholders[placeholder] = `$(${varName})`
+    return placeholder
+  })
+
+  // Extract $VAR variables for shell-quote env option
+  const envVars = extractEnvVariables(cmd)
+
+  // Parse with shell-quote (for proper splitting and $VAR support)
+  const args = parse(cmdWithPlaceholders, envVars)
+
+  // Restore $(VAR) placeholders
   return args.flatMap((arg) => {
     if (typeof arg === 'string') {
-      return arg
+      return placeholders[arg] || arg
     }
     if ('op' in arg) {
       return arg.op

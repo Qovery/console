@@ -25,10 +25,22 @@ describe('parseCmd function', () => {
     expect(result).toEqual(['docker', 'run', 'nginx', '# start nginx container'])
   })
 
-  it('should handle env variables', () => {
+  it('should handle env variables with $VAR format', () => {
     const cmd = 'docker $ENV_VAR run nginx'
     const result = parseCmd(cmd)
     expect(result).toEqual(['docker', '$ENV_VAR', 'run', 'nginx'])
+  })
+
+  it('should handle env variables with $(VAR) format', () => {
+    const cmd = 'my-cmd --token $(MY_SECRET_TOKEN) --env prod'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['my-cmd', '--token', '$(MY_SECRET_TOKEN)', '--env', 'prod'])
+  })
+
+  it('should handle mixed $VAR and $(VAR) formats', () => {
+    const cmd = 'run --access-token $TOKEN --secret $(SECRET_KEY)'
+    const result = parseCmd(cmd)
+    expect(result).toEqual(['run', '--access-token', '$TOKEN', '--secret', '$(SECRET_KEY)'])
   })
 
   it('should handle complex arguments and operations together', () => {
