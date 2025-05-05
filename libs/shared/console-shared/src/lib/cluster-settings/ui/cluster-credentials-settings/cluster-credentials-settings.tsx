@@ -22,7 +22,6 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
   }))
 
   const formIsDirty = formState.isDirty
-  console.log(formIsDirty)
 
   return (
     <div>
