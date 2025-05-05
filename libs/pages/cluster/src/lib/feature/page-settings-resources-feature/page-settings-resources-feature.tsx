@@ -1,17 +1,19 @@
 import {
   type Cluster,
   type ClusterFeatureKarpenterParametersResponse,
+  type ClusterFeatureStringResponse,
   type ClusterRequestFeaturesInner,
 } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { SCW_CONTROL_PLANE_FEATURE_ID } from '@qovery/domains/cloud-providers/feature'
 import {
   ClusterMigrationModal,
   useCluster,
   useEditCluster,
   useUpdateKarpenterPrivateFargate,
 } from '@qovery/domains/clusters/feature'
-import { type ClusterResourcesEdit } from '@qovery/shared/interfaces'
+import { type ClusterResourcesEdit, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { PageSettingsResources } from '../../ui/page-settings-resources/page-settings-resources'
 
@@ -61,6 +63,19 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
     })
   }
 
+  if (cluster.cloud_provider === 'SCW') {
+    payload.features = cluster.features?.map((feature) => {
+      if (feature.id === SCW_CONTROL_PLANE_FEATURE_ID) {
+        return {
+          ...feature,
+          value: data['scw_control_plane'],
+        }
+      }
+
+      return feature
+    })
+  }
+
   return payload
 }
 
@@ -72,6 +87,10 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
   const karpenterFeature = cluster.features?.find(
     (feature) => feature.id === 'KARPENTER'
   ) as ClusterFeatureKarpenterParametersResponse
+  const scwFeature = cluster.features?.find(
+    (feature) => feature.id === SCW_CONTROL_PLANE_FEATURE_ID
+  ) as ClusterFeatureStringResponse
+
   const { openModal, closeModal } = useModal()
 
   const methods = useForm<ClusterResourcesEdit>({
@@ -92,6 +111,7 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
         : {
             enabled: false,
           },
+      scw_control_plane: scwFeature ? (scwFeature.value as SCWControlPlaneFeatureType) : undefined,
     },
   })
   const { mutate: editCluster, isLoading: isEditClusterLoading } = useEditCluster()

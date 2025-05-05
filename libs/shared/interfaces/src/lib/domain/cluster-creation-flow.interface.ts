@@ -11,6 +11,8 @@ export interface ClusterGeneralData {
   installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO'
 }
 
+export type SCWControlPlaneFeatureType = 'KAPSULE' | 'KAPSULE_DEDICATED4' | 'KAPSULE_DEDICATED8' | 'KAPSULE_DEDICATED16'
+
 export interface ClusterKubeconfigData {
   file_name: string
   file_content: string
@@ -27,6 +29,7 @@ export interface ClusterResourcesData {
   nodes: [number, number]
   disk_size: number
   karpenter?: KarpenterData
+  scw_control_plane?: SCWControlPlaneFeatureType
 }
 
 // XXX: Necessary to have `eks_subnets` for Karpenter migration

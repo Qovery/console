@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
+  ClusterSCWControlPlaneFeature,
   KarpenterInstanceFilterModal,
   KarpenterInstanceTypePreview,
   convertToKarpenterRequirements,
@@ -499,29 +500,36 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               </Callout.Text>
             </Callout.Root>
           )}
-          {watchClusterType === KubernetesEnum.MANAGED && (
-            <>
-              <Heading>Nodes auto-scaling</Heading>
-              <Controller
-                name="nodes"
-                control={control}
-                rules={{
-                  required: 'Please number of nodes',
-                }}
-                render={({ field }) => (
-                  <div>
-                    {watchNodes && (
-                      <p className="mb-3 font-medium text-neutral-400">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
-                    )}
-                    <Slider onChange={field.onChange} value={field.value} max={200} min={3} step={1} />
-                    <p className="mt-3 text-xs text-neutral-350">
-                      Cluster can scale up to "max" nodes depending on its usage
-                    </p>
-                  </div>
+        </Section>
+      )}
+
+      {props.cloudProvider === 'SCW' && (
+        <Section>
+          <ClusterSCWControlPlaneFeature />
+        </Section>
+      )}
+
+      {watchClusterType === KubernetesEnum.MANAGED && (!watchKarpenterEnabled || props.cloudProvider !== 'AWS') && (
+        <Section>
+          <Heading>Nodes auto-scaling</Heading>
+          <Controller
+            name="nodes"
+            control={control}
+            rules={{
+              required: 'Please number of nodes',
+            }}
+            render={({ field }) => (
+              <div>
+                {watchNodes && (
+                  <p className="mb-3 font-medium text-neutral-400">{`min ${watchNodes[0]} - max ${watchNodes[1]}`}</p>
                 )}
-              />
-            </>
-          )}
+                <Slider onChange={field.onChange} value={field.value} max={200} min={3} step={1} />
+                <p className="mt-3 text-xs text-neutral-350">
+                  Cluster can scale up to "max" nodes depending on its usage
+                </p>
+              </div>
+            )}
+          />
         </Section>
       )}
 
