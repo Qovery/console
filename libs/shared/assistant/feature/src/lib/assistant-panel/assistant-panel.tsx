@@ -244,33 +244,44 @@ const renderStreamingMessageWithMermaid = (input: string) => {
                 )
               },
               code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                const match = /language-(\w+)/.exec(className || '')
+                const match = /language-(\w+)/.exec(className || '');
                 if (match && match[1] === 'mermaid') {
-                  return <MermaidChart code={String(children).replace(/\n$/, '')} />
+                  return <MermaidChart code={String(children).replace(/\n$/, '')} />;
                 }
-                return !inline && match ? (
-                  <SyntaxHighlighter
-                    language={match[1]}
-                    style={materialDark as any}
-                    PreTag="div"
-                    customStyle={{
-                      borderRadius: '0.5rem',
-                      padding: '1rem',
-                      fontSize: '0.875rem',
-                      lineHeight: '1.5',
-                    }}
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                ) : (
-                  <code
-                    className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm dark:bg-neutral-800"
-                    {...props}
-                  >
+                const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className);
+                if (isInline) {
+                  return (
+                    <code
+                      className="bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 px-1 py-0.5 rounded font-mono text-[13px]"
+                      {...props}
+                    >
+                      {children}
+                    </code>
+                  );
+                }
+                if (match) {
+                  return (
+                    <SyntaxHighlighter
+                      language={match[1]}
+                      style={materialDark as any}
+                      PreTag="div"
+                      customStyle={{
+                        borderRadius: '0.5rem',
+                        padding: '1rem',
+                        fontSize: '0.875rem',
+                        lineHeight: '1.5',
+                      }}
+                      {...props}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  );
+                }
+                return (
+                  <code className="text-sm font-mono" {...props}>
                     {children}
                   </code>
-                )
+                );
               },
               blockquote: ({ node, ...props }) => (
                 <blockquote
@@ -329,33 +340,44 @@ const renderStreamingMessageWithMermaid = (input: string) => {
               )
             },
             code: ({ node, inline, className, children, ...props }: CodeProps) => {
-              const match = /language-(\w+)/.exec(className || '')
+              const match = /language-(\w+)/.exec(className || '');
               if (match && match[1] === 'mermaid') {
-                return <MermaidChart code={String(children).replace(/\n$/, '')} />
+                return <MermaidChart code={String(children).replace(/\n$/, '')} />;
               }
-              return !inline && match ? (
-                <SyntaxHighlighter
-                  language={match[1]}
-                  style={materialDark as any}
-                  PreTag="div"
-                  customStyle={{
-                    borderRadius: '0.5rem',
-                    padding: '1rem',
-                    fontSize: '0.875rem',
-                    lineHeight: '1.5',
-                  }}
-                  {...props}
-                >
-                  {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
-              ) : (
-                <code
-                  className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm dark:bg-neutral-800"
-                  {...props}
-                >
+              const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className);
+              if (isInline) {
+                return (
+                  <code
+                    className="bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 px-1 py-0.5 rounded font-mono text-[13px]"
+                    {...props}
+                  >
+                    {children}
+                  </code>
+                );
+              }
+              if (match) {
+                return (
+                  <SyntaxHighlighter
+                    language={match[1]}
+                    style={materialDark as any}
+                    PreTag="div"
+                    customStyle={{
+                      borderRadius: '0.5rem',
+                      padding: '1rem',
+                      fontSize: '0.875rem',
+                      lineHeight: '1.5',
+                    }}
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
+                );
+              }
+              return (
+                <code className="text-sm font-mono" {...props}>
                   {children}
                 </code>
-              )
+              );
             },
             blockquote: ({ node, ...props }) => (
               <blockquote
@@ -1143,33 +1165,49 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                               )
                             },
                             code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                              const match = /language-(\w+)/.exec(className || '')
-                              if (match && match[1] === 'mermaid') {
-                                return <MermaidChart code={String(children).replace(/\n$/, '')} />
+                              const match = /language-(\w+)/.exec(className || '');
+                              const content = React.Children.toArray(children).join('');
+                              if (content.includes('Optimized Dockerfile')) {
+                                console.log(match);
                               }
-                              return !inline && match ? (
-                                <SyntaxHighlighter
-                                  language={match[1]}
-                                  style={materialDark as any}
-                                  PreTag="div"
-                                  customStyle={{
-                                    borderRadius: '0.5rem',
-                                    padding: '1rem',
-                                    fontSize: '0.875rem',
-                                    lineHeight: '1.5',
-                                  }}
-                                  {...props}
-                                >
-                                  {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                              ) : (
-                                <code
-                                  className="bg-neutral-100 px-1.5 py-0.5 rounded text-sm dark:bg-neutral-800"
-                                  {...props}
-                                >
+
+                              if (match && match[1] === 'mermaid') {
+                                return <MermaidChart code={String(children).replace(/\n$/, '')} />;
+                              }
+                              const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className);
+                              if (isInline) {
+                                return (
+                                  <code
+                                    className="bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 px-1 py-0.5 rounded font-mono text-[13px]"
+                                    {...props}
+                                  >
+                                    {children}
+                                  </code>
+                                );
+                              }
+                              if (match) {
+                                return (
+                                  <SyntaxHighlighter
+                                    language={match[1]}
+                                    style={materialDark as any}
+                                    PreTag="div"
+                                    customStyle={{
+                                      borderRadius: '0.5rem',
+                                      padding: '1rem',
+                                      fontSize: '0.875rem',
+                                      lineHeight: '1.5',
+                                    }}
+                                    {...props}
+                                  >
+                                    {String(children).replace(/\n$/, '')}
+                                  </SyntaxHighlighter>
+                                );
+                              }
+                              return (
+                                <code className="text-sm font-mono" {...props}>
                                   {children}
                                 </code>
-                              )
+                              );
                             },
                             blockquote: ({ node, ...props }) => (
                               <blockquote
