@@ -256,7 +256,7 @@ export function StepSummaryFeature() {
           features: [
             {
               id: SCW_CONTROL_PLANE_FEATURE_ID,
-              value: resourcesData.scw_control_plane || 'KAPSULE',
+              value: resourcesData.scw_control_plane,
             },
           ],
         }))

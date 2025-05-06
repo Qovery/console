@@ -67,7 +67,7 @@ export function StepResourcesFeature() {
                 id: SCW_CONTROL_PLANE_FEATURE_ID,
                 title: 'Control Plane',
                 value: true,
-                extendedValue: resourcesData.scw_control_plane || 'KAPSULE',
+                extendedValue: resourcesData.scw_control_plane,
               },
             },
           })
