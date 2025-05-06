@@ -87,7 +87,14 @@ export function ModalCrud(props: ModalCrudProps) {
             Cancel
           </Button>
           {isEdit && onDelete && (
-            <Button data-testid="delete-button" variant="outline" color="red" size="lg" onClick={() => onDelete()}>
+            <Button
+              data-testid="delete-button"
+              type="button"
+              variant="outline"
+              color="red"
+              size="lg"
+              onClick={() => onDelete()}
+            >
               {deleteButtonLabel || 'Delete'}
             </Button>
           )}

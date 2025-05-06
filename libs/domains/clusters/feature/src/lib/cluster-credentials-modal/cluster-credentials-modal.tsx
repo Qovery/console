@@ -19,6 +19,7 @@ import {
   InputText,
   ModalCrud,
   useModal,
+  useModalConfirmation,
 } from '@qovery/shared/ui'
 import CopyButton from '../cluster-setup/copy-button/copy-button'
 import { useClusterCloudProviderInfo } from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
@@ -136,6 +137,7 @@ export function ClusterCredentialsModal({
   cloudProvider = 'AWS',
 }: ClusterCredentialsModalProps) {
   const { enableAlertClickOutside } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
 
   const { data: cloudProviderInfo } = useClusterCloudProviderInfo({
     organizationId,
@@ -237,18 +239,30 @@ export function ClusterCredentialsModal({
   })
 
   const onDelete = async () => {
-    if (credential?.id) {
-      try {
-        await deleteCloudProviderCredential({
-          organizationId,
-          cloudProvider: cloudProviderLocal,
-          credentialId: credential.id,
-        })
-        onClose()
-      } catch (error) {
-        console.error(error)
-      }
-    }
+    openModalConfirmation({
+      title: 'Delete credential',
+      description: (
+        <p>
+          To confirm the deletion of <strong>{credential?.name}</strong>, please type "delete"
+        </p>
+      ),
+      name: credential?.name,
+      isDelete: true,
+      action: async () => {
+        if (credential?.id) {
+          try {
+            await deleteCloudProviderCredential({
+              organizationId,
+              cloudProvider: cloudProviderLocal,
+              credentialId: credential.id,
+            })
+            onClose()
+          } catch (error) {
+            console.error(error)
+          }
+        }
+      },
+    })
   }
 
   const watchType = methods.watch('type')
