@@ -31,18 +31,19 @@ describe('ClusterSCWControlPlaneFeature', () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <Section>
-          <ClusterSCWControlPlaneFeature />
+          <ClusterSCWControlPlaneFeature production={false} />
         </Section>
       )
     )
     expect(screen.getByText('Control plane type')).toBeInTheDocument()
+    expect(screen.getByLabelText('Type')).toBeInTheDocument()
   })
 
-  it('displays the mutualized callout when KAPSULE is selected and form is dirty', async () => {
+  it('displays the additional costs callout when dedicated control plane is selected', async () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <Section>
-          <ClusterSCWControlPlaneFeature />
+          <ClusterSCWControlPlaneFeature production={false} />
         </Section>
       )
     )
@@ -56,7 +57,7 @@ describe('ClusterSCWControlPlaneFeature', () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <Section>
-          <ClusterSCWControlPlaneFeature />
+          <ClusterSCWControlPlaneFeature production={false} />
         </Section>
       )
     )
@@ -65,5 +66,64 @@ describe('ClusterSCWControlPlaneFeature', () => {
     expect(CONTROL_PLANE_LABELS.KAPSULE_DEDICATED4).toBe('Dedicated 4')
     expect(CONTROL_PLANE_LABELS.KAPSULE_DEDICATED8).toBe('Dedicated 8')
     expect(CONTROL_PLANE_LABELS.KAPSULE_DEDICATED16).toBe('Dedicated 16')
+  })
+
+  it('sets KAPSULE_DEDICATED4 as default value for production environments', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <Section>
+          <ClusterSCWControlPlaneFeature production={true} />
+        </Section>
+      )
+    )
+
+    expect(screen.getByText('Dedicated 4')).toBeInTheDocument()
+  })
+
+  it('shows downgrade warning when selecting a lower stier after a higher one', async () => {
+    const { rerender } = renderWithProviders(
+      wrapWithReactHookForm(
+        <Section>
+          <ClusterSCWControlPlaneFeature production={false} />
+        </Section>,
+        {
+          defaultValues: {
+            scw_control_plane: 'KAPSULE_DEDICATED16',
+          },
+        }
+      )
+    )
+
+    rerender(
+      wrapWithReactHookForm(
+        <Section>
+          <ClusterSCWControlPlaneFeature production={false} />
+        </Section>,
+        {
+          defaultValues: {
+            scw_control_plane: 'KAPSULE_DEDICATED16',
+          },
+        }
+      )
+    )
+
+    await selectEvent.select(screen.getByLabelText('Type'), 'Dedicated 4', {
+      container: document.body,
+    })
+
+    expect(screen.getByText(/Please note that there is a 30-day commitment period/)).toBeInTheDocument()
+  })
+
+  it('does not show any warning when mutualized plan is selected initially', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <Section>
+          <ClusterSCWControlPlaneFeature production={false} />
+        </Section>
+      )
+    )
+
+    expect(screen.queryByText(/additional costs will be incurred/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/30-day commitment period/)).not.toBeInTheDocument()
   })
 })

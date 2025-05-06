@@ -505,7 +505,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
       {props.cloudProvider === 'SCW' && (
         <Section>
-          <ClusterSCWControlPlaneFeature />
+          <ClusterSCWControlPlaneFeature production={props.isProduction || false} />
         </Section>
       )}
 
