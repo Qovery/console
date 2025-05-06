@@ -3,7 +3,7 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import * as useCreateCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useDeleteCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { getByText, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useClusterCloudProviderInfoHook from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 import ClusterCredentialsModal, { type ClusterCredentialsModalProps, handleSubmit } from './cluster-credentials-modal'
 
@@ -87,31 +87,6 @@ describe('ClusterCredentialsModal', () => {
     expect(props.onClose).toHaveBeenCalled()
   })
 
-  it('should handle edit mode', async () => {
-    mockEditCredential.mockResolvedValue({ id: 'cred-123', name: 'updated-name' })
-
-    props.credential = {
-      id: 'cred-123',
-      name: 'existing-cred',
-      role_arn: 'arn:aws:role',
-      object_type: 'AWS_ROLE',
-    }
-
-    const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
-
-    expect(screen.getByText('Edit credentials')).toBeInTheDocument()
-    expect(screen.getByText(/The credential change won't be applied/)).toBeInTheDocument()
-
-    const nameInput = screen.getByTestId('input-name')
-    await userEvent.clear(nameInput)
-    await userEvent.type(nameInput, 'updated-name')
-
-    const submitButton = screen.getByTestId('submit-button')
-    await userEvent.click(submitButton)
-
-    expect(mockEditCredential).toHaveBeenCalled()
-  })
-
   it('should format AWS STS credentials correctly with handleSubmit', () => {
     const data = {
       name: 'test-cred',
@@ -127,6 +102,57 @@ describe('ClusterCredentialsModal', () => {
         name: 'test-cred',
         role_arn: 'arn:aws:iam::123456789012:role/test-role',
       },
+    })
+  })
+
+  describe('Edit mode', () => {
+    beforeEach(() => {
+      props.credential = {
+        id: 'cred-123',
+        name: 'existing-cred',
+        role_arn: 'arn:aws:role',
+        object_type: 'AWS_ROLE',
+      }
+    })
+
+    it('should render form and handle edit submission', async () => {
+      mockEditCredential.mockResolvedValue({ id: 'cred-123', name: 'updated-name' })
+
+      const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+      expect(screen.getByText('Edit credentials')).toBeInTheDocument()
+      expect(screen.getByText(/The credential change won't be applied/)).toBeInTheDocument()
+
+      const nameInput = screen.getByTestId('input-name')
+      await userEvent.clear(nameInput)
+      await userEvent.type(nameInput, 'updated-name')
+
+      const submitButton = screen.getByTestId('submit-button')
+      await userEvent.click(submitButton)
+
+      expect(mockEditCredential).toHaveBeenCalled()
+    })
+
+    it('should handle delete confirmation', async () => {
+      const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+      const deleteButton = screen.getByTestId('delete-button')
+      await userEvent.click(deleteButton)
+
+      const confirmationInput = screen.getByTestId('input-value')
+      await userEvent.type(confirmationInput, 'delete')
+
+      const modalTitle = screen.getByText('Delete credential')
+      expect(modalTitle).toBeInTheDocument()
+
+      const confirmationModal = modalTitle.parentElement
+
+      if (confirmationModal) {
+        const confirmButton = getByText(confirmationModal, 'Confirm')
+        await userEvent.click(confirmButton)
+      }
+
+      expect(mockDeleteCredential).toHaveBeenCalled()
     })
   })
 })
