@@ -1,6 +1,6 @@
 import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { KarpenterInstanceTypePreview } from '@qovery/domains/cloud-providers/feature'
+import { CONTROL_PLANE_LABELS, KarpenterInstanceTypePreview } from '@qovery/domains/cloud-providers/feature'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
@@ -196,6 +196,12 @@ export function StepSummary(props: StepSummaryProps) {
                           {(props.resourcesData.karpenter?.spot_enabled ?? false).toString()}
                         </li>
                       </>
+                    )}
+                    {props.resourcesData.scw_control_plane && props.generalData.cloud_provider === 'SCW' && (
+                      <li>
+                        <strong className="font-medium">Control plane type: </strong>
+                        {CONTROL_PLANE_LABELS[props.resourcesData.scw_control_plane]}
+                      </li>
                     )}
                   </ul>
                 </div>

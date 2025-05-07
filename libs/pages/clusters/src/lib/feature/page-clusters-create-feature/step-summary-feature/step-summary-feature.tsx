@@ -7,7 +7,7 @@ import {
 import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
+import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
@@ -253,6 +253,12 @@ export function StepSummaryFeature() {
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
           cloud_provider_credentials,
+          features: [
+            {
+              id: SCW_CONTROL_PLANE_FEATURE_ID,
+              value: resourcesData.scw_control_plane,
+            },
+          ],
         }))
         .otherwise(() => {
           if (resourcesData.cluster_type === KubernetesEnum.K3_S) {
