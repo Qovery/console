@@ -280,7 +280,7 @@ export function InputSelect({
         'startsWith',
         () =>
           ({ value }: Value, inputValue: string) =>
-            value?.startsWith(inputValue) ?? false
+            value?.startsWith(inputValue.toLowerCase()) ?? false
       )
       .exhaustive(),
   }
