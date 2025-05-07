@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
+import { CARGO_API_TOKEN } from '@qovery/shared/util-node-env'
 
 export interface CargoSignupPayload {
   email: string
@@ -10,7 +11,6 @@ export interface CargoSignupPayload {
 }
 
 const CARGO_API_URL = 'https://api.getcargo.io/v1/models/277bc95c-61d5-4fec-beac-9fc211f196a4/records/ingest'
-const CARGO_API_TOKEN = '14ea88e74f20be68f0d64e7cb41d52d698f00335d7fd926bfea53fb148df440e'
 
 // https://qovery.slack.com/archives/C08M2RT8T29/p1746543979992499
 export function useSignUpCargo() {

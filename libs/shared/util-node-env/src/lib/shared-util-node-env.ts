@@ -16,6 +16,7 @@ declare global {
       NX_PUBLIC_INSTATUS_APP_ID: string
       NX_PUBLIC_ALGOLIA_APP_ID: string
       NX_PUBLIC_ALGOLIA_API_KEY: string
+      NX_PUBLIC_CARGO_API_TOKEN: string
     }
   }
 }
@@ -33,4 +34,5 @@ export const NODE_ENV = process.env.NODE_ENV,
   GTM = process.env.NX_PUBLIC_GTM,
   INSTATUS_APP_ID = process.env.NX_PUBLIC_INSTATUS_APP_ID,
   ALGOLIA_APP_ID = process.env.NX_PUBLIC_ALGOLIA_APP_ID,
-  ALGOLIA_API_KEY = process.env.NX_PUBLIC_ALGOLIA_API_KEY
+  ALGOLIA_API_KEY = process.env.NX_PUBLIC_ALGOLIA_API_KEY,
+  CARGO_API_TOKEN = process.env.NX_PUBLIC_CARGO_API_TOKEN
