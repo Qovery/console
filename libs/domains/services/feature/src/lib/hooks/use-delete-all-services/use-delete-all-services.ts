@@ -11,6 +11,9 @@ export function useDeleteAllServices() {
   return useMutation(mutations.deleteAllServices, {
     onSuccess(_, { environment, payload }) {
       queryClient.invalidateQueries({
+        queryKey: queries.services.list(environment.id).queryKey,
+      })
+      queryClient.invalidateQueries({
         queryKey: queries.services.listStatuses(environment.id).queryKey,
       })
       for (const serviceId of payload.application_ids ?? []) {
@@ -53,7 +56,7 @@ export function useDeleteAllServices() {
           },
         } = variables as Parameters<typeof mutations.deleteAllServices>[0]
         return {
-          title: 'Your services are being updated',
+          title: 'Your services are being deleted',
           labelAction: 'See deployment logs',
           callback() {
             navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId))
