@@ -1,13 +1,14 @@
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useAuth0 } from '@auth0/auth0-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
+import mermaid from 'mermaid'
 import { type ComponentProps, forwardRef, useContext, useEffect, useRef, useState } from 'react'
 import React from 'react'
 import Markdown from 'react-markdown'
 import { useMatch, useParams } from 'react-router-dom'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useIntercom } from 'react-use-intercom'
 import remarkGfm from 'remark-gfm'
 import { match } from 'ts-pattern'
@@ -18,6 +19,7 @@ import { useProject } from '@qovery/domains/projects/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
+import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
@@ -30,8 +32,6 @@ import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
-import { toast, ToastEnum } from '@qovery/shared/ui'
-import mermaid from 'mermaid'
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
@@ -68,7 +68,7 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, load
         {...props}
       />
       <div className="flex items-end justify-end p-2">
-        <Tooltip content={loading ? "Stop generation" : "Send now"} delayDuration={400} classNameContent="z-10">
+        <Tooltip content={loading ? 'Stop generation' : 'Send now'} delayDuration={400} classNameContent="z-10">
           <Button
             type="button"
             variant="surface"
@@ -189,8 +189,7 @@ function useQoveryContext() {
 }
 
 const normalizeMermaid = (text: string) => {
-  return text.replace(/\[start mermaid block\]/g, '```mermaid')
-    .replace(/\[end mermaid block\]/g, '```')
+  return text.replace(/\[start mermaid block\]/g, '```mermaid').replace(/\[end mermaid block\]/g, '```')
 }
 
 const renderStreamingMessageWithMermaid = (input: string) => {
@@ -244,20 +243,21 @@ const renderStreamingMessageWithMermaid = (input: string) => {
                 )
               },
               code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                const match = /language-(\w+)/.exec(className || '');
+                const match = /language-(\w+)/.exec(className || '')
                 if (match && match[1] === 'mermaid') {
-                  return <MermaidChart code={String(children).replace(/\n$/, '')} />;
+                  return <MermaidChart code={String(children).replace(/\n$/, '')} />
                 }
-                const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className);
+                const isInline =
+                  inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className)
                 if (isInline) {
                   return (
                     <code
-                      className="bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 px-1 py-0.5 rounded font-mono text-[13px]"
+                      className="rounded border border-yellow-200 bg-yellow-50 px-1 py-0.5 font-mono text-[13px] text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
                       {...props}
                     >
                       {children}
                     </code>
-                  );
+                  )
                 }
                 if (match) {
                   return (
@@ -275,19 +275,16 @@ const renderStreamingMessageWithMermaid = (input: string) => {
                     >
                       {String(children).replace(/\n$/, '')}
                     </SyntaxHighlighter>
-                  );
+                  )
                 }
                 return (
-                  <code className="text-sm font-mono" {...props}>
+                  <code className="font-mono text-sm" {...props}>
                     {children}
                   </code>
-                );
+                )
               },
               blockquote: ({ node, ...props }) => (
-                <blockquote
-                  className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
-                  {...props}
-                />
+                <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600" {...props} />
               ),
             }}
           >
@@ -340,20 +337,20 @@ const renderStreamingMessageWithMermaid = (input: string) => {
               )
             },
             code: ({ node, inline, className, children, ...props }: CodeProps) => {
-              const match = /language-(\w+)/.exec(className || '');
+              const match = /language-(\w+)/.exec(className || '')
               if (match && match[1] === 'mermaid') {
-                return <MermaidChart code={String(children).replace(/\n$/, '')} />;
+                return <MermaidChart code={String(children).replace(/\n$/, '')} />
               }
-              const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className);
+              const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className)
               if (isInline) {
                 return (
                   <code
-                    className="bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 px-1 py-0.5 rounded font-mono text-[13px]"
+                    className="rounded border border-yellow-200 bg-yellow-50 px-1 py-0.5 font-mono text-[13px] text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
                     {...props}
                   >
                     {children}
                   </code>
-                );
+                )
               }
               if (match) {
                 return (
@@ -371,19 +368,16 @@ const renderStreamingMessageWithMermaid = (input: string) => {
                   >
                     {String(children).replace(/\n$/, '')}
                   </SyntaxHighlighter>
-                );
+                )
               }
               return (
-                <code className="text-sm font-mono" {...props}>
+                <code className="font-mono text-sm" {...props}>
                   {children}
                 </code>
-              );
+              )
             },
             blockquote: ({ node, ...props }) => (
-              <blockquote
-                className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
-                {...props}
-              />
+              <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600" {...props} />
             ),
           }}
         >
@@ -397,8 +391,8 @@ const renderStreamingMessageWithMermaid = (input: string) => {
 
 export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   useEffect(() => {
-    mermaid.initialize({ startOnLoad: true });
-  }, []);
+    mermaid.initialize({ startOnLoad: true })
+  }, [])
   const controllerRef = useRef<AbortController | null>(null)
   const STORAGE_KEY = 'assistant-panel-size'
   const { message: inputExplainMessage, setMessage: setInputExplainMessage } = useContext(AssistantContext)
@@ -422,8 +416,15 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
 
-  const [plan, setPlan] = useState<{ messageId: number; description: string; toolName: string; status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error' }[]>([]);
-  const [showPlans, setShowPlans] = useState<Record<number, boolean>>({});
+  const [plan, setPlan] = useState<
+    {
+      messageId: number
+      description: string
+      toolName: string
+      status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
+    }[]
+  >([])
+  const [showPlans, setShowPlans] = useState<Record<number, boolean>>({})
 
   const pendingThreadId = useRef<string>()
 
@@ -487,13 +488,10 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     const currentVote = currentMessage?.vote
     const nextVote = currentVote === vote ? undefined : vote
 
-    const updatedThread = thread.map((msg) =>
-      msg.id === messageId ? { ...msg, vote: nextVote } : msg
-    )
+    const updatedThread = thread.map((msg) => (msg.id === messageId ? { ...msg, vote: nextVote } : msg))
     setThread(updatedThread)
 
     try {
-
       const token = await getAccessTokenSilently()
       const response = await submitVote(
         user?.sub ?? '',
@@ -504,29 +502,24 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
       )
 
       if (!response) {
-        const updatedThread = thread.map((msg) =>
-          msg.id === messageId ? { ...msg, vote: currentVote } : msg
-        )
+        const updatedThread = thread.map((msg) => (msg.id === messageId ? { ...msg, vote: currentVote } : msg))
         setThread(updatedThread)
       } else {
-
         if (nextVote) {
           toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
         }
       }
     } catch (error) {
       console.error('Erro r sending vote:', error)
-      const updatedThread = thread.map((msg) =>
-        msg.id === messageId ? { ...msg, vote: currentVote } : msg
-      )
+      const updatedThread = thread.map((msg) => (msg.id === messageId ? { ...msg, vote: currentVote } : msg))
       setThread(updatedThread)
     }
   }
 
-  const lastSubmitResult = useRef<any>(null);
+  const lastSubmitResult = useRef<any>(null)
   const handleSendMessage = async (value?: string) => {
     controllerRef.current = new AbortController()
-    lastSubmitResult.current = null;
+    lastSubmitResult.current = null
     const node = scrollAreaRef.current
     if (node) {
       node.scrollTo({
@@ -538,7 +531,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     setStreamingMessage('')
     setDisplayedStreamingMessage('')
     setIsStopped(false)
-    setLoadingText("Loading...")
+    setLoadingText('Loading...')
     let fullContent = ''
     const trimmedInputMessage = typeof value === 'string' ? value.trim() : inputMessage.trim()
 
@@ -578,33 +571,32 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
               if (parsed.type === 'chunk' && parsed.content) {
                 if (parsed.content.includes('__plan__:')) {
                   try {
-                    const planArray = JSON.parse(parsed.content.replace('__plan__:', ''));
-                    setPlan(prev => ([
+                    const planArray = JSON.parse(parsed.content.replace('__plan__:', ''))
+                    setPlan((prev) => [
                       ...prev,
                       ...planArray.map((step: any) => ({
                         messageId: -2,
                         description: step.description,
                         toolName: step.tool_name,
                         status: 'not_started',
-                      }))
-                    ]));
-                  } catch (e) {
-                  }
+                      })),
+                    ])
+                  } catch (e) {}
                 } else if (parsed.content.includes('__step__:')) {
-                  const stepDescription = parsed.content.replace('__step__:', '').replaceAll('_', ' ');
-                  setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1));
+                  const stepDescription = parsed.content.replace('__step__:', '').replaceAll('_', ' ')
+                  setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1))
                 } else if (parsed.content.includes('__stepPlan__:')) {
                   try {
-                    const stepObj = JSON.parse(parsed.content.replace('__stepPlan__:', ''));
-                    const { description, status } = stepObj;
-                    setLoadingText(description.charAt(0).toUpperCase() + description.slice(1));
-                    setPlan(prev => prev.map(step =>
-                      step.description.toLowerCase().includes(description.toLowerCase())
-                        ? { ...step, status }
-                        : step
-                    ));
+                    const stepObj = JSON.parse(parsed.content.replace('__stepPlan__:', ''))
+                    const { description, status } = stepObj
+                    setLoadingText(description.charAt(0).toUpperCase() + description.slice(1))
+                    setPlan((prev) =>
+                      prev.map((step) =>
+                        step.description.toLowerCase().includes(description.toLowerCase()) ? { ...step, status } : step
+                      )
+                    )
                   } catch (e) {
-                    console.error("Failed to parse stepPlan object", e);
+                    console.error('Failed to parse stepPlan object', e)
                   }
                 } else {
                   fullContent += parsed.content
@@ -628,15 +620,14 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
 
   useEffect(() => {
     // Once the animation is finished, we can stop the loading and set the message
-    if ((isLoading && isFinish && displayedStreamingMessage.length >= streamingMessage.length) || (isStopped && isLoading && isFinish)) {
-      controllerRef.current?.abort();
-      if (
-        pendingThreadId.current &&
-        lastSubmitResult.current &&
-        lastSubmitResult.current.thread.length >= 2
-      ) {
-        const result = lastSubmitResult.current;
-        const updatedThread = [...thread];
+    if (
+      (isLoading && isFinish && displayedStreamingMessage.length >= streamingMessage.length) ||
+      (isStopped && isLoading && isFinish)
+    ) {
+      controllerRef.current?.abort()
+      if (pendingThreadId.current && lastSubmitResult.current && lastSubmitResult.current.thread.length >= 2) {
+        const result = lastSubmitResult.current
+        const updatedThread = [...thread]
 
         const resultThread: Message[] = [
           {
@@ -650,15 +641,13 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
             owner: 'assistant',
             timestamp: Date.now(),
           },
-        ];
+        ]
 
-        setThread(updatedThread.slice(0, -1).concat(resultThread));
-        const newAssistantMessageId = result.thread[result.thread.length - 1].id;
+        setThread(updatedThread.slice(0, -1).concat(resultThread))
+        const newAssistantMessageId = result.thread[result.thread.length - 1].id
         setPlan((prev) =>
-          prev.map((step) =>
-            step.messageId === -2 ? { ...step, messageId: newAssistantMessageId } : step
-          )
-        );
+          prev.map((step) => (step.messageId === -2 ? { ...step, messageId: newAssistantMessageId } : step))
+        )
       } else {
         setThread([
           ...thread,
@@ -668,13 +657,12 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
             owner: 'assistant',
             timestamp: Date.now(),
           },
-        ]);
+        ])
       }
       setIsLoading(false)
       setStreamingMessage('')
     }
     if (!streamingMessage || displayedStreamingMessage === streamingMessage) return
-
   }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish])
 
   useEffect(() => {
@@ -708,7 +696,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
 
   useEffect(() => {
     const node = scrollAreaRef.current
-    console.log('node', node);
+    console.log('node', node)
 
     if (!node) return
 
@@ -798,10 +786,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
     const onMouseUp = () => {
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseup', onMouseUp)
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ width: panel.offsetWidth, height: panel.offsetHeight })
-      )
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ width: panel.offsetWidth, height: panel.offsetHeight }))
       setIsResizing(false)
     }
 
@@ -835,18 +820,13 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
               {
                 'left-4 top-4 animate-[scalein_0.22s_ease_both] opacity-0': expand,
                 'animate-slidein-up-sm-faded': !expand,
-                'border-2 border-brand-500': !expand && isResizing
+                'border-2 border-brand-500': !expand && isResizing,
               }
             )
           )}
           style={style}
         >
-          {!expand && (
-            <div
-              className="absolute left-1 top-1 z-10 cursor-nw-resize p-1"
-              onMouseDown={startResize}
-            />
-          )}
+          {!expand && <div className="absolute left-1 top-1 z-10 cursor-nw-resize p-1" onMouseDown={startResize} />}
           {expand && (
             <AssistantHistory
               data={{
@@ -887,11 +867,11 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                         className="flex h-11 w-full items-center gap-2 text-sm"
                         type="button"
                         onClick={() => {
-                          controllerRef.current?.abort();
+                          controllerRef.current?.abort()
                           setThread([])
-                          setThreadId(undefined);
-                          setIsLoading(false);
-                          setPlan([]);
+                          setThreadId(undefined)
+                          setIsLoading(false)
+                          setPlan([])
                         }}
                       >
                         <span className="w-4">
@@ -1032,64 +1012,70 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                   </div>
                 )}
                 {thread.map((thread) => {
-
                   return match(thread.owner)
                     .with('user', () => (
                       <div
                         key={thread.id}
-                        className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm animate-[fadeSlideUp_0.5s_ease] dark:text-neutral-500"
+                        className="ml-auto min-h-max max-w-[70%] animate-[fadeSlideUp_0.5s_ease] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
                       >
                         <div className="whitespace-pre-wrap">{thread.text}</div>
                       </div>
                     ))
                     .with('assistant', () => (
-                      <div key={thread.id} className="text-sm group">
-                        {plan.filter(p => p.messageId === thread.id).length > 0 && (
-                          <div className="plan-toggle mt-2 flex items-center gap-2 group cursor-pointer"
+                      <div key={thread.id} className="group text-sm">
+                        {plan.filter((p) => p.messageId === thread.id).length > 0 && (
+                          <div
+                            className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
                             onClick={() => setShowPlans((prev) => ({ ...prev, [thread.id]: !prev[thread.id] }))}
                           >
-                            <div className="italic text-gray-600 w-fit text-ssm font-medium">
-                              Plan steps
-                            </div>
+                            <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
                             <div className="">
                               <Icon
-                                iconName={showPlans[thread.id] ? "chevron-circle-up" : "chevron-circle-down"}
+                                iconName={showPlans[thread.id] ? 'chevron-circle-up' : 'chevron-circle-down'}
                                 iconStyle="regular"
                                 className="transform transition-transform group-hover:scale-110"
                               />
                             </div>
                           </div>
                         )}
-                        {plan.filter(p => p.messageId === thread.id).length > 0 && showPlans[thread.id] && (
+                        {plan.filter((p) => p.messageId === thread.id).length > 0 && showPlans[thread.id] && (
                           <div className="mt-2 flex flex-col gap-2">
-                            {plan.filter(p => p.messageId === thread.id).map((step, index) => (
-                              <div key={index} className="flex items-start gap-2 text-sm">
-                                <Icon
-                                  iconName={
-                                    step.status === 'completed' ? 'check-circle' :
-                                      step.status === 'in_progress' ? 'spinner' :
-                                        step.status === 'waiting' ? 'pause-circle' :
-                                          step.status === 'error' ? 'exclamation-circle' :
-                                            'circle'
-                                  }
-                                  className={
-                                    step.status === 'completed' ? 'text-green-500' :
-                                      step.status === 'in_progress' ? 'text-yellow-500 animate-spin' :
-                                        step.status === 'waiting' ? 'text-blue-500' :
-                                          step.status === 'error' ? 'text-red-500' :
-                                            'text-gray-400'
-                                  }
-                                />
-                                <div className="flex flex-col">
-                                  <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
-                                    {step.description}
-                                  </span>
-                                  <span className="text-2xs text-neutral-400">
-                                    {step.status.replace('_', ' ')}
-                                  </span>
+                            {plan
+                              .filter((p) => p.messageId === thread.id)
+                              .map((step, index) => (
+                                <div key={index} className="flex items-start gap-2 text-sm">
+                                  <Icon
+                                    iconName={
+                                      step.status === 'completed'
+                                        ? 'check-circle'
+                                        : step.status === 'in_progress'
+                                          ? 'spinner'
+                                          : step.status === 'waiting'
+                                            ? 'pause-circle'
+                                            : step.status === 'error'
+                                              ? 'exclamation-circle'
+                                              : 'circle'
+                                    }
+                                    className={
+                                      step.status === 'completed'
+                                        ? 'text-green-500'
+                                        : step.status === 'in_progress'
+                                          ? 'animate-spin text-yellow-500'
+                                          : step.status === 'waiting'
+                                            ? 'text-blue-500'
+                                            : step.status === 'error'
+                                              ? 'text-red-500'
+                                              : 'text-gray-400'
+                                    }
+                                  />
+                                  <div className="flex flex-col">
+                                    <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                      {step.description}
+                                    </span>
+                                    <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
                           </div>
                         )}
                         <Markdown
@@ -1127,7 +1113,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                                   {typeof codeContent === 'string' && (
                                     <Button
                                       variant="surface"
-                                      className="absolute right-2 top-2 aspect-square p-0 flex items-center justify-center"
+                                      className="absolute right-2 top-2 flex aspect-square items-center justify-center p-0"
                                       onClick={async (e) => {
                                         const btn = e.currentTarget
                                         const copyIcon = btn.querySelector('.copy-icon') as HTMLElement
@@ -1153,11 +1139,11 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                                     >
                                       <Icon
                                         iconName="copy"
-                                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 copy-icon transition-all duration-300 ease-in-out transform opacity-100 scale-100"
+                                        className="copy-icon absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-100 transform opacity-100 transition-all duration-300 ease-in-out"
                                       />
                                       <Icon
                                         iconName="check"
-                                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 check-icon opacity-0 scale-75 pointer-events-none transition-all duration-300 ease-in-out transform"
+                                        className="check-icon pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-75 transform opacity-0 transition-all duration-300 ease-in-out"
                                       />
                                     </Button>
                                   )}
@@ -1165,25 +1151,26 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                               )
                             },
                             code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                              const match = /language-(\w+)/.exec(className || '');
-                              const content = React.Children.toArray(children).join('');
+                              const match = /language-(\w+)/.exec(className || '')
+                              const content = React.Children.toArray(children).join('')
                               if (content.includes('Optimized Dockerfile')) {
-                                console.log(match);
+                                console.log(match)
                               }
 
                               if (match && match[1] === 'mermaid') {
-                                return <MermaidChart code={String(children).replace(/\n$/, '')} />;
+                                return <MermaidChart code={String(children).replace(/\n$/, '')} />
                               }
-                              const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className);
+                              const isInline =
+                                inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className)
                               if (isInline) {
                                 return (
                                   <code
-                                    className="bg-yellow-50 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-700 px-1 py-0.5 rounded font-mono text-[13px]"
+                                    className="rounded border border-yellow-200 bg-yellow-50 px-1 py-0.5 font-mono text-[13px] text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
                                     {...props}
                                   >
                                     {children}
                                   </code>
-                                );
+                                )
                               }
                               if (match) {
                                 return (
@@ -1201,13 +1188,13 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                                   >
                                     {String(children).replace(/\n$/, '')}
                                   </SyntaxHighlighter>
-                                );
+                                )
                               }
                               return (
-                                <code className="text-sm font-mono" {...props}>
+                                <code className="font-mono text-sm" {...props}>
                                   {children}
                                 </code>
-                              );
+                              )
                             },
                             blockquote: ({ node, ...props }) => (
                               <blockquote
@@ -1215,11 +1202,34 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                                 {...props}
                               />
                             ),
+                            table: ({ node, ...props }) => (
+                              <div className="my-6 w-full overflow-x-auto">
+                                <table className="w-full border-collapse text-sm" {...props} />
+                              </div>
+                            ),
+                            thead: ({ node, ...props }) => (
+                              <thead className="bg-neutral-100 dark:bg-neutral-700" {...props} />
+                            ),
+                            tbody: ({ node, ...props }) => (
+                              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-600" {...props} />
+                            ),
+                            tr: ({ node, ...props }) => (
+                              <tr className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50" {...props} />
+                            ),
+                            th: ({ node, ...props }) => (
+                              <th
+                                className="border border-neutral-200 px-4 py-2 text-left font-medium dark:border-neutral-600"
+                                {...props}
+                              />
+                            ),
+                            td: ({ node, ...props }) => (
+                              <td className="border border-neutral-200 px-4 py-2 dark:border-neutral-600" {...props} />
+                            ),
                           }}
                         >
                           {normalizeMermaid(thread.text)}
                         </Markdown>
-                        <div className="mt-2 flex gap-2 text-xs text-neutral-400 invisible group-hover:visible">
+                        <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
                           <Button
                             type="button"
                             variant="surface"
@@ -1236,7 +1246,8 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                             className={clsx('flex items-center gap-1 px-2 py-1', {
                               'text-brand-500': thread.vote === 'downvote',
                             })}
-                            onClick={() => handleVote(thread.id, 'downvote')}>
+                            onClick={() => handleVote(thread.id, 'downvote')}
+                          >
                             <Icon iconName="thumbs-down" />
                           </Button>
                         </div>
@@ -1246,113 +1257,120 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                 })}
                 {isLoading && streamingMessage.length === 0 && (
                   <div className="relative top-2 mt-auto">
-                    <div className="flex items-center gap-2 group cursor-pointer"
+                    <div
+                      className="group flex cursor-pointer items-center gap-2"
                       onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}
                     >
-                      <AnimatedGradientText className="w-fit text-ssm font-medium">
-                        {loadingText}
-                      </AnimatedGradientText>
-                      {plan.filter(p => p.messageId === -2).length > 0 && (
+                      <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
+                      {plan.filter((p) => p.messageId === -2).length > 0 && (
                         <Icon
-                          iconName={showPlans[-1] ? "chevron-circle-up" : "chevron-circle-down"}
+                          iconName={showPlans[-1] ? 'chevron-circle-up' : 'chevron-circle-down'}
                           iconStyle="regular"
                           className="transform transition-transform group-hover:scale-110"
                         />
                       )}
                     </div>
-                    {showPlans[-2] && plan.filter(p => p.messageId === -2).length > 0 && (
+                    {showPlans[-2] && plan.filter((p) => p.messageId === -2).length > 0 && (
                       <div className="mt-2 flex flex-col gap-2">
-                        {plan.filter(p => p.messageId === -2).map((step, index) => (
-                          <div key={index} className="flex items-start gap-2 text-sm">
-                            <Icon
-                              iconName={
-                                step.status === 'completed'
-                                  ? 'check-circle'
-                                  : step.status === 'in_progress'
-                                    ? 'spinner'
-                                    : step.status === 'waiting'
-                                      ? 'pause-circle'
-                                      : step.status === 'error'
-                                        ? 'exclamation-circle'
-                                        : 'circle'
-                              }
-                              className={
-                                step.status === 'completed'
-                                  ? 'text-green-500'
-                                  : step.status === 'in_progress'
-                                    ? 'text-yellow-500 animate-spin'
-                                    : step.status === 'waiting'
-                                      ? 'text-blue-500'
-                                      : step.status === 'error'
-                                        ? 'text-red-500'
-                                        : 'text-gray-400'
-                              }
-                            />
-                            <div className="flex flex-col">
-                              <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
-                                {step.description}
-                              </span>
-                              <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                        {plan
+                          .filter((p) => p.messageId === -2)
+                          .map((step, index) => (
+                            <div key={index} className="flex items-start gap-2 text-sm">
+                              <Icon
+                                iconName={
+                                  step.status === 'completed'
+                                    ? 'check-circle'
+                                    : step.status === 'in_progress'
+                                      ? 'spinner'
+                                      : step.status === 'waiting'
+                                        ? 'pause-circle'
+                                        : step.status === 'error'
+                                          ? 'exclamation-circle'
+                                          : 'circle'
+                                }
+                                className={
+                                  step.status === 'completed'
+                                    ? 'text-green-500'
+                                    : step.status === 'in_progress'
+                                      ? 'animate-spin text-yellow-500'
+                                      : step.status === 'waiting'
+                                        ? 'text-blue-500'
+                                        : step.status === 'error'
+                                          ? 'text-red-500'
+                                          : 'text-gray-400'
+                                }
+                              />
+                              <div className="flex flex-col">
+                                <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                  {step.description}
+                                </span>
+                                <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                       </div>
                     )}
                   </div>
                 )}
                 {isLoading && streamingMessage.length > 0 && (
                   <div className="streaming text-sm">
-                    {plan.filter(p => p.messageId === -2).length > 0 && (
-                      <div className="plan-toggle mt-2 flex items-center gap-2 cursor-pointer group"
-                        onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}>
-                        <div className="italic text-gray-600 w-fit text-ssm font-medium">
-                          Plan steps
-                        </div>
+                    {plan.filter((p) => p.messageId === -2).length > 0 && (
+                      <div
+                        className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
+                        onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}
+                      >
+                        <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
                         <Icon
-                          iconName={(showPlans[-2] !== undefined && showPlans[-2]) ? "chevron-circle-up" : "chevron-circle-down"}
+                          iconName={
+                            showPlans[-2] !== undefined && showPlans[-2] ? 'chevron-circle-up' : 'chevron-circle-down'
+                          }
                           iconStyle="regular"
                           className="transform transition-transform group-hover:scale-110"
                         />
                       </div>
                     )}
-                    {plan.filter(p => p.messageId === -2).length > 0 && showPlans[-2] !== undefined && showPlans[-2] && (
-                      <div className="mt-2 flex flex-col gap-2">
-                        {plan.filter(p => p.messageId === -2).map((step, index) => (
-                          <div key={index} className="flex items-start gap-2 text-sm">
-                            <Icon
-                              iconName={
-                                step.status === 'completed'
-                                  ? 'check-circle'
-                                  : step.status === 'in_progress'
-                                    ? 'spinner'
-                                    : step.status === 'waiting'
-                                      ? 'pause-circle'
-                                      : step.status === 'error'
-                                        ? 'exclamation-circle'
-                                        : 'circle'
-                              }
-                              className={
-                                step.status === 'completed'
-                                  ? 'text-green-500'
-                                  : step.status === 'in_progress'
-                                    ? 'text-yellow-500 animate-spin'
-                                    : step.status === 'waiting'
-                                      ? 'text-blue-500'
-                                      : step.status === 'error'
-                                        ? 'text-red-500'
-                                        : 'text-gray-400'
-                              }
-                            />
-                            <div className="flex flex-col">
-                              <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
-                                {step.description}
-                              </span>
-                              <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {plan.filter((p) => p.messageId === -2).length > 0 &&
+                      showPlans[-2] !== undefined &&
+                      showPlans[-2] && (
+                        <div className="mt-2 flex flex-col gap-2">
+                          {plan
+                            .filter((p) => p.messageId === -2)
+                            .map((step, index) => (
+                              <div key={index} className="flex items-start gap-2 text-sm">
+                                <Icon
+                                  iconName={
+                                    step.status === 'completed'
+                                      ? 'check-circle'
+                                      : step.status === 'in_progress'
+                                        ? 'spinner'
+                                        : step.status === 'waiting'
+                                          ? 'pause-circle'
+                                          : step.status === 'error'
+                                            ? 'exclamation-circle'
+                                            : 'circle'
+                                  }
+                                  className={
+                                    step.status === 'completed'
+                                      ? 'text-green-500'
+                                      : step.status === 'in_progress'
+                                        ? 'animate-spin text-yellow-500'
+                                        : step.status === 'waiting'
+                                          ? 'text-blue-500'
+                                          : step.status === 'error'
+                                            ? 'text-red-500'
+                                            : 'text-gray-400'
+                                  }
+                                />
+                                <div className="flex flex-col">
+                                  <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                    {step.description}
+                                  </span>
+                                  <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      )}
                     {(() => {
                       const input = displayedStreamingMessage
                       const startMatches = [...input.matchAll(/\[start mermaid block\]/g)]
@@ -1462,7 +1480,8 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                     onInput={(e) => adjustTextareaHeight(e.target as HTMLTextAreaElement)}
                     loading={isLoading}
                     stop={() => {
-                      setIsStopped(true); setIsFinish(true);
+                      setIsStopped(true)
+                      setIsFinish(true)
                     }}
                   />
                 </div>
