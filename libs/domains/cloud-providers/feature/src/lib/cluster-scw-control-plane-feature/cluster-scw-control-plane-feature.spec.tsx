@@ -77,7 +77,7 @@ describe('ClusterSCWControlPlaneFeature', () => {
       )
     )
 
-    expect(screen.getByText('Dedicated 4')).toBeInTheDocument()
+    expect(screen.getByText('Dedicated 4: 4 GB / 2vCPU / 250 nodes')).toBeInTheDocument()
   })
 
   it('shows downgrade warning when selecting a lower stier after a higher one', async () => {
@@ -125,5 +125,23 @@ describe('ClusterSCWControlPlaneFeature', () => {
 
     expect(screen.queryByText(/additional costs will be incurred/)).not.toBeInTheDocument()
     expect(screen.queryByText(/30-day commitment period/)).not.toBeInTheDocument()
+  })
+
+  it('displays the correct specifications when selecting different control plane types', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <Section>
+          <ClusterSCWControlPlaneFeature production={false} />
+        </Section>
+      )
+    )
+
+    const selectInput = screen.getByLabelText('Type')
+
+    await selectEvent.select(selectInput, 'Dedicated 8', {
+      container: document.body,
+    })
+
+    expect(screen.getByText('Dedicated 8: 8 GB / 2vCPU / 500 nodes')).toBeInTheDocument()
   })
 })

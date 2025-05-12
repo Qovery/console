@@ -165,8 +165,9 @@ export function InputSelect({
           ) : (
             <Icon iconName="check" className="opacity-0" />
           )}
-          <label id={id} className="ml-2 truncate">
+          <label id={id} className="ml-2 flex flex-col gap-0.5 truncate text-sm">
             {props.label}
+            {props.data.description && <span className="font-normal">{props.data.description}</span>}
           </label>
         </components.Option>
       </div>
@@ -181,7 +182,10 @@ export function InputSelect({
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="mr-1 text-sm text-neutral-400">{props.data.label}</span>
+    <span className="mr-1 text-sm text-neutral-400">
+      {props.data.label}
+      {props.data.description ? `: ${props.data.description}` : ''}
+    </span>
   )
 
   const NoOptionsMessage = (props: NoticeProps<Value>) => {

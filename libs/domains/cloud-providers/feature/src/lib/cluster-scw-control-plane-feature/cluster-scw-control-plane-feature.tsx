@@ -1,5 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
+import { type Value } from '@qovery/shared/interfaces'
 import { Callout, ExternalLink, Heading, Icon, InputSelect, Tooltip } from '@qovery/shared/ui'
 import { useCloudProviderFeatures } from '../hooks/use-cloud-provider-features/use-cloud-provider-features'
 
@@ -12,6 +13,13 @@ export const CONTROL_PLANE_LABELS = {
   KAPSULE_DEDICATED16: 'Dedicated 16',
 }
 
+export const CONTROL_PLANE_SPECS = {
+  KAPSULE: '4 GB / 1vCPU / 150 nodes',
+  KAPSULE_DEDICATED4: '4 GB / 2vCPU / 250 nodes',
+  KAPSULE_DEDICATED8: '8 GB / 2vCPU / 500 nodes',
+  KAPSULE_DEDICATED16: '16 GB / 4vCPU / 500 nodes',
+}
+
 export interface ClusterSCWControlPlaneFeatureInterface {
   production: boolean
 }
@@ -22,10 +30,11 @@ export function ClusterSCWControlPlaneFeature({ production }: ClusterSCWControlP
   })
   const controlPlane = features?.find((feature) => feature.id === SCW_CONTROL_PLANE_FEATURE_ID)
 
-  const options =
+  const options: Value[] =
     controlPlane?.accepted_values?.map((value) => ({
       label: CONTROL_PLANE_LABELS[value as keyof typeof CONTROL_PLANE_LABELS],
       value: value as string,
+      description: CONTROL_PLANE_SPECS[value as keyof typeof CONTROL_PLANE_SPECS],
     })) || []
 
   const { control, formState, watch } = useFormContext<{ scw_control_plane: SCWControlPlaneFeatureType }>()
@@ -53,7 +62,7 @@ export function ClusterSCWControlPlaneFeature({ production }: ClusterSCWControlP
 
   return (
     <div className="flex flex-col gap-4">
-      <Heading className="flex items-center gap-1">
+      <Heading className="flex items-center gap-1.5">
         Control plane type
         <Tooltip
           content={
@@ -68,7 +77,7 @@ export function ClusterSCWControlPlaneFeature({ production }: ClusterSCWControlP
             </span>
           }
         >
-          <span>
+          <span className="relative top-0.5">
             <Icon iconName="circle-info" iconStyle="regular" />
           </span>
         </Tooltip>
