@@ -16,12 +16,14 @@ interface UseCurrentThreadResult {
 }
 
 export async function fetchThread(userSub: string, organizationId: string, threadId: string, token: string) {
-
-  const response = await fetch(`${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
+  const response = await fetch(
+    `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  )
 
   if (!response.ok) {
     throw new Error('Failed to fetch thread')
@@ -52,7 +54,6 @@ export function useThread({ organizationId, threadId }: UseCurrentThreadOptions)
         const token = await getAccessTokenSilently()
         const messages = await fetchThread(userSub, organizationId, threadId, token)
 
-        // Convertir les messages du format API vers le format Thread
         const formattedMessages: Thread = messages.map((msg: any) => ({
           id: msg.id,
           text: msg.media_content,

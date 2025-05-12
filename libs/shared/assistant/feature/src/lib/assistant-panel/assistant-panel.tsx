@@ -3,8 +3,17 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
-import { type ComponentProps, forwardRef, useContext, useEffect, useRef, useState } from 'react'
-import React from 'react'
+import {
+  Children,
+  type ComponentProps,
+  type HTMLAttributes,
+  forwardRef,
+  isValidElement,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import Markdown from 'react-markdown'
 import { useMatch, useParams } from 'react-router-dom'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -39,7 +48,7 @@ interface InputProps extends ComponentProps<'textarea'> {
   stop?: () => void
 }
 
-interface CodeProps extends React.HTMLAttributes<HTMLElement> {
+interface CodeProps extends HTMLAttributes<HTMLElement> {
   inline?: boolean
   node?: any
 }
@@ -228,7 +237,7 @@ const renderStreamingMessageWithMermaid = (input: string) => {
                 />
               ),
               pre: ({ node, children, ...props }) => {
-                const codeContent = React.isValidElement(children)
+                const codeContent = isValidElement(children)
                   ? (children.props as { children?: string })?.children
                   : null
                 return (
@@ -322,9 +331,7 @@ const renderStreamingMessageWithMermaid = (input: string) => {
               />
             ),
             pre: ({ node, children, ...props }) => {
-              const codeContent = React.isValidElement(children)
-                ? (children.props as { children?: string })?.children
-                : null
+              const codeContent = isValidElement(children) ? (children.props as { children?: string })?.children : null
               return (
                 <div className="relative my-4">
                   <pre
@@ -1098,7 +1105,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                               />
                             ),
                             pre: ({ node, children, ...props }) => {
-                              const codeContent = React.isValidElement(children)
+                              const codeContent = isValidElement(children)
                                 ? (children.props as { children?: string })?.children
                                 : null
 
@@ -1152,7 +1159,7 @@ export function AssistantPanel({ onClose, style }: AssistantPanelProps) {
                             },
                             code: ({ node, inline, className, children, ...props }: CodeProps) => {
                               const match = /language-(\w+)/.exec(className || '')
-                              const content = React.Children.toArray(children).join('')
+                              const content = Children.toArray(children).join('')
                               if (content.includes('Optimized Dockerfile')) {
                                 console.log(match)
                               }
