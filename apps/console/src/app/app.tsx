@@ -52,7 +52,7 @@ export function App() {
   const gtmParams = { id: GTM }
 
   const { user } = useAuth0()
-  const { updatePylon, insertPylonScriptTag } = useSupportChat()
+  const { initChat } = useSupportChat()
 
   const initMonitorings = useCallback(
     (user: User) => {
@@ -62,23 +62,15 @@ export function App() {
         ...user,
       })
 
-      updatePylon({
-        email: user.email,
-        name: user.name,
-        account_id: user.sub,
-        email_hash: user['https://qovery.com/pylon_hash'],
-      })
+      initChat()
     },
-    [updatePylon]
+    [initChat]
   )
 
   // init axios interceptor
   useAuthInterceptor(axios, QOVERY_API)
 
   useEffect(() => {
-    // Insert Pylon script tag
-    insertPylonScriptTag()
-
     // init Sentry
     if (NODE_ENV === 'production') {
       Sentry.init({

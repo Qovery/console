@@ -1,4 +1,7 @@
-import { useCallback } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useCallback, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useIntercom } from 'react-use-intercom'
 
 type ChatSettings = {
   app_id?: string
@@ -19,6 +22,11 @@ declare global {
 }
 
 export function useSupportChat() {
+  const { user } = useAuth0()
+  const { pathname } = useLocation()
+  const { update: updateIntercom, hardShutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
+  const [currentService, setCurrentService] = useState<'intercom' | 'pylon' | undefined>(undefined)
+
   const updatePylon = useCallback((chatSettings: ChatSettings) => {
     window.pylon = {
       chat_settings: {
@@ -28,8 +36,62 @@ export function useSupportChat() {
     }
   }, [])
 
+  const updateUserInfo = (params: ChatSettings) => {
+    if (currentService === 'pylon') {
+      updatePylon(params)
+    } else {
+      updateIntercom(params)
+    }
+  }
+
+  const initIntercom = useCallback(() => {
+    if (!user || currentService === 'intercom') return
+
+    // TODO shutdown Pylon
+    updateIntercom({
+      email: user.email,
+      name: user.name,
+      userId: user.sub,
+      userHash: user['https://qovery.com/intercom_hash'],
+    })
+    setCurrentService('intercom')
+  }, [user, updateIntercom, setCurrentService, currentService])
+
+  const initPylon = useCallback(() => {
+    if (!user || currentService === 'pylon') return
+
+    shutdownIntercom()
+    updatePylon({
+      email: user.email,
+      name: user.name,
+      account_id: user.sub,
+      email_hash: user['https://qovery.com/pylon_hash'],
+      avatar_url: user.picture,
+    })
+    setCurrentService('pylon')
+  }, [user, updatePylon, setCurrentService, shutdownIntercom, currentService])
+
+  const initChat = useCallback(() => {
+    const isOnboarding = pathname.includes('onboarding')
+
+    if (isOnboarding) {
+      initIntercom()
+    } else {
+      insertPylonScriptTag()
+      initPylon()
+    }
+  }, [pathname, initPylon, initIntercom])
+
+  useEffect(() => {
+    initChat()
+  }, [pathname, initChat])
+
   const showChat = () => {
-    window.Pylon('show')
+    if (currentService === 'intercom') {
+      showIntercomMessenger()
+    } else {
+      window.Pylon('show')
+    }
   }
 
   const insertPylonScriptTag = () => {
@@ -46,5 +108,5 @@ export function useSupportChat() {
     mainScriptTag.parentNode?.insertBefore(tag, mainScriptTag)
   }
 
-  return { updatePylon, showChat, insertPylonScriptTag }
+  return { updateUserInfo, showChat, initChat }
 }
