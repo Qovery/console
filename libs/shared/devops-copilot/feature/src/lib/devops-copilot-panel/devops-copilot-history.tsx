@@ -9,7 +9,7 @@ interface GroupedThreads {
   lastThirtyDays: Thread[]
 }
 
-export const AssistantHistory = ({
+export const DevopsCopilotHistory = ({
   data,
   threadId,
   setThreadId,
@@ -156,4 +156,4 @@ export const AssistantHistory = ({
   )
 }
 
-export default AssistantHistory
+export default DevopsCopilotHistory

@@ -4,8 +4,7 @@ import {
   type OrganizationEventResponse,
   OrganizationEventType,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type SetStateAction, useContext } from 'react'
-import { AssistantContext } from '@qovery/shared/assistant/feature'
+import { type Dispatch, type SetStateAction } from 'react'
 import {
   Button,
   Icon,
@@ -105,7 +104,6 @@ export function PageGeneral({
   organizationMaxLimitReached,
 }: PageGeneralProps) {
   const auditLogsRetentionInDays = organization?.organization_plan?.audit_logs_retention_in_days ?? 30
-  const { setMessage, setAssistantOpen } = useContext(AssistantContext)
 
   return (
     <Section className="grow p-8">
@@ -113,18 +111,6 @@ export function PageGeneral({
         <div className="flex h-9 items-center">
           <CustomFilterFeature handleClearFilter={handleClearFilter} />
         </div>
-        <Button
-          size="sm"
-          variant="surface"
-          className="inline-flex max-w-max items-center justify-center gap-1.5"
-          onClick={() => {
-            setAssistantOpen(true)
-            setMessage('Please generate concise Audit Logs Report')
-          }}
-        >
-          <Icon iconName="sparkles" iconStyle="light" className="relative top-[1px] text-sm text-brand-500" />
-          Generate Audit Logs Report with AI
-        </Button>
       </div>
 
       <Table

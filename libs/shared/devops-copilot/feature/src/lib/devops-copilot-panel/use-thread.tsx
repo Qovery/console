@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
-import { type Thread } from './assistant-panel'
+import { type Thread } from './devops-copilot-panel'
 import { HACKATHON_API_BASE_URL } from './submit-message'
 
 interface UseCurrentThreadOptions {

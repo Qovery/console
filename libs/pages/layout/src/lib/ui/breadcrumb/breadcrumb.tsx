@@ -1,12 +1,11 @@
 import equal from 'fast-deep-equal'
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
-import { memo, useCallback, useContext, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { EnvironmentMode, useDeploymentStages } from '@qovery/domains/environments/feature'
 import { BreadcrumbDeploymentHistory, BreadcrumbDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
-import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_GENERAL_URL,
@@ -40,7 +39,6 @@ export interface BreadcrumbProps {
 }
 
 export function Breadcrumb(props: BreadcrumbProps) {
-  const { setMessage, setAssistantOpen } = useContext(AssistantContext)
   const { organizations, clusters, projects, environments, createProjectModal } = props
   const { organizationId, projectId, environmentId, applicationId, databaseId, clusterId } = useParams()
 
@@ -69,44 +67,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
     path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
     end: false,
   })
-
-  const [selection, setSelection] = useState({
-    text: '',
-    position: { x: 0, y: 0 },
-    isVisible: false,
-  })
-
-  useEffect(() => {
-    const handleSelection = () => {
-      const selection = window.getSelection()
-      const text = selection?.toString().trim()
-
-      if (text) {
-        const range = selection?.getRangeAt(0)
-        if (range) {
-          const rect = range.getBoundingClientRect()
-          setSelection({
-            text,
-            position: {
-              x: rect.left + rect.width / 2,
-              y: rect.bottom + window.scrollY,
-            },
-            isVisible: true,
-          })
-        }
-      } else {
-        setSelection((prev) => ({ ...prev, isVisible: false }))
-      }
-    }
-
-    document.addEventListener('mouseup', handleSelection)
-    document.addEventListener('keyup', handleSelection)
-
-    return () => {
-      document.removeEventListener('mouseup', handleSelection)
-      document.removeEventListener('keyup', handleSelection)
-    }
-  }, [])
 
   const location = useLocation()
   const navigate = useNavigate()
@@ -488,29 +448,6 @@ export function Breadcrumb(props: BreadcrumbProps) {
               <Icon iconName="xmark" className="text-sm" />
             </Button>
           </div>
-          {selection.isVisible && (
-            <div
-              className="fixed animate-slidein-up-md-faded shadow-lg"
-              style={{
-                left: `${selection.position.x - 110}px`,
-                top: `${selection.position.y + 8}px`,
-              }}
-            >
-              <Button
-                color="neutral"
-                variant="surface"
-                size="xs"
-                className="gap-1.5"
-                onClick={() => {
-                  setAssistantOpen(true)
-                  setMessage('Explain this message from my logs:\n' + selection.text)
-                }}
-              >
-                <Icon iconName="sparkles" iconStyle="light" />
-                Explain AI Copilot
-              </Button>
-            </div>
-          )}
         </div>
       )}
     </div>

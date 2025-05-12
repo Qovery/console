@@ -1,6 +1,6 @@
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { type Thread } from './assistant-panel'
+import { type Thread } from './devops-copilot-panel'
 import { fetchThread } from './use-thread'
 
 type Context = {
@@ -10,10 +10,10 @@ type Context = {
   environment?: Environment
   service?: AnyService
   deployment?:
-  | {
-    execution_id?: string
-  }
-  | undefined
+    | {
+        execution_id?: string
+      }
+    | undefined
 }
 
 export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
@@ -37,16 +37,19 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const createThreadResponse = await fetch(`${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: message.substring(0, 50), // Use first 50 chars as title
-        }),
-      })
+      const createThreadResponse = await fetch(
+        `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: message.substring(0, 50), // Use first 50 chars as title
+          }),
+        }
+      )
 
       if (!createThreadResponse.ok) {
         throw new Error(`Failed to create thread: ${createThreadResponse.status}`)
@@ -102,11 +105,11 @@ export const submitMessage = async (
         const parseSSE = (data: string): string[] => {
           return data
             .split('\n\n')
-            .map(block =>
+            .map((block) =>
               block
                 .split('\n')
-                .filter(line => line.startsWith('data:'))
-                .map(line => line.slice(5).trim())
+                .filter((line) => line.startsWith('data:'))
+                .map((line) => line.slice(5).trim())
                 .join('')
             )
             .filter(Boolean)

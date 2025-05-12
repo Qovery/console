@@ -17,7 +17,6 @@ export function Truncate(props: TruncateProps) {
       <Tooltip
         delayDuration={delayDuration}
         content={text.length >= defaultTooltipLimit ? `${truncateText(text, defaultTooltipLimit)}...` : text}
-        classNameTrigger="z-[1]"
       >
         <span data-testid="truncate-text">{truncateText(text, truncateLimit)}...</span>
       </Tooltip>
