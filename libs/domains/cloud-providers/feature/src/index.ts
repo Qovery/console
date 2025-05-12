@@ -1,6 +1,7 @@
 export * from './lib/karpenter-instance-filter-modal/karpenter-instance-filter-modal'
 export * from './lib/karpenter-instance-type-preview/karpenter-instance-type-preview'
 export * from './lib/karpenter-instance-filter-modal/utils/convert-instance-to-karpenter-requirements'
+export * from './lib/cluster-scw-control-plane-feature/cluster-scw-control-plane-feature'
 export * from './lib/hooks/use-cloud-providers/use-cloud-providers'
 export * from './lib/hooks/use-cloud-provider-credentials/use-cloud-provider-credentials'
 export * from './lib/hooks/use-cloud-provider-features/use-cloud-provider-features'

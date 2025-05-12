@@ -1,7 +1,9 @@
-import { CloudProviderEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import { KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { SCW_CONTROL_PLANE_FEATURE_ID } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_FEATURES_URL,
@@ -43,23 +45,44 @@ export function StepResourcesFeature() {
       setResourcesData(data)
     }
 
-    if (generalData?.cloud_provider === CloudProviderEnum.AWS) {
-      if (data.cluster_type === KubernetesEnum.K3_S) {
-        navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
-        setFeaturesData(undefined)
-      } else {
-        navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
+    match(generalData?.cloud_provider)
+      .with('AWS', () => {
+        if (data.cluster_type === KubernetesEnum.K3_S) {
+          navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
+          setFeaturesData(undefined)
+        } else {
+          navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
+          setRemoteData({
+            ssh_key: '',
+          })
+        }
+      })
+      .with('SCW', () => {
+        navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
+        if (resourcesData) {
+          setFeaturesData({
+            vpc_mode: 'DEFAULT',
+            features: {
+              [SCW_CONTROL_PLANE_FEATURE_ID]: {
+                id: SCW_CONTROL_PLANE_FEATURE_ID,
+                title: 'Control Plane',
+                value: true,
+                extendedValue: resourcesData.scw_control_plane,
+              },
+            },
+          })
+        }
         setRemoteData({
           ssh_key: '',
         })
-      }
-    } else {
-      navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
-      setRemoteData({
-        ssh_key: '',
       })
-      setFeaturesData(undefined)
-    }
+      .otherwise(() => {
+        navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
+        setRemoteData({
+          ssh_key: '',
+        })
+        setFeaturesData(undefined)
+      })
   })
 
   return (
