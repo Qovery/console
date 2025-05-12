@@ -21917,9 +21917,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-syntax-highlighter@npm:^15.5.0":
-  version: 15.5.0
-  resolution: "react-syntax-highlighter@npm:15.5.0"
+"react-syntax-highlighter@npm:^15.6.1":
+  version: 15.6.1
+  resolution: "react-syntax-highlighter@npm:15.6.1"
   dependencies:
     "@babel/runtime": ^7.3.1
     highlight.js: ^10.4.1
