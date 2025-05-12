@@ -165,7 +165,7 @@ export function InputSelect({
           ) : (
             <Icon iconName="check" className="opacity-0" />
           )}
-          <label id={id} className="ml-2 flex flex-col gap-0.5 truncate text-ssm">
+          <label id={id} className="ml-2 flex flex-col gap-0.5 truncate text-sm">
             {props.label}
             {props.data.description && <span className="font-normal">{props.data.description}</span>}
           </label>
@@ -175,14 +175,14 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className="mr-1 flex text-ssm text-neutral-400">
+    <span className="mr-1 flex text-sm text-neutral-400">
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="mr-1 text-ssm text-neutral-400">
+    <span className="mr-1 text-sm text-neutral-400">
       {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
