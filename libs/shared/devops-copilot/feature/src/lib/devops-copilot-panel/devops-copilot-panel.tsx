@@ -14,18 +14,11 @@ import {
   useState,
 } from 'react'
 import Markdown from 'react-markdown'
-import { useMatch, useParams } from 'react-router-dom'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useIntercom } from 'react-use-intercom'
 import remarkGfm from 'remark-gfm'
 import { match } from 'ts-pattern'
-import { useCluster } from '@qovery/domains/clusters/feature'
-import { useEnvironment } from '@qovery/domains/environments/feature'
-import { useOrganization } from '@qovery/domains/organizations/feature'
-import { useProject } from '@qovery/domains/projects/feature'
-import { useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
@@ -33,6 +26,7 @@ import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
+import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import DevopsCopilotHistory from './devops-copilot-history'
 import { submitMessage } from './submit-message'
@@ -69,7 +63,7 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, load
         ref={ref}
         placeholder="Ask Qovery Copilot"
         autoFocus
-        className="w-full resize-none rounded-xl px-4 py-[13px] text-sm leading-[22px] text-neutral-400 transition-[height] placeholder:text-neutral-350 focus-visible:outline-none dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250"
+        className="min-h-12 w-full resize-none rounded-xl px-4 py-[13px] text-sm leading-[22px] text-neutral-400 transition-[height] placeholder:text-neutral-350 focus-visible:outline-none dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250"
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         {...props}
@@ -144,57 +138,6 @@ export interface DevopsCopilotPanelProps {
   style?: React.CSSProperties
 }
 
-function useQoveryContext() {
-  const {
-    organizationId = '',
-    clusterId = '',
-    projectId = '',
-    environmentId,
-    databaseId,
-    applicationId,
-    serviceId,
-  } = useParams()
-
-  const matchServiceLogs = useMatch({ path: ENVIRONMENT_LOGS_URL() + SERVICE_LOGS_URL(), end: false })?.params
-  const matchDeploymentLogs = useMatch({
-    path: ENVIRONMENT_LOGS_URL() + DEPLOYMENT_LOGS_VERSION_URL(),
-    end: false,
-  })?.params
-
-  const _serviceId =
-    applicationId || serviceId || databaseId || matchServiceLogs?.['serviceId'] || matchDeploymentLogs?.['serviceId']
-
-  const { data: organization } = useOrganization({ organizationId })
-  const { data: project } = useProject({ organizationId, projectId })
-  const { data: environment } = useEnvironment({ environmentId })
-  const { data: cluster } = useCluster({ organizationId, clusterId: clusterId ?? environment?.cluster_id })
-  const { data: service } = useService({ environmentId, serviceId: _serviceId })
-
-  const entityMap = [
-    [service, 'service'],
-    [environment, 'environment'],
-    [project, 'project'],
-    [cluster, 'cluster'],
-    [organization, 'organization'],
-  ]
-
-  const current = entityMap.find(([entity]) => entity !== undefined)
-
-  return {
-    context: {
-      organization,
-      cluster,
-      project,
-      environment,
-      service,
-      deployment: service && {
-        execution_id: matchDeploymentLogs?.['versionId'],
-      },
-    },
-    current: current && typeof current[0] === 'object' ? { ...current[0], type: current[1] } : undefined,
-  }
-}
-
 const normalizeMermaid = (text: string) => {
   return text.replace(/\[start mermaid block\]/g, '```mermaid').replace(/\[end mermaid block\]/g, '```')
 }
@@ -235,9 +178,6 @@ const renderStreamingMessageWithMermaid = (input: string) => {
                 />
               ),
               pre: ({ node, children, ...props }) => {
-                const codeContent = isValidElement(children)
-                  ? (children.props as { children?: string })?.children
-                  : null
                 return (
                   <div className="relative my-4">
                     <pre
@@ -329,7 +269,6 @@ const renderStreamingMessageWithMermaid = (input: string) => {
               />
             ),
             pre: ({ node, children, ...props }) => {
-              const codeContent = isValidElement(children) ? (children.props as { children?: string })?.children : null
               return (
                 <div className="relative my-4">
                   <pre
@@ -470,8 +409,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }, 50)
   }, [])
 
-  const isProgrammaticScroll = useRef(false)
-
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -581,7 +518,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                         status: 'not_started',
                       })),
                     ])
-                  } catch (e) {}
+                  } catch (e) {
+                    console.error(e)
+                  }
                 } else if (parsed.content.includes('__step__:')) {
                   const stepDescription = parsed.content.replace('__step__:', '').replaceAll('_', ' ')
                   setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1))
@@ -696,7 +635,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
 
   useEffect(() => {
     const node = scrollAreaRef.current
-    console.log('node', node)
 
     if (!node) return
 

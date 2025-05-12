@@ -94,7 +94,6 @@ export const submitMessage = async (
     if (onStream && messageResponse.body) {
       const reader = messageResponse.body.getReader()
       const decoder = new TextDecoder()
-      let accumulatedResponse = ''
 
       while (true) {
         const { done, value } = await reader.read()
