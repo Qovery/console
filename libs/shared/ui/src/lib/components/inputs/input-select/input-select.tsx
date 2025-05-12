@@ -175,14 +175,14 @@ export function InputSelect({
   }
 
   const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
-    <span className="mr-1 flex text-sm text-neutral-400">
+    <span className="mr-1 flex text-ssm text-neutral-400">
       {props.data.label}
       {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
   const SingleValue = (props: SingleValueProps<Value>) => (
-    <span className="mr-1 text-sm text-neutral-400">
+    <span className="mr-1 text-ssm text-neutral-400">
       {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
