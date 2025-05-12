@@ -1,5 +1,5 @@
 {
-  "name": "feature",
+  "name": "domains-environment-logs-feature",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/environment-logs/feature/src",
   "projectType": "library",
