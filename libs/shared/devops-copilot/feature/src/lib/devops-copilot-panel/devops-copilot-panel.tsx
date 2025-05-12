@@ -19,7 +19,7 @@ import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { useIntercom } from 'react-use-intercom'
 import remarkGfm from 'remark-gfm'
 import { match } from 'ts-pattern'
-import { AnimatedGradientText, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
+import { AnimatedGradientText, Button, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -74,7 +74,7 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, load
             type="button"
             variant="surface"
             radius="full"
-            className="relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 dark:text-white"
+            className="group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
             onClick={() => {
               if (loading) {
                 stop?.()
@@ -82,9 +82,19 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, load
                 onClick?.()
               }
             }}
-            loading={loading}
           >
-            <Icon iconName="arrow-up" className={loading ? 'opacity-0' : ''} />
+            {!loading ? (
+              <Icon iconName="arrow-up" className={loading ? 'opacity-0' : ''} />
+            ) : (
+              <>
+                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0" theme="dark" />
+                <Icon
+                  className="absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100"
+                  iconName="stop"
+                  iconStyle="light"
+                />
+              </>
+            )}
           </Button>
         </Tooltip>
       </div>
@@ -954,7 +964,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     .with('user', () => (
                       <div
                         key={thread.id}
-                        className="ml-auto min-h-max max-w-[70%] animate-[fadeSlideUp_0.5s_ease] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
+                        className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
                       >
                         <div className="whitespace-pre-wrap">{thread.text}</div>
                       </div>
