@@ -94,8 +94,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   )
 
   const defaultScope =
-    // Check if it's a file and the scope is one of 'APPLICATION', 'CONTAINER', 'JOB', or 'HELM'
-    // If so, assign the default scope to 'ENVIRONMENT' if isFile
+    // Check if it's a file and the scope is one of services and assign the default scope to 'ENVIRONMENT'
     isFile && ['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(scope)
       ? 'ENVIRONMENT'
       : variable?.scope === 'BUILT_IN'
