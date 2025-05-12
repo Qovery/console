@@ -12,3 +12,4 @@ import {
 export { useDocumentTitle, useClickAway, useCopyToClipboard, useDebounce, useLocalStorage, useNetworkState }
 
 export * from './lib/use-format-hotkeys/use-format-hotkeys'
+export * from './lib/use-support-chat/use-support-chat'

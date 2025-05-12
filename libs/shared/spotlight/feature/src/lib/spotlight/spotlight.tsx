@@ -18,7 +18,7 @@ import {
   USER_URL,
 } from '@qovery/shared/routes'
 import { Command, type CommandDialogProps, Icon, Truncate } from '@qovery/shared/ui'
-import { QOVERY_DOCS_URL, QOVERY_FORUM_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
+import { QOVERY_DOCS_URL, QOVERY_ROADMAP_URL } from '@qovery/shared/util-const'
 import { useQuickActions } from '../hooks/use-quick-actions/use-quick-actions'
 import { useServicesSearch } from '../hooks/use-services-search/use-services-search'
 import { SubCommand } from '../sub-command/sub-command'
@@ -187,11 +187,6 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         label: 'Go to documentation',
         onSelect: openExternalLink(QOVERY_DOCS_URL),
         iconName: 'book-open',
-      },
-      {
-        label: 'Community Forum',
-        onSelect: openExternalLink(QOVERY_FORUM_URL),
-        iconName: 'people',
       },
       {
         label: 'Roadmap',

@@ -13,7 +13,6 @@ import {
   useLocation,
   useNavigationType,
 } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
 import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
@@ -24,7 +23,7 @@ import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { GIT_SHA, GTM, NODE_ENV, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 import PreviewCode from './components/preview-code'
@@ -53,7 +52,7 @@ export function App() {
   const gtmParams = { id: GTM }
 
   const { user } = useAuth0()
-  const { update: updateIntercom } = useIntercom()
+  const { updatePylon, insertPylonScriptTag } = useSupportChat()
 
   const initMonitorings = useCallback(
     (user: User) => {
@@ -63,22 +62,23 @@ export function App() {
         ...user,
       })
 
-      const INTERCOM_HASH_KEY = 'https://qovery.com/intercom_hash'
-
-      updateIntercom({
+      updatePylon({
         email: user.email,
         name: user.name,
-        userId: user.sub,
-        userHash: user[INTERCOM_HASH_KEY],
+        account_id: user.sub,
+        email_hash: user['https://qovery.com/pylon_hash'],
       })
     },
-    [updateIntercom]
+    [updatePylon]
   )
 
   // init axios interceptor
   useAuthInterceptor(axios, QOVERY_API)
 
   useEffect(() => {
+    // Insert Pylon script tag
+    insertPylonScriptTag()
+
     // init Sentry
     if (NODE_ENV === 'production') {
       Sentry.init({
