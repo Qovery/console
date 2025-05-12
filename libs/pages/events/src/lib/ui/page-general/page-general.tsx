@@ -107,10 +107,8 @@ export function PageGeneral({
 
   return (
     <Section className="grow p-8">
-      <div className="mb-4 flex h-9 items-center justify-between">
-        <div className="flex h-9 items-center">
-          <CustomFilterFeature handleClearFilter={handleClearFilter} />
-        </div>
+      <div className="mb-4 flex h-9 items-center">
+        <CustomFilterFeature handleClearFilter={handleClearFilter} />
       </div>
 
       <Table

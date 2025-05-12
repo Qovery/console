@@ -16,3 +16,5 @@ export function useCluster({ organizationId, clusterId, enabled }: UseClusterPro
     enabled,
   })
 }
+
+export default useCluster

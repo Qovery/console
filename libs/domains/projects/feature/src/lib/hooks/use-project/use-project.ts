@@ -12,3 +12,5 @@ export function useProject({ organizationId, projectId }: UseProjectProps) {
     select: (data) => data?.find((project) => project.id === projectId),
   })
 }
+
+export default useProject

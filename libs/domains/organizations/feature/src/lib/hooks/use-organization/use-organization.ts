@@ -12,3 +12,5 @@ export function useOrganization({ organizationId, enabled }: UseOrganizationProp
     enabled,
   })
 }
+
+export default useOrganization
