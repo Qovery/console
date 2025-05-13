@@ -6,14 +6,13 @@ import {
 } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
 import { createEnumParam } from 'serialize-query-params'
 import { NumberParam, StringParam, useQueryParams, withDefault } from 'use-query-params'
 import { type EventQueryParams, useFetchEvents } from '@qovery/domains/event'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { ALL, type TableFilterProps } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import PageGeneral from '../../ui/page-general/page-general'
 
 export const queryParamsValues = {
@@ -49,7 +48,7 @@ export function PageGeneralFeature() {
   const [filter, setFilter] = useState<TableFilterProps[]>([])
   const { data: eventsData, isLoading } = useFetchEvents(organizationId, queryParams)
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
-  const { show: showIntercom } = useIntercom()
+  const { showChat } = useSupportChat()
 
   // Sync queryParams -> table filters
   useEffect(() => {
@@ -139,7 +138,7 @@ export function PageGeneralFeature() {
       filter={filter}
       setFilter={setFilter}
       organization={organization}
-      showIntercom={showIntercom}
+      showIntercom={showChat}
     />
   )
 }

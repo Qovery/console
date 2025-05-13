@@ -2,11 +2,11 @@ import { useAuth0 } from '@auth0/auth0-react'
 import posthog from 'posthog-js'
 import { type PropsWithChildren, memo, useEffect } from 'react'
 import { redirect, useParams } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
+import { useSupportChat } from '@qovery/shared/util-hooks'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage, setCurrentProvider } from '../../utils/utils'
@@ -23,7 +23,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, spotlight, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
   const { user } = useAuth0()
-  const { update: updateIntercom } = useIntercom()
+  const { updateUserInfo } = useSupportChat()
 
   const { data: clusters = [] } = useClusters({ organizationId, enabled: !!organizationId })
   const { data: organizations = [] } = useOrganizations()
@@ -49,13 +49,14 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
       try {
         if (organizationId) {
           const { data: currentOrganization } = await fetchOrganization()
-          updateIntercom({
-            company: currentOrganization
-              ? {
-                  companyId: currentOrganization.id,
-                  name: currentOrganization.name,
-                }
-              : undefined,
+
+          if (!currentOrganization?.id && !currentOrganization?.name) return
+
+          updateUserInfo({
+            company: {
+              companyId: currentOrganization.id,
+              name: currentOrganization.name,
+            },
           })
         }
       } catch (error) {
@@ -71,7 +72,7 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
         fetchOrganizationAndUpdateIntercom()
       }
     }
-  }, [updateIntercom, organizationId, organizations, fetchOrganization])
+  }, [updateUserInfo, organizationId, organizations, fetchOrganization])
 
   useEffect(() => {
     posthog.group('organization_id', organizationId)

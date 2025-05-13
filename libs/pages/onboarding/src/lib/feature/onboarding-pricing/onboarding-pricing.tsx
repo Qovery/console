@@ -2,7 +2,6 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
 import { useCreateOrganization } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -54,7 +53,6 @@ export function OnboardingPricing() {
   useDocumentTitle('Onboarding Pricing - Qovery')
 
   const navigate = useNavigate()
-  const { showNewMessage } = useIntercom()
   const { user } = useAuth0()
   const { organization_name, project_name, admin_email } = useContext(ContextOnboarding)
   const { getAccessTokenSilently } = useAuth()
@@ -94,9 +92,7 @@ export function OnboardingPricing() {
     setLoading('')
   }
 
-  const onClickContact = () => showNewMessage()
-
-  return <StepPricing plans={PLANS} onSubmit={onSubmit} loading={loading} onClickContact={onClickContact} />
+  return <StepPricing plans={PLANS} onSubmit={onSubmit} loading={loading} />
 }
 
 export default OnboardingPricing

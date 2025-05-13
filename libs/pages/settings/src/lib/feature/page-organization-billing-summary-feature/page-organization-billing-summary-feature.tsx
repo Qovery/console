@@ -1,8 +1,7 @@
 import { useParams } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
 import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'
 import { useModal } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
 import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'
 import ShowUsageModalFeature from './show-usage-modal-feature/show-usage-modal-feature'
@@ -16,7 +15,7 @@ export function PageOrganizationBillingSummaryFeature() {
 
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { data: currentCost } = useCurrentCost({ organizationId })
-  const { show: showIntercom } = useIntercom()
+  const { showChat } = useSupportChat()
 
   const openPromoCodeModal = () => {
     openModal({
@@ -37,7 +36,7 @@ export function PageOrganizationBillingSummaryFeature() {
       creditCardLoading={isLoadingCreditCards}
       onPromoCodeClick={openPromoCodeModal}
       onShowUsageClick={openShowUsageModal}
-      openIntercom={showIntercom}
+      openIntercom={showChat}
     />
   )
 }

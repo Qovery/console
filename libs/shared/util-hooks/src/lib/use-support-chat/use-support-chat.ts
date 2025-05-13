@@ -1,9 +1,11 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
+import { type IntercomProps, useIntercom } from 'react-use-intercom'
 
-type ChatSettings = {
+type IntercomChatSettings = Partial<IntercomProps>
+
+type PylonChatSettings = {
   app_id?: string
   email?: string
   email_hash?: string
@@ -11,6 +13,8 @@ type ChatSettings = {
   account_id?: string
   avatar_url?: string
 }
+
+type ChatSettings = IntercomChatSettings | PylonChatSettings
 
 declare global {
   interface Window {
