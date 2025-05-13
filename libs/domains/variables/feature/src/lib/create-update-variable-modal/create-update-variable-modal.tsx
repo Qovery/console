@@ -88,16 +88,23 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     setTimeout(() => textarea?.focus(), 50)
   }
 
-  const availableScopes = computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]
+  // Compute available scopes and filter them - if it's a file, do not allow targeting a service scope
+  const availableScopes = (computeAvailableScope(variable?.scope, false, scope, type === 'OVERRIDE') as Scope[]).filter(
+    (s) => !_isFile || !['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(s)
+  )
 
   const defaultScope =
-    variable?.scope === 'BUILT_IN'
-      ? undefined
-      : mode === 'CREATE' && type === 'OVERRIDE'
-        ? availableScopes[0]
-        : variable?.scope
-          ? variable.scope
-          : availableScopes[availableScopes.length - 1]
+    // Check if it's a file and the scope is one of services and assign the default scope to 'ENVIRONMENT'
+    isFile && ['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(scope)
+      ? 'ENVIRONMENT'
+      : variable?.scope === 'BUILT_IN'
+        ? undefined
+        : mode === 'CREATE' && type === 'OVERRIDE'
+          ? availableScopes[0]
+          : variable?.scope
+            ? variable.scope
+            : availableScopes[availableScopes.length - 1]
+
   const mountPath = getEnvironmentVariableFileMountPath(variable)
 
   const methods = useForm<{
