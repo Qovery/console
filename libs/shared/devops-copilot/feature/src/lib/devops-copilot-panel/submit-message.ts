@@ -91,18 +91,20 @@ export const submitMessage = async (
       throw new Error('Failed to fetch thread')
     }
 
+    // Process streaming response if onStream callback is provided
     if (onStream && messageResponse.body) {
       const reader = messageResponse.body.getReader()
       const decoder = new TextDecoder()
 
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
+      // Process the stream until it's done
+      const processStream = async () => {
+        let result = await reader.read()
 
-        const chunk = decoder.decode(value, { stream: true })
+        while (!result.done) {
+          const chunk = decoder.decode(result.value, { stream: true })
 
-        const parseSSE = (data: string): string[] => {
-          return data
+          // Parse SSE data
+          const chunks = chunk
             .split('\n\n')
             .map((block) =>
               block
@@ -112,36 +114,31 @@ export const submitMessage = async (
                 .join('')
             )
             .filter(Boolean)
-        }
 
-        for (const cleanChunk of parseSSE(chunk)) {
-          onStream(cleanChunk)
+          // Send each chunk to the callback
+          for (const cleanChunk of chunks) {
+            onStream(cleanChunk)
+          }
+
+          // Read the next chunk
+          result = await reader.read()
         }
       }
 
-      const messages = await fetchThread(userSub, organizationId, _threadId, token)
+      await processStream()
+    }
 
-      const formattedMessages: Thread = messages.map((msg: any) => ({
+    // Fetch and format the thread messages
+    const messages = await fetchThread(userSub, organizationId, _threadId, token)
+
+    const formattedMessages: Thread = messages.map(
+      (msg: { id: string; media_content: string; owner: string; created_at: string }) => ({
         id: msg.id,
         text: msg.media_content,
         owner: msg.owner,
         timestamp: new Date(msg.created_at).getTime(),
-      }))
-
-      return {
-        id: _threadId,
-        thread: formattedMessages,
-      }
-    }
-
-    const messages = await fetchThread(userSub, organizationId, _threadId, token)
-
-    const formattedMessages: Thread = messages.map((msg: any) => ({
-      id: msg.id,
-      text: msg.media_content,
-      owner: msg.owner,
-      timestamp: new Date(msg.created_at).getTime(),
-    }))
+      })
+    )
 
     return {
       id: _threadId,

@@ -34,6 +34,10 @@ import { submitVote } from './submit-vote'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
 
+/*
+XXX: The devops-copilot feature is unstable and requires a full redesign.
+*/
+
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
   onClick?: () => void
@@ -615,29 +619,31 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   }, [streamingMessage, displayedStreamingMessage, isStopped, isFinish])
 
   useEffect(() => {
-    if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) return
-    let interval: NodeJS.Timeout
-    let indexRef = { current: displayedStreamingMessage.length }
+    if (streamingMessage.length === 0 || streamingMessage.length <= displayedStreamingMessage.length) {
+      return
+    }
+    let currentIndex = displayedStreamingMessage.length
 
-    interval = setInterval(() => {
-      const nextChar = streamingMessage[indexRef.current]
+    const typingInterval = setInterval(() => {
+      const nextChar = streamingMessage[currentIndex]
+
       if (nextChar === undefined) {
-        clearInterval(interval)
+        clearInterval(typingInterval)
         return
       }
 
       setDisplayedStreamingMessage((prev) => {
         if (!streamingMessage.startsWith(prev + nextChar)) {
-          clearInterval(interval)
+          clearInterval(typingInterval)
           return streamingMessage
         }
-        indexRef.current++
+        currentIndex++
         return prev + nextChar
       })
     }, 1)
 
-    return () => clearInterval(interval)
-  }, [streamingMessage])
+    return () => clearInterval(typingInterval)
+  }, [streamingMessage, displayedStreamingMessage])
 
   const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
 

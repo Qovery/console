@@ -8,7 +8,7 @@ export function DevopsCopilotButton() {
   const { devopsCopilotOpen, setDevopsCopilotOpen } = useContext(DevopsCopilotContext)
   const metaKey = useFormatHotkeys('meta')
 
-  // Toggle the menu when ⌘H is pressed
+  // Toggle the menu when ⌘i is pressed
   useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'i' && (event.metaKey || event.ctrlKey)) {
@@ -19,7 +19,7 @@ export function DevopsCopilotButton() {
 
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [])
+  }, [setDevopsCopilotOpen])
 
   if (!metaKey) return null
 

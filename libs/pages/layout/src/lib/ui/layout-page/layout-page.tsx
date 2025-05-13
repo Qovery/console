@@ -1,3 +1,4 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -54,6 +55,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
+  const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
 
@@ -131,7 +133,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
               >
                 <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
                 <AssistantTrigger />
-                <DevopsCopilotTrigger />
+                {isFeatureFlag && <DevopsCopilotTrigger />}
               </div>
             </div>
             {clusterCredentialError && (
@@ -164,7 +166,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
               <TopBar>
                 <div className="flex items-center">
                   {spotlight && <SpotlightTrigger />}
-                  <DevopsCopilotButton />
+                  {isFeatureFlag && <DevopsCopilotButton />}
                 </div>
               </TopBar>
             )}
