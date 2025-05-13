@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useCallback, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { type IntercomProps, useIntercom } from 'react-use-intercom'
 
 type IntercomChatSettings = Partial<IntercomProps>
@@ -12,6 +12,7 @@ type PylonChatSettings = {
   name?: string
   account_id?: string
   avatar_url?: string
+  account_external_id?: string
 }
 
 type ChatSettings = IntercomChatSettings | PylonChatSettings
@@ -28,6 +29,7 @@ declare global {
 export function useSupportChat() {
   const { user } = useAuth0()
   const { pathname } = useLocation()
+  const { organizationId } = useParams()
   const { update: updateIntercom, hardShutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
   const [currentService, setCurrentService] = useState<'intercom' | 'pylon' | undefined>(undefined)
 
@@ -71,9 +73,10 @@ export function useSupportChat() {
       account_id: user.sub,
       email_hash: user['https://qovery.com/pylon_hash'],
       avatar_url: user.picture,
+      account_external_id: organizationId,
     })
     setCurrentService('pylon')
-  }, [user, updatePylon, setCurrentService, shutdownIntercom, currentService])
+  }, [user, organizationId, updatePylon, setCurrentService, shutdownIntercom, currentService])
 
   const initChat = useCallback(() => {
     const isOnboarding = pathname.includes('onboarding')
