@@ -16,7 +16,6 @@ import {
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { useIntercom } from 'react-use-intercom'
 import remarkGfm from 'remark-gfm'
 import { match } from 'ts-pattern'
 import { AnimatedGradientText, Button, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
@@ -354,7 +353,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const controllerRef = useRef<AbortController | null>(null)
   const STORAGE_KEY = 'assistant-panel-size'
   const { data } = useQoveryStatus()
-  const { showMessages: showIntercomMessenger } = useIntercom()
   const docLinks = useContextualDocLinks()
   const { context, current } = useQoveryContext()
   const { user, getAccessTokenSilently } = useAuth0()
@@ -848,21 +846,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                         </button>
                       </DropdownMenu.Item>
                     )}
-                    <DropdownMenu.Item asChild>
-                      <button
-                        className="flex h-11 w-full items-center gap-2 text-sm"
-                        type="button"
-                        onClick={() => {
-                          showIntercomMessenger()
-                          handleOnClose()
-                        }}
-                      >
-                        <span className="w-4">
-                          <Icon iconName="robot" className="text-brand-500" />
-                        </span>
-                        <span>Contact support</span>
-                      </button>
-                    </DropdownMenu.Item>
                     <DropdownMenu.Item asChild>
                       <a
                         className="flex h-11 w-full items-center gap-2 text-sm"
