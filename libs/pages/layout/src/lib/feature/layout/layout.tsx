@@ -6,7 +6,6 @@ import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { ORGANIZATION_URL } from '@qovery/shared/routes'
-import { useSupportChat } from '@qovery/shared/util-hooks'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import LayoutPage from '../../ui/layout-page/layout-page'
 import { setCurrentOrganizationIdOnStorage, setCurrentProjectIdOnStorage, setCurrentProvider } from '../../utils/utils'
@@ -23,7 +22,6 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { children, spotlight, topBar } = props
   const { organizationId = '', projectId = '', environmentId = '', versionId } = useParams()
   const { user } = useAuth0()
-  const { updateUserInfo } = useSupportChat()
 
   const { data: clusters = [] } = useClusters({ organizationId, enabled: !!organizationId })
   const { data: organizations = [] } = useOrganizations()
@@ -45,34 +43,14 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
         redirect(ORGANIZATION_URL(organizations[0].id))
       }
     }
-    async function fetchOrganizationAndUpdateIntercom() {
-      try {
-        if (organizationId) {
-          const { data: currentOrganization } = await fetchOrganization()
-
-          if (!currentOrganization?.id && !currentOrganization?.name) return
-
-          updateUserInfo({
-            company: {
-              companyId: currentOrganization.id,
-              name: currentOrganization.name,
-            },
-          })
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
 
     if (organizations.length > 0) {
       // fetch organization by id neccessary for debug by Qovery team
       if (!organizationIds.includes(organizationId)) {
         fetchOrganizationForQoveryTeam()
-      } else {
-        fetchOrganizationAndUpdateIntercom()
       }
     }
-  }, [updateUserInfo, organizationId, organizations, fetchOrganization])
+  }, [organizationId, organizations, fetchOrganization])
 
   useEffect(() => {
     posthog.group('organization_id', organizationId)

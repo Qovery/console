@@ -62,6 +62,7 @@ export function App() {
         ...user,
       })
 
+      // Initialize support chat (either Pylon or Intercom depending on the route: Intercom for onboarding views, Pylon for the rest of the Console)
       initChat()
     },
     [initChat]

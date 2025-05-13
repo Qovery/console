@@ -1,7 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useCallback, useEffect, useState } from 'react'
-import { useLocation, useParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMatch, useParams } from 'react-router-dom'
 import { type IntercomProps, useIntercom } from 'react-use-intercom'
+import { ONBOARDING_URL } from '@qovery/shared/routes'
 
 type IntercomChatSettings = Partial<IntercomProps>
 
@@ -28,78 +29,57 @@ declare global {
 
 export function useSupportChat() {
   const { user } = useAuth0()
-  const { pathname } = useLocation()
   const { organizationId } = useParams()
-  const { update: updateIntercom, hardShutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
-  const [currentService, setCurrentService] = useState<'intercom' | 'pylon' | undefined>(undefined)
 
-  const updatePylon = useCallback((chatSettings: ChatSettings) => {
-    window.pylon = {
-      chat_settings: {
-        app_id: process.env['NX_PUBLIC_PYLON_APP_ID'],
-        ...chatSettings,
-      },
-    }
-  }, [])
+  const { update: updateIntercom, shutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
+  const [chatSettings, setChatSettings] = useState<ChatSettings | undefined>(undefined)
+  const matchesOnboardingRoutes = useMatch({ path: ONBOARDING_URL, end: false })
 
-  const updateUserInfo = (params: ChatSettings) => {
-    if (currentService === 'pylon') {
-      updatePylon(params)
-    } else {
-      updateIntercom(params)
-    }
-  }
-
-  const initIntercom = useCallback(() => {
-    if (!user || currentService === 'intercom') return
-
-    window.Pylon?.('hide')
-    updateIntercom({
-      email: user.email,
-      name: user.name,
-      userId: user.sub,
-      userHash: user['https://qovery.com/intercom_hash'],
-    })
-    setCurrentService('intercom')
-  }, [user, updateIntercom, setCurrentService, currentService])
-
-  const initPylon = useCallback(() => {
-    if (!user || currentService === 'pylon') return
-
-    shutdownIntercom()
-    updatePylon({
-      email: user.email,
-      name: user.name,
-      account_id: user.sub,
-      email_hash: user['https://qovery.com/pylon_hash'],
-      avatar_url: user.picture,
-      account_external_id: organizationId,
-    })
-    setCurrentService('pylon')
-  }, [user, organizationId, updatePylon, setCurrentService, shutdownIntercom, currentService])
+  const service = useMemo(() => {
+    return matchesOnboardingRoutes ? 'intercom' : 'pylon'
+  }, [matchesOnboardingRoutes])
 
   const initChat = useCallback(() => {
-    const isOnboarding = pathname.includes('onboarding')
+    if (!user) return
 
-    if (isOnboarding) {
-      initIntercom()
-    } else {
+    let defaultChatParams = undefined
+
+    if (service === 'pylon') {
       insertPylonScriptTag()
-      initPylon()
+      shutdownIntercom()
+      defaultChatParams = {
+        app_id: process.env.NX_PUBLIC_PYLON_APP_ID,
+        email: user.email,
+        name: user.name,
+        account_id: user.sub,
+        email_hash: user['https://qovery.com/pylon_hash'],
+        avatar_url: user.picture,
+        account_external_id: organizationId,
+      }
+    } else {
+      window.Pylon?.('hide')
+      defaultChatParams = {
+        email: user.email,
+        name: user.name,
+        userId: user.sub,
+        userHash: user['https://qovery.com/intercom_hash'],
+      }
     }
-  }, [pathname, initPylon, initIntercom])
 
-  useEffect(() => {
-    initChat()
-  }, [pathname, initChat])
+    setChatSettings(defaultChatParams)
+  }, [user, service, organizationId, shutdownIntercom])
 
-  const showChat = () => {
-    if (currentService === 'intercom') {
+  const updateUserInfo = (params: ChatSettings) => {
+    setChatSettings(params)
+  }
+
+  const showChat = useCallback(() => {
+    if (service === 'intercom') {
       showIntercomMessenger()
     } else {
       window.Pylon?.('show')
     }
-  }
+  }, [service, showIntercomMessenger])
 
   const insertPylonScriptTag = () => {
     if (document.getElementById('pylon-script')) return
@@ -108,12 +88,38 @@ export function useSupportChat() {
     tag.setAttribute('type', 'text/javascript')
     tag.setAttribute('async', 'true')
     tag.setAttribute('id', 'pylon-script')
-    tag.setAttribute('src', `https://widget.usepylon.com/widget/${process.env['NX_PUBLIC_PYLON_APP_ID']}`)
+    tag.setAttribute('src', `https://widget.usepylon.com/widget/${process.env.NX_PUBLIC_PYLON_APP_ID}`)
 
     const mainScriptTag = document.getElementsByTagName('script')[0]
 
     mainScriptTag.parentNode?.insertBefore(tag, mainScriptTag)
   }
+
+  const applyChatSettings = useCallback(() => {
+    if (!chatSettings) return
+
+    if (service === 'pylon') {
+      window.pylon = {
+        chat_settings: chatSettings,
+      }
+    } else {
+      updateIntercom(chatSettings)
+    }
+  }, [chatSettings, service, updateIntercom])
+
+  // When chat settings change, refresh the service with the up-to-date information
+  useEffect(() => {
+    if (!chatSettings) return
+
+    applyChatSettings()
+  }, [chatSettings, applyChatSettings])
+
+  // When user object coming from auth0 changes, re-init the chat
+  useEffect(() => {
+    if (!user) return
+
+    initChat()
+  }, [user, initChat])
 
   return { updateUserInfo, showChat, initChat }
 }
