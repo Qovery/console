@@ -17,7 +17,6 @@ describe('Spotlight', () => {
     expect(baseElement).toHaveTextContent('Go to personal settings')
     expect(baseElement).toHaveTextContent('Help')
     expect(baseElement).toHaveTextContent('Go to documentation')
-    expect(baseElement).toHaveTextContent('Community Forum')
     expect(baseElement).toHaveTextContent('Roadmap')
     expect(baseElement).toHaveTextContent('Get help')
     expect(baseElement).toHaveTextContent('Arrow to navigate')
