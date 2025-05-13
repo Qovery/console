@@ -90,9 +90,9 @@ export function useSupportChat() {
     tag.setAttribute('id', 'pylon-script')
     tag.setAttribute('src', `https://widget.usepylon.com/widget/${process.env.NX_PUBLIC_PYLON_APP_ID}`)
 
-    const mainScriptTag = document.getElementsByTagName('script')[0]
+    const mainScriptTag: HTMLScriptElement | undefined = document.getElementsByTagName('script')[0]
 
-    mainScriptTag.parentNode?.insertBefore(tag, mainScriptTag)
+    mainScriptTag?.parentNode?.insertBefore(tag, mainScriptTag)
   }
 
   const applyChatSettings = useCallback(() => {
