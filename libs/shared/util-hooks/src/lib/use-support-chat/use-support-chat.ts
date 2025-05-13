@@ -70,7 +70,7 @@ export function useSupportChat() {
   }, [user, service, organizationId, shutdownIntercom])
 
   const updateUserInfo = (params: ChatSettings) => {
-    setChatSettings(params)
+    setChatSettings((state) => ({ ...state, ...params }))
   }
 
   const showChat = useCallback(() => {
