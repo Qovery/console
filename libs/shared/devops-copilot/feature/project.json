@@ -3,7 +3,25 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/devops-copilot/feature/src",
   "projectType": "library",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project shared-devops-copilot-feature --web",
-  "targets": {}
+  "tags": ["scope:shared", "type:feature"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/shared/devops-copilot/feature/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
 }
