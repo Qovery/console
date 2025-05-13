@@ -18,10 +18,10 @@ type ChatSettings = IntercomChatSettings | PylonChatSettings
 
 declare global {
   interface Window {
-    pylon: {
+    pylon?: {
       chat_settings: ChatSettings
     }
-    Pylon: (cmd: 'show' | 'hide') => void
+    Pylon?: (cmd: 'show' | 'hide') => void
   }
 }
 
@@ -51,7 +51,7 @@ export function useSupportChat() {
   const initIntercom = useCallback(() => {
     if (!user || currentService === 'intercom') return
 
-    // TODO shutdown Pylon
+    window.Pylon?.('hide')
     updateIntercom({
       email: user.email,
       name: user.name,
@@ -94,7 +94,7 @@ export function useSupportChat() {
     if (currentService === 'intercom') {
       showIntercomMessenger()
     } else {
-      window.Pylon('show')
+      window.Pylon?.('show')
     }
   }
 
