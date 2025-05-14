@@ -15,10 +15,12 @@ import { type PropsWithChildren, type ReactElement } from 'react'
 import { useChainProviders } from 'react-flat-providers'
 import { InstantSearch } from 'react-instantsearch'
 import { MemoryRouter } from 'react-router-dom'
+import { IntercomProvider } from 'react-use-intercom'
 import { QueryParamProvider } from 'use-query-params'
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ModalProvider } from '@qovery/shared/ui'
+import { INTERCOM } from '@qovery/shared/util-node-env'
 
 const allQueries = {
   ...queries,
@@ -44,6 +46,7 @@ function renderWithProviders(
       .add(TooltipProvider)
       .add(ModalProvider)
       .add(MemoryRouter)
+      .add(IntercomProvider, { appId: INTERCOM })
       .add(QueryParamProvider, {
         adapter: ReactRouter6Adapter,
       })

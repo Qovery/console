@@ -1,9 +1,9 @@
-import { render } from '__tests__/utils/setup-jest'
+import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageOnboarding from './page-onboarding'
 
 describe('PageOnboarding', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<PageOnboarding />)
+    const { baseElement } = renderWithProviders(<PageOnboarding />)
     expect(baseElement).toBeTruthy()
   })
 })
