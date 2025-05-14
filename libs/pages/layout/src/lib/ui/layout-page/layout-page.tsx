@@ -1,3 +1,4 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -5,6 +6,7 @@ import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
+import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
@@ -53,6 +55,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
+  const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
 
@@ -130,6 +133,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
               >
                 <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
                 <AssistantTrigger />
+                {isFeatureFlag && <DevopsCopilotTrigger />}
               </div>
             </div>
             {clusterCredentialError && (
@@ -158,7 +162,14 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 ongoing, you can follow it from logs
               </Banner>
             )}
-            {topBar && <TopBar>{spotlight && <SpotlightTrigger />}</TopBar>}
+            {topBar && (
+              <TopBar>
+                <div className="flex items-center">
+                  {spotlight && <SpotlightTrigger />}
+                  {isFeatureFlag && <DevopsCopilotButton />}
+                </div>
+              </TopBar>
+            )}
           </div>
         </div>
       </main>

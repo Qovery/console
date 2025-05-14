@@ -33,3 +33,28 @@ jest.mock('@uidotdev/usehooks', () => ({
     type: 'wifi',
   }),
 }))
+
+// Mocks required for the devops-copilot feature to prevent Jest from choking on ESM modules
+// Mock 'mermaid' (used in devops-copilot visual rendering)
+jest.mock('mermaid', () => ({
+  initialize: jest.fn(),
+  render: jest.fn(() => Promise.resolve({ svg: '' })),
+}))
+
+// Mock 'react-markdown' (used to render Markdown content in devops-copilot)
+jest.mock('react-markdown', () => ({
+  __esModule: true,
+  default: ({ children }: { children: string }) => children,
+}))
+
+// Mock 'materialDark' theme from 'react-syntax-highlighter' (used in code blocks in devops-copilot)
+jest.mock('react-syntax-highlighter/dist/esm/styles/prism', () => ({
+  __esModule: true,
+  materialDark: {},
+}))
+
+// Mock 'remark-gfm' (used with react-markdown in devops-copilot)
+jest.mock('remark-gfm', () => ({
+  __esModule: true,
+  default: () => () => {},
+}))
