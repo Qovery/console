@@ -1,8 +1,8 @@
 import { clsx } from 'clsx'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { match } from 'ts-pattern'
 import { Icon } from '@qovery/shared/ui'
-import { useLocalStorage } from '@qovery/shared/util-hooks'
+import { useLocalStorage, useSupportChat } from '@qovery/shared/util-hooks'
 import { AssistantContext } from '../assistant-context/assistant-context'
 import { type AssistantIcon, AssistantIconKey } from '../assistant-icon/assistant-icon'
 import { AssistantPanel } from '../assistant-panel/assistant-panel'
@@ -12,8 +12,14 @@ export interface AssistantTriggerProps {
 }
 
 export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps) {
+  const { initChat } = useSupportChat()
   const { assistantOpen, setAssistantOpen } = useContext(AssistantContext)
   const [assistantIcon] = useLocalStorage<AssistantIcon>(AssistantIconKey, 'QUESTION_MARK')
+
+  useEffect(() => {
+    // Initialize support chat (either Pylon or Intercom depending on the route: Intercom for onboarding views, Pylon for the rest of the Console)
+    initChat()
+  }, [initChat])
 
   return (
     <>

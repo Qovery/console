@@ -32,21 +32,18 @@ export function useSupportChat() {
   const { organizationId } = useParams()
 
   const { update: updateIntercom, shutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
-  const [chatSettings, setChatSettings] = useState<ChatSettings | undefined>(undefined)
   const matchesOnboardingRoutes = useMatch({ path: ONBOARDING_URL, end: false })
 
   const service = useMemo(() => {
     return matchesOnboardingRoutes ? 'intercom' : 'pylon'
   }, [matchesOnboardingRoutes])
 
-  const initChat = useCallback(() => {
-    if (!user) return
-
+  const defaultChatParams = useMemo(() => {
     let defaultChatParams = undefined
 
+    if (!user) return undefined
+
     if (service === 'pylon') {
-      insertPylonScriptTag()
-      shutdownIntercom()
       defaultChatParams = {
         app_id: process.env.NX_PUBLIC_PYLON_APP_ID,
         email: user.email,
@@ -57,7 +54,6 @@ export function useSupportChat() {
         account_external_id: organizationId,
       }
     } else {
-      window.Pylon?.('hide')
       defaultChatParams = {
         email: user.email,
         name: user.name,
@@ -66,20 +62,28 @@ export function useSupportChat() {
       }
     }
 
-    setChatSettings(defaultChatParams)
-  }, [user, service, organizationId, shutdownIntercom])
+    return defaultChatParams
+  }, [service, user, organizationId])
+
+  const [chatSettings, setChatSettings] = useState<ChatSettings | undefined>(defaultChatParams)
+
+  const initChat = () => {
+    if (service === 'pylon') {
+      insertPylonScriptTag()
+    }
+  }
 
   const updateUserInfo = (params: ChatSettings) => {
     setChatSettings((state) => ({ ...state, ...params }))
   }
 
-  const showChat = useCallback(() => {
+  const showChat = () => {
     if (service === 'intercom') {
       showIntercomMessenger()
     } else {
       window.Pylon?.('show')
     }
-  }, [service, showIntercomMessenger])
+  }
 
   const insertPylonScriptTag = () => {
     if (document.getElementById('pylon-script')) return
@@ -99,13 +103,15 @@ export function useSupportChat() {
     if (!chatSettings) return
 
     if (service === 'pylon') {
+      shutdownIntercom()
       window.pylon = {
         chat_settings: chatSettings,
       }
     } else {
+      window.Pylon?.('hide')
       updateIntercom(chatSettings)
     }
-  }, [chatSettings, service, updateIntercom])
+  }, [chatSettings, service, updateIntercom, shutdownIntercom])
 
   // When chat settings change, refresh the service with the up-to-date information
   useEffect(() => {
@@ -113,13 +119,6 @@ export function useSupportChat() {
 
     applyChatSettings()
   }, [chatSettings, applyChatSettings])
-
-  // When user object coming from auth0 changes, re-init the chat
-  useEffect(() => {
-    if (!user) return
-
-    initChat()
-  }, [user, initChat])
 
   return { updateUserInfo, showChat, initChat }
 }

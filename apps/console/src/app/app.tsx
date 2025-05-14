@@ -23,7 +23,7 @@ import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
-import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { GIT_SHA, GTM, NODE_ENV, QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 import PreviewCode from './components/preview-code'
@@ -52,21 +52,14 @@ export function App() {
   const gtmParams = { id: GTM }
 
   const { user } = useAuth0()
-  const { initChat } = useSupportChat()
 
-  const initMonitorings = useCallback(
-    (user: User) => {
-      if (!user || !user.sub) return
+  const initMonitorings = useCallback((user: User) => {
+    if (!user || !user.sub) return
 
-      posthog.identify(user.sub, {
-        ...user,
-      })
-
-      // Initialize support chat (either Pylon or Intercom depending on the route: Intercom for onboarding views, Pylon for the rest of the Console)
-      initChat()
-    },
-    [initChat]
-  )
+    posthog.identify(user.sub, {
+      ...user,
+    })
+  }, [])
 
   // init axios interceptor
   useAuthInterceptor(axios, QOVERY_API)
