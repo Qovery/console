@@ -23,9 +23,7 @@ export function useCreateVariable() {
     onError(
       error: AxiosError<{
         existing_variable: { organization_id: string; project_id: string; environment_id: string; service_id: string }
-      }>,
-      variables,
-      context
+      }>
     ) {
       if (error.code === '409') {
         if (error.response?.data) {
@@ -42,6 +40,8 @@ export function useCreateVariable() {
               : `${ENVIRONMENTS_URL(orgId, projectId)}${ENVIRONMENTS_VARIABLES_URL}`
           toastError(error, 'Conflict', error.message, undefined, undefined, 'Go to the conflicting variable', url)
         }
+      } else {
+        toastError(error)
       }
     },
     meta: {
