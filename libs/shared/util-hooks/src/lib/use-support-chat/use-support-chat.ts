@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useMatch, useParams } from 'react-router-dom'
 import { type IntercomProps, useIntercom } from 'react-use-intercom'
 import { ONBOARDING_URL } from '@qovery/shared/routes'
@@ -65,16 +65,10 @@ export function useSupportChat() {
     return defaultChatParams
   }, [service, user, organizationId])
 
-  const [chatSettings, setChatSettings] = useState<ChatSettings | undefined>(defaultChatParams)
-
   const initChat = () => {
     if (service === 'pylon') {
       insertPylonScriptTag()
     }
-  }
-
-  const updateUserInfo = (params: ChatSettings) => {
-    setChatSettings((state) => ({ ...state, ...params }))
   }
 
   const showChat = () => {
@@ -99,26 +93,26 @@ export function useSupportChat() {
     mainScriptTag?.parentNode?.insertBefore(tag, mainScriptTag)
   }
 
-  const applyChatSettings = useCallback(() => {
-    if (!chatSettings) return
+  const updateUserInfo = useCallback(
+    (settings?: ChatSettings) => {
+      if (!settings) return
 
-    if (service === 'pylon') {
-      shutdownIntercom()
-      window.pylon = {
-        chat_settings: chatSettings,
+      if (service === 'pylon') {
+        shutdownIntercom()
+        window.pylon = {
+          chat_settings: { ...defaultChatParams, ...settings },
+        }
+      } else {
+        window.Pylon?.('hide')
+        updateIntercom({ ...defaultChatParams, ...settings })
       }
-    } else {
-      window.Pylon?.('hide')
-      updateIntercom(chatSettings)
-    }
-  }, [chatSettings, service, updateIntercom, shutdownIntercom])
+    },
+    [defaultChatParams, service, shutdownIntercom, updateIntercom]
+  )
 
-  // When chat settings change, refresh the service with the up-to-date information
   useEffect(() => {
-    if (!chatSettings) return
-
-    applyChatSettings()
-  }, [chatSettings, applyChatSettings])
+    updateUserInfo(defaultChatParams)
+  }, [defaultChatParams, updateUserInfo])
 
   return { updateUserInfo, showChat, initChat }
 }
