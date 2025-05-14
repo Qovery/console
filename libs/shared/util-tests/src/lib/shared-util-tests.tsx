@@ -46,7 +46,6 @@ function renderWithProviders(
       .add(TooltipProvider)
       .add(ModalProvider)
       .add(MemoryRouter)
-      .add(IntercomProvider, { appId: INTERCOM })
       .add(QueryParamProvider, {
         adapter: ReactRouter6Adapter,
       })
