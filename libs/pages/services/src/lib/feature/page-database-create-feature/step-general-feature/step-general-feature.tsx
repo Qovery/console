@@ -154,8 +154,7 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const publicOptionNotAvailable =
-    cluster?.kubernetes === KubernetesEnum.K3_S && watchModeDatabase === DatabaseModeEnum.CONTAINER
+  const publicOptionNotAvailable = false
 
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {

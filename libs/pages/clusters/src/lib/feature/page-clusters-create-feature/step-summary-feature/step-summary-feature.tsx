@@ -56,6 +56,11 @@ export function StepSummaryFeature() {
         cloudProvider: cloud_provider,
         clusterType: 'MANAGED' as const,
       }))
+      .with({ cloud_provider: 'AZURE', installation_type: 'MANAGED' }, ({ cloud_provider, region }) => ({
+        cloudProvider: cloud_provider,
+        clusterType: 'MANAGED' as const,
+        region: region,
+      }))
       .otherwise(() => ({ enabled: false }))
   )
   const detailInstanceType = cloudProviderInstanceTypes?.find(({ type }) => type === resourcesData?.instance_type)
@@ -86,14 +91,9 @@ export function StepSummaryFeature() {
       return
     }
     return match(generalData?.cloud_provider)
-      .with('AWS', () => {
-        if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
-          goToRemote()
-        } else {
-          goToFeatures()
-        }
-      })
+      .with('AWS', () => goToFeatures())
       .with('GCP', () => goToFeatures())
+      .with('AZURE', () => goToFeatures())
       .otherwise(() => goToResources())
   }
 
@@ -145,7 +145,7 @@ export function StepSummaryFeature() {
       return
     }
     if (resourcesData) {
-      let formatFeatures: ClusterRequestFeaturesInner[] | undefined
+      let formatFeatures: ClusterRequestFeaturesInner[] = []
 
       if (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'GCP') {
         if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
@@ -217,7 +217,7 @@ export function StepSummaryFeature() {
         }
       }
 
-      if (generalData.cloud_provider === 'AWS' && resourcesData.karpenter?.enabled) {
+      if ((generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'AZURE') && resourcesData.karpenter?.enabled) {
         formatFeatures?.push({
           id: 'KARPENTER',
           value: {
@@ -261,22 +261,6 @@ export function StepSummaryFeature() {
           ],
         }))
         .otherwise(() => {
-          if (resourcesData.cluster_type === KubernetesEnum.K3_S) {
-            return {
-              name: generalData.name,
-              description: generalData.description || '',
-              production: generalData.production,
-              cloud_provider: generalData.cloud_provider,
-              region: generalData.region,
-              min_running_nodes: resourcesData.nodes[0],
-              max_running_nodes: resourcesData.nodes[1],
-              disk_size: resourcesData.disk_size,
-              instance_type: resourcesData.instance_type,
-              kubernetes: resourcesData.cluster_type as KubernetesEnum,
-              ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
-              cloud_provider_credentials,
-            }
-          } else {
             if (resourcesData.karpenter?.enabled) {
               return {
                 name: generalData.name,
@@ -305,7 +289,6 @@ export function StepSummaryFeature() {
                 cloud_provider_credentials,
               }
             }
-          }
         })
 
       try {

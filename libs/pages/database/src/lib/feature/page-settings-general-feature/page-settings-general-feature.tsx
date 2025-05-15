@@ -33,8 +33,7 @@ export function PageSettingsGeneralFeature() {
       value: v.name || '',
     }))
 
-  const publicOptionNotAvailable =
-    cluster?.kubernetes === KubernetesEnum.K3_S && database?.mode === DatabaseModeEnum.CONTAINER
+  const publicOptionNotAvailable = false
 
   const methods = useForm({
     mode: 'onChange',

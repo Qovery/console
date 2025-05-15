@@ -32,11 +32,7 @@ export function StepFeaturesFeature() {
     match(generalData?.cloud_provider)
       .with('GCP', () => navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL))
       .otherwise(() => {
-        if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
-        } else {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
-        }
+        navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
       })
   }
 

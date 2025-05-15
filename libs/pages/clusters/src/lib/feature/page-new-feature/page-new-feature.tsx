@@ -20,7 +20,6 @@ const Qovery = '/assets/logos/logo-icon.svg'
 
 const ExtendedCloudProviderEnum = {
   ...CloudProviderEnum,
-  AZURE: 'AZURE' as const,
 }
 
 type CardOptionProps = {
@@ -62,22 +61,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         {title}
         {recommended && (
           <>
-            {selectedCloudProvider === 'AZURE' ? (
-              <Tooltip
-                content={
-                  <span>
-                    Follow the release on our{' '}
-                    <ExternalLink size="xs" href="https://roadmap.qovery.com/p/support-aks-as-a-managed-cluster">
-                      product roadmap
-                    </ExternalLink>
-                  </span>
-                }
-              >
-                <span className="absolute right-5 top-5 h-5 rounded-lg border border-neutral-200 px-1.5 text-[11px] leading-[17px] text-neutral-350">
-                  coming soon
-                </span>
-              </Tooltip>
-            ) : (
+            {(
               <span className="absolute right-5 top-5 h-5 rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
                 recommended
               </span>
@@ -117,17 +101,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
       </button>
     ))
     .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) =>
-      selectedCloudProvider === 'AZURE' ? (
-        <div
-          className={twMerge(
-            baseClassNames,
-            'cursor-default shadow-none hover:border-neutral-200 hover:outline-transparent'
-          )}
-        >
-          {renderIcon()}
-          {renderContent()}
-        </div>
-      ) : (
+      (
         <NavLink
           to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider)}
           className={baseClassNames}

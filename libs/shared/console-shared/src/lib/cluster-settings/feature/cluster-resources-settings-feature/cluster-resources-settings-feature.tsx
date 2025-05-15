@@ -32,6 +32,14 @@ export function ClusterResourcesSettingsFeature(props: ClusterResourcesSettingsF
           description: 'Multiple node cluster powered with Autopilot',
         },
       ]
+    } else if (props?.cloudProvider === CloudVendorEnum.AZURE) {
+      clusterTypeOptions = [
+        {
+          label: 'Managed K8S (AKS with Karpenter)',
+          value: KubernetesEnum.MANAGED,
+          description: 'Multiple node cluster powered with Karpenter',
+        },
+      ]
     } else {
       clusterTypeOptions = [
         { label: 'Managed K8S (KAPSULE)', value: KubernetesEnum.MANAGED, description: 'Multiple node cluster' },

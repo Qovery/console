@@ -42,7 +42,7 @@ export function StepGeneralFeature() {
       instance_type: d?.instance_type ?? '',
       nodes: d?.nodes ?? [3, 10],
       karpenter: {
-        enabled: data?.production ? false : true,
+        enabled: data.cloud_provider === 'AZURE' ? true : (data?.production ? false : true),
         default_service_architecture: 'AMD64',
         disk_size_in_gib: 50,
         spot_enabled: false,
@@ -50,7 +50,8 @@ export function StepGeneralFeature() {
           requirements: [],
         },
       },
-    }))
+    })
+  )
 
     if (credentials.length > 0) {
       // necessary to get the name of credentials

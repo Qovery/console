@@ -101,16 +101,6 @@ export function PageSettingsFeature() {
       advancedSettingsLink,
       dangerZoneLink,
     ])
-    .with({ cloud_provider: 'AWS', kubernetes: 'K3S' }, () => [
-      generalLink,
-      credentialsLink,
-      resourcesLink,
-      imageRegistryLink,
-      remoteAccessLink,
-      networkLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
     .with({ cloud_provider: 'SCW' }, () => [
       generalLink,
       credentialsLink,
@@ -120,6 +110,14 @@ export function PageSettingsFeature() {
       dangerZoneLink,
     ])
     .with({ cloud_provider: 'GCP' }, () => [
+      generalLink,
+      credentialsLink,
+      imageRegistryLink,
+      featuresLink,
+      advancedSettingsLink,
+      dangerZoneLink,
+    ])
+    .with({ cloud_provider: 'AZURE' }, () => [
       generalLink,
       credentialsLink,
       imageRegistryLink,

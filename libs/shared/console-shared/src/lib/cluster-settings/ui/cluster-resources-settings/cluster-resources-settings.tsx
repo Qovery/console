@@ -77,7 +77,12 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         cloudProvider,
         clusterType: 'MANAGED' as const,
       }))
-      .with('ON_PREMISE', 'DO', 'AZURE', 'OVH', 'CIVO', 'HETZNER', 'ORACLE', 'IBM', () => ({
+      .with('AZURE', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: props.clusterRegion || '',
+      }))
+      .with('ON_PREMISE', 'DO', 'OVH', 'CIVO', 'HETZNER', 'ORACLE', 'IBM', () => ({
         cloudProvider: CloudVendorEnum.ON_PREMISE,
         clusterType: 'MANAGED' as const,
       }))
@@ -85,6 +90,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   )
 
   const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
+    cloudProvider: props.cloudProvider || CloudVendorEnum.AWS,
     region: props.clusterRegion || '',
     enabled: !props.fromDetail,
   })
@@ -103,7 +109,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     if (!watchKarpenterEnabled || watchKarpenterQoveryNodePools.length > 0) return
 
     if (!props.fromDetail) {
-      if (cloudProviderInstanceTypesKarpenter && props.cloudProvider === 'AWS') {
+      if (cloudProviderInstanceTypesKarpenter && (props.cloudProvider === 'AWS' || props.cloudProvider === 'AZURE')) {
         setValue(
           'karpenter.qovery_node_pools.requirements',
           convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
@@ -159,7 +165,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </div>
         )}
       </BlockContent>
-      {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
+      {(props.cloudProvider === 'AWS' || props.cloudProvider === 'AZURE') && watchClusterType === KubernetesEnum.MANAGED && (
         <BlockContent
           title={props.isProduction ? 'Reduce your costs with Karpenter' : 'Karpenter configuration'}
           className="mb-0"
@@ -329,6 +335,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                   },
                                   content: (
                                     <KarpenterInstanceFilterModal
+                                      cloudProvider={props.cloudProvider ?? CloudVendorEnum.AWS}
                                       cluster={props.cluster}
                                       clusterRegion={props.clusterRegion ?? ''}
                                       defaultValues={watchKarpenter}
@@ -422,7 +429,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         </BlockContent>
       )}
 
-      {(!watchKarpenterEnabled || props.cloudProvider !== 'AWS') && (
+      {(!watchKarpenterEnabled || (props.cloudProvider !== 'AWS' && props.cloudProvider !== 'AZURE')) && (
         <Section className="gap-4">
           <Heading>Resources configuration</Heading>
           <Controller

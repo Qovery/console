@@ -1,15 +1,10 @@
-import { KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
-import {
-  CLUSTERS_CREATION_FEATURES_URL,
-  CLUSTERS_CREATION_REMOTE_URL,
-  CLUSTERS_CREATION_SUMMARY_URL,
-} from '@qovery/shared/routes'
+import { CLUSTERS_CREATION_FEATURES_URL, CLUSTERS_CREATION_SUMMARY_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepResources from '../../../ui/page-clusters-create/step-resources/step-resources'
@@ -38,24 +33,14 @@ export function StepResourcesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data.cluster_type === KubernetesEnum.K3_S) {
-      data['nodes'] = [1, 1]
-      setResourcesData(data)
-    } else {
-      setResourcesData(data)
-    }
+    setResourcesData(data)
 
     match(generalData?.cloud_provider)
       .with('AWS', () => {
-        if (data.cluster_type === KubernetesEnum.K3_S) {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
-          setFeaturesData(undefined)
-        } else {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
-          setRemoteData({
-            ssh_key: '',
-          })
-        }
+        navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
+        setRemoteData({
+          ssh_key: '',
+        })
       })
       .with('SCW', () => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
