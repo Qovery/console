@@ -2,7 +2,7 @@ import {
   type ClusterCloudProviderInfoRequest,
   type ClusterRequest,
   type ClusterRequestFeaturesInner,
-  KubernetesEnum,
+  type KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -13,7 +13,6 @@ import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
-  CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
@@ -32,7 +31,7 @@ export function getValueByKey(key: string, data: { [key: string]: string }[] = [
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Cluster')
-  const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep, creationFlowUrl } =
+  const { generalData, kubeconfigData, resourcesData, featuresData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
@@ -79,10 +78,6 @@ export function StepSummaryFeature() {
 
   const goToResources = () => {
     navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
-  }
-
-  const goToRemote = () => {
-    navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
   }
 
   const onBack = () => {
@@ -217,7 +212,10 @@ export function StepSummaryFeature() {
         }
       }
 
-      if ((generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'AZURE') && resourcesData.karpenter?.enabled) {
+      if (
+        (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'AZURE') &&
+        resourcesData.karpenter?.enabled
+      ) {
         formatFeatures?.push({
           id: 'KARPENTER',
           value: {
@@ -251,7 +249,6 @@ export function StepSummaryFeature() {
           disk_size: resourcesData.disk_size,
           instance_type: resourcesData.instance_type,
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
-          ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
           cloud_provider_credentials,
           features: [
             {
@@ -261,34 +258,33 @@ export function StepSummaryFeature() {
           ],
         }))
         .otherwise(() => {
-            if (resourcesData.karpenter?.enabled) {
-              return {
-                name: generalData.name,
-                description: generalData.description || '',
-                production: generalData.production,
-                cloud_provider: generalData.cloud_provider,
-                region: generalData.region,
-                kubernetes: resourcesData.cluster_type as KubernetesEnum,
-                features: formatFeatures as ClusterRequestFeaturesInner[],
-                cloud_provider_credentials,
-              }
-            } else {
-              return {
-                name: generalData.name,
-                description: generalData.description || '',
-                production: generalData.production,
-                cloud_provider: generalData.cloud_provider,
-                region: generalData.region,
-                min_running_nodes: resourcesData.nodes[0],
-                max_running_nodes: resourcesData.nodes[1],
-                disk_size: resourcesData.disk_size,
-                instance_type: resourcesData.instance_type,
-                kubernetes: resourcesData.cluster_type as KubernetesEnum,
-                features: formatFeatures as ClusterRequestFeaturesInner[],
-                ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
-                cloud_provider_credentials,
-              }
+          if (resourcesData.karpenter?.enabled) {
+            return {
+              name: generalData.name,
+              description: generalData.description || '',
+              production: generalData.production,
+              cloud_provider: generalData.cloud_provider,
+              region: generalData.region,
+              kubernetes: resourcesData.cluster_type as KubernetesEnum,
+              features: formatFeatures as ClusterRequestFeaturesInner[],
+              cloud_provider_credentials,
             }
+          } else {
+            return {
+              name: generalData.name,
+              description: generalData.description || '',
+              production: generalData.production,
+              cloud_provider: generalData.cloud_provider,
+              region: generalData.region,
+              min_running_nodes: resourcesData.nodes[0],
+              max_running_nodes: resourcesData.nodes[1],
+              disk_size: resourcesData.disk_size,
+              instance_type: resourcesData.instance_type,
+              kubernetes: resourcesData.cluster_type as KubernetesEnum,
+              features: formatFeatures as ClusterRequestFeaturesInner[],
+              cloud_provider_credentials,
+            }
+          }
         })
 
       try {
@@ -328,13 +324,11 @@ export function StepSummaryFeature() {
           kubeconfigData={kubeconfigData}
           resourcesData={resourcesData}
           featuresData={featuresData}
-          remoteData={remoteData}
           detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
           goToKubeconfig={goToKubeconfig}
-          goToRemote={goToRemote}
         />
       )}
     </FunnelFlowBody>

@@ -12,15 +12,8 @@ import { steps, useClusterContainerCreateContext } from '../page-clusters-create
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Cluster')
-  const {
-    setResourcesData,
-    resourcesData,
-    setRemoteData,
-    setFeaturesData,
-    setCurrentStep,
-    generalData,
-    creationFlowUrl,
-  } = useClusterContainerCreateContext()
+  const { setResourcesData, resourcesData, setFeaturesData, setCurrentStep, generalData, creationFlowUrl } =
+    useClusterContainerCreateContext()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -38,9 +31,6 @@ export function StepResourcesFeature() {
     match(generalData?.cloud_provider)
       .with('AWS', () => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
-        setRemoteData({
-          ssh_key: '',
-        })
       })
       .with('SCW', () => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
@@ -57,15 +47,9 @@ export function StepResourcesFeature() {
             },
           })
         }
-        setRemoteData({
-          ssh_key: '',
-        })
       })
       .otherwise(() => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
-        setRemoteData({
-          ssh_key: '',
-        })
         setFeaturesData(undefined)
       })
   })

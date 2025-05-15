@@ -1,4 +1,3 @@
-import { KubernetesEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -7,7 +6,6 @@ import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
   type ClusterKubeconfigData,
-  type ClusterRemoteData,
   type ClusterResourcesData,
 } from '@qovery/shared/interfaces'
 import {
@@ -30,8 +28,6 @@ export interface ClusterContainerCreateContextInterface {
   setResourcesData: Dispatch<SetStateAction<ClusterResourcesData | undefined>>
   featuresData: ClusterFeaturesData | undefined
   setFeaturesData: Dispatch<SetStateAction<ClusterFeaturesData | undefined>>
-  remoteData: ClusterRemoteData | undefined
-  setRemoteData: Dispatch<SetStateAction<ClusterRemoteData | undefined>>
   kubeconfigData: ClusterKubeconfigData | undefined
   setKubeconfigData: Dispatch<SetStateAction<ClusterKubeconfigData | undefined>>
   creationFlowUrl: string
@@ -102,9 +98,6 @@ export function PageClusterCreateFeature() {
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
-  const [remoteData, setRemoteData] = useState<ClusterRemoteData | undefined>({
-    ssh_key: '',
-  })
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
   const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>({
     vpc_mode: 'DEFAULT',
@@ -144,8 +137,6 @@ export function PageClusterCreateFeature() {
         setGeneralData,
         resourcesData,
         setResourcesData,
-        remoteData,
-        setRemoteData,
         featuresData,
         setFeaturesData,
         kubeconfigData,

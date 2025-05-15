@@ -71,10 +71,6 @@ const ContextWrapper = (props: { installation_type?: 'MANAGED' | 'SELF_MANAGED';
           disk_size: 50,
         },
         setResourcesData: mockSetResourcesData,
-        remoteData: {
-          ssh_key: 'ssh_key',
-        },
-        setRemoteData: jest.fn(),
         featuresData: {
           vpc_mode: 'DEFAULT',
           features: {
