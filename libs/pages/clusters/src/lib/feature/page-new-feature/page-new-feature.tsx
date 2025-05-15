@@ -6,6 +6,7 @@ import GCP from 'devicon/icons/googlecloud/googlecloud-original.svg'
 import Kubernetes from 'devicon/icons/kubernetes/kubernetes-original.svg'
 import { AnimatePresence, motion } from 'framer-motion'
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type MutableRefObject, type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
@@ -41,6 +42,8 @@ type CardOptionProps = {
 function CardOption({ icon, title, description, selectedCloudProvider, recommended, ...props }: CardOptionProps) {
   const { organizationId = '' } = useParams()
 
+  const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
+
   const renderIcon = () => {
     return typeof icon === 'string' ? (
       <img className="mt-1 select-none" width={32} height={32} src={icon} alt={title} />
@@ -49,29 +52,57 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
     )
   }
 
-  const renderContent = () => (
-    <span>
-      <span
-        className={twMerge(
-          clsx('mb-2 inline-flex items-center text-base font-semibold text-neutral-400', {
-            'text-neutral-350': selectedCloudProvider === 'AZURE' && recommended,
-          })
-        )}
-      >
-        {title}
-        {recommended && (
-          <>
-            {(
-              <span className="absolute right-5 top-5 h-5 rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
-                recommended
-              </span>
-            )}
-          </>
-        )}
+  const renderContent = () =>
+    isAzureFeatureFlag ? (
+      <span>
+        <span className="mb-2 inline-flex items-center text-base font-semibold text-neutral-400">
+          {title}
+          {recommended && (
+            <span className="absolute right-5 top-5 h-5 rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
+              recommended
+            </span>
+          )}
+        </span>
+        <span className="inline-block text-sm text-neutral-350">{description}</span>
       </span>
-      <span className="inline-block text-sm text-neutral-350">{description}</span>
-    </span>
-  )
+    ) : (
+      <span>
+        <span
+          className={twMerge(
+            clsx('mb-2 inline-flex items-center text-base font-semibold text-neutral-400', {
+              'text-neutral-350': selectedCloudProvider === 'AZURE' && recommended,
+            })
+          )}
+        >
+          {title}
+          {recommended && (
+            <span>
+              {selectedCloudProvider === 'AZURE' ? (
+                <Tooltip
+                  content={
+                    <span>
+                      Follow the release on our{' '}
+                      <ExternalLink size="xs" href="https://roadmap.qovery.com/p/support-aks-as-a-managed-cluster">
+                        product roadmap
+                      </ExternalLink>
+                    </span>
+                  }
+                >
+                  <span className="absolute right-5 top-5 h-5 rounded-lg border border-neutral-200 px-1.5 text-[11px] leading-[17px] text-neutral-350">
+                    coming soon
+                  </span>
+                </Tooltip>
+              ) : (
+                <span className="absolute right-5 top-5 h-5 rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
+                  recommended
+                </span>
+              )}
+            </span>
+          )}
+        </span>
+        <span className="inline-block text-sm text-neutral-350">{description}</span>
+      </span>
+    )
 
   const handleAnalytics = (selectedInstallationType: string) => {
     posthog.capture('select-cluster', {
@@ -101,7 +132,17 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
       </button>
     ))
     .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) =>
-      (
+      !isAzureFeatureFlag && selectedCloudProvider === 'AZURE' ? (
+        <div
+          className={twMerge(
+            baseClassNames,
+            'cursor-default shadow-none hover:border-neutral-200 hover:outline-transparent'
+          )}
+        >
+          {renderIcon()}
+          {renderContent()}
+        </div>
+      ) : (
         <NavLink
           to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider)}
           className={baseClassNames}
