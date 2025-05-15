@@ -1,9 +1,9 @@
 import { useDeferredValue, useEffect } from 'react'
 import { Hits, SearchBox, useInstantSearch } from 'react-instantsearch'
-import { useIntercom } from 'react-use-intercom'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch } from '@qovery/shared/ui'
-import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
+import { QOVERY_FEEDBACK_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
+import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { AssistantIconSwitcher } from '../assistant-icon-switcher/assistant-icon-switcher'
@@ -19,7 +19,7 @@ export interface AssistantPanelProps {
 
 export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps) {
   const { data } = useQoveryStatus()
-  const { showMessages: showIntercomMessenger } = useIntercom()
+  const { showChat } = useSupportChat()
   const { setIndexUiState, indexUiState } = useInstantSearch()
   const docLinks = useContextualDocLinks()
   const valueDoc = useDeferredValue(indexUiState.query ?? '')
@@ -94,22 +94,13 @@ export function AssistantPanel({ smaller = false, onClose }: AssistantPanelProps
           className="flex h-11 items-center justify-center gap-1.5 px-5 font-medium text-neutral-400 transition hover:bg-neutral-150 dark:text-white dark:hover:bg-neutral-550"
           type="button"
           onClick={() => {
-            showIntercomMessenger()
+            showChat()
             onClose()
           }}
         >
           <Icon iconName="robot" className="text-brand-500" />
           <span className="text-sm">Contact support</span>
         </button>
-        <a
-          className="flex h-11 items-center justify-center gap-1.5 px-5 font-medium text-neutral-400 transition hover:bg-neutral-150 dark:text-white dark:hover:bg-neutral-550"
-          href={QOVERY_FORUM_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon iconName="user-group" className="text-brand-500" />
-          <span className="text-sm">Community forum</span>
-        </a>
         <a
           className="flex h-11 items-center justify-center gap-1.5 px-5 font-medium text-neutral-400 transition hover:bg-neutral-150 dark:text-white dark:hover:bg-neutral-550"
           href={QOVERY_FEEDBACK_URL}

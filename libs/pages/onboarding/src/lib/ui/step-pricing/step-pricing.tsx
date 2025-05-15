@@ -8,7 +8,6 @@ export interface StepPricingProps {
   plans: OrganizationPlan[]
   onSubmit: (plan: PlanEnum) => void
   loading: string
-  onClickContact: () => void
 }
 
 export function StepPricing(props: StepPricingProps) {

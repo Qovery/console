@@ -1,22 +1,22 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
-import { useIntercom } from 'react-use-intercom'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
+import { useSupportChat } from '@qovery/shared/util-hooks'
 import { StepThanks } from '../../ui/step-thanks/step-thanks'
 
 export function OnboardingThanks() {
   const { user } = useAuth0()
   const { data: userSignUp } = useUserSignUp()
-  const { update } = useIntercom()
+  const { updateUserInfo } = useSupportChat()
 
   useEffect(() => {
-    // update user intercom
-    update({
+    // Update user information used by current support chat (i.e. Intercom or Pylon)
+    updateUserInfo({
       email: userSignUp?.user_email,
       name: `${userSignUp?.first_name} ${userSignUp?.last_name}`,
       userId: user?.sub,
     })
-  }, [user, userSignUp, update])
+  }, [user, userSignUp, updateUserInfo])
 
   if (!userSignUp) return null
 

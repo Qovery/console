@@ -17,6 +17,7 @@ declare global {
       NX_PUBLIC_ALGOLIA_APP_ID: string
       NX_PUBLIC_ALGOLIA_API_KEY: string
       NX_PUBLIC_CARGO_API_TOKEN: string
+      NX_PUBLIC_PYLON_APP_ID: string
     }
   }
 }

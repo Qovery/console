@@ -1,4 +1,5 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { IntercomProvider } from 'react-use-intercom'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import LayoutPage, { type LayoutPageProps } from './layout-page'
 
@@ -16,6 +17,12 @@ jest.mock('@qovery/domains/clusters/feature', () => {
   }
 })
 
+const renderComponent = (props: LayoutPageProps) => (
+  <IntercomProvider appId="__test__app__id__" autoBoot={false}>
+    <LayoutPage {...props} />
+  </IntercomProvider>
+)
+
 describe('LayoutPage', () => {
   const props: LayoutPageProps = {
     defaultOrganizationId: '0000-0000-0000-0000',
@@ -23,7 +30,7 @@ describe('LayoutPage', () => {
   }
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<LayoutPage {...props} />)
+    const { baseElement } = renderWithProviders(renderComponent({ ...props }))
     expect(baseElement).toBeTruthy()
   })
 
@@ -38,7 +45,7 @@ describe('LayoutPage', () => {
       },
     ]
 
-    renderWithProviders(<LayoutPage {...props} />)
+    renderWithProviders(renderComponent({ ...props }))
     screen.getByText('Check the credentials configuration')
   })
 })

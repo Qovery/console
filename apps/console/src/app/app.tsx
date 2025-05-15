@@ -13,7 +13,6 @@ import {
   useLocation,
   useNavigationType,
 } from 'react-router-dom'
-import { useIntercom } from 'react-use-intercom'
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
 import { HelmDefaultValuesPreview } from '@qovery/domains/service-helm/feature'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
@@ -53,27 +52,14 @@ export function App() {
   const gtmParams = { id: GTM }
 
   const { user } = useAuth0()
-  const { update: updateIntercom } = useIntercom()
 
-  const initMonitorings = useCallback(
-    (user: User) => {
-      if (!user || !user.sub) return
+  const initMonitorings = useCallback((user: User) => {
+    if (!user || !user.sub) return
 
-      posthog.identify(user.sub, {
-        ...user,
-      })
-
-      const INTERCOM_HASH_KEY = 'https://qovery.com/intercom_hash'
-
-      updateIntercom({
-        email: user.email,
-        name: user.name,
-        userId: user.sub,
-        userHash: user[INTERCOM_HASH_KEY],
-      })
-    },
-    [updateIntercom]
-  )
+    posthog.identify(user.sub, {
+      ...user,
+    })
+  }, [])
 
   // init axios interceptor
   useAuthInterceptor(axios, QOVERY_API)

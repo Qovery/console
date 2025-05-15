@@ -1,8 +1,8 @@
 import { clsx } from 'clsx'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { match } from 'ts-pattern'
 import { Icon } from '@qovery/shared/ui'
-import { useLocalStorage } from '@qovery/shared/util-hooks'
+import { useLocalStorage, useSupportChat } from '@qovery/shared/util-hooks'
 import { AssistantContext } from '../assistant-context/assistant-context'
 import { type AssistantIcon, AssistantIconKey } from '../assistant-icon/assistant-icon'
 import { AssistantPanel } from '../assistant-panel/assistant-panel'
@@ -12,14 +12,20 @@ export interface AssistantTriggerProps {
 }
 
 export function AssistantTrigger({ defaultOpen = false }: AssistantTriggerProps) {
+  const { initChat } = useSupportChat()
   const { assistantOpen, setAssistantOpen } = useContext(AssistantContext)
   const [assistantIcon] = useLocalStorage<AssistantIcon>(AssistantIconKey, 'QUESTION_MARK')
+
+  useEffect(() => {
+    // Initialize support chat (either Pylon or Intercom depending on the route: Intercom for onboarding views, Pylon for the rest of the Console)
+    initChat()
+  }, [initChat])
 
   return (
     <>
       <button
         className={clsx(
-          'group fixed bottom-8 right-8 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-neutral-50 outline-brand-600 transition hover:animate-[showAssistantTrigger_0.2s_cubic-bezier(0.21,1.02,0.73,1)_forwards]',
+          'group fixed bottom-[18px] right-[17px] flex h-[45px] w-[45px] items-center justify-center overflow-hidden rounded-full text-neutral-50 outline-brand-600 transition hover:animate-[showAssistantTrigger_0.2s_cubic-bezier(0.21,1.02,0.73,1)_forwards]',
           assistantIcon === 'QUESTION_MARK' && 'bg-brand-500 shadow-2xl hover:bg-brand-600',
           assistantIcon === 'PAPERCLIP' && 'drop-shadow-2xl'
         )}
