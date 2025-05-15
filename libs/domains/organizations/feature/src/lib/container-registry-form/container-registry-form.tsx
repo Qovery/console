@@ -209,7 +209,8 @@ export function ContainerRegistryForm({
                   ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
                   () => 'Expected format: https://<region>-docker.pkg.dev'
                 )
-                .exhaustive()}
+                // XXX: Need to remove it and add `exhaustive` when Azure is ready
+                .otherwise(() => '')}
               disabled={
                 isClusterManaged ||
                 match(watchKind)
