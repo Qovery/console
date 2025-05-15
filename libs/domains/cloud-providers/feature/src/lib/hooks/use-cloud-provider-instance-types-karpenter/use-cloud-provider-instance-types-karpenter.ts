@@ -1,10 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { type CloudVendorEnum } from 'qovery-typescript-axios'
 import { queries } from '@qovery/state/util-queries'
-import { CloudVendorEnum } from 'qovery-typescript-axios'
-
-type ListInstanceTypesParameters = {
-  region: string
-}
 
 export type UseCloudProviderInstanceTypesKarpenterProps = {
   enabled?: boolean
@@ -19,7 +15,7 @@ export function useCloudProviderInstanceTypesKarpenter({
 }: UseCloudProviderInstanceTypesKarpenterProps) {
   return useQuery({
     ...queries.cloudProviders.listInstanceTypesKarpenter({
-      cloudProvider: cloudProvider,
+      cloudProvider,
       region,
     } as Parameters<typeof queries.cloudProviders.listInstanceTypesKarpenter>[0]),
     enabled,

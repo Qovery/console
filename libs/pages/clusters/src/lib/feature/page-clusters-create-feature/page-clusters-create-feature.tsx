@@ -45,7 +45,7 @@ export const useClusterContainerCreateContext = () => {
   return clusterContainerCreateContext
 }
 
-export const steps = (clusterGeneralData?: ClusterGeneralData, clusterType?: string) => {
+export const steps = (clusterGeneralData?: ClusterGeneralData) => {
   return match(clusterGeneralData)
     .with({ installation_type: 'SELF_MANAGED' }, () => [
       { title: 'Create new cluster', key: 'general' },
@@ -64,7 +64,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, clusterType?: str
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }, () => [
       { title: 'Create new cluster', key: 'general' },
-      { title: 'Set features', key: 'features' },
+      { title: 'Set resources', key: 'resources' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, undefined, () => [
@@ -150,9 +150,9 @@ export function PageClusterCreateFeature() {
             navigate(CLUSTERS_URL(organizationId) + CLUSTERS_NEW_URL)
           }
         }}
-        totalSteps={steps(generalData, resourcesData?.cluster_type).length}
+        totalSteps={steps(generalData).length}
         currentStep={currentStep}
-        currentTitle={steps(generalData, resourcesData?.cluster_type)[currentStep - 1]?.title}
+        currentTitle={steps(generalData)[currentStep - 1]?.title}
       >
         <Routes>
           {ROUTER_CLUSTER_CREATION.map((route) => (

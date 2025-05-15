@@ -309,8 +309,8 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'summary') + 1)
-  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
+    setCurrentStep(steps(generalData).findIndex((step) => step.key === 'summary') + 1)
+  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type])
 
   return (
     <FunnelFlowBody>

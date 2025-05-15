@@ -35,8 +35,8 @@ export function StepFeaturesFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'features') + 1)
-  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
+    setCurrentStep(steps(generalData).findIndex((step) => step.key === 'features') + 1)
+  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type])
 
   useEffect(() => {
     generalData?.cloud_provider !== 'GCP' &&
