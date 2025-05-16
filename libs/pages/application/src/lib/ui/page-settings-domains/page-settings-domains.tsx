@@ -1,12 +1,21 @@
-import { type CheckedCustomDomainResponse, type CustomDomain } from 'qovery-typescript-axios'
+import {
+  type CheckedCustomDomainResponse,
+  type CustomDomain,
+  type IngressDeploymentStatusResponse,
+  StateEnum,
+} from 'qovery-typescript-axios'
+import { useParams } from 'react-router-dom'
 import { SettingsHeading } from '@qovery/shared/console-shared'
+import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
   Callout,
   EmptyState,
+  ExternalLink,
   Icon,
   InputText,
+  Link,
   LoaderSpinner,
   Section,
   Tooltip,
@@ -21,14 +30,21 @@ export interface PageSettingsDomainsProps {
   onDelete: (customDomain: CustomDomain) => void
   domains?: CustomDomain[]
   loading?: boolean
+  ingressDeploymentStatus?: IngressDeploymentStatusResponse
 }
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
+  const params = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = params
+  const canAddDomain =
+    props.ingressDeploymentStatus?.status &&
+    ['RUNNING', StateEnum.WAITING_RUNNING].includes(props.ingressDeploymentStatus?.status)
+
   return (
     <div className="w-full justify-between">
       <Section className="max-w-content-with-navigation-left  p-8">
         <SettingsHeading title="Domain" description="Add custom domains to your service.">
-          <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
+          <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()} disabled={!canAddDomain}>
             Add Domain
             <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
@@ -126,6 +142,35 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                 )
               })}
           </BlockContent>
+        ) : !canAddDomain ? (
+          <div className="flex flex-col items-center gap-5 rounded-md border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
+            <div className="flex flex-col items-center gap-2">
+              <Icon iconName="earth-americas" className="text-lg" iconStyle="regular" />
+              <div className="flex flex-col items-center">
+                <span className="font-medium text-neutral-400">No domains configured</span>
+                <span className="text-sm text-neutral-350">You need at least one exposed port to create a domain.</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link
+                as="button"
+                className="gap-1"
+                to={`${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_PORT_URL}`}
+              >
+                Create public port
+                <Icon iconName="arrow-right" className="text-xs" />
+              </Link>
+              <ExternalLink
+                as="button"
+                type="button"
+                variant="outline"
+                color="neutral"
+                href="https://hub.qovery.com/docs/using-qovery/configuration/application/#custom-domains"
+              >
+                Learn more
+              </ExternalLink>
+            </div>
+          </div>
         ) : (
           <EmptyState title="No domains are set" description="Define a custom domain for your application" />
         )}

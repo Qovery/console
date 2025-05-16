@@ -1,7 +1,19 @@
-import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
+import { type Healthcheck, type ServicePort, StateEnum } from 'qovery-typescript-axios'
+import { useParams } from 'react-router-dom'
+import { useIngressDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { type PortData } from '@qovery/shared/interfaces'
-import { BlockContent, Button, EmptyState, Heading, Icon, IconAwesomeEnum, Section, Tooltip } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  Callout,
+  EmptyState,
+  Heading,
+  Icon,
+  IconAwesomeEnum,
+  Section,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
 
 export interface FlowCreatePortProps {
@@ -29,6 +41,15 @@ export function FlowCreatePort({
 }: FlowCreatePortProps) {
   const livenessType = healthchecks?.liveness_probe?.type
   const readinessType = healthchecks?.readiness_probe?.type
+  const { applicationId = '' } = useParams()
+
+  const { data: service } = useService({ serviceId: applicationId })
+  const { data: ingressDeploymentStatus } = useIngressDeploymentStatus({
+    serviceId: applicationId,
+    serviceType: service?.serviceType ?? 'APPLICATION',
+  })
+  const hasRunningPulicPort =
+    ingressDeploymentStatus?.status && ['RUNNING', StateEnum.WAITING_RUNNING].includes(ingressDeploymentStatus?.status)
 
   return (
     <Section>
@@ -51,6 +72,22 @@ export function FlowCreatePort({
           </Button>
         )}
       </div>
+
+      {!hasRunningPulicPort && (
+        <Callout.Root color="red" className="mb-5 items-center">
+          <Callout.Icon>
+            <Icon iconName="triangle-exclamation" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>No public port deployed</Callout.TextHeading>
+            Domains will not work until you create and deploy a public port.
+          </Callout.Text>
+          <Button type="button" onClick={() => onAddPort()} className="gap-1">
+            Create public port
+            <Icon iconName="plus-circle" iconStyle="regular" />
+          </Button>
+        </Callout.Root>
+      )}
 
       <div className="mb-10">
         {!isSetting || (ports && ports.length > 0) ? (
