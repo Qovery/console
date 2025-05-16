@@ -66,23 +66,17 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, clusterType?: str
       { title: 'Set features', key: 'features' },
       { title: 'Ready to install', key: 'summary' },
     ])
-    .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, undefined, () => {
-      if (clusterType === KubernetesEnum.K3_S) {
-        return [
-          { title: 'Create new cluster', key: 'general' },
-          { title: 'Set resources', key: 'resources' },
-          { title: 'Set SSH Key', key: 'remote' },
-          { title: 'Ready to install', key: 'summary' },
-        ]
-      } else {
-        return [
-          { title: 'Create new cluster', key: 'general' },
-          { title: 'Set resources', key: 'resources' },
-          { title: 'Set features', key: 'features' },
-          { title: 'Ready to install', key: 'summary' },
-        ]
-      }
-    })
+    .with({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }, () => [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Set resources', key: 'resources' },
+      { title: 'Ready to install', key: 'summary' },
+    ])
+    .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, undefined, () => [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Set resources', key: 'resources' },
+      { title: 'Set features', key: 'features' },
+      { title: 'Ready to install', key: 'summary' },
+    ])
     .otherwise(() => [])
 }
 
@@ -131,6 +125,7 @@ export function PageClusterCreateFeature() {
         .with('AWS', () => ({ installation_type: 'MANAGED', cloud_provider: 'AWS' }))
         .with('SCW', () => ({ installation_type: 'MANAGED', cloud_provider: 'SCW' }))
         .with('GCP', () => ({ installation_type: 'MANAGED', cloud_provider: 'GCP' }))
+        .with('AZURE', () => ({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }))
         .otherwise(() => undefined)
       if (defaultOptions) {
         setGeneralData({

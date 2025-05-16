@@ -1,6 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AwsCredentialsRequest,
+  AzureCredentialsRequest,
   CloudProviderApi,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,
@@ -36,6 +37,12 @@ type CredentialRequest =
     }
   | {
       organizationId: string
+      cloudProvider: Extract<CloudProviderEnum, 'AZURE'>
+      payload: AzureCredentialsRequest
+      credentialId: string
+    }
+  | {
+      organizationId: string
       cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
       payload: undefined
       credentialId: string
@@ -56,6 +63,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         .with('AWS', () => cloudProviderApi.listAWSFeatures())
         .with('SCW', () => cloudProviderApi.listScalewayFeatures())
         .with('GCP', () => cloudProviderApi.listGcpFeatures())
+        .with('AZURE', () => cloudProviderApi.listAzureFeatures())
         .with('ON_PREMISE', () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
       return response.data.results
@@ -78,6 +86,11 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
       | {
+          cloudProvider: Extract<CloudProviderEnum, 'AZURE'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          region: string
+        }
+      | {
           cloudProvider: Extract<CloudProviderEnum, 'ON_PREMISE'>
           clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
@@ -85,9 +98,6 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
     queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
       const response = await match(args)
-        .with({ cloudProvider: 'AWS', clusterType: 'K3S' }, ({ region }) =>
-          cloudProviderApi.listAWSEc2InstanceType(region)
-        )
         .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
           cloudProviderApi.listAWSEKSInstanceType(region, true, true)
         )
@@ -96,15 +106,51 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         )
         .with({ cloudProvider: 'SCW' }, ({ region }) => cloudProviderApi.listScalewayKapsuleInstanceType(region))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
+        .with({ cloudProvider: 'AZURE' }, ({ region }) => cloudProviderApi.listAzureAKSInstanceType(region))
         .with({ cloudProvider: 'ON_PREMISE' }, () => Promise.resolve({ data: { results: [] } }))
         .exhaustive()
       return response.data.results
     },
   }),
-  listInstanceTypesKarpenter: (args: { cloudProvider: Extract<CloudProviderEnum, 'AWS'>; region: string }) => ({
-    queryKey: [args.cloudProvider, args.region],
+  listInstanceTypesKarpenter: (
+    args:
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'AWS'>
+          clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'SCW'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'GCP'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'AZURE'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'ON_PREMISE'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+        }
+  ) => ({
+    queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
-      const response = await cloudProviderApi.listAWSEKSInstanceType(args.region, false, false)
+      const response = await match(args)
+        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, false, false)
+        )
+        .with({ cloudProvider: 'AZURE' }, ({ region }) =>
+          cloudProviderApi.listAzureAKSInstanceType(region, false, false)
+        )
+        .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
+        .with({ cloudProvider: 'SCW' }, () => Promise.resolve({ data: { results: [] } }))
+        .with({ cloudProvider: 'ON_PREMISE' }, () => Promise.resolve({ data: { results: [] } }))
+        .run()
       return response.data.results
     },
   }),
@@ -122,6 +168,10 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
         })
         .with('GCP', async () => {
           const response = await cloudProviderCredentialsApi.listGcpCredentials(organizationId)
+          return response.data.results
+        })
+        .with('AZURE', async () => {
+          const response = await cloudProviderCredentialsApi.listAzureCredentials(organizationId)
           return response.data.results
         })
         .with('ON_PREMISE', async () => undefined)
@@ -146,6 +196,10 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           databaseType: string
         }
       | {
+          cloudProvider: Extract<CloudVendorEnum, 'AZURE'>
+          databaseType: string
+        }
+      | {
           cloudProvider: Extract<CloudVendorEnum, 'ON_PREMISE'>
           databaseType: string
         }
@@ -164,6 +218,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
             (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
         )
         .with({ cloudProvider: 'GCP' }, () => undefined)
+        .with({ cloudProvider: 'AZURE' }, () => undefined)
         .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
         .exhaustive()
     },
@@ -183,6 +238,10 @@ export const mutations = {
       })
       .with({ cloudProvider: 'GCP' }, async ({ organizationId, payload }) => {
         const response = await cloudProviderCredentialsApi.createGcpCredentials(organizationId, payload)
+        return response.data
+      })
+      .with({ cloudProvider: 'AZURE' }, async ({ organizationId, payload }) => {
+        const response = await cloudProviderCredentialsApi.createAzureCredentials(organizationId, payload)
         return response.data
       })
       .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
@@ -208,6 +267,10 @@ export const mutations = {
         const response = await cloudProviderCredentialsApi.editGcpCredentials(organizationId, credentialId, payload)
         return response.data
       })
+      .with({ cloudProvider: 'AZURE' }, async ({ organizationId, credentialId, payload }) => {
+        const response = await cloudProviderCredentialsApi.editAzureCredentials(organizationId, credentialId, payload)
+        return response.data
+      })
       .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
       .exhaustive()
 
@@ -225,6 +288,10 @@ export const mutations = {
       })
       .with({ cloudProvider: 'GCP' }, async ({ organizationId, credentialId }) => {
         const response = await cloudProviderCredentialsApi.deleteGcpCredentials(credentialId, organizationId)
+        return response.data
+      })
+      .with({ cloudProvider: 'AZURE' }, async ({ organizationId, credentialId }) => {
+        const response = await cloudProviderCredentialsApi.deleteAzureCredentials(credentialId, organizationId)
         return response.data
       })
       .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)

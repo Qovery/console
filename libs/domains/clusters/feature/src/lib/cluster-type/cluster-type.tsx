@@ -11,7 +11,6 @@ export interface ClusterTypeProps extends Omit<BadgeProps, 'color'> {
 
 export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props }: ClusterTypeProps) {
   const clusterType = match([cloudProvider, kubernetes])
-    .with(['AWS', KubernetesEnum.K3_S], () => 'EC2 (K3S)')
     .with(['AWS', KubernetesEnum.MANAGED], ['AWS', undefined], () =>
       instanceType === 'KARPENTER' ? `EKS (${upperCaseFirstLetter(instanceType)})` : 'EKS'
     )
@@ -20,6 +19,9 @@ export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props 
     .with(['SCW', P._], () => 'Kapsule')
     // Google GCP
     .with(['GCP', P._], () => 'GKE (Autopilot)')
+    // Microsoft AZURE
+    .with(['AZURE', KubernetesEnum.MANAGED], () => 'AKS (Karpenter)')
+    .with(['AZURE', KubernetesEnum.SELF_MANAGED], ['AZURE', undefined], () => 'Self-managed')
     // BYOK
     .with(['ON_PREMISE', P._], () => 'On-premise')
     .with(['AZURE', P._], () => 'Azure')

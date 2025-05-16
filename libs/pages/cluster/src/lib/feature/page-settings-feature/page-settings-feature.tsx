@@ -101,7 +101,7 @@ export function PageSettingsFeature() {
       advancedSettingsLink,
       dangerZoneLink,
     ])
-    .with({ cloud_provider: 'AWS', kubernetes: 'K3S' }, () => [
+    .with({ cloud_provider: 'SCW' }, () => [
       generalLink,
       credentialsLink,
       resourcesLink,
@@ -111,7 +111,7 @@ export function PageSettingsFeature() {
       advancedSettingsLink,
       dangerZoneLink,
     ])
-    .with({ cloud_provider: 'SCW' }, () => [
+    .with({ cloud_provider: 'GCP' }, () => [
       generalLink,
       credentialsLink,
       resourcesLink,
@@ -119,7 +119,7 @@ export function PageSettingsFeature() {
       advancedSettingsLink,
       dangerZoneLink,
     ])
-    .with({ cloud_provider: 'GCP' }, () => [
+    .with({ cloud_provider: 'AZURE' }, () => [
       generalLink,
       credentialsLink,
       imageRegistryLink,
