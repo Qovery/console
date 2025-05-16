@@ -272,15 +272,6 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item icon={<Icon iconName="timeline" />} asChild>
-          <Link
-            className="gap-0"
-            to={ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)}
-            state={{ prevUrl: pathname }}
-          >
-            Logs
-          </Link>
-        </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
             className="gap-0"

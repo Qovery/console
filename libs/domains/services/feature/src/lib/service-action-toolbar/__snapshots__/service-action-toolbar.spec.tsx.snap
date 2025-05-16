@@ -265,20 +265,6 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       tabindex="-1"
     >
       <a
-        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
-        data-orientation="vertical"
-        data-radix-collection-item=""
-        href="/organization/123/project/123/environment/3840068565336064/logs/0/service-logs"
-        role="menuitem"
-        tabindex="-1"
-      >
-        <i
-          aria-hidden="true"
-          class="fa-solid fa-scroll text-sm mr-3 text-brand-500"
-        />
-        Logs
-      </a>
-      <a
         href="https://gitpod.io/#/tree/"
         rel="noreferrer"
         target="_blank"

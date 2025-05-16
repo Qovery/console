@@ -575,12 +575,10 @@ function MenuOtherActions({
   state,
   environment,
   service,
-  environmentLogsLink,
 }: {
   state: StateEnum
   environment: Environment
   service: AnyService
-  environmentLogsLink: string
 }) {
   const {
     id: environmentId,
@@ -590,7 +588,6 @@ function MenuOtherActions({
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
 
   const [, copyToClipboard] = useCopyToClipboard()
@@ -663,11 +660,6 @@ function MenuOtherActions({
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item icon={<Icon iconName="scroll" />} asChild>
-          <Link className="gap-0" to={environmentLogsLink + SERVICE_LOGS_URL(service.id)} state={{ prevUrl: pathname }}>
-            Logs
-          </Link>
-        </DropdownMenu.Item>
         {editCodeUrl && (
           <a href={editCodeUrl} target="_blank" rel="noreferrer">
             <DropdownMenu.Item icon={<Icon iconName="code" />}>Edit code</DropdownMenu.Item>
@@ -776,12 +768,7 @@ export function ServiceActionToolbar({
               </ActionToolbar.Button>
             </Tooltip>
           )}
-          <MenuOtherActions
-            state={deploymentStatus.state}
-            environment={environment}
-            service={service}
-            environmentLogsLink={environmentLogsLink}
-          />
+          <MenuOtherActions state={deploymentStatus.state} environment={environment} service={service} />
         </>
       )}
     </ActionToolbar.Root>
