@@ -88,7 +88,6 @@ export function StepSummaryFeature() {
     return match(generalData?.cloud_provider)
       .with('AWS', () => goToFeatures())
       .with('GCP', () => goToFeatures())
-      .with('AZURE', () => goToFeatures())
       .otherwise(() => goToResources())
   }
 

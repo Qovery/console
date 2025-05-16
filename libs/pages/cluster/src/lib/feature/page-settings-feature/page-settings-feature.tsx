@@ -106,6 +106,7 @@ export function PageSettingsFeature() {
     .with({ cloud_provider: 'AZURE' }, () => [
       generalLink,
       credentialsLink,
+      resourcesLink,
       imageRegistryLink,
       featuresLink,
       advancedSettingsLink,
