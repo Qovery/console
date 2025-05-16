@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -5,17 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import {
-  Button,
-  Callout,
-  ExternalLink,
-  Heading,
-  Icon,
-  IconFlag,
-  InputSelect,
-  LoaderSpinner,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Heading, Icon, IconFlag, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
 
@@ -32,18 +23,22 @@ export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
+  const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
+
   const [currentProvider, setCurrentProvider] = useState<CloudProvider | undefined>(
     cloudProviders.filter((cloudProvider: CloudProvider) => cloudProvider.short_name === currentCloudProvider)[0]
   )
 
   const buildCloudProviders: Value[] = useMemo(
     () =>
-      cloudProviders.map((value) => ({
-        label: upperCaseFirstLetter(value.name),
-        value: value.short_name || '',
-        icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
-      })),
-    [cloudProviders]
+      cloudProviders
+        .map((value) => ({
+          label: upperCaseFirstLetter(value.name),
+          value: value.short_name || '',
+          icon: <Icon name={value.short_name || CloudProviderEnum.AWS} className="w-4" />,
+        }))
+        .filter((c) => isAzureFeatureFlag || c.value !== 'AZURE'),
+    [cloudProviders, isAzureFeatureFlag]
   )
 
   const buildRegions: Value[] = useMemo(
@@ -73,72 +68,68 @@ export function StepGeneral(props: StepGeneralProps) {
       </div>
 
       <form onSubmit={onSubmit}>
-        <>
-          <div className="mb-10">
-            <h4 className="mb-4 text-sm text-neutral-400">General</h4>
-            <ClusterGeneralSettings />
-          </div>
-          <div className="mb-10">
-            <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
-            {cloudProviders.length > 0 ? (
-              <>
-                <Controller
-                  name="cloud_provider"
-                  control={control}
-                  rules={{
-                    required: 'Please select a cloud provider.',
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputSelect
-                      dataTestId="input-cloud-provider"
-                      label="Cloud provider"
-                      className="mb-3"
-                      options={buildCloudProviders}
-                      onChange={(value) => {
-                        field.onChange(value)
-                        setResourcesData && setResourcesData(defaultResourcesData)
-                      }}
-                      value={field.value}
-                      error={error?.message}
-                      portal
-                    />
-                  )}
-                />
-                {currentProvider && (
-                  <>
-                    <Controller
-                      name="region"
-                      control={control}
-                      rules={{
-                        required: 'Please select a region.',
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputSelect
-                          dataTestId="input-region"
-                          label="Region"
-                          className="mb-3"
-                          options={buildRegions}
-                          onChange={field.onChange}
-                          value={field.value}
-                          error={error?.message}
-                          isSearchable
-                          portal
-                        />
-                      )}
-                    />
-                    <ClusterCredentialsSettingsFeature
-                      cloudProvider={currentProvider.short_name as CloudProviderEnum}
-                    />
-                  </>
+        <div className="mb-10">
+          <h4 className="mb-4 text-sm text-neutral-400">General</h4>
+          <ClusterGeneralSettings />
+        </div>
+        <div className="mb-10">
+          <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
+          {cloudProviders.length > 0 ? (
+            <>
+              <Controller
+                name="cloud_provider"
+                control={control}
+                rules={{
+                  required: 'Please select a cloud provider.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    dataTestId="input-cloud-provider"
+                    label="Cloud provider"
+                    className="mb-3"
+                    options={buildCloudProviders}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      setResourcesData && setResourcesData(defaultResourcesData)
+                    }}
+                    value={field.value}
+                    error={error?.message}
+                    portal
+                  />
                 )}
-              </>
-            ) : (
-              <div className="mt-2 flex justify-center">
-                <LoaderSpinner className="w-4" />
-              </div>
-            )}
-          </div>
-        </>
+              />
+              {currentProvider && (
+                <>
+                  <Controller
+                    name="region"
+                    control={control}
+                    rules={{
+                      required: 'Please select a region.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputSelect
+                        dataTestId="input-region"
+                        label="Region"
+                        className="mb-3"
+                        options={buildRegions}
+                        onChange={field.onChange}
+                        value={field.value}
+                        error={error?.message}
+                        isSearchable
+                        portal
+                      />
+                    )}
+                  />
+                  <ClusterCredentialsSettingsFeature cloudProvider={currentProvider.short_name as CloudProviderEnum} />
+                </>
+              )}
+            </>
+          ) : (
+            <div className="mt-2 flex justify-center">
+              <LoaderSpinner className="w-4" />
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-between">
           <Button

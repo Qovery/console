@@ -38,13 +38,11 @@ export interface StepGeneralProps {
   cloudProvider?: string
   cluster: Cluster
   clusterVpc?: ClusterFeatureAwsExistingVpc
-  publicOptionNotAvailable?: boolean
 }
 
 export function StepGeneral({
   databaseTypeOptions,
   databaseVersionOptions = {},
-  publicOptionNotAvailable,
   cluster,
   clusterVpc,
   onSubmit,
@@ -194,74 +192,65 @@ export function StepGeneral({
             )}
           />
 
-          {publicOptionNotAvailable ? (
-            <span>
-              The access of your database is private, it is only accessible from within your cluster or via our
-              port-forward feature. Public access to a K3S cluster running a containerized database is not supported.
-            </span>
-          ) : (
-            <Controller
-              name="accessibility"
-              control={control}
-              rules={{ required: 'Please select an accessibility' }}
-              render={({ field }) => (
-                <div>
-                  <SegmentedControl.Root
-                    defaultValue={DatabaseAccessibilityEnum.PRIVATE}
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    className="w-60 text-sm"
-                  >
-                    <SegmentedControl.Item value={DatabaseAccessibilityEnum.PRIVATE}>
-                      Private access
-                    </SegmentedControl.Item>
-                    <SegmentedControl.Item value={DatabaseAccessibilityEnum.PUBLIC}>
-                      Public access
-                    </SegmentedControl.Item>
-                  </SegmentedControl.Root>
-                  <p className="mt-2 text-sm text-neutral-350">
-                    {match({ watchMode, watchAccessibility })
-                      .with(
-                        { watchMode: 'CONTAINER', watchAccessibility: 'PRIVATE' },
-                        { watchMode: 'CONTAINER', watchAccessibility: undefined },
-                        () => (
-                          <>
-                            <strong>Private access to your database is ensured</strong>, as it is only accessible from
-                            within your cluster or via our port-forward feature. This setup is recommended for security
-                            reasons.
-                          </>
-                        )
-                      )
-                      .with(
-                        { watchMode: 'MANAGED', watchAccessibility: 'PRIVATE' },
-                        { watchMode: 'MANAGED', watchAccessibility: undefined },
-                        () => (
-                          <>
-                            <strong>Private access to your database is ensured</strong>, as it is only accessible from
-                            within your cloud network. This configuration is recommended for security reasons.
-                          </>
-                        )
-                      )
-                      .with({ watchMode: 'CONTAINER', watchAccessibility: 'PUBLIC' }, () => (
+          <Controller
+            name="accessibility"
+            control={control}
+            rules={{ required: 'Please select an accessibility' }}
+            render={({ field }) => (
+              <div>
+                <SegmentedControl.Root
+                  defaultValue={DatabaseAccessibilityEnum.PRIVATE}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  className="w-60 text-sm"
+                >
+                  <SegmentedControl.Item value={DatabaseAccessibilityEnum.PRIVATE}>
+                    Private access
+                  </SegmentedControl.Item>
+                  <SegmentedControl.Item value={DatabaseAccessibilityEnum.PUBLIC}>Public access</SegmentedControl.Item>
+                </SegmentedControl.Root>
+                <p className="mt-2 text-sm text-neutral-350">
+                  {match({ watchMode, watchAccessibility })
+                    .with(
+                      { watchMode: 'CONTAINER', watchAccessibility: 'PRIVATE' },
+                      { watchMode: 'CONTAINER', watchAccessibility: undefined },
+                      () => (
                         <>
-                          <strong>Public access to your database is enabled</strong>, making it accessible to authorized
-                          users from anywhere, both inside and outside your cluster, allowing for broad access,
-                          collaboration, or testing purposes.
+                          <strong>Private access to your database is ensured</strong>, as it is only accessible from
+                          within your cluster or via our port-forward feature. This setup is recommended for security
+                          reasons.
                         </>
-                      ))
-                      .with({ watchMode: 'MANAGED', watchAccessibility: 'PUBLIC' }, () => (
+                      )
+                    )
+                    .with(
+                      { watchMode: 'MANAGED', watchAccessibility: 'PRIVATE' },
+                      { watchMode: 'MANAGED', watchAccessibility: undefined },
+                      () => (
                         <>
-                          <strong>Public access to your database is enabled</strong>, making it accessible to authorized
-                          users from anywhere, both inside and outside your cloud network, allowing for broad access,
-                          collaboration, or testing purposes.
+                          <strong>Private access to your database is ensured</strong>, as it is only accessible from
+                          within your cloud network. This configuration is recommended for security reasons.
                         </>
-                      ))
-                      .exhaustive()}
-                  </p>
-                </div>
-              )}
-            />
-          )}
+                      )
+                    )
+                    .with({ watchMode: 'CONTAINER', watchAccessibility: 'PUBLIC' }, () => (
+                      <>
+                        <strong>Public access to your database is enabled</strong>, making it accessible to authorized
+                        users from anywhere, both inside and outside your cluster, allowing for broad access,
+                        collaboration, or testing purposes.
+                      </>
+                    ))
+                    .with({ watchMode: 'MANAGED', watchAccessibility: 'PUBLIC' }, () => (
+                      <>
+                        <strong>Public access to your database is enabled</strong>, making it accessible to authorized
+                        users from anywhere, both inside and outside your cloud network, allowing for broad access,
+                        collaboration, or testing purposes.
+                      </>
+                    ))
+                    .exhaustive()}
+                </p>
+              </div>
+            )}
+          />
         </Section>
 
         {watchMode === DatabaseModeEnum.CONTAINER && (

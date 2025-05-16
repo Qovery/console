@@ -39,10 +39,6 @@ export interface ClusterResourcesEdit extends ClusterResourcesData {
   }
 }
 
-export interface ClusterRemoteData {
-  ssh_key: string
-}
-
 export type Subnets = {
   A: string
   B: string

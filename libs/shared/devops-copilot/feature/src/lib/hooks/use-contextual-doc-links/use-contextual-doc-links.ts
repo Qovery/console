@@ -23,7 +23,6 @@ import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
-  CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_SUMMARY_URL,
   CLUSTERS_CREATION_URL,
@@ -984,7 +983,6 @@ export function useContextualDocLinks() {
   const clusterCreationKubeconfigURL = useMatch(
     CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_KUBECONFIG_URL
   )
-  const clusterCreationRemoteURL = useMatch(CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_REMOTE_URL)
   const clusterCreationResourcesURL = useMatch(CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_RESOURCES_URL)
   const clusterCreationSummaryURL = useMatch(CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_SUMMARY_URL)
 
@@ -1079,7 +1077,6 @@ export function useContextualDocLinks() {
     clusterCreationFeaturesURL ??
     clusterCreationGeneralURL ??
     clusterCreationKubeconfigURL ??
-    clusterCreationRemoteURL ??
     clusterCreationResourcesURL ??
     clusterCreationSummaryURL ??
     clusterSettingsGeneralURL ??
