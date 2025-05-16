@@ -154,9 +154,6 @@ export function StepGeneralFeature() {
     setCurrentStep(1)
   }, [setCurrentStep])
 
-  const publicOptionNotAvailable =
-    cluster?.kubernetes === KubernetesEnum.K3_S && watchModeDatabase === DatabaseModeEnum.CONTAINER
-
   const onSubmit = methods.handleSubmit((data) => {
     const cloneData = {
       ...data,
@@ -176,7 +173,6 @@ export function StepGeneralFeature() {
             onSubmit={onSubmit}
             databaseTypeOptions={databaseTypeOptions}
             databaseVersionOptions={databaseVersionOptions}
-            publicOptionNotAvailable={publicOptionNotAvailable}
             clusterVpc={clusterVpc}
             showManagedWithVpcOptions={showManagedWithVpcOptions}
           />

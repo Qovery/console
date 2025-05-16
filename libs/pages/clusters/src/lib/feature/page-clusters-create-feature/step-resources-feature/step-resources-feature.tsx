@@ -38,24 +38,11 @@ export function StepResourcesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (data.cluster_type === KubernetesEnum.K3_S) {
-      data['nodes'] = [1, 1]
-      setResourcesData(data)
-    } else {
-      setResourcesData(data)
-    }
+    setResourcesData(data)
 
     match(generalData?.cloud_provider)
       .with('AWS', () => {
-        if (data.cluster_type === KubernetesEnum.K3_S) {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
-          setFeaturesData(undefined)
-        } else {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
-          setRemoteData({
-            ssh_key: '',
-          })
-        }
+        navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
       })
       .with('SCW', () => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)

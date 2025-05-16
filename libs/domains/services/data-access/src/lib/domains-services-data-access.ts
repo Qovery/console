@@ -35,6 +35,7 @@ import {
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
   type EnvironmentServiceIdsAllRequest,
+  type GetIngressDeploymentStatusServiceTypeEnum,
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
@@ -58,6 +59,7 @@ import {
   type JobRequest,
   JobsApi,
   type RebootServicesRequest,
+  ServiceStatusApi,
   type Status,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -112,6 +114,8 @@ const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
 const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
+
+const serviceStatusApi = new ServiceStatusApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
@@ -373,6 +377,22 @@ export const services = createQueryKeys('services', {
     async queryFn() {
       const response = await environmentMainCallsApi.listDeploymentRequestByServiceId(serviceId)
       return response.data.results
+    },
+  }),
+  ingressDeploymentStatus: ({
+    serviceType,
+    serviceId,
+  }: {
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
+    serviceId: string
+  }) => ({
+    queryKey: [serviceType, serviceId],
+    async queryFn() {
+      const response = await serviceStatusApi.getIngressDeploymentStatus(
+        serviceType.toLowerCase() as GetIngressDeploymentStatusServiceTypeEnum,
+        serviceId
+      )
+      return response.data
     },
   }),
   listLinks: ({

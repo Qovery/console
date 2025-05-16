@@ -92,6 +92,17 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
       cloudProvider: cp,
       payload: undefined,
     }))
+    .with('AZURE', (cp) => ({
+      cloudProvider: cp,
+      payload: {
+        ...currentData,
+        azure_subscription_id: data['azure_subscription_id'],
+        azure_tenant_id: data['azure_tenant_id'],
+        azure_client_id: data['azure_client_id'],
+        azure_client_secret: data['azure_client_secret'],
+        azure_resource_group_name: data['azure_resource_group_name'],
+      },
+    }))
     .exhaustive()
 }
 
