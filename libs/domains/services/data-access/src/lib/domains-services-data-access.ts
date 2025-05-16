@@ -35,6 +35,7 @@ import {
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
   type EnvironmentServiceIdsAllRequest,
+  type GetIngressDeploymentStatusServiceTypeEnum,
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
@@ -387,7 +388,10 @@ export const services = createQueryKeys('services', {
   }) => ({
     queryKey: [serviceType, serviceId],
     async queryFn() {
-      const response = await serviceStatusApi.getIngressDeploymentStatus(serviceType.toLowerCase() as any, serviceId)
+      const response = await serviceStatusApi.getIngressDeploymentStatus(
+        serviceType.toLowerCase() as GetIngressDeploymentStatusServiceTypeEnum,
+        serviceId
+      )
       return response.data
     },
   }),

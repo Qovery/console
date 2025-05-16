@@ -11,7 +11,7 @@ export interface UseIngressDeploymentStatusProps {
 export function useIngressDeploymentStatus({ serviceId, serviceType }: UseIngressDeploymentStatusProps) {
   return useQuery({
     ...queries.services.ingressDeploymentStatus({
-      serviceType,
+      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>,
       serviceId,
     }),
     enabled: match(serviceType)
