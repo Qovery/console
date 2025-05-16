@@ -11,7 +11,7 @@ describe('error toaster', () => {
     const title = 'error title'
 
     toastError(null, title, message)
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, title, message)
+    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, title, message, undefined, undefined, undefined, undefined)
   })
 
   it('should call error toaster with error name and error message', () => {
@@ -21,12 +21,42 @@ describe('error toaster', () => {
     }
 
     toastError(error)
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'error', 'error message')
+    expect(toast).toHaveBeenCalledWith(
+      ToastEnum.ERROR,
+      'error',
+      'error message',
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    )
   })
 
   it('should call error toaster with default error name', () => {
     const error = {}
     toastError(error)
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'Error', 'No message found')
+    expect(toast).toHaveBeenCalledWith(
+      ToastEnum.ERROR,
+      'Error',
+      'No message found',
+      undefined,
+      undefined,
+      undefined,
+      undefined
+    )
+  })
+
+  it('should call error toaster with label and external link', () => {
+    const error = {}
+    toastError(error, undefined, undefined, undefined, undefined, 'label', 'https://www.google.com')
+    expect(toast).toHaveBeenCalledWith(
+      ToastEnum.ERROR,
+      'Error',
+      'No message found',
+      undefined,
+      undefined,
+      'label',
+      'https://www.google.com'
+    )
   })
 })
