@@ -14,6 +14,7 @@ import {
   Section,
   Tooltip,
 } from '@qovery/shared/ui'
+import { hasPublicPort } from '@qovery/shared/util-services'
 import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
 
 export interface FlowCreatePortProps {
@@ -48,8 +49,7 @@ export function FlowCreatePort({
     serviceId: applicationId,
     serviceType: service?.serviceType ?? 'APPLICATION',
   })
-  const hasRunningPulicPort =
-    ingressDeploymentStatus?.status && ['RUNNING', StateEnum.WAITING_RUNNING].includes(ingressDeploymentStatus?.status)
+  const hasRunningPulicPort = hasPublicPort(ingressDeploymentStatus?.status)
 
   return (
     <Section>

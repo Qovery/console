@@ -30,21 +30,24 @@ export interface PageSettingsDomainsProps {
   onDelete: (customDomain: CustomDomain) => void
   domains?: CustomDomain[]
   loading?: boolean
-  ingressDeploymentStatus?: IngressDeploymentStatusResponse
+  canAddDomain?: boolean
 }
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   const params = useParams()
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = params
-  const canAddDomain =
-    props.ingressDeploymentStatus?.status &&
-    ['RUNNING', StateEnum.WAITING_RUNNING].includes(props.ingressDeploymentStatus?.status)
 
   return (
     <div className="w-full justify-between">
       <Section className="max-w-content-with-navigation-left  p-8">
         <SettingsHeading title="Domain" description="Add custom domains to your service.">
-          <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()} disabled={!canAddDomain}>
+          <Button
+            size="md"
+            variant="solid"
+            color="brand"
+            onClick={() => props.onAddDomain()}
+            disabled={!props.canAddDomain}
+          >
             Add Domain
             <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
@@ -142,7 +145,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                 )
               })}
           </BlockContent>
-        ) : !canAddDomain ? (
+        ) : !props.canAddDomain ? (
           <div className="flex flex-col items-center gap-5 rounded-md border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
             <div className="flex flex-col items-center gap-2">
               <Icon iconName="earth-americas" className="text-lg" iconStyle="regular" />

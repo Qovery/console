@@ -3,6 +3,7 @@ import { match } from 'ts-pattern'
 import { useCustomDomains, useDeleteCustomDomain } from '@qovery/domains/custom-domains/feature'
 import { useCheckCustomDomains, useIngressDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { Callout, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { hasPublicPort } from '@qovery/shared/util-services'
 import PageSettingsDomains from '../../ui/page-settings-domains/page-settings-domains'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -27,6 +28,7 @@ export function PageSettingsDomainsFeature() {
     serviceId: applicationId,
     serviceType: service?.serviceType ?? 'APPLICATION',
   })
+  const canAddDomain = hasPublicPort(ingressDeploymentStatus?.status)
 
   const { mutate: deleteCustomDomain } = useDeleteCustomDomain()
 
@@ -38,7 +40,7 @@ export function PageSettingsDomainsFeature() {
       <PageSettingsDomains
         domains={customDomains}
         loading={isLoadingCustomDomains}
-        ingressDeploymentStatus={ingressDeploymentStatus}
+        canAddDomain={canAddDomain}
         onCheckCustomDomains={refetchCheckCustomDomains}
         checkedCustomDomains={checkedCustomDomains}
         isFetchingCheckedCustomDomains={isFetchingCheckedCustomDomains}
