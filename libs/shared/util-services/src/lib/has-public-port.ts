@@ -1,5 +1,9 @@
 import { StateEnum } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 
 export const hasPublicPort = (ingressDeploymentStatus?: StateEnum) => {
-  return ingressDeploymentStatus && ['RUNNING', StateEnum.WAITING_RUNNING].includes(ingressDeploymentStatus)
+  return match(ingressDeploymentStatus)
+    .with(StateEnum.DEPLOYED, () => true)
+    .with(StateEnum.WAITING_RUNNING, () => true)
+    .otherwise(() => false)
 }
