@@ -146,7 +146,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
               })}
           </BlockContent>
         ) : !props.canAddDomain ? (
-          <div className="flex flex-col items-center gap-5 rounded-md border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
+          <div className="flex flex-col items-center gap-5 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
             <div className="flex flex-col items-center gap-2">
               <Icon iconName="earth-americas" className="text-lg" iconStyle="regular" />
               <div className="flex flex-col items-center">
