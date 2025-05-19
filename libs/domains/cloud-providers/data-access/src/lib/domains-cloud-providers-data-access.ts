@@ -1,7 +1,7 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AwsCredentialsRequest,
-  AzureCredentialsRequest,
+  type AzureCredentialsRequest,
   CloudProviderApi,
   CloudProviderCredentialsApi,
   type CloudProviderEnum,

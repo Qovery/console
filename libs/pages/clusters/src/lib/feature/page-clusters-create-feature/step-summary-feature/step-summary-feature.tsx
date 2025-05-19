@@ -1,7 +1,7 @@
-import {
-  type ClusterCloudProviderInfoRequest,
-  type ClusterRequest,
-  type ClusterRequestFeaturesInner,
+import type {
+  ClusterCloudProviderInfoRequest,
+  ClusterRequest,
+  ClusterRequestFeaturesInner,
   KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
