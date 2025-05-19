@@ -1,9 +1,9 @@
 {
-  "name": "domains-environment-logs-feature",
+  "name": "domains-cluster-metrics-feature",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domains/environment-logs/feature/src",
+  "sourceRoot": "libs/domains/cluster-metrics/feature/src",
   "projectType": "library",
-  "tags": ["scope:domain", "type:feature", "slice:environment-logs"],
+  "tags": ["scope:domain", "type:feature", "slice:cluster-metrics"],
   "// targets": "to see all targets run: nx show project feature --web",
   "targets": {}
 }

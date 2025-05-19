@@ -1,4 +1,5 @@
 import {
+  CLUSTER_OVERVIEW_URL,
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
@@ -11,6 +12,7 @@ import {
   CLUSTER_SETTINGS_URL,
   type Route,
 } from '@qovery/shared/routes'
+import { PageOverviewFeature } from '../feature/page-overview-feature/page-overview-feature'
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsCredentialsFeature from '../feature/page-settings-credentials-feature/page-settings-credentials-feature'
 import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
@@ -29,6 +31,14 @@ export const ROUTER_CLUSTER: Route[] = [
     component: (
       <Container>
         <PageSettingsFeature />
+      </Container>
+    ),
+  },
+  {
+    path: CLUSTER_OVERVIEW_URL,
+    component: (
+      <Container>
+        <PageOverviewFeature />
       </Container>
     ),
   },

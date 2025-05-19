@@ -39,6 +39,7 @@
       "@qovery/domains/variables/data-access": ["libs/domains/variables/data-access/src/index.ts"],
       "@qovery/domains/variables/feature": ["libs/domains/variables/feature/src/index.ts"],
       "@qovery/domains/variables/util": ["libs/domains/variables/util/src/index.ts"],
+      "@qovery/domains/cluster-metrics/feature": ["libs/domains/cluster-metrics/feature/src/index.ts"],
       "@qovery/pages/application": ["libs/pages/application/src/index.ts"],
       "@qovery/pages/cluster": ["libs/pages/cluster/src/index.ts"],
       "@qovery/pages/clusters": ["libs/pages/clusters/src/index.ts"],

@@ -1,6 +1,8 @@
 export const CLUSTER_URL = (organizationId = ':organizationId', clusterId = ':clusterId') =>
   `/organization/${organizationId}/cluster/${clusterId}`
 
+export const CLUSTER_OVERVIEW_URL = '/overview'
+
 // settings
 export const CLUSTER_SETTINGS_URL = '/settings'
 export const CLUSTER_SETTINGS_GENERAL_URL = '/general'
