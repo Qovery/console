@@ -5,8 +5,14 @@ import {
   StateEnum,
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
+import {
+  APPLICATION_SETTINGS_NETWORKING_URL,
+  APPLICATION_SETTINGS_PORT_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+} from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
@@ -36,6 +42,8 @@ export interface PageSettingsDomainsProps {
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   const params = useParams()
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = params
+  const { data: service } = useService({ serviceId: applicationId })
+  const pathToPortsTab = `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${service?.serviceType === 'HELM' ? APPLICATION_SETTINGS_NETWORKING_URL : APPLICATION_SETTINGS_PORT_URL}`
 
   return (
     <div className="w-full justify-between">
@@ -155,11 +163,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Link
-                as="button"
-                className="gap-1"
-                to={`${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${APPLICATION_SETTINGS_PORT_URL}`}
-              >
+              <Link as="button" className="gap-1" to={pathToPortsTab}>
                 Create public port
                 <Icon iconName="arrow-right" className="text-xs" />
               </Link>

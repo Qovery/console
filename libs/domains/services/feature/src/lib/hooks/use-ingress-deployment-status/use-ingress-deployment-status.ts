@@ -16,7 +16,7 @@ export function useIngressDeploymentStatus({ serviceId, serviceType }: UseIngres
     }),
     enabled: match(serviceType)
       .with('APPLICATION', 'CONTAINER', 'HELM', () => true)
-      .otherwise(() => false), // TODO check if serviceType is valid and defined
+      .otherwise(() => false),
     // TODO: handle errors (404 no deployment, etc...)
   })
 }
