@@ -8,9 +8,7 @@ import {
   CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
   CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
-  CLUSTER_SETTINGS_KUBECONFIG_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
-  CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
   CLUSTER_SETTINGS_URL,
   CLUSTER_URL,
@@ -59,12 +57,6 @@ export function PageSettingsFeature() {
     url: pathSettings + CLUSTER_SETTINGS_FEATURES_URL,
   }
 
-  const remoteAccessLink = {
-    title: 'Remote access',
-    icon: IconAwesomeEnum.LIGHTBULB,
-    url: pathSettings + CLUSTER_SETTINGS_REMOTE_ACCESS_URL,
-  }
-
   const networkLink = {
     title: 'Network',
     icon: IconAwesomeEnum.PLUG,
@@ -75,12 +67,6 @@ export function PageSettingsFeature() {
     title: 'Advanced settings',
     icon: IconAwesomeEnum.GEARS,
     url: pathSettings + CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
-  }
-
-  const kubeconfigLink = {
-    title: 'Kubeconfig',
-    icon: IconAwesomeEnum.GEARS,
-    url: pathSettings + CLUSTER_SETTINGS_KUBECONFIG_URL,
   }
 
   const dangerZoneLink = {
@@ -106,22 +92,21 @@ export function PageSettingsFeature() {
       credentialsLink,
       resourcesLink,
       imageRegistryLink,
-      remoteAccessLink,
-      networkLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
     .with({ cloud_provider: 'GCP' }, () => [
       generalLink,
       credentialsLink,
-      resourcesLink,
       imageRegistryLink,
+      featuresLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
     .with({ cloud_provider: 'AZURE' }, () => [
       generalLink,
       credentialsLink,
+      resourcesLink,
       imageRegistryLink,
       featuresLink,
       advancedSettingsLink,

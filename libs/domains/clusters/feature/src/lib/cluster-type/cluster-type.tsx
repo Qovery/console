@@ -24,7 +24,6 @@ export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props 
     .with(['AZURE', KubernetesEnum.SELF_MANAGED], ['AZURE', undefined], () => 'Self-managed')
     // BYOK
     .with(['ON_PREMISE', P._], () => 'On-premise')
-    .with(['AZURE', P._], () => 'Azure')
     .with(['DO', P._], () => 'DO')
     .with(['OVH', P._], () => 'OVH')
     .with(['CIVO', P._], () => 'CIVO')

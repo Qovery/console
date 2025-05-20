@@ -3,7 +3,6 @@ import {
   type DatabaseConfiguration,
   DatabaseModeEnum,
   type DatabaseTypeEnum,
-  KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'

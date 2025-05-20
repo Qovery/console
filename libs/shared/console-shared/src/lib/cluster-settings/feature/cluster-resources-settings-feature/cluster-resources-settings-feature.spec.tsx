@@ -1,7 +1,7 @@
-import { getByLabelText, getByText, render } from '__tests__/utils/setup-jest'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterResourcesSettingsFeature from './cluster-resources-settings-feature'
 
 describe('ClusterResourcesSettingsFeature', () => {
@@ -16,7 +16,7 @@ describe('ClusterResourcesSettingsFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = render(
+    const { baseElement } = renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(
         <ClusterResourcesSettingsFeature
           clusterRegion="us-east-2"
@@ -32,7 +32,7 @@ describe('ClusterResourcesSettingsFeature', () => {
   })
 
   it('should render two cluster type options if aws', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(
         <ClusterResourcesSettingsFeature
           clusterRegion="us-east-2"
@@ -44,11 +44,11 @@ describe('ClusterResourcesSettingsFeature', () => {
         }
       )
     )
-    getByText(baseElement, 'Managed K8S (EKS)')
+    screen.getByText('Managed K8S (EKS)')
   })
 
   it('should render one cluster type option if scw', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(
         <ClusterResourcesSettingsFeature
           clusterRegion="us-east-2"
@@ -60,11 +60,11 @@ describe('ClusterResourcesSettingsFeature', () => {
         }
       )
     )
-    getByText(baseElement, 'Managed K8S (KAPSULE)')
+    screen.getByText('Managed K8S (KAPSULE)')
   })
 
   it('should render one cluster type option if gcp', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(
         <ClusterResourcesSettingsFeature
           clusterRegion="europe-west9"
@@ -76,11 +76,27 @@ describe('ClusterResourcesSettingsFeature', () => {
         }
       )
     )
-    getByText(baseElement, 'Managed K8S (GKE with Autopilot)')
+    screen.getByText('Managed K8S (GKE with Autopilot)')
+  })
+
+  it('should render one cluster type option if azure', () => {
+    renderWithProviders(
+      wrapWithReactHookForm<ClusterResourcesData>(
+        <ClusterResourcesSettingsFeature
+          clusterRegion="francecental"
+          fromDetail={false}
+          cloudProvider={CloudProviderEnum.AZURE}
+        />,
+        {
+          defaultValues,
+        }
+      )
+    )
+    screen.getByText('Managed K8S (AKS)')
   })
 
   it('should select first cluster option at initialisation', () => {
-    const { baseElement } = render(
+    renderWithProviders(
       wrapWithReactHookForm<ClusterResourcesData>(
         <ClusterResourcesSettingsFeature
           clusterRegion="us-east-2"
@@ -92,7 +108,7 @@ describe('ClusterResourcesSettingsFeature', () => {
         }
       )
     )
-    const checkbox = getByLabelText(baseElement, 'Managed K8S (EKS)')
+    const checkbox = screen.getByLabelText('Managed K8S (EKS)')
     expect(checkbox).toBeChecked()
   })
 })

@@ -35,6 +35,11 @@ type ClusterCredentialsFormValues = {
   scaleway_secret_key?: string
   gcp_credentials?: string
   role_arn?: string
+  azure_subscription_id?: string
+  azure_client_id?: string
+  azure_client_secret?: string
+  azure_tenant_id?: string
+  azure_resource_group_name?: string
 }
 
 export interface ClusterCredentialsModalProps {
@@ -88,10 +93,6 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         gcp_credentials: data['gcp_credentials'],
       },
     }))
-    .with('ON_PREMISE', (cp) => ({
-      cloudProvider: cp,
-      payload: undefined,
-    }))
     .with('AZURE', (cp) => ({
       cloudProvider: cp,
       payload: {
@@ -102,6 +103,10 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         azure_client_secret: data['azure_client_secret'],
         azure_resource_group_name: data['azure_resource_group_name'],
       },
+    }))
+    .with('ON_PREMISE', (cp) => ({
+      cloudProvider: cp,
+      payload: undefined,
     }))
     .exhaustive()
 }
@@ -644,6 +649,104 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     </div>
                   )}
                 />
+              )}
+              {cloudProviderLocal === 'AZURE' && (
+                <>
+                  <Controller
+                    name="azure_tenant_id"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter your Azure tenant ID.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-azure-tenant-id"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Azure tenant ID"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="azure_subscription_id"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter your Azure subscription ID.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-azure-subscription-id"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Azure subscription ID"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="azure_client_id"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter your Azure client ID.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-azure-client-id"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Azure client ID"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                  {isEditDirty && (
+                    <>
+                      <hr />
+                      <span className="text-sm text-neutral-350">Confirm your Azure client secret</span>
+                    </>
+                  )}
+                  {(!isEdit || isEditDirty) && (
+                    <Controller
+                      name="azure_client_secret"
+                      control={methods.control}
+                      rules={{
+                        required: 'Please enter your Azure client secret',
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputText
+                          dataTestId="input-azure-client-secret"
+                          type="password"
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value}
+                          label="Azure client secret"
+                          error={error?.message}
+                        />
+                      )}
+                    />
+                  )}
+                  <Controller
+                    name="azure_resource_group_name"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter your Azure resource group name.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-azure-resource-group-name"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Azure resource group name"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                </>
               )}
               <CalloutEdit isEdit={isEdit} organizationId={organizationId} clusterId={clusterId} />
             </div>

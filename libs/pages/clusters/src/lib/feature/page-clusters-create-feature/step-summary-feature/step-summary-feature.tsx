@@ -1,8 +1,8 @@
-import type {
-  ClusterCloudProviderInfoRequest,
-  ClusterRequest,
-  ClusterRequestFeaturesInner,
-  KubernetesEnum,
+import {
+  type ClusterCloudProviderInfoRequest,
+  type ClusterRequest,
+  type ClusterRequestFeaturesInner,
+  type KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -13,7 +13,6 @@ import {
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
-  CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_GENERAL_URL,
   CLUSTERS_URL,
@@ -32,7 +31,7 @@ export function getValueByKey(key: string, data: { [key: string]: string }[] = [
 
 export function StepSummaryFeature() {
   useDocumentTitle('Summary - Create Cluster')
-  const { generalData, kubeconfigData, resourcesData, featuresData, remoteData, setCurrentStep, creationFlowUrl } =
+  const { generalData, kubeconfigData, resourcesData, featuresData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
@@ -81,10 +80,6 @@ export function StepSummaryFeature() {
     navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
   }
 
-  const goToRemote = () => {
-    navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
-  }
-
   const onBack = () => {
     if (generalData?.installation_type === 'SELF_MANAGED') {
       goToKubeconfig()
@@ -124,7 +119,6 @@ export function StepSummaryFeature() {
             cloud_provider: generalData.cloud_provider,
             kubernetes: 'SELF_MANAGED',
             production: generalData.production,
-            ssh_keys: [],
             features: [],
             cloud_provider_credentials,
           },
@@ -144,7 +138,7 @@ export function StepSummaryFeature() {
       return
     }
     if (resourcesData) {
-      let formatFeatures: ClusterRequestFeaturesInner[] | undefined
+      let formatFeatures: ClusterRequestFeaturesInner[] = []
 
       if (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'GCP') {
         if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
@@ -250,7 +244,6 @@ export function StepSummaryFeature() {
           disk_size: resourcesData.disk_size,
           instance_type: resourcesData.instance_type,
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
-          ssh_keys: remoteData?.ssh_key ? [remoteData?.ssh_key] : undefined,
           cloud_provider_credentials,
           features: [
             {
@@ -311,8 +304,8 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'summary') + 1)
-  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
+    setCurrentStep(steps(generalData).findIndex((step) => step.key === 'summary') + 1)
+  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type])
 
   return (
     <FunnelFlowBody>
@@ -326,13 +319,11 @@ export function StepSummaryFeature() {
           kubeconfigData={kubeconfigData}
           resourcesData={resourcesData}
           featuresData={featuresData}
-          remoteData={remoteData}
           detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
           goToKubeconfig={goToKubeconfig}
-          goToRemote={goToRemote}
         />
       )}
     </FunnelFlowBody>

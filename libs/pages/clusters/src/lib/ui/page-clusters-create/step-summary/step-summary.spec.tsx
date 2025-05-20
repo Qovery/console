@@ -51,6 +51,5 @@ describe('StepSummary', () => {
     screen.getByTestId('summary-general')
     screen.getByTestId('summary-resources')
     screen.getByTestId('summary-features')
-    screen.getByTestId('summary-remote')
   })
 })

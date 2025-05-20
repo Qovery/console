@@ -53,8 +53,6 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         setFeaturesData: mockSetFeaturesData,
         resourcesData: undefined,
         setResourcesData: jest.fn(),
-        remoteData: undefined,
-        setRemoteData: jest.fn(),
         creationFlowUrl: '/organization/1/clusters/create',
       }}
     >

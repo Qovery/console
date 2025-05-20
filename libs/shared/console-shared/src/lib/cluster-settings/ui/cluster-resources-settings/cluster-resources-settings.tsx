@@ -77,7 +77,12 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
         cloudProvider,
         clusterType: 'MANAGED' as const,
       }))
-      .with('ON_PREMISE', 'DO', 'AZURE', 'OVH', 'CIVO', 'HETZNER', 'ORACLE', 'IBM', () => ({
+      .with('AZURE', (cloudProvider) => ({
+        cloudProvider,
+        clusterType: 'MANAGED' as const,
+        region: props.clusterRegion || '',
+      }))
+      .with('ON_PREMISE', 'DO', 'OVH', 'CIVO', 'HETZNER', 'ORACLE', 'IBM', () => ({
         cloudProvider: CloudVendorEnum.ON_PREMISE,
         clusterType: 'MANAGED' as const,
       }))
@@ -133,7 +138,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               required: 'Please select a cluster type',
             }}
             render={({ field }) => (
-              <div>
+              <div className="pointer-events-none">
                 {props.clusterTypeOptions?.map((option) => (
                   <InputRadioBox
                     key={option.value}
