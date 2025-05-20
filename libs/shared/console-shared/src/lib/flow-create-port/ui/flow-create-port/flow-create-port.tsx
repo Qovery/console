@@ -30,10 +30,6 @@ export function FlowCreatePort({
   const livenessType = healthchecks?.liveness_probe?.type
   const readinessType = healthchecks?.readiness_probe?.type
 
-  const exposedPorts = ports?.filter((port) => 'publicly_accessible' in port && port.publicly_accessible)
-  const deletingLastExposedPort = (port: PortData | ServicePort) =>
-    exposedPorts?.find((p) => 'id' in p && 'id' in port && port.id === p.id)
-
   return (
     <Section>
       <div className="mb-10 flex justify-between">
@@ -132,7 +128,7 @@ export function FlowCreatePort({
                             customPort,
                             isMatchingHealthCheck(customPort, livenessType) ||
                               isMatchingHealthCheck(customPort, readinessType)
-                              ? `${deletingLastExposedPort(customPort) ? 'This is the only publicly exposed port for this service. The health check and domains pointing to this port will be deleted as well.' : 'The health check pointing to this port will be deleted as well.'}`
+                              ? 'The health check pointing to this port will be deleted as well.'
                               : undefined
                           )
                         }
