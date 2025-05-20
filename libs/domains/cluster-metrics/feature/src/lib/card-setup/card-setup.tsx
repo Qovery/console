@@ -19,7 +19,7 @@ export function CardSetup({ organizationId, clusterId }: CardSetupProps) {
     organizationId: organizationId,
     clusterId: clusterId,
   })
-  const kubeVersion = runningStatus?.computed_status.kube_version_status
+  const kubeVersion = runningStatus?.computed_status?.kube_version_status
 
   const isLoading =
     !deploymentStatus?.is_deployed || !deploymentStatus?.last_deployment_date || !cluster?.created_at || !kubeVersion
