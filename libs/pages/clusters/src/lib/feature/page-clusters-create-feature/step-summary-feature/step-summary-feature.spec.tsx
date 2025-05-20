@@ -145,7 +145,6 @@ describe('StepSummaryFeature', () => {
         kubernetes: 'MANAGED',
         instance_type: 't2.micro',
         disk_size: 50,
-        ssh_keys: ['ssh_key'],
         features: [
           {
             id: STATIC_IP,
@@ -206,7 +205,6 @@ describe('StepSummaryFeature', () => {
         },
         region: 'region',
         kubernetes: 'SELF_MANAGED',
-        ssh_keys: [],
         features: [],
       },
     })

@@ -119,7 +119,6 @@ export function StepSummaryFeature() {
             cloud_provider: generalData.cloud_provider,
             kubernetes: 'SELF_MANAGED',
             production: generalData.production,
-            ssh_keys: [],
             features: [],
             cloud_provider_credentials,
           },
@@ -211,10 +210,7 @@ export function StepSummaryFeature() {
         }
       }
 
-      if (
-        (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'AZURE') &&
-        resourcesData.karpenter?.enabled
-      ) {
+      if (generalData.cloud_provider === 'AWS' && resourcesData.karpenter?.enabled) {
         formatFeatures?.push({
           id: 'KARPENTER',
           value: {

@@ -43,9 +43,8 @@ export function StepGeneralFeature() {
       nodes: d?.nodes ?? [3, 10],
       karpenter: {
         enabled: match(data)
-          .with({ cloud_provider: 'AZURE' }, () => true)
-          .with({ production: true }, () => false)
-          .otherwise(() => true),
+          .with({ cloud_provider: 'AWS', production: false }, () => true)
+          .otherwise(() => false),
         default_service_architecture: 'AMD64',
         disk_size_in_gib: 50,
         spot_enabled: false,

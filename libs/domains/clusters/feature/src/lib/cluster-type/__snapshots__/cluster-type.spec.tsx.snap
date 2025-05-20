@@ -1,5 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ClusterType should render as AKS 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+      data-accent-color="neutral"
+    >
+      Self-managed
+    </span>
+  </div>
+</body>
+`;
+
 exports[`ClusterType should render as EKS 1`] = `
 <body>
   <div>
@@ -26,19 +39,6 @@ exports[`ClusterType should render as GCP 1`] = `
 </body>
 `;
 
-exports[`ClusterType should render as K3S 1`] = `
-<body>
-  <div>
-    <span
-      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
-      data-accent-color="neutral"
-    >
-      EC2 (K3S)
-    </span>
-  </div>
-</body>
-`;
-
 exports[`ClusterType should render as SCW 1`] = `
 <body>
   <div>
@@ -47,19 +47,6 @@ exports[`ClusterType should render as SCW 1`] = `
       data-accent-color="neutral"
     >
       Kapsule
-    </span>
-  </div>
-</body>
-`;
-
-exports[`ClusterType should render as AKS 1`] = `
-<body>
-  <div>
-    <span
-      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
-      data-accent-color="neutral"
-    >
-      AKS (Karpenter)
     </span>
   </div>
 </body>

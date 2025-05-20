@@ -3,7 +3,6 @@ import {
   type ClusterFeatureKarpenterParametersResponse,
   type ClusterInstanceAttributes,
   type ClusterInstanceTypeResponseListResultsInner,
-  CloudVendorEnum,
   CpuArchitectureEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
@@ -29,7 +28,6 @@ import { sortInstanceSizes } from './utils/sort-instance-sizes'
 const DISPLAY_LIMIT = 60
 
 export interface KarpenterInstanceFilterModalProps {
-  cloudProvider: CloudVendorEnum
   clusterRegion: string
   cloudProviderInstanceTypes: ClusterInstanceTypeResponseListResultsInner[]
   onChange: (data: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>) => void
@@ -47,7 +45,6 @@ export interface KarpenterInstanceFormProps {
 }
 
 function KarpenterInstanceForm({
-  cloudProvider,
   cloudProviderInstanceTypes,
   defaultValues,
   onChange,
@@ -163,45 +160,23 @@ function KarpenterInstanceForm({
 
   const onSubmit = useCallback(
     methods.handleSubmit(({ ARM64, AMD64, default_service_architecture }) => {
-      if (cloudProvider === 'AWS') {
-        const instanceSize = dataFiltered
-          .map((instanceType) => instanceType.attributes?.instance_size)
-          .filter((item): item is string => item !== undefined)
-        const instanceFamily = dataFiltered
-          .map((instanceType) => instanceType.attributes?.instance_family)
-          .filter((item): item is string => item !== undefined)
+      const instanceSize = dataFiltered
+        .map((instanceType) => instanceType.attributes?.instance_size)
+        .filter((item): item is string => item !== undefined)
+      const instanceFamily = dataFiltered
+        .map((instanceType) => instanceType.attributes?.instance_family)
+        .filter((item): item is string => item !== undefined)
 
-        onChange({
-          default_service_architecture,
-          qovery_node_pools: {
-            requirements: [
-              { key: 'InstanceSize', operator: 'In', values: Array.from(new Set(instanceSize)) },
-              { key: 'InstanceFamily', operator: 'In', values: Array.from(new Set(instanceFamily)) },
-              { key: 'Arch', operator: 'In', values: [ARM64 ? 'ARM64' : '', AMD64 ? 'AMD64' : ''].filter(Boolean) },
-            ],
-          },
-        })
-      }
-      else if (cloudProvider === 'AZURE') {
-        const skuFamily = dataFiltered
-          .map((skuFamily) => skuFamily.attributes?.instance_family) // TODO(AZURE): OpenAPI to return SKU family
-          .filter((item): item is string => item !== undefined)
-        const skuVersion = dataFiltered
-          .map((skuVersion) => "" + skuVersion.attributes?.instance_generation) // TODO(AZURE): OpenAPI to return SKU version
-          .filter((item): item is string => item !== undefined)
-
-        onChange({
-          default_service_architecture,
-          qovery_node_pools: {
-            requirements: [
-              { key: 'Arch', operator: 'In', values: [ARM64 ? 'ARM64' : '', AMD64 ? 'AMD64' : ''].filter(Boolean) },
-              { key: 'SkuFamily', operator: 'In', values: Array.from(new Set(skuFamily)) },
-              { key: 'SkuVersion', operator: 'In', values: Array.from(new Set(skuVersion)) },
-            ],
-          },
-        })
-      }
-      
+      onChange({
+        default_service_architecture,
+        qovery_node_pools: {
+          requirements: [
+            { key: 'InstanceSize', operator: 'In', values: Array.from(new Set(instanceSize)) },
+            { key: 'InstanceFamily', operator: 'In', values: Array.from(new Set(instanceFamily)) },
+            { key: 'Arch', operator: 'In', values: [ARM64 ? 'ARM64' : '', AMD64 ? 'AMD64' : ''].filter(Boolean) },
+          ],
+        },
+      })
 
       onClose()
     }),
@@ -563,7 +538,6 @@ function KarpenterInstanceForm({
 }
 
 export function KarpenterInstanceFilterModal({
-  cloudProvider,
   clusterRegion,
   defaultValues,
   onChange,
@@ -572,7 +546,6 @@ export function KarpenterInstanceFilterModal({
 }: Omit<KarpenterInstanceFilterModalProps, 'cloudProviderInstanceTypes'>) {
   // Get instance types only available for AWS
   const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
-    cloudProvider,
     region: clusterRegion,
     enabled: true,
   })
@@ -580,7 +553,6 @@ export function KarpenterInstanceFilterModal({
   if (cloudProviderInstanceTypesKarpenter) {
     return (
       <KarpenterInstanceForm
-        cloudProvider={cloudProvider}
         defaultValues={defaultValues}
         cloudProviderInstanceTypes={cloudProviderInstanceTypesKarpenter}
         onChange={onChange}

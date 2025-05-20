@@ -151,6 +151,7 @@ export function StepSummary(props: StepSummaryProps) {
           .with(
             { installation_type: 'MANAGED', cloud_provider: 'AWS' },
             { installation_type: 'MANAGED', cloud_provider: 'SCW' },
+            { installation_type: 'MANAGED', cloud_provider: 'AZURE' },
             () => (
               <Section
                 data-testid="summary-resources"

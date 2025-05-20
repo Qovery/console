@@ -112,40 +112,43 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
       return response.data.results
     },
   }),
-  listInstanceTypesKarpenter: (args: 
-    | {
-      cloudProvider: Extract<CloudVendorEnum, 'AWS'>
-      clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
-      region: string
-    }
-  | {
-      cloudProvider: Extract<CloudVendorEnum, 'SCW'>
-      clusterType: Extract<KubernetesEnum, 'MANAGED'>
-      region: string
-    }
-  | {
-      cloudProvider: Extract<CloudVendorEnum, 'GCP'>
-      clusterType: Extract<KubernetesEnum, 'MANAGED'>
-    }
-  | {
-      cloudProvider: Extract<CloudVendorEnum, 'AZURE'>
-      clusterType: Extract<KubernetesEnum, 'MANAGED'>
-      region: string
-    }
-  | {
-      cloudProvider: Extract<CloudVendorEnum, 'ON_PREMISE'>
-      clusterType: Extract<KubernetesEnum, 'MANAGED'>
-    }
+  listInstanceTypesKarpenter: (
+    args:
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'AWS'>
+          clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'SCW'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'GCP'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'AZURE'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+          region: string
+        }
+      | {
+          cloudProvider: Extract<CloudVendorEnum, 'ON_PREMISE'>
+          clusterType: Extract<KubernetesEnum, 'MANAGED'>
+        }
   ) => ({
     queryKey: [args.cloudProvider, args.clusterType],
     async queryFn() {
       const response = await match(args)
-      .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) => cloudProviderApi.listAWSEKSInstanceType(region, false, false))
-      .with({ cloudProvider: 'AZURE' }, ({ region }) => cloudProviderApi.listAzureAKSInstanceType(region, false, false))
-      .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
-      .with({ cloudProvider: 'SCW' }, () => Promise.resolve({ data: { results: [] } }))
-      .with({ cloudProvider: 'ON_PREMISE' }, () => Promise.resolve({ data: { results: [] } }))
-      .run()
+        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, false, false)
+        )
+        .with({ cloudProvider: 'AZURE' }, () => Promise.resolve({ data: { results: [] } }))
+        .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
+        .with({ cloudProvider: 'SCW' }, () => Promise.resolve({ data: { results: [] } }))
+        .with({ cloudProvider: 'ON_PREMISE' }, () => Promise.resolve({ data: { results: [] } }))
+        .run()
       return response.data.results
     },
   }),
@@ -190,7 +193,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudVendorEnum, 'GCP'>
           databaseType: string
         }
-      |  {
+      | {
           cloudProvider: Extract<CloudVendorEnum, 'AZURE'>
           databaseType: string
         }
