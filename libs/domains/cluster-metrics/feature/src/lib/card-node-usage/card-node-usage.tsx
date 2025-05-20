@@ -18,7 +18,7 @@ export function CardNodeUsage({ organizationId, clusterId }: CardNodeUsageProps)
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-neutral-350">Nodes usages</p>
-          <span className="text-[28px] font-bold text-neutral-400">{runningStatus?.nodes.length ?? 0}</span>
+          <span className="text-[28px] font-bold text-neutral-400">{runningStatus?.nodes?.length ?? 0}</span>
         </div>
         <Link
           color="current"
