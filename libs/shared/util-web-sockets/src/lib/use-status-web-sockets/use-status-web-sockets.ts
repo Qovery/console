@@ -1,5 +1,7 @@
+import * as Sentry from '@sentry/react'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import { type ServiceStatusDto } from 'qovery-ws-typescript-axios'
+import { useEffect, useRef } from 'react'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
@@ -24,6 +26,18 @@ export function useStatusWebSockets({
   environmentId,
   versionId,
 }: UseStatusWebSocketsProps) {
+  const firstMessageReceived = useRef(false)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    return () => {
+      // Cleanup if component unmounts
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
     urlSearchParams: {
@@ -78,7 +92,30 @@ export function useStatusWebSockets({
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
     shouldReconnect: true,
+    onOpen(_, event) {
+      timeoutRef.current = setTimeout(() => {
+        if (!firstMessageReceived.current) {
+          Sentry.captureMessage('No WS message received from /service/status after 6s', {
+            level: 'debug',
+            tags: {
+              organizationId: organizationId ?? 'unknown',
+              environmentId: environmentId ?? 'unknown',
+              projectId: projectId ?? 'unknown',
+              clusterId,
+              event: JSON.stringify(event),
+            },
+          })
+        }
+      }, 6_000)
+    },
     onMessage(queryClient, message: ServiceStatusDto) {
+      if (!firstMessageReceived.current) {
+        firstMessageReceived.current = true
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
+        }
+      }
+
       for (const env of message.environments) {
         queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
           state: env.state,
