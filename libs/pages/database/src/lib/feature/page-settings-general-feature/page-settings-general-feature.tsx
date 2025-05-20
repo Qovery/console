@@ -1,8 +1,6 @@
-import { DatabaseModeEnum, KubernetesEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { useCluster } from '@qovery/domains/clusters/feature'
-import { useEnvironment, useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
+import { useListDatabaseConfigurations } from '@qovery/domains/environments/feature'
 import { useAnnotationsGroups, useLabelsGroups } from '@qovery/domains/organizations/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
@@ -10,9 +8,6 @@ import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-ge
 
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
-
-  const { data: environment } = useEnvironment({ environmentId })
-  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const { data: database } = useService({ serviceId: databaseId, serviceType: 'DATABASE' })
   const { mutate: editService, isLoading: isLoadingService } = useEditService({
@@ -32,9 +27,6 @@ export function PageSettingsGeneralFeature() {
       label: v.name || '',
       value: v.name || '',
     }))
-
-  const publicOptionNotAvailable =
-    cluster?.kubernetes === KubernetesEnum.K3_S && database?.mode === DatabaseModeEnum.CONTAINER
 
   const methods = useForm({
     mode: 'onChange',
@@ -76,7 +68,6 @@ export function PageSettingsGeneralFeature() {
         <PageSettingsGeneral
           onSubmit={onSubmit}
           loading={isLoadingService}
-          publicOptionNotAvailable={publicOptionNotAvailable}
           databaseVersionLoading={isLoading}
           databaseVersionOptions={databaseVersionOptions}
           database={database}

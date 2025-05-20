@@ -36,14 +36,6 @@ export function StepResourcesFeature() {
     mode: 'onChange',
   })
 
-  useEffect(() => {
-    if (cluster?.kubernetes === KubernetesEnum.K3_S) {
-      setMaxInstance(1)
-      methods.setValue('min_running_instances', 1)
-      methods.setValue('max_running_instances', 1)
-    }
-  }, [methods, cluster])
-
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
     navigate(creationFlowUrl + SERVICES_CREATION_PORTS_URL)

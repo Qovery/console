@@ -63,9 +63,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
             enabled: false,
           },
         },
-        remoteData: undefined,
         featuresData: undefined,
-        setRemoteData: jest.fn(),
         setFeaturesData: jest.fn(),
       }}
     >

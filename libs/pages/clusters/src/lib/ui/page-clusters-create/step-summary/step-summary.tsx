@@ -5,12 +5,10 @@ import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
   type ClusterKubeconfigData,
-  type ClusterRemoteData,
   type ClusterResourcesData,
   type Subnets,
 } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
-import { trimId } from '@qovery/shared/util-js'
 import { getValueByKey } from '../../../feature/page-clusters-create-feature/step-summary-feature/step-summary-feature'
 
 export interface StepSummaryProps {
@@ -20,12 +18,10 @@ export interface StepSummaryProps {
   kubeconfigData?: ClusterKubeconfigData
   resourcesData: ClusterResourcesData
   featuresData?: ClusterFeaturesData
-  remoteData?: ClusterRemoteData
   goToFeatures: () => void
   goToResources: () => void
   goToKubeconfig: () => void
   goToGeneral: () => void
-  goToRemote: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   detailInstanceType?: ClusterInstanceTypeResponseListResultsInner
@@ -155,6 +151,7 @@ export function StepSummary(props: StepSummaryProps) {
           .with(
             { installation_type: 'MANAGED', cloud_provider: 'AWS' },
             { installation_type: 'MANAGED', cloud_provider: 'SCW' },
+            { installation_type: 'MANAGED', cloud_provider: 'AZURE' },
             () => (
               <Section
                 data-testid="summary-resources"
@@ -231,26 +228,6 @@ export function StepSummary(props: StepSummaryProps) {
             </Section>
           ))
           .otherwise(() => null)}
-
-        {props.remoteData && props.remoteData.ssh_key.length > 0 && (
-          <Section
-            data-testid="summary-remote"
-            className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
-          >
-            <div className="mr-2 flex-grow">
-              <Heading className="mb-3">Remote access</Heading>
-              <ul className="list-none text-sm text-neutral-400">
-                <li>
-                  <strong className="font-medium">SSH key: </strong>
-                  {trimId(props.remoteData.ssh_key, 'both')}
-                </li>
-              </ul>
-            </div>
-            <Button type="button" variant="plain" size="md" onClick={props.goToRemote}>
-              <Icon className="text-base" iconName="gear-complex" />
-            </Button>
-          </Section>
-        )}
 
         {props.featuresData && showFeaturesSection && (
           <Section

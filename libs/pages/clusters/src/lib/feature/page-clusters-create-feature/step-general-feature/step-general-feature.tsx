@@ -42,7 +42,9 @@ export function StepGeneralFeature() {
       instance_type: d?.instance_type ?? '',
       nodes: d?.nodes ?? [3, 10],
       karpenter: {
-        enabled: data?.production ? false : true,
+        enabled: match(data)
+          .with({ cloud_provider: 'AWS', production: false }, () => true)
+          .otherwise(() => false),
         default_service_architecture: 'AMD64',
         disk_size_in_gib: 50,
         spot_enabled: false,
@@ -55,7 +57,6 @@ export function StepGeneralFeature() {
     if (credentials.length > 0) {
       // necessary to get the name of credentials
       const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
-
       data['credentials_name'] = currentCredentials.name
 
       setGeneralData(data)

@@ -1,4 +1,3 @@
-import { KubernetesEnum } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -7,7 +6,6 @@ import { useCloudProviderFeatures } from '@qovery/domains/cloud-providers/featur
 import { type ClusterFeaturesData, type Subnets } from '@qovery/shared/interfaces'
 import {
   CLUSTERS_CREATION_GENERAL_URL,
-  CLUSTERS_CREATION_REMOTE_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
   CLUSTERS_CREATION_SUMMARY_URL,
 } from '@qovery/shared/routes'
@@ -32,17 +30,13 @@ export function StepFeaturesFeature() {
     match(generalData?.cloud_provider)
       .with('GCP', () => navigate(creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL))
       .otherwise(() => {
-        if (resourcesData?.cluster_type === KubernetesEnum.K3_S) {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_REMOTE_URL)
-        } else {
-          navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
-        }
+        navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
       })
   }
 
   useEffect(() => {
-    setCurrentStep(steps(generalData, resourcesData?.cluster_type).findIndex((step) => step.key === 'features') + 1)
-  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type, resourcesData?.cluster_type])
+    setCurrentStep(steps(generalData).findIndex((step) => step.key === 'features') + 1)
+  }, [setCurrentStep, generalData?.cloud_provider, generalData?.installation_type])
 
   useEffect(() => {
     generalData?.cloud_provider !== 'GCP' &&
