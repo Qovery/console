@@ -5,14 +5,15 @@ import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL 
 import { Callout, ExternalLink, Icon, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
-  credentials?: ClusterCredentials[]
   openCredentialsModal: (id?: string, onChange?: (e: string | string[]) => void) => void
   loading: boolean
+  credentials?: ClusterCredentials[]
+  isSetting?: boolean
 }
 
 export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProps) {
   const { organizationId = '', clusterId } = useParams()
-  const { credentials, openCredentialsModal, loading } = props
+  const { credentials, openCredentialsModal, loading, isSetting } = props
   const { control, formState } = useFormContext()
 
   const buildCredentials = credentials?.map((item: ClusterCredentials) => ({
@@ -54,7 +55,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
               />
             )}
           />
-          {formState.isDirty && (
+          {isSetting && formState.isDirty && (
             <Callout.Root color="yellow">
               <Callout.Icon>
                 <Icon iconName="circle-exclamation" iconStyle="regular" />
