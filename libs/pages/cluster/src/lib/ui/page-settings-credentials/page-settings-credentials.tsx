@@ -20,7 +20,7 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
         <SettingsHeading title="Credentials" />
         <form onSubmit={onSubmit}>
           <BlockContent title="Configured credentials">
-            <ClusterCredentialsSettingsFeature cloudProvider={cloudProvider} />
+            <ClusterCredentialsSettingsFeature cloudProvider={cloudProvider} isSetting={true} />
           </BlockContent>
           <div className="flex justify-end">
             <Button data-testid="submit-button" type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
