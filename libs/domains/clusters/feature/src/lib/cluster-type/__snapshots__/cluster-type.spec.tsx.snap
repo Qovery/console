@@ -4,7 +4,7 @@ exports[`ClusterType should render as AKS 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
       data-accent-color="neutral"
     >
       Self-managed
