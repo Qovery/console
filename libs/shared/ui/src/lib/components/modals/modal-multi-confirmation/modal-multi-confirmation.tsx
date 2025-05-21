@@ -47,13 +47,13 @@ export function ModalMultiConfirmation({
       <form onSubmit={onSubmit}>
         {children}
         {(warning || checks) && (
-          <Callout.Root className="mb-5" color="yellow">
+          <Callout.Root className="mb-5" color="red">
             <Callout.Icon>
-              <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              <Icon iconName="triangle-exclamation" className="text-red-600" />
             </Callout.Icon>
             <Callout.Text>
               <div className="flex flex-col gap-3">
-                {warning}
+                <p className="font-semibold">{warning}</p>
                 {checks &&
                   checks.map((check) => (
                     <div key={check} className="flex items-center gap-4">
@@ -61,7 +61,7 @@ export function ModalMultiConfirmation({
                         name={check.toLowerCase().replace(' ', '_')}
                         control={control}
                         rules={{
-                          required: 'Please check the box.',
+                          required: 'Please check the box to confirm.',
                           validate: (value) => value,
                         }}
                         render={({ field, fieldState: { error } }) => (

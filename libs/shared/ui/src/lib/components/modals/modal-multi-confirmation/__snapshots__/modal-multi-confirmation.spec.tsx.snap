@@ -15,15 +15,15 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
     />
     <form>
       <div
-        class="flex flex-row gap-x-3 p-3 border rounded text-sm border-yellow-600 bg-yellow-50 text-yellow-700 mb-5"
-        data-accent-color="yellow"
+        class="flex flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mb-5"
+        data-accent-color="red"
       >
         <div
           class="-order-2 text-lg leading-6"
         >
           <i
             aria-hidden="true"
-            class="fa-regular fa-triangle-exclamation "
+            class="fa-solid fa-triangle-exclamation text-red-600"
           />
         </div>
         <div
@@ -32,6 +32,9 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
           <div
             class="flex flex-col gap-3"
           >
+            <p
+              class="font-semibold"
+            />
             <div
               class="flex items-center gap-4"
             >

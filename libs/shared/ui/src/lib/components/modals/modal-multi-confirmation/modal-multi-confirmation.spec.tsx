@@ -31,18 +31,20 @@ describe('ModalMultiConfirmation', () => {
     expect(screen.getByText('one')).toBeInTheDocument()
     expect(screen.getByText('two')).toBeInTheDocument()
 
+    // Checking the first confirmation checkbox
     await act(() => {
       fireEvent.click(screen.getByText('one'))
     })
 
+    // Making sure the submit button is disabled
     fireEvent.click(screen.getByText('Confirm'))
-
     expect(screen.getByText('Confirm')).toBeDisabled()
   })
 
   it('should submit if all checkboxes are checked', async () => {
     renderWithProviders(<ModalMultiConfirmation {...props} />)
 
+    // Checking the confirmation checkboxes
     await act(() => {
       fireEvent.click(screen.getByText('one'))
       fireEvent.click(screen.getByText('two'))
@@ -50,7 +52,8 @@ describe('ModalMultiConfirmation', () => {
 
     fireEvent.click(screen.getByText('Confirm'))
 
-    expect(screen.getByText('Confirm')).not.toBeDisabled()
+    // Making sure the submit button is enabled
+    expect(screen.getByText('Confirm')).toBeEnabled()
   })
 
   it('should match delete mode without description', () => {
