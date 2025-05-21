@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import TerraformIcon from 'devicon/icons/terraform/terraform-original.svg'
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
@@ -18,6 +19,7 @@ import {
   SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
+  SERVICES_TERRAFORM_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
@@ -260,6 +262,9 @@ export function PageNewFeature() {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
 
+  // const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
+  const isTerraformFeatureFlag = true
+
   const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
 
   const serviceEmpty = [
@@ -299,6 +304,16 @@ export function PageNewFeature() {
       cloud_provider: cloudProvider,
     },
   ]
+
+  if (isTerraformFeatureFlag) {
+    serviceEmpty.push({
+      title: 'Terraform',
+      description: 'Deploy a Terraform configuration on your Kubernetes cluster.',
+      icon: <Icon name="TERRAFORM" width={32} height={32} />,
+      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL,
+      cloud_provider: cloudProvider,
+    })
+  }
 
   const [searchInput, setSearchInput] = useState('')
 

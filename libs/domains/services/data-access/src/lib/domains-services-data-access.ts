@@ -69,6 +69,7 @@ import {
   type Database as _Database,
   type HelmResponse as _Helm,
   type JobResponse as _Job,
+  type TerraformResponse as _Terraform,
 } from 'qovery-typescript-axios'
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
@@ -132,6 +133,7 @@ export type ContainerType = Extract<ServiceType, 'CONTAINER'>
 export type DatabaseType = Extract<ServiceType, 'DATABASE'>
 export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
+export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
@@ -155,8 +157,12 @@ export type Helm = _Helm & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: HelmType
 }
+export type Terraform = _Terraform & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: TerraformType
+}
 
-export type AnyService = Application | Database | Container | Job | Helm
+export type AnyService = Application | Database | Container | Job | Terraform
 
 export type AdvancedSettings =
   | ApplicationAdvancedSettings

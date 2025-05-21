@@ -1,0 +1,1891 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <section
+            class="flex flex-col"
+          >
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              General information
+            </h1>
+            <p
+              class="mb-10 text-sm text-neutral-350"
+            >
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
+            <form
+              class="space-y-10"
+            >
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  General
+                </h2>
+                <div
+                  class="flex items-center gap-4"
+                >
+                  <button
+                    aria-controls="radix-:rk:"
+                    aria-expanded="false"
+                    aria-haspopup="dialog"
+                    class="relative rounded-full transition hover:bg-neutral-100"
+                    data-state="closed"
+                    type="button"
+                  >
+                    <span
+                      class="flex items-center justify-center h-16 w-16 min-h-16 min-w-16 rounded-full border border-neutral-200"
+                    >
+                      <span
+                        class="flex items-center justify-center rounded-full h-10 w-10"
+                      >
+                        <svg
+                          class="shrink-0 "
+                          fill="none"
+                          height="100%"
+                          name="HELM"
+                          viewBox="0 0 24 24"
+                          width="100%"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="#EAEAFE"
+                            stroke-width="2"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="11.3"
+                            stroke="#42E8E0"
+                            stroke-opacity="0.3"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10.9"
+                            stroke="#42E8E0"
+                            stroke-width="0.2"
+                          />
+                          <g
+                            clip-path="url(#clip0_6005_35604)"
+                          >
+                            <rect
+                              fill="#fff"
+                              height="18"
+                              rx="9"
+                              width="18"
+                              x="3"
+                              y="3"
+                            />
+                            <path
+                              d="M16.988 17.439c.528.754.72 1.53.43 1.733-.29.203-.953-.244-1.481-.997a3.777 3.777 0 01-.438-.812 6.43 6.43 0 01-2.924 1.05c.061.255.098.553.098.875 0 .92-.287 1.665-.642 1.665-.355 0-.642-.745-.642-1.665 0-.315.035-.605.094-.857a6.427 6.427 0 01-2.958-.963 3.877 3.877 0 01-.393.707c-.528.753-1.191 1.2-1.482.997-.29-.204-.098-.98.43-1.733.177-.253.369-.466.557-.637a6.396 6.396 0 01-.981-1.11l.843-.586a5.4 5.4 0 008.867-.008l.844.585c-.26.377-.56.718-.887 1.025.222.18.454.43.665.731zM7.708 7.217a6.44 6.44 0 00-1.175 1.356l.863.557a5.378 5.378 0 014.534-2.47c1.902 0 3.627.97 4.614 2.596l.877-.534a6.49 6.49 0 00-1.17-1.42c.243-.184.503-.453.737-.787.528-.754.72-1.53.43-1.733-.29-.203-.953.243-1.481.997-.22.314-.378.63-.47.909a6.366 6.366 0 00-2.926-1.023c.082-.28.132-.623.132-1 0-.92-.287-1.665-.642-1.665-.355 0-.642.745-.642 1.666 0 .368.047.705.125.98a6.391 6.391 0 00-2.947.936 3.744 3.744 0 00-.435-.803c-.528-.754-1.19-1.2-1.481-.996-.29.203-.098.978.43 1.732.199.284.417.524.627.702zm-4.333 7.237h1.236V12.6h1.394v1.855h1.236V9.782H6.006v1.74H4.611v-1.74H3.375v4.672zm4.902-4.672v4.672h3.09v-1.035H9.514v-.834h1.524V11.55H9.513v-.734h1.783V9.781l-3.019.001zm3.996 0v4.672h3.005v-1.035h-1.769V9.782h-1.236zm3.81 0v4.672h1.135v-1.38c0-.12-.006-.251-.018-.395a39.023 39.023 0 00-.04-.442c-.014-.15-.032-.299-.05-.442a36.27 36.27 0 01-.05-.387h.028l.373 1.092.648 1.575h.46l.646-1.575.388-1.092h.028l-.05.388c-.02.144-.036.291-.05.442-.014.15-.028.298-.04.442a4.782 4.782 0 00-.018.395v1.38h1.152V9.782h-1.28l-.704 1.941-.258.762h-.029l-.259-.762-.733-1.94h-1.28z"
+                              fill="url(#paint0_linear_6005_35604)"
+                            />
+                          </g>
+                          <defs>
+                            <lineargradient
+                              gradientUnits="userSpaceOnUse"
+                              id="paint0_linear_6005_35604"
+                              x1="12"
+                              x2="12"
+                              y1="3"
+                              y2="20.953"
+                            >
+                              <stop
+                                stop-color="#AEB0EE"
+                              />
+                              <stop
+                                offset="1"
+                                stop-color="#7C7ABF"
+                              />
+                            </lineargradient>
+                            <clippath
+                              id="clip0_6005_35604"
+                            >
+                              <rect
+                                fill="#fff"
+                                height="18"
+                                rx="9"
+                                width="18"
+                                x="3"
+                                y="3"
+                              />
+                            </clippath>
+                          </defs>
+                        </svg>
+                      </span>
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-angle-down absolute bottom-0 right-0 rounded-full bg-white p-0.5 text-neutral-300"
+                    />
+                  </button>
+                  <div
+                    class="grow"
+                  >
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Service name"
+                            >
+                              Service name
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Service name"
+                              name="name"
+                              type="text"
+                              value="my-helm-app"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  data-testid="input-textarea"
+                >
+                  <div
+                    aria-label="textarea-container"
+                    class="input pb-0 pr-2    "
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="Description (optional)"
+                    >
+                      Description (optional)
+                    </label>
+                    <textarea
+                      class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
+                      id="Description (optional)"
+                      name="description"
+                    />
+                  </div>
+                </div>
+              </section>
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  Source
+                </h2>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div
+                    class=""
+                  >
+                    <div
+                      class="input input--select    "
+                      data-testid="select"
+                    >
+                      <label
+                        class="!translate-y-0 !text-xs"
+                        for="Helm source"
+                      >
+                        Helm source
+                      </label>
+                      <div
+                        class=" css-b62m3t-container"
+                      >
+                        <span
+                          class="css-1f43avz-a11yText-A11yText"
+                          id="react-select-4-live-region"
+                        />
+                        <span
+                          aria-atomic="false"
+                          aria-live="polite"
+                          aria-relevant="additions text"
+                          class="css-1f43avz-a11yText-A11yText"
+                        />
+                        <div
+                          class="input-select__control css-13cymwt-control"
+                        >
+                          <div
+                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                          >
+                            <span
+                              class="mr-1 text-sm text-neutral-400"
+                            >
+                              Git provider
+                            </span>
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-readonly="true"
+                              class="css-mohuvp-dummyInput-DummyInput"
+                              id="Helm source"
+                              inputmode="none"
+                              role="combobox"
+                              tabindex="0"
+                              value=""
+                            />
+                          </div>
+                          <div
+                            class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                          >
+                            <span
+                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                            />
+                            <div
+                              aria-hidden="true"
+                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="css-tj5bde-Svg"
+                                focusable="false"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                width="20"
+                              >
+                                <path
+                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          name="Helm source"
+                          type="hidden"
+                          value="GIT"
+                        />
+                      </div>
+                      <input
+                        name="Helm source"
+                        type="hidden"
+                        value="GIT"
+                      />
+                      <div
+                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                      >
+                        <span
+                          class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                          role="img"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div
+                    class=""
+                  >
+                    <div
+                      class="input input--select    "
+                      data-testid="select"
+                    >
+                      <label
+                        class="top-1.5 translate-y-2 text-sm"
+                        for="Git account"
+                      >
+                        Git account
+                      </label>
+                      <div
+                        class=" css-b62m3t-container"
+                      >
+                        <span
+                          class="css-1f43avz-a11yText-A11yText"
+                          id="react-select-5-live-region"
+                        />
+                        <span
+                          aria-atomic="false"
+                          aria-live="polite"
+                          aria-relevant="additions text"
+                          class="css-1f43avz-a11yText-A11yText"
+                        />
+                        <div
+                          class="input-select__control css-13cymwt-control"
+                        >
+                          <div
+                            class="input-select__value-container css-1fdsijx-ValueContainer"
+                          >
+                            <div
+                              class="input-select__placeholder css-1jqq78o-placeholder"
+                              id="react-select-5-placeholder"
+                            >
+                              Select...
+                            </div>
+                            <div
+                              class="input-select__input-container css-qbdosj-Input"
+                              data-value=""
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                aria-describedby="react-select-5-placeholder"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                autocapitalize="none"
+                                autocomplete="off"
+                                autocorrect="off"
+                                class="input-select__input"
+                                id="Git account"
+                                role="combobox"
+                                spellcheck="false"
+                                style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                                tabindex="0"
+                                type="text"
+                                value=""
+                              />
+                            </div>
+                          </div>
+                          <div
+                            class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                          >
+                            <span
+                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                            />
+                            <div
+                              aria-hidden="true"
+                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="css-tj5bde-Svg"
+                                focusable="false"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                width="20"
+                              >
+                                <path
+                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          name="Git account"
+                          type="hidden"
+                          value=""
+                        />
+                      </div>
+                      <input
+                        name="Git account"
+                        type="hidden"
+                        value=""
+                      />
+                      <div
+                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                      >
+                        <span
+                          class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                          role="img"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex justify-center"
+                  >
+                    <div
+                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                      data-testid="spinner"
+                    />
+                  </div>
+                  <div
+                    class="flex justify-center"
+                  >
+                    <div
+                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                      data-testid="spinner"
+                    />
+                  </div>
+                </div>
+              </section>
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  Deploy
+                </h2>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div>
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Helm arguments"
+                            >
+                              Helm arguments
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Helm arguments"
+                              name="arguments"
+                              type="text"
+                              value="--wait"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p
+                      class="ml-3 mt-1 text-xs text-neutral-350"
+                    >
+                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
+                      <br />
+                      <a
+                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
+                        href="https://helm.sh/docs/helm/helm_install/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        See documentation
+                        <i
+                          aria-hidden="true"
+                          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+                        />
+                      </a>
+                    </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm install {{RELEASE_NAME}}  ./ --wait
+                    </span>
+                  </div>
+                  <div
+                    class=""
+                    data-testid="input-text-wrapper"
+                  >
+                    <div
+                      class="relative"
+                    >
+                      <div
+                        aria-label="input-container"
+                        class="input    input--label-up "
+                      >
+                        <div
+                          class=""
+                        >
+                          <label
+                            class="translate-y-2 text-sm"
+                            for="Helm timeout"
+                          >
+                            Helm timeout
+                          </label>
+                          <input
+                            class="input__value "
+                            data-testid="input-text"
+                            id="Helm timeout"
+                            name="timeout_sec"
+                            type="text"
+                            value="600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex text-sm  items-start mt-2 "
+                    data-testid="input-toggle"
+                  >
+                    <div
+                      aria-label="toggle-btn"
+                      class="inline-flex items-center justify-between cursor-pointer"
+                      data-testid="input-toggle-button"
+                    >
+                      <input
+                        class="hidden"
+                        type="checkbox"
+                        value="false"
+                      />
+                      <div
+                        aria-label="bg"
+                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+                      >
+                        <div
+                          aria-label="circle"
+                          class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
+                    >
+                      <p
+                        class="font-medium text-neutral-400"
+                      >
+                        Allow cluster-wide resources
+                      </p>
+                      <div
+                        class="text-neutral-350"
+                      >
+                        Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex text-sm  items-start  "
+                  data-testid="input-toggle"
+                >
+                  <div
+                    aria-label="toggle-btn"
+                    class="inline-flex items-center justify-between cursor-pointer"
+                    data-testid="input-toggle-button"
+                  >
+                    <input
+                      class="hidden"
+                      type="checkbox"
+                      value="false"
+                    />
+                    <div
+                      aria-label="bg"
+                      class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+                    >
+                      <div
+                        aria-label="circle"
+                        class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
+                  >
+                    <p
+                      class="font-medium text-neutral-400"
+                    >
+                      Auto-deploy
+                    </p>
+                    <div
+                      class="text-neutral-350"
+                    >
+                      The service will be automatically updated on every new commit on the branch.
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <div
+                class="flex justify-between"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                  disabled=""
+                  type="submit"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StepGeneralFeature should submit a form with a helm repository and match snapshots 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <section
+            class="flex flex-col"
+          >
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              General information
+            </h1>
+            <p
+              class="mb-10 text-sm text-neutral-350"
+            >
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
+            <form
+              class="space-y-10"
+            >
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  General
+                </h2>
+                <div
+                  class="flex items-center gap-4"
+                >
+                  <button
+                    aria-controls="radix-:rd:"
+                    aria-expanded="false"
+                    aria-haspopup="dialog"
+                    class="relative rounded-full transition hover:bg-neutral-100"
+                    data-state="closed"
+                    type="button"
+                  >
+                    <span
+                      class="flex items-center justify-center h-16 w-16 min-h-16 min-w-16 rounded-full border border-neutral-200"
+                    >
+                      <span
+                        class="flex items-center justify-center rounded-full h-10 w-10"
+                      >
+                        <svg
+                          class="shrink-0 "
+                          fill="none"
+                          height="100%"
+                          name="HELM"
+                          viewBox="0 0 24 24"
+                          width="100%"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="#EAEAFE"
+                            stroke-width="2"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="11.3"
+                            stroke="#42E8E0"
+                            stroke-opacity="0.3"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10.9"
+                            stroke="#42E8E0"
+                            stroke-width="0.2"
+                          />
+                          <g
+                            clip-path="url(#clip0_6005_35604)"
+                          >
+                            <rect
+                              fill="#fff"
+                              height="18"
+                              rx="9"
+                              width="18"
+                              x="3"
+                              y="3"
+                            />
+                            <path
+                              d="M16.988 17.439c.528.754.72 1.53.43 1.733-.29.203-.953-.244-1.481-.997a3.777 3.777 0 01-.438-.812 6.43 6.43 0 01-2.924 1.05c.061.255.098.553.098.875 0 .92-.287 1.665-.642 1.665-.355 0-.642-.745-.642-1.665 0-.315.035-.605.094-.857a6.427 6.427 0 01-2.958-.963 3.877 3.877 0 01-.393.707c-.528.753-1.191 1.2-1.482.997-.29-.204-.098-.98.43-1.733.177-.253.369-.466.557-.637a6.396 6.396 0 01-.981-1.11l.843-.586a5.4 5.4 0 008.867-.008l.844.585c-.26.377-.56.718-.887 1.025.222.18.454.43.665.731zM7.708 7.217a6.44 6.44 0 00-1.175 1.356l.863.557a5.378 5.378 0 014.534-2.47c1.902 0 3.627.97 4.614 2.596l.877-.534a6.49 6.49 0 00-1.17-1.42c.243-.184.503-.453.737-.787.528-.754.72-1.53.43-1.733-.29-.203-.953.243-1.481.997-.22.314-.378.63-.47.909a6.366 6.366 0 00-2.926-1.023c.082-.28.132-.623.132-1 0-.92-.287-1.665-.642-1.665-.355 0-.642.745-.642 1.666 0 .368.047.705.125.98a6.391 6.391 0 00-2.947.936 3.744 3.744 0 00-.435-.803c-.528-.754-1.19-1.2-1.481-.996-.29.203-.098.978.43 1.732.199.284.417.524.627.702zm-4.333 7.237h1.236V12.6h1.394v1.855h1.236V9.782H6.006v1.74H4.611v-1.74H3.375v4.672zm4.902-4.672v4.672h3.09v-1.035H9.514v-.834h1.524V11.55H9.513v-.734h1.783V9.781l-3.019.001zm3.996 0v4.672h3.005v-1.035h-1.769V9.782h-1.236zm3.81 0v4.672h1.135v-1.38c0-.12-.006-.251-.018-.395a39.023 39.023 0 00-.04-.442c-.014-.15-.032-.299-.05-.442a36.27 36.27 0 01-.05-.387h.028l.373 1.092.648 1.575h.46l.646-1.575.388-1.092h.028l-.05.388c-.02.144-.036.291-.05.442-.014.15-.028.298-.04.442a4.782 4.782 0 00-.018.395v1.38h1.152V9.782h-1.28l-.704 1.941-.258.762h-.029l-.259-.762-.733-1.94h-1.28z"
+                              fill="url(#paint0_linear_6005_35604)"
+                            />
+                          </g>
+                          <defs>
+                            <lineargradient
+                              gradientUnits="userSpaceOnUse"
+                              id="paint0_linear_6005_35604"
+                              x1="12"
+                              x2="12"
+                              y1="3"
+                              y2="20.953"
+                            >
+                              <stop
+                                stop-color="#AEB0EE"
+                              />
+                              <stop
+                                offset="1"
+                                stop-color="#7C7ABF"
+                              />
+                            </lineargradient>
+                            <clippath
+                              id="clip0_6005_35604"
+                            >
+                              <rect
+                                fill="#fff"
+                                height="18"
+                                rx="9"
+                                width="18"
+                                x="3"
+                                y="3"
+                              />
+                            </clippath>
+                          </defs>
+                        </svg>
+                      </span>
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-angle-down absolute bottom-0 right-0 rounded-full bg-white p-0.5 text-neutral-300"
+                    />
+                  </button>
+                  <div
+                    class="grow"
+                  >
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Service name"
+                            >
+                              Service name
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Service name"
+                              name="name"
+                              type="text"
+                              value="my-helm-app"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  data-testid="input-textarea"
+                >
+                  <div
+                    aria-label="textarea-container"
+                    class="input pb-0 pr-2    input--label-up"
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="Description (optional)"
+                    >
+                      Description (optional)
+                    </label>
+                    <textarea
+                      class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
+                      id="Description (optional)"
+                      name="description"
+                    >
+                      description
+                    </textarea>
+                  </div>
+                </div>
+              </section>
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  Source
+                </h2>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div
+                    class=""
+                  >
+                    <div
+                      class="input input--select    "
+                      data-testid="select"
+                    >
+                      <label
+                        class="!translate-y-0 !text-xs"
+                        for="Helm source"
+                      >
+                        Helm source
+                      </label>
+                      <div
+                        class=" css-b62m3t-container"
+                      >
+                        <span
+                          class="css-1f43avz-a11yText-A11yText"
+                          id="react-select-3-live-region"
+                        />
+                        <span
+                          aria-atomic="false"
+                          aria-live="polite"
+                          aria-relevant="additions text"
+                          class="css-1f43avz-a11yText-A11yText"
+                        />
+                        <div
+                          class="input-select__control css-13cymwt-control"
+                        >
+                          <div
+                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                          >
+                            <span
+                              class="mr-1 text-sm text-neutral-400"
+                            >
+                              Helm repository
+                            </span>
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-readonly="true"
+                              class="css-mohuvp-dummyInput-DummyInput"
+                              id="Helm source"
+                              inputmode="none"
+                              role="combobox"
+                              tabindex="0"
+                              value=""
+                            />
+                          </div>
+                          <div
+                            class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                          >
+                            <span
+                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                            />
+                            <div
+                              aria-hidden="true"
+                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="css-tj5bde-Svg"
+                                focusable="false"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                width="20"
+                              >
+                                <path
+                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          name="Helm source"
+                          type="hidden"
+                          value="HELM_REPOSITORY"
+                        />
+                      </div>
+                      <input
+                        name="Helm source"
+                        type="hidden"
+                        value="HELM_REPOSITORY"
+                      />
+                      <div
+                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                      >
+                        <span
+                          class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                          role="img"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-col gap-3"
+                  >
+                    <div
+                      class="flex justify-center"
+                    >
+                      <div
+                        class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                        data-testid="spinner"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  Deploy
+                </h2>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div>
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Helm arguments"
+                            >
+                              Helm arguments
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Helm arguments"
+                              name="arguments"
+                              type="text"
+                              value="--wait"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p
+                      class="ml-3 mt-1 text-xs text-neutral-350"
+                    >
+                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
+                      <br />
+                      <a
+                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
+                        href="https://helm.sh/docs/helm/helm_install/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        See documentation
+                        <i
+                          aria-hidden="true"
+                          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+                        />
+                      </a>
+                    </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm upgrade --install -n {{KUBERNETES_NAMESPACE}} {{RELEASE_NAME}} . --wait
+                    </span>
+                  </div>
+                  <div
+                    class=""
+                    data-testid="input-text-wrapper"
+                  >
+                    <div
+                      class="relative"
+                    >
+                      <div
+                        aria-label="input-container"
+                        class="input    input--label-up "
+                      >
+                        <div
+                          class=""
+                        >
+                          <label
+                            class="translate-y-2 text-sm"
+                            for="Helm timeout"
+                          >
+                            Helm timeout
+                          </label>
+                          <input
+                            class="input__value "
+                            data-testid="input-text"
+                            id="Helm timeout"
+                            name="timeout_sec"
+                            type="text"
+                            value="600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex text-sm  items-start mt-2 "
+                    data-testid="input-toggle"
+                  >
+                    <div
+                      aria-label="toggle-btn"
+                      class="inline-flex items-center justify-between cursor-pointer"
+                      data-testid="input-toggle-button"
+                    >
+                      <input
+                        checked=""
+                        class="hidden"
+                        type="checkbox"
+                        value="true"
+                      />
+                      <div
+                        aria-label="bg"
+                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-brand-500"
+                      >
+                        <div
+                          aria-label="circle"
+                          class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  translate-x-3.5"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
+                    >
+                      <p
+                        class="font-medium text-neutral-400"
+                      >
+                        Allow cluster-wide resources
+                      </p>
+                      <div
+                        class="text-neutral-350"
+                      >
+                        Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-5 items-center"
+                  data-accent-color="sky"
+                >
+                  <div
+                    class="-order-2 text-lg leading-6"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-circle-info "
+                    />
+                  </div>
+                  <div
+                    class="-order-1 mr-auto gap-x-3 text-neutral-400"
+                  >
+                    <span
+                      class="block font-medium leading-6"
+                    >
+                      Git automations are disabled when using Helm repositories (auto-deploy, automatic preview environments)
+                    </span>
+                  </div>
+                </div>
+              </section>
+              <div
+                class="flex justify-between"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                  disabled=""
+                  type="submit"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StepGeneralFeature should submit a form with a public git repository 1`] = `
+<body>
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <section
+            class="flex flex-col"
+          >
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              General information
+            </h1>
+            <p
+              class="mb-10 text-sm text-neutral-350"
+            >
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
+            <form
+              class="space-y-10"
+            >
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  General
+                </h2>
+                <div
+                  class="flex items-center gap-4"
+                >
+                  <button
+                    aria-controls="radix-:rr:"
+                    aria-expanded="false"
+                    aria-haspopup="dialog"
+                    class="relative rounded-full transition hover:bg-neutral-100"
+                    data-state="closed"
+                    type="button"
+                  >
+                    <span
+                      class="flex items-center justify-center h-16 w-16 min-h-16 min-w-16 rounded-full border border-neutral-200"
+                    >
+                      <span
+                        class="flex items-center justify-center rounded-full h-10 w-10"
+                      >
+                        <svg
+                          class="shrink-0 "
+                          fill="none"
+                          height="100%"
+                          name="HELM"
+                          viewBox="0 0 24 24"
+                          width="100%"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="#EAEAFE"
+                            stroke-width="2"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="11.3"
+                            stroke="#42E8E0"
+                            stroke-opacity="0.3"
+                          />
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10.9"
+                            stroke="#42E8E0"
+                            stroke-width="0.2"
+                          />
+                          <g
+                            clip-path="url(#clip0_6005_35604)"
+                          >
+                            <rect
+                              fill="#fff"
+                              height="18"
+                              rx="9"
+                              width="18"
+                              x="3"
+                              y="3"
+                            />
+                            <path
+                              d="M16.988 17.439c.528.754.72 1.53.43 1.733-.29.203-.953-.244-1.481-.997a3.777 3.777 0 01-.438-.812 6.43 6.43 0 01-2.924 1.05c.061.255.098.553.098.875 0 .92-.287 1.665-.642 1.665-.355 0-.642-.745-.642-1.665 0-.315.035-.605.094-.857a6.427 6.427 0 01-2.958-.963 3.877 3.877 0 01-.393.707c-.528.753-1.191 1.2-1.482.997-.29-.204-.098-.98.43-1.733.177-.253.369-.466.557-.637a6.396 6.396 0 01-.981-1.11l.843-.586a5.4 5.4 0 008.867-.008l.844.585c-.26.377-.56.718-.887 1.025.222.18.454.43.665.731zM7.708 7.217a6.44 6.44 0 00-1.175 1.356l.863.557a5.378 5.378 0 014.534-2.47c1.902 0 3.627.97 4.614 2.596l.877-.534a6.49 6.49 0 00-1.17-1.42c.243-.184.503-.453.737-.787.528-.754.72-1.53.43-1.733-.29-.203-.953.243-1.481.997-.22.314-.378.63-.47.909a6.366 6.366 0 00-2.926-1.023c.082-.28.132-.623.132-1 0-.92-.287-1.665-.642-1.665-.355 0-.642.745-.642 1.666 0 .368.047.705.125.98a6.391 6.391 0 00-2.947.936 3.744 3.744 0 00-.435-.803c-.528-.754-1.19-1.2-1.481-.996-.29.203-.098.978.43 1.732.199.284.417.524.627.702zm-4.333 7.237h1.236V12.6h1.394v1.855h1.236V9.782H6.006v1.74H4.611v-1.74H3.375v4.672zm4.902-4.672v4.672h3.09v-1.035H9.514v-.834h1.524V11.55H9.513v-.734h1.783V9.781l-3.019.001zm3.996 0v4.672h3.005v-1.035h-1.769V9.782h-1.236zm3.81 0v4.672h1.135v-1.38c0-.12-.006-.251-.018-.395a39.023 39.023 0 00-.04-.442c-.014-.15-.032-.299-.05-.442a36.27 36.27 0 01-.05-.387h.028l.373 1.092.648 1.575h.46l.646-1.575.388-1.092h.028l-.05.388c-.02.144-.036.291-.05.442-.014.15-.028.298-.04.442a4.782 4.782 0 00-.018.395v1.38h1.152V9.782h-1.28l-.704 1.941-.258.762h-.029l-.259-.762-.733-1.94h-1.28z"
+                              fill="url(#paint0_linear_6005_35604)"
+                            />
+                          </g>
+                          <defs>
+                            <lineargradient
+                              gradientUnits="userSpaceOnUse"
+                              id="paint0_linear_6005_35604"
+                              x1="12"
+                              x2="12"
+                              y1="3"
+                              y2="20.953"
+                            >
+                              <stop
+                                stop-color="#AEB0EE"
+                              />
+                              <stop
+                                offset="1"
+                                stop-color="#7C7ABF"
+                              />
+                            </lineargradient>
+                            <clippath
+                              id="clip0_6005_35604"
+                            >
+                              <rect
+                                fill="#fff"
+                                height="18"
+                                rx="9"
+                                width="18"
+                                x="3"
+                                y="3"
+                              />
+                            </clippath>
+                          </defs>
+                        </svg>
+                      </span>
+                    </span>
+                    <i
+                      aria-hidden="true"
+                      class="fa-solid fa-angle-down absolute bottom-0 right-0 rounded-full bg-white p-0.5 text-neutral-300"
+                    />
+                  </button>
+                  <div
+                    class="grow"
+                  >
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Service name"
+                            >
+                              Service name
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Service name"
+                              name="name"
+                              type="text"
+                              value="my-helm-app"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  data-testid="input-textarea"
+                >
+                  <div
+                    aria-label="textarea-container"
+                    class="input pb-0 pr-2    "
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="Description (optional)"
+                    >
+                      Description (optional)
+                    </label>
+                    <textarea
+                      class="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral-400 outline-0"
+                      id="Description (optional)"
+                      name="description"
+                    />
+                  </div>
+                </div>
+              </section>
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  Source
+                </h2>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div
+                    class=""
+                  >
+                    <div
+                      class="input input--select    "
+                      data-testid="select"
+                    >
+                      <label
+                        class="!translate-y-0 !text-xs"
+                        for="Helm source"
+                      >
+                        Helm source
+                      </label>
+                      <div
+                        class=" css-b62m3t-container"
+                      >
+                        <span
+                          class="css-1f43avz-a11yText-A11yText"
+                          id="react-select-6-live-region"
+                        />
+                        <span
+                          aria-atomic="false"
+                          aria-live="polite"
+                          aria-relevant="additions text"
+                          class="css-1f43avz-a11yText-A11yText"
+                        />
+                        <div
+                          class="input-select__control css-13cymwt-control"
+                        >
+                          <div
+                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                          >
+                            <span
+                              class="mr-1 text-sm text-neutral-400"
+                            >
+                              Git provider
+                            </span>
+                            <input
+                              aria-autocomplete="list"
+                              aria-expanded="false"
+                              aria-haspopup="true"
+                              aria-readonly="true"
+                              class="css-mohuvp-dummyInput-DummyInput"
+                              id="Helm source"
+                              inputmode="none"
+                              role="combobox"
+                              tabindex="0"
+                              value=""
+                            />
+                          </div>
+                          <div
+                            class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                          >
+                            <span
+                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                            />
+                            <div
+                              aria-hidden="true"
+                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="css-tj5bde-Svg"
+                                focusable="false"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                width="20"
+                              >
+                                <path
+                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          name="Helm source"
+                          type="hidden"
+                          value="GIT"
+                        />
+                      </div>
+                      <input
+                        name="Helm source"
+                        type="hidden"
+                        value="GIT"
+                      />
+                      <div
+                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                      >
+                        <span
+                          class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                          role="img"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div
+                    class=""
+                  >
+                    <div
+                      class="input input--select input--has-icon   "
+                      data-testid="select"
+                    >
+                      <div
+                        class="absolute left-0 top-0 flex h-full w-12 items-center justify-center"
+                        data-testid="selected-icon"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-folder-closed "
+                          height="16"
+                          width="16"
+                        />
+                      </div>
+                      <label
+                        class="!translate-y-0 !text-xs ml-8"
+                        for="Git account"
+                      >
+                        Git account
+                      </label>
+                      <div
+                        class=" css-b62m3t-container"
+                      >
+                        <span
+                          class="css-1f43avz-a11yText-A11yText"
+                          id="react-select-7-live-region"
+                        />
+                        <span
+                          aria-atomic="false"
+                          aria-live="polite"
+                          aria-relevant="additions text"
+                          class="css-1f43avz-a11yText-A11yText"
+                        />
+                        <div
+                          class="input-select__control css-13cymwt-control"
+                        >
+                          <div
+                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                          >
+                            <span
+                              class="mr-1 text-sm text-neutral-400"
+                            >
+                              Public repository (Github, Gitlab, Bitbucket)
+                            </span>
+                            <div
+                              class="input-select__input-container css-qbdosj-Input"
+                              data-value=""
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                autocapitalize="none"
+                                autocomplete="off"
+                                autocorrect="off"
+                                class="input-select__input"
+                                id="Git account"
+                                role="combobox"
+                                spellcheck="false"
+                                style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                                tabindex="0"
+                                type="text"
+                                value=""
+                              />
+                            </div>
+                          </div>
+                          <div
+                            class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                          >
+                            <span
+                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                            />
+                            <div
+                              aria-hidden="true"
+                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="css-tj5bde-Svg"
+                                focusable="false"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                width="20"
+                              >
+                                <path
+                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          name="Git account"
+                          type="hidden"
+                          value="PUBLIC"
+                        />
+                      </div>
+                      <input
+                        name="Git account"
+                        type="hidden"
+                        value="PUBLIC"
+                      />
+                      <div
+                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                      >
+                        <span
+                          class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                          role="img"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Public repository URL (.git)"
+                            >
+                              Public repository URL (.git)
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Public repository URL (.git)"
+                              name="repository"
+                              type="text"
+                              value="https://github.com/Qovery/console.git"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class=""
+                    data-testid="input-text-wrapper"
+                  >
+                    <div
+                      class="relative"
+                    >
+                      <div
+                        aria-label="input-container"
+                        class="input    input--label-up "
+                      >
+                        <div
+                          class=""
+                        >
+                          <label
+                            class="translate-y-2 text-sm"
+                            for="Branch"
+                          >
+                            Branch
+                          </label>
+                          <input
+                            class="input__value "
+                            data-testid="input-text"
+                            id="Branch"
+                            name="branch"
+                            type="text"
+                            value="main"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class=""
+                    data-testid="input-text-wrapper"
+                  >
+                    <div
+                      class="relative"
+                    >
+                      <div
+                        aria-label="input-container"
+                        class="input    input--label-up "
+                      >
+                        <div
+                          class=""
+                        >
+                          <label
+                            class="translate-y-2 text-sm"
+                            for="Root service path"
+                          >
+                            Root service path
+                          </label>
+                          <input
+                            class="input__value "
+                            data-testid="input-text"
+                            id="Root service path"
+                            name="root_path"
+                            type="text"
+                            value="/"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p
+                    class="ml-4 mt-1 text-xs text-neutral-350"
+                  >
+                    Provide the path in the repository where the service is located
+                  </p>
+                  <div
+                    class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 items-center"
+                    data-accent-color="sky"
+                  >
+                    <div
+                      class="-order-2 text-lg leading-6"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-info-circle "
+                      />
+                    </div>
+                    <div
+                      class="-order-1 mr-auto gap-x-3 text-neutral-400"
+                    >
+                      Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section
+                class="flex flex-col gap-4"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold"
+                >
+                  Deploy
+                </h2>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div>
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Helm arguments"
+                            >
+                              Helm arguments
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Helm arguments"
+                              name="arguments"
+                              type="text"
+                              value="--wait"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p
+                      class="ml-3 mt-1 text-xs text-neutral-350"
+                    >
+                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
+                      <br />
+                      <a
+                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
+                        href="https://helm.sh/docs/helm/helm_install/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        See documentation
+                        <i
+                          aria-hidden="true"
+                          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+                        />
+                      </a>
+                    </p>
+                  </div>
+                  <div
+                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
+                  >
+                    <span
+                      class="select-none text-xs"
+                    >
+                      Helm install format:
+                    </span>
+                    <span
+                      class="break-words text-sm"
+                    >
+                      helm install {{RELEASE_NAME}}  ./ --wait
+                    </span>
+                  </div>
+                  <div
+                    class=""
+                    data-testid="input-text-wrapper"
+                  >
+                    <div
+                      class="relative"
+                    >
+                      <div
+                        aria-label="input-container"
+                        class="input    input--label-up "
+                      >
+                        <div
+                          class=""
+                        >
+                          <label
+                            class="translate-y-2 text-sm"
+                            for="Helm timeout"
+                          >
+                            Helm timeout
+                          </label>
+                          <input
+                            class="input__value "
+                            data-testid="input-text"
+                            id="Helm timeout"
+                            name="timeout_sec"
+                            type="text"
+                            value="600"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex text-sm  items-start mt-2 "
+                    data-testid="input-toggle"
+                  >
+                    <div
+                      aria-label="toggle-btn"
+                      class="inline-flex items-center justify-between cursor-pointer"
+                      data-testid="input-toggle-button"
+                    >
+                      <input
+                        class="hidden"
+                        type="checkbox"
+                        value="false"
+                      />
+                      <div
+                        aria-label="bg"
+                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
+                      >
+                        <div
+                          aria-label="circle"
+                          class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
+                    >
+                      <p
+                        class="font-medium text-neutral-400"
+                      >
+                        Allow cluster-wide resources
+                      </p>
+                      <div
+                        class="text-neutral-350"
+                      >
+                        Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <div
+                class="flex justify-between"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                  disabled=""
+                  type="submit"
+                >
+                  Continue
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;
