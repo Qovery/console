@@ -2,7 +2,7 @@ import { CloudProviderEnum, type KubernetesEnum, PortProtocolEnum } from 'qovery
 import { type FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
+import { Callout, Checkbox, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   kubernetes?: KubernetesEnum
@@ -259,6 +259,52 @@ export function CrudModal({
           </Callout.Icon>
           <Callout.Text>Please verify the health check configuration.</Callout.Text>
         </Callout.Root>
+      )}
+      {isEdit && !watchPublicly && (
+        <div>
+          <Callout.Root className="mt-5" color="red">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" className="text-red-600" />
+            </Callout.Icon>
+            <Callout.Text>
+              <div className="flex flex-col gap-2">
+                <p className="font-semibold">
+                  You are about to remove your last public port.
+                  <br />
+                  Please confirm that you understand the impact of this operation.
+                </p>
+                <div className="flex items-center gap-4">
+                  <Controller
+                    name="confirm"
+                    control={control}
+                    rules={{
+                      required: 'Please check the box to confirm.',
+                      validate: (value) => value,
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            name={field.name}
+                            id={field.name}
+                            className="shrink-0"
+                            color="red"
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                          <label htmlFor={field.name}>
+                            I understand this action is irreversible and will delete all linked domains
+                          </label>
+                        </div>
+                        {error && <p className="text-sm text-red-500">{error.message}</p>}
+                      </div>
+                    )}
+                  />
+                </div>
+              </div>
+            </Callout.Text>
+          </Callout.Root>
+        </div>
       )}
     </ModalCrud>
   )
