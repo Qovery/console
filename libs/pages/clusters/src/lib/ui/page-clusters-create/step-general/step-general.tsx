@@ -120,7 +120,10 @@ export function StepGeneral(props: StepGeneralProps) {
                       />
                     )}
                   />
-                  <ClusterCredentialsSettingsFeature cloudProvider={currentProvider.short_name as CloudProviderEnum} />
+                  <ClusterCredentialsSettingsFeature
+                    cloudProvider={currentProvider.short_name as CloudProviderEnum}
+                    isSetting={false}
+                  />
                 </>
               )}
             </>

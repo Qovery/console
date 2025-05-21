@@ -7,9 +7,13 @@ import { ClusterCredentialsSettings } from '../../ui/cluster-credentials-setting
 
 export interface ClusterCredentialsSettingsFeatureProps {
   cloudProvider?: CloudProviderEnum
+  isSetting?: boolean
 }
 
-export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCredentialsSettingsFeatureProps) {
+export function ClusterCredentialsSettingsFeature({
+  cloudProvider,
+  isSetting,
+}: ClusterCredentialsSettingsFeatureProps) {
   const { organizationId = '', clusterId } = useParams()
   const { openModal, closeModal } = useModal()
   const { data: credentials = [], isLoading: isLoadingCloudProviderCredentials } = useCloudProviderCredentials({
@@ -42,6 +46,7 @@ export function ClusterCredentialsSettingsFeature({ cloudProvider }: ClusterCred
       credentials={credentials}
       openCredentialsModal={openCredentialsModal}
       loading={isLoadingCloudProviderCredentials}
+      isSetting={isSetting}
     />
   )
 }
