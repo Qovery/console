@@ -49,7 +49,7 @@ export function CardResources({ organizationId, clusterId }: CardResourcesProps)
               <Icon className="shrink-0 text-base text-neutral-300" iconName={icon} iconStyle="regular" />
               <span className="truncate whitespace-nowrap">{label}</span>
             </span>
-            <Skeleton width={160} height={20} show={!runningStatus}>
+            <Skeleton width={160} height={20} show={typeof runningStatus !== 'object' ? true : false}>
               <p className="flex items-center gap-1 text-right text-neutral-400">
                 <span className="font-medium">{value.used}</span>
                 <span className="flex items-center gap-1.5 text-neutral-350">

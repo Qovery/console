@@ -1,10 +1,11 @@
 import clsx from 'clsx'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface CardSetupProps {
   organizationId: string
@@ -19,6 +20,8 @@ export function CardSetup({ organizationId, clusterId }: CardSetupProps) {
     organizationId: organizationId,
     clusterId: clusterId,
   })
+  const { pathname } = useLocation()
+
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
 
   const isLoading =
@@ -68,17 +71,37 @@ export function CardSetup({ organizationId, clusterId }: CardSetupProps) {
             </span>
           </div>
         </Skeleton>
-        <Skeleton width="65%" height={20} show={isLoading}>
-          <Link
-            to={INFRA_LOGS_URL(organizationId, clusterId)}
-            className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-neutral-150"
-          >
-            <StatusChip status="RUNNING" />
-            Deployed{' '}
-            {deploymentStatus?.last_deployment_date && timeAgo(new Date(deploymentStatus.last_deployment_date))}
-            <Icon className="ml-auto text-base text-neutral-300" iconName="arrow-up-right" iconStyle="regular" />
-          </Link>
-        </Skeleton>
+        {deploymentStatus?.is_deployed && (
+          <Skeleton width="65%" height={20} show={isLoading} className="truncate">
+            <Link
+              to={INFRA_LOGS_URL(organizationId, clusterId)}
+              className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-neutral-150"
+              state={{
+                prevUrl: pathname,
+              }}
+            >
+              <StatusChip status={deploymentStatus.status} />
+              {match(deploymentStatus?.status)
+                .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
+                  <>{upperCaseFirstLetter(s).replace('_', ' ')}...</>
+                ))
+                .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) =>
+                  s === 'DRY_RUN' ? 'Evaluating changes (dry-run) ' : upperCaseFirstLetter(s) + '...'
+                )
+                .with(
+                  'BUILD_ERROR',
+                  'DELETE_ERROR',
+                  'DEPLOYMENT_ERROR',
+                  'STOP_ERROR',
+                  'RESTART_ERROR',
+                  () => 'Last deployment failed'
+                )
+                .otherwise((s) => upperCaseFirstLetter(s))}{' '}
+              {deploymentStatus?.last_deployment_date && timeAgo(new Date(deploymentStatus.last_deployment_date))}
+              <Icon className="ml-auto text-base text-neutral-300" iconName="arrow-up-right" iconStyle="regular" />
+            </Link>
+          </Skeleton>
+        )}
         <Skeleton width="65%" height={20} show={isLoading}>
           <div className="flex h-8 items-center gap-2.5 p-1.5">
             <Icon className="text-base text-neutral-300" iconName="calendar-day" iconStyle="regular" />
