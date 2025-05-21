@@ -8,6 +8,68 @@ $fa-font-path: '/assets/fonts/font-awesome';
 @tailwind base;
 @tailwind utilities;
 
+:root {
+  --color-neutral-50: theme('colors.neutral.50');
+  --color-neutral-100: theme('colors.neutral.100');
+  --color-neutral-150: theme('colors.neutral.150');
+  --color-neutral-200: theme('colors.neutral.200');
+  --color-neutral-250: theme('colors.neutral.250');
+  --color-neutral-300: theme('colors.neutral.300');
+  --color-neutral-350: theme('colors.neutral.350');
+  --color-neutral-400: theme('colors.neutral.400');
+  --color-neutral-500: theme('colors.neutral.500');
+  --color-neutral-550: theme('colors.neutral.550');
+  --color-neutral-600: theme('colors.neutral.600');
+  --color-neutral-650: theme('colors.neutral.650');
+  --color-neutral-700: theme('colors.neutral.700');
+  --color-neutral-800: theme('colors.neutral.800');
+  --color-neutral-900: theme('colors.neutral.900');
+
+  --color-brand-50: theme('colors.brand.50');
+  --color-brand-100: theme('colors.brand.100');
+  --color-brand-200: theme('colors.brand.200');
+  --color-brand-300: theme('colors.brand.300');
+  --color-brand-400: theme('colors.brand.400');
+  --color-brand-500: theme('colors.brand.500');
+  --color-brand-600: theme('colors.brand.600');
+  --color-brand-700: theme('colors.brand.700');
+  --color-brand-800: theme('colors.brand.800');
+  --color-brand-900: theme('colors.brand.900');
+
+  --color-yellow-50: theme('colors.yellow.50');
+  --color-yellow-100: theme('colors.yellow.100');
+  --color-yellow-200: theme('colors.yellow.200');
+  --color-yellow-300: theme('colors.yellow.300');
+  --color-yellow-400: theme('colors.yellow.400');
+  --color-yellow-500: theme('colors.yellow.500');
+  --color-yellow-600: theme('colors.yellow.600');
+  --color-yellow-700: theme('colors.yellow.700');
+  --color-yellow-800: theme('colors.yellow.800');
+  --color-yellow-900: theme('colors.yellow.900');
+
+  --color-red-50: theme('colors.red.50');
+  --color-red-100: theme('colors.red.100');
+  --color-red-200: theme('colors.red.200');
+  --color-red-300: theme('colors.red.300');
+  --color-red-400: theme('colors.red.400');
+  --color-red-500: theme('colors.red.500');
+  --color-red-600: theme('colors.red.600');
+  --color-red-700: theme('colors.red.700');
+  --color-red-800: theme('colors.red.800');
+  --color-red-900: theme('colors.red.900');
+
+  --color-green-50: theme('colors.green.50');
+  --color-green-100: theme('colors.green.100');
+  --color-green-200: theme('colors.green.200');
+  --color-green-300: theme('colors.green.300');
+  --color-green-400: theme('colors.green.400');
+  --color-green-500: theme('colors.green.500');
+  --color-green-600: theme('colors.green.600');
+  --color-green-700: theme('colors.green.700');
+  --color-green-800: theme('colors.green.800');
+  --color-green-900: theme('colors.green.900');
+}
+
 @import 'base/variable';
 @import 'base/fonts';
 @import 'base/icons';
