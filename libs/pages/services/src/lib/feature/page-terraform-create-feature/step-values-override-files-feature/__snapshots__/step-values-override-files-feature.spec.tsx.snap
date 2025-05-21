@@ -1,0 +1,618 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StepValuesOverrideFilesFeature should submit a form with a git repository 1`] = `
+<body>
+  <div />
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <section
+            class="flex flex-col"
+          >
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              Values override as file
+            </h1>
+            <form
+              class="space-y-10"
+            >
+              <div>
+                <p
+                  class="text-sm text-neutral-350"
+                >
+                  Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
+                </p>
+                <span
+                  aria-controls="radix-:rd:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+                  data-state="closed"
+                  type="button"
+                >
+                  How it works 
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-circle-question text-xs"
+                  />
+                </span>
+              </div>
+              <div
+                class="flex flex-col gap-4"
+              >
+                <div
+                  class=""
+                >
+                  <div
+                    class="input input--select    "
+                    data-testid="select"
+                  >
+                    <label
+                      class="!translate-y-0 !text-xs"
+                      for="File source"
+                    >
+                      File source
+                    </label>
+                    <div
+                      class=" css-b62m3t-container"
+                    >
+                      <span
+                        class="css-1f43avz-a11yText-A11yText"
+                        id="react-select-3-live-region"
+                      />
+                      <span
+                        aria-atomic="false"
+                        aria-live="polite"
+                        aria-relevant="additions text"
+                        class="css-1f43avz-a11yText-A11yText"
+                      />
+                      <div
+                        class="input-select__control css-13cymwt-control"
+                      >
+                        <div
+                          class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                        >
+                          <span
+                            class="mr-1 text-sm text-neutral-400"
+                          >
+                            Git repository
+                          </span>
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-readonly="true"
+                            class="css-mohuvp-dummyInput-DummyInput"
+                            id="File source"
+                            inputmode="none"
+                            role="combobox"
+                            tabindex="0"
+                            value=""
+                          />
+                        </div>
+                        <div
+                          class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                        >
+                          <span
+                            class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                          />
+                          <div
+                            aria-hidden="true"
+                            class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              class="css-tj5bde-Svg"
+                              focusable="false"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              width="20"
+                            >
+                              <path
+                                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        name="File source"
+                        type="hidden"
+                        value="GIT_REPOSITORY"
+                      />
+                    </div>
+                    <input
+                      name="File source"
+                      type="hidden"
+                      value="GIT_REPOSITORY"
+                    />
+                    <div
+                      class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                    >
+                      <span
+                        class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                        role="img"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <section
+                class="flex flex-col"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold mb-2"
+                >
+                  Override from repository
+                </h2>
+                <p
+                  class="mb-6 text-sm text-neutral-350"
+                >
+                  Specify the repository and the path containing the override yaml file to be passed via the “-f” helm argument. More than one file can be used as override by adding them in the path field separated by a semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
+                </p>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div
+                    class=""
+                  >
+                    <div
+                      class="input input--select    "
+                      data-testid="select"
+                    >
+                      <label
+                        class="top-1.5 translate-y-2 text-sm"
+                        for="Git account"
+                      >
+                        Git account
+                      </label>
+                      <div
+                        class=" css-b62m3t-container"
+                      >
+                        <span
+                          class="css-1f43avz-a11yText-A11yText"
+                          id="react-select-4-live-region"
+                        />
+                        <span
+                          aria-atomic="false"
+                          aria-live="polite"
+                          aria-relevant="additions text"
+                          class="css-1f43avz-a11yText-A11yText"
+                        />
+                        <div
+                          class="input-select__control css-13cymwt-control"
+                        >
+                          <div
+                            class="input-select__value-container css-1fdsijx-ValueContainer"
+                          >
+                            <div
+                              class="input-select__placeholder css-1jqq78o-placeholder"
+                              id="react-select-4-placeholder"
+                            >
+                              Select...
+                            </div>
+                            <div
+                              class="input-select__input-container css-qbdosj-Input"
+                              data-value=""
+                            >
+                              <input
+                                aria-autocomplete="list"
+                                aria-describedby="react-select-4-placeholder"
+                                aria-expanded="false"
+                                aria-haspopup="true"
+                                autocapitalize="none"
+                                autocomplete="off"
+                                autocorrect="off"
+                                class="input-select__input"
+                                id="Git account"
+                                role="combobox"
+                                spellcheck="false"
+                                style="opacity: 1; width: 100%; grid-area: 1 / 2; min-width: 2px; border: 0px; margin: 0px; outline: 0; padding: 0px;"
+                                tabindex="0"
+                                type="text"
+                                value=""
+                              />
+                            </div>
+                          </div>
+                          <div
+                            class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                          >
+                            <span
+                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                            />
+                            <div
+                              aria-hidden="true"
+                              class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                class="css-tj5bde-Svg"
+                                focusable="false"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                width="20"
+                              >
+                                <path
+                                  d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <input
+                          name="Git account"
+                          type="hidden"
+                          value=""
+                        />
+                      </div>
+                      <input
+                        name="Git account"
+                        type="hidden"
+                        value=""
+                      />
+                      <div
+                        class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                      >
+                        <span
+                          class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                          role="img"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex justify-center"
+                  >
+                    <div
+                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                      data-testid="spinner"
+                    />
+                  </div>
+                  <div
+                    class="flex justify-center"
+                  >
+                    <div
+                      class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                      data-testid="spinner"
+                    />
+                  </div>
+                  <div>
+                    <div
+                      class=""
+                      data-testid="input-text-wrapper"
+                    >
+                      <div
+                        class="relative"
+                      >
+                        <div
+                          aria-label="input-container"
+                          class="input    input--label-up "
+                        >
+                          <div
+                            class=""
+                          >
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Overrides path"
+                            >
+                              Overrides path
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Overrides path"
+                              name="paths"
+                              type="text"
+                              value="/"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <p
+                      class="ml-4 mt-1 text-xs text-neutral-350"
+                    >
+                      Specify multiple paths by separating them with a semi-colon
+                    </p>
+                  </div>
+                  <div
+                    class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-3"
+                    data-accent-color="sky"
+                  >
+                    <div
+                      class="-order-2 text-lg leading-6"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-circle-info "
+                      />
+                    </div>
+                    <div
+                      class="-order-1 mr-auto gap-x-3 text-neutral-400"
+                    >
+                      <span
+                        class="block font-medium leading-6"
+                      >
+                        Auto-deploy is not activated
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <div
+                class="flex justify-between"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  type="button"
+                >
+                  Back
+                </button>
+                <div
+                  class="flex gap-3"
+                >
+                  <button
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                    type="submit"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StepValuesOverrideFilesFeature should submit a form with a yaml 1`] = `
+<body>
+  <div />
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <section
+            class="flex flex-col"
+          >
+            <h1
+              class="text-neutral-400 text-xl font-bold mb-2"
+            >
+              Values override as file
+            </h1>
+            <form
+              class="space-y-10"
+            >
+              <div>
+                <p
+                  class="text-sm text-neutral-350"
+                >
+                  Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
+                </p>
+                <span
+                  aria-controls="radix-:rk:"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
+                  class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+                  data-state="closed"
+                  type="button"
+                >
+                  How it works 
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-circle-question text-xs"
+                  />
+                </span>
+              </div>
+              <div
+                class="flex flex-col gap-4"
+              >
+                <div
+                  class=""
+                >
+                  <div
+                    class="input input--select    "
+                    data-testid="select"
+                  >
+                    <label
+                      class="!translate-y-0 !text-xs"
+                      for="File source"
+                    >
+                      File source
+                    </label>
+                    <div
+                      class=" css-b62m3t-container"
+                    >
+                      <span
+                        class="css-1f43avz-a11yText-A11yText"
+                        id="react-select-5-live-region"
+                      />
+                      <span
+                        aria-atomic="false"
+                        aria-live="polite"
+                        aria-relevant="additions text"
+                        class="css-1f43avz-a11yText-A11yText"
+                      />
+                      <div
+                        class="input-select__control css-13cymwt-control"
+                      >
+                        <div
+                          class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                        >
+                          <span
+                            class="mr-1 text-sm text-neutral-400"
+                          >
+                            Raw YAML
+                          </span>
+                          <input
+                            aria-autocomplete="list"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            aria-readonly="true"
+                            class="css-mohuvp-dummyInput-DummyInput"
+                            id="File source"
+                            inputmode="none"
+                            role="combobox"
+                            tabindex="0"
+                            value=""
+                          />
+                        </div>
+                        <div
+                          class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                        >
+                          <span
+                            class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                          />
+                          <div
+                            aria-hidden="true"
+                            class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              class="css-tj5bde-Svg"
+                              focusable="false"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              width="20"
+                            >
+                              <path
+                                d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        name="File source"
+                        type="hidden"
+                        value="YAML"
+                      />
+                    </div>
+                    <input
+                      name="File source"
+                      type="hidden"
+                      value="YAML"
+                    />
+                    <div
+                      class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+                    >
+                      <span
+                        class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                        role="img"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <section
+                class="flex flex-col"
+              >
+                <h2
+                  class="text-neutral-400 text-base font-bold mb-2"
+                >
+                  Override with raw Yaml
+                </h2>
+                <p
+                  class="mb-6 text-sm text-neutral-350"
+                >
+                  You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery and can be updated later within the settings but no history will be retained.
+                </p>
+                <div
+                  class="flex flex-col gap-3"
+                >
+                  <div
+                    class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+                    data-testid="block-content"
+                  >
+                    <div
+                      class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+                    >
+                      <h2
+                        class="text-ssm font-medium text-neutral-400"
+                      >
+                        Raw YAML
+                      </h2>
+                      <button
+                        class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-xs h-6 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none hover:text-neutral-400"
+                        type="button"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-solid fa-pen "
+                        />
+                      </button>
+                    </div>
+                    <div
+                      class="p-0"
+                    >
+                      <section
+                        style="display: flex; position: relative; text-align: initial; width: 100%; height: 300px;"
+                      >
+                        <div
+                          style="display: flex; height: 100%; width: 100%; justify-content: center; align-items: center;"
+                        >
+                          <div
+                            class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+                            data-testid="spinner"
+                          />
+                        </div>
+                        <div
+                          style="width: 100%; display: none;"
+                        />
+                      </section>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <div
+                class="flex justify-between"
+              >
+                <button
+                  class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+                  type="button"
+                >
+                  Back
+                </button>
+                <div
+                  class="flex gap-3"
+                >
+                  <button
+                    class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                    type="submit"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script
+    src="https://cdn.jsdelivr.net/npm/monaco-editor@0.43.0/min/vs/loader.js"
+  />
+</body>
+`;
