@@ -1,4 +1,5 @@
 import { type CheckedCustomDomainResponse, type CustomDomain } from 'qovery-typescript-axios'
+import { ServiceType } from 'qovery-ws-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { useIngressDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -40,11 +41,11 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   const { data: service } = useService({ serviceId: applicationId })
   const { data: ingressStatus, isLoading: isIngressStatusLoading } = useIngressDeploymentStatus({
     serviceId: applicationId,
-    serviceType: service?.serviceType ?? 'APPLICATION',
+    serviceType: service?.serviceType ?? ServiceType.APPLICATION,
   })
   const isLoading = props.loading || isIngressStatusLoading
   const canAddDomain = !isLoading && hasPublicPort(ingressStatus?.status)
-  const pathToPortsTab = `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${service?.serviceType === 'HELM' ? APPLICATION_SETTINGS_NETWORKING_URL : APPLICATION_SETTINGS_PORT_URL}`
+  const pathToPortsTab = `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${service?.serviceType === ServiceType.HELM ? APPLICATION_SETTINGS_NETWORKING_URL : APPLICATION_SETTINGS_PORT_URL}`
 
   return (
     <div className="w-full justify-between">
