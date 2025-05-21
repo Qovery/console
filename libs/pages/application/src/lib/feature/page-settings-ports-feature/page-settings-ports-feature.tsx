@@ -11,7 +11,7 @@ import { type Application, type Container } from '@qovery/domains/services/data-
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type PortData } from '@qovery/shared/interfaces'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useModal, useModalConfirmation, useModalMultiConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
@@ -81,6 +81,7 @@ export function SettingsPortsFeature({
   })
 
   const { openModal, closeModal } = useModal()
+  const { openModalMultiConfirmation } = useModalMultiConfirmation()
   const { openModalConfirmation } = useModalConfirmation()
 
   return (
@@ -98,36 +99,51 @@ export function SettingsPortsFeature({
         })
       }}
       onDelete={(port: PortData | ServicePort, warning) => {
-        openModalConfirmation({
-          title: 'Delete Port',
-          isDelete: true,
-          name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
-          warning,
-          action: () => {
-            const cloneApplication = deletePort(service, (port as ServicePort).id)
-            const payload = match(service)
-              .with({ serviceType: 'APPLICATION' }, (service) =>
-                buildEditServicePayload({
-                  service,
-                  request: cloneApplication as ApplicationEditRequest,
-                })
-              )
-              .with({ serviceType: 'CONTAINER' }, (service) =>
-                buildEditServicePayload({
-                  service,
-                  request: cloneApplication as ContainerRequest,
-                })
-              )
-              .otherwise(() => undefined)
+        const isLastPublicPort =
+          service.ports?.filter((p) => 'id' in port && p.publicly_accessible && p.id !== port.id).length === 0
 
-            if (!payload) return
+        const callback = () => {
+          const cloneApplication = deletePort(service, (port as ServicePort).id)
+          const payload = match(service)
+            .with({ serviceType: 'APPLICATION' }, (service) =>
+              buildEditServicePayload({
+                service,
+                request: cloneApplication as ApplicationEditRequest,
+              })
+            )
+            .with({ serviceType: 'CONTAINER' }, (service) =>
+              buildEditServicePayload({
+                service,
+                request: cloneApplication as ContainerRequest,
+              })
+            )
+            .otherwise(() => undefined)
 
-            editService({
-              serviceId: service.id,
-              payload,
+          if (!payload) return
+
+          editService({
+            serviceId: service.id,
+            payload,
+          })
+        }
+
+        isLastPublicPort
+          ? openModalMultiConfirmation({
+              title: 'Delete port',
+              isDelete: true,
+              description: 'Please confirm deletion',
+              warning:
+                'You are about to remove your last public port. Please confirm that you understand the impact of this operation.',
+              checks: ['I understand this action is irreversible and will delete all linked domains'],
+              action: callback,
             })
-          },
-        })
+          : openModalConfirmation({
+              title: 'Delete port',
+              isDelete: true,
+              name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
+              warning,
+              action: callback,
+            })
       }}
     />
   )
