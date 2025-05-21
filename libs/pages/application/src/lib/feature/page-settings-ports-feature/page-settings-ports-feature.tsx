@@ -132,8 +132,13 @@ export function SettingsPortsFeature({
               title: 'Delete port',
               isDelete: true,
               description: 'Please confirm deletion',
-              warning:
-                'You are about to remove your last public port. Please confirm that you understand the impact of this operation.',
+              warning: (
+                <p>
+                  You are about to remove your last public port.
+                  <br />
+                  Please confirm that you understand the impact of this operation.
+                </p>
+              ),
               checks: ['I understand this action is irreversible and will delete all linked domains'],
               action: callback,
             })
