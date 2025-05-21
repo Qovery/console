@@ -17,9 +17,9 @@ export default Story
 export const Default: StoryObj<typeof ProgressBar.Root> = {
   render: () => (
     <ProgressBar.Root>
-      <ProgressBar.Cell percentage={60} color="#10b981" />
-      <ProgressBar.Cell percentage={30} color="#22c55e" />
-      <ProgressBar.Cell percentage={10} color="#fbbf24" />
+      <ProgressBar.Cell percentage={60} color="var(--color-green-500)" />
+      <ProgressBar.Cell percentage={30} color="var(--color-yellow-500)" />
+      <ProgressBar.Cell percentage={10} color="var(--color-brand-500)" />
     </ProgressBar.Root>
   ),
 }

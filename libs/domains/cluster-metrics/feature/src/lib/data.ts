@@ -1,4 +1,5 @@
-const fakeData = {
+// TODO: Need to be removed
+export const fakeData = {
   computed_status: {
     global_status: 'WARNING',
     qovery_components_in_failure: [],

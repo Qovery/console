@@ -32,19 +32,19 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
 
   nodes?.forEach((node) => {
     // CPU
-    totalCpuMilli += node.resources_allocatable.cpu_milli
+    totalCpuMilli += node.resources_allocatable.cpu_milli + (node.metrics_usage.cpu_milli_usage ?? 0)
     if (node.metrics_usage.cpu_milli_usage !== null) {
       usedCpuMilli += node.metrics_usage.cpu_milli_usage ?? 0
     }
 
     // Memory
-    totalMemoryMib += node.resources_allocatable.memory_mib
+    totalMemoryMib += node.resources_allocatable.memory_mib + (node.metrics_usage.memory_mib_working_set_usage ?? 0)
     if (node.metrics_usage.memory_mib_working_set_usage !== null) {
       usedMemoryMib += node.metrics_usage.memory_mib_working_set_usage ?? 0
     }
 
     // Disk
-    totalDiskMib += node.resources_allocatable.ephemeral_storage_mib
+    totalDiskMib += node.resources_allocatable.ephemeral_storage_mib + (node.metrics_usage.disk_mib_usage ?? 0)
     if (node.metrics_usage.disk_mib_usage !== null) {
       usedDiskMib += node.metrics_usage.disk_mib_usage ?? 0
     }
@@ -53,7 +53,7 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
   // Convert to display units
   const cpuUsed = formatNumber(milliCoreToVCPU(usedCpuMilli))
   const cpuTotal = formatNumber(milliCoreToVCPU(totalCpuMilli))
-  // Calculate percentages safely (avoid division by zero)
+
   const cpuPercent = cpuTotal > 0 ? formatNumber((cpuUsed / cpuTotal) * 100) : 0
 
   const memoryUsed = formatNumber(mibToGib(usedMemoryMib))

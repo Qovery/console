@@ -8,7 +8,7 @@ const ProgressBarRoot = forwardRef<ElementRef<'div'>, ProgressBarRootProps>(func
   ref
 ) {
   return (
-    <div ref={ref} className={twMerge('h-2 w-full overflow-hidden rounded-full', className)} {...props}>
+    <div ref={ref} className={twMerge('h-2 w-full overflow-hidden rounded-full bg-neutral-150', className)} {...props}>
       <div className="flex h-full w-full">{children}</div>
     </div>
   )
@@ -28,7 +28,7 @@ const ProgressBarCell = forwardRef<ElementRef<'div'>, ProgressBarCellProps>(func
   return (
     <div
       ref={ref}
-      className={twMerge('h-full', className)}
+      className={twMerge('h-full border-r border-neutral-50 last:border-r-0', className)}
       style={{
         width: `${percentage}%`,
         backgroundColor: color,
