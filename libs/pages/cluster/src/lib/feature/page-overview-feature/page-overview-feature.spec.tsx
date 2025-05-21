@@ -1,9 +1,9 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import PageSettingsCredentialsFeature from './page-overview-feature'
+import PageOverviewFeature from './page-overview-feature'
 
-describe('PageSettingsCredentialsFeature', () => {
+describe('PageOverviewFeature', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<PageSettingsCredentialsFeature />)
+    const { baseElement } = renderWithProviders(<PageOverviewFeature />)
     expect(baseElement).toBeTruthy()
   })
 })
