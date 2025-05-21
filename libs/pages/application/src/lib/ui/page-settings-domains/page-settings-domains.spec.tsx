@@ -4,6 +4,11 @@ import { PageSettingsDomains, type PageSettingsDomainsProps } from './page-setti
 
 let props: PageSettingsDomainsProps
 
+jest.mock('@qovery/domains/services/feature', () => ({
+  ...jest.requireActual('@qovery/domains/services/feature'),
+  useIngressDeploymentStatus: () => ({ data: { routerId: 'id', status: 'DEPLOYED' } }),
+}))
+
 describe('PageSettingsDomains', () => {
   beforeEach(() => {
     props = {

@@ -154,7 +154,9 @@ describe('NetworkingSetting', () => {
 
     await userEvent.click(screen.getAllByTestId('remove-port')[0])
 
-    await userEvent.type(screen.getByRole('textbox'), 'delete')
+    await userEvent.click(
+      screen.getByText('I understand this action is irreversible and will delete all linked domains')
+    )
     await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
 
     expect(onUpdatePorts).toHaveBeenCalledWith([])

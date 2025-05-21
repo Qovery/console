@@ -15,6 +15,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
     isFetching: false,
     refetch: jest.fn(),
   }),
+  useIngressDeploymentStatus: () => ({ data: { routerId: 'id', status: 'DEPLOYED' } }),
 }))
 
 jest.mock('@qovery/domains/custom-domains/feature', () => ({
