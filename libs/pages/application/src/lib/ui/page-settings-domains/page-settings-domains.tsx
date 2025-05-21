@@ -1,11 +1,6 @@
-import {
-  type CheckedCustomDomainResponse,
-  type CustomDomain,
-  type IngressDeploymentStatusResponse,
-  StateEnum,
-} from 'qovery-typescript-axios'
+import { type CheckedCustomDomainResponse, type CustomDomain } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useService } from '@qovery/domains/services/feature'
+import { useIngressDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   APPLICATION_SETTINGS_NETWORKING_URL,
@@ -26,6 +21,7 @@ import {
   Section,
   Tooltip,
 } from '@qovery/shared/ui'
+import { hasPublicPort } from '@qovery/shared/util-services'
 
 export interface PageSettingsDomainsProps {
   onCheckCustomDomains: () => void
@@ -36,26 +32,25 @@ export interface PageSettingsDomainsProps {
   onDelete: (customDomain: CustomDomain) => void
   domains?: CustomDomain[]
   loading?: boolean
-  canAddDomain?: boolean
 }
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   const params = useParams()
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = params
   const { data: service } = useService({ serviceId: applicationId })
+  const { data: ingressStatus, isLoading: isIngressStatusLoading } = useIngressDeploymentStatus({
+    serviceId: applicationId,
+    serviceType: service?.serviceType ?? 'APPLICATION',
+  })
+  const isLoading = props.loading || isIngressStatusLoading
+  const canAddDomain = !isLoading && hasPublicPort(ingressStatus?.status)
   const pathToPortsTab = `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${service?.serviceType === 'HELM' ? APPLICATION_SETTINGS_NETWORKING_URL : APPLICATION_SETTINGS_PORT_URL}`
 
   return (
     <div className="w-full justify-between">
       <Section className="max-w-content-with-navigation-left  p-8">
         <SettingsHeading title="Domain" description="Add custom domains to your service.">
-          <Button
-            size="md"
-            variant="solid"
-            color="brand"
-            onClick={() => props.onAddDomain()}
-            disabled={!props.canAddDomain}
-          >
+          <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()} disabled={!canAddDomain}>
             Add Domain
             <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
@@ -70,11 +65,11 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
             </Callout.TextHeading>
           </Callout.Root>
         )}
-        {props.loading && props.domains?.length === 0 ? (
+        {isLoading ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
-        ) : props.domains && props.domains.length > 0 ? (
+        ) : !isLoading && props.domains && props.domains.length > 0 ? (
           <BlockContent title="Configured domains">
             {props.domains &&
               props.domains.map((customDomain, i) => {
@@ -153,7 +148,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                 )
               })}
           </BlockContent>
-        ) : !props.canAddDomain ? (
+        ) : !canAddDomain ? (
           <div className="flex flex-col items-center gap-5 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
             <div className="flex flex-col items-center gap-2">
               <Icon iconName="earth-americas" className="text-lg" iconStyle="regular" />
