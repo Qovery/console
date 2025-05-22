@@ -203,11 +203,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           async ({ region, databaseType }) =>
             (await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)).data.results
         )
-        .with(
-          { cloudProvider: 'SCW' },
-          async ({ databaseType }) =>
-            (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
-        )
+        .with({ cloudProvider: 'SCW' }, async () => (await cloudProviderApi.listSCWManagedDatabaseType()).data.results)
         .with({ cloudProvider: 'GCP' }, () => undefined)
         .with({ cloudProvider: 'AZURE' }, () => undefined)
         .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
