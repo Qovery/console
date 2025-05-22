@@ -38,21 +38,25 @@ describe('Conversion Utility Functions', () => {
 
 describe('calculateClusterResources', () => {
   const createMockNode = (
-    cpuAllocatable: number,
-    cpuUsage: number | null,
-    memoryAllocatable: number,
-    memoryUsage: number | null,
-    diskAllocatable: number,
+    cpuCapacity: number,
+    cpuRequest: number,
+    memoryCapacity: number,
+    memoryRequest: number,
+    diskCapacity: number,
     diskUsage: number | null
   ): ClusterNodeDto => ({
-    resources_allocatable: {
-      cpu_milli: cpuAllocatable,
-      memory_mib: memoryAllocatable,
-      ephemeral_storage_mib: diskAllocatable,
+    resources_capacity: {
+      cpu_milli: cpuCapacity,
+      memory_mib: memoryCapacity,
+      ephemeral_storage_mib: diskCapacity,
+    },
+    resources_allocated: {
+      request_cpu_milli: cpuRequest,
+      request_memory_mib: memoryRequest,
     },
     metrics_usage: {
-      cpu_milli_usage: cpuUsage,
-      memory_mib_working_set_usage: memoryUsage,
+      cpu_milli_usage: null,
+      memory_mib_working_set_usage: null,
       disk_mib_usage: diskUsage,
     },
     id: 'mock-id',
@@ -61,7 +65,7 @@ describe('calculateClusterResources', () => {
     kubernetes_version: 'mock-version',
     region: 'mock-region',
     state: 'RUNNING',
-    resources_capacity: {
+    resources_allocatable: {
       cpu_milli: 0,
       memory_mib: 0,
       ephemeral_storage_mib: 0,
@@ -77,41 +81,41 @@ describe('calculateClusterResources', () => {
 
     const result = calculateClusterResources(nodes)
 
-    expect(result.cpu.total).toBe(7.5)
+    expect(result.cpu.total).toBe(5)
     expect(result.cpu.used).toBe(2.5)
-    expect(result.cpu.percent).toBe(33.33)
+    expect(result.cpu.percent).toBe(50)
     expect(result.cpu.unit).toBe('vCPU')
 
-    expect(result.memory.total).toBe(9)
+    expect(result.memory.total).toBe(6)
     expect(result.memory.used).toBe(3)
-    expect(result.memory.percent).toBe(33.33)
+    expect(result.memory.percent).toBe(50)
     expect(result.memory.unit).toBe('GB')
 
-    expect(result.disk.total).toBe(18)
+    expect(result.disk.total).toBe(12)
     expect(result.disk.used).toBe(6)
-    expect(result.disk.percent).toBe(33.33)
+    expect(result.disk.percent).toBe(50)
     expect(result.disk.unit).toBe('GB')
   })
 
   it('should handle nodes with null usage values', () => {
     const nodes: ClusterNodeDto[] = [
-      createMockNode(2000, null, 2048, null, 4096, null),
+      createMockNode(2000, 1000, 2048, 1024, 4096, null),
       createMockNode(3000, 1500, 4096, 2048, 8192, 4096),
     ]
 
     const result = calculateClusterResources(nodes)
 
-    expect(result.cpu.total).toBe(6.5)
-    expect(result.cpu.used).toBe(1.5)
-    expect(result.cpu.percent).toBe(23.08)
+    expect(result.cpu.total).toBe(5)
+    expect(result.cpu.used).toBe(2.5)
+    expect(result.cpu.percent).toBe(50)
 
-    expect(result.memory.total).toBe(8)
-    expect(result.memory.used).toBe(2)
-    expect(result.memory.percent).toBe(25)
+    expect(result.memory.total).toBe(6)
+    expect(result.memory.used).toBe(3)
+    expect(result.memory.percent).toBe(50)
 
-    expect(result.disk.total).toBe(16)
+    expect(result.disk.total).toBe(12)
     expect(result.disk.used).toBe(4)
-    expect(result.disk.percent).toBe(25)
+    expect(result.disk.percent).toBe(33.33)
   })
 
   it('should handle empty nodes array', () => {
