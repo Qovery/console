@@ -228,4 +228,22 @@ describe('ContainerRegistryForm', () => {
 
     expect(options[0].value).toBe(ContainerRegistryKindEnum.DOCKER_HUB)
   })
+
+  it('should render the form with AZURE_CR', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ContainerRegistryForm {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.AZURE_CR,
+          username: 'azure',
+          password: 'password',
+        },
+      })
+    )
+    expect(screen.getByDisplayValue('hello')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('https://qovery.com')).toBeInTheDocument()
+    expect(screen.getByLabelText('Azure client ID')).toBeInTheDocument()
+    expect(screen.getByLabelText('Azure client secret')).toBeInTheDocument()
+  })
 })

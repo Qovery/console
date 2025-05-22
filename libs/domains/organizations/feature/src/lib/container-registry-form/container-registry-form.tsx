@@ -521,38 +521,72 @@ export function ContainerRegistryForm({
           rules={{
             required: 'Please enter your credentials JSON',
           }}
-          render={({ field }) => (
-            <>
-              {!field.value ? (
-                <div {...getRootProps()}>
-                  <input data-testid="input-credentials-json" className="hidden" {...getInputProps()} />
-                  <Dropzone typeFile=".json" isDragActive={isDragActive} />
+          render={({ field }) =>
+            !field.value ? (
+              <div {...getRootProps()}>
+                <input data-testid="input-credentials-json" className="hidden" {...getInputProps()} />
+                <Dropzone typeFile=".json" isDragActive={isDragActive} />
+              </div>
+            ) : fileDetails ? (
+              <div className="mb-[90px] flex items-center justify-between rounded border border-neutral-200 p-4">
+                <div className="flex items-center pl-2 text-neutral-400">
+                  <Icon iconName="file-arrow-down" className="mr-4" />
+                  <p className="flex flex-col gap-1">
+                    <span className="text-xs font-medium">{fileDetails.name}</span>
+                    <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
+                  </p>
                 </div>
-              ) : fileDetails ? (
-                <div className="mb-[90px] flex items-center justify-between rounded border border-neutral-200 p-4">
-                  <div className="flex items-center pl-2 text-neutral-400">
-                    <Icon iconName="file-arrow-down" className="mr-4" />
-                    <p className="flex flex-col gap-1">
-                      <span className="text-xs font-medium">{fileDetails.name}</span>
-                      <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
-                    </p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    color="neutral"
-                    size="md"
-                    className="h-7 w-7 justify-center"
-                    onClick={() => field.onChange(undefined)}
-                  >
-                    <Icon iconName="trash" />
-                  </Button>
-                </div>
-              ) : (
-                <div />
-              )}
-            </>
-          )}
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  size="md"
+                  className="h-7 w-7 justify-center"
+                  onClick={() => field.onChange(undefined)}
+                >
+                  <Icon iconName="trash" />
+                </Button>
+              </div>
+            ) : (
+              <div />
+            )
+          }
         />
+      )}
+      {watchKind === ContainerRegistryKindEnum.AZURE_CR && (
+        <>
+          <Controller
+            name="config.username"
+            control={methods.control}
+            rules={{
+              required: 'Please enter an Azure client ID.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Azure client ID"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="config.password"
+            control={methods.control}
+            rules={{
+              required: 'Please enter an Azure client secret.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Azure client secret"
+                error={error?.message}
+              />
+            )}
+          />
+        </>
       )}
     </div>
   )
