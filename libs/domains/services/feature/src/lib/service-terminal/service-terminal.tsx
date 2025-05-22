@@ -173,7 +173,7 @@ export function ServiceTerminal({
             <LoaderSpinner />
           </div>
         ) : (
-          <MemoizedXTerm className="h-full" addons={addons} options={{ fontSize: 14 }} />
+          <MemoizedXTerm className="h-full" addons={addons} />
         )}
       </div>
     </div>,

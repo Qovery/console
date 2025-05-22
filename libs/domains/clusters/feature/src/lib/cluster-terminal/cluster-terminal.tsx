@@ -139,7 +139,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
             <LoaderSpinner />
           </div>
         ) : (
-          <MemoizedXTerm className="h-full" addons={addons} options={{ fontSize: 14 }} />
+          <MemoizedXTerm className="h-full" addons={addons} />
         )}
       </div>
     </div>,
