@@ -80,6 +80,7 @@ export function App() {
             createRoutesFromChildren,
             matchRoutes,
           }),
+          Sentry.browserTracingIntegration(),
           Sentry.replayIntegration(),
         ],
 
