@@ -1,4 +1,8 @@
-import { type ContainerRegistryRequest, type ContainerRegistryResponse } from 'qovery-typescript-axios'
+import {
+  ContainerRegistryKindEnum,
+  type ContainerRegistryRequest,
+  type ContainerRegistryResponse,
+} from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ExternalLink, ModalCrud, useModal } from '@qovery/shared/ui'
@@ -28,7 +32,7 @@ export function ContainerRegistryCreateEditModal({
       description: registry?.description,
       url: registry?.url,
       kind: registry?.kind,
-      type: registry ? (registry.config?.role_arn ? 'STS' : 'STATIC') : 'STATIC',
+      type: registry ? (registry.config?.role_arn ? 'STS' : 'STATIC') : 'STS',
       config: {
         username: registry?.config?.username,
         password: undefined,
@@ -63,6 +67,7 @@ export function ContainerRegistryCreateEditModal({
 
     const {
       type,
+      kind,
       config: { login_type, ...config },
       ...rest
     } = containerRegistryRequest
@@ -73,8 +78,9 @@ export function ContainerRegistryCreateEditModal({
           containerRegistryId: registry.id,
           containerRegistryRequest: {
             ...rest,
+            kind,
             config:
-              type === 'STS'
+              type === 'STS' && kind === 'ECR'
                 ? {
                     role_arn: config?.role_arn,
                     region: config?.region,
@@ -87,14 +93,13 @@ export function ContainerRegistryCreateEditModal({
         })
         onClose(response)
       } else {
-        console.log('type', type)
-        console.log('config', config)
         const response = await createContainerRegistry({
           organizationId: organizationId,
           containerRegistryRequest: {
             ...rest,
+            kind,
             config:
-              type === 'STS'
+              type === 'STS' && kind === 'ECR'
                 ? {
                     role_arn: config?.role_arn,
                     region: config?.region,
