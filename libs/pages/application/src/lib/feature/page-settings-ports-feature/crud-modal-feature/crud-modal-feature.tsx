@@ -23,6 +23,7 @@ export interface CrudModalFeatureProps {
   service: Extract<AnyService, Application | Container>
   onClose: () => void
   port?: ServicePort
+  isLastPublicPort?: boolean
 }
 
 export function handleSubmit<
@@ -130,7 +131,7 @@ export function handleSubmit<
   return cloneApplication as R
 }
 
-export function CrudModalFeature({ service, onClose, port }: CrudModalFeatureProps) {
+export function CrudModalFeature({ service, onClose, port, isLastPublicPort }: CrudModalFeatureProps) {
   const { enableAlertClickOutside } = useModal()
 
   const { data: environment } = useEnvironment({ environmentId: service?.environment?.id || '' })
@@ -196,6 +197,7 @@ export function CrudModalFeature({ service, onClose, port }: CrudModalFeaturePro
         kubernetes={cluster?.kubernetes}
         currentProtocol={port?.protocol}
         isEdit={!!port}
+        isLastPublicPort={isLastPublicPort}
         isDemo={cluster?.is_demo}
         isMatchingHealthCheck={isMatchingHealthCheck(port, livenessType) || isMatchingHealthCheck(port, readinessType)}
         loading={isLoadingEditService}

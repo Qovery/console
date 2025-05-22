@@ -15,6 +15,7 @@ export interface CrudModalProps {
   hidePortName?: boolean
   onClose: () => void
   onSubmit: () => void
+  isLastPublicPort?: boolean
 }
 
 export function CrudModal({
@@ -28,8 +29,9 @@ export function CrudModal({
   onSubmit,
   hidePortName,
   isDemo,
+  isLastPublicPort,
 }: CrudModalProps) {
-  const { control, watch, setValue } = useFormContext()
+  const { control, watch, setValue, getFieldState } = useFormContext()
 
   const watchProtocol = watch('protocol')
   const watchPublicly = watch('publicly_accessible') || false
@@ -260,7 +262,7 @@ export function CrudModal({
           <Callout.Text>Please verify the health check configuration.</Callout.Text>
         </Callout.Root>
       )}
-      {isEdit && !watchPublicly && (
+      {isEdit && !watchPublicly && getFieldState('publicly_accessible').isDirty && isLastPublicPort && (
         <div>
           <Callout.Root className="mt-5" color="red">
             <Callout.Icon>

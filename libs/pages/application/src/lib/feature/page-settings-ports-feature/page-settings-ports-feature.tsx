@@ -100,8 +100,16 @@ export function SettingsPortsFeature({
         })
       }}
       onEdit={(port: PortData | ServicePort) => {
+        const isLastPublicPort = isTryingToRemoveLastPublicPort(service.serviceType, service.ports, port, customDomains)
         openModal({
-          content: <CrudModalFeature onClose={closeModal} service={service} port={port as ServicePort} />,
+          content: (
+            <CrudModalFeature
+              onClose={closeModal}
+              service={service}
+              port={port as ServicePort}
+              isLastPublicPort={isLastPublicPort}
+            />
+          ),
         })
       }}
       onDelete={(port: PortData | ServicePort, warning) => {
