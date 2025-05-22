@@ -321,7 +321,7 @@ exports[`EnvironmentList should match snapshot 1`] = `
               class="flex min-w-0 max-w-[600px] items-center gap-4 text-sm font-medium text-neutral-400"
             >
               <span
-                class="items-center shrink-0 text-xs text-red-500 border rounded-md border-red-500 flex h-4 w-4 justify-center p-0 font-semibold"
+                class="items-center shrink-0 text-xs text-red-500 border rounded-md border-red-500/30 flex h-4 w-4 justify-center p-0 font-semibold"
                 data-accent-color="red"
                 data-state="closed"
               >
