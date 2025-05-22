@@ -574,7 +574,7 @@ export function ContainerRegistryForm({
             name="config.password"
             control={methods.control}
             rules={{
-              required: 'Please enter a Azure client secret.',
+              required: 'Please enter an Azure client secret.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
