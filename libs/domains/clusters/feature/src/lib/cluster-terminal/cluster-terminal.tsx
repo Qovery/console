@@ -2,45 +2,38 @@ import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
+import { DebugFlavor } from 'qovery-ws-typescript-axios'
 import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { XTerm } from 'react-xtermjs'
 import { Button, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import { useRunningStatus } from '../..'
-import { InputSearch } from './input-search/input-search'
-import { ServiceTerminalContext } from './service-terminal-provider'
+import useClusterRunningStatus from '../hooks/use-cluster-running-status/use-cluster-running-status'
+import { ClusterTerminalContext } from './cluster-terminal-provider'
 
 const MemoizedXTerm = memo(XTerm)
 
-export interface ServiceTerminalProps {
+export interface ClusterTerminalProps {
   organizationId: string
   clusterId: string
-  projectId: string
-  environmentId: string
-  serviceId: string
 }
 
-export function ServiceTerminal({
-  organizationId,
-  clusterId,
-  projectId,
-  environmentId,
-  serviceId,
-}: ServiceTerminalProps) {
-  const { data: runningStatuses, isLoading: isRunningStatusesLoading } = useRunningStatus({ environmentId, serviceId })
+export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalProps) {
+  const { data: runningStatuses } = useClusterRunningStatus({
+    organizationId,
+    clusterId,
+  })
 
-  const { setOpen } = useContext(ServiceTerminalContext)
+  const isRunningStatusesLoading = typeof runningStatuses !== 'object'
+
+  const { setOpen } = useContext(ClusterTerminalContext)
   const MIN_TERMINAL_HEIGHT = 248
   const MAX_TERMINAL_HEIGHT = document.body.clientHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
   const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const isTerminalLoading = addons.length < 2 || isRunningStatusesLoading
   const fitAddon = addons[0] as FitAddon | undefined
-
-  const [selectedPod, setSelectedPod] = useState<string | undefined>()
-  const [selectedContainer, setSelectedContainer] = useState<string | undefined>()
 
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
@@ -69,15 +62,11 @@ export function ServiceTerminal({
   const cols = Math.ceil(document.body.clientWidth / 8)
 
   useReactQueryWsSubscription({
-    url: QOVERY_WS + '/shell/exec',
+    url: QOVERY_WS + '/shell/debug',
     urlSearchParams: {
       organization: organizationId,
       cluster: clusterId,
-      project: projectId,
-      environment: environmentId,
-      service: serviceId,
-      pod_name: selectedPod,
-      container_name: selectedContainer,
+      flavor: DebugFlavor.FULL_PRIVILEGE,
       tty_height: rows.toString(),
       tty_width: cols.toString(),
     },
@@ -120,30 +109,7 @@ export function ServiceTerminal({
       >
         <Icon iconName="grip-lines" iconStyle="regular" className="text-white" />
       </button>
-      <div className="flex h-11 justify-between border-y border-neutral-500 px-4 py-2">
-        <div className="flex gap-2">
-          {runningStatuses && runningStatuses.pods.length > 0 && (
-            <InputSearch
-              value={selectedPod}
-              onChange={setSelectedPod}
-              data={runningStatuses.pods.map((pod) => pod.name)}
-              placeholder="Search by pod"
-              trimLabel
-            />
-          )}
-          {runningStatuses && selectedPod && (
-            <InputSearch
-              value={selectedContainer}
-              onChange={setSelectedContainer}
-              data={
-                runningStatuses.pods
-                  .find((pod) => selectedPod === pod?.name)
-                  ?.containers.map((container) => container?.name) || []
-              }
-              placeholder="Search by container"
-            />
-          )}
-        </div>
+      <div className="flex h-11 justify-end border-y border-neutral-500 px-4 py-2">
         <div className="flex items-center gap-1">
           {fitAddon && (
             <Button
@@ -181,4 +147,4 @@ export function ServiceTerminal({
   )
 }
 
-export default ServiceTerminal
+export default ClusterTerminal
