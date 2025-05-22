@@ -32,19 +32,15 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
 
   nodes?.forEach((node) => {
     // CPU
-    totalCpuMilli += node.resources_allocatable.cpu_milli + (node.metrics_usage.cpu_milli_usage ?? 0)
-    if (node.metrics_usage.cpu_milli_usage !== null) {
-      usedCpuMilli += node.metrics_usage.cpu_milli_usage ?? 0
-    }
+    totalCpuMilli += node.resources_capacity.cpu_milli
+    usedCpuMilli += node.resources_allocated.request_cpu_milli
 
     // Memory
-    totalMemoryMib += node.resources_allocatable.memory_mib + (node.metrics_usage.memory_mib_working_set_usage ?? 0)
-    if (node.metrics_usage.memory_mib_working_set_usage !== null) {
-      usedMemoryMib += node.metrics_usage.memory_mib_working_set_usage ?? 0
-    }
+    totalMemoryMib += node.resources_capacity.memory_mib
+    usedMemoryMib += node.resources_allocated.request_memory_mib
 
     // Disk
-    totalDiskMib += node.resources_allocatable.ephemeral_storage_mib + (node.metrics_usage.disk_mib_usage ?? 0)
+    totalDiskMib += node.resources_capacity.ephemeral_storage_mib
     if (node.metrics_usage.disk_mib_usage !== null) {
       usedDiskMib += node.metrics_usage.disk_mib_usage ?? 0
     }
