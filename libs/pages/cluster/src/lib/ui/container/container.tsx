@@ -6,6 +6,7 @@ import {
   ClusterAvatar,
   ClusterType,
   useCluster,
+  useClusterRunningStatusSocket,
   useClusterStatus,
   useDeployCluster,
 } from '@qovery/domains/clusters/feature'
@@ -21,6 +22,8 @@ export function Container({ children }: PropsWithChildren) {
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { mutate: deployCluster } = useDeployCluster()
   const { data: clusterStatus, isLoading } = useClusterStatus({ organizationId, clusterId })
+
+  useClusterRunningStatusSocket({ organizationId, clusterId })
 
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
