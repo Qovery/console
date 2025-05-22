@@ -389,7 +389,7 @@ export const services = createQueryKeys('services', {
     queryKey: [serviceType, serviceId],
     async queryFn() {
       const response = await serviceStatusApi.getIngressDeploymentStatus(
-        serviceType.toLowerCase() as GetIngressDeploymentStatusServiceTypeEnum,
+        serviceType.toLowerCase() as GetIngressDeploymentStatusServiceTypeEnum, // TODO rename the enum on openai-spec
         serviceId
       )
       return response.data
