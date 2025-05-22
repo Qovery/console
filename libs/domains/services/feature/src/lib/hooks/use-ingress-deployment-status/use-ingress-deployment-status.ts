@@ -18,6 +18,7 @@ export function useIngressDeploymentStatus({ serviceId, serviceType }: UseIngres
       .with('APPLICATION', 'CONTAINER', 'HELM', () => true)
       .otherwise(() => false),
     retry: false, // If we get an error, we don't want to retry as it will very likely fail again and just increase the loading time of the "domains" settings page
+    staleTime: 0,
   })
 }
 
