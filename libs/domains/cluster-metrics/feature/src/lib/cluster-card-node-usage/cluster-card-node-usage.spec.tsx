@@ -45,7 +45,7 @@ describe('ClusterCardNodeUsage', () => {
   it('should render the component with correct structure', () => {
     setupMocks()
     renderWithProviders(<ClusterCardNodeUsage organizationId={mockOrganizationId} clusterId={mockClusterId} />)
-    expect(screen.getByText('Nodes usages')).toBeInTheDocument()
+    expect(screen.getByText('Nodes usage')).toBeInTheDocument()
     expect(screen.getByText('3')).toBeInTheDocument()
   })
 
