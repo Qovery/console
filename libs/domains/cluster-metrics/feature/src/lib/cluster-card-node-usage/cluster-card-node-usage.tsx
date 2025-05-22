@@ -71,7 +71,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
     <div className="flex flex-col justify-between rounded border border-neutral-250 p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm text-neutral-350">Nodes usages</p>
+          <p className="text-sm text-neutral-350">Nodes usage</p>
           <Skeleton
             width={32}
             height={32}
