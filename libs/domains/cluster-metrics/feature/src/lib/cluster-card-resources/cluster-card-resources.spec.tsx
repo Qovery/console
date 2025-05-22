@@ -1,7 +1,7 @@
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { calculateClusterResources } from './calculate-cluster-resources'
-import { CardResources } from './card-resources'
+import { ClusterCardResources } from './cluster-card-resources'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useClusterRunningStatus: jest.fn(),
@@ -11,7 +11,7 @@ jest.mock('./calculate-cluster-resources', () => ({
   calculateClusterResources: jest.fn(),
 }))
 
-describe('CardResources', () => {
+describe('ClusterCardResources', () => {
   const mockOrganizationId = 'org-123'
   const mockClusterId = 'cluster-456'
 
@@ -50,7 +50,7 @@ describe('CardResources', () => {
   })
 
   it('should render the component with correct structure', () => {
-    renderWithProviders(<CardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    renderWithProviders(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('Total cluster resources')).toBeInTheDocument()
     expect(screen.getByText('CPU usage')).toBeInTheDocument()
@@ -59,7 +59,7 @@ describe('CardResources', () => {
   })
 
   it('should display the correct CPU resource values', () => {
-    renderWithProviders(<CardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    renderWithProviders(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('2.5')).toBeInTheDocument()
     expect(screen.getByText(/\/8 vCPU/)).toBeInTheDocument()
@@ -67,7 +67,7 @@ describe('CardResources', () => {
   })
 
   it('should display the correct Memory resource values', () => {
-    renderWithProviders(<CardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    renderWithProviders(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('4')).toBeInTheDocument()
     expect(screen.getByText(/\/16 GB/)).toBeInTheDocument()
@@ -75,7 +75,7 @@ describe('CardResources', () => {
   })
 
   it('should display the correct Disk resource values', () => {
-    renderWithProviders(<CardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    renderWithProviders(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('50')).toBeInTheDocument()
     expect(screen.getByText(/\/200 GB/)).toBeInTheDocument()

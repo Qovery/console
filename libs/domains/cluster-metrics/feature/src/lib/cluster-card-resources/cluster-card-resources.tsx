@@ -4,12 +4,12 @@ import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Icon, Skeleton } from '@qovery/shared/ui'
 import { type ResourcesProps, calculateClusterResources } from './calculate-cluster-resources'
 
-export interface CardResourcesProps {
+export interface ClusterCardResourcesProps {
   organizationId: string
   clusterId: string
 }
 
-export function CardResources({ organizationId, clusterId }: CardResourcesProps) {
+export function ClusterCardResources({ organizationId, clusterId }: ClusterCardResourcesProps) {
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId,
     clusterId,
@@ -68,4 +68,4 @@ export function CardResources({ organizationId, clusterId }: CardResourcesProps)
   )
 }
 
-export default CardResources
+export default ClusterCardResources
