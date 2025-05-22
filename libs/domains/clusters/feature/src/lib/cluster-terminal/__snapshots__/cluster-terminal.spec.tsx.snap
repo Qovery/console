@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterTerminal should match snapshot 1`] = `
+<body>
+  <div />
+  <div
+    class="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650"
+  >
+    <button
+      class="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
+      type="button"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-grip-lines text-white"
+      />
+    </button>
+    <div
+      class="flex h-11 justify-end border-y border-neutral-500 px-4 py-2"
+    >
+      <div
+        class="flex items-center gap-1"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+        >
+          Close shell
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-xmark ml-2 text-sm"
+          />
+        </button>
+      </div>
+    </div>
+    <div
+      class="min-h-[248px] bg-neutral-700 px-4 py-2"
+      style="height: 248px;"
+    >
+      <div
+        class="flex h-40 items-start justify-center p-5"
+      >
+        <div
+          class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+          data-testid="spinner"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
