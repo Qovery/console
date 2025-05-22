@@ -1,5 +1,7 @@
 import { type HelmPortRequestPortsInner } from 'qovery-typescript-axios'
+import { ServiceType } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren } from 'react'
+import { useCustomDomains } from '@qovery/domains/custom-domains/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   BlockContent,
@@ -13,6 +15,7 @@ import {
   useModalConfirmation,
   useModalMultiConfirmation,
 } from '@qovery/shared/ui'
+import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
 import { NetworkingPortSettingModal } from '../networking-port-setting-modal/networking-port-setting-modal'
 
 export interface NetworkingSettingProps extends PropsWithChildren {
@@ -32,6 +35,11 @@ export function NetworkingSetting({
   const { openModal, closeModal } = useModal()
   const { openModalMultiConfirmation } = useModalMultiConfirmation()
   const { openModalConfirmation } = useModalConfirmation()
+
+  const { data: customDomains } = useCustomDomains({
+    serviceId: helmId,
+    serviceType: ServiceType.HELM,
+  })
 
   const onAddPort = () =>
     openModal({
@@ -61,9 +69,9 @@ export function NetworkingSetting({
       ),
     })
   const onRemovePort = (port: HelmPortRequestPortsInner) => {
-    const isLastPort = ports.length === 1
+    const isTryingToRemoveLastPort = isTryingToRemoveLastPublicPort(ServiceType.HELM, ports, port, customDomains)
 
-    isLastPort
+    isTryingToRemoveLastPort
       ? openModalMultiConfirmation({
           title: 'Delete port',
           isDelete: true,

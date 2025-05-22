@@ -7,12 +7,14 @@ import {
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useCustomDomains } from '@qovery/domains/custom-domains/feature'
 import { type Application, type Container } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type PortData } from '@qovery/shared/interfaces'
 import { useModal, useModalConfirmation, useModalMultiConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
+import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -79,6 +81,10 @@ export function SettingsPortsFeature({
     projectId,
     environmentId: service.environment.id,
   })
+  const { data: customDomains } = useCustomDomains({
+    serviceId: service.id,
+    serviceType: service?.serviceType ?? 'APPLICATION',
+  })
 
   const { openModal, closeModal } = useModal()
   const { openModalMultiConfirmation } = useModalMultiConfirmation()
@@ -99,8 +105,12 @@ export function SettingsPortsFeature({
         })
       }}
       onDelete={(port: PortData | ServicePort, warning) => {
-        const isLastPublicPort =
-          service.ports?.filter((p) => 'id' in port && p.publicly_accessible && p.id !== port.id).length === 0
+        const isTryingToRemoveLastPort = isTryingToRemoveLastPublicPort(
+          service.serviceType,
+          service.ports,
+          port,
+          customDomains
+        )
 
         const callback = () => {
           const cloneApplication = deletePort(service, (port as ServicePort).id)
@@ -127,7 +137,7 @@ export function SettingsPortsFeature({
           })
         }
 
-        isLastPublicPort
+        isTryingToRemoveLastPort
           ? openModalMultiConfirmation({
               title: 'Delete port',
               isDelete: true,
