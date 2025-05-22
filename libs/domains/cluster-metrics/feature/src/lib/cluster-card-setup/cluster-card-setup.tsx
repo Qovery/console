@@ -7,12 +7,12 @@ import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
-export interface CardSetupProps {
+export interface ClusterCardSetupProps {
   organizationId: string
   clusterId: string
 }
 
-export function CardSetup({ organizationId, clusterId }: CardSetupProps) {
+export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetupProps) {
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const { data: deploymentStatus } = useClusterStatus({ organizationId, clusterId, refetchInterval: 5000 })
@@ -113,4 +113,4 @@ export function CardSetup({ organizationId, clusterId }: CardSetupProps) {
   )
 }
 
-export default CardSetup
+export default ClusterCardSetup

@@ -1,3 +1,3 @@
-export * from './lib/card-node-usage/card-node-usage'
-export * from './lib/card-resources/card-resources'
-export * from './lib/card-setup/card-setup'
+export * from './lib/cluster-card-node-usage/cluster-card-node-usage'
+export * from './lib/cluster-card-resources/cluster-card-resources'
+export * from './lib/cluster-card-setup/cluster-card-setup'

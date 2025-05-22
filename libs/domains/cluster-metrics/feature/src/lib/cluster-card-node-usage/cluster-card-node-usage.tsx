@@ -3,12 +3,12 @@ import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/fe
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
 
-export interface CardNodeUsageProps {
+export interface ClusterCardNodeUsageProps {
   organizationId: string
   clusterId: string
 }
 
-export function CardNodeUsage({ organizationId, clusterId }: CardNodeUsageProps) {
+export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardNodeUsageProps) {
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
@@ -116,4 +116,4 @@ export function CardNodeUsage({ organizationId, clusterId }: CardNodeUsageProps)
   )
 }
 
-export default CardNodeUsage
+export default ClusterCardNodeUsage

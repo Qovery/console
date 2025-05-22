@@ -1,6 +1,6 @@
 import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { CardSetup } from './card-setup'
+import { ClusterCardSetup } from './cluster-card-setup'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
@@ -8,7 +8,7 @@ jest.mock('@qovery/domains/clusters/feature', () => ({
   useClusterRunningStatus: jest.fn(),
 }))
 
-describe('CardSetup', () => {
+describe('ClusterCardSetup', () => {
   const mockOrganizationId = 'org-123'
   const mockClusterId = 'cluster-456'
 
@@ -44,7 +44,7 @@ describe('CardSetup', () => {
       data: mockRunningStatus,
     })
 
-    renderWithProviders(<CardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    renderWithProviders(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('Kubernetes up to date')).toBeInTheDocument()
     expect(screen.getByText('v1.28.1')).toBeInTheDocument()
@@ -64,7 +64,7 @@ describe('CardSetup', () => {
       data: mockRunningStatus,
     })
 
-    renderWithProviders(<CardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    renderWithProviders(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('Upgrade Kubernetes')).toBeInTheDocument()
     expect(screen.getByText('v1.26.0 → v1.28.1')).toBeInTheDocument()
@@ -82,7 +82,7 @@ describe('CardSetup', () => {
       data: mockRunningStatus,
     })
 
-    renderWithProviders(<CardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    renderWithProviders(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('Kubernetes version')).toBeInTheDocument()
     expect(screen.getByText('Unsupported')).toBeInTheDocument()
