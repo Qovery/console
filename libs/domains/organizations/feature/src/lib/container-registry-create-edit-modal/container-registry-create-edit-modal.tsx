@@ -1,8 +1,4 @@
-import {
-  ContainerRegistryKindEnum,
-  type ContainerRegistryRequest,
-  type ContainerRegistryResponse,
-} from 'qovery-typescript-axios'
+import { type ContainerRegistryRequest, type ContainerRegistryResponse } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ExternalLink, ModalCrud, useModal } from '@qovery/shared/ui'
