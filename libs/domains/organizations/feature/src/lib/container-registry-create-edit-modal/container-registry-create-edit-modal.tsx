@@ -28,7 +28,7 @@ export function ContainerRegistryCreateEditModal({
       description: registry?.description,
       url: registry?.url,
       kind: registry?.kind,
-      type: registry ? (registry.config?.role_arn ? 'STS' : 'STATIC') : 'STS',
+      type: registry ? (registry.config?.role_arn ? 'STS' : 'STATIC') : 'STATIC',
       config: {
         username: registry?.config?.username,
         password: undefined,
@@ -87,6 +87,8 @@ export function ContainerRegistryCreateEditModal({
         })
         onClose(response)
       } else {
+        console.log('type', type)
+        console.log('config', config)
         const response = await createContainerRegistry({
           organizationId: organizationId,
           containerRegistryRequest: {

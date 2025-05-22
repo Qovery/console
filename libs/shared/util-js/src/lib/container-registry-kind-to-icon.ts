@@ -14,6 +14,6 @@ export function containerRegistryKindToIcon(
     .with('ECR', 'PUBLIC_ECR', () => IconEnum.AWS)
     .with('GCP_ARTIFACT_REGISTRY', () => IconEnum.GCP_ARTIFACT_REGISTRY)
     .with('DOCR', () => IconEnum.DO)
-    .with('AZURE_CR', () => IconEnum.AZURE_CR)
+    .with('AZURE_CR', () => IconEnum.AZURE)
     .exhaustive()
 }
