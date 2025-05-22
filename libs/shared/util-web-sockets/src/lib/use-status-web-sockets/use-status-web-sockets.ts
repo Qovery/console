@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import { type ServiceStatusDto } from 'qovery-ws-typescript-axios'
 import { useEffect, useRef } from 'react'
+import { v7 as uuidv7 } from 'uuid'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { queries } from '@qovery/state/util-queries'
@@ -28,6 +29,7 @@ export function useStatusWebSockets({
 }: UseStatusWebSocketsProps) {
   const firstMessageReceived = useRef(false)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const externalRequestId = uuidv7()
 
   useEffect(() => {
     return () => {
@@ -88,6 +90,7 @@ export function useStatusWebSockets({
       environment: environmentId,
       cluster: clusterId,
       project: projectId,
+      external_request_id: externalRequestId,
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
@@ -95,13 +98,14 @@ export function useStatusWebSockets({
     onOpen(_, event) {
       timeoutRef.current = setTimeout(() => {
         if (!firstMessageReceived.current) {
-          Sentry.captureMessage('No WS message received from /service/status after 6s', {
-            level: 'debug',
+          Sentry.captureMessage(`No WS message received from /service/status after 6s - id: ${externalRequestId}`, {
+            level: 'error',
             tags: {
               organizationId: organizationId ?? 'unknown',
               environmentId: environmentId ?? 'unknown',
               projectId: projectId ?? 'unknown',
               clusterId,
+              externalRequestId,
               event: JSON.stringify(event),
             },
           })
