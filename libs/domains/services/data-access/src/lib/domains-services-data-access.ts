@@ -61,6 +61,7 @@ import {
   type Status,
   TerraformConfigurationApi,
   TerraformMainCallsApi,
+  TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
   type ContainerResponse as _Container,
@@ -80,6 +81,7 @@ const containersApi = new ContainersApi()
 const databasesApi = new DatabasesApi()
 const jobsApi = new JobsApi()
 const helmsApi = new HelmsApi()
+const terraformsApi = new TerraformsApi()
 
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
@@ -448,7 +450,7 @@ export const services = createQueryKeys('services', {
         }))
         .with('HELM', (serviceType) => ({ query: helmsApi.getDefaultHelmAdvancedSettings.bind(helmsApi), serviceType }))
         .with('TERRAFORM', (serviceType) => ({
-          query: async () => ({ data: {} }), // TODO [QOV-821] to be implemented
+          query: terraformsApi.getDefaultTerraformAdvancedSettings.bind(terraformConfigurationApi),
           serviceType,
         }))
         .exhaustive()
