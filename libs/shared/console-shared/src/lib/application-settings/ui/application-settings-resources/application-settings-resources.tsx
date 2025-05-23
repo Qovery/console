@@ -33,12 +33,7 @@ export function ApplicationSettingsResources({
 
   const cloudProvider = environment?.cloud_provider.provider
 
-  let maxMemoryBySize = service?.maximum_memory
-
-  if (!service) {
-    // until api allows us to fetch the max possible value
-    maxMemoryBySize = 128000
-  }
+  const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 
   const minRunningInstances = watch('min_running_instances')
 
@@ -67,7 +62,8 @@ export function ApplicationSettingsResources({
         Minimum value is {minVCpu} milli vCPU.{' '}
         {service && (
           <>
-            Maximum value allowed based on the selected cluster instance type: {service.maximum_cpu} milli vCPU.{' '}
+            {'maximum_cpu' in service &&
+              `Maximum value allowed based on the selected cluster instance type: ${service.maximum_cpu} milli vCPU.`}
             {clusterId && (
               <Link
                 to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
@@ -98,7 +94,8 @@ export function ApplicationSettingsResources({
         Minimum value is {minMemory} MiB.{' '}
         {service && (
           <>
-            Maximum value allowed based on the selected cluster instance type: {service.maximum_memory} MiB.{' '}
+            {'maximum_memory' in service &&
+              `Maximum value allowed based on the selected cluster instance type: ${service.maximum_memory} MiB. `}
             {clusterId && (
               <Link
                 to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}

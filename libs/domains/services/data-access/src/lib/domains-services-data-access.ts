@@ -162,7 +162,7 @@ export type Terraform = _Terraform & {
   serviceType: TerraformType
 }
 
-export type AnyService = Application | Database | Container | Job | Terraform
+export type AnyService = Application | Database | Container | Job | Helm | Terraform
 
 export type AdvancedSettings =
   | ApplicationAdvancedSettings

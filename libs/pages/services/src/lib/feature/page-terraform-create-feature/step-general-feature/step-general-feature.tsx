@@ -80,26 +80,43 @@ export function StepGeneralFeature() {
                   id: '',
                   name: '',
                   created_at: '',
-                  environment: {
-                    id: '',
-                  },
+                  // TODO [821] some keys do not exist in the API yet
+                  // environment: {
+                  //   id: '',
+                  // },
                   auto_deploy: false,
-                  auto_preview: false,
-                  source: {
-                    repository: {
-                      chart_name: '',
-                      chart_version: '',
-                      repository: {
-                        id: '',
-                        name: '',
-                        url: '',
-                      },
-                    },
-                  },
-                  arguments: [],
+                  // auto_preview: false,
+                  // source: {
+                  //   repository: {
+                  //     chart_name: '',
+                  //     chart_version: '',
+                  //     repository: {
+                  //       id: '',
+                  //       name: '',
+                  //       url: '',
+                  //     },
+                  //   },
+                  // },
+                  // arguments: [],
                   icon_uri: 'app://qovery-console/terraform',
-                  allow_cluster_wide_resources: false,
-                  values_override: {},
+                  // allow_cluster_wide_resources: false,
+                  // values_override: {},
+                  //
+                  timeout_sec: 60,
+                  auto_approve: false,
+                  terraform_variables_source: {
+                    tf_vars: [],
+                    tf_var_file_paths: [],
+                  },
+                  provider: 'TERRAFORM',
+                  provider_version: {
+                    read_from_terraform_block: false,
+                  },
+                  job_resources: {
+                    cpu_milli: 0,
+                    ram_mib: 0,
+                    storage_gb: 0,
+                  },
                 }}
               />
             </Section>
