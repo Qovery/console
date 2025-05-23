@@ -38,7 +38,7 @@ export function NetworkingSetting({
 
   const { data: customDomains } = useCustomDomains({
     serviceId: helmId,
-    serviceType: ServiceType.HELM,
+    serviceType: 'HELM',
   })
 
   const onAddPort = () =>

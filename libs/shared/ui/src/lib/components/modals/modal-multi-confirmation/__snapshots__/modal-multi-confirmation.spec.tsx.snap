@@ -32,7 +32,7 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
           <div
             class="flex flex-col gap-3"
           >
-            <p
+            <div
               class="font-semibold"
             />
             <div

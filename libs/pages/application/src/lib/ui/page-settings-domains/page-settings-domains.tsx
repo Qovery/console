@@ -24,7 +24,13 @@ import {
   Section,
   Tooltip,
 } from '@qovery/shared/ui'
-import { hasPublicPort } from '@qovery/shared/util-services'
+
+export const hasPublicPort = (ingressDeploymentStatus?: StateEnum) => {
+  return match(ingressDeploymentStatus)
+    .with(StateEnum.DEPLOYED, () => true)
+    .with(StateEnum.WAITING_RUNNING, () => true)
+    .otherwise(() => false)
+}
 
 export interface PageSettingsDomainsProps {
   onCheckCustomDomains: () => void
@@ -174,8 +180,6 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                     .with(
                       StateEnum.STOPPED,
                       StateEnum.STOP_QUEUED,
-                      StateEnum.CANCELED,
-                      StateEnum.CANCELING,
                       () => "You can't set up a domain because your service is currently stopped."
                     )
                     .otherwise(() => 'You need at least one exposed port to create a domain.')}
@@ -184,7 +188,7 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
             </div>
             <div className="flex items-center gap-3">
               {match(ingressStatus)
-                .with(StateEnum.STOPPED, StateEnum.STOP_QUEUED, StateEnum.CANCELED, StateEnum.CANCELING, () => (
+                .with(StateEnum.STOPPED, StateEnum.STOP_QUEUED, () => (
                   <Button className="gap-1" onClick={mutationDeploy}>
                     Deploy
                     <Icon iconName="arrow-right" className="text-xs" />

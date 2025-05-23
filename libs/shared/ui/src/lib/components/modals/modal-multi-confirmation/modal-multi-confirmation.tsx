@@ -30,7 +30,7 @@ export function ModalMultiConfirmation({
     handleSubmit,
     control,
     formState: { isValid },
-  } = useForm({})
+  } = useForm()
   const { closeModal } = useModal()
 
   const onSubmit = handleSubmit((data) => {
@@ -53,7 +53,7 @@ export function ModalMultiConfirmation({
             </Callout.Icon>
             <Callout.Text>
               <div className="flex flex-col gap-3">
-                <p className="font-semibold">{warning}</p>
+                <div className="font-semibold">{warning}</div>
                 {checks &&
                   checks.map((check) => (
                     <div key={check} className="flex items-center gap-4">
@@ -62,7 +62,6 @@ export function ModalMultiConfirmation({
                         control={control}
                         rules={{
                           required: 'Please check the box to confirm.',
-                          validate: (value) => value,
                         }}
                         render={({ field, fieldState: { error } }) => (
                           <div className="flex flex-col gap-2">

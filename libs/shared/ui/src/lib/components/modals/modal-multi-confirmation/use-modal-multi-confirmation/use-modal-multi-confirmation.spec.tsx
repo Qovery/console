@@ -1,5 +1,5 @@
-import { act, renderHook } from '__tests__/utils/setup-jest'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
+import { act, renderHook } from '@qovery/shared/util-tests'
 import ModalProvider from '../../../modal/modal-root'
 import useModalMultiConfirmation, { type UseModalMultiConfirmationProps } from './use-modal-multi-confirmation'
 
