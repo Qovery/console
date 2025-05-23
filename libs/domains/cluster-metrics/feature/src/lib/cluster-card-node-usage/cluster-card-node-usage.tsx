@@ -20,6 +20,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
 
   const shouldDisplayMinMaxNodes = match(cluster)
     .with({ cloud_provider: 'GCP' }, () => false)
+    .with({ cloud_provider: 'ON_PREMISE' }, () => false)
     .with({ cloud_provider: 'AWS', instance_type: 'KARPENTER' }, () => false)
     .otherwise(() => true)
 
@@ -82,12 +83,17 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
             <span className="text-[28px] font-bold text-neutral-400">{runningStatus?.nodes?.length}</span>
           </Skeleton>
         </div>
-        <Link
-          color="current"
-          to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-        >
-          <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-300" />
-        </Link>
+        {match(cluster?.cloud_provider)
+          .with('GCP', () => null)
+          .with('ON_PREMISE', () => null)
+          .otherwise(() => (
+            <Link
+              color="current"
+              to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+            >
+              <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-300" />
+            </Link>
+          ))}
       </div>
       <Skeleton width="100%" height={20} show={!cluster || runningStatusNotAvailable}>
         <div className="flex w-full flex-col gap-2.5">

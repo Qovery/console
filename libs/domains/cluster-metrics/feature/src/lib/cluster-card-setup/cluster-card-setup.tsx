@@ -71,7 +71,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
             </span>
           </div>
         </Skeleton>
-        {deploymentStatus?.is_deployed && (
+        {cluster?.cloud_provider !== 'ON_PREMISE' && deploymentStatus?.is_deployed && (
           <Skeleton width="65%" height={20} show={isLoading} className="truncate">
             <Link
               to={INFRA_LOGS_URL(organizationId, clusterId)}
