@@ -255,7 +255,7 @@ export const services = createQueryKeys('services', {
         .with('DATABASE', () => databaseMainCallsApi.getDatabaseStatus.bind(databaseMainCallsApi))
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
         .with('HELM', () => helmMainCallsApi.getHelmStatus.bind(helmMainCallsApi))
-        .with('TERRAFORM', () => terraformMainCallsApi.getTerraform.bind(terraformMainCallsApi)) // TODO double check that
+        .with('TERRAFORM', () => terraformMainCallsApi.getTerraform.bind(terraformMainCallsApi)) // TODO [QOV-821] should it be replaced with `getTerraformStatus` ?
         .exhaustive()
       const response = await fn(serviceId)
       return response.data
@@ -277,7 +277,7 @@ export const services = createQueryKeys('services', {
           helmDeploymentRestrictionApi.getHelmDeploymentRestrictions.bind(helmDeploymentRestrictionApi)
         )
         .with('CONTAINER', 'DATABASE', () => null)
-        .with('TERRAFORM', () => null) // TODO double check that
+        .with('TERRAFORM', () => null) // TODO [QOV-821] double check that
         .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
@@ -379,7 +379,7 @@ export const services = createQueryKeys('services', {
           async () => (await jobDeploymentsApi.listJobDeploymentHistoryV2(serviceId)).data.results
         )
         .with('HELM', async () => (await helmDeploymentsApi.listHelmDeploymentHistoryV2(serviceId)).data.results)
-        .with('TERRAFORM', async () => undefined) // TODO change that
+        .with('TERRAFORM', async () => undefined) // TODO [QOV-821] to be implemented
         .exhaustive()
     },
   }),
@@ -448,7 +448,7 @@ export const services = createQueryKeys('services', {
         }))
         .with('HELM', (serviceType) => ({ query: helmsApi.getDefaultHelmAdvancedSettings.bind(helmsApi), serviceType }))
         .with('TERRAFORM', (serviceType) => ({
-          query: async () => ({ data: {} }), // TODO update that
+          query: async () => ({ data: {} }), // TODO [QOV-821] to be implemented
           serviceType,
         }))
         .exhaustive()
@@ -485,7 +485,7 @@ export const services = createQueryKeys('services', {
         .with('TERRAFORM', (serviceType) => ({
           query: terraformConfigurationApi.getTerraformAdvancedSettings.bind(terraformConfigurationApi),
           serviceType,
-        })) // TODO to double check
+        })) // TODO [QOV-821] to double check
         .exhaustive()
       const response = await query(serviceId)
       return response.data
@@ -674,7 +674,7 @@ export const mutations = {
       .with('TERRAFORM', (serviceType) => ({
         mutation: () => ({ data: { id: 'id', environment: { id: 'id' } } }),
         serviceType,
-      })) // TODO implement that
+      })) // TODO [QOV-821] to be implemented
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -784,7 +784,7 @@ export const mutations = {
       .with('TERRAFORM', (serviceType) => ({
         mutation: terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi),
         serviceType,
-      })) // TODO double check that
+      })) // TODO [QOV-821] double check that
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
@@ -868,7 +868,7 @@ export const mutations = {
         serviceType,
       }))
       .with('TERRAFORM', (serviceType) => ({
-        mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }), // TODO to implement
+        mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }), // TODO [QOV-821] to be implemented
         serviceType,
       }))
       .exhaustive()
@@ -937,7 +937,7 @@ export const mutations = {
       .with('TERRAFORM', (serviceType) => ({
         mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
         serviceType,
-      })) // TODO to implement
+      })) // TODO [QOV-821] to implement
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
