@@ -4,9 +4,13 @@ import { PageSettingsDomains, type PageSettingsDomainsProps } from './page-setti
 
 let props: PageSettingsDomainsProps
 
+let mockIngressDeploymentStatus = 'DEPLOYED'
 jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),
-  useIngressDeploymentStatus: () => ({ data: { routerId: 'id', status: 'DEPLOYED' } }),
+  useIngressDeploymentStatus: () => ({
+    data: { routerId: 'id', status: mockIngressDeploymentStatus },
+    isLoading: false,
+  }),
 }))
 
 describe('PageSettingsDomains', () => {
@@ -107,5 +111,28 @@ describe('PageSettingsDomains', () => {
 
     renderWithProviders(<PageSettingsDomains {...props} />)
     expect(screen.queryByTestId('spinner')).not.toBeInTheDocument()
+  })
+
+  describe('with ingress deployment status', () => {
+    describe('when the ingress is stopped', () => {
+      it('should show the deploy button', () => {
+        mockIngressDeploymentStatus = 'STOPPED'
+        props.domains = []
+        props.loading = false
+        renderWithProviders(<PageSettingsDomains {...props} />)
+        expect(screen.getByText('Deploy')).toBeInTheDocument()
+      })
+    })
+
+    describe('when the ingress is deployed', () => {
+      it('should not show the deploy button but show the create public port button instead', () => {
+        mockIngressDeploymentStatus = 'CANCELED'
+        props.domains = []
+        props.loading = false
+        renderWithProviders(<PageSettingsDomains {...props} />)
+        expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+        expect(screen.getByText('Create public port')).toBeInTheDocument()
+      })
+    })
   })
 })

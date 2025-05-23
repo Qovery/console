@@ -4,7 +4,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsDomainsFeature from './page-settings-domains-feature'
 
 const mockApplication = applicationFactoryMock(1)[0] as Application
-
+const mockIngressDeploymentStatus = 'DEPLOYED'
 jest.mock('@qovery/domains/services/feature', () => ({
   useService: () => ({
     data: mockApplication,
@@ -15,29 +15,34 @@ jest.mock('@qovery/domains/services/feature', () => ({
     isFetching: false,
     refetch: jest.fn(),
   }),
-  useIngressDeploymentStatus: () => ({ data: { routerId: 'id', status: 'DEPLOYED' } }),
+  useIngressDeploymentStatus: () => ({ data: { routerId: 'id', status: mockIngressDeploymentStatus } }),
+  useDeployService: () => ({
+    mutate: jest.fn(),
+  }),
 }))
 
+const mockCustomDomains = [
+  {
+    id: '1',
+    domain: 'example.com',
+    status: 'VALIDATION_PENDING',
+    validation_domain: 'example.com',
+    updated_at: '2020-01-01T00:00:00Z',
+    created_at: '2020-01-01T00:00:00Z',
+  },
+  {
+    id: '2',
+    domain: 'example2.com',
+    status: 'VALIDATION_PENDING',
+    validation_domain: 'example.com',
+    updated_at: '2020-01-01T00:00:00Z',
+    created_at: '2020-01-01T00:00:00Z',
+  },
+]
 jest.mock('@qovery/domains/custom-domains/feature', () => ({
   useCustomDomains: () => ({
-    data: [
-      {
-        id: '1',
-        domain: 'example.com',
-        status: 'VALIDATION_PENDING',
-        validation_domain: 'example.com',
-        updated_at: '2020-01-01T00:00:00Z',
-        created_at: '2020-01-01T00:00:00Z',
-      },
-      {
-        id: '2',
-        domain: 'example2.com',
-        status: 'VALIDATION_PENDING',
-        validation_domain: 'example.com',
-        updated_at: '2020-01-01T00:00:00Z',
-        created_at: '2020-01-01T00:00:00Z',
-      },
-    ],
+    data: mockCustomDomains,
+    isLoading: false,
   }),
   useDeleteCustomDomain: () => ({
     mutate: jest.fn(),
