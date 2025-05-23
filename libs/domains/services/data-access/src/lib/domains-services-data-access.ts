@@ -60,6 +60,7 @@ import {
   type RebootServicesRequest,
   type Status,
   TerraformConfigurationApi,
+  TerraformDeploymentHistoryApi,
   TerraformMainCallsApi,
   TerraformsApi,
   type Application as _Application,
@@ -99,6 +100,7 @@ const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const helmDeploymentsApi = new HelmDeploymentHistoryApi()
+const terraformDeploymentsApi = new TerraformDeploymentHistoryApi()
 const jobDeploymentsApi = new JobDeploymentHistoryApi()
 
 const applicationActionsApi = new ApplicationActionsApi()
@@ -381,7 +383,10 @@ export const services = createQueryKeys('services', {
           async () => (await jobDeploymentsApi.listJobDeploymentHistoryV2(serviceId)).data.results
         )
         .with('HELM', async () => (await helmDeploymentsApi.listHelmDeploymentHistoryV2(serviceId)).data.results)
-        .with('TERRAFORM', async () => undefined) // TODO [QOV-821] to be implemented
+        .with(
+          'TERRAFORM',
+          async () => (await terraformDeploymentsApi.listTerraformDeploymentHistoryV2(serviceId)).data.results
+        ) // TODO [QOV-821] double check that
         .exhaustive()
     },
   }),
@@ -675,8 +680,9 @@ export const mutations = {
       .with('HELM', (serviceType) => ({ mutation: helmsApi.cloneHelm.bind(helmsApi), serviceType }))
       .with('TERRAFORM', (serviceType) => ({
         mutation: () => ({ data: { id: 'id', environment: { id: 'id' } } }),
+        // mutation: terraformMainCallsApi.cloneTerraform.bind(terraformMainCallsApi), // TODO [QOV-821] uncomment when implemented
         serviceType,
-      })) // TODO [QOV-821] to be implemented
+      }))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
