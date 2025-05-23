@@ -35,6 +35,15 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
   const isTerminalLoading = addons.length < 2 || isRunningStatusesLoading
   const fitAddon = addons[0] as FitAddon | undefined
 
+  // Lock body scroll when terminal is open
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = originalStyle
+    }
+  }, [])
+
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
@@ -57,9 +66,10 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
 
   // Necesssary to calculate the number of rows and columns (tty) for the terminal
   // https://github.com/xtermjs/xterm.js/issues/1412#issuecomment-724421101
-  // 16 is the font height
-  const rows = Math.ceil(document.body.clientHeight / 16)
-  const cols = Math.ceil(document.body.clientWidth / 8)
+  // 14 is the font height for better k9s compatibility
+  const rows = Math.ceil(document.body.clientHeight / 14)
+  // 9 is the font width for better k9s compatibility, with a minimum width of 80 columns
+  const cols = Math.max(80, Math.ceil(document.body.clientWidth / 9))
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/shell/debug',
