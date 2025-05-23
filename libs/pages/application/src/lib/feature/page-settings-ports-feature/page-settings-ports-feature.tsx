@@ -7,12 +7,14 @@ import {
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useCustomDomains } from '@qovery/domains/custom-domains/feature'
 import { type Application, type Container } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { ProbeTypeEnum } from '@qovery/shared/enums'
 import { type PortData } from '@qovery/shared/interfaces'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useModal, useModalConfirmation, useModalMultiConfirmation } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
+import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
 import PageSettingsPorts from '../../ui/page-settings-ports/page-settings-ports'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
 
@@ -79,8 +81,13 @@ export function SettingsPortsFeature({
     projectId,
     environmentId: service.environment.id,
   })
+  const { data: customDomains } = useCustomDomains({
+    serviceId: service.id,
+    serviceType: service?.serviceType ?? 'APPLICATION',
+  })
 
   const { openModal, closeModal } = useModal()
+  const { openModalMultiConfirmation } = useModalMultiConfirmation()
   const { openModalConfirmation } = useModalConfirmation()
 
   return (
@@ -93,41 +100,73 @@ export function SettingsPortsFeature({
         })
       }}
       onEdit={(port: PortData | ServicePort) => {
+        const isLastPublicPort = isTryingToRemoveLastPublicPort(service.serviceType, service.ports, port, customDomains)
         openModal({
-          content: <CrudModalFeature onClose={closeModal} service={service} port={port as ServicePort} />,
+          content: (
+            <CrudModalFeature
+              onClose={closeModal}
+              service={service}
+              port={port as ServicePort}
+              isLastPublicPort={isLastPublicPort}
+            />
+          ),
         })
       }}
       onDelete={(port: PortData | ServicePort, warning) => {
-        openModalConfirmation({
-          title: 'Delete Port',
-          isDelete: true,
-          name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
-          warning,
-          action: () => {
-            const cloneApplication = deletePort(service, (port as ServicePort).id)
-            const payload = match(service)
-              .with({ serviceType: 'APPLICATION' }, (service) =>
-                buildEditServicePayload({
-                  service,
-                  request: cloneApplication as ApplicationEditRequest,
-                })
-              )
-              .with({ serviceType: 'CONTAINER' }, (service) =>
-                buildEditServicePayload({
-                  service,
-                  request: cloneApplication as ContainerRequest,
-                })
-              )
-              .otherwise(() => undefined)
+        const isTryingToRemoveLastPort = isTryingToRemoveLastPublicPort(
+          service.serviceType,
+          service.ports,
+          port,
+          customDomains
+        )
 
-            if (!payload) return
+        const callback = () => {
+          const cloneApplication = deletePort(service, (port as ServicePort).id)
+          const payload = match(service)
+            .with({ serviceType: 'APPLICATION' }, (service) =>
+              buildEditServicePayload({
+                service,
+                request: cloneApplication as ApplicationEditRequest,
+              })
+            )
+            .with({ serviceType: 'CONTAINER' }, (service) =>
+              buildEditServicePayload({
+                service,
+                request: cloneApplication as ContainerRequest,
+              })
+            )
+            .otherwise(() => undefined)
 
-            editService({
-              serviceId: service.id,
-              payload,
+          if (!payload) return
+
+          editService({
+            serviceId: service.id,
+            payload,
+          })
+        }
+
+        isTryingToRemoveLastPort
+          ? openModalMultiConfirmation({
+              title: 'Delete port',
+              isDelete: true,
+              description: 'Please confirm deletion',
+              warning: (
+                <p>
+                  You are about to remove your last public port.
+                  <br />
+                  Please confirm that you understand the impact of this operation.
+                </p>
+              ),
+              checks: ['I understand this action is irreversible and will delete all linked domains'],
+              action: callback,
             })
-          },
-        })
+          : openModalConfirmation({
+              title: 'Delete port',
+              isDelete: true,
+              name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
+              warning,
+              action: callback,
+            })
       }}
     />
   )
