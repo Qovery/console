@@ -203,15 +203,21 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        {cluster.kubernetes === 'SELF_MANAGED' ? (
-          <DropdownMenu.Item icon={<Icon iconName="terminal" />} onSelect={() => openAccessModal('SELF_MANAGED')}>
-            Connect
-          </DropdownMenu.Item>
-        ) : (
-          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal('MANAGED')}>
-            Access info
-          </DropdownMenu.Item>
-        )}
+        <DropdownMenu.Item
+          icon={<Icon iconName="terminal" />}
+          onSelect={() => {
+            navigate(CLUSTER_URL(cluster.organization.id, cluster.id), {
+              state: {
+                hasShell: true,
+              },
+            })
+          }}
+        >
+          Connect
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal('MANAGED')}>
+          Access info
+        </DropdownMenu.Item>
         <DropdownMenu.Item
           icon={<Icon iconName="clock-rotate-left" />}
           onSelect={() =>
