@@ -30,6 +30,7 @@ function scopeHierarchy(targetScope: APIVariableScopeEnum) {
         hierarchy: 3,
       },
     ])
+    .with('TERRAFORM', () => baseHierarchy) // TODO [QOV-821] to double check
     .exhaustive()
 }
 
@@ -43,6 +44,7 @@ function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof 
     .with('BUILT_IN', () => APIVariableScopeEnum.BUILT_IN)
     .with('PROJECT', () => APIVariableScopeEnum.PROJECT)
     .with('ENVIRONMENT', () => APIVariableScopeEnum.ENVIRONMENT)
+    .with('TERRAFORM', () => APIVariableScopeEnum.TERRAFORM)
     .exhaustive()
 }
 
