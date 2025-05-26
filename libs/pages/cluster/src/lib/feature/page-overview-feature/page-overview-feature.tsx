@@ -1,5 +1,10 @@
 import { useParams } from 'react-router-dom'
-import { ClusterCardNodeUsage, ClusterCardResources, ClusterCardSetup } from '@qovery/domains/cluster-metrics/feature'
+import {
+  ClusterCardNodeUsage,
+  ClusterCardResources,
+  ClusterCardSetup,
+  ClusterTableNodepool,
+} from '@qovery/domains/cluster-metrics/feature'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -21,10 +26,13 @@ export function PageOverviewFeature() {
   }
 
   return (
-    <div className="grid gap-6 p-8 md:grid-cols-3">
-      <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
-      <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
-      <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
+    <div className="flex flex-col gap-6 p-8">
+      <div className="grid gap-6 md:grid-cols-3">
+        <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
+        <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
+        <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
+      </div>
+      <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
     </div>
   )
 }

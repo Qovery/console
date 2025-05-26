@@ -2,8 +2,7 @@ import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
-
-const calculatePercentage = (value: number, total: number): number => (total > 0 ? (value / total) * 100 : 0)
+import { calculatePercentage } from '@qovery/shared/util-js'
 
 export interface ClusterCardNodeUsageProps {
   organizationId: string
