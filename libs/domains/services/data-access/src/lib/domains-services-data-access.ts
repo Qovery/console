@@ -652,6 +652,10 @@ type DeployRequest =
       serviceId: string
       serviceType: DatabaseType
     }
+  | {
+      serviceId: string
+      serviceType: TerraformType
+    }
 
 type EditAdvancedSettingsRequest = {
   serviceId: string
@@ -915,6 +919,7 @@ export const mutations = {
         mutation: helmActionsApi.deployHelm.bind(helmActionsApi, serviceId, undefined, request),
         serviceType,
       }))
+
       .exhaustive()
     const response = await mutation()
     return response.data

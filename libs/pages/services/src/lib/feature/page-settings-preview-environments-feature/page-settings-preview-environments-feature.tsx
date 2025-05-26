@@ -92,12 +92,12 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
     // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
     if (environmentDeploymentRules && loadingStatusEnvironmentDeploymentRules && !loading) {
       const isApplicationPreviewEnabled = services
-        ? services.some((app) => app.serviceType !== 'DATABASE' && app.auto_preview)
+        ? services.some((app) => app.serviceType !== 'DATABASE' && app.auto_preview) // TODO exclude Terraform
         : false
       methods.setValue('auto_preview', environmentDeploymentRules.auto_preview || isApplicationPreviewEnabled)
       methods.setValue('on_demand_preview', environmentDeploymentRules.on_demand_preview)
-      services.forEach((service) =>
-        methods.setValue(service.id, service.serviceType !== 'DATABASE' && service.auto_preview)
+      services.forEach(
+        (service) => methods.setValue(service.id, service.serviceType !== 'DATABASE' && service.auto_preview) // TODO exclude Terraform
       )
     }
   }, [loadingStatusEnvironmentDeploymentRules, methods, environmentDeploymentRules, services, loading])
