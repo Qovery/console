@@ -2,15 +2,19 @@ import { type VariantProps, cva } from 'class-variance-authority'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs', 'h-6', 'px-1.5'], {
+const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs', 'px-1.5'], {
   variants: {
+    size: {
+      base: ['h-6'],
+      sm: ['h-5'],
+    },
     color: {
       neutral: [],
       red: ['text-red-500'],
       purple: ['text-purple-500'],
       sky: ['text-sky-500'],
       green: ['text-green-500'],
-      yellow: ['text-yellow-500'],
+      yellow: ['text-yellow-900'],
       brand: ['text-brand-500'],
     },
     variant: {
@@ -63,7 +67,7 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs',
     {
       variant: ['surface', 'outline'],
       color: 'red',
-      className: ['border-red-500'],
+      className: ['border-red-500/30'],
     },
     {
       variant: 'surface',
@@ -98,12 +102,12 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs',
     {
       variant: 'surface',
       color: 'yellow',
-      className: ['bg-yellow-50'],
+      className: ['bg-yellow-500/30'],
     },
     {
       variant: ['surface', 'outline'],
       color: 'yellow',
-      className: ['border-yellow-500'],
+      className: ['border-yellow-100'],
     },
     {
       variant: 'surface',
@@ -117,6 +121,7 @@ const badgeVariants = cva(['inline-flex', 'items-center', 'shrink-0', 'text-xs',
     },
   ],
   defaultVariants: {
+    size: 'base',
     variant: 'outline',
     color: 'neutral',
     radius: 'rounded',
@@ -128,7 +133,7 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {}
 
 export const Badge = forwardRef<ElementRef<'span'>, BadgeProps>(function Badge(
-  { className, color, variant, radius, ...badgeProps },
+  { className, color, variant, radius, size, ...badgeProps },
   forwardedRef
 ) {
   return (
@@ -136,7 +141,7 @@ export const Badge = forwardRef<ElementRef<'span'>, BadgeProps>(function Badge(
       data-accent-color={color}
       {...badgeProps}
       ref={forwardedRef}
-      className={twMerge(badgeVariants({ color, variant, radius }), className)}
+      className={twMerge(badgeVariants({ color, variant, radius, size }), className)}
     />
   )
 })
