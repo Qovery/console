@@ -3,6 +3,8 @@ import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/fe
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
 
+const calculatePercentage = (value: number, total: number): number => (total > 0 ? (value / total) * 100 : 0)
+
 export interface ClusterCardNodeUsageProps {
   organizationId: string
   clusterId: string
@@ -38,9 +40,9 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
       (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'False'
     ).length || 0
 
-  const healthyPercentage = totalNodes > 0 ? (healthyNodes / totalNodes) * 100 : 0
-  const warningPercentage = totalNodes > 0 ? (warningNodes / totalNodes) * 100 : 0
-  const deployingPercentage = totalNodes > 0 ? (deployingNodes / totalNodes) * 100 : 0
+  const healthyPercentage = calculatePercentage(healthyNodes, totalNodes)
+  const warningPercentage = calculatePercentage(warningNodes, totalNodes)
+  const deployingPercentage = calculatePercentage(deployingNodes, totalNodes)
 
   const tooltipContent = (
     <div className="flex flex-col gap-1">
