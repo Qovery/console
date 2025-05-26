@@ -23,6 +23,7 @@ export function PageSettingsDomainsFeature() {
     serviceId: applicationId,
     serviceType: service?.serviceType ?? 'APPLICATION',
   })
+
   const { mutate: deleteCustomDomain } = useDeleteCustomDomain()
 
   const { openModal, closeModal } = useModal()

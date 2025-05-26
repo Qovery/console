@@ -1,16 +1,36 @@
-import { type CheckedCustomDomainResponse, type CustomDomain } from 'qovery-typescript-axios'
+import { type CheckedCustomDomainResponse, type CustomDomain, StateEnum } from 'qovery-typescript-axios'
+import { ServiceType } from 'qovery-ws-typescript-axios'
+import { useCallback } from 'react'
+import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useDeployService, useIngressDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
+import {
+  APPLICATION_SETTINGS_NETWORKING_URL,
+  APPLICATION_SETTINGS_PORT_URL,
+  APPLICATION_SETTINGS_URL,
+  APPLICATION_URL,
+} from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
   Callout,
   EmptyState,
+  ExternalLink,
   Icon,
   InputText,
+  Link,
   LoaderSpinner,
   Section,
   Tooltip,
 } from '@qovery/shared/ui'
+
+export const hasPublicPort = (ingressDeploymentStatus?: StateEnum) => {
+  return match(ingressDeploymentStatus)
+    .with(StateEnum.DEPLOYED, () => true)
+    .with(StateEnum.WAITING_RUNNING, () => true)
+    .otherwise(() => false)
+}
 
 export interface PageSettingsDomainsProps {
   onCheckCustomDomains: () => void
@@ -24,11 +44,34 @@ export interface PageSettingsDomainsProps {
 }
 
 export function PageSettingsDomains(props: PageSettingsDomainsProps) {
+  const params = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = params
+  const { data: service } = useService({ serviceId: applicationId })
+  const { data: ingressStatusData, isLoading: isIngressStatusLoading } = useIngressDeploymentStatus({
+    serviceId: applicationId,
+    serviceType: service?.serviceType ?? ServiceType.APPLICATION,
+  })
+  const { mutate: deployService } = useDeployService({
+    organizationId: organizationId,
+    projectId: projectId,
+    environmentId: environmentId,
+  })
+
+  const ingressStatus = ingressStatusData?.status
+  const isLoading = props.loading || isIngressStatusLoading
+  const canAddDomain = !isLoading && hasPublicPort(ingressStatus)
+  const pathToPortsTab = `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${service?.serviceType === ServiceType.HELM ? APPLICATION_SETTINGS_NETWORKING_URL : APPLICATION_SETTINGS_PORT_URL}`
+
+  const mutationDeploy = useCallback(() => {
+    if (!service) return
+    deployService({ serviceId: service.id, serviceType: service.serviceType })
+  }, [service, deployService])
+
   return (
     <div className="w-full justify-between">
       <Section className="max-w-content-with-navigation-left  p-8">
         <SettingsHeading title="Domain" description="Add custom domains to your service.">
-          <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()}>
+          <Button size="md" variant="solid" color="brand" onClick={() => props.onAddDomain()} disabled={!canAddDomain}>
             Add Domain
             <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
           </Button>
@@ -43,11 +86,11 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
             </Callout.TextHeading>
           </Callout.Root>
         )}
-        {props.loading && props.domains?.length === 0 ? (
+        {isLoading ? (
           <div className="flex justify-center">
             <LoaderSpinner className="w-6" />
           </div>
-        ) : props.domains && props.domains.length > 0 ? (
+        ) : !isLoading && props.domains && props.domains.length > 0 ? (
           <BlockContent title="Configured domains">
             {props.domains &&
               props.domains.map((customDomain, i) => {
@@ -126,6 +169,48 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
                 )
               })}
           </BlockContent>
+        ) : !canAddDomain ? (
+          <div className="flex flex-col items-center gap-5 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
+            <div className="flex flex-col items-center gap-2">
+              <Icon iconName="earth-americas" className="text-lg" iconStyle="regular" />
+              <div className="flex flex-col items-center">
+                <span className="font-medium text-neutral-400">No domains configured</span>
+                <span className="text-sm text-neutral-350">
+                  {match(ingressStatus)
+                    .with(
+                      StateEnum.STOPPED,
+                      StateEnum.STOP_QUEUED,
+                      () => "You can't set up a domain because your service is currently stopped."
+                    )
+                    .otherwise(() => 'You need at least one exposed port to create a domain.')}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              {match(ingressStatus)
+                .with(StateEnum.STOPPED, StateEnum.STOP_QUEUED, () => (
+                  <Button className="gap-1" onClick={mutationDeploy}>
+                    Deploy
+                    <Icon iconName="arrow-right" className="text-xs" />
+                  </Button>
+                ))
+                .otherwise(() => (
+                  <Link as="button" className="gap-1" to={pathToPortsTab}>
+                    Create public port
+                    <Icon iconName="arrow-right" className="text-xs" />
+                  </Link>
+                ))}
+              <ExternalLink
+                as="button"
+                type="button"
+                variant="outline"
+                color="neutral"
+                href="https://hub.qovery.com/docs/using-qovery/configuration/application/#custom-domains"
+              >
+                Learn more
+              </ExternalLink>
+            </div>
+          </div>
         ) : (
           <EmptyState title="No domains are set" description="Define a custom domain for your application" />
         )}
