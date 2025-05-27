@@ -4,7 +4,10 @@ import { FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
-import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_VALUES_STEP_1_URL } from '@qovery/shared/routes'
+import {
+  SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
+  SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
+} from '@qovery/shared/routes'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -47,7 +50,7 @@ export function StepValuesOverrideArgumentsFeature() {
   }, [setCurrentStep])
 
   const onSubmit = valuesOverrideArgumentsForm.handleSubmit(() => {
-    navigate(creationFlowUrl + SERVICES_HELM_CREATION_SUMMARY_URL)
+    navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_SUMMARY_URL)
   })
 
   return (
@@ -60,7 +63,7 @@ export function StepValuesOverrideArgumentsFeature() {
               size="lg"
               variant="plain"
               color="neutral"
-              onClick={() => navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)}
             >
               Back
             </Button>

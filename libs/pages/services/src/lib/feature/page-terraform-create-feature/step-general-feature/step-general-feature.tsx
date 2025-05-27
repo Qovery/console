@@ -9,11 +9,9 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
-import { SERVICES_HELM_CREATION_VALUES_STEP_1_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { findTemplateData } from '../../page-job-create-feature/page-job-create-feature'
-import { serviceTemplates } from '../../page-new-feature/service-templates'
 import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepGeneralFeature() {
@@ -32,7 +30,7 @@ export function StepGeneralFeature() {
       data.auto_deploy = false
     }
 
-    navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_1_URL)
+    navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)
   })
 
   const watchFieldProvider = generalForm.watch('source_provider')
@@ -44,31 +42,16 @@ export function StepGeneralFeature() {
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchFieldProvider === 'GIT' ? generalForm.watch('branch') : true
 
-  const isTemplate = slug !== undefined
-  const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
-  const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
-
   return (
     <FunnelFlowBody>
       <FormProvider {...generalForm}>
         <Section>
-          {isTemplate ? (
-            <div className="mb-10">
-              <Heading className="mb-2">
-                {dataTemplate?.title} {dataOptionTemplate?.title ? `- ${dataOptionTemplate?.title}` : ''}
-              </Heading>
-              <p className="text-sm text-neutral-350">
-                These general settings allow you to set up the service name, its source and deployment parameters.
-              </p>
-            </div>
-          ) : (
-            <>
-              <Heading className="mb-2">General information</Heading>
-              <p className="mb-10 text-sm text-neutral-350">
-                These general settings allow you to set up the service name, its source and deployment parameters.
-              </p>
-            </>
-          )}
+          <>
+            <Heading className="mb-2">General information</Heading>
+            <p className="mb-10 text-sm text-neutral-350">
+              These general settings allow you to set up the service name, its source and deployment parameters.
+            </p>
+          </>
           <form className="space-y-10" onSubmit={onSubmit}>
             <Section className="gap-4">
               <Heading>General</Heading>
@@ -80,11 +63,11 @@ export function StepGeneralFeature() {
                   id: '',
                   name: '',
                   created_at: '',
-                  // TODO [821] some keys do not exist in the API yet
                   environment: {
                     id: '',
                   },
                   auto_deploy: false,
+                  // TODO [821] some keys do not exist in the API yet
                   // auto_preview: false,
                   // source: {
                   //   repository: {
@@ -148,8 +131,8 @@ export function StepGeneralFeature() {
                         <GitBranchSettings
                           gitProvider={watchFieldGitProvider}
                           gitTokenId={watchFieldGitTokenId}
-                          rootPathLabel="Chart root folder path"
-                          rootPathHint="Provide the folder path in the repository where the chart is located."
+                          rootPathLabel="Root module path"
+                          rootPathHint="Provide the folder path in the repository where the root module is located."
                         />
                       )}
                     </>
@@ -157,7 +140,7 @@ export function StepGeneralFeature() {
                 </div>
               )}
             </Section>
-            <Section className="gap-4">
+            {/* <Section className="gap-4">
               <Heading>Deploy</Heading>
               <DeploymentSetting />
               {watchFieldProvider === 'GIT' && !watchFieldIsPublicRepository && <AutoDeploySetting source="GIT" />}
@@ -174,7 +157,7 @@ export function StepGeneralFeature() {
                   </Callout.Text>
                 </Callout.Root>
               )}
-            </Section>
+            </Section> */}
             <div className="flex justify-between">
               <Button
                 type="button"

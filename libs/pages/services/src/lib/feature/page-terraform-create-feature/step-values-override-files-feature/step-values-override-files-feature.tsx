@@ -10,7 +10,10 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
 import { AutoDeploySetting } from '@qovery/domains/services/feature'
-import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_VALUES_STEP_2_URL } from '@qovery/shared/routes'
+import {
+  SERVICES_TERRAFORM_CREATION_GENERAL_URL,
+  SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
+} from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -75,7 +78,7 @@ export function StepValuesOverrideFilesFeature() {
 
   const onSubmit = valuesOverrideFileForm.handleSubmit(() => {
     if (watchFieldIsPublicRepository) generalForm.setValue('auto_deploy', false)
-    navigate(creationFlowUrl + SERVICES_HELM_CREATION_VALUES_STEP_2_URL)
+    navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL)
   })
 
   const watchFieldType = valuesOverrideFileForm.watch('type')
@@ -173,7 +176,7 @@ export function StepValuesOverrideFilesFeature() {
               size="lg"
               variant="plain"
               color="neutral"
-              onClick={() => navigate(creationFlowUrl + SERVICES_HELM_CREATION_GENERAL_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_GENERAL_URL)}
             >
               Back
             </Button>
