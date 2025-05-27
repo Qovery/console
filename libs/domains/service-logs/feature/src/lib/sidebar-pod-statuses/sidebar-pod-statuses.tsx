@@ -49,7 +49,16 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
   }, [metrics, runningStatuses])
 
   const podsFiltered = useMemo(
-    () => pods.filter((pod) => (service?.serviceType === 'JOB' && pod.state === 'COMPLETED') || pod.state === 'ERROR'),
+    () =>
+      pods
+        .filter((pod) => (service?.serviceType === 'JOB' && pod.state === 'COMPLETED') || pod.state === 'ERROR')
+        .sort((a, b) => {
+          // First sort by state (ERROR before COMPLETED)
+          if (a.state !== b.state) {
+            return a.state === 'ERROR' ? -1 : 1
+          }
+          return a.podName.localeCompare(b.podName)
+        }),
     [pods]
   )
 
