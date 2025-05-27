@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useMemo } from 'react'
-import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Icon, Skeleton } from '@qovery/shared/ui'
+import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { type ResourcesProps, calculateClusterResources } from './calculate-cluster-resources'
 
 export interface ClusterCardResourcesProps {
@@ -10,12 +10,12 @@ export interface ClusterCardResourcesProps {
 }
 
 export function ClusterCardResources({ organizationId, clusterId }: ClusterCardResourcesProps) {
-  const { data: runningStatus } = useClusterRunningStatus({
+  const { data: metrics } = useClusterMetrics({
     organizationId,
     clusterId,
   })
 
-  const clusterResources = useMemo(() => calculateClusterResources(runningStatus?.nodes), [runningStatus?.nodes])
+  const clusterResources = useMemo(() => calculateClusterResources(metrics?.nodes), [metrics?.nodes])
 
   const resources: {
     label: string
@@ -49,7 +49,7 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
               <Icon className="shrink-0 text-base text-neutral-300" iconName={icon} iconStyle="regular" />
               <span className="truncate whitespace-nowrap">{label}</span>
             </span>
-            <Skeleton width={160} height={20} show={typeof runningStatus !== 'object' ? true : false}>
+            <Skeleton width={160} height={20} show={typeof metrics !== 'object' ? true : false}>
               <p className="flex items-center gap-1 text-right text-neutral-400">
                 <span className="font-medium">{value.used}</span>
                 <span className="flex items-center gap-1.5 text-neutral-350">

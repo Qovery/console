@@ -1,6 +1,7 @@
 import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { useClusterMetricsSocket } from '@qovery/domains/cluster-metrics/feature'
 import {
   ClusterActionToolbar,
   ClusterAvatar,
@@ -24,6 +25,7 @@ export function Container({ children }: PropsWithChildren) {
   const { data: clusterStatus, isLoading } = useClusterStatus({ organizationId, clusterId })
 
   useClusterRunningStatusSocket({ organizationId, clusterId })
+  useClusterMetricsSocket({ organizationId, clusterId })
 
   const headerActions = (
     <div className="flex flex-row items-center gap-4">

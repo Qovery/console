@@ -8,7 +8,7 @@ import {
   type ClusterRoutingTableRequest,
   ClustersApi,
 } from 'qovery-typescript-axios'
-import { type ClusterStatusDto } from 'qovery-ws-typescript-axios'
+import { ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
 
@@ -82,6 +82,14 @@ export const clusters = createQueryKeys('clusters', {
     queryFn() {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise<ClusterStatusDto | null>(() => {})
+    },
+  }),
+  metrics: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    // NOTE: Value is set by WebSocket
+    queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      return new Promise<ClusterMetricsDto | null>(() => {})
     },
   }),
 })

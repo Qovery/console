@@ -14,11 +14,13 @@ describe('ClusterCardSetup', () => {
 
   const mockCluster = {
     created_at: '2024-05-01T12:00:00Z',
+    cloud_provider: 'AWS',
   }
 
   const mockDeploymentStatus = {
     is_deployed: true,
     last_deployment_date: '2024-05-15T10:00:00Z',
+    status: 'DEPLOYED',
   }
 
   beforeEach(() => {
