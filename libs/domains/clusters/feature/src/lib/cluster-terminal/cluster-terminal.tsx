@@ -33,6 +33,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
   const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const isTerminalLoading = addons.length < 2 || isRunningStatusesLoading
+  const [showDelayedLoader, setShowDelayedLoader] = useState(true)
   const fitAddon = addons[0] as FitAddon | undefined
 
   // Lock body scroll when terminal is open
@@ -43,6 +44,15 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
       document.body.style.overflow = originalStyle
     }
   }, [])
+
+  // Hack to avoid having connection delay with server
+  useEffect(() => {
+    if (!isTerminalLoading) {
+      const timer = setTimeout(() => setShowDelayedLoader(false), 6_000)
+      return () => clearTimeout(timer)
+    }
+    return () => null
+  }, [isTerminalLoading])
 
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
@@ -121,7 +131,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
       </button>
       <div className="flex h-11 justify-end border-y border-neutral-500 px-4 py-2">
         <div className="flex items-center gap-1">
-          {fitAddon && (
+          {fitAddon && !showDelayedLoader && (
             <Button
               color="neutral"
               variant="surface"
@@ -143,13 +153,20 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
           </Button>
         </div>
       </div>
-      <div className="min-h-[248px] bg-neutral-700 px-4 py-2" style={{ height: terminalParentHeight }}>
+      <div className="relative min-h-[248px] bg-neutral-700 px-4 py-2" style={{ height: terminalParentHeight }}>
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />
           </div>
         ) : (
-          <MemoizedXTerm className="h-full" addons={addons} />
+          <>
+            <MemoizedXTerm className="h-full" addons={addons} />
+            {showDelayedLoader && (
+              <div className="absolute inset-0 flex items-start justify-center bg-neutral-700 pt-7">
+                <LoaderSpinner />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>,

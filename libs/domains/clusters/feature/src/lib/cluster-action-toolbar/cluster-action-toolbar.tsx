@@ -6,7 +6,7 @@ import {
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { AUDIT_LOGS_PARAMS_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { ActionToolbar, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
@@ -203,18 +203,6 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         </ActionToolbar.Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item
-          icon={<Icon iconName="terminal" />}
-          onSelect={() => {
-            navigate(CLUSTER_URL(cluster.organization.id, cluster.id), {
-              state: {
-                hasShell: true,
-              },
-            })
-          }}
-        >
-          Connect
-        </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal('MANAGED')}>
           Access info
         </DropdownMenu.Item>
@@ -236,6 +224,11 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
           Copy identifier
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
+          <Link className="gap-0" to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL}>
+            Open settings
+          </Link>
         </DropdownMenu.Item>
         {cluster.kubernetes !== 'SELF_MANAGED' && (
           <DropdownMenu.Item
@@ -261,10 +254,9 @@ function MenuOtherActions({ cluster, clusterStatus }: { cluster: Cluster; cluste
 export interface ClusterActionToolbarProps {
   cluster: Cluster
   clusterStatus: ClusterStatus
-  noSettings?: boolean
 }
 
-export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: ClusterActionToolbarProps) {
+export function ClusterActionToolbar({ cluster, clusterStatus }: ClusterActionToolbarProps) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
@@ -342,15 +334,19 @@ export function ClusterActionToolbar({ cluster, clusterStatus, noSettings }: Clu
   return (
     <ActionToolbar.Root>
       {actionToolbarButtons}
-      {!noSettings && (
-        <Tooltip content="Settings">
-          <ActionToolbar.Button
-            onClick={() => navigate(CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL)}
-          >
-            <Icon iconName="gear" />
-          </ActionToolbar.Button>
-        </Tooltip>
-      )}
+      <Tooltip content="Qovery cloud shell">
+        <ActionToolbar.Button
+          onClick={() =>
+            navigate(CLUSTER_URL(cluster.organization.id, cluster.id), {
+              state: {
+                hasShell: true,
+              },
+            })
+          }
+        >
+          <Icon iconName="terminal" />
+        </ActionToolbar.Button>
+      </Tooltip>
       <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} />
     </ActionToolbar.Root>
   )

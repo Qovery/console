@@ -72,7 +72,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-gear "
+        class="fa-solid fa-terminal "
       />
     </button>
     <button
@@ -228,7 +228,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-gear "
+        class="fa-solid fa-terminal "
       />
     </button>
     <button
@@ -285,19 +285,6 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-terminal text-sm mr-3 text-brand-500"
-        />
-        Connect
-      </div>
-      <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
-        data-orientation="vertical"
-        data-radix-collection-item=""
-        role="menuitem"
-        tabindex="-1"
-      >
-        <i
-          aria-hidden="true"
           class="fa-solid fa-circle-info text-sm mr-3 text-brand-500"
         />
         Access info
@@ -328,6 +315,20 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
         />
         Copy identifier
       </div>
+      <a
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        href="/organization/123/cluster/0/settings"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
+        />
+        Open settings
+      </a>
       <div
         class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
@@ -442,7 +443,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-gear "
+        class="fa-solid fa-terminal "
       />
     </button>
     <button
@@ -499,19 +500,6 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-terminal text-sm mr-3 text-brand-500"
-        />
-        Connect
-      </div>
-      <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
-        data-orientation="vertical"
-        data-radix-collection-item=""
-        role="menuitem"
-        tabindex="-1"
-      >
-        <i
-          aria-hidden="true"
           class="fa-solid fa-circle-info text-sm mr-3 text-brand-500"
         />
         Access info
@@ -542,6 +530,20 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
         />
         Copy identifier
       </div>
+      <a
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        href="/organization/123/cluster/0/settings"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
+        />
+        Open settings
+      </a>
       <div
         class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
