@@ -21,24 +21,15 @@ import PageSettingsGeneralFeature from '../feature/page-settings-general-feature
 import PageSettingsImageRegistryFeature from '../feature/page-settings-image-registry-feature/page-settings-image-registry-feature'
 import PageSettingsNetworkFeature from '../feature/page-settings-network-feature/page-settings-network-feature'
 import PageSettingsResourcesFeature from '../feature/page-settings-resources-feature/page-settings-resources-feature'
-import Container from '../ui/container/container'
 
 export const ROUTER_CLUSTER: Route[] = [
   {
     path: `${CLUSTER_SETTINGS_URL}/*`,
-    component: (
-      <Container>
-        <PageSettingsFeature />
-      </Container>
-    ),
+    component: <PageSettingsFeature />,
   },
   {
     path: CLUSTER_OVERVIEW_URL,
-    component: (
-      <Container>
-        <PageOverviewFeature />
-      </Container>
-    ),
+    component: <PageOverviewFeature />,
   },
 ]
 
