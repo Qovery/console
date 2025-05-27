@@ -1,7 +1,9 @@
+import clsx from 'clsx'
 import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Icon, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
-import { calculatePercentage, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
+import { Icon, Link, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { calculatePercentage, pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { calculateNodePoolMetrics } from './calculate-node-pool-metrics'
 
 export interface ClusterTableNodepoolProps {
@@ -13,14 +15,21 @@ interface MetricProgressBarProps {
   type: 'cpu' | 'memory'
   used: number
   reserved: number
-  total: number
+  total: number | null
   unit: string
 }
 
 function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgressBarProps) {
+  if (total == null) {
+    return (
+      <div className="flex items-center gap-1.5 text-center text-ssm text-neutral-350">
+        No limit <Icon iconName="infinity" className="text-neutral-300" />
+      </div>
+    )
+  }
+
   const usedPercentage = calculatePercentage(used, total)
   const reservedPercentage = calculatePercentage(reserved, total)
-
   const totalPercentage = Math.round(usedPercentage + reservedPercentage)
 
   return (
@@ -60,6 +69,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
       <ProgressBar.Root>
         <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
         <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-500)" className="opacity-50" />
+        {/* <span className="block h-3 w-[1px] bg-purple-500"></span> */}
       </ProgressBar.Root>
     </Tooltip>
   )
@@ -80,7 +90,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
   return (
     <div className="flex flex-col gap-4">
       {nodePools?.map((nodePool) => {
-        const metrics = calculateNodePoolMetrics(nodePool.name, nodes, nodeWarnings)
+        const metrics = calculateNodePoolMetrics(nodePool, nodes, nodeWarnings)
 
         const nodesHealthyPercentage = calculatePercentage(
           metrics.nodesCount - metrics.nodesWarningCount,
@@ -104,13 +114,36 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 </div>
                 <Icon iconName="chevron-down" iconStyle="solid" className="text-neutral-350" />
               </div>
-              <div className="flex flex-col gap-3 border-r border-neutral-200 px-5">
-                <span className="flex items-center gap-2 text-sm text-neutral-350">
-                  <Icon iconName="microchip" iconStyle="regular" className="text-neutral-300" />
-                  <span>
-                    <span className="font-medium text-neutral-400">{metrics.cpuUsed} </span>/{metrics.cpuTotal} vCPU
+              <div
+                className={twMerge(
+                  clsx('flex flex-col gap-3 border-r border-neutral-200 px-5', {
+                    'gap-2': !metrics.cpuTotal,
+                  })
+                )}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm text-neutral-350">
+                    <Icon iconName="microchip" iconStyle="regular" className="text-neutral-300" />
+                    <span>
+                      {metrics.cpuTotal ? (
+                        <>
+                          <span className="font-medium text-neutral-400">{metrics.cpuUsed} </span>/{metrics.cpuReserved}{' '}
+                          vCPU
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-medium text-neutral-400">{metrics.cpuUsed}</span> vCPU
+                        </>
+                      )}
+                    </span>
                   </span>
-                </span>
+                  <Link
+                    color="current"
+                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                  >
+                    <Icon iconName="pen" iconStyle="regular" className="text-base text-neutral-300" />
+                  </Link>
+                </div>
                 <MetricProgressBar
                   type="cpu"
                   used={metrics.cpuUsed}
@@ -119,13 +152,36 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   unit="vCPU"
                 />
               </div>
-              <div className="flex flex-col gap-3 border-r border-neutral-200 px-5">
-                <span className="flex items-center gap-2 text-sm text-neutral-350">
-                  <Icon iconName="memory" iconStyle="regular" className="text-neutral-300" />
-                  <span>
-                    <span className="font-medium text-neutral-400">{metrics.memoryUsed} </span>/{metrics.memoryTotal} GB
+              <div
+                className={twMerge(
+                  clsx('flex flex-col gap-3 border-r border-neutral-200 px-5', {
+                    'gap-2': !metrics.memoryTotal,
+                  })
+                )}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <span className="flex items-center gap-2 text-sm text-neutral-350">
+                    <Icon iconName="memory" iconStyle="regular" className="text-neutral-300" />
+                    <span>
+                      {metrics.memoryTotal ? (
+                        <>
+                          <span className="font-medium text-neutral-400">{metrics.memoryUsed} </span>/
+                          {metrics.memoryReserved} GB
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-medium text-neutral-400">{metrics.memoryUsed}</span> GB
+                        </>
+                      )}
+                    </span>
                   </span>
-                </span>
+                  <Link
+                    color="current"
+                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                  >
+                    <Icon iconName="pen" iconStyle="regular" className="text-base text-neutral-300" />
+                  </Link>
+                </div>
                 <MetricProgressBar
                   type="memory"
                   used={metrics.memoryUsed}
@@ -135,7 +191,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 />
               </div>
               <div className="flex flex-col gap-3 pl-5">
-                <span className="flex items-center gap-2 text-sm text-neutral-350">
+                <span className="relative -top-1 flex items-center gap-2 text-sm text-neutral-350">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
                     <path
                       fill="var(--color-neutral-300)"
@@ -158,19 +214,30 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 <Tooltip
                   content={
                     <div className="flex flex-col gap-1">
-                      <div className="flex items-center">
-                        <div className="flex w-full items-center gap-1.5">
-                          <Icon iconName="check-circle" iconStyle="regular" className="text-green-400" />
-                          <span>Healthy nodes</span>
-                          <span className="ml-auto block font-semibold">
-                            {metrics.nodesCount - metrics.nodesWarningCount}
-                          </span>
+                      {metrics.nodesCount - metrics.nodesWarningCount - metrics.nodesDeployingCount > 0 && (
+                        <div className="flex items-center">
+                          <div className="flex w-full items-center gap-1.5">
+                            <Icon iconName="check-circle" iconStyle="regular" className="text-green-400" />
+                            <span>
+                              Healthy {pluralize(metrics.nodesCount - metrics.nodesWarningCount, 'node', 'nodes')}
+                            </span>
+                            <span className="ml-auto block font-semibold">
+                              {metrics.nodesCount - metrics.nodesWarningCount}
+                            </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                       {metrics.nodesWarningCount > 0 && (
                         <div className="flex w-full items-center gap-1.5">
                           <Icon iconName="exclamation-circle" iconStyle="regular" className="text-yellow-500" />
-                          <span>Warning nodes</span>
+                          <span>Warning {pluralize(metrics.nodesWarningCount, 'node', 'nodes')}</span>
+                          <span className="ml-auto block font-semibold">{metrics.nodesWarningCount}</span>
+                        </div>
+                      )}
+                      {metrics.nodesDeployingCount > 0 && (
+                        <div className="flex w-full items-center gap-1.5">
+                          <Icon iconName="exclamation-circle" iconStyle="regular" className="text-brand-300" />
+                          <span>Deploying {pluralize(metrics.nodesDeployingCount, 'node', 'nodes')}</span>
                           <span className="ml-auto block font-semibold">{metrics.nodesWarningCount}</span>
                         </div>
                       )}
@@ -179,14 +246,14 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   classNameContent="w-[157px] px-2.5 py-1.5"
                 >
                   <ProgressBar.Root>
-                    {nodesHealthyPercentage > 0 && (
+                    {deployingPercentage > 0 && (
+                      <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
+                    )}
+                    {nodesHealthyPercentage - nodesWarningPercentage > 0 && (
                       <ProgressBar.Cell percentage={nodesHealthyPercentage} color="var(--color-green-500)" />
                     )}
                     {nodesWarningPercentage > 0 && (
                       <ProgressBar.Cell percentage={nodesWarningPercentage} color="var(--color-yellow-500)" />
-                    )}
-                    {deployingPercentage > 0 && (
-                      <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
                     )}
                   </ProgressBar.Root>
                 </Tooltip>

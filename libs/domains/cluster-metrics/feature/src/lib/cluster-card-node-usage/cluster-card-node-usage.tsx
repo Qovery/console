@@ -2,7 +2,7 @@ import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { calculatePercentage } from '@qovery/shared/util-js'
+import { calculatePercentage, pluralize } from '@qovery/shared/util-js'
 
 export interface ClusterCardNodeUsageProps {
   organizationId: string
@@ -48,21 +48,21 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
       <div className="flex items-center">
         <div className="flex w-full items-center gap-1.5">
           <Icon iconName="check-circle" iconStyle="regular" className="text-green-400" />
-          <span>Healthy nodes</span>
+          <span>Healthy {pluralize(healthyNodes - warningNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{healthyNodes - warningNodes}</span>
         </div>
       </div>
       {warningNodes > 0 && (
         <div className="flex w-full items-center gap-1.5">
           <Icon iconName="exclamation-circle" iconStyle="regular" className="text-yellow-500" />
-          <span>Warning nodes</span>
+          <span>Warning {pluralize(warningNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{warningNodes}</span>
         </div>
       )}
       {deployingNodes > 0 && (
         <div className="flex w-full items-center gap-1.5">
           <Icon iconName="exclamation-circle" iconStyle="regular" className="text-brand-300" />
-          <span>Deploying nodes</span>
+          <span>Deploying {pluralize(deployingNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{deployingNodes}</span>
         </div>
       )}
@@ -106,14 +106,14 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
           )}
           <Tooltip content={tooltipContent} classNameContent="w-[157px] px-2.5 py-1.5">
             <ProgressBar.Root>
+              {deployingPercentage > 0 && (
+                <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
+              )}
               {healthyPercentage > 0 && (
                 <ProgressBar.Cell percentage={healthyPercentage} color="var(--color-green-500)" />
               )}
               {warningPercentage > 0 && (
                 <ProgressBar.Cell percentage={warningPercentage} color="var(--color-yellow-500)" />
-              )}
-              {deployingPercentage > 0 && (
-                <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
               )}
             </ProgressBar.Root>
           </Tooltip>

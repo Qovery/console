@@ -1,13 +1,13 @@
-import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
+import type { ClusterNodeDto, NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 
 const KEY_KARPENTER_NODE_POOL = 'karpenter.sh/nodepool'
 
 export interface NodePoolMetrics {
   cpuUsed: number
-  cpuTotal: number
+  cpuTotal: number | null
   cpuReserved: number
   memoryUsed: number
-  memoryTotal: number
+  memoryTotal: number | null
   memoryReserved: number
   nodesCount: number
   nodesWarningCount: number
@@ -15,59 +15,51 @@ export interface NodePoolMetrics {
 }
 
 export function calculateNodePoolMetrics(
-  nodePoolName: string,
+  nodePool: NodePoolInfoDto,
   nodes: ClusterNodeDto[],
   nodeWarnings: Record<string, unknown>
 ): NodePoolMetrics {
+  const nodePoolName = nodePool.name
   const nodePoolNodes = nodes.filter((node) => node.labels[KEY_KARPENTER_NODE_POOL] === nodePoolName)
 
-  const metrics = nodePoolNodes.reduce(
-    (acc, node) => {
-      // CPU metrics
-      acc.cpuUsed += node.metrics_usage.cpu_milli_usage || 0
-      acc.cpuReserved += node.resources_allocated?.request_cpu_milli || 0
-      acc.cpuTotal += node.resources_capacity?.cpu_milli || 0
+  let cpuTotal: number | null = null
+  let cpuReserved = 0
+  let memoryTotal: number | null = null
+  let memoryReserved = 0
+  let cpuUsed = 0
+  let memoryUsed = 0
 
-      // Memory metrics
-      acc.memoryUsed += node.metrics_usage?.memory_mib_working_set_usage || 0
-      acc.memoryReserved += node.resources_allocated?.request_memory_mib || 0
-      acc.memoryTotal += node.resources_capacity?.memory_mib || 0
+  // If limits are set, use them, otherwise, set to null
+  const hasCpuLimit = nodePool.cpu_milli_limit != null
+  const hasMemoryLimit = nodePool.memory_mib_limit != null
 
-      // Warning count
-      if (node.name && nodeWarnings && nodeWarnings[node.name]) {
-        acc.nodesWarningCount += 1
-      }
+  // vCPU
+  cpuTotal = hasCpuLimit ? Math.round((nodePool.cpu_milli_limit || 0) / 1000) : null
+  cpuReserved = Math.round((nodePool.cpu_milli || 0) / 1000)
+  cpuUsed = Math.round(nodePoolNodes.reduce((acc, node) => acc + (node.metrics_usage?.cpu_milli_usage || 0), 0) / 1000)
 
-      // Deploying count
-      if (node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'False') {
-        acc.nodesDeployingCount += 1
-      }
-
-      return acc
-    },
-    {
-      cpuUsed: 0,
-      cpuTotal: 0,
-      cpuReserved: 0,
-      memoryUsed: 0,
-      memoryTotal: 0,
-      memoryReserved: 0,
-      nodesCount: nodePoolNodes.length,
-      nodesWarningCount: 0,
-      nodesDeployingCount: 0,
-    }
+  // Memory
+  memoryTotal = hasMemoryLimit ? Math.round((nodePool.memory_mib_limit || 0) / 1024) : null
+  memoryReserved = Math.round((nodePool.memory_mib || 0) / 1024)
+  memoryUsed = Math.round(
+    nodePoolNodes.reduce((acc, node) => acc + (node.metrics_usage?.memory_mib_rss_usage || 0), 0) / 1024
   )
 
+  // Warning and deploying counts
+  const nodesWarningCount = nodePoolNodes.filter((node) => node.name && nodeWarnings && nodeWarnings[node.name]).length
+  const nodesDeployingCount = nodePoolNodes.filter(
+    (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'False'
+  ).length
+
   return {
-    ...metrics,
-    cpuUsed: Math.round(metrics.cpuUsed / 1000), // vCPU
-    cpuTotal: Math.round(metrics.cpuTotal / 1000), // vCPU
-    cpuReserved: Math.round(metrics.cpuReserved / 1000), // vCPU
-    memoryUsed: Math.round(metrics.memoryUsed / 1024), // GB
-    memoryTotal: Math.round(metrics.memoryTotal / 1024), // GB
-    memoryReserved: Math.round(metrics.memoryReserved / 1024), // GB
-    nodesCount: metrics.nodesCount,
-    nodesWarningCount: metrics.nodesWarningCount,
-    nodesDeployingCount: metrics.nodesDeployingCount,
+    cpuUsed,
+    cpuTotal,
+    cpuReserved,
+    memoryUsed,
+    memoryTotal,
+    memoryReserved,
+    nodesCount: nodePoolNodes.length,
+    nodesWarningCount,
+    nodesDeployingCount,
   }
 }
