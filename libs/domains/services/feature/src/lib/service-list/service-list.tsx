@@ -640,6 +640,10 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 },
               }) => helmInfo(repository)
             )
+            .with(
+              { service: P.intersection({ serviceType: 'TERRAFORM' }) },
+              ({ service: { provider_version } }) => provider_version
+            )
             .exhaustive()
           return cell
         },

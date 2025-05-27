@@ -50,6 +50,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
             .with({ serviceType: 'CONTAINER' }, (s) => buildEditServicePayload({ service: s, request }))
             .with({ serviceType: 'JOB' }, (s) => buildEditServicePayload({ service: s, request }))
             .with({ serviceType: 'HELM' }, (s) => buildEditServicePayload({ service: s, request }))
+            .with({ serviceType: 'TERRAFORM' }, (s) => buildEditServicePayload({ service: s }))
             .exhaustive()
 
           try {
@@ -78,7 +79,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
   // Force enable Preview if we enable preview from the 1rst application
   const toggleEnablePreview = (value: boolean) => {
     const isApplicationPreviewEnabled = services
-      ? services.some((service) => service?.serviceType !== 'DATABASE' && service.auto_preview)
+      ? services.some((service) => 'auto_preview' in service && service.auto_preview)
       : false
     if (isApplicationPreviewEnabled || !value) {
       return
@@ -92,13 +93,11 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
     // !loading is here to prevent the toggle to glitch the time we are submitting the two api endpoints
     if (environmentDeploymentRules && loadingStatusEnvironmentDeploymentRules && !loading) {
       const isApplicationPreviewEnabled = services
-        ? services.some((app) => app.serviceType !== 'DATABASE' && app.auto_preview) // TODO exclude Terraform
+        ? services.some((app) => 'auto_preview' in app && app.auto_preview)
         : false
       methods.setValue('auto_preview', environmentDeploymentRules.auto_preview || isApplicationPreviewEnabled)
       methods.setValue('on_demand_preview', environmentDeploymentRules.on_demand_preview)
-      services.forEach(
-        (service) => methods.setValue(service.id, service.serviceType !== 'DATABASE' && service.auto_preview) // TODO exclude Terraform
-      )
+      services.forEach((service) => methods.setValue(service.id, 'auto_preview' in service && service.auto_preview))
     }
   }, [loadingStatusEnvironmentDeploymentRules, methods, environmentDeploymentRules, services, loading])
 

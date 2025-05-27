@@ -22,6 +22,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
 
   const defaultInstances = match(service)
     .with({ serviceType: 'JOB' }, () => ({}))
+    .with({ serviceType: 'TERRAFORM' }, () => ({}))
     .otherwise((s) => ({
       min_running_instances: s.min_running_instances || 1,
       max_running_instances: s.max_running_instances || 1,
@@ -30,8 +31,8 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      memory: service.memory,
-      cpu: service.cpu,
+      memory: 'memory' in service ? service.memory : 0,
+      cpu: 'cpu' in service ? service.cpu : 0,
       ...defaultInstances,
     },
   })
@@ -67,6 +68,11 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
           request: requestWithInstances,
         })
       )
+      .with({ serviceType: 'TERRAFORM' }, (service) =>
+        buildEditServicePayload({
+          service,
+        })
+      )
       .exhaustive()
 
     editService({
@@ -75,7 +81,8 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
     })
   })
 
-  const displayWarningCpu: boolean = (methods.watch('cpu') || 0) > (service.maximum_cpu || 0)
+  const displayWarningCpu: boolean =
+    'maximum_cpu' in service && (methods.watch('cpu') || 0) > (service.maximum_cpu || 0)
 
   return (
     <FormProvider {...methods}>

@@ -81,9 +81,9 @@ export function StepGeneralFeature() {
                   name: '',
                   created_at: '',
                   // TODO [821] some keys do not exist in the API yet
-                  // environment: {
-                  //   id: '',
-                  // },
+                  environment: {
+                    id: '',
+                  },
                   auto_deploy: false,
                   // auto_preview: false,
                   // source: {

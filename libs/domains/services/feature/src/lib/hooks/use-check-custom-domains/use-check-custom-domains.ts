@@ -12,7 +12,7 @@ export function useCheckCustomDomains({ serviceId, serviceType }: UseCheckCustom
   return useQuery({
     ...queries.services.checkCustomDomains({
       serviceId,
-      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>,
+      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM' | 'TERRAFORM'>,
     }),
     enabled: match(serviceType)
       .with('APPLICATION', 'CONTAINER', 'HELM', () => true)

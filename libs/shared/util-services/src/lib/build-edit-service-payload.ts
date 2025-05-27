@@ -7,6 +7,7 @@ import {
   type HelmRequest,
   type JobRequest,
   type ServiceStorageStorageInner,
+  type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 import {
@@ -20,6 +21,8 @@ import {
   type HelmType,
   type Job,
   type JobType,
+  type Terraform,
+  type TerraformType,
 } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 
@@ -48,7 +51,17 @@ type helmProps = {
   request?: Partial<HelmRequest>
 }
 
-export type responseToRequestProps = applicationProps | containerProps | databaseProps | jobProps | helmProps
+type terraformProps = {
+  service: Terraform
+}
+
+export type responseToRequestProps =
+  | applicationProps
+  | containerProps
+  | databaseProps
+  | jobProps
+  | helmProps
+  | terraformProps
 
 export function buildEditServicePayload(
   props: applicationProps
@@ -57,6 +70,7 @@ export function buildEditServicePayload(props: containerProps): ContainerRequest
 export function buildEditServicePayload(props: databaseProps): DatabaseEditRequest & { serviceType: DatabaseType }
 export function buildEditServicePayload(props: jobProps): JobRequest & { serviceType: JobType }
 export function buildEditServicePayload(props: helmProps): HelmRequest & { serviceType: HelmType }
+export function buildEditServicePayload(props: terraformProps): TerraformRequest & { serviceType: TerraformType }
 
 export function buildEditServicePayload(props: responseToRequestProps) {
   return {
@@ -67,6 +81,7 @@ export function buildEditServicePayload(props: responseToRequestProps) {
       .with({ service: { serviceType: 'DATABASE' } }, (props) => refactoDatabase(props))
       .with({ service: { serviceType: 'JOB' } }, (props) => refactoJob(props))
       .with({ service: { serviceType: 'HELM' } }, (props) => refactoHelm(props))
+      .with({ service: { serviceType: 'TERRAFORM' } }, (props) => props)
       .exhaustive(),
   }
 }

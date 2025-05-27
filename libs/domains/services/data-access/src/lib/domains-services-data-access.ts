@@ -12,6 +12,7 @@ import {
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
+  CheckedCustomDomainResponse,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
@@ -59,9 +60,11 @@ import {
   JobsApi,
   type RebootServicesRequest,
   type Status,
+  TerraformAdvancedSettings,
   TerraformConfigurationApi,
-  TerraformDeploymentHistoryApi,
+  TerraformDeploymentHistoryApi, // TerraformActionsApi,
   TerraformMainCallsApi,
+  TerraformRequest,
   TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -108,6 +111,7 @@ const applicationActionsApi = new ApplicationActionsApi()
 const containerActionsApi = new ContainerActionsApi()
 const databaseActionsApi = new DatabaseActionsApi()
 const helmActionsApi = new HelmActionsApi()
+// const terraformActionsApi = new TerraformActionsApi()
 const jobActionsApi = new JobActionsApi()
 
 const applicationConfigurationApi = new ApplicationConfigurationApi()
@@ -509,7 +513,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM' | 'TERRAFORM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -526,6 +530,10 @@ export const services = createQueryKeys('services', {
           query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
           serviceType,
         }))
+        .with('TERRAFORM', (serviceType) => ({
+          query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
+          serviceType,
+        })) // TODO [QOV-821] replace with customDomainTerraformApi when it will be available
         .exhaustive()
       const response = await query(serviceId)
       return response.data.results
@@ -536,7 +544,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM' | 'TERRAFORM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -551,6 +559,10 @@ export const services = createQueryKeys('services', {
         }))
         .with('HELM', (serviceType) => ({
           query: customDomainHelmApi.checkHelmCustomDomain.bind(customDomainHelmApi),
+          serviceType,
+        }))
+        .with('TERRAFORM', (serviceType) => ({
+          query: async () => ({ data: { results: [] as CheckedCustomDomainResponse[] } }), // TODO [QOV-821] to be implemented
           serviceType,
         }))
         .exhaustive()
@@ -624,6 +636,9 @@ type EditServiceRequest = {
     | ({
         serviceType: HelmType
       } & HelmRequest)
+    | ({
+        serviceType: TerraformType
+      } & TerraformRequest)
 }
 
 type DeployRequest =
@@ -672,6 +687,9 @@ type EditAdvancedSettingsRequest = {
     | ({
         serviceType: HelmType
       } & HelmAdvancedSettings)
+    | ({
+        serviceType: TerraformType
+      } & TerraformAdvancedSettings)
 }
 
 export const mutations = {
@@ -855,6 +873,10 @@ export const mutations = {
         mutation: helmMainCallsApi.editHelm.bind(helmMainCallsApi, serviceId, payload),
         serviceType,
       }))
+      .with({ serviceType: 'TERRAFORM' }, ({ serviceType, ...payload }) => ({
+        mutation: terraformMainCallsApi.editTerraform.bind(terraformMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation()
     return response.data
@@ -919,7 +941,10 @@ export const mutations = {
         mutation: helmActionsApi.deployHelm.bind(helmActionsApi, serviceId, undefined, request),
         serviceType,
       }))
-
+      .with({ serviceType: 'TERRAFORM' }, ({ serviceId, serviceType }) => ({
+        mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi, serviceId),
+        serviceType,
+      })) // TODO [QOV-821] replace with terraformActionsApi when it will be ready
       .exhaustive()
     const response = await mutation()
     return response.data
@@ -993,6 +1018,14 @@ export const mutations = {
       }))
       .with({ serviceType: 'HELM' }, ({ serviceType, ...payload }) => ({
         mutation: helmConfigurationApi.editHelmAdvancedSettings.bind(helmConfigurationApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'TERRAFORM' }, ({ serviceType, ...payload }) => ({
+        mutation: terraformConfigurationApi.editTerraformAdvancedSettings.bind(
+          terraformConfigurationApi,
+          serviceId,
+          payload
+        ),
         serviceType,
       }))
       .exhaustive()
