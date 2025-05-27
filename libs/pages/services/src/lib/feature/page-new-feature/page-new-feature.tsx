@@ -63,6 +63,7 @@ const servicePath = (type: ServiceType, parentSlug: string, slug: string) =>
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
+    .with('TERRAFORM', () => undefined) // TODO
     .exhaustive()
 
 interface CardOptionProps extends ServiceTemplateOptionType {
