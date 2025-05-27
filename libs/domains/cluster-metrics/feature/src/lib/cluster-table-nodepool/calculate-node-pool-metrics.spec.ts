@@ -1,4 +1,4 @@
-import type { ClusterNodeDto } from 'qovery-ws-typescript-axios'
+import type { ClusterNodeDto, NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { calculateNodePoolMetrics } from './calculate-node-pool-metrics'
 
 describe('calculateNodePoolMetrics', () => {
@@ -156,8 +156,35 @@ describe('calculateNodePoolMetrics', () => {
     'node-1': { message: 'Warning message' },
   }
 
+  const mockNodePool: NodePoolInfoDto = {
+    name: 'default',
+    cpu_milli: 2000,
+    cpu_milli_limit: 3000,
+    memory_mib: 1024,
+    memory_mib_limit: 2048,
+    nodes_count: 2,
+  }
+
+  const mockNonExistentNodePool: NodePoolInfoDto = {
+    name: 'non-existent',
+    cpu_milli: 0,
+    cpu_milli_limit: 0,
+    memory_mib: 0,
+    memory_mib_limit: 0,
+    nodes_count: 0,
+  }
+
+  const mockStableNodePool: NodePoolInfoDto = {
+    name: 'stable',
+    cpu_milli: 2000,
+    cpu_milli_limit: 4000,
+    memory_mib: 1024,
+    memory_mib_limit: 2048,
+    nodes_count: 1,
+  }
+
   it('should calculate metrics for a specific node pool', () => {
-    const result = calculateNodePoolMetrics('default', mockNodes, mockNodeWarnings)
+    const result = calculateNodePoolMetrics(mockNodePool, mockNodes, mockNodeWarnings)
 
     expect(result).toEqual({
       cpuUsed: 2,
@@ -173,7 +200,7 @@ describe('calculateNodePoolMetrics', () => {
   })
 
   it('should handle empty node pool', () => {
-    const result = calculateNodePoolMetrics('non-existent', mockNodes, {})
+    const result = calculateNodePoolMetrics(mockNonExistentNodePool, mockNodes, {})
 
     expect(result).toEqual({
       cpuUsed: 0,
@@ -229,15 +256,15 @@ describe('calculateNodePoolMetrics', () => {
       },
     ]
 
-    const result = calculateNodePoolMetrics('default', nodesWithMissingInfo, {})
+    const result = calculateNodePoolMetrics(mockNodePool, nodesWithMissingInfo, {})
 
     expect(result).toEqual({
       cpuUsed: 0,
-      cpuTotal: 0,
-      cpuReserved: 0,
+      cpuTotal: 3,
+      cpuReserved: 2,
       memoryUsed: 0,
-      memoryTotal: 0,
-      memoryReserved: 0,
+      memoryTotal: 2,
+      memoryReserved: 1,
       nodesCount: 1,
       nodesWarningCount: 0,
       nodesDeployingCount: 0,
@@ -245,7 +272,7 @@ describe('calculateNodePoolMetrics', () => {
   })
 
   it('should count deploying nodes correctly', () => {
-    const result = calculateNodePoolMetrics('stable', mockNodes, {})
+    const result = calculateNodePoolMetrics(mockStableNodePool, mockNodes, {})
 
     expect(result).toEqual({
       cpuUsed: 2,

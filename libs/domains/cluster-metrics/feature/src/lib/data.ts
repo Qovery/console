@@ -1,43 +1,7 @@
-// import { type ClusterStatusDto } from 'qovery-ws-typescript-axios'
+import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 // TODO: Need to be removed
-export const fakeData = {
-  computed_status: {
-    global_status: 'WARNING',
-    qovery_components_in_failure: [],
-    qovery_components: [
-      {
-        name: 'karpenter',
-        namespace: 'kube-system',
-        status: 'RUNNING',
-        error_detail: [],
-        images_version: [
-          'public.ecr.aws/karpenter/controller:1.0.9@sha256:80b2d0bf045ea5c02cc4abfc5f73cfea41dea772aa2e52c77bcadbaa27ed1ea0',
-        ],
-      },
-      {
-        name: 'cert-manager',
-        namespace: 'cert-manager',
-        status: 'RUNNING',
-        error_detail: [],
-        images_version: ['quay.io/jetstack/cert-manager-controller:v1.15.3'],
-      },
-    ],
-    node_warnings: {
-      'ip-10-0-94-96.eu-west-3.compute.internal': [
-        {
-          reason: 'KubeletNotReady',
-          message:
-            'container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized',
-        },
-      ],
-    },
-    is_max_nodes_size_reached: false,
-    kube_version_status: {
-      kube_version: '1.31',
-      type: 'OK',
-    },
-  },
+export const fakeClusterMetrics: ClusterMetricsDto = {
   nodes: [
     {
       created_at: 1747200860000,
@@ -253,5 +217,48 @@ export const fakeData = {
     state_message: 'Certificate is up to date and has not expired',
     failed_issuance_attempt_count: 0,
     last_failure_issuance_time: null,
+  },
+}
+
+export const fakeClusterRunningStatus: ClusterStatusDto = {
+  computed_status: {
+    global_status: 'WARNING',
+    qovery_components_in_failure: [],
+    qovery_components: [
+      {
+        name: 'karpenter',
+        namespace: 'kube-system',
+        status: 'RUNNING',
+        error_detail: [],
+        images_version: [
+          'public.ecr.aws/karpenter/controller:1.0.9@sha256:80b2d0bf045ea5c02cc4abfc5f73cfea41dea772aa2e52c77bcadbaa27ed1ea0',
+        ],
+      },
+      {
+        name: 'cert-manager',
+        namespace: 'cert-manager',
+        status: 'RUNNING',
+        error_detail: [],
+        images_version: ['quay.io/jetstack/cert-manager-controller:v1.15.3'],
+      },
+    ],
+    node_warnings: {
+      'ip-10-0-94-96.eu-west-3.compute.internal': [
+        {
+          type: 'KubeletNotReady',
+          reason: 'KubeletNotReady',
+          message:
+            'container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:Network plugin returns error: cni plugin not initialized',
+          node_attributes: {
+            node_pool_name: 'default',
+          },
+        },
+      ],
+    },
+    is_max_nodes_size_reached: false,
+    kube_version_status: {
+      kube_version: '1.31',
+      type: 'OK',
+    },
   },
 }

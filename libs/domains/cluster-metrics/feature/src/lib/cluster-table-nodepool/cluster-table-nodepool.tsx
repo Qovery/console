@@ -1,9 +1,12 @@
+import * as Accordion from '@radix-ui/react-accordion'
 import clsx from 'clsx'
-import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
-import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { match } from 'ts-pattern'
+import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
+import useClusterMetrics from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { calculateNodePoolMetrics } from './calculate-node-pool-metrics'
 
 export interface ClusterTableNodepoolProps {
@@ -23,7 +26,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
   if (total == null) {
     return (
       <div className="flex items-center gap-1.5 text-center text-ssm text-neutral-350">
-        No limit <Icon iconName="infinity" className="text-neutral-300" />
+        No limit <Icon iconName="infinity" className="relative top-[1px] text-neutral-300" />
       </div>
     )
   }
@@ -45,7 +48,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
           <div className="flex flex-col gap-1 px-2.5 py-1.5">
             <div className="flex w-full items-center gap-1.5">
               <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-purple-500" />
+                <span className="h-2 w-2 rounded-full bg-purple-200" />
                 Reserved
               </span>
               <span className="ml-auto block font-semibold">
@@ -68,8 +71,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
     >
       <ProgressBar.Root>
         <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
-        <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-500)" className="opacity-50" />
-        {/* <span className="block h-3 w-[1px] bg-purple-500"></span> */}
+        <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
       </ProgressBar.Root>
     </Tooltip>
   )
@@ -80,15 +82,20 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
     organizationId: organizationId,
     clusterId: clusterId,
   })
+  const { data: metrics } = useClusterMetrics({
+    organizationId: organizationId,
+    clusterId: clusterId,
+  })
+  const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const nodePools = runningStatus?.node_pools
-  const nodes = runningStatus?.nodes as unknown as ClusterNodeDto[]
+  const nodePools = metrics?.node_pools
+  const nodes = metrics?.nodes || []
   const nodeWarnings = runningStatus?.computed_status?.node_warnings || {}
 
   if (nodes?.length === 0) return null
 
   return (
-    <div className="flex flex-col gap-4">
+    <Accordion.Root type="multiple" className="flex flex-col gap-4">
       {nodePools?.map((nodePool) => {
         const metrics = calculateNodePoolMetrics(nodePool, nodes, nodeWarnings)
 
@@ -100,11 +107,12 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
         const deployingPercentage = calculatePercentage(metrics.nodesDeployingCount, metrics.nodesCount)
 
         return (
-          <div
+          <Accordion.Item
             key={nodePool.name}
-            className="flex h-[86px] rounded border border-neutral-250 [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
+            value={nodePool.name}
+            className="rounded border border-neutral-250 [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
           >
-            <button className="grid h-[86px] w-full grid-cols-4 items-center justify-between p-5">
+            <Accordion.Trigger className="group grid h-[86px] w-full grid-cols-4 items-center justify-between p-5">
               <div className="flex h-full items-center justify-between border-r border-neutral-200 pr-6">
                 <div className="flex items-center gap-[18px]">
                   <StatusChip status={metrics.nodesWarningCount > 0 ? 'WARNING' : 'RUNNING'} />
@@ -112,7 +120,11 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     {upperCaseFirstLetter(nodePool.name)} nodepool
                   </div>
                 </div>
-                <Icon iconName="chevron-down" iconStyle="solid" className="text-neutral-350" />
+                <Icon
+                  iconName="chevron-down"
+                  iconStyle="solid"
+                  className="text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+                />
               </div>
               <div
                 className={twMerge(
@@ -123,7 +135,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
               >
                 <div className="flex w-full items-center justify-between">
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
-                    <Icon iconName="microchip" iconStyle="regular" className="text-neutral-300" />
+                    <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
                       {metrics.cpuTotal ? (
                         <>
@@ -137,12 +149,23 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       )}
                     </span>
                   </span>
-                  <Link
-                    color="current"
-                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                  >
-                    <Icon iconName="pen" iconStyle="regular" className="text-base text-neutral-300" />
-                  </Link>
+                  {match(cluster?.cloud_provider)
+                    .with('GCP', () => null)
+                    .with('ON_PREMISE', () => null)
+                    .otherwise(() => (
+                      <Tooltip content="Edit limits">
+                        <Link
+                          color="current"
+                          to={
+                            CLUSTER_URL(organizationId, clusterId) +
+                            CLUSTER_SETTINGS_URL +
+                            CLUSTER_SETTINGS_RESOURCES_URL
+                          }
+                        >
+                          <Icon iconName="pen" iconStyle="regular" className="text-neutral-300" />
+                        </Link>
+                      </Tooltip>
+                    ))}
                 </div>
                 <MetricProgressBar
                   type="cpu"
@@ -161,7 +184,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
               >
                 <div className="flex w-full items-center justify-between">
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
-                    <Icon iconName="memory" iconStyle="regular" className="text-neutral-300" />
+                    <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
                       {metrics.memoryTotal ? (
                         <>
@@ -175,12 +198,23 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       )}
                     </span>
                   </span>
-                  <Link
-                    color="current"
-                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-                  >
-                    <Icon iconName="pen" iconStyle="regular" className="text-base text-neutral-300" />
-                  </Link>
+                  {match(cluster?.cloud_provider)
+                    .with('GCP', () => null)
+                    .with('ON_PREMISE', () => null)
+                    .otherwise(() => (
+                      <Tooltip content="Edit limits">
+                        <Link
+                          color="current"
+                          to={
+                            CLUSTER_URL(organizationId, clusterId) +
+                            CLUSTER_SETTINGS_URL +
+                            CLUSTER_SETTINGS_RESOURCES_URL
+                          }
+                        >
+                          <Icon iconName="pen" iconStyle="regular" className="text-neutral-300" />
+                        </Link>
+                      </Tooltip>
+                    ))}
                 </div>
                 <MetricProgressBar
                   type="memory"
@@ -258,11 +292,14 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   </ProgressBar.Root>
                 </Tooltip>
               </div>
-            </button>
-          </div>
+            </Accordion.Trigger>
+            <Accordion.Content className="overflow-hidden data-[state=closed]:animate-slidein-up-sm-faded data-[state=open]:animate-slidein-down-sm-faded">
+              <ClusterTableNode nodePool={nodePool} organizationId={organizationId} clusterId={clusterId} />
+            </Accordion.Content>
+          </Accordion.Item>
         )
       })}
-    </div>
+    </Accordion.Root>
   )
 }
 

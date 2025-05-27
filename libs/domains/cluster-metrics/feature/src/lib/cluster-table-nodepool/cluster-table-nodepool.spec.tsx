@@ -1,26 +1,15 @@
-import { type ClusterNodeDto, type NodeConditionDto } from 'qovery-ws-typescript-axios'
-import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { ClusterTableNodepool } from './cluster-table-nodepool'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
-  useCluster: jest.fn(),
   useClusterRunningStatus: jest.fn(),
 }))
 
-interface MockNodePool {
-  name: string
-  cpu: {
-    total: number
-    used: number
-    reserved: number
-  }
-  memory: {
-    total: number
-    used: number
-    reserved: number
-  }
-}
+jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
+  useClusterMetrics: jest.fn(),
+}))
 
 describe('ClusterTableNodepool', () => {
   const mockOrganizationId = 'org-123'
@@ -30,26 +19,22 @@ describe('ClusterTableNodepool', () => {
     jest.clearAllMocks()
   })
 
-  const setupMocks = (
-    nodePools: MockNodePool[] = [],
-    nodes: ClusterNodeDto[] = [],
-    nodeWarnings: Record<string, string> = {}
-  ) => {
-    const mockRunningStatus = {
-      node_pools: nodePools,
-      nodes: nodes,
-      computed_status: {
-        node_warnings: nodeWarnings,
-      },
-    }
-
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
-      data: mockRunningStatus,
-    })
-  }
-
   it('should render nothing when there are no nodes', () => {
-    setupMocks([], [], {})
+    ;(useClusterMetrics as jest.Mock)
+      .mockReturnValue({
+        data: {
+          node_pools: [],
+          nodes: [],
+        },
+      })(useClusterRunningStatus as jest.Mock)
+      .mockReturnValue({
+        data: {
+          computed_status: {
+            node_warnings: {},
+          },
+        },
+      })
+
     const { container } = renderWithProviders(
       <ClusterTableNodepool organizationId={mockOrganizationId} clusterId={mockClusterId} />
     )
@@ -57,116 +42,127 @@ describe('ClusterTableNodepool', () => {
   })
 
   it('should render node pool with metrics correctly', () => {
-    const mockNodePools: MockNodePool[] = [
-      {
-        name: 'default',
-        cpu: { total: 8, used: 4, reserved: 2 },
-        memory: { total: 16, used: 8, reserved: 4 },
-      },
-    ]
-
-    const mockNodes: ClusterNodeDto[] = [
-      {
-        name: 'node-1',
-        labels: {
-          'karpenter.sh/nodepool': 'default',
+    const mockMetrics = {
+      node_pools: [
+        {
+          name: 'default',
+          cpu: { total: 8, used: 4, reserved: 2 },
+          memory: { total: 16, used: 8, reserved: 4 },
         },
-        metrics_usage: {
-          cpu_milli_usage: 2000,
-          memory_mib_working_set_usage: 4096,
-        },
-        resources_allocated: {
-          request_cpu_milli: 2000,
-          request_memory_mib: 4096,
-          limit_cpu_milli: 4000,
-          limit_memory_mib: 8192,
-        },
-        resources_capacity: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        resources_allocatable: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        conditions: [
-          {
-            type: 'Ready',
-            status: 'True',
-            last_heartbeat_time: 1704067200000,
-            last_transition_time: 1704067200000,
-            message: '',
-            reason: '',
+      ],
+      nodes: [
+        {
+          name: 'node-1',
+          labels: {
+            'karpenter.sh/nodepool': 'default',
           },
-        ],
-        addresses: [],
-        annotations: {},
-        architecture: 'amd64',
-        created_at: 1704067200000,
-        kubelet_version: 'v1.24.0',
-        operating_system: 'linux',
-        kernel_version: '5.15.0',
-        os_image: 'Ubuntu 22.04 LTS',
-        pods: [],
-        taints: [],
-        unschedulable: false,
-      },
-      {
-        name: 'node-2',
-        labels: {
-          'karpenter.sh/nodepool': 'default',
-        },
-        metrics_usage: {
-          cpu_milli_usage: 2000,
-          memory_mib_working_set_usage: 4096,
-        },
-        resources_allocated: {
-          request_cpu_milli: 2000,
-          request_memory_mib: 4096,
-          limit_cpu_milli: 4000,
-          limit_memory_mib: 8192,
-        },
-        resources_capacity: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        resources_allocatable: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        conditions: [
-          {
-            type: 'Ready',
-            status: 'True',
-            last_heartbeat_time: 1704067200000,
-            last_transition_time: 1704067200000,
-            message: '',
-            reason: '',
+          metrics_usage: {
+            cpu_milli_usage: 2000,
+            memory_mib_working_set_usage: 4096,
           },
-        ],
-        addresses: [],
-        annotations: {},
-        architecture: 'amd64',
-        created_at: 1704067200000,
-        kubelet_version: 'v1.24.0',
-        operating_system: 'linux',
-        kernel_version: '5.15.0',
-        os_image: 'Ubuntu 22.04 LTS',
-        pods: [],
-        taints: [],
-        unschedulable: false,
-      },
-    ]
+          resources_allocated: {
+            request_cpu_milli: 2000,
+            request_memory_mib: 4096,
+            limit_cpu_milli: 4000,
+            limit_memory_mib: 8192,
+          },
+          resources_capacity: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          resources_allocatable: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          conditions: [
+            {
+              type: 'Ready',
+              status: 'True',
+              last_heartbeat_time: 1704067200000,
+              last_transition_time: 1704067200000,
+              message: '',
+              reason: '',
+            },
+          ],
+          addresses: [],
+          annotations: {},
+          architecture: 'amd64',
+          created_at: 1704067200000,
+          kubelet_version: 'v1.24.0',
+          operating_system: 'linux',
+          kernel_version: '5.15.0',
+          os_image: 'Ubuntu 22.04 LTS',
+          pods: [],
+          taints: [],
+          unschedulable: false,
+        },
+        {
+          name: 'node-2',
+          labels: {
+            'karpenter.sh/nodepool': 'default',
+          },
+          metrics_usage: {
+            cpu_milli_usage: 2000,
+            memory_mib_working_set_usage: 4096,
+          },
+          resources_allocated: {
+            request_cpu_milli: 2000,
+            request_memory_mib: 4096,
+            limit_cpu_milli: 4000,
+            limit_memory_mib: 8192,
+          },
+          resources_capacity: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          resources_allocatable: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          conditions: [
+            {
+              type: 'Ready',
+              status: 'True',
+              last_heartbeat_time: 1704067200000,
+              last_transition_time: 1704067200000,
+              message: '',
+              reason: '',
+            },
+          ],
+          addresses: [],
+          annotations: {},
+          architecture: 'amd64',
+          created_at: 1704067200000,
+          kubelet_version: 'v1.24.0',
+          operating_system: 'linux',
+          kernel_version: '5.15.0',
+          os_image: 'Ubuntu 22.04 LTS',
+          pods: [],
+          taints: [],
+          unschedulable: false,
+        },
+      ],
+    }
 
-    setupMocks(mockNodePools, mockNodes, {})
+    const mockRunningStatus = {
+      computed_status: {
+        node_warnings: {},
+      },
+    }(useClusterMetrics as jest.Mock)
+      .mockReturnValue({
+        data: mockMetrics,
+      })(useClusterRunningStatus as jest.Mock)
+      .mockReturnValue({
+        data: mockRunningStatus,
+      })
 
     renderWithProviders(<ClusterTableNodepool organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
@@ -178,120 +174,129 @@ describe('ClusterTableNodepool', () => {
   })
 
   it('should show warning status when nodes have warnings', () => {
-    const mockNodePools: MockNodePool[] = [
-      {
-        name: 'default',
-        cpu: { total: 8, used: 4, reserved: 2 },
-        memory: { total: 16, used: 8, reserved: 4 },
-      },
-    ]
-
-    const mockNodes: ClusterNodeDto[] = [
-      {
-        name: 'node-1',
-        labels: {
-          'karpenter.sh/nodepool': 'default',
+    const mockMetrics = {
+      node_pools: [
+        {
+          name: 'default',
+          cpu: { total: 8, used: 4, reserved: 2 },
+          memory: { total: 16, used: 8, reserved: 4 },
         },
-        metrics_usage: {
-          cpu_milli_usage: 2000,
-          memory_mib_working_set_usage: 4096,
-        },
-        resources_allocated: {
-          request_cpu_milli: 2000,
-          request_memory_mib: 4096,
-          limit_cpu_milli: 4000,
-          limit_memory_mib: 8192,
-        },
-        resources_capacity: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        resources_allocatable: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        conditions: [
-          {
-            type: 'Ready',
-            status: 'True',
-            last_heartbeat_time: 1704067200000,
-            last_transition_time: 1704067200000,
-            message: '',
-            reason: '',
+      ],
+      nodes: [
+        {
+          name: 'node-1',
+          labels: {
+            'karpenter.sh/nodepool': 'default',
           },
-        ],
-        addresses: [],
-        annotations: {},
-        architecture: 'amd64',
-        created_at: 1704067200000,
-        kubelet_version: 'v1.24.0',
-        operating_system: 'linux',
-        kernel_version: '5.15.0',
-        os_image: 'Ubuntu 22.04 LTS',
-        pods: [],
-        taints: [],
-        unschedulable: false,
-      },
-      {
-        name: 'node-2',
-        labels: {
-          'karpenter.sh/nodepool': 'default',
-        },
-        metrics_usage: {
-          cpu_milli_usage: 2000,
-          memory_mib_working_set_usage: 4096,
-        },
-        resources_allocated: {
-          request_cpu_milli: 2000,
-          request_memory_mib: 4096,
-          limit_cpu_milli: 4000,
-          limit_memory_mib: 8192,
-        },
-        resources_capacity: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        resources_allocatable: {
-          cpu_milli: 4000,
-          memory_mib: 8192,
-          ephemeral_storage_mib: 20480,
-          pods: 110,
-        },
-        conditions: [
-          {
-            type: 'Ready',
-            status: 'False',
-            last_heartbeat_time: 1704067200000,
-            last_transition_time: 1704067200000,
-            message: 'Node is not ready',
-            reason: 'NodeNotReady',
+          metrics_usage: {
+            cpu_milli_usage: 2000,
+            memory_mib_working_set_usage: 4096,
           },
-        ],
-        addresses: [],
-        annotations: {},
-        architecture: 'amd64',
-        created_at: 1704067200000,
-        kubelet_version: 'v1.24.0',
-        operating_system: 'linux',
-        kernel_version: '5.15.0',
-        os_image: 'Ubuntu 22.04 LTS',
-        pods: [],
-        taints: [],
-        unschedulable: false,
-      },
-    ]
-
-    const mockNodeWarnings = {
-      'node-2': 'Node is not ready',
+          resources_allocated: {
+            request_cpu_milli: 2000,
+            request_memory_mib: 4096,
+            limit_cpu_milli: 4000,
+            limit_memory_mib: 8192,
+          },
+          resources_capacity: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          resources_allocatable: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          conditions: [
+            {
+              type: 'Ready',
+              status: 'True',
+              last_heartbeat_time: 1704067200000,
+              last_transition_time: 1704067200000,
+              message: '',
+              reason: '',
+            },
+          ],
+          addresses: [],
+          annotations: {},
+          architecture: 'amd64',
+          created_at: 1704067200000,
+          kubelet_version: 'v1.24.0',
+          operating_system: 'linux',
+          kernel_version: '5.15.0',
+          os_image: 'Ubuntu 22.04 LTS',
+          pods: [],
+          taints: [],
+          unschedulable: false,
+        },
+        {
+          name: 'node-2',
+          labels: {
+            'karpenter.sh/nodepool': 'default',
+          },
+          metrics_usage: {
+            cpu_milli_usage: 2000,
+            memory_mib_working_set_usage: 4096,
+          },
+          resources_allocated: {
+            request_cpu_milli: 2000,
+            request_memory_mib: 4096,
+            limit_cpu_milli: 4000,
+            limit_memory_mib: 8192,
+          },
+          resources_capacity: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          resources_allocatable: {
+            cpu_milli: 4000,
+            memory_mib: 8192,
+            ephemeral_storage_mib: 20480,
+            pods: 110,
+          },
+          conditions: [
+            {
+              type: 'Ready',
+              status: 'False',
+              last_heartbeat_time: 1704067200000,
+              last_transition_time: 1704067200000,
+              message: 'Node is not ready',
+              reason: 'NodeNotReady',
+            },
+          ],
+          addresses: [],
+          annotations: {},
+          architecture: 'amd64',
+          created_at: 1704067200000,
+          kubelet_version: 'v1.24.0',
+          operating_system: 'linux',
+          kernel_version: '5.15.0',
+          os_image: 'Ubuntu 22.04 LTS',
+          pods: [],
+          taints: [],
+          unschedulable: false,
+        },
+      ],
     }
 
-    setupMocks(mockNodePools, mockNodes, mockNodeWarnings)
+    const mockRunningStatus = {
+      computed_status: {
+        node_warnings: {
+          'node-2': 'Node is not ready',
+        },
+      },
+    }(useClusterMetrics as jest.Mock)
+      .mockReturnValue({
+        data: mockMetrics,
+      })(useClusterRunningStatus as jest.Mock)
+      .mockReturnValue({
+        data: mockRunningStatus,
+      })
 
     renderWithProviders(<ClusterTableNodepool organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
