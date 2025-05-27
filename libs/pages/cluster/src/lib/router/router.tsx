@@ -29,11 +29,7 @@ export const ROUTER_CLUSTER: Route[] = [
   },
   {
     path: CLUSTER_OVERVIEW_URL,
-    component: (
-      <Container>
-        <PageOverviewFeature />
-      </Container>
-    ),
+    component: <PageOverviewFeature />,
   },
 ]
 
