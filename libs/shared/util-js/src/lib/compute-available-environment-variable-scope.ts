@@ -43,6 +43,7 @@ function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof 
     .with('BUILT_IN', () => APIVariableScopeEnum.BUILT_IN)
     .with('PROJECT', () => APIVariableScopeEnum.PROJECT)
     .with('ENVIRONMENT', () => APIVariableScopeEnum.ENVIRONMENT)
+    .with('TERRAFORM', () => 'TERRAFORM' as APIVariableScopeEnum) // TODO [QOV-821] replace with APIVariableScopeEnum.TERRAFORM once it will be available
     .exhaustive()
 }
 

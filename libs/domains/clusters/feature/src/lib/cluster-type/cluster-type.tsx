@@ -20,7 +20,7 @@ export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props 
     // Google GCP
     .with(['GCP', P._], () => 'GKE (Autopilot)')
     // Microsoft AZURE
-    .with(['AZURE', KubernetesEnum.MANAGED], () => 'AKS (Karpenter)')
+    .with(['AZURE', KubernetesEnum.MANAGED], () => 'AKS')
     .with(['AZURE', KubernetesEnum.SELF_MANAGED], ['AZURE', undefined], () => 'Self-managed')
     // BYOK
     .with(['ON_PREMISE', P._], () => 'On-premise')
