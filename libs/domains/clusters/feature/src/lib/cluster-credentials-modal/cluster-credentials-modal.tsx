@@ -39,7 +39,6 @@ type ClusterCredentialsFormValues = {
   azure_client_id?: string
   azure_client_secret?: string
   azure_tenant_id?: string
-  azure_resource_group_name?: string
 }
 
 export interface ClusterCredentialsModalProps {
@@ -101,7 +100,6 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         azure_tenant_id: data['azure_tenant_id'],
         azure_client_id: data['azure_client_id'],
         azure_client_secret: data['azure_client_secret'],
-        azure_resource_group_name: data['azure_resource_group_name'],
       },
     }))
     .with('ON_PREMISE', (cp) => ({
@@ -729,23 +727,6 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       )}
                     />
                   )}
-                  <Controller
-                    name="azure_resource_group_name"
-                    control={methods.control}
-                    rules={{
-                      required: 'Please enter your Azure resource group name.',
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <InputText
-                        dataTestId="input-azure-resource-group-name"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value}
-                        label="Azure resource group name"
-                        error={error?.message}
-                      />
-                    )}
-                  />
                 </>
               )}
               <CalloutEdit isEdit={isEdit} organizationId={organizationId} clusterId={clusterId} />
