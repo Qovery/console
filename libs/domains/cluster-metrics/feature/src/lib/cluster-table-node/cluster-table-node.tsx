@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Badge, Button, ProgressBar, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, ProgressBar, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
@@ -57,10 +57,18 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
         }
         classNameContent="w-[173px] p-0"
       >
-        <ProgressBar.Root mode="absolute">
-          <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
-          <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
-        </ProgressBar.Root>
+        <div className="relative w-full">
+          <ProgressBar.Root mode="absolute">
+            <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
+            <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
+          </ProgressBar.Root>
+          {reservedPercentage < 99 && (
+            <span
+              className="absolute -top-0.5 h-[calc(100%+4px)] w-[1px] bg-purple-500"
+              style={{ left: `${reservedPercentage}%` }}
+            />
+          )}
+        </div>
       </Tooltip>
     </div>
   )

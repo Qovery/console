@@ -37,6 +37,7 @@ export function calculateNodePoolMetrics(
   // vCPU
   cpuTotal = hasCpuLimit ? formatNumber(milliCoreToVCPU(nodePool.cpu_milli_limit || 0), 0) : null
   cpuReserved = formatNumber(milliCoreToVCPU(nodePool.cpu_milli || 0), 0)
+  // XXX: This value is not correct for now
   cpuUsed = formatNumber(
     milliCoreToVCPU(nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated.request_cpu_milli || 0), 0)),
     0
@@ -45,6 +46,7 @@ export function calculateNodePoolMetrics(
   // Memory
   memoryTotal = hasMemoryLimit ? formatNumber(mibToGib(nodePool.memory_mib_limit || 0), 0) : null
   memoryReserved = formatNumber(mibToGib(nodePool.memory_mib || 0), 0)
+  // XXX: This value is not correct for now
   memoryUsed = formatNumber(
     mibToGib(nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated?.request_memory_mib || 0), 0)),
     0
