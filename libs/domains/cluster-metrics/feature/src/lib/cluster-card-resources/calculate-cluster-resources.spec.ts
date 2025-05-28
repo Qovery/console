@@ -1,40 +1,5 @@
 import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
-import { calculateClusterResources, formatNumber, mibToGib, milliCoreToVCPU } from './calculate-cluster-resources'
-
-describe('Conversion Utility Functions', () => {
-  it('should convert MiB to GiB correctly', () => {
-    expect(mibToGib(1024)).toBe(1)
-    expect(mibToGib(2048)).toBe(2)
-    expect(mibToGib(512)).toBe(0.5)
-    expect(mibToGib(0)).toBe(0)
-  })
-
-  it('should convert millicores to vCPU correctly', () => {
-    expect(milliCoreToVCPU(1000)).toBe(1)
-    expect(milliCoreToVCPU(2500)).toBe(2.5)
-    expect(milliCoreToVCPU(500)).toBe(0.5)
-    expect(milliCoreToVCPU(0)).toBe(0)
-  })
-
-  it('should format numbers to the specified precision', () => {
-    expect(formatNumber(1.2345, 2)).toBe(1.23)
-    expect(formatNumber(1.2345, 3)).toBe(1.234)
-    expect(formatNumber(1.2, 0)).toBe(1)
-  })
-
-  it('should use default precision of 2 when not specified', () => {
-    expect(formatNumber(1.2345)).toBe(1.23)
-    expect(formatNumber(1.2)).toBe(1.2)
-  })
-
-  it('should handle NaN and return 0', () => {
-    expect(formatNumber(NaN)).toBe(0)
-  })
-
-  it('should handle integer numbers', () => {
-    expect(formatNumber(5)).toBe(5)
-  })
-})
+import { calculateClusterResources } from './calculate-cluster-resources'
 
 describe('calculateClusterResources', () => {
   const createMockNode = (
@@ -49,28 +14,40 @@ describe('calculateClusterResources', () => {
       cpu_milli: cpuCapacity,
       memory_mib: memoryCapacity,
       ephemeral_storage_mib: diskCapacity,
+      pods: 0,
     },
     resources_allocated: {
       request_cpu_milli: cpuRequest,
       request_memory_mib: memoryRequest,
+      limit_cpu_milli: cpuRequest,
+      limit_memory_mib: memoryRequest,
     },
     metrics_usage: {
-      cpu_milli_usage: null,
-      memory_mib_working_set_usage: null,
+      cpu_milli_usage: cpuRequest,
+      memory_mib_working_set_usage: memoryRequest,
+      memory_mib_rss_usage: memoryRequest,
       disk_mib_usage: diskUsage,
     },
-    id: 'mock-id',
     name: 'mock-name',
-    type: 'mock-type',
-    kubernetes_version: 'mock-version',
-    region: 'mock-region',
-    state: 'RUNNING',
     resources_allocatable: {
-      cpu_milli: 0,
-      memory_mib: 0,
-      ephemeral_storage_mib: 0,
+      cpu_milli: cpuCapacity,
+      memory_mib: memoryCapacity,
+      ephemeral_storage_mib: diskCapacity,
+      pods: 0,
     },
-    created_at: '',
+    conditions: [],
+    addresses: [],
+    annotations: {},
+    architecture: 'amd64',
+    created_at: Date.now(),
+    kubelet_version: 'v1.24.0',
+    operating_system: 'linux',
+    kernel_version: '5.15.0',
+    os_image: 'Ubuntu 22.04 LTS',
+    pods: [],
+    taints: [],
+    unschedulable: false,
+    labels: {},
   })
 
   it('should return correct resources when nodes are provided', () => {
