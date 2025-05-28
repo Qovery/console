@@ -15,12 +15,7 @@ export function useClusterRunningStatusSocket({ organizationId, clusterId }: Use
       cluster: clusterId,
     },
     onMessage(queryClient, message: ClusterStatusDto) {
-      // XXX: Filter out Fargate nodes (nodes without instance_type)
-      const filteredMessage = {
-        ...message,
-        nodes: message.nodes.filter((node) => node.instance_type !== undefined),
-      }
-      queryClient.setQueryData(queries.clusters.runningStatus({ organizationId, clusterId }).queryKey, filteredMessage)
+      queryClient.setQueryData(queries.clusters.runningStatus({ organizationId, clusterId }).queryKey, message)
     },
     onClose(queryClient, event: CloseEvent) {
       // XXX: API returns a string for the reason, which allows us to know if the status is available or not
