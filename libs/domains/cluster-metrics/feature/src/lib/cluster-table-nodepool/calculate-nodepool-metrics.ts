@@ -36,13 +36,15 @@ export function calculateNodePoolMetrics(
   // vCPU
   cpuTotal = hasCpuLimit ? Math.round((nodePool.cpu_milli_limit || 0) / 1000) : null
   cpuReserved = Math.round((nodePool.cpu_milli || 0) / 1000)
-  cpuUsed = Math.round(nodePoolNodes.reduce((acc, node) => acc + (node.metrics_usage?.cpu_milli_usage || 0), 0) / 1000)
+  cpuUsed = Math.round(
+    nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated.request_cpu_milli || 0), 0) / 1000
+  )
 
   // Memory
   memoryTotal = hasMemoryLimit ? Math.round((nodePool.memory_mib_limit || 0) / 1024) : null
   memoryReserved = Math.round((nodePool.memory_mib || 0) / 1024)
   memoryUsed = Math.round(
-    nodePoolNodes.reduce((acc, node) => acc + (node.metrics_usage?.memory_mib_rss_usage || 0), 0) / 1024
+    nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated?.request_memory_mib || 0), 0) / 1024
   )
 
   // Warning and deploying counts

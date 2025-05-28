@@ -16,13 +16,12 @@ export interface ClusterTableNodepoolProps {
 
 interface MetricProgressBarProps {
   type: 'cpu' | 'memory'
-  used: number
   reserved: number
   total: number | null
   unit: string
 }
 
-function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgressBarProps) {
+function MetricProgressBar({ type, reserved, total, unit }: MetricProgressBarProps) {
   if (total == null) {
     return (
       <div className="flex items-center gap-1.5 text-center text-ssm text-neutral-350">
@@ -31,9 +30,8 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
     )
   }
 
-  const usedPercentage = calculatePercentage(used, total)
   const reservedPercentage = calculatePercentage(reserved, total)
-  const totalPercentage = Math.round(usedPercentage + reservedPercentage)
+  const totalPercentage = Math.round(reservedPercentage)
 
   return (
     <Tooltip
@@ -55,22 +53,12 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
                 {reserved} {unit}
               </span>
             </div>
-            <div className="flex w-full items-center gap-1.5">
-              <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-brand-400" />
-                Used
-              </span>
-              <span className="ml-auto block font-semibold">
-                {used} {unit}
-              </span>
-            </div>
           </div>
         </div>
       }
       classNameContent="w-[173px] p-0"
     >
       <ProgressBar.Root>
-        <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
         <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
       </ProgressBar.Root>
     </Tooltip>
@@ -139,12 +127,12 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     <span>
                       {metrics.cpuTotal ? (
                         <>
-                          <span className="font-medium text-neutral-400">{metrics.cpuUsed} </span>/{metrics.cpuReserved}{' '}
-                          vCPU
+                          <span className="font-medium text-neutral-400">{metrics.cpuReserved} </span>/
+                          {metrics.cpuTotal} vCPU
                         </>
                       ) : (
                         <>
-                          <span className="font-medium text-neutral-400">{metrics.cpuUsed}</span> vCPU
+                          <span className="font-medium text-neutral-400">{metrics.cpuReserved}</span> vCPU
                         </>
                       )}
                     </span>
@@ -167,13 +155,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       </Tooltip>
                     ))}
                 </div>
-                <MetricProgressBar
-                  type="cpu"
-                  used={metrics.cpuUsed}
-                  reserved={metrics.cpuReserved}
-                  total={metrics.cpuTotal}
-                  unit="vCPU"
-                />
+                <MetricProgressBar type="cpu" reserved={metrics.cpuReserved} total={metrics.cpuTotal} unit="vCPU" />
               </div>
               <div
                 className={twMerge(
@@ -188,12 +170,12 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     <span>
                       {metrics.memoryTotal ? (
                         <>
-                          <span className="font-medium text-neutral-400">{metrics.memoryUsed} </span>/
-                          {metrics.memoryReserved} GB
+                          <span className="font-medium text-neutral-400">{metrics.memoryReserved} </span>/
+                          {metrics.memoryTotal} GB
                         </>
                       ) : (
                         <>
-                          <span className="font-medium text-neutral-400">{metrics.memoryUsed}</span> GB
+                          <span className="font-medium text-neutral-400">{metrics.memoryReserved}</span> GB
                         </>
                       )}
                     </span>
@@ -218,7 +200,6 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 </div>
                 <MetricProgressBar
                   type="memory"
-                  used={metrics.memoryUsed}
                   reserved={metrics.memoryReserved}
                   total={metrics.memoryTotal}
                   unit="GB"
