@@ -19,11 +19,11 @@ interface MetricProgressBarProps {
 function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgressBarProps) {
   const usedPercentage = calculatePercentage(used, total)
   const reservedPercentage = calculatePercentage(reserved, total)
-  const totalPercentage = (usedPercentage + reservedPercentage).toFixed(2)
+  const totalPercentage = Math.round(usedPercentage + reservedPercentage)
 
   return (
     <div className="flex items-center gap-2 text-ssm">
-      <span className="text-neutral-400">{totalPercentage}%</span>
+      <span className="min-w-8 text-neutral-400">{totalPercentage}%</span>
       <Tooltip
         content={
           <div className="flex flex-col gap-1">
@@ -40,7 +40,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
                   Reserved
                 </span>
                 <span className="ml-auto block font-semibold">
-                  {reserved} {unit}
+                  {reserved.toFixed(2)} {unit}
                 </span>
               </div>
               <div className="flex w-full items-center gap-1.5">
@@ -49,7 +49,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
                   Used
                 </span>
                 <span className="ml-auto block font-semibold">
-                  {used} {unit}
+                  {used.toFixed(2)} {unit}
                 </span>
               </div>
             </div>
@@ -57,9 +57,9 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
         }
         classNameContent="w-[173px] p-0"
       >
-        <ProgressBar.Root>
-          <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
+        <ProgressBar.Root mode="absolute">
           <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
+          <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
         </ProgressBar.Root>
       </Tooltip>
     </div>
@@ -129,19 +129,24 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId }: Cluste
                 <Table.Cell className="h-12 w-1/4 px-3">
                   <MetricProgressBar
                     type="cpu"
-                    used={node.metrics_usage?.cpu_milli_usage || 0}
-                    reserved={node.resources_allocated.request_cpu_milli}
-                    total={node.resources_capacity.cpu_milli}
-                    unit="mCPU"
+                    used={(node.metrics_usage?.cpu_milli_usage || 0) / 1000}
+                    reserved={node.resources_allocated.request_cpu_milli / 1000}
+                    total={node.resources_allocatable.cpu_milli / 1000}
+                    unit="vCPU"
                   />
                 </Table.Cell>
                 <Table.Cell className="h-12 w-1/4 px-3">
                   <MetricProgressBar
                     type="memory"
-                    used={node.metrics_usage?.memory_mib_rss_usage || 0}
-                    reserved={node.resources_allocated.request_memory_mib}
-                    total={node.resources_capacity.memory_mib}
-                    unit="MiB"
+                    used={
+                      Math.max(
+                        node.metrics_usage?.memory_mib_rss_usage || 0,
+                        node.metrics_usage?.memory_mib_working_set_usage || 0
+                      ) / 1024
+                    }
+                    reserved={node.resources_allocated.request_memory_mib / 1024}
+                    total={node.resources_allocatable.memory_mib / 1024}
+                    unit="GB"
                   />
                 </Table.Cell>
                 <Table.Cell className="h-12 w-[calc(30%/3)] px-3">
