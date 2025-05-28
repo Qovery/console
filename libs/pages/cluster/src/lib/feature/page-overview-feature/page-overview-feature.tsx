@@ -3,16 +3,20 @@ import {
   ClusterCardNodeUsage,
   ClusterCardResources,
   ClusterCardSetup,
+  ClusterTableNode,
   ClusterTableNodepool,
 } from '@qovery/domains/cluster-metrics/feature'
-import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export function PageOverviewFeature() {
   useDocumentTitle('Cluster - Overview')
   const { organizationId = '', clusterId = '' } = useParams()
+  const { data: cluster } = useCluster({ organizationId, clusterId })
   const { data: runningStatus } = useClusterRunningStatus({ organizationId, clusterId })
+
+  const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
 
   if (typeof runningStatus === 'string') {
     return (
@@ -32,7 +36,13 @@ export function PageOverviewFeature() {
         <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
         <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
       </div>
-      <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+      {isKarpenter ? (
+        <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+      ) : (
+        <div className="overflow-hidden rounded border border-neutral-250">
+          <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
+        </div>
+      )}
     </div>
   )
 }
