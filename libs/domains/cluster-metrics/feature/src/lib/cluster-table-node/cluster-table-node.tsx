@@ -36,7 +36,12 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-purple-200" />
+                  <span
+                    className={clsx('h-2 w-2 rounded-full', {
+                      'bg-yellow-500': usedPercentage > reservedPercentage,
+                      'bg-purple-200': usedPercentage <= reservedPercentage,
+                    })}
+                  />
                   Reserved
                 </span>
                 <span className="ml-auto block font-semibold">
@@ -59,13 +64,22 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
       >
         <div className="relative w-full">
           <ProgressBar.Root mode="absolute">
-            <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
-            <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
+            {usedPercentage > reservedPercentage ? (
+              <>
+                <ProgressBar.Cell percentage={usedPercentage + reservedPercentage} color="var(--color-yellow-500)" />
+                <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
+              </>
+            ) : (
+              <>
+                <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
+                <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
+              </>
+            )}
           </ProgressBar.Root>
           {reservedPercentage < 99 && (
             <span
               className="absolute -top-0.5 h-[calc(100%+4px)] w-[1px] bg-purple-500"
-              style={{ left: `${reservedPercentage}%` }}
+              style={{ left: `${usedPercentage > reservedPercentage ? usedPercentage : reservedPercentage}%` }}
             />
           )}
         </div>
