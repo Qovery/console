@@ -96,7 +96,7 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
       () => 'https://hub.qovery.com/docs/using-qovery/configuration/lifecylejob/#clone'
     )
     .with({ serviceType: 'HELM' }, () => 'https://hub.qovery.com/docs/using-qovery/configuration/helm/#clone')
-    .with({ serviceType: 'TERRAFORM' }, () => 'https://hub.qovery.com/docs/using-qovery/configuration/helm/#clone') // TODO [QOV-821] replace URL with new doc path
+    .with({ serviceType: 'TERRAFORM' }, () => 'https://hub.qovery.com/docs/using-qovery/configuration/terraform/#clone') // TODO [QOV-821] replace URL with new doc path
     .exhaustive()
 
   return (

@@ -262,8 +262,7 @@ export function PageNewFeature() {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
 
-  // const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
-  const isTerraformFeatureFlag = true
+  const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
 
   const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
 

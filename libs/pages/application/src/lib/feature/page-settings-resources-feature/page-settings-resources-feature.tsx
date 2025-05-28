@@ -71,6 +71,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
       .with({ serviceType: 'TERRAFORM' }, (service) =>
         buildEditServicePayload({
           service,
+          // TODO [CQ-821] add request here
         })
       )
       .exhaustive()
