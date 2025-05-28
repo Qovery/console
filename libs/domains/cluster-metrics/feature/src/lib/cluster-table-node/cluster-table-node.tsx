@@ -1,9 +1,9 @@
 import clsx from 'clsx'
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Button, ProgressBar, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, ProgressBar, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { calculatePercentage, twMerge } from '@qovery/shared/util-js'
+import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 
 const { Table } = TablePrimitives
@@ -40,7 +40,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
                   Reserved
                 </span>
                 <span className="ml-auto block font-semibold">
-                  {reserved.toFixed(2)} {unit}
+                  {reserved} {unit}
                 </span>
               </div>
               <div className="flex w-full items-center gap-1.5">
@@ -49,7 +49,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
                   Used
                 </span>
                 <span className="ml-auto block font-semibold">
-                  {used.toFixed(2)} {unit}
+                  {used} {unit}
                 </span>
               </div>
             </div>
@@ -129,40 +129,36 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId }: Cluste
                 <Table.Cell className="h-12 w-1/4 px-3">
                   <MetricProgressBar
                     type="cpu"
-                    used={(node.metrics_usage?.cpu_milli_usage || 0) / 1000}
-                    reserved={node.resources_allocated.request_cpu_milli / 1000}
-                    total={node.resources_allocatable.cpu_milli / 1000}
+                    used={formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0))}
+                    reserved={formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli))}
+                    total={formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))}
                     unit="vCPU"
                   />
                 </Table.Cell>
                 <Table.Cell className="h-12 w-1/4 px-3">
                   <MetricProgressBar
                     type="memory"
-                    used={
-                      Math.max(
-                        node.metrics_usage?.memory_mib_rss_usage || 0,
-                        node.metrics_usage?.memory_mib_working_set_usage || 0
-                      ) / 1024
-                    }
-                    reserved={node.resources_allocated.request_memory_mib / 1024}
-                    total={node.resources_allocatable.memory_mib / 1024}
+                    used={formatNumber(
+                      mibToGib(
+                        Math.max(
+                          node.metrics_usage?.memory_mib_rss_usage || 0,
+                          node.metrics_usage?.memory_mib_working_set_usage || 0
+                        )
+                      )
+                    )}
+                    reserved={formatNumber(mibToGib(node.resources_allocated.request_memory_mib))}
+                    total={formatNumber(mibToGib(node.resources_allocatable.memory_mib))}
                     unit="GB"
                   />
                 </Table.Cell>
                 <Table.Cell className="h-12 w-[calc(30%/3)] px-3">
                   <div className="flex items-center gap-2">
-                    <Button type="button" variant="surface" size="xs" radius="full">
+                    <Badge variant="surface" radius="full">
                       {node.instance_type}
-                    </Button>
+                    </Badge>
                     {node.labels[KEY_KARPENTER_CAPACITY_TYPE] === 'spot' && (
                       <Tooltip content="Spot instance">
-                        <Button
-                          type="button"
-                          variant="surface"
-                          size="xs"
-                          radius="full"
-                          className="w-6 justify-center p-0"
-                        >
+                        <Badge variant="surface" radius="full" className="w-6 justify-center p-0">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="12"
@@ -181,16 +177,18 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId }: Cluste
                               </clipPath>
                             </defs>
                           </svg>
-                        </Button>
+                        </Badge>
                       </Tooltip>
                     )}
                   </div>
                 </Table.Cell>
                 <Table.Cell className="h-12 w-[calc(25%/3)] px-3">
-                  {calculatePercentage(
-                    node.metrics_usage?.disk_mib_usage || 0,
-                    node.resources_capacity.ephemeral_storage_mib
-                  ).toFixed(2)}
+                  {formatNumber(
+                    calculatePercentage(
+                      node.metrics_usage?.disk_mib_usage || 0,
+                      node.resources_capacity.ephemeral_storage_mib
+                    )
+                  )}
                   %
                 </Table.Cell>
                 <Table.Cell className="h-12 w-[calc(20%/3)] px-3">

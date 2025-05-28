@@ -101,7 +101,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
             className="rounded border border-neutral-250 [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
           >
             <Accordion.Trigger className="group flex h-[86px] w-full items-center justify-between py-5">
-              <div className="flex h-full w-1/4 min-w-[317px] items-center justify-between border-r border-neutral-200 px-6">
+              <div className="flex h-full w-1/4 min-w-[352px] items-center justify-between border-r border-neutral-200 px-6">
                 <div className="flex items-center gap-[18px]">
                   <StatusChip status={metrics.nodesWarningCount > 0 ? 'WARNING' : 'RUNNING'} />
                   <div className="text-sm font-medium text-neutral-400">
