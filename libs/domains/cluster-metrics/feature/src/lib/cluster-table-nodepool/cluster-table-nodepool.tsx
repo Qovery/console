@@ -7,7 +7,7 @@ import { Icon, Link, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
 import useClusterMetrics from '../hooks/use-cluster-metrics/use-cluster-metrics'
-import { calculateNodePoolMetrics } from './calculate-node-pool-metrics'
+import { calculateNodePoolMetrics } from './calculate-nodepool-metrics'
 
 export interface ClusterTableNodepoolProps {
   organizationId: string
@@ -112,8 +112,8 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
             value={nodePool.name}
             className="rounded border border-neutral-250 [box-shadow:0px_1px_2px_0px_rgba(27,36,44,0.12)]"
           >
-            <Accordion.Trigger className="group grid h-[86px] w-full grid-cols-4 items-center justify-between p-5">
-              <div className="flex h-full items-center justify-between border-r border-neutral-200 pr-6">
+            <Accordion.Trigger className="group flex h-[86px] w-full items-center justify-between py-5">
+              <div className="flex h-full w-1/4 min-w-[317px] items-center justify-between border-r border-neutral-200 px-6">
                 <div className="flex items-center gap-[18px]">
                   <StatusChip status={metrics.nodesWarningCount > 0 ? 'WARNING' : 'RUNNING'} />
                   <div className="text-sm font-medium text-neutral-400">
@@ -128,7 +128,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
               </div>
               <div
                 className={twMerge(
-                  clsx('flex flex-col gap-3 border-r border-neutral-200 px-5', {
+                  clsx('flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5', {
                     'gap-2': !metrics.cpuTotal,
                   })
                 )}
@@ -177,7 +177,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
               </div>
               <div
                 className={twMerge(
-                  clsx('flex flex-col gap-3 border-r border-neutral-200 px-5', {
+                  clsx('flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5', {
                     'gap-2': !metrics.memoryTotal,
                   })
                 )}
@@ -224,7 +224,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   unit="GB"
                 />
               </div>
-              <div className="flex flex-col gap-3 pl-5">
+              <div className="flex w-1/4 flex-col gap-3 px-5">
                 <span className="relative -top-1 flex items-center gap-2 text-sm text-neutral-350">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24">
                     <path
@@ -293,7 +293,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 </Tooltip>
               </div>
             </Accordion.Trigger>
-            <Accordion.Content className="overflow-hidden data-[state=closed]:animate-slidein-up-sm-faded data-[state=open]:animate-slidein-down-sm-faded">
+            <Accordion.Content className="overflow-hidden data-[state=open]:animate-slidein-down-sm-faded">
               <ClusterTableNode nodePool={nodePool} organizationId={organizationId} clusterId={clusterId} />
             </Accordion.Content>
           </Accordion.Item>

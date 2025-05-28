@@ -1,5 +1,5 @@
 import type { ClusterNodeDto, NodePoolInfoDto } from 'qovery-ws-typescript-axios'
-import { calculateNodePoolMetrics } from './calculate-node-pool-metrics'
+import { calculateNodePoolMetrics } from './calculate-nodepool-metrics'
 
 describe('calculateNodePoolMetrics', () => {
   const mockNodes: ClusterNodeDto[] = [
