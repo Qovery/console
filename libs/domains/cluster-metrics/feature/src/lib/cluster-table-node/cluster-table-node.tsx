@@ -92,12 +92,13 @@ export interface ClusterTableNodeProps {
   organizationId: string
   clusterId: string
   nodePool?: NodePoolInfoDto
+  className?: string
 }
 
 const KEY_KARPENTER_NODE_POOL = 'karpenter.sh/nodepool'
 const KEY_KARPENTER_CAPACITY_TYPE = 'karpenter.sh/capacity-type'
 
-export function ClusterTableNode({ nodePool, organizationId, clusterId }: ClusterTableNodeProps) {
+export function ClusterTableNode({ nodePool, organizationId, clusterId, className }: ClusterTableNodeProps) {
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
@@ -114,8 +115,10 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId }: Cluste
   const nodes = nodePool ? getNodeAssociatedToNodePool(nodePool) : metrics?.nodes
   const nodeWarnings = runningStatus?.computed_status?.node_warnings || {}
 
+  if (!runningStatus) return null
+
   return (
-    <Table.Root className="overflow-hidden border-t border-neutral-200">
+    <Table.Root className={twMerge('overflow-hidden border-t border-neutral-200', className)}>
       <Table.Header>
         <Table.Row className="divide-x divide-neutral-200 bg-neutral-100 text-ssm font-medium text-neutral-350">
           <Table.Cell className="h-8 w-1/4 px-3">Nodes</Table.Cell>
@@ -175,8 +178,8 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId }: Cluste
                 </Table.Cell>
                 <Table.Cell className="h-12 w-[calc(30%/3)] px-3">
                   <div className="flex items-center gap-2">
-                    <Badge variant="surface" radius="full">
-                      {node.instance_type}
+                    <Badge variant="surface" radius="full" className="lowercase">
+                      {node.instance_type?.replace('_', ' ')}
                     </Badge>
                     {node.labels[KEY_KARPENTER_CAPACITY_TYPE] === 'spot' && (
                       <Tooltip content="Spot instance">
