@@ -1,0 +1,21 @@
+{
+  "name": "domains-service-terraform-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/service-terraform/feature/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:feature", "slice:service-terraform"],
+  "implicitDependencies": ["!shared-console-shared"],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
+}

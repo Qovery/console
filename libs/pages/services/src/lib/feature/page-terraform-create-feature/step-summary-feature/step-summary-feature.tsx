@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useHelmRepositories } from '@qovery/domains/organizations/feature'
-import { type ArgumentTypes, useCreateHelmService } from '@qovery/domains/service-helm/feature'
+import { useCreateTerraformService } from '@qovery/domains/service-terraform/feature'
 import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -15,16 +15,16 @@ import {
 import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
-import { useHelmCreateContext } from '../page-helm-create-feature'
+import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepSummaryFeature() {
-  useDocumentTitle('Summary - Create Helm')
+  useDocumentTitle('Summary - Create Terraform')
 
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
   const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, setCurrentStep, creationFlowUrl } =
-    useHelmCreateContext()
+    useTerraformCreateContext()
   const generalData = generalForm.getValues()
   const valuesOverrideFileData = valuesOverrideFileForm.getValues()
   const valuesOverrideArgumentData = valuesOverrideArgumentsForm.getValues()
@@ -33,7 +33,7 @@ export function StepSummaryFeature() {
     setCurrentStep(4)
   }, [setCurrentStep])
 
-  const { mutateAsync: createHelmService } = useCreateHelmService()
+  const { mutateAsync: createTerraformService } = useCreateTerraformService()
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const { data: helmRepositories = [] } = useHelmRepositories({ organizationId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
@@ -46,81 +46,88 @@ export function StepSummaryFeature() {
       setIsLoadingCreate(true)
     }
 
-    const source = match(generalData.source_provider)
-      .with('GIT', () => {
-        return {
-          git_repository: {
-            url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
-            branch: generalData.branch,
-            root_path: generalData.root_path,
-            git_token_id: generalData.git_token_id,
-          },
-        }
-      })
-      .with('HELM_REPOSITORY', () => ({
-        helm_repository: {
-          repository: generalData.repository,
-          chart_name: generalData.chart_name,
-          chart_version: generalData.chart_version,
-        },
-      }))
-      .exhaustive()
+    // const source = match(generalData.source_provider)
+    //   .with('GIT', () => {
+    //     return {
+    //       git_repository: {
+    //         url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+    //         branch: generalData.branch,
+    //         root_path: generalData.root_path,
+    //         git_token_id: generalData.git_token_id,
+    //       },
+    //     }
+    //   })
+    //   .exhaustive()
 
-    const valuesOverrideFile = match(valuesOverrideFileData.type)
-      .with('GIT_REPOSITORY', () => {
-        return {
-          git: {
-            git_repository: {
-              url: buildGitRepoUrl(valuesOverrideFileData.provider ?? '', valuesOverrideFileData.repository!),
-              branch: valuesOverrideFileData.branch!,
-              git_token_id: valuesOverrideFileData.git_token_id,
-            },
-            paths: valuesOverrideFileData.paths?.split(',') ?? [],
-          },
-        }
-      })
-      .with('YAML', () => ({
-        raw: {
-          values: [
-            {
-              name: 'override',
-              content: valuesOverrideFileData.content!,
-            },
-          ],
-        },
-      }))
-      .with('NONE', () => null)
-      .exhaustive()
+    // const valuesOverrideFile = match(valuesOverrideFileData.type)
+    //   .with('GIT_REPOSITORY', () => {
+    //     return {
+    //       git: {
+    //         git_repository: {
+    //           url: buildGitRepoUrl(valuesOverrideFileData.provider ?? '', valuesOverrideFileData.repository!),
+    //           branch: valuesOverrideFileData.branch!,
+    //           git_token_id: valuesOverrideFileData.git_token_id,
+    //         },
+    //         paths: valuesOverrideFileData.paths?.split(',') ?? [],
+    //       },
+    //     }
+    //   })
+    //   .with('YAML', () => ({
+    //     raw: {
+    //       values: [
+    //         {
+    //           name: 'override',
+    //           content: valuesOverrideFileData.content!,
+    //         },
+    //       ],
+    //     },
+    //   }))
+    //   .with('NONE', () => null)
+    //   .exhaustive()
 
-    const getValuesByType = (type: ArgumentTypes) => {
-      return valuesOverrideArgumentData.arguments.filter((a) => a.type === type).map((a) => [a.key, a.json ?? a.value])
-    }
+    // const getValuesByType = (type: ArgumentTypes) => {
+    //   return valuesOverrideArgumentData.arguments.filter((a) => a.type === type).map((a) => [a.key, a.json ?? a.value])
+    // }
 
     try {
-      const response = await createHelmService({
+      const response = await createTerraformService({
         environmentId,
-        helmRequest: {
+        terraformRequest: {
           name: generalData.name,
-          description: generalData.description,
+          description: generalData.description ?? '',
           icon_uri: generalData.icon_uri,
-          source,
-          allow_cluster_wide_resources: generalData.allow_cluster_wide_resources,
-          arguments: parseCmd(generalData.arguments),
-          timeout_sec: parseInt(generalData.timeout_sec, 10),
+          timeout_sec: `${parseInt(generalData.timeout_sec, 10)}`,
           auto_deploy: generalData.auto_deploy || (valuesOverrideFileData.auto_deploy ?? false),
-          values_override: {
-            set: getValuesByType('--set'),
-            set_string: getValuesByType('--set-string'),
-            set_json: getValuesByType('--set-json'),
-            file: valuesOverrideFile,
+          auto_approve: false,
+          provider: 'Terraform',
+          terraform_files_source: {
+            git_repository: {
+              url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+              branch: generalData.branch ?? '',
+              root_path: generalData.root_path ?? '',
+              git_token_id: generalData.git_token_id ?? '',
+            },
+          },
+          terraform_variables_source: {
+            tf_var_file_paths: [],
+            tf_vars: [],
+          },
+          provider_version: {
+            read_from_terraform_block: true,
+            explicit_version: '1.10.0',
+          },
+          job_resources: {
+            cpu_milli: 1000,
+            ram_mib: 1024,
+            storage_gb: 10,
           },
         },
       })
 
-      if (withDeploy) {
-        await deployService({ serviceId: response.id, serviceType: 'HELM' })
-        setIsLoadingCreateAndDeploy(false)
-      }
+      // if (withDeploy) {
+      //   await deployService({ serviceId: response.id, serviceType: 'TERRAFORM' })
+      //   setIsLoadingCreateAndDeploy(false)
+      // }
 
       if (slug && option) {
         posthog.capture('create-service', {
@@ -140,7 +147,7 @@ export function StepSummaryFeature() {
   return (
     <FunnelFlowBody>
       <Section>
-        <Heading className="mb-2">Ready to create your Helm chart</Heading>
+        <Heading className="mb-2">Ready to create your Terraform service</Heading>
 
         <form className="space-y-10">
           <p className="text-sm text-neutral-350">
@@ -188,7 +195,7 @@ export function StepSummaryFeature() {
                 </ul>
               )}
 
-              {generalData.source_provider === 'HELM_REPOSITORY' && (
+              {/* {generalData.source_provider === 'HELM_REPOSITORY' && (
                 <ul className="list-none space-y-2 text-sm text-neutral-400">
                   <li>
                     <strong className="font-medium">Repository:</strong>{' '}
@@ -201,14 +208,15 @@ export function StepSummaryFeature() {
                     <strong className="font-medium">Version:</strong> {generalData.chart_version}
                   </li>
                 </ul>
-              )}
+              )} */}
+
               <hr className="my-4 border-t border-dashed border-neutral-250" />
               <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
-                  <span className="font-medium">Helm parameters:</span> {generalData.arguments?.toString()}
+                  <span className="font-medium">Terraform configuration:</span> {generalData.arguments?.toString()}
                 </li>
                 <li>
-                  <span className="font-medium">Helm timeout:</span> {generalData.timeout_sec}
+                  <span className="font-medium">Timeout:</span> {generalData.timeout_sec}
                 </li>
                 <li>
                   <span className="font-medium">Allow cluster-wide resources:</span>{' '}
@@ -216,28 +224,14 @@ export function StepSummaryFeature() {
                 </li>
                 <li>
                   <span className="font-medium">Auto-deploy:</span>{' '}
-                  {match({ generalData, valuesOverrideFileData })
-                    .with(
-                      {
-                        generalData: { source_provider: 'GIT', auto_deploy: true },
-                        valuesOverrideFileData: { type: 'GIT_REPOSITORY' },
-                      },
-                      () => 'On (chart and values)'
-                    )
-                    .with({ generalData: { source_provider: 'GIT', auto_deploy: true } }, () => 'On (chart)')
-                    .with(
-                      {
-                        generalData: { source_provider: 'HELM_REPOSITORY' },
-                        valuesOverrideFileData: { auto_deploy: true },
-                      },
-                      () => 'On (values)'
-                    )
+                  {match(generalData.auto_deploy)
+                    .with(true, () => 'On')
                     .otherwise(() => 'Off')}
                 </li>
               </ul>
             </Section>
 
-            {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
+            {/* {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
               <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
                 <div className="flex justify-between">
                   <Heading>Values</Heading>
@@ -286,7 +280,7 @@ export function StepSummaryFeature() {
                   </ul>
                 )}
               </Section>
-            )}
+            )} */}
           </div>
 
           <div className="mt-10 flex justify-between">
@@ -317,7 +311,7 @@ export function StepSummaryFeature() {
                 onClick={() => onSubmit(true)}
                 loading={isLoadingCreateAndDeploy}
               >
-                Create and deploy
+                Create and plan
               </Button>
             </div>
           </div>

@@ -48,14 +48,14 @@ export const TerraformCreateContext = createContext<TerraformCreateContextInterf
 
 // this is to avoid to set initial value twice https://stackoverflow.com/questions/49949099/react-createcontext-point-of-defaultvalue
 export const useTerraformCreateContext = () => {
-  const helmCreateContext = useContext(TerraformCreateContext)
-  if (!helmCreateContext) throw new Error('useHelmCreateContext must be used within a TerraformCreateContext')
-  return helmCreateContext
+  const terraformCreateContext = useContext(TerraformCreateContext)
+  if (!terraformCreateContext) throw new Error('useTerraformCreateContext must be used within a TerraformCreateContext')
+  return terraformCreateContext
 }
 
 export function PageTerraformCreateFeature() {
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '', slug } = useParams()
   const [currentStep, setCurrentStep] = useState<number>(1)
 
   const dataTemplate = serviceTemplates.find((service) => service.slug === slug)

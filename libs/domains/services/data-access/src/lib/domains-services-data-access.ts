@@ -616,6 +616,9 @@ type CreateServiceRequest = {
     | ({
         serviceType: HelmType
       } & HelmRequest)
+    | ({
+        serviceType: TerraformType
+      } & TerraformRequest)
 }
 
 type EditServiceRequest = {
@@ -847,6 +850,11 @@ export const mutations = {
         mutation: helmsApi.createHelm.bind(helmsApi, environmentId, payload),
         serviceType: 'HELM' as const,
       }))
+      .with({ serviceType: 'TERRAFORM' }, (payload) => ({
+        mutation: terraformsApi.createTerraform.bind(terraformsApi, environmentId, payload),
+        serviceType: 'TERRAFORM' as const,
+      }))
+
       .exhaustive()
     const response = await mutation()
     return response.data

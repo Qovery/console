@@ -62,6 +62,7 @@ import { PageSettingsFeature } from '../feature/page-settings-feature/page-setti
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsPreviewEnvironmentsFeature from '../feature/page-settings-preview-environments-feature/page-settings-preview-environments-feature'
 import { StepGeneralFeature as TerraformStepGeneralFeature } from '../feature/page-terraform-create-feature/step-general-feature/step-general-feature'
+import { StepSummaryFeature as TerraformStepSummaryFeature } from '../feature/page-terraform-create-feature/step-summary-feature/step-summary-feature'
 import { PageVariablesFeature } from '../feature/page-variables-feature/page-variables-feature'
 import { Container } from '../ui/container/container'
 
@@ -233,8 +234,8 @@ export const ROUTER_SERVICE_TERRAFORM_CREATION: Route[] = [
   //   path: SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
   //   component: <HelmStepValuesOverrideArgumentsFeature />,
   // },
-  // {
-  //   path: SERVICES_HELM_CREATION_SUMMARY_URL,
-  //   component: <HelmStepSummaryFeature />,
-  // },
+  {
+    path: SERVICES_HELM_CREATION_SUMMARY_URL,
+    component: <TerraformStepSummaryFeature />,
+  },
 ]
