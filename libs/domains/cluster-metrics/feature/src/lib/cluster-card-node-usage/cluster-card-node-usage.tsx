@@ -2,8 +2,8 @@ import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
-
-const calculatePercentage = (value: number, total: number): number => (total > 0 ? (value / total) * 100 : 0)
+import { calculatePercentage, pluralize } from '@qovery/shared/util-js'
+import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 
 export interface ClusterCardNodeUsageProps {
   organizationId: string
@@ -15,8 +15,12 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
     organizationId: organizationId,
     clusterId: clusterId,
   })
+  const { data: metrics } = useClusterMetrics({
+    organizationId: organizationId,
+    clusterId: clusterId,
+  })
 
-  const runningStatusNotAvailable = typeof runningStatus !== 'object'
+  const metricsNotAvailable = typeof metrics !== 'object'
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
@@ -26,17 +30,17 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
     .with({ cloud_provider: 'AWS', instance_type: 'KARPENTER' }, () => false)
     .otherwise(() => true)
 
-  const totalNodes = (!shouldDisplayMinMaxNodes ? runningStatus?.nodes?.length : cluster?.max_running_nodes) || 0
+  const totalNodes = (!shouldDisplayMinMaxNodes ? metrics?.nodes?.length : cluster?.max_running_nodes) || 0
 
   const healthyNodes =
-    runningStatus?.nodes?.filter(
+    metrics?.nodes?.filter(
       (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'True'
     ).length || 0
 
   const warningNodes = Object.keys(runningStatus?.computed_status?.node_warnings || {}).length || 0
 
   const deployingNodes =
-    runningStatus?.nodes?.filter(
+    metrics?.nodes?.filter(
       (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'False'
     ).length || 0
 
@@ -49,21 +53,21 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
       <div className="flex items-center">
         <div className="flex w-full items-center gap-1.5">
           <Icon iconName="check-circle" iconStyle="regular" className="text-green-400" />
-          <span>Healthy nodes</span>
+          <span>Healthy {pluralize(healthyNodes - warningNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{healthyNodes - warningNodes}</span>
         </div>
       </div>
       {warningNodes > 0 && (
         <div className="flex w-full items-center gap-1.5">
           <Icon iconName="exclamation-circle" iconStyle="regular" className="text-yellow-500" />
-          <span>Warning nodes</span>
+          <span>Warning {pluralize(warningNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{warningNodes}</span>
         </div>
       )}
       {deployingNodes > 0 && (
         <div className="flex w-full items-center gap-1.5">
           <Icon iconName="exclamation-circle" iconStyle="regular" className="text-brand-300" />
-          <span>Deploying nodes</span>
+          <span>Deploying {pluralize(deployingNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{deployingNodes}</span>
         </div>
       )}
@@ -78,26 +82,28 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
           <Skeleton
             width={32}
             height={32}
-            show={!cluster || runningStatusNotAvailable}
-            className={!cluster || runningStatusNotAvailable ? 'mt-1' : ''}
+            show={!cluster || metricsNotAvailable}
+            className={!cluster || metricsNotAvailable ? 'mt-1' : ''}
             rounded
           >
-            <span className="text-[28px] font-bold text-neutral-400">{runningStatus?.nodes?.length}</span>
+            <span className="text-[28px] font-bold text-neutral-400">{metrics?.nodes?.length}</span>
           </Skeleton>
         </div>
         {match(cluster?.cloud_provider)
           .with('GCP', () => null)
           .with('ON_PREMISE', () => null)
           .otherwise(() => (
-            <Link
-              color="current"
-              to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
-            >
-              <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-300" />
-            </Link>
+            <Tooltip content="Edit resources">
+              <Link
+                color="current"
+                to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+              >
+                <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-300" />
+              </Link>
+            </Tooltip>
           ))}
       </div>
-      <Skeleton width="100%" height={20} show={!cluster || runningStatusNotAvailable}>
+      <Skeleton width="100%" height={20} show={!cluster || metricsNotAvailable}>
         <div className="flex w-full flex-col gap-2.5">
           {shouldDisplayMinMaxNodes && (
             <div className="flex items-center justify-between text-sm text-neutral-350">
@@ -107,14 +113,14 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
           )}
           <Tooltip content={tooltipContent} classNameContent="w-[157px] px-2.5 py-1.5">
             <ProgressBar.Root>
+              {deployingPercentage > 0 && (
+                <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
+              )}
               {healthyPercentage > 0 && (
                 <ProgressBar.Cell percentage={healthyPercentage} color="var(--color-green-500)" />
               )}
               {warningPercentage > 0 && (
                 <ProgressBar.Cell percentage={warningPercentage} color="var(--color-yellow-500)" />
-              )}
-              {deployingPercentage > 0 && (
-                <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
               )}
             </ProgressBar.Root>
           </Tooltip>

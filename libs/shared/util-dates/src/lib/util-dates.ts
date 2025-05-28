@@ -1,7 +1,20 @@
 import { differenceInMinutes, formatDistanceToNowStrict, getDaysInMonth } from 'date-fns'
 import { format, utcToZonedTime } from 'date-fns-tz'
 
-export const timeAgo = (date: Date) => formatDistanceToNowStrict(date)
+export const timeAgo = (date: Date, compact = false) => {
+  if (compact) {
+    const distance = formatDistanceToNowStrict(date, { addSuffix: false })
+    return distance
+      .replace(/\s/g, '')
+      .replace(/seconds?/, 's')
+      .replace(/minutes?/, 'm')
+      .replace(/hours?/, 'h')
+      .replace(/days?/, 'd')
+      .replace(/months?/, 'mo')
+      .replace(/years?/, 'y')
+  }
+  return formatDistanceToNowStrict(date)
+}
 
 export const dateDifferenceMinutes = (firstDate?: Date, secondDate?: Date) => {
   return firstDate && secondDate && differenceInMinutes(firstDate, secondDate)

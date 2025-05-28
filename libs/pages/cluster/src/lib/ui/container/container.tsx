@@ -1,6 +1,7 @@
 import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { useClusterMetricsSocket } from '@qovery/domains/cluster-metrics/feature'
 import {
   ClusterActionToolbar,
   ClusterAvatar,
@@ -11,7 +12,7 @@ import {
   useDeployCluster,
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
+import { CLUSTER_OVERVIEW_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Badge, ErrorBoundary, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
@@ -24,6 +25,7 @@ export function Container({ children }: PropsWithChildren) {
   const { data: clusterStatus, isLoading } = useClusterStatus({ organizationId, clusterId })
 
   useClusterRunningStatusSocket({ organizationId, clusterId })
+  useClusterMetricsSocket({ organizationId, clusterId })
 
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
@@ -90,12 +92,12 @@ export function Container({ children }: PropsWithChildren) {
   )
 
   const tabsItems = [
-    // {
-    //   icon: <Icon iconName="cloud-word" iconStyle="regular" className="w-4" />,
-    //   name: 'Overview',
-    //   active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL),
-    //   link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_OVERVIEW_URL}`,
-    // },
+    {
+      icon: <Icon iconName="cloud-word" iconStyle="regular" className="w-4" />,
+      name: 'Overview',
+      active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL),
+      link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_OVERVIEW_URL}`,
+    },
     {
       icon: <Icon iconName="gear" iconStyle="regular" className="mt-0.5 w-4" />,
       name: 'Settings',
