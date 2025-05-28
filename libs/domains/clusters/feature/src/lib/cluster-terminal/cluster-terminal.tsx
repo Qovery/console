@@ -48,7 +48,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
   // Hack to avoid having connection delay with server
   useEffect(() => {
     if (!isTerminalLoading) {
-      const timer = setTimeout(() => setShowDelayedLoader(false), 6_000)
+      const timer = setTimeout(() => setShowDelayedLoader(false), 4_000)
       return () => clearTimeout(timer)
     }
     return () => null
