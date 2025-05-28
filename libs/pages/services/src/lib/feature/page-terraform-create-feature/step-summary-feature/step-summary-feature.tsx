@@ -96,7 +96,7 @@ export function StepSummaryFeature() {
           name: generalData.name,
           description: generalData.description ?? '',
           icon_uri: generalData.icon_uri,
-          timeout_sec: `${parseInt(generalData.timeout_sec, 10)}`,
+          timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy || (valuesOverrideFileData.auto_deploy ?? false),
           auto_approve: false,
           provider: 'Terraform',
@@ -114,12 +114,12 @@ export function StepSummaryFeature() {
           },
           provider_version: {
             read_from_terraform_block: true,
-            explicit_version: '1.10.0',
+            explicit_version: generalData.provider_version.explicit_version,
           },
           job_resources: {
-            cpu_milli: 1000,
-            ram_mib: 1024,
-            storage_gb: 10,
+            cpu_milli: generalData.job_resources.cpu_milli,
+            ram_mib: generalData.job_resources.ram_mib,
+            storage_gb: generalData.job_resources.storage_gb,
           },
         },
       })
@@ -213,14 +213,20 @@ export function StepSummaryFeature() {
               <hr className="my-4 border-t border-dashed border-neutral-250" />
               <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
-                  <span className="font-medium">Terraform configuration:</span> {generalData.arguments?.toString()}
+                  <span className="font-medium">Terraform version:</span>{' '}
+                  {generalData.provider_version.explicit_version}
+                </li>
+                <li>
+                  <span className="font-medium">CPU:</span> {generalData.job_resources.cpu_milli}
+                </li>
+                <li>
+                  <span className="font-medium">RAM:</span> {generalData.job_resources.ram_mib}mb
+                </li>
+                <li>
+                  <span className="font-medium">Storage:</span> {generalData.job_resources.storage_gb}gb
                 </li>
                 <li>
                   <span className="font-medium">Timeout:</span> {generalData.timeout_sec}
-                </li>
-                <li>
-                  <span className="font-medium">Allow cluster-wide resources:</span>{' '}
-                  {Boolean(generalData.allow_cluster_wide_resources).toString()}
                 </li>
                 <li>
                   <span className="font-medium">Auto-deploy:</span>{' '}
@@ -288,7 +294,7 @@ export function StepSummaryFeature() {
               type="button"
               size="lg"
               variant="plain"
-              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)}
             >
               Back
             </Button>
@@ -311,7 +317,7 @@ export function StepSummaryFeature() {
                 onClick={() => onSubmit(true)}
                 loading={isLoadingCreateAndDeploy}
               >
-                Create and plan
+                Create and run plan
               </Button>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { type GitProviderEnum, type GitTokenResponse, type HelmRequest } from 'qovery-typescript-axios'
+import { type GitProviderEnum, type GitTokenResponse, type TerraformRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -21,8 +21,8 @@ export const steps: { title: string }[] = [
   { title: 'Summary' },
 ]
 export interface TerraformGeneralData
-  extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
-  source_provider: 'HELM_REPOSITORY' | 'GIT'
+  extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
+  source_provider: 'GIT'
   repository: string
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
@@ -66,6 +66,15 @@ export function PageTerraformCreateFeature() {
       name: dataTemplate?.slug ?? '',
       icon_uri: dataTemplate?.icon_uri ?? 'app://qovery-console/terraform',
       source_provider: 'GIT',
+      provider_version: {
+        read_from_terraform_block: false,
+        explicit_version: undefined,
+      },
+      job_resources: {
+        cpu_milli: 500,
+        ram_mib: 256,
+        storage_gb: 1,
+      },
     },
   })
 

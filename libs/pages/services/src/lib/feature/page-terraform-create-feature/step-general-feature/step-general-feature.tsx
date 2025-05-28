@@ -9,7 +9,7 @@ import {
 } from '@qovery/domains/organizations/feature'
 import { SourceSetting } from '@qovery/domains/service-terraform/feature'
 import { AutoDeploySetting, GeneralSetting } from '@qovery/domains/services/feature'
-import { SERVICES_TERRAFORM_CREATION_SUMMARY_URL, SERVICES_URL } from '@qovery/shared/routes'
+import { SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useTerraformCreateContext } from '../page-terraform-create-feature'
@@ -30,7 +30,7 @@ export function StepGeneralFeature() {
       data.auto_deploy = false
     }
 
-    navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_SUMMARY_URL)
+    navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)
   })
 
   const watchFieldProvider = generalForm.watch('source_provider')
@@ -94,11 +94,12 @@ export function StepGeneralFeature() {
                   provider: 'TERRAFORM',
                   provider_version: {
                     read_from_terraform_block: false,
+                    explicit_version: '1.12.1',
                   },
                   job_resources: {
-                    cpu_milli: 0,
-                    ram_mib: 0,
-                    storage_gb: 0,
+                    cpu_milli: 500,
+                    ram_mib: 256,
+                    storage_gb: 1000,
                   },
                 }}
               />

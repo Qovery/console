@@ -11,12 +11,12 @@ import {
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { useHelmCreateContext } from '../page-helm-create-feature'
+import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
-export function StepValuesOverrideArgumentsFeature() {
-  useDocumentTitle('General - Values override as arguments')
+export function StepVariablesFeature() {
+  useDocumentTitle('General - Terraform configuration')
 
-  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm, creationFlowUrl } = useHelmCreateContext()
+  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm, creationFlowUrl } = useTerraformCreateContext()
 
   const generalData = generalForm.getValues()
 
@@ -84,4 +84,4 @@ export function StepValuesOverrideArgumentsFeature() {
   )
 }
 
-export default StepValuesOverrideArgumentsFeature
+export default StepVariablesFeature
