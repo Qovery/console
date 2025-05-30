@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
-import { HACKATHON_API_BASE_URL } from './submit-message'
+import { fetchAllThreads } from '../hooks/fetch-all-thread/fetch-all-thread'
 
 export interface Thread {
   id: string
@@ -29,15 +29,7 @@ export const useThreads = (organizationId: string, owner: string, threadId?: str
       setError(null)
 
       const token = await getAccessTokenSilently()
-      const response = await fetch(`${HACKATHON_API_BASE_URL}/owner/${owner}/organization/${organizationId}/thread`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`Error fetching threads: ${response.status}`)
-      }
+      const response = await fetchAllThreads(owner, organizationId, token)
 
       const data = await response.json()
       setThreads(data.threads)

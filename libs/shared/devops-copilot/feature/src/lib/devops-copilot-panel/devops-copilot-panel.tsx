@@ -45,7 +45,7 @@ interface InputProps extends ComponentProps<'textarea'> {
 
 interface CodeProps extends HTMLAttributes<HTMLElement> {
   inline?: boolean
-  node?: any
+  node?: unknown
 }
 
 const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, loading, ...props }, ref) => {
@@ -465,7 +465,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }
 
-  const lastSubmitResult = useRef<any>(null)
+  const lastSubmitResult = useRef<{ thread: Message[] } | null>(null)
   const handleSendMessage = async (value?: string) => {
     controllerRef.current = new AbortController()
     lastSubmitResult.current = null
@@ -523,7 +523,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     const planArray = JSON.parse(parsed.content.replace('__plan__:', ''))
                     setPlan((prev) => [
                       ...prev,
-                      ...planArray.map((step: any) => ({
+                      ...planArray.map((step: { description: string; tool_name: string }) => ({
                         messageId: -2,
                         description: step.description,
                         toolName: step.tool_name,
