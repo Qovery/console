@@ -366,6 +366,12 @@ export const services = createQueryKeys('services', {
             serviceType,
           }
         })
+        // .with({ serviceType: 'TERRAFORM' }, async ({ serviceId, serviceType }) => {
+        //   return {
+        //     results: (await terraformMainCallsApi.listTerraformCommit(serviceId)).data.results,
+        //     serviceType,
+        //   }
+        // }) // TODO [CQ-821] implement this once the endpoint will be available
         .exhaustive()
       return commits
     },

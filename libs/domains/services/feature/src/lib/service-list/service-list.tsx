@@ -21,7 +21,13 @@ import type {
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { type AnyService, type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  type Application,
+  type Helm,
+  type Job,
+  type Terraform,
+} from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -641,8 +647,10 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               }) => helmInfo(repository)
             )
             .with(
-              { service: P.intersection({ serviceType: 'TERRAFORM' }) },
-              ({ service: { provider_version } }) => provider_version
+              { service: { serviceType: 'TERRAFORM' } },
+              ({ service }) =>
+                // ({ service }: { service: any & { git: { git_repository: ApplicationGitRepository } } }) =>
+                'Git info goes here' // TODO [CQ-821] implement this once the API endpoint is ready
             )
             .exhaustive()
           return cell
