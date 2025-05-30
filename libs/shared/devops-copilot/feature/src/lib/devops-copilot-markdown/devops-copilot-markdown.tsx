@@ -1,3 +1,4 @@
+import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { FC, HTMLAttributes, Children, isValidElement, useRef, useEffect } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -36,16 +37,31 @@ export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
           {...props}
         />
       ),
-      pre: ({ node, children, ...props }) => (
-        <div className="relative my-4" >
-          <pre
-            className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
-            {...props}
-          >
-            {children}
-          </pre>
-        </div>
-      ),
+      pre: ({ node, children, ...props }) => {
+        const codeContent = isValidElement(children)
+          ? (children.props as { children?: string })?.children
+          : null
+
+        return (
+          <div className="relative my-4">
+            <pre
+              className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
+              {...props}
+            >
+              {children}
+            </pre>
+            {typeof codeContent === 'string' && (
+              <div className="absolute flex items-center justify-center right-2 top-2 w-8 h-8 rounded-md border border-neutral-300 bg-white p-1 shadow-md dark:border-neutral-600 dark:bg-neutral-900">
+                <CopyToClipboardButtonIcon
+                  content={codeContent}
+                  tooltipContent="Copy code"
+                  className="text-neutral-400 hover:text-neutral-600 dark:text-white"
+                />
+              </div>
+            )}
+          </div>
+        )
+      },
       code: ({ inline, className, children, ...props }: CodeProps) => {
         const match = /language-(\w+)/.exec(className || '')
         if (match && match[1] === 'mermaid') {
