@@ -1,10 +1,10 @@
 import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
-import { FC, HTMLAttributes, Children, isValidElement, useRef, useEffect } from 'react'
+import { isValidElement } from 'react'
+import type { FC, HTMLAttributes } from 'react'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import mermaid from 'mermaid'
 import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 
 type CodeProps = {
