@@ -84,7 +84,7 @@ export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
           return (
             <SyntaxHighlighter
               language={match[1]}
-              style={materialDark as any}
+              style={materialDark as { [key: string]: React.CSSProperties }}
               PreTag="div"
               customStyle={{
                 borderRadius: '0.5rem',
