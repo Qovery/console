@@ -150,9 +150,6 @@ const renderStreamingMessageWithMermaid = (input: string) => {
 }
 
 export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) {
-  useEffect(() => {
-    mermaid.initialize({ startOnLoad: true })
-  }, [])
   const controllerRef = useRef<AbortController | null>(null)
   const STORAGE_KEY = 'assistant-panel-size'
   const { data } = useQoveryStatus()
@@ -216,15 +213,15 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   }
 
   useEffect(() => {
+    mermaid.initialize({ startOnLoad: true })
+
     setTimeout(() => {
       if (inputRef.current) {
         adjustTextareaHeight(inputRef.current)
         inputRef.current.scrollTop = inputRef.current.scrollHeight
       }
     }, 50)
-  }, [])
 
-  useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         handleOnClose()
@@ -372,6 +369,12 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }
 
+  const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
+
+  const [isAtBottom, setIsAtBottom] = useState(true)
+  const panelRef = useRef<HTMLDivElement>(null)
+
+
   useEffect(() => {
     // Once the animation is finished, we can stop the loading and set the message
     if (
@@ -446,10 +449,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     return () => clearInterval(typingInterval)
   }, [streamingMessage, displayedStreamingMessage])
 
-  const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
-
-  const [isAtBottom, setIsAtBottom] = useState(true)
-
   useEffect(() => {
     const node = scrollAreaRef.current
 
@@ -468,8 +467,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       node.removeEventListener('scroll', handleScroll)
     }
   }, [threadId, displayedStreamingMessage])
-
-  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const applyPanelSize = () => {
@@ -796,17 +793,13 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                                               ? 'exclamation-circle'
                                               : 'circle'
                                     }
-                                    className={
-                                      step.status === 'completed'
-                                        ? 'text-green-500'
-                                        : step.status === 'in_progress'
-                                          ? 'animate-spin text-yellow-500'
-                                          : step.status === 'waiting'
-                                            ? 'text-blue-500'
-                                            : step.status === 'error'
-                                              ? 'text-red-500'
-                                              : 'text-gray-400'
-                                    }
+                                    className={clsx({
+                                      'text-green-500': step.status === 'completed',
+                                      'animate-spin text-yellow-500': step.status === 'in_progress',
+                                      'text-blue-500': step.status === 'waiting',
+                                      'text-red-500': step.status === 'error',
+                                      'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(step.status),
+                                    })}
                                   />
                                   <div className="flex flex-col">
                                     <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
@@ -878,20 +871,16 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                                           ? 'exclamation-circle'
                                           : 'circle'
                                 }
-                                className={
-                                  step.status === 'completed'
-                                    ? 'text-green-500'
-                                    : step.status === 'in_progress'
-                                      ? 'animate-spin text-yellow-500'
-                                      : step.status === 'waiting'
-                                        ? 'text-blue-500'
-                                        : step.status === 'error'
-                                          ? 'text-red-500'
-                                          : 'text-gray-400'
-                                }
+                                className={clsx({
+                                  'text-green-500': step.status === 'completed',
+                                  'animate-spin text-yellow-500': step.status === 'in_progress',
+                                  'text-blue-500': step.status === 'waiting',
+                                  'text-red-500': step.status === 'error',
+                                  'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(step.status),
+                                })}
                               />
                               <div className="flex flex-col">
-                                <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                <span className={clsx({ 'text-neutral-400': step.status === 'completed' })}>
                                   {step.description}
                                 </span>
                                 <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
