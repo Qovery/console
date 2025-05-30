@@ -29,6 +29,8 @@ import {
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_RULES_URL,
   SERVICES_SETTINGS_URL,
+  SERVICES_TERRAFORM_CREATION_GENERAL_URL,
+  SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
   SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
@@ -60,6 +62,9 @@ import PageSettingsDeploymentRulesFeature from '../feature/page-settings-deploym
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsPreviewEnvironmentsFeature from '../feature/page-settings-preview-environments-feature/page-settings-preview-environments-feature'
+import { StepConfigurationFeature as TerraformStepConfigurationFeature } from '../feature/page-terraform-create-feature/step-configuration-feature/step-configuration-feature'
+import { StepGeneralFeature as TerraformStepGeneralFeature } from '../feature/page-terraform-create-feature/step-general-feature/step-general-feature'
+import { StepSummaryFeature as TerraformStepSummaryFeature } from '../feature/page-terraform-create-feature/step-summary-feature/step-summary-feature'
 import { PageVariablesFeature } from '../feature/page-variables-feature/page-variables-feature'
 import { Container } from '../ui/container/container'
 
@@ -215,5 +220,24 @@ export const ROUTER_SERVICE_HELM_CREATION: Route[] = [
   {
     path: SERVICES_HELM_CREATION_SUMMARY_URL,
     component: <HelmStepSummaryFeature />,
+  },
+]
+
+export const ROUTER_SERVICE_TERRAFORM_CREATION: Route[] = [
+  {
+    path: SERVICES_TERRAFORM_CREATION_GENERAL_URL,
+    component: <TerraformStepGeneralFeature />,
+  },
+  {
+    path: SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
+    component: <TerraformStepConfigurationFeature />,
+  },
+  // {
+  //   path: SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
+  //   component: <TerraformStepVariablesFeature />,
+  // },
+  {
+    path: SERVICES_HELM_CREATION_SUMMARY_URL,
+    component: <TerraformStepSummaryFeature />,
   },
 ]

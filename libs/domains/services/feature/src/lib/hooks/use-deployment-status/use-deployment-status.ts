@@ -27,6 +27,7 @@ export function useDeploymentStatus({ environmentId, serviceId }: UseDeploymentS
     ...(environmentStatus?.containers ?? []),
     ...(environmentStatus?.databases ?? []),
     ...(environmentStatus?.jobs ?? []),
+    ...(environmentStatus?.terraforms ?? []),
   ]
   return webSocketResult.data
     ? webSocketResult

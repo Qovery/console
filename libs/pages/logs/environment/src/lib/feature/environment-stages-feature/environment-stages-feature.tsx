@@ -40,7 +40,7 @@ export function matchServicesWithStatuses(deploymentStages?: DeploymentStageWith
   if (!deploymentStages) return []
 
   return deploymentStages.map((deploymentStage) => {
-    const serviceTypes = ['applications', 'databases', 'containers', 'jobs', 'helms'] as const
+    const serviceTypes = ['applications', 'databases', 'containers', 'jobs', 'helms', 'terraforms'] as const
 
     const services = serviceTypes
       .map((serviceType) => deploymentStage[serviceType])
@@ -67,6 +67,7 @@ export function EnvironmentStagesFeature({
     environmentId: environment.id,
     executionId,
   })
+  console.log('deploymentHistory', deploymentHistory)
 
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(true)
   const navigate = useNavigate()
@@ -107,6 +108,8 @@ export function EnvironmentStagesFeature({
         () => true
       )
       .otherwise(() => false)
+
+  console.log('matchServicesWithStatuses(deploymentStages)', matchServicesWithStatuses(deploymentStages))
 
   return (
     <div className="h-full w-full bg-neutral-800">

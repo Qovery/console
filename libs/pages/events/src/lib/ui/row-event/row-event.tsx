@@ -76,6 +76,7 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.CONTAINER]: generateApplicationLink,
       [OrganizationEventTargetType.JOB]: generateApplicationLink,
       [OrganizationEventTargetType.HELM]: generateApplicationLink,
+      [OrganizationEventTargetType.TERRAFORM]: generateApplicationLink,
       [OrganizationEventTargetType.ORGANIZATION]: () => customLink(SETTINGS_URL(organizationId)),
       [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () =>
         customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),

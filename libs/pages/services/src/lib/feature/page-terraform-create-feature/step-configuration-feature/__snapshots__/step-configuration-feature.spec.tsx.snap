@@ -1,0 +1,517 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StepConfigurationFeature should submit a form with a git repository 1`] = `
+<body>
+  <div />
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <div
+            class=""
+          >
+            <div
+              class="input input--select    "
+              data-testid="select"
+            >
+              <label
+                class="top-1.5 translate-y-2 text-sm"
+                for="Terraform version"
+              >
+                Terraform version
+              </label>
+              <div
+                class=" css-b62m3t-container"
+              >
+                <span
+                  class="css-1f43avz-a11yText-A11yText"
+                  id="react-select-3-live-region"
+                />
+                <span
+                  aria-atomic="false"
+                  aria-live="polite"
+                  aria-relevant="additions text"
+                  class="css-1f43avz-a11yText-A11yText"
+                />
+                <div
+                  class="input-select__control css-13cymwt-control"
+                >
+                  <div
+                    class="input-select__value-container css-1fdsijx-ValueContainer"
+                  >
+                    <div
+                      class="input-select__placeholder css-1jqq78o-placeholder"
+                      id="react-select-3-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <input
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-3-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-readonly="true"
+                      class="css-mohuvp-dummyInput-DummyInput"
+                      id="Terraform version"
+                      inputmode="none"
+                      role="combobox"
+                      tabindex="0"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-tj5bde-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="Terraform version"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+              <input
+                name="Terraform version"
+                type="hidden"
+                value=""
+              />
+              <div
+                class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+              >
+                <span
+                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                  role="img"
+                />
+              </div>
+            </div>
+          </div>
+          <hr
+            class="my-4 border-t border-dashed border-neutral-250"
+          />
+          <div
+            class="flex flex-col gap-5"
+          >
+            <div
+              class=""
+              data-testid="input-name-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="CPU (m)"
+                    >
+                      CPU (m)
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-name"
+                      id="CPU (m)"
+                      name="job_resources.cpu_milli"
+                      type="text"
+                      value="500"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p
+                class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              >
+                Amount of CPU allocated to the job resources
+              </p>
+            </div>
+            <div
+              class=""
+              data-testid="input-name-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="RAM (MiB)"
+                    >
+                      RAM (MiB)
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-name"
+                      id="RAM (MiB)"
+                      name="job_resources.ram_mib"
+                      type="text"
+                      value="256"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p
+                class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              >
+                Amount of RAM allocated to the job resources
+              </p>
+            </div>
+            <div
+              class=""
+              data-testid="input-name-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="Storage (GB)"
+                    >
+                      Storage (GB)
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-name"
+                      id="Storage (GB)"
+                      name="job_resources.storage_gb"
+                      type="text"
+                      value="1"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p
+                class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              >
+                Amount of storage allocated to the job resources
+              </p>
+            </div>
+          </div>
+          <div
+            class="mt-10 flex justify-between"
+          >
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+              type="button"
+            >
+              Back
+            </button>
+            <div
+              class="flex gap-3"
+            >
+              <button
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                type="submit"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`StepConfigurationFeature should submit a form with a yaml 1`] = `
+<body>
+  <div />
+  <div />
+  <div>
+    <div
+      class="flex w-full overflow-auto"
+    >
+      <section
+        class="w-full bg-white pt-14 overflow-auto"
+      >
+        <div
+          class="relative mx-auto px-8 pb-14 max-w-content-with-navigation-left"
+          data-testid="funnel-body-content"
+        >
+          <div
+            class=""
+          >
+            <div
+              class="input input--select    "
+              data-testid="select"
+            >
+              <label
+                class="top-1.5 translate-y-2 text-sm"
+                for="Terraform version"
+              >
+                Terraform version
+              </label>
+              <div
+                class=" css-b62m3t-container"
+              >
+                <span
+                  class="css-1f43avz-a11yText-A11yText"
+                  id="react-select-4-live-region"
+                />
+                <span
+                  aria-atomic="false"
+                  aria-live="polite"
+                  aria-relevant="additions text"
+                  class="css-1f43avz-a11yText-A11yText"
+                />
+                <div
+                  class="input-select__control css-13cymwt-control"
+                >
+                  <div
+                    class="input-select__value-container css-1fdsijx-ValueContainer"
+                  >
+                    <div
+                      class="input-select__placeholder css-1jqq78o-placeholder"
+                      id="react-select-4-placeholder"
+                    >
+                      Select...
+                    </div>
+                    <input
+                      aria-autocomplete="list"
+                      aria-describedby="react-select-4-placeholder"
+                      aria-expanded="false"
+                      aria-haspopup="true"
+                      aria-readonly="true"
+                      class="css-mohuvp-dummyInput-DummyInput"
+                      id="Terraform version"
+                      inputmode="none"
+                      role="combobox"
+                      tabindex="0"
+                      value=""
+                    />
+                  </div>
+                  <div
+                    class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
+                  >
+                    <span
+                      class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                    />
+                    <div
+                      aria-hidden="true"
+                      class="input-select__indicator input-select__dropdown-indicator css-1xc3v61-indicatorContainer"
+                    >
+                      <svg
+                        aria-hidden="true"
+                        class="css-tj5bde-Svg"
+                        focusable="false"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        width="20"
+                      >
+                        <path
+                          d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <input
+                  name="Terraform version"
+                  type="hidden"
+                  value=""
+                />
+              </div>
+              <input
+                name="Terraform version"
+                type="hidden"
+                value=""
+              />
+              <div
+                class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
+              >
+                <span
+                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
+                  role="img"
+                />
+              </div>
+            </div>
+          </div>
+          <hr
+            class="my-4 border-t border-dashed border-neutral-250"
+          />
+          <div
+            class="flex flex-col gap-5"
+          >
+            <div
+              class=""
+              data-testid="input-name-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="CPU (m)"
+                    >
+                      CPU (m)
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-name"
+                      id="CPU (m)"
+                      name="job_resources.cpu_milli"
+                      type="text"
+                      value="500"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p
+                class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              >
+                Amount of CPU allocated to the job resources
+              </p>
+            </div>
+            <div
+              class=""
+              data-testid="input-name-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="RAM (MiB)"
+                    >
+                      RAM (MiB)
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-name"
+                      id="RAM (MiB)"
+                      name="job_resources.ram_mib"
+                      type="text"
+                      value="256"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p
+                class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              >
+                Amount of RAM allocated to the job resources
+              </p>
+            </div>
+            <div
+              class=""
+              data-testid="input-name-wrapper"
+            >
+              <div
+                class="relative"
+              >
+                <div
+                  aria-label="input-container"
+                  class="input    input--label-up "
+                >
+                  <div
+                    class=""
+                  >
+                    <label
+                      class="translate-y-2 text-sm"
+                      for="Storage (GB)"
+                    >
+                      Storage (GB)
+                    </label>
+                    <input
+                      class="input__value "
+                      data-testid="input-name"
+                      id="Storage (GB)"
+                      name="job_resources.storage_gb"
+                      type="text"
+                      value="1"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p
+                class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+              >
+                Amount of storage allocated to the job resources
+              </p>
+            </div>
+          </div>
+          <div
+            class="mt-10 flex justify-between"
+          >
+            <button
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+              type="button"
+            >
+              Back
+            </button>
+            <div
+              class="flex gap-3"
+            >
+              <button
+                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                type="submit"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+`;
