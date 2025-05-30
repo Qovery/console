@@ -2,11 +2,23 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { useForm } from 'react-hook-form'
 import { type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { type TerraformGeneralData } from '../page-helm-create-feature'
-import { TerraformCreateContext } from '../page-helm-create-feature'
-import StepValuesOverrideFilesFeature from './step-values-override-files-feature'
+import { type TerraformGeneralData } from '../page-terraform-create-feature'
+import { TerraformCreateContext } from '../page-terraform-create-feature'
+import StepConfigurationFeature from './step-configuration-feature'
 
-describe('StepValuesOverrideFilesFeature', () => {
+const defaultValues = {
+  provider_version: {
+    read_from_terraform_block: false,
+    explicit_version: undefined,
+  },
+  job_resources: {
+    cpu_milli: 500,
+    ram_mib: 256,
+    storage_gb: 1,
+  },
+}
+
+describe('StepConfigurationFeature', () => {
   it('should render successfully', () => {
     const { result: generalForm } = renderHook(() =>
       useForm<TerraformGeneralData>({
@@ -17,6 +29,7 @@ describe('StepValuesOverrideFilesFeature', () => {
           chart_name: 'nginx',
           chart_version: '8.9.0',
           arguments: '',
+          ...defaultValues,
         },
       })
     )
@@ -39,7 +52,7 @@ describe('StepValuesOverrideFilesFeature', () => {
           valuesOverrideFileForm: valuesOverrideFileForm.current,
         }}
       >
-        <StepValuesOverrideFilesFeature />
+        <StepConfigurationFeature />
       </TerraformCreateContext.Provider>
     )
     expect(baseElement).toBeTruthy()
@@ -55,6 +68,7 @@ describe('StepValuesOverrideFilesFeature', () => {
           repository: 'Qovery/github',
           branch: 'main',
           root_path: '/',
+          ...defaultValues,
         },
       })
     )
@@ -68,6 +82,7 @@ describe('StepValuesOverrideFilesFeature', () => {
           repository: 'Qovery/github',
           branch: 'main',
           paths: '/',
+          ...defaultValues,
         },
       })
     )
@@ -82,7 +97,7 @@ describe('StepValuesOverrideFilesFeature', () => {
             valuesOverrideFileForm: valuesOverrideFileForm.current,
           }}
         >
-          <StepValuesOverrideFilesFeature />
+          <StepConfigurationFeature />
         </TerraformCreateContext.Provider>
       )
     )
@@ -108,6 +123,7 @@ describe('StepValuesOverrideFilesFeature', () => {
           repository: 'Qovery/github',
           branch: 'main',
           root_path: '/',
+          ...defaultValues,
         },
       })
     )
@@ -132,7 +148,7 @@ describe('StepValuesOverrideFilesFeature', () => {
             valuesOverrideFileForm: valuesOverrideFileForm.current,
           }}
         >
-          <StepValuesOverrideFilesFeature />
+          <StepConfigurationFeature />
         </TerraformCreateContext.Provider>
       )
     )

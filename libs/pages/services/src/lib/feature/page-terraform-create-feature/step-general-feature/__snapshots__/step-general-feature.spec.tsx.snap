@@ -59,78 +59,15 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                           class="shrink-0 "
                           fill="none"
                           height="100%"
-                          name="HELM"
-                          viewBox="0 0 24 24"
+                          name="TERRAFORM"
+                          viewBox="0 0 11 12"
                           width="100%"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="#EAEAFE"
-                            stroke-width="2"
+                          <path
+                            d="M7.28 4.01v3.786l3.28-1.892v-3.79L7.28 4.01zM3.64 2.114L6.92 4.01v3.786L3.64 5.902V2.114zM0 0v3.788l3.28 1.894V1.894L0 0zm3.64 10.106L6.92 12V8.212L3.64 6.318v3.788z"
+                            fill="#7B42BC"
                           />
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="11.3"
-                            stroke="#42E8E0"
-                            stroke-opacity="0.3"
-                          />
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10.9"
-                            stroke="#42E8E0"
-                            stroke-width="0.2"
-                          />
-                          <g
-                            clip-path="url(#clip0_6005_35604)"
-                          >
-                            <rect
-                              fill="#fff"
-                              height="18"
-                              rx="9"
-                              width="18"
-                              x="3"
-                              y="3"
-                            />
-                            <path
-                              d="M16.988 17.439c.528.754.72 1.53.43 1.733-.29.203-.953-.244-1.481-.997a3.777 3.777 0 01-.438-.812 6.43 6.43 0 01-2.924 1.05c.061.255.098.553.098.875 0 .92-.287 1.665-.642 1.665-.355 0-.642-.745-.642-1.665 0-.315.035-.605.094-.857a6.427 6.427 0 01-2.958-.963 3.877 3.877 0 01-.393.707c-.528.753-1.191 1.2-1.482.997-.29-.204-.098-.98.43-1.733.177-.253.369-.466.557-.637a6.396 6.396 0 01-.981-1.11l.843-.586a5.4 5.4 0 008.867-.008l.844.585c-.26.377-.56.718-.887 1.025.222.18.454.43.665.731zM7.708 7.217a6.44 6.44 0 00-1.175 1.356l.863.557a5.378 5.378 0 014.534-2.47c1.902 0 3.627.97 4.614 2.596l.877-.534a6.49 6.49 0 00-1.17-1.42c.243-.184.503-.453.737-.787.528-.754.72-1.53.43-1.733-.29-.203-.953.243-1.481.997-.22.314-.378.63-.47.909a6.366 6.366 0 00-2.926-1.023c.082-.28.132-.623.132-1 0-.92-.287-1.665-.642-1.665-.355 0-.642.745-.642 1.666 0 .368.047.705.125.98a6.391 6.391 0 00-2.947.936 3.744 3.744 0 00-.435-.803c-.528-.754-1.19-1.2-1.481-.996-.29.203-.098.978.43 1.732.199.284.417.524.627.702zm-4.333 7.237h1.236V12.6h1.394v1.855h1.236V9.782H6.006v1.74H4.611v-1.74H3.375v4.672zm4.902-4.672v4.672h3.09v-1.035H9.514v-.834h1.524V11.55H9.513v-.734h1.783V9.781l-3.019.001zm3.996 0v4.672h3.005v-1.035h-1.769V9.782h-1.236zm3.81 0v4.672h1.135v-1.38c0-.12-.006-.251-.018-.395a39.023 39.023 0 00-.04-.442c-.014-.15-.032-.299-.05-.442a36.27 36.27 0 01-.05-.387h.028l.373 1.092.648 1.575h.46l.646-1.575.388-1.092h.028l-.05.388c-.02.144-.036.291-.05.442-.014.15-.028.298-.04.442a4.782 4.782 0 00-.018.395v1.38h1.152V9.782h-1.28l-.704 1.941-.258.762h-.029l-.259-.762-.733-1.94h-1.28z"
-                              fill="url(#paint0_linear_6005_35604)"
-                            />
-                          </g>
-                          <defs>
-                            <lineargradient
-                              gradientUnits="userSpaceOnUse"
-                              id="paint0_linear_6005_35604"
-                              x1="12"
-                              x2="12"
-                              y1="3"
-                              y2="20.953"
-                            >
-                              <stop
-                                stop-color="#AEB0EE"
-                              />
-                              <stop
-                                offset="1"
-                                stop-color="#7C7ABF"
-                              />
-                            </lineargradient>
-                            <clippath
-                              id="clip0_6005_35604"
-                            >
-                              <rect
-                                fill="#fff"
-                                height="18"
-                                rx="9"
-                                width="18"
-                                x="3"
-                                y="3"
-                              />
-                            </clippath>
-                          </defs>
                         </svg>
                       </span>
                     </span>
@@ -212,17 +149,17 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                     class=""
                   >
                     <div
-                      class="input input--select    "
+                      class="input input--select  !bg-neutral-100 !border-neutral-250 !pointer-events-none !border-neutral-250 !bg-neutral-100 "
                       data-testid="select"
                     >
                       <label
                         class="!translate-y-0 !text-xs"
-                        for="Helm source"
+                        for="Terraform source"
                       >
-                        Helm source
+                        Terraform source
                       </label>
                       <div
-                        class=" css-b62m3t-container"
+                        class="input-select--is-disabled css-3iigni-container"
                       >
                         <span
                           class="css-1f43avz-a11yText-A11yText"
@@ -235,7 +172,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control input-select__control--is-disabled css-16xfy0z-control"
                         >
                           <div
                             class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
@@ -251,7 +188,8 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                               aria-haspopup="true"
                               aria-readonly="true"
                               class="css-mohuvp-dummyInput-DummyInput"
-                              id="Helm source"
+                              disabled=""
+                              id="Terraform source"
                               inputmode="none"
                               role="combobox"
                               tabindex="0"
@@ -262,7 +200,7 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-894a34-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
@@ -283,14 +221,9 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                             </div>
                           </div>
                         </div>
-                        <input
-                          name="Helm source"
-                          type="hidden"
-                          value="GIT"
-                        />
                       </div>
                       <input
-                        name="Helm source"
+                        name="Terraform source"
                         type="hidden"
                         value="GIT"
                       />
@@ -433,195 +366,6 @@ exports[`StepGeneralFeature should submit a form with a git repository 1`] = `
                   </div>
                 </div>
               </section>
-              <section
-                class="flex flex-col gap-4"
-              >
-                <h2
-                  class="text-neutral-400 text-base font-bold"
-                >
-                  Deploy
-                </h2>
-                <div
-                  class="flex flex-col gap-3"
-                >
-                  <div>
-                    <div
-                      class=""
-                      data-testid="input-text-wrapper"
-                    >
-                      <div
-                        class="relative"
-                      >
-                        <div
-                          aria-label="input-container"
-                          class="input    input--label-up "
-                        >
-                          <div
-                            class=""
-                          >
-                            <label
-                              class="translate-y-2 text-sm"
-                              for="Helm arguments"
-                            >
-                              Helm arguments
-                            </label>
-                            <input
-                              class="input__value "
-                              data-testid="input-text"
-                              id="Helm arguments"
-                              name="arguments"
-                              type="text"
-                              value="--wait"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <p
-                      class="ml-3 mt-1 text-xs text-neutral-350"
-                    >
-                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
-                      <br />
-                      <a
-                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
-                        href="https://helm.sh/docs/helm/helm_install/"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        See documentation
-                        <i
-                          aria-hidden="true"
-                          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
-                        />
-                      </a>
-                    </p>
-                  </div>
-                  <div
-                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
-                  >
-                    <span
-                      class="select-none text-xs"
-                    >
-                      Helm install format:
-                    </span>
-                    <span
-                      class="break-words text-sm"
-                    >
-                      helm install {{RELEASE_NAME}}  ./ --wait
-                    </span>
-                  </div>
-                  <div
-                    class=""
-                    data-testid="input-text-wrapper"
-                  >
-                    <div
-                      class="relative"
-                    >
-                      <div
-                        aria-label="input-container"
-                        class="input    input--label-up "
-                      >
-                        <div
-                          class=""
-                        >
-                          <label
-                            class="translate-y-2 text-sm"
-                            for="Helm timeout"
-                          >
-                            Helm timeout
-                          </label>
-                          <input
-                            class="input__value "
-                            data-testid="input-text"
-                            id="Helm timeout"
-                            name="timeout_sec"
-                            type="text"
-                            value="600"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="flex text-sm  items-start mt-2 "
-                    data-testid="input-toggle"
-                  >
-                    <div
-                      aria-label="toggle-btn"
-                      class="inline-flex items-center justify-between cursor-pointer"
-                      data-testid="input-toggle-button"
-                    >
-                      <input
-                        class="hidden"
-                        type="checkbox"
-                        value="false"
-                      />
-                      <div
-                        aria-label="bg"
-                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
-                      >
-                        <div
-                          aria-label="circle"
-                          class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
-                    >
-                      <p
-                        class="font-medium text-neutral-400"
-                      >
-                        Allow cluster-wide resources
-                      </p>
-                      <div
-                        class="text-neutral-350"
-                      >
-                        Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="flex text-sm  items-start  "
-                  data-testid="input-toggle"
-                >
-                  <div
-                    aria-label="toggle-btn"
-                    class="inline-flex items-center justify-between cursor-pointer"
-                    data-testid="input-toggle-button"
-                  >
-                    <input
-                      class="hidden"
-                      type="checkbox"
-                      value="false"
-                    />
-                    <div
-                      aria-label="bg"
-                      class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
-                    >
-                      <div
-                        aria-label="circle"
-                        class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
-                      />
-                    </div>
-                  </div>
-                  <div
-                    class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
-                  >
-                    <p
-                      class="font-medium text-neutral-400"
-                    >
-                      Auto-deploy
-                    </p>
-                    <div
-                      class="text-neutral-350"
-                    >
-                      The service will be automatically updated on every new commit on the branch.
-                    </div>
-                  </div>
-                </div>
-              </section>
               <div
                 class="flex justify-between"
               >
@@ -707,78 +451,15 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                           class="shrink-0 "
                           fill="none"
                           height="100%"
-                          name="HELM"
-                          viewBox="0 0 24 24"
+                          name="TERRAFORM"
+                          viewBox="0 0 11 12"
                           width="100%"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="#EAEAFE"
-                            stroke-width="2"
+                          <path
+                            d="M7.28 4.01v3.786l3.28-1.892v-3.79L7.28 4.01zM3.64 2.114L6.92 4.01v3.786L3.64 5.902V2.114zM0 0v3.788l3.28 1.894V1.894L0 0zm3.64 10.106L6.92 12V8.212L3.64 6.318v3.788z"
+                            fill="#7B42BC"
                           />
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="11.3"
-                            stroke="#42E8E0"
-                            stroke-opacity="0.3"
-                          />
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10.9"
-                            stroke="#42E8E0"
-                            stroke-width="0.2"
-                          />
-                          <g
-                            clip-path="url(#clip0_6005_35604)"
-                          >
-                            <rect
-                              fill="#fff"
-                              height="18"
-                              rx="9"
-                              width="18"
-                              x="3"
-                              y="3"
-                            />
-                            <path
-                              d="M16.988 17.439c.528.754.72 1.53.43 1.733-.29.203-.953-.244-1.481-.997a3.777 3.777 0 01-.438-.812 6.43 6.43 0 01-2.924 1.05c.061.255.098.553.098.875 0 .92-.287 1.665-.642 1.665-.355 0-.642-.745-.642-1.665 0-.315.035-.605.094-.857a6.427 6.427 0 01-2.958-.963 3.877 3.877 0 01-.393.707c-.528.753-1.191 1.2-1.482.997-.29-.204-.098-.98.43-1.733.177-.253.369-.466.557-.637a6.396 6.396 0 01-.981-1.11l.843-.586a5.4 5.4 0 008.867-.008l.844.585c-.26.377-.56.718-.887 1.025.222.18.454.43.665.731zM7.708 7.217a6.44 6.44 0 00-1.175 1.356l.863.557a5.378 5.378 0 014.534-2.47c1.902 0 3.627.97 4.614 2.596l.877-.534a6.49 6.49 0 00-1.17-1.42c.243-.184.503-.453.737-.787.528-.754.72-1.53.43-1.733-.29-.203-.953.243-1.481.997-.22.314-.378.63-.47.909a6.366 6.366 0 00-2.926-1.023c.082-.28.132-.623.132-1 0-.92-.287-1.665-.642-1.665-.355 0-.642.745-.642 1.666 0 .368.047.705.125.98a6.391 6.391 0 00-2.947.936 3.744 3.744 0 00-.435-.803c-.528-.754-1.19-1.2-1.481-.996-.29.203-.098.978.43 1.732.199.284.417.524.627.702zm-4.333 7.237h1.236V12.6h1.394v1.855h1.236V9.782H6.006v1.74H4.611v-1.74H3.375v4.672zm4.902-4.672v4.672h3.09v-1.035H9.514v-.834h1.524V11.55H9.513v-.734h1.783V9.781l-3.019.001zm3.996 0v4.672h3.005v-1.035h-1.769V9.782h-1.236zm3.81 0v4.672h1.135v-1.38c0-.12-.006-.251-.018-.395a39.023 39.023 0 00-.04-.442c-.014-.15-.032-.299-.05-.442a36.27 36.27 0 01-.05-.387h.028l.373 1.092.648 1.575h.46l.646-1.575.388-1.092h.028l-.05.388c-.02.144-.036.291-.05.442-.014.15-.028.298-.04.442a4.782 4.782 0 00-.018.395v1.38h1.152V9.782h-1.28l-.704 1.941-.258.762h-.029l-.259-.762-.733-1.94h-1.28z"
-                              fill="url(#paint0_linear_6005_35604)"
-                            />
-                          </g>
-                          <defs>
-                            <lineargradient
-                              gradientUnits="userSpaceOnUse"
-                              id="paint0_linear_6005_35604"
-                              x1="12"
-                              x2="12"
-                              y1="3"
-                              y2="20.953"
-                            >
-                              <stop
-                                stop-color="#AEB0EE"
-                              />
-                              <stop
-                                offset="1"
-                                stop-color="#7C7ABF"
-                              />
-                            </lineargradient>
-                            <clippath
-                              id="clip0_6005_35604"
-                            >
-                              <rect
-                                fill="#fff"
-                                height="18"
-                                rx="9"
-                                width="18"
-                                x="3"
-                                y="3"
-                              />
-                            </clippath>
-                          </defs>
                         </svg>
                       </span>
                     </span>
@@ -862,17 +543,17 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                     class=""
                   >
                     <div
-                      class="input input--select    "
+                      class="input input--select  !bg-neutral-100 !border-neutral-250 !pointer-events-none !border-neutral-250 !bg-neutral-100 "
                       data-testid="select"
                     >
                       <label
-                        class="!translate-y-0 !text-xs"
-                        for="Helm source"
+                        class="top-1.5 translate-y-2 text-sm"
+                        for="Terraform source"
                       >
-                        Helm source
+                        Terraform source
                       </label>
                       <div
-                        class=" css-b62m3t-container"
+                        class="input-select--is-disabled css-3iigni-container"
                       >
                         <span
                           class="css-1f43avz-a11yText-A11yText"
@@ -885,23 +566,26 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control input-select__control--is-disabled css-16xfy0z-control"
                         >
                           <div
-                            class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
+                            class="input-select__value-container css-1fdsijx-ValueContainer"
                           >
-                            <span
-                              class="mr-1 text-sm text-neutral-400"
+                            <div
+                              class="input-select__placeholder css-1jqq78o-placeholder"
+                              id="react-select-3-placeholder"
                             >
-                              Helm repository
-                            </span>
+                              Select...
+                            </div>
                             <input
                               aria-autocomplete="list"
+                              aria-describedby="react-select-3-placeholder"
                               aria-expanded="false"
                               aria-haspopup="true"
                               aria-readonly="true"
                               class="css-mohuvp-dummyInput-DummyInput"
-                              id="Helm source"
+                              disabled=""
+                              id="Terraform source"
                               inputmode="none"
                               role="combobox"
                               tabindex="0"
@@ -912,7 +596,7 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-894a34-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
@@ -933,16 +617,11 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                             </div>
                           </div>
                         </div>
-                        <input
-                          name="Helm source"
-                          type="hidden"
-                          value="HELM_REPOSITORY"
-                        />
                       </div>
                       <input
-                        name="Helm source"
+                        name="Terraform source"
                         type="hidden"
-                        value="HELM_REPOSITORY"
+                        value=""
                       />
                       <div
                         class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
@@ -953,191 +632,6 @@ exports[`StepGeneralFeature should submit a form with a helm repository and matc
                         />
                       </div>
                     </div>
-                  </div>
-                  <div
-                    class="flex flex-col gap-3"
-                  >
-                    <div
-                      class="flex justify-center"
-                    >
-                      <div
-                        class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
-                        data-testid="spinner"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </section>
-              <section
-                class="flex flex-col gap-4"
-              >
-                <h2
-                  class="text-neutral-400 text-base font-bold"
-                >
-                  Deploy
-                </h2>
-                <div
-                  class="flex flex-col gap-3"
-                >
-                  <div>
-                    <div
-                      class=""
-                      data-testid="input-text-wrapper"
-                    >
-                      <div
-                        class="relative"
-                      >
-                        <div
-                          aria-label="input-container"
-                          class="input    input--label-up "
-                        >
-                          <div
-                            class=""
-                          >
-                            <label
-                              class="translate-y-2 text-sm"
-                              for="Helm arguments"
-                            >
-                              Helm arguments
-                            </label>
-                            <input
-                              class="input__value "
-                              data-testid="input-text"
-                              id="Helm arguments"
-                              name="arguments"
-                              type="text"
-                              value="--wait"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <p
-                      class="ml-3 mt-1 text-xs text-neutral-350"
-                    >
-                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
-                      <br />
-                      <a
-                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
-                        href="https://helm.sh/docs/helm/helm_install/"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        See documentation
-                        <i
-                          aria-hidden="true"
-                          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
-                        />
-                      </a>
-                    </p>
-                  </div>
-                  <div
-                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
-                  >
-                    <span
-                      class="select-none text-xs"
-                    >
-                      Helm install format:
-                    </span>
-                    <span
-                      class="break-words text-sm"
-                    >
-                      helm upgrade --install -n {{KUBERNETES_NAMESPACE}} {{RELEASE_NAME}} . --wait
-                    </span>
-                  </div>
-                  <div
-                    class=""
-                    data-testid="input-text-wrapper"
-                  >
-                    <div
-                      class="relative"
-                    >
-                      <div
-                        aria-label="input-container"
-                        class="input    input--label-up "
-                      >
-                        <div
-                          class=""
-                        >
-                          <label
-                            class="translate-y-2 text-sm"
-                            for="Helm timeout"
-                          >
-                            Helm timeout
-                          </label>
-                          <input
-                            class="input__value "
-                            data-testid="input-text"
-                            id="Helm timeout"
-                            name="timeout_sec"
-                            type="text"
-                            value="600"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="flex text-sm  items-start mt-2 "
-                    data-testid="input-toggle"
-                  >
-                    <div
-                      aria-label="toggle-btn"
-                      class="inline-flex items-center justify-between cursor-pointer"
-                      data-testid="input-toggle-button"
-                    >
-                      <input
-                        checked=""
-                        class="hidden"
-                        type="checkbox"
-                        value="true"
-                      />
-                      <div
-                        aria-label="bg"
-                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-brand-500"
-                      >
-                        <div
-                          aria-label="circle"
-                          class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  translate-x-3.5"
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
-                    >
-                      <p
-                        class="font-medium text-neutral-400"
-                      >
-                        Allow cluster-wide resources
-                      </p>
-                      <div
-                        class="text-neutral-350"
-                      >
-                        Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 mt-5 items-center"
-                  data-accent-color="sky"
-                >
-                  <div
-                    class="-order-2 text-lg leading-6"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-circle-info "
-                    />
-                  </div>
-                  <div
-                    class="-order-1 mr-auto gap-x-3 text-neutral-400"
-                  >
-                    <span
-                      class="block font-medium leading-6"
-                    >
-                      Git automations are disabled when using Helm repositories (auto-deploy, automatic preview environments)
-                    </span>
                   </div>
                 </div>
               </section>
@@ -1226,78 +720,15 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                           class="shrink-0 "
                           fill="none"
                           height="100%"
-                          name="HELM"
-                          viewBox="0 0 24 24"
+                          name="TERRAFORM"
+                          viewBox="0 0 11 12"
                           width="100%"
                           xmlns="http://www.w3.org/2000/svg"
                         >
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="#EAEAFE"
-                            stroke-width="2"
+                          <path
+                            d="M7.28 4.01v3.786l3.28-1.892v-3.79L7.28 4.01zM3.64 2.114L6.92 4.01v3.786L3.64 5.902V2.114zM0 0v3.788l3.28 1.894V1.894L0 0zm3.64 10.106L6.92 12V8.212L3.64 6.318v3.788z"
+                            fill="#7B42BC"
                           />
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="11.3"
-                            stroke="#42E8E0"
-                            stroke-opacity="0.3"
-                          />
-                          <circle
-                            cx="12"
-                            cy="12"
-                            r="10.9"
-                            stroke="#42E8E0"
-                            stroke-width="0.2"
-                          />
-                          <g
-                            clip-path="url(#clip0_6005_35604)"
-                          >
-                            <rect
-                              fill="#fff"
-                              height="18"
-                              rx="9"
-                              width="18"
-                              x="3"
-                              y="3"
-                            />
-                            <path
-                              d="M16.988 17.439c.528.754.72 1.53.43 1.733-.29.203-.953-.244-1.481-.997a3.777 3.777 0 01-.438-.812 6.43 6.43 0 01-2.924 1.05c.061.255.098.553.098.875 0 .92-.287 1.665-.642 1.665-.355 0-.642-.745-.642-1.665 0-.315.035-.605.094-.857a6.427 6.427 0 01-2.958-.963 3.877 3.877 0 01-.393.707c-.528.753-1.191 1.2-1.482.997-.29-.204-.098-.98.43-1.733.177-.253.369-.466.557-.637a6.396 6.396 0 01-.981-1.11l.843-.586a5.4 5.4 0 008.867-.008l.844.585c-.26.377-.56.718-.887 1.025.222.18.454.43.665.731zM7.708 7.217a6.44 6.44 0 00-1.175 1.356l.863.557a5.378 5.378 0 014.534-2.47c1.902 0 3.627.97 4.614 2.596l.877-.534a6.49 6.49 0 00-1.17-1.42c.243-.184.503-.453.737-.787.528-.754.72-1.53.43-1.733-.29-.203-.953.243-1.481.997-.22.314-.378.63-.47.909a6.366 6.366 0 00-2.926-1.023c.082-.28.132-.623.132-1 0-.92-.287-1.665-.642-1.665-.355 0-.642.745-.642 1.666 0 .368.047.705.125.98a6.391 6.391 0 00-2.947.936 3.744 3.744 0 00-.435-.803c-.528-.754-1.19-1.2-1.481-.996-.29.203-.098.978.43 1.732.199.284.417.524.627.702zm-4.333 7.237h1.236V12.6h1.394v1.855h1.236V9.782H6.006v1.74H4.611v-1.74H3.375v4.672zm4.902-4.672v4.672h3.09v-1.035H9.514v-.834h1.524V11.55H9.513v-.734h1.783V9.781l-3.019.001zm3.996 0v4.672h3.005v-1.035h-1.769V9.782h-1.236zm3.81 0v4.672h1.135v-1.38c0-.12-.006-.251-.018-.395a39.023 39.023 0 00-.04-.442c-.014-.15-.032-.299-.05-.442a36.27 36.27 0 01-.05-.387h.028l.373 1.092.648 1.575h.46l.646-1.575.388-1.092h.028l-.05.388c-.02.144-.036.291-.05.442-.014.15-.028.298-.04.442a4.782 4.782 0 00-.018.395v1.38h1.152V9.782h-1.28l-.704 1.941-.258.762h-.029l-.259-.762-.733-1.94h-1.28z"
-                              fill="url(#paint0_linear_6005_35604)"
-                            />
-                          </g>
-                          <defs>
-                            <lineargradient
-                              gradientUnits="userSpaceOnUse"
-                              id="paint0_linear_6005_35604"
-                              x1="12"
-                              x2="12"
-                              y1="3"
-                              y2="20.953"
-                            >
-                              <stop
-                                stop-color="#AEB0EE"
-                              />
-                              <stop
-                                offset="1"
-                                stop-color="#7C7ABF"
-                              />
-                            </lineargradient>
-                            <clippath
-                              id="clip0_6005_35604"
-                            >
-                              <rect
-                                fill="#fff"
-                                height="18"
-                                rx="9"
-                                width="18"
-                                x="3"
-                                y="3"
-                              />
-                            </clippath>
-                          </defs>
                         </svg>
                       </span>
                     </span>
@@ -1379,17 +810,17 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                     class=""
                   >
                     <div
-                      class="input input--select    "
+                      class="input input--select  !bg-neutral-100 !border-neutral-250 !pointer-events-none !border-neutral-250 !bg-neutral-100 "
                       data-testid="select"
                     >
                       <label
                         class="!translate-y-0 !text-xs"
-                        for="Helm source"
+                        for="Terraform source"
                       >
-                        Helm source
+                        Terraform source
                       </label>
                       <div
-                        class=" css-b62m3t-container"
+                        class="input-select--is-disabled css-3iigni-container"
                       >
                         <span
                           class="css-1f43avz-a11yText-A11yText"
@@ -1402,7 +833,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                           class="css-1f43avz-a11yText-A11yText"
                         />
                         <div
-                          class="input-select__control css-13cymwt-control"
+                          class="input-select__control input-select__control--is-disabled css-16xfy0z-control"
                         >
                           <div
                             class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
@@ -1418,7 +849,8 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                               aria-haspopup="true"
                               aria-readonly="true"
                               class="css-mohuvp-dummyInput-DummyInput"
-                              id="Helm source"
+                              disabled=""
+                              id="Terraform source"
                               inputmode="none"
                               role="combobox"
                               tabindex="0"
@@ -1429,7 +861,7 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                             class="input-select__indicators css-1hb7zxy-IndicatorsContainer"
                           >
                             <span
-                              class="input-select__indicator-separator css-1u9des2-indicatorSeparator"
+                              class="input-select__indicator-separator css-894a34-indicatorSeparator"
                             />
                             <div
                               aria-hidden="true"
@@ -1450,14 +882,9 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                             </div>
                           </div>
                         </div>
-                        <input
-                          name="Helm source"
-                          type="hidden"
-                          value="GIT"
-                        />
                       </div>
                       <input
-                        name="Helm source"
+                        name="Terraform source"
                         type="hidden"
                         value="GIT"
                       />
@@ -1710,156 +1137,6 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                       class="-order-1 mr-auto gap-x-3 text-neutral-400"
                     >
                       Git automations are disabled when using public repos (auto-deploy, automatic preview environments)
-                    </div>
-                  </div>
-                </div>
-              </section>
-              <section
-                class="flex flex-col gap-4"
-              >
-                <h2
-                  class="text-neutral-400 text-base font-bold"
-                >
-                  Deploy
-                </h2>
-                <div
-                  class="flex flex-col gap-3"
-                >
-                  <div>
-                    <div
-                      class=""
-                      data-testid="input-text-wrapper"
-                    >
-                      <div
-                        class="relative"
-                      >
-                        <div
-                          aria-label="input-container"
-                          class="input    input--label-up "
-                        >
-                          <div
-                            class=""
-                          >
-                            <label
-                              class="translate-y-2 text-sm"
-                              for="Helm arguments"
-                            >
-                              Helm arguments
-                            </label>
-                            <input
-                              class="input__value "
-                              data-testid="input-text"
-                              id="Helm arguments"
-                              name="arguments"
-                              type="text"
-                              value="--wait"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <p
-                      class="ml-3 mt-1 text-xs text-neutral-350"
-                    >
-                      Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
-                      <br />
-                      <a
-                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs mt-0.5"
-                        href="https://helm.sh/docs/helm/helm_install/"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        See documentation
-                        <i
-                          aria-hidden="true"
-                          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
-                        />
-                      </a>
-                    </p>
-                  </div>
-                  <div
-                    class="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350"
-                  >
-                    <span
-                      class="select-none text-xs"
-                    >
-                      Helm install format:
-                    </span>
-                    <span
-                      class="break-words text-sm"
-                    >
-                      helm install {{RELEASE_NAME}}  ./ --wait
-                    </span>
-                  </div>
-                  <div
-                    class=""
-                    data-testid="input-text-wrapper"
-                  >
-                    <div
-                      class="relative"
-                    >
-                      <div
-                        aria-label="input-container"
-                        class="input    input--label-up "
-                      >
-                        <div
-                          class=""
-                        >
-                          <label
-                            class="translate-y-2 text-sm"
-                            for="Helm timeout"
-                          >
-                            Helm timeout
-                          </label>
-                          <input
-                            class="input__value "
-                            data-testid="input-text"
-                            id="Helm timeout"
-                            name="timeout_sec"
-                            type="text"
-                            value="600"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    class="flex text-sm  items-start mt-2 "
-                    data-testid="input-toggle"
-                  >
-                    <div
-                      aria-label="toggle-btn"
-                      class="inline-flex items-center justify-between cursor-pointer"
-                      data-testid="input-toggle-button"
-                    >
-                      <input
-                        class="hidden"
-                        type="checkbox"
-                        value="false"
-                      />
-                      <div
-                        aria-label="bg"
-                        class="w-8 h-4.5 flex items-center rounded-full p-0.5  bg-neutral-300"
-                      >
-                        <div
-                          aria-label="circle"
-                          class="w-3.5 h-3.5 transform rounded-full bg-white shadow-lg  "
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
-                    >
-                      <p
-                        class="font-medium text-neutral-400"
-                      >
-                        Allow cluster-wide resources
-                      </p>
-                      <div
-                        class="text-neutral-350"
-                      >
-                        Allow this chart to deploy resources outside of this environment namespace (including CRDs or non-namespaced resources).
-                      </div>
                     </div>
                   </div>
                 </div>

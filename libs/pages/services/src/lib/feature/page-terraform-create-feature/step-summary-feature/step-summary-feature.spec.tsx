@@ -2,8 +2,8 @@ import { useForm } from 'react-hook-form'
 import * as organizationDomain from '@qovery/domains/organizations/feature'
 import type * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders } from '@qovery/shared/util-tests'
-import { type TerraformGeneralData } from '../page-helm-create-feature'
-import { TerraformCreateContext } from '../page-helm-create-feature'
+import { type TerraformGeneralData } from '../page-terraform-create-feature'
+import { TerraformCreateContext } from '../page-terraform-create-feature'
 import StepSummaryFeature from './step-summary-feature'
 
 import SpyInstance = jest.SpyInstance
@@ -14,6 +14,18 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ organizationId: '1' }),
 }))
+
+const defaultValues = {
+  provider_version: {
+    read_from_terraform_block: false,
+    explicit_version: undefined,
+  },
+  job_resources: {
+    cpu_milli: 500,
+    ram_mib: 256,
+    storage_gb: 1,
+  },
+}
 
 describe('PageApplicationCreateGeneralFeature', () => {
   beforeEach(() => {
@@ -40,6 +52,7 @@ describe('PageApplicationCreateGeneralFeature', () => {
           repository: 'Qovery/github',
           branch: 'main',
           root_path: '/',
+          ...defaultValues,
         },
       })
     )

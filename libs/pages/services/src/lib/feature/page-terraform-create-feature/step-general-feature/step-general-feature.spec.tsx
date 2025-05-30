@@ -2,8 +2,8 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { useForm } from 'react-hook-form'
 import * as serviceHelmDomain from '@qovery/domains/service-helm/feature'
 import { renderHook, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { type TerraformGeneralData } from '../page-helm-create-feature'
-import { TerraformCreateContext } from '../page-helm-create-feature'
+import { type TerraformGeneralData } from '../page-terraform-create-feature'
+import { TerraformCreateContext } from '../page-terraform-create-feature'
 import StepGeneralFeature from './step-general-feature'
 
 import SpyInstance = jest.SpyInstance

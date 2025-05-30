@@ -67,6 +67,7 @@ export function EnvironmentStagesFeature({
     environmentId: environment.id,
     executionId,
   })
+  console.log('deploymentHistory', deploymentHistory)
 
   const [hideSkipped, setHideSkipped] = useState<CheckedState>(true)
   const navigate = useNavigate()
@@ -107,6 +108,8 @@ export function EnvironmentStagesFeature({
         () => true
       )
       .otherwise(() => false)
+
+  console.log('matchServicesWithStatuses(deploymentStages)', matchServicesWithStatuses(deploymentStages))
 
   return (
     <div className="h-full w-full bg-neutral-800">
