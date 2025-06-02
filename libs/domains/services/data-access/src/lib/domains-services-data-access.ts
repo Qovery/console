@@ -830,7 +830,7 @@ export const mutations = {
       .with('TERRAFORM', (serviceType) => ({
         mutation: terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi),
         serviceType,
-      })) // TODO [QOV-821] double check that
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
