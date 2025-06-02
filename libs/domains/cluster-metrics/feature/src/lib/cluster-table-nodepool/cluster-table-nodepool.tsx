@@ -6,7 +6,7 @@ import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } fro
 import { Icon, Link, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
-import useClusterMetrics from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { calculateNodePoolMetrics } from './calculate-nodepool-metrics'
 
 export interface ClusterTableNodepoolProps {
