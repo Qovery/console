@@ -459,7 +459,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         cell: (info) => {
           const service = info.row.original
 
-          const gitInfo = (service: Application | Job | Helm, gitRepository?: ApplicationGitRepository) =>
+          const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
             gitRepository && (
               <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-44 flex-col gap-1.5">
@@ -646,12 +646,10 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 },
               }) => helmInfo(repository)
             )
-            .with(
-              { service: { serviceType: 'TERRAFORM' } },
-              ({ service }) =>
-                // ({ service }: { service: any & { git: { git_repository: ApplicationGitRepository } } }) =>
-                'Git info goes here' // TODO [CQ-821] implement this once the API endpoint is ready
-            )
+            .with({ service: { serviceType: 'TERRAFORM' } }, ({ service }) => {
+              // @ts-ignore
+              return gitInfo(service, service?.terraform_files_source?.git?.git_repository) // TODO [CQ-821] double check that
+            })
             .exhaustive()
           return cell
         },
