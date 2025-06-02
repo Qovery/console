@@ -19,7 +19,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
     organizationId: organizationId,
     clusterId: clusterId,
   })
-
+  const isMaxNodesSizeReached = runningStatus?.computed_status.is_max_nodes_size_reached
   const metricsNotAvailable = typeof metrics !== 'object'
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
@@ -93,7 +93,19 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
           .with('GCP', () => null)
           .with('ON_PREMISE', () => null)
           .otherwise(() => (
-            <Tooltip content="Edit resources">
+            <Tooltip
+              open={isMaxNodesSizeReached}
+              classNameContent={isMaxNodesSizeReached ? 'py-2' : ''}
+              content={
+                isMaxNodesSizeReached ? (
+                  <span className="block max-w-[194px] border-l-[3px] border-yellow-500 pl-2.5 text-sm">
+                    Maximum node usage detected. Review affected services below
+                  </span>
+                ) : (
+                  'Edit resources'
+                )
+              }
+            >
               <Link
                 color="current"
                 to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}

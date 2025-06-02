@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Badge, ProgressBar, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, Icon, ProgressBar, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
@@ -14,16 +14,28 @@ interface MetricProgressBarProps {
   reserved: number
   total: number
   unit: string
+  isPressure?: boolean
 }
 
-function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgressBarProps) {
+function MetricProgressBar({ type, used, reserved, total, unit, isPressure = false }: MetricProgressBarProps) {
   const usedPercentage = calculatePercentage(used, total)
   const reservedPercentage = calculatePercentage(reserved, total)
-  const totalPercentage = Math.round(usedPercentage + reservedPercentage)
+  const totalPercentage = Math.round(usedPercentage)
 
   return (
     <div className="flex items-center gap-2 text-ssm">
-      <span className="min-w-8 text-neutral-400">{totalPercentage}%</span>
+      {isPressure ? (
+        <span className="mr-1.5 flex min-w-8 items-center gap-1 text-red-500">
+          99%
+          <Tooltip content={`Node has ${type} pressure condition`}>
+            <span>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </span>
+          </Tooltip>
+        </span>
+      ) : (
+        <span className="min-w-8 text-neutral-400">{totalPercentage}%</span>
+      )}
       <Tooltip
         content={
           <div className="flex flex-col gap-1">
@@ -36,12 +48,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span
-                    className={clsx('bg-purple-20 h-2 w-2 rounded-full', {
-                      'bg-brand-400': usedPercentage > reservedPercentage,
-                      'bg-purple-200': usedPercentage <= reservedPercentage,
-                    })}
-                  />
+                  <span className="bg-purple-20 h-2 w-2 rounded-full bg-purple-200" />
                   Reserved
                 </span>
                 <span className="ml-auto block font-semibold">
@@ -139,6 +146,12 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
           ?.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           .map((node) => {
             const isWarning = Boolean(nodeWarnings[node.name])
+            const isDiskPressure = node.conditions?.some(
+              (condition) => condition.type === 'DiskPressure' && condition.status === 'True'
+            )
+            const isMemoryPressure = node.conditions?.some(
+              (condition) => condition.type === 'MemoryPressure' && condition.status === 'True'
+            )
 
             return (
               <Table.Row
@@ -179,6 +192,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                     reserved={formatNumber(mibToGib(node.resources_allocated.request_memory_mib))}
                     total={formatNumber(mibToGib(node.resources_allocatable.memory_mib))}
                     unit="GB"
+                    isPressure={isMemoryPressure}
                   />
                 </Table.Cell>
                 <Table.Cell className="h-12 w-[calc(30%/3)] px-3">
@@ -212,14 +226,31 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                     )}
                   </div>
                 </Table.Cell>
-                <Table.Cell className="h-12 w-[calc(25%/3)] px-3">
-                  {formatNumber(
-                    calculatePercentage(
-                      node.metrics_usage?.disk_mib_usage || 0,
-                      node.resources_capacity.ephemeral_storage_mib
-                    )
+                <Table.Cell
+                  className={clsx('h-12 w-[calc(25%/3)] px-3', {
+                    'text-red-500': isDiskPressure,
+                  })}
+                >
+                  {!isDiskPressure ? (
+                    <>
+                      {formatNumber(
+                        calculatePercentage(
+                          node.metrics_usage?.disk_mib_usage || 0,
+                          node.resources_capacity.ephemeral_storage_mib
+                        )
+                      )}
+                      %
+                    </>
+                  ) : (
+                    <>
+                      99%
+                      <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
+                        <span className="ml-1 inline-block text-red-500">
+                          <Icon iconName="circle-exclamation" iconStyle="regular" />
+                        </span>
+                      </Tooltip>
+                    </>
                   )}
-                  %
                 </Table.Cell>
                 <Table.Cell className="h-12 w-[calc(20%/3)] px-3">
                   {timeAgo(new Date(node.created_at), true)}
