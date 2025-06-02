@@ -14,6 +14,36 @@ import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_TERRAFORM_CREATION } from '../../router/router'
 import { serviceTemplates } from '../page-new-feature/service-templates'
 
+export const TERRAFORM_VERSIONS = [
+  '1.12.1',
+  '1.11.4',
+  '1.10.5',
+  '1.9.8',
+  '1.8.5',
+  '1.7.5',
+  '1.6.6',
+  '1.5.7',
+  '1.4.7',
+  '1.3.10',
+  '1.2.9',
+  '1.1.9',
+  '1.0.11',
+  '0.15.5',
+  '0.14.11',
+  '0.13.7',
+  '0.12.31',
+  '0.11.15',
+  '0.10.8',
+  '0.9.11',
+  '0.8.8',
+  '0.7.13',
+  '0.6.16',
+  '0.5.3',
+  '0.4.2',
+  '0.3.7',
+  '0.2.2',
+  '0.1.1',
+]
 export const steps: { title: string }[] = [
   { title: 'General data' },
   { title: 'Values override as file' },
@@ -68,7 +98,7 @@ export function PageTerraformCreateFeature() {
       source_provider: 'GIT',
       provider_version: {
         read_from_terraform_block: false,
-        explicit_version: undefined,
+        explicit_version: TERRAFORM_VERSIONS[0],
       },
       job_resources: {
         cpu_milli: 500,

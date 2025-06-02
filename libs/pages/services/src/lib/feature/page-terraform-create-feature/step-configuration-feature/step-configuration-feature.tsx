@@ -4,38 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { SERVICES_TERRAFORM_CREATION_GENERAL_URL, SERVICES_TERRAFORM_CREATION_SUMMARY_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, InputSelect, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { useTerraformCreateContext } from '../page-terraform-create-feature'
-
-const TERRAFORM_VERSIONS = [
-  '1.12.1',
-  '1.11.4',
-  '1.10.5',
-  '1.9.8',
-  '1.8.5',
-  '1.7.5',
-  '1.6.6',
-  '1.5.7',
-  '1.4.7',
-  '1.3.10',
-  '1.2.9',
-  '1.1.9',
-  '1.0.11',
-  '0.15.5',
-  '0.14.11',
-  '0.13.7',
-  '0.12.31',
-  '0.11.15',
-  '0.10.8',
-  '0.9.11',
-  '0.8.8',
-  '0.7.13',
-  '0.6.16',
-  '0.5.3',
-  '0.4.2',
-  '0.3.7',
-  '0.2.2',
-  '0.1.1',
-]
+import { TERRAFORM_VERSIONS, useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepConfigurationFeature() {
   useDocumentTitle('General - Terraform configuration')
@@ -43,6 +12,7 @@ export function StepConfigurationFeature() {
   const { generalForm, valuesOverrideFileForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
 
   const generalData = generalForm.getValues()
+  console.log('generalData', generalData)
 
   const navigate = useNavigate()
 
@@ -61,6 +31,7 @@ export function StepConfigurationFeature() {
           name="provider_version.explicit_version"
           control={generalForm.control}
           defaultValue={generalData.provider_version.explicit_version}
+          rules={{ required: 'Terraform version is required' }}
           render={({ field }) => (
             <InputSelect
               label="Terraform version"

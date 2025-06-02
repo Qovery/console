@@ -113,7 +113,7 @@ export function StepSummaryFeature() {
             tf_vars: [],
           },
           provider_version: {
-            read_from_terraform_block: true,
+            read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
             explicit_version: generalData.provider_version.explicit_version,
           },
           job_resources: {
