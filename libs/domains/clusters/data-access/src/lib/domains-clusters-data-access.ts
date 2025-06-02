@@ -8,7 +8,7 @@ import {
   type ClusterRoutingTableRequest,
   ClustersApi,
 } from 'qovery-typescript-axios'
-import { ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
+import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
 

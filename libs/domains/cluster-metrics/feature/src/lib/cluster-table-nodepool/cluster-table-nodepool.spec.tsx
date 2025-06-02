@@ -20,20 +20,19 @@ describe('ClusterTableNodepool', () => {
   })
 
   it('should render nothing when there are no nodes', () => {
-    ;(useClusterMetrics as jest.Mock)
-      .mockReturnValue({
-        data: {
-          node_pools: [],
-          nodes: [],
+    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+      data: {
+        node_pools: [],
+        nodes: [],
+      },
+    })
+    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+      data: {
+        computed_status: {
+          node_warnings: {},
         },
-      })(useClusterRunningStatus as jest.Mock)
-      .mockReturnValue({
-        data: {
-          computed_status: {
-            node_warnings: {},
-          },
-        },
-      })
+      },
+    })
 
     const { container } = renderWithProviders(
       <ClusterTableNodepool organizationId={mockOrganizationId} clusterId={mockClusterId} />
@@ -156,13 +155,14 @@ describe('ClusterTableNodepool', () => {
       computed_status: {
         node_warnings: {},
       },
-    }(useClusterMetrics as jest.Mock)
-      .mockReturnValue({
-        data: mockMetrics,
-      })(useClusterRunningStatus as jest.Mock)
-      .mockReturnValue({
-        data: mockRunningStatus,
-      })
+    }
+
+    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+      data: mockMetrics,
+    })
+    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+      data: mockRunningStatus,
+    })
 
     renderWithProviders(<ClusterTableNodepool organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
@@ -290,13 +290,14 @@ describe('ClusterTableNodepool', () => {
           'node-2': 'Node is not ready',
         },
       },
-    }(useClusterMetrics as jest.Mock)
-      .mockReturnValue({
-        data: mockMetrics,
-      })(useClusterRunningStatus as jest.Mock)
-      .mockReturnValue({
-        data: mockRunningStatus,
-      })
+    }
+
+    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+      data: mockMetrics,
+    })
+    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+      data: mockRunningStatus,
+    })
 
     renderWithProviders(<ClusterTableNodepool organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
