@@ -226,9 +226,11 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                 )}
               </div>
               <div
-                className={clsx('flex h-12 w-[calc(20%/3)] items-center px-3', {
-                  'text-red-500': isDiskPressure,
-                })}
+                className={twMerge(
+                  clsx('flex h-12 w-[calc(20%/3)] items-center px-3 text-neutral-400', {
+                    'text-red-500': isDiskPressure,
+                  })
+                )}
               >
                 {!isDiskPressure ? (
                   <>
@@ -251,7 +253,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                   </>
                 )}
               </div>
-              <div className="flex h-12 w-[calc(20%/3)] items-center px-3">
+              <div className="flex h-12 w-[calc(20%/3)] items-center px-3 text-neutral-400">
                 {timeAgo(new Date(node.created_at), true)}
               </div>
             </div>
