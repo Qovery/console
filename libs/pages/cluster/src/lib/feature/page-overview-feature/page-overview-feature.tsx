@@ -5,16 +5,21 @@ import {
   ClusterCardSetup,
   ClusterTableNode,
   ClusterTableNodepool,
+  useClusterMetrics,
 } from '@qovery/domains/cluster-metrics/feature'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import TableSkeleton from './table-skeleton'
 
 export function PageOverviewFeature() {
   useDocumentTitle('Cluster - Overview')
   const { organizationId = '', clusterId = '' } = useParams()
-  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { data: runningStatus } = useClusterRunningStatus({ organizationId, clusterId })
+  const { data: clusterMetrics } = useClusterMetrics({ organizationId, clusterId })
+
+  const isLoading = isClusterLoading || !runningStatus || !clusterMetrics
 
   const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
 
@@ -36,7 +41,9 @@ export function PageOverviewFeature() {
         <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
         <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
       </div>
-      {isKarpenter ? (
+      {isLoading ? (
+        <TableSkeleton />
+      ) : isKarpenter ? (
         <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
       ) : (
         <div className="overflow-hidden rounded border border-neutral-250">

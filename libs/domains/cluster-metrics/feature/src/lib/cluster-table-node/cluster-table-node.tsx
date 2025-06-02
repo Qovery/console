@@ -137,26 +137,16 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
   // Using div with flex instead of Table.Root for better alignment with cluster-table-nodepool
   // Ensures consistent column widths and spacing between both tables
   return (
-    <div className={twMerge('overflow-hidden border-t border-neutral-200 text-ssm', className)}>
-      <div className="flex border-b border-neutral-200 ">
-        <div className="flex h-8 w-1/4 items-center border-r border-neutral-200 bg-neutral-100 px-3 font-medium text-neutral-350">
-          Nodes
-        </div>
-        <div className="flex h-8 w-1/4 items-center border-r border-neutral-200 bg-neutral-100 px-3 font-medium text-neutral-350">
-          CPU
-        </div>
-        <div className="flex h-8 w-1/4 items-center border-r border-neutral-200 bg-neutral-100 px-3 font-medium text-neutral-350">
-          Memory
-        </div>
-        <div className="flex h-8 w-[calc(35%/3)] items-center border-r border-neutral-200 bg-neutral-100 px-3 font-medium text-neutral-350">
-          Instance
-        </div>
-        <div className="flex h-8 w-[calc(20%/3)] items-center border-r border-neutral-200 bg-neutral-100 px-3 font-medium text-neutral-350">
-          Disk
-        </div>
-        <div className="flex h-8 w-[calc(20%/3)] items-center bg-neutral-100 px-3 font-medium text-neutral-350">
-          Age
-        </div>
+    <div
+      className={twMerge('divide-y divide-neutral-200 overflow-hidden border-t border-neutral-200 text-ssm', className)}
+    >
+      <div className="flex divide-x divide-neutral-200 bg-neutral-100 font-medium text-neutral-350">
+        <div className="flex h-8 w-1/4 items-center px-3">Nodes</div>
+        <div className="flex h-8 w-1/4 items-center px-3">CPU</div>
+        <div className="flex h-8 w-1/4 items-center px-3">Memory</div>
+        <div className="flex h-8 w-[calc(35%/3)] items-center px-3">Instance</div>
+        <div className="flex h-8 w-[calc(20%/3)] items-center px-3">Disk</div>
+        <div className="flex h-8 w-[calc(20%/3)] items-center px-3">Age</div>
       </div>
 
       {nodes
@@ -175,18 +165,18 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
               key={node.name}
               className={twMerge(
                 clsx(
-                  'flex border-b border-neutral-200 transition-colors last:border-b-0 hover:bg-neutral-100',
+                  'flex divide-x divide-neutral-200 transition-colors hover:bg-neutral-100',
                   isWarning && 'bg-yellow-50 hover:bg-yellow-50'
                 )
               )}
             >
-              <div className="flex h-12 w-1/4 min-w-0 items-center gap-2 border-r border-neutral-200 px-5 font-medium text-neutral-400">
+              <div className="flex h-12 w-1/4 min-w-0 items-center gap-2.5 px-5 font-medium text-neutral-400">
                 <StatusChip status={isWarning ? 'WARNING' : 'RUNNING'} className="inline-flex shrink-0" />
                 <Tooltip content={node.name}>
                   <span className="truncate">{node.name}</span>
                 </Tooltip>
               </div>
-              <div className="flex h-12 w-1/4 items-center border-r border-neutral-200 px-3">
+              <div className="flex h-12 w-1/4 items-center px-3">
                 <MetricProgressBar
                   type="cpu"
                   used={formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0))}
@@ -195,7 +185,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                   unit="vCPU"
                 />
               </div>
-              <div className="flex h-12 w-1/4 items-center border-r border-neutral-200 px-3">
+              <div className="flex h-12 w-1/4 items-center px-3">
                 <MetricProgressBar
                   type="memory"
                   used={formatNumber(
@@ -212,7 +202,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                   isPressure={isMemoryPressure}
                 />
               </div>
-              <div className="flex h-12 w-[calc(35%/3)] items-center gap-2 overflow-hidden border-r border-neutral-200 px-3">
+              <div className="flex h-12 w-[calc(35%/3)] items-center gap-2 overflow-hidden px-3">
                 <Badge variant="surface" radius="full" className="lowercase">
                   {node.instance_type?.replace('_', ' ')}
                 </Badge>
@@ -236,7 +226,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                 )}
               </div>
               <div
-                className={clsx('flex h-12 w-[calc(20%/3)] items-center border-r border-neutral-200 px-3', {
+                className={clsx('flex h-12 w-[calc(20%/3)] items-center px-3', {
                   'text-red-500': isDiskPressure,
                 })}
               >
