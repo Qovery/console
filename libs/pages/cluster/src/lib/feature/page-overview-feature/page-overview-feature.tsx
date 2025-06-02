@@ -10,7 +10,7 @@ import {
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import TableSkeleton from './table-skeleton'
+import { TableSkeleton } from './table-skeleton'
 
 export function PageOverviewFeature() {
   useDocumentTitle('Cluster - Overview')

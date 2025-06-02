@@ -21,6 +21,10 @@ describe('util-dates', () => {
     jest.setSystemTime(now)
   })
 
+  afterAll(() => {
+    jest.useRealTimers()
+  })
+
   it('dateDifferenceMinutes', () => {
     const result = dateDifferenceMinutes(now, pastDate)
     expect(result).toBe(5)
@@ -106,17 +110,19 @@ describe('util-dates', () => {
     const result = formatDurationMinutesSeconds('PT1H23M45.678S')
     expect(result).toBe('83m 45s')
   })
+})
 
+describe('timeAgo function', () => {
   it('should format time ago in compact format', () => {
-    const date = new Date()
-    date.setHours(date.getHours() - 2)
+    const now = new Date()
+    const date = new Date(now.getTime() - 2 * 60 * 60 * 1000)
     const result = timeAgo(date, true)
     expect(result).toBe('2h')
   })
 
   it('should format time ago in full format', () => {
-    const date = new Date()
-    date.setHours(date.getHours() - 2)
+    const now = new Date()
+    const date = new Date(now.getTime() - 2 * 60 * 60 * 1000)
     const result = timeAgo(date)
     expect(result).toBe('2 hours')
   })
