@@ -37,8 +37,8 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
                   <span
-                    className={clsx('h-2 w-2 rounded-full', {
-                      'bg-yellow-500': usedPercentage > reservedPercentage,
+                    className={clsx('bg-purple-20 h-2 w-2 rounded-full', {
+                      'bg-brand-400': usedPercentage > reservedPercentage,
                       'bg-purple-200': usedPercentage <= reservedPercentage,
                     })}
                   />
@@ -50,7 +50,12 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
               </div>
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-brand-400" />
+                  <span
+                    className={clsx('h-2 w-2 rounded-full', {
+                      'bg-yellow-500': usedPercentage > reservedPercentage,
+                      'bg-brand-400': usedPercentage <= reservedPercentage,
+                    })}
+                  />
                   Used
                 </span>
                 <span className="ml-auto block font-semibold">
