@@ -647,7 +647,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               }) => helmInfo(repository)
             )
             .with({ service: { serviceType: 'TERRAFORM' } }, ({ service }) => {
-              // @ts-ignore
+              // @ts-expect-error Temporary fix for missing type
               return gitInfo(service, service?.terraform_files_source?.git?.git_repository) // TODO [CQ-821] double check that
             })
             .exhaustive()
