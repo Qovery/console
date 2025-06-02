@@ -23,11 +23,11 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, valuesOverrideFileForm, valuesOverrideArgumentsForm, setCurrentStep, creationFlowUrl } =
-    useTerraformCreateContext()
+  const { generalForm, valuesOverrideArgumentsForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
-  const valuesOverrideFileData = valuesOverrideFileForm.getValues()
+  console.log('generalData', generalData)
   const valuesOverrideArgumentData = valuesOverrideArgumentsForm.getValues()
+  console.log('valuesOverrideArgumentData', valuesOverrideArgumentData)
 
   useEffect(() => {
     setCurrentStep(4)
@@ -97,7 +97,7 @@ export function StepSummaryFeature() {
           description: generalData.description ?? '',
           icon_uri: generalData.icon_uri,
           timeout_sec: generalData.timeout_sec,
-          auto_deploy: generalData.auto_deploy || (valuesOverrideFileData.auto_deploy ?? false),
+          auto_deploy: generalData.auto_deploy ?? false,
           auto_approve: false,
           provider: 'Terraform',
           terraform_files_source: {
@@ -109,8 +109,8 @@ export function StepSummaryFeature() {
             },
           },
           terraform_variables_source: {
-            tf_var_file_paths: [],
-            tf_vars: [],
+            tf_var_file_paths: valuesOverrideArgumentData.tf_var_file_paths,
+            tf_vars: valuesOverrideArgumentData.tf_vars,
           },
           provider_version: {
             read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
@@ -226,13 +226,28 @@ export function StepSummaryFeature() {
                   <span className="font-medium">Storage:</span> {generalData.job_resources.storage_gb}gb
                 </li>
                 <li>
-                  <span className="font-medium">Timeout:</span> {generalData.timeout_sec}
-                </li>
-                <li>
                   <span className="font-medium">Auto-deploy:</span>{' '}
                   {match(generalData.auto_deploy)
                     .with(true, () => 'On')
                     .otherwise(() => 'Off')}
+                </li>
+              </ul>
+
+              <hr className="my-4 border-t border-dashed border-neutral-250" />
+              <ul className="list-none space-y-2 text-sm text-neutral-400">
+                <li>
+                  <span className="font-medium">Variables:</span>
+                  <ul>
+                    {valuesOverrideArgumentData.tf_vars.map((variable) => (
+                      <li key={variable.key}>
+                        {variable.key}: {variable.value}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-medium">File paths:</span>{' '}
+                  {valuesOverrideArgumentData.tf_var_file_paths.join(', ')}
                 </li>
               </ul>
             </Section>
@@ -294,7 +309,7 @@ export function StepSummaryFeature() {
               type="button"
               size="lg"
               variant="plain"
-              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL)}
             >
               Back
             </Button>

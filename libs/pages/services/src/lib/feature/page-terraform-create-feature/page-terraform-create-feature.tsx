@@ -2,7 +2,7 @@ import { type GitProviderEnum, type GitTokenResponse, type TerraformRequest } fr
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { type HelmValuesArgumentsData, type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
+import { type TerraformValuesArgumentsData } from '@qovery/domains/service-terraform/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_NEW_URL,
@@ -69,8 +69,7 @@ interface TerraformCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<TerraformGeneralData>
-  valuesOverrideFileForm: UseFormReturn<HelmValuesFileData>
-  valuesOverrideArgumentsForm: UseFormReturn<HelmValuesArgumentsData>
+  valuesOverrideArgumentsForm: UseFormReturn<TerraformValuesArgumentsData>
   creationFlowUrl?: string
 }
 
@@ -105,17 +104,14 @@ export function PageTerraformCreateFeature() {
         ram_mib: 256,
         storage_gb: 1,
       },
+      terraform_variables_source: {
+        tf_vars: [],
+        tf_var_file_paths: [],
+      },
     },
   })
 
-  const valuesOverrideFileForm = useForm<HelmValuesFileData>({
-    mode: 'onChange',
-    defaultValues: {
-      type: 'GIT_REPOSITORY',
-    },
-  })
-
-  const valuesOverrideArgumentsForm = useForm<HelmValuesArgumentsData>({
+  const valuesOverrideArgumentsForm = useForm<TerraformValuesArgumentsData>({
     mode: 'onChange',
   })
 
@@ -127,7 +123,6 @@ export function PageTerraformCreateFeature() {
         currentStep,
         setCurrentStep,
         generalForm,
-        valuesOverrideFileForm,
         valuesOverrideArgumentsForm,
         creationFlowUrl,
       }}

@@ -1,9 +1,9 @@
-import { type HelmRequestAllOfSourceOneOf, type HelmRequestAllOfSourceOneOf1 } from 'qovery-typescript-axios'
+import { type HelmRequestAllOfSourceOneOf } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
+import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-terraform/feature'
 import {
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
   SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
@@ -31,16 +31,6 @@ export function StepVariablesFeature() {
         },
       }
     })
-    .with(
-      'HELM_REPOSITORY',
-      (): HelmRequestAllOfSourceOneOf1 => ({
-        helm_repository: {
-          repository: generalData.repository,
-          chart_name: generalData.chart_name,
-          chart_version: generalData.chart_version,
-        },
-      })
-    )
     .exhaustive()
 
   const navigate = useNavigate()
