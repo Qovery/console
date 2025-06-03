@@ -79,9 +79,9 @@ export function StepConfigurationFeature() {
             )}
           />
           <Controller
-            name="job_resources.storage_gb"
+            name="job_resources.storage_gib"
             control={generalForm.control}
-            defaultValue={generalData.job_resources.storage_gb}
+            defaultValue={generalData.job_resources.storage_gib}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 dataTestId="input-name"

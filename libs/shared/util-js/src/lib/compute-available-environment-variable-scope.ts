@@ -23,14 +23,13 @@ function scopeHierarchy(targetScope: APIVariableScopeEnum) {
     .with('BUILT_IN', () => baseHierarchy.slice(0, 1))
     .with('PROJECT', () => baseHierarchy.slice(0, 2))
     .with('ENVIRONMENT', () => baseHierarchy)
-    .with('APPLICATION', 'CONTAINER', 'HELM', 'JOB', (serviceScope) => [
+    .with('APPLICATION', 'CONTAINER', 'HELM', 'JOB', 'TERRAFORM', (serviceScope) => [
       ...baseHierarchy,
       {
         name: serviceScope,
         hierarchy: 3,
       },
     ])
-    .with('TERRAFORM', () => baseHierarchy) // TODO [QOV-821] to double check
     .exhaustive()
 }
 

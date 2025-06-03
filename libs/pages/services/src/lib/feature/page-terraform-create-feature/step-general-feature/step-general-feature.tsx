@@ -99,7 +99,7 @@ export function StepGeneralFeature() {
                   job_resources: {
                     cpu_milli: 500,
                     ram_mib: 256,
-                    storage_gb: 1000,
+                    storage_gib: 1000,
                   },
                 }}
               />

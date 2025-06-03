@@ -8,7 +8,6 @@ import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
-  SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
   SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -119,7 +118,7 @@ export function StepSummaryFeature() {
           job_resources: {
             cpu_milli: generalData.job_resources.cpu_milli,
             ram_mib: generalData.job_resources.ram_mib,
-            storage_gb: generalData.job_resources.storage_gb,
+            storage_gib: generalData.job_resources.storage_gib,
           },
         },
       })
@@ -223,7 +222,7 @@ export function StepSummaryFeature() {
                   <span className="font-medium">RAM:</span> {generalData.job_resources.ram_mib}mb
                 </li>
                 <li>
-                  <span className="font-medium">Storage:</span> {generalData.job_resources.storage_gb}gb
+                  <span className="font-medium">Storage:</span> {generalData.job_resources.storage_gib}gb
                 </li>
                 <li>
                   <span className="font-medium">Auto-deploy:</span>{' '}
