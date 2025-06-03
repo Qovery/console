@@ -178,7 +178,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               key: data.key,
               value: data.value || '',
               description: data.description,
-              mount_path: data.mountPath,
+              mount_path: data.mountPath || undefined,
               variable_parent_id: parentId,
               variable_scope: data.scope,
               enable_interpolation_in_file: data.enable_interpolation_in_file,
