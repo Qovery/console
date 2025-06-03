@@ -89,7 +89,7 @@ export function StepSummaryFeature() {
           ],
         },
       }))
-      .with('NONE', () => null)
+      .with('NONE', () => undefined)
       .exhaustive()
 
     const getValuesByType = (type: ArgumentTypes) => {

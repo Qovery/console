@@ -29,8 +29,8 @@ export interface ApplicationGeneralData {
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
   root_path?: string
-  dockerfile_path?: string | null
-  docker_target_build_stage?: string | null
+  dockerfile_path?: string
+  docker_target_build_stage?: string
 }
 
 export interface ApplicationResourcesData {

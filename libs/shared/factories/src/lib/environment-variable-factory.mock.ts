@@ -37,7 +37,7 @@ export const mockEnvironmentVariable = (isAlias = false, isOverride = false): Va
     : isAlias
       ? APIVariableTypeEnum.ALIAS
       : APIVariableTypeEnum.VALUE,
-  mount_path: null,
+  mount_path: undefined,
 })
 
 export const mockSecretEnvironmentVariable = (
@@ -66,7 +66,7 @@ export const mockSecretEnvironmentVariable = (
         variable_type: APIVariableTypeEnum.VALUE,
       }
     : undefined,
-  value: null,
+  value: '',
   is_secret: true,
   key: chance.word().toString(),
   scope: APIVariableScopeEnum.PROJECT,

@@ -23,9 +23,9 @@ type FileSource = 'GIT_REPOSITORY' | 'DOCKERFILE_RAW'
 
 export interface DockerfileSettingsData {
   dockerfile_source: FileSource
-  dockerfile_path?: string | null
-  dockerfile_raw?: string | null
-  docker_target_build_stage?: string | null
+  dockerfile_path?: string
+  dockerfile_raw?: string
+  docker_target_build_stage?: string
 }
 
 export interface DockerfileSettingsProps extends PropsWithChildren {
@@ -58,10 +58,10 @@ export function DockerfileSettings({
 
   const handleSubmit = () => {
     if (watchDockerfileSource === 'GIT_REPOSITORY') {
-      setValue('dockerfile_raw', null)
+      setValue('dockerfile_raw', undefined)
     } else {
-      setValue('dockerfile_path', null)
-      setValue('docker_target_build_stage', null)
+      setValue('dockerfile_path', undefined)
+      setValue('docker_target_build_stage', undefined)
     }
     onSubmit()
   }

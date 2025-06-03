@@ -15,7 +15,7 @@ import { toastError } from '@qovery/shared/ui'
 const eventsApi = new OrganizationEventApi()
 
 export interface EventQueryParams {
-  pageSize?: number | null
+  pageSize?: number
   fromTimestamp?: string | null
   toTimestamp?: string | null
   eventType?: OrganizationEventType | null
@@ -57,13 +57,13 @@ export const useFetchEvents = (organizationId: string, queryParams: EventQueryPa
       const response = await eventsApi.getOrganizationEvents(
         organizationId,
         pageSize,
-        fromTimestamp,
-        toTimestamp,
+        fromTimestamp || '',
+        toTimestamp || '',
         continueToken,
         stepBackToken,
         eventType,
         targetType,
-        targetId,
+        targetId || '',
         subTargetType,
         triggeredBy,
         origin
@@ -91,8 +91,8 @@ export const useFetchEventTargets = (organizationId: string, queryParams: EventQ
     async () => {
       const response = await eventsApi.getOrganizationEventTargets(
         organizationId,
-        fromTimestamp,
-        toTimestamp,
+        fromTimestamp || '',
+        toTimestamp || '',
         eventType,
         targetType,
         triggeredBy,

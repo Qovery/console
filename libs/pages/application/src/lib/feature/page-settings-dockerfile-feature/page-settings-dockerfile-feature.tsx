@@ -89,8 +89,8 @@ export function PageSettingsDockerfileFeature() {
               docker: {
                 git_repository: gitRepository,
                 dockerfile_raw: data.dockerfile_raw,
-                dockerfile_path: null,
-                docker_target_build_stage: null,
+                dockerfile_path: undefined,
+                docker_target_build_stage: undefined,
               },
             },
           },
@@ -118,8 +118,8 @@ export function PageSettingsDockerfileFeature() {
                 docker: {
                   git_repository: gitRepository,
                   dockerfile_path: data.dockerfile_path,
-                  docker_target_build_stage: data.docker_target_build_stage || null,
-                  dockerfile_raw: null,
+                  docker_target_build_stage: data.docker_target_build_stage || undefined,
+                  dockerfile_raw: undefined,
                 },
               },
             },

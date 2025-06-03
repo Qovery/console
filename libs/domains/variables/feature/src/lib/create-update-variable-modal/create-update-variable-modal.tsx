@@ -109,7 +109,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   const methods = useForm<{
     key: string
-    value?: string | null
+    value?: string
     description?: string
     scope: Scope
     isSecret: boolean
@@ -152,12 +152,19 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           }
           throw new Error('Scope mismatch')
         })
-        .with({ scope: 'APPLICATION' }, { scope: 'CONTAINER' }, { scope: 'JOB' }, { scope: 'HELM' }, () => {
-          if ('serviceId' in props) {
-            return props.serviceId
+        .with(
+          { scope: 'APPLICATION' },
+          { scope: 'CONTAINER' },
+          { scope: 'JOB' },
+          { scope: 'HELM' },
+          { scope: 'TERRAFORM' },
+          () => {
+            if ('serviceId' in props) {
+              return props.serviceId
+            }
+            throw new Error('Scope mismatch')
           }
-          throw new Error('Scope mismatch')
-        })
+        )
         .with({ scope: undefined }, () => {
           throw new Error('scope undefined')
         })
@@ -171,7 +178,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               key: data.key,
               value: data.value || '',
               description: data.description,
-              mount_path: data.mountPath || null,
+              mount_path: data.mountPath,
               variable_parent_id: parentId,
               variable_scope: data.scope,
               enable_interpolation_in_file: data.enable_interpolation_in_file,

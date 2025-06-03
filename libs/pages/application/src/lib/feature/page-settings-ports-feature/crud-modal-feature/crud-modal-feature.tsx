@@ -87,7 +87,7 @@ export function handleSubmit<
       return Object.keys(probeType ?? {}).find((key) => probeType?.[key as keyof ProbeType] !== null) ?? null
     }
 
-    const updateProbe = (probe?: Probe | null) => {
+    const updateProbe = (probe?: Probe) => {
       const probProtocol = getProbeProtocol(probe?.type) as Lowercase<PortProtocol>
 
       return isMatchingHealthCheck(currentPort, probe?.type)
