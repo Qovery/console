@@ -130,6 +130,7 @@ export function CrudModal({
       <Controller
         name="protocol"
         control={control}
+        defaultValue={PortProtocolEnum.HTTP}
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             label="Select protocol"
