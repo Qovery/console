@@ -1,10 +1,9 @@
 import * as Accordion from '@radix-ui/react-accordion'
-import clsx from 'clsx'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
-import { calculatePercentage, pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { calculatePercentage, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { calculateNodePoolMetrics } from './calculate-nodepool-metrics'
@@ -22,19 +21,14 @@ interface MetricProgressBarProps {
 }
 
 function MetricProgressBar({ type, reserved, total, unit }: MetricProgressBarProps) {
-  if (total == null) {
-    return (
-      <div className="flex items-center gap-1.5 text-center text-ssm text-neutral-350">
-        No limit <Icon iconName="infinity" className="relative top-[1px] text-neutral-300" />
-      </div>
-    )
-  }
+  const noLimit = total == null
 
-  const reservedPercentage = calculatePercentage(reserved, total)
+  const reservedPercentage = calculatePercentage(reserved, total ?? 0)
   const totalPercentage = Math.round(reservedPercentage)
 
   return (
     <Tooltip
+      disabled={noLimit}
       content={
         <div className="flex flex-col gap-1">
           <div className="flex items-center justify-between border-b border-neutral-400">
@@ -59,7 +53,11 @@ function MetricProgressBar({ type, reserved, total, unit }: MetricProgressBarPro
       classNameContent="w-[173px] p-0"
     >
       <ProgressBar.Root>
-        <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
+        {noLimit ? (
+          <ProgressBar.Cell percentage={100} color="var(--color-neutral-150)" />
+        ) : (
+          <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
+        )}
       </ProgressBar.Root>
     </Tooltip>
   )
@@ -114,26 +112,19 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   className="text-neutral-350 transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
                 />
               </div>
-              <div
-                className={twMerge(
-                  clsx('flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5', {
-                    'gap-2': !metrics.cpuTotal,
-                  })
-                )}
-              >
+              <div className="flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5">
                 <div className="flex w-full items-center justify-between">
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
                     <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
+                      <span className="font-medium text-neutral-400">{metrics.cpuReserved}</span> vCPU
                       {metrics.cpuTotal ? (
-                        <>
-                          <span className="font-medium text-neutral-400">{metrics.cpuReserved} </span>/
-                          {metrics.cpuTotal} vCPU
-                        </>
+                        ` (limit: ${metrics.cpuTotal})`
                       ) : (
-                        <>
-                          <span className="font-medium text-neutral-400">{metrics.cpuReserved}</span> vCPU
-                        </>
+                        <span>
+                          {' '}
+                          (limit: <span className="relative top-[1px]">∞</span>)
+                        </span>
                       )}
                     </span>
                   </span>
@@ -157,26 +148,19 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 </div>
                 <MetricProgressBar type="cpu" reserved={metrics.cpuReserved} total={metrics.cpuTotal} unit="vCPU" />
               </div>
-              <div
-                className={twMerge(
-                  clsx('flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5', {
-                    'gap-2': !metrics.memoryTotal,
-                  })
-                )}
-              >
+              <div className="flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5">
                 <div className="flex w-full items-center justify-between">
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
                     <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
+                      <span className="font-medium text-neutral-400">{metrics.memoryReserved}</span> GB
                       {metrics.memoryTotal ? (
-                        <>
-                          <span className="font-medium text-neutral-400">{metrics.memoryReserved} </span>/
-                          {metrics.memoryTotal} GB
-                        </>
+                        ` (limit: ${metrics.memoryTotal})`
                       ) : (
-                        <>
-                          <span className="font-medium text-neutral-400">{metrics.memoryReserved}</span> GB
-                        </>
+                        <span>
+                          {' '}
+                          (limit: <span className="relative top-[1px]">∞</span>)
+                        </span>
                       )}
                     </span>
                   </span>
