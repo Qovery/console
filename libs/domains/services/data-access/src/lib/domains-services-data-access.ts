@@ -722,8 +722,7 @@ export const mutations = {
       }))
       .with('HELM', (serviceType) => ({ mutation: helmsApi.cloneHelm.bind(helmsApi), serviceType }))
       .with('TERRAFORM', (serviceType) => ({
-        mutation: () => ({ data: { id: 'id', environment: { id: 'id' } } }),
-        // mutation: terraformMainCallsApi.cloneTerraform.bind(terraformMainCallsApi), // TODO [QOV-821] uncomment when implemented
+        mutation: terraformsApi.cloneTerraform.bind(terraformsApi),
         serviceType,
       }))
       .exhaustive()
