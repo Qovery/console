@@ -4,8 +4,11 @@ exports[`PodDetails should match snapshot with container based pod and with mult
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
+      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
+      <div
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+      />
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/service-logs"
@@ -90,30 +93,9 @@ exports[`PodDetails should match snapshot with container based pod and with mult
               >
                 foobar-img
               </dd>
-              <div
-                class="relative flex flex-col items-center"
-              >
-                <div
-                  class="grid items-center gap-2"
-                >
-                  <svg
-                    class="z-10 bg-neutral-700"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="3.75"
-                      stroke="#67778E"
-                      stroke-width="1.5"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <span
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+              />
               <dt
                 class="text-neutral-350 dark:text-neutral-300"
               >
@@ -123,7 +105,14 @@ exports[`PodDetails should match snapshot with container based pod and with mult
                 class="font-medium text-neutral-400 dark:font-normal dark:text-white"
               >
                 <span>
-                  ✅ Running
+                  <span
+                    aria-label="Checkmark"
+                    role="img"
+                  >
+                    ✅
+                  </span>
+                   
+                  Running
                 </span>
               </dd>
             </dl>
@@ -149,8 +138,11 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
+      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
+      <div
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+      />
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/service-logs"
@@ -208,33 +200,9 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
             <dl
               class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
             >
-              <div
-                class="relative flex flex-col items-center"
-              >
-                <div
-                  class="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"
-                />
-                <div
-                  class="grid items-center gap-2"
-                >
-                  <svg
-                    class="z-10 bg-neutral-700"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="3.75"
-                      stroke="#67778E"
-                      stroke-width="1.5"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <span
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+              />
               <dt
                 class="text-neutral-350 dark:text-neutral-300 mb-2"
               >
@@ -244,49 +212,42 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
                 class="font-medium text-neutral-400 dark:font-normal dark:text-white mb-2"
               >
                 <span>
-                  ✅ Running
+                  <span
+                    aria-label="Checkmark"
+                    role="img"
+                  >
+                    ✅
+                  </span>
+                   
+                  Running
                 </span>
               </dd>
-              <div
-                class="relative flex flex-col items-center"
-              >
-                <div
-                  class="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"
-                />
-                <div
-                  class="grid gap-2"
-                >
-                  <svg
-                    class="z-10 bg-neutral-700"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="3.75"
-                      stroke="#67778E"
-                      stroke-width="1.5"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <span
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+              />
               <dt
-                class="text-neutral-350 dark:text-neutral-300"
+                class="text-neutral-350 dark:text-neutral-300 mb-2"
               >
-                10 Oct, 2023, 07:36:26
+                State reason:
+              </dt>
+              <dd
+                class="font-medium text-neutral-400 dark:font-normal dark:text-white mb-2"
+              >
+                Baz reason
+              </dd>
+              <span
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+              />
+              <dt
+                class="text-neutral-350 dark:text-neutral-300 mb-2"
+              >
+                State message:
               </dt>
               <dd
                 class="font-medium text-neutral-400 dark:font-normal dark:text-white"
               >
-                Baz reason
-                : 
-                baz
-                 
-                (
+                Baz
+                 (
                 1
                 ).
                  
@@ -305,8 +266,11 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
+      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
+      <div
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+      />
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/service-logs"
@@ -364,30 +328,9 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
             <dl
               class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
             >
-              <div
-                class="relative flex flex-col items-center"
-              >
-                <div
-                  class="grid items-center gap-2"
-                >
-                  <svg
-                    class="z-10 bg-neutral-700"
-                    fill="none"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <circle
-                      cx="8"
-                      cy="8"
-                      r="3.75"
-                      stroke="#67778E"
-                      stroke-width="1.5"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <span
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+              />
               <dt
                 class="text-neutral-350 dark:text-neutral-300"
               >
@@ -397,7 +340,14 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
                 class="font-medium text-neutral-400 dark:font-normal dark:text-white"
               >
                 <span>
-                  ✅ Running
+                  <span
+                    aria-label="Checkmark"
+                    role="img"
+                  >
+                    ✅
+                  </span>
+                   
+                  Running
                 </span>
               </dd>
             </dl>
@@ -413,8 +363,11 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
 <body>
   <div>
     <div
-      class="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3"
+      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
     >
+      <div
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
+      />
       <a
         class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
         href="/organization//project//environment//logs/1/service-logs?pod_name=app-z0fb41d62-5c7fdb6f5f-44wpd"
@@ -429,30 +382,9 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
       <dl
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
       >
-        <div
-          class="relative flex flex-col items-center"
-        >
-          <div
-            class="grid items-center gap-2"
-          >
-            <svg
-              class="z-10 bg-neutral-700"
-              fill="none"
-              height="16"
-              viewBox="0 0 16 16"
-              width="16"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle
-                cx="8"
-                cy="8"
-                r="3.75"
-                stroke="#67778E"
-                stroke-width="1.5"
-              />
-            </svg>
-          </div>
-        </div>
+        <span
+          class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+        />
         <dt
           class="text-neutral-350 dark:text-neutral-300"
         >
@@ -461,10 +393,19 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
         <dd
           class="font-medium text-neutral-400 dark:font-normal dark:text-white"
         >
-          <span>
-            ❌ 
-            Evicted
-            :Pod was rejected: The node had condition: [DiskPressure]. 
+          <span
+            class="flex gap-1.5"
+          >
+            <span
+              aria-label="Error"
+              role="img"
+            >
+              ❌
+            </span>
+            <span>
+              Evicted
+              :Pod was rejected: The node had condition: [DiskPressure]. 
+            </span>
           </span>
         </dd>
       </dl>
