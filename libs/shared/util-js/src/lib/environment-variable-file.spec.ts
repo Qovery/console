@@ -6,7 +6,7 @@ describe('isEnvironmentVariableFile', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -21,7 +21,7 @@ describe('isEnvironmentVariableFile', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -36,7 +36,7 @@ describe('isEnvironmentVariableFile', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -58,7 +58,7 @@ describe('isEnvironmentVariableFile', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -81,7 +81,7 @@ describe('isEnvironmentVariableFile', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -103,7 +103,7 @@ describe('isEnvironmentVariableFile', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -128,7 +128,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -143,7 +143,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -157,7 +157,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -179,7 +179,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -201,7 +201,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,
@@ -223,7 +223,7 @@ describe('getEnvironmentVariableFileMountPath', () => {
     const variable: VariableResponse = {
       id: 'id',
       key: 'key',
-      value: null,
+      value: '',
       is_secret: true,
       created_at: 'created_at',
       scope: APIVariableScopeEnum.APPLICATION,

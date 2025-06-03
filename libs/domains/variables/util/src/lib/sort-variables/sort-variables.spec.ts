@@ -140,7 +140,7 @@ const secretVars: VariableResponse[] = [
     variable_type: 'VALUE',
     scope: APIVariableScopeEnum.PROJECT,
     service_name: '',
-    value: null,
+    value: '',
     is_secret: true,
   },
   {
@@ -158,7 +158,7 @@ const secretVars: VariableResponse[] = [
       mount_path: '',
     },
     service_name: '',
-    value: null,
+    value: '',
     is_secret: true,
   },
   {
@@ -176,7 +176,7 @@ const secretVars: VariableResponse[] = [
       variable_type: APIVariableTypeEnum.ALIAS,
     },
     service_name: '',
-    value: null,
+    value: '',
     is_secret: true,
   },
 ]
@@ -312,7 +312,7 @@ const sortedData: VariableResponse[] = [
     variable_type: 'VALUE',
     scope: APIVariableScopeEnum.PROJECT,
     service_name: '',
-    value: null,
+    value: '',
     is_secret: true,
   },
   {
@@ -330,7 +330,7 @@ const sortedData: VariableResponse[] = [
       mount_path: '',
     },
     service_name: '',
-    value: null,
+    value: '',
     is_secret: true,
   },
   {
@@ -348,7 +348,7 @@ const sortedData: VariableResponse[] = [
       variable_type: APIVariableTypeEnum.ALIAS,
     },
     service_name: '',
-    value: null,
+    value: '',
     is_secret: true,
   },
 ]

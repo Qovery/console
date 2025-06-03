@@ -187,7 +187,7 @@ describe('testing payload refactoring', () => {
       memory: 512,
       auto_preview: true,
       max_duration_seconds: 300,
-      port: null,
+      port: undefined,
       max_nb_restart: 0,
       source: {
         docker: {
@@ -226,7 +226,7 @@ describe('testing payload refactoring', () => {
       memory: 512,
       auto_preview: true,
       max_duration_seconds: 300,
-      port: null,
+      port: undefined,
       max_nb_restart: 0,
       healthchecks: {},
       source: {

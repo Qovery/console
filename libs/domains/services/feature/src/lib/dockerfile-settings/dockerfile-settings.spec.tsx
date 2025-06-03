@@ -72,7 +72,7 @@ describe('DockerfileSettings', () => {
     await userEvent.click(screen.getByRole('button', { name: /Submit/i }))
     expect(onSubmit).toHaveBeenCalledWith({
       dockerfile_source: 'GIT_REPOSITORY',
-      dockerfile_raw: null,
+      dockerfile_raw: undefined,
       dockerfile_path: 'CustomDockerfile',
       docker_target_build_stage: undefined,
     })
@@ -92,7 +92,7 @@ describe('DockerfileSettings', () => {
     await userEvent.click(screen.getByRole('button', { name: /Submit/i }))
     expect(onSubmit).toHaveBeenCalledWith({
       dockerfile_source: 'GIT_REPOSITORY',
-      dockerfile_raw: null,
+      dockerfile_raw: undefined,
       dockerfile_path: 'CustomDockerfile',
       docker_target_build_stage: 'build-stage',
     })
@@ -113,9 +113,9 @@ describe('DockerfileSettings', () => {
     await userEvent.click(screen.getByRole('button', { name: /Submit/i }))
     expect(onSubmit).toHaveBeenCalledWith({
       dockerfile_source: 'DOCKERFILE_RAW',
-      dockerfile_path: null,
+      dockerfile_path: undefined,
       dockerfile_raw: 'my dockerfile content',
-      docker_target_build_stage: null,
+      docker_target_build_stage: undefined,
     })
   })
 })
