@@ -110,7 +110,7 @@ export function StepSummaryFeature() {
           },
           terraform_variables_source: {
             tf_var_file_paths: valuesOverrideArgumentData.tf_var_file_paths,
-            tf_vars: valuesOverrideArgumentData.tf_vars,
+            tf_vars: valuesOverrideArgumentData.tf_vars.map((tfVar) => [tfVar.key, tfVar.value]),
           },
           provider_version: {
             read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
