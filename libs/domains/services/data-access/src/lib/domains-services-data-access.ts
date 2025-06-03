@@ -60,6 +60,7 @@ import {
   JobsApi,
   type RebootServicesRequest,
   type Status,
+  TerraformActionsApi,
   type TerraformAdvancedSettings,
   TerraformConfigurationApi,
   TerraformDeploymentHistoryApi, // TerraformActionsApi,
@@ -111,7 +112,7 @@ const applicationActionsApi = new ApplicationActionsApi()
 const containerActionsApi = new ContainerActionsApi()
 const databaseActionsApi = new DatabaseActionsApi()
 const helmActionsApi = new HelmActionsApi()
-// const terraformActionsApi = new TerraformActionsApi()
+const terraformActionsApi = new TerraformActionsApi()
 const jobActionsApi = new JobActionsApi()
 
 const applicationConfigurationApi = new ApplicationConfigurationApi()
@@ -957,9 +958,9 @@ export const mutations = {
         serviceType,
       }))
       .with({ serviceType: 'TERRAFORM' }, ({ serviceId, serviceType }) => ({
-        mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi, serviceId),
+        mutation: terraformActionsApi.deployTerraform.bind(terraformActionsApi, serviceId),
         serviceType,
-      })) // TODO [QOV-821] replace with terraformActionsApi when it will be ready
+      }))
       .exhaustive()
     const response = await mutation()
     return response.data
