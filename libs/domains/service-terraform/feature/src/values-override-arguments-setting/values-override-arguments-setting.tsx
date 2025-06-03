@@ -1,17 +1,16 @@
 import { type HelmRequestAllOfSource } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useState } from 'react'
+import { type PropsWithChildren } from 'react'
 import {
   Controller,
   type UseFieldArrayRemove,
   type UseFormReturn,
   useFieldArray,
   useFormContext,
-  useFormState,
 } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { FieldVariableSuggestion } from '@qovery/domains/variables/feature'
 import { HELM_DEFAULT_VALUES } from '@qovery/shared/routes'
-import { Button, EmptyState, Heading, Icon, InputTextSmall, Popover, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputTextSmall, Section } from '@qovery/shared/ui'
 
 export interface TerraformValuesArgumentsData {
   tf_var_file_paths: string[]
@@ -147,7 +146,7 @@ export function ValuesOverrideArgumentsSetting({
                 <Icon iconName="plus-circle" />
               </Button>
             </div>
-            {tfVars.length > 0 ? (
+            {tfVars.length > 0 && (
               <ul>
                 <li className="mb-3 grid grid-cols-[6fr_6fr_1fr] gap-x-2">
                   {/* <span className="text-sm font-medium text-neutral-400">Override type</span> */}
@@ -159,8 +158,6 @@ export function ValuesOverrideArgumentsSetting({
                   <Row key={field.id} index={index} remove={tfVarsRemove} />
                 ))}
               </ul>
-            ) : (
-              <EmptyState title="No override defined" />
             )}
           </div>
 
@@ -176,7 +173,7 @@ export function ValuesOverrideArgumentsSetting({
                 <Icon iconName="plus-circle" />
               </Button>
             </div>
-            {tfPaths.length > 0 ? (
+            {tfPaths.length > 0 && (
               <ul>
                 <li className="mb-3 flex gap-x-2">
                   <span className="text-sm font-medium text-neutral-400">Path</span>
@@ -216,8 +213,6 @@ export function ValuesOverrideArgumentsSetting({
                   // <Row key={field.id} index={index} remove={tfVarsRemove} />
                 ))}
               </ul>
-            ) : (
-              <EmptyState title="No override defined" />
             )}
           </div>
         </div>
