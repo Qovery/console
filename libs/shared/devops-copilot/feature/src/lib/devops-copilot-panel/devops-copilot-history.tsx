@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { Button, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
+import { isToday, isWithinLastSevenDays, isWithinLastThirtyDays, isYesterday } from '../utils/date-utils/date-utils'
 import { type Thread } from './use-threads'
-import { isToday, isYesterday, isWithinLastSevenDays, isWithinLastThirtyDays } from '../utils/date-utils/date-utils'
 
 interface GroupedThreads {
   today: Thread[]

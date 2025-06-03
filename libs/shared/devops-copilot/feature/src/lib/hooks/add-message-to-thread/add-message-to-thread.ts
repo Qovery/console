@@ -1,4 +1,4 @@
-import { HACKATHON_API_BASE_URL } from "../../devops-copilot-panel/submit-message"
+import { HACKATHON_API_BASE_URL } from '../../devops-copilot-panel/submit-message'
 
 export const addMessageToThread = async (
   userSub: string,

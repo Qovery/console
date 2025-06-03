@@ -1,9 +1,9 @@
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { type Thread } from './devops-copilot-panel'
-import { fetchThread } from '../hooks/fetch-thread/fetch-thread'
-import { addThread } from '../hooks/add-thread/add-thread'
 import { addMessageToThread } from '../hooks/add-message-to-thread/add-message-to-thread'
+import { addThread } from '../hooks/add-thread/add-thread'
+import { fetchThread } from '../hooks/fetch-thread/fetch-thread'
+import { type Thread } from './devops-copilot-panel'
 
 type Context = {
   organization?: Organization
@@ -12,10 +12,10 @@ type Context = {
   environment?: Environment
   service?: AnyService
   deployment?:
-  | {
-    execution_id?: string
-  }
-  | undefined
+    | {
+        execution_id?: string
+      }
+    | undefined
 }
 
 export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
@@ -39,7 +39,6 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-
       const response = await addThread(userSub, token, organizationId, message)
       const responseJson = await response.json()
       _threadId = responseJson.id
@@ -50,8 +49,15 @@ export const submitMessage = async (
     }
 
     // Then, send the message to the thread
-    const messageResponse = await addMessageToThread(userSub, token, organizationId, _threadId, message, context, signal)
-    
+    const messageResponse = await addMessageToThread(
+      userSub,
+      token,
+      organizationId,
+      _threadId,
+      message,
+      context,
+      signal
+    )
 
     // Process streaming response if onStream callback is provided
     if (onStream && messageResponse.body) {

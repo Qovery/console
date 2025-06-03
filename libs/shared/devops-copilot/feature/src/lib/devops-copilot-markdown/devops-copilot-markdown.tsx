@@ -1,10 +1,10 @@
-import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { isValidElement } from 'react'
 import type { FC, HTMLAttributes } from 'react'
 import Markdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import remarkGfm from 'remark-gfm'
+import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 
 type CodeProps = {
@@ -38,9 +38,7 @@ export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
         />
       ),
       pre: ({ node, children, ...props }) => {
-        const codeContent = isValidElement(children)
-          ? (children.props as { children?: string })?.children
-          : null
+        const codeContent = isValidElement(children) ? (children.props as { children?: string })?.children : null
 
         return (
           <div className="relative my-4">
@@ -51,7 +49,7 @@ export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
               {children}
             </pre>
             {typeof codeContent === 'string' && (
-              <div className="absolute flex items-center justify-center right-2 top-2 w-8 h-8 rounded-md border border-neutral-300 bg-white p-1 shadow-md dark:border-neutral-600 dark:bg-neutral-900">
+              <div className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md border border-neutral-300 bg-white p-1 shadow-md dark:border-neutral-600 dark:bg-neutral-900">
                 <CopyToClipboardButtonIcon
                   content={codeContent}
                   tooltipContent="Copy code"
@@ -91,8 +89,7 @@ export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
                 padding: '1rem',
                 fontSize: '0.875rem',
                 lineHeight: '1.5',
-              }
-              }
+              }}
               {...props}
             >
               {String(children).replace(/\n$/, '')}
@@ -110,12 +107,14 @@ export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
         <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600" {...props} />
       ),
       table: ({ node, ...props }) => (
-        <div className="my-6 w-full overflow-x-auto" >
+        <div className="my-6 w-full overflow-x-auto">
           <table className="w-full border-collapse text-sm" {...props} />
         </div>
       ),
       thead: ({ node, ...props }) => <thead className="bg-neutral-100 dark:bg-neutral-700" {...props} />,
-      tbody: ({ node, ...props }) => <tbody className="divide-y divide-neutral-200 dark:divide-neutral-600" {...props} />,
+      tbody: ({ node, ...props }) => (
+        <tbody className="divide-y divide-neutral-200 dark:divide-neutral-600" {...props} />
+      ),
       tr: ({ node, ...props }) => <tr className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50" {...props} />,
       th: ({ node, ...props }) => (
         <th className="border border-neutral-200 px-4 py-2 text-left font-medium dark:border-neutral-600" {...props} />

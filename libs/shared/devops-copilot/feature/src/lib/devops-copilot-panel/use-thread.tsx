@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
-import { type Thread } from './devops-copilot-panel'
 import { fetchThread } from '../hooks/fetch-thread/fetch-thread'
+import { type Thread } from './devops-copilot-panel'
 
 interface UseCurrentThreadOptions {
   organizationId: string

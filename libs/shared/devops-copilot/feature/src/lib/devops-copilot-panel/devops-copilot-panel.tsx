@@ -3,30 +3,24 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
-import {
-  type ComponentProps,
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { type ComponentProps, forwardRef, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { AnimatedGradientText, Button, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
+import { CopilotMarkdown } from '../devops-copilot-markdown/devops-copilot-markdown'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
+import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 import DevopsCopilotHistory from './devops-copilot-history'
 import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
 import { useThread } from './use-thread'
 import { useThreads } from './use-threads'
-import { CopilotMarkdown } from '../devops-copilot-markdown/devops-copilot-markdown'
-import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 
 /*
 XXX: The devops-copilot feature is unstable and requires a full redesign.
@@ -129,9 +123,7 @@ const renderStreamingMessageWithMermaid = (input: string) => {
     if (start > lastIndex) {
       const textPart = input.slice(lastIndex, start)
       if (textPart) {
-        parts.push(
-          <CopilotMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</CopilotMarkdown>
-        )
+        parts.push(<CopilotMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</CopilotMarkdown>)
       }
     }
     parts.push(<MermaidChart key={'mermaid-' + start} code={mermaidCode} />)
@@ -141,9 +133,7 @@ const renderStreamingMessageWithMermaid = (input: string) => {
   if (lastIndex < input.length) {
     const textPart = input.slice(lastIndex)
     if (textPart) {
-      parts.push(
-        <CopilotMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</CopilotMarkdown>
-      )
+      parts.push(<CopilotMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</CopilotMarkdown>)
     }
   }
   return parts
@@ -373,7 +363,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
 
   const [isAtBottom, setIsAtBottom] = useState(true)
   const panelRef = useRef<HTMLDivElement>(null)
-
 
   useEffect(() => {
     // Once the animation is finished, we can stop the loading and set the message
@@ -798,7 +787,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                                       'animate-spin text-yellow-500': step.status === 'in_progress',
                                       'text-blue-500': step.status === 'waiting',
                                       'text-red-500': step.status === 'error',
-                                      'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(step.status),
+                                      'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(
+                                        step.status
+                                      ),
                                     })}
                                   />
                                   <div className="flex flex-col">
@@ -876,7 +867,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                                   'animate-spin text-yellow-500': step.status === 'in_progress',
                                   'text-blue-500': step.status === 'waiting',
                                   'text-red-500': step.status === 'error',
-                                  'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(step.status),
+                                  'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(
+                                    step.status
+                                  ),
                                 })}
                               />
                               <div className="flex flex-col">
