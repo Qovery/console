@@ -2,6 +2,7 @@ import {
   type ApplicationDeploymentRestriction,
   DeploymentRestrictionModeEnum,
   DeploymentRestrictionTypeEnum,
+  type TerraformDeploymentRestrictionResponse,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { type ApplicationType, type HelmType, type JobType } from '@qovery/domains/services/data-access'
@@ -9,7 +10,7 @@ import { useCreateDeploymentRestriction, useEditDeploymentRestriction } from '@q
 import CrudModal from '../../../ui/page-settings-deployment-restrictions/crud-modal/crud-modal'
 
 export interface CrudModalFeatureProps {
-  deploymentRestriction?: ApplicationDeploymentRestriction
+  deploymentRestriction?: ApplicationDeploymentRestriction | TerraformDeploymentRestrictionResponse
   onClose: () => void
   serviceId: string
   serviceType: ApplicationType | JobType | HelmType

@@ -63,7 +63,8 @@ import {
   TerraformActionsApi,
   type TerraformAdvancedSettings,
   TerraformConfigurationApi,
-  TerraformDeploymentHistoryApi, // TerraformActionsApi,
+  TerraformDeploymentHistoryApi,
+  TerraformDeploymentRestrictionApi,
   TerraformMainCallsApi,
   type TerraformRequest,
   TerraformsApi,
@@ -100,6 +101,7 @@ const terraformMainCallsApi = new TerraformMainCallsApi()
 const applicationDeploymentRestrictionApi = new ApplicationDeploymentRestrictionApi()
 const jobDeploymentRestrictionApi = new JobDeploymentRestrictionApi()
 const helmDeploymentRestrictionApi = new HelmDeploymentRestrictionApi()
+const terraformDeploymentRestrictionApi = new TerraformDeploymentRestrictionApi()
 
 const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
@@ -291,8 +293,10 @@ export const services = createQueryKeys('services', {
         .with('HELM', () =>
           helmDeploymentRestrictionApi.getHelmDeploymentRestrictions.bind(helmDeploymentRestrictionApi)
         )
+        .with('TERRAFORM', () =>
+          terraformDeploymentRestrictionApi.getTerraformDeploymentRestrictions.bind(terraformDeploymentRestrictionApi)
+        )
         .with('CONTAINER', 'DATABASE', () => null)
-        .with('TERRAFORM', () => null) // TODO [QOV-821] double check that
         .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
@@ -404,7 +408,7 @@ export const services = createQueryKeys('services', {
         .with(
           'TERRAFORM',
           async () => (await terraformDeploymentsApi.listTerraformDeploymentHistoryV2(serviceId)).data.results
-        ) // TODO [QOV-821] double check that
+        )
         .exhaustive()
     },
   }),
@@ -510,7 +514,7 @@ export const services = createQueryKeys('services', {
         .with('TERRAFORM', (serviceType) => ({
           query: terraformConfigurationApi.getTerraformAdvancedSettings.bind(terraformConfigurationApi),
           serviceType,
-        })) // TODO [QOV-821] to double check
+        }))
         .exhaustive()
       const response = await query(serviceId)
       return response.data
