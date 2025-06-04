@@ -96,7 +96,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
             {usedPercentage > reservedPercentage && (
               <ProgressBar.Cell
                 className="left-0.5 top-1/2 h-1 -translate-y-1/2"
-                value={usedPercentage + reservedPercentage}
+                value={usedPercentage - reservedPercentage + 0.8} // 0.8 is hack to compensate border-r and left-0.5
                 color="var(--color-yellow-500)"
                 style={{
                   left: `${reservedPercentage}%`,
