@@ -32,17 +32,17 @@ const ProgressBarRoot = forwardRef<ElementRef<'div'>, ProgressBarRootProps>(func
 })
 
 interface ProgressBarCellProps extends Omit<ComponentPropsWithoutRef<'div'>, 'color'> {
-  percentage: number
+  value: number
   color: string
 }
 
 const ProgressBarCell = forwardRef<ElementRef<'div'>, ProgressBarCellProps>(function ProgressBarCell(
-  { percentage, color, className, ...props },
+  { value, color, className, style, ...props },
   ref
 ) {
   const { mode } = useContext(ProgressBarContext)
 
-  if (percentage <= 0) return null
+  if (value <= 0) return null
 
   return (
     <div
@@ -55,8 +55,9 @@ const ProgressBarCell = forwardRef<ElementRef<'div'>, ProgressBarCellProps>(func
         className
       )}
       style={{
-        width: `${percentage}%`,
+        width: `${value}%`,
         backgroundColor: color,
+        ...style,
       }}
       {...props}
     />

@@ -126,14 +126,10 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
           <Tooltip content={tooltipContent} classNameContent="w-[157px] px-2.5 py-1.5">
             <ProgressBar.Root>
               {deployingPercentage > 0 && (
-                <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
+                <ProgressBar.Cell value={deployingPercentage} color="var(--color-brand-500" />
               )}
-              {healthyPercentage > 0 && (
-                <ProgressBar.Cell percentage={healthyPercentage} color="var(--color-green-500)" />
-              )}
-              {warningPercentage > 0 && (
-                <ProgressBar.Cell percentage={warningPercentage} color="var(--color-yellow-500)" />
-              )}
+              {healthyPercentage > 0 && <ProgressBar.Cell value={healthyPercentage} color="var(--color-green-500)" />}
+              {warningPercentage > 0 && <ProgressBar.Cell value={warningPercentage} color="var(--color-yellow-500)" />}
             </ProgressBar.Root>
           </Tooltip>
         </div>

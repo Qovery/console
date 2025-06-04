@@ -54,9 +54,9 @@ function MetricProgressBar({ type, used, total, unit }: MetricProgressBarProps) 
     >
       <ProgressBar.Root>
         {noLimit ? (
-          <ProgressBar.Cell percentage={100} color="var(--color-neutral-150)" />
+          <ProgressBar.Cell value={100} color="var(--color-neutral-150)" />
         ) : (
-          <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
+          <ProgressBar.Cell value={usedPercentage} color="var(--color-brand-400)" />
         )}
       </ProgressBar.Root>
     </Tooltip>
@@ -241,13 +241,13 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                 >
                   <ProgressBar.Root>
                     {deployingPercentage > 0 && (
-                      <ProgressBar.Cell percentage={deployingPercentage} color="var(--color-brand-500" />
+                      <ProgressBar.Cell value={deployingPercentage} color="var(--color-brand-500" />
                     )}
                     {nodesHealthyPercentage - nodesWarningPercentage > 0 && (
-                      <ProgressBar.Cell percentage={nodesHealthyPercentage} color="var(--color-green-500)" />
+                      <ProgressBar.Cell value={nodesHealthyPercentage} color="var(--color-green-500)" />
                     )}
                     {nodesWarningPercentage > 0 && (
-                      <ProgressBar.Cell percentage={nodesWarningPercentage} color="var(--color-yellow-500)" />
+                      <ProgressBar.Cell value={nodesWarningPercentage} color="var(--color-yellow-500)" />
                     )}
                   </ProgressBar.Root>
                 </Tooltip>

@@ -3,7 +3,14 @@ import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Badge, Icon, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
+import {
+  calculatePercentage,
+  formatNumber,
+  mibToGib,
+  milliCoreToVCPU,
+  twMerge,
+  upperCaseFirstLetter,
+} from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 
 interface MetricProgressBarProps {
@@ -21,9 +28,9 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
   const totalPercentage = Math.round(usedPercentage)
 
   return (
-    <div className="flex w-full items-center gap-2 text-ssm">
+    <div className="flex w-full items-center gap-1 text-ssm">
       <span
-        className={clsx('mr-1.5 flex min-w-8 items-center gap-1', {
+        className={clsx('flex min-w-8 items-center gap-1 whitespace-nowrap', {
           'text-red-500': isPressure,
           'text-neutral-400': !isPressure,
         })}
@@ -31,7 +38,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
         {totalPercentage}%
         {isPressure && (
           <Tooltip content={`Node has ${type} pressure condition`}>
-            <span>
+            <span className="mr-1.5">
               <Icon iconName="circle-exclamation" iconStyle="regular" />
             </span>
           </Tooltip>
@@ -41,20 +48,18 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
         content={
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b border-neutral-400">
-              <div className="flex w-full items-center justify-between px-2.5 py-1.5">
-                <span>{type === 'cpu' ? 'CPU' : 'Memory'} usage</span>
-                <span className="ml-auto block font-semibold">{totalPercentage}%</span>
-              </div>
+              <span className="px-2.5 py-1.5">{upperCaseFirstLetter(type)}</span>
+              {/* TODO: keep or remove this? 
+                <div className="flex w-full items-center justify-between px-2.5 py-1.5">
+                  <span>{type === 'cpu' ? 'CPU' : 'Memory'}</span> 
+                  <span className="ml-auto block font-semibold">{totalPercentage}%</span>
+                </div>
+              */}
             </div>
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span
-                    className={clsx('h-2 w-2 rounded-full', {
-                      'bg-purple-200': usedPercentage <= reservedPercentage,
-                      'bg-purple-500': usedPercentage > reservedPercentage,
-                    })}
-                  />
+                  <span className="h-2 w-2 rounded-full bg-purple-200" />
                   Reserved
                 </span>
                 <span className="ml-auto block font-semibold">
@@ -63,12 +68,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
               </div>
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span
-                    className={clsx('h-2 w-2 rounded-full', {
-                      'bg-yellow-500': usedPercentage > reservedPercentage,
-                      'bg-brand-400': usedPercentage <= reservedPercentage,
-                    })}
-                  />
+                  <span className="h-2 w-2 rounded-full bg-brand-400" />
                   Used
                 </span>
                 <span className="ml-auto block font-semibold">
@@ -76,29 +76,39 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
                 </span>
               </div>
             </div>
+            {usedPercentage > reservedPercentage && (
+              <div className="flex items-center justify-between border-t border-neutral-400 px-2 py-1.5">
+                Exceeds reserved allocation Review workload distribution on high-usage
+              </div>
+            )}
           </div>
         }
         classNameContent="w-[173px] p-0"
       >
         <div className="relative w-full">
           <ProgressBar.Root mode="absolute">
-            {usedPercentage > reservedPercentage ? (
-              <>
-                <ProgressBar.Cell percentage={usedPercentage + reservedPercentage} color="var(--color-yellow-500)" />
-                <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
-              </>
-            ) : (
-              <>
-                <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
-                <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
-              </>
+            <ProgressBar.Cell value={reservedPercentage} color="var(--color-purple-200)" />
+            <ProgressBar.Cell
+              className="left-0.5 top-1/2 h-1 -translate-y-1/2 rounded-l-full"
+              value={usedPercentage}
+              color="var(--color-brand-400)"
+            />
+            {usedPercentage > reservedPercentage && (
+              <ProgressBar.Cell
+                className="left-0.5 top-1/2 h-1 -translate-y-1/2"
+                value={usedPercentage + reservedPercentage}
+                color="var(--color-yellow-500)"
+                style={{
+                  left: `${reservedPercentage}%`,
+                }}
+              />
             )}
           </ProgressBar.Root>
           {reservedPercentage < 99 && (
             <span
-              className="absolute -top-0.5 h-[calc(100%+4px)] w-[1px] bg-purple-500"
+              className="absolute top-0 h-full w-[1px] bg-purple-500"
               style={{
-                left: `${Math.min(usedPercentage > reservedPercentage ? usedPercentage : reservedPercentage, 100)}%`,
+                left: `${reservedPercentage}%`,
               }}
             />
           )}

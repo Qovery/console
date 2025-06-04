@@ -18,13 +18,13 @@ export const Default: StoryObj<typeof ProgressBar.Root> = {
   render: () => (
     <div className="flex w-full flex-col gap-y-14">
       <ProgressBar.Root>
-        <ProgressBar.Cell percentage={60} color="var(--color-green-500)" />
-        <ProgressBar.Cell percentage={30} color="var(--color-yellow-500)" />
-        <ProgressBar.Cell percentage={10} color="var(--color-brand-500)" />
+        <ProgressBar.Cell value={60} color="var(--color-green-500)" />
+        <ProgressBar.Cell value={30} color="var(--color-yellow-500)" />
+        <ProgressBar.Cell value={10} color="var(--color-brand-500)" />
       </ProgressBar.Root>
       <ProgressBar.Root mode="absolute">
-        <ProgressBar.Cell percentage={30} color="var(--color-green-500)" />
-        <ProgressBar.Cell percentage={10} color="var(--color-brand-500)" />
+        <ProgressBar.Cell value={30} color="var(--color-green-500)" />
+        <ProgressBar.Cell value={10} color="var(--color-brand-500)" />
       </ProgressBar.Root>
     </div>
   ),
