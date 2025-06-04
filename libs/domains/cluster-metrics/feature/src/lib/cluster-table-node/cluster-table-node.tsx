@@ -3,14 +3,7 @@ import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { Badge, Icon, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import {
-  calculatePercentage,
-  formatNumber,
-  mibToGib,
-  milliCoreToVCPU,
-  twMerge,
-  upperCaseFirstLetter,
-} from '@qovery/shared/util-js'
+import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 
 interface MetricProgressBarProps {
@@ -48,13 +41,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
         content={
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b border-neutral-400">
-              <span className="px-2.5 py-1.5">{upperCaseFirstLetter(type)}</span>
-              {/* TODO: keep or remove this? 
-                <div className="flex w-full items-center justify-between px-2.5 py-1.5">
-                  <span>{type === 'cpu' ? 'CPU' : 'Memory'}</span> 
-                  <span className="ml-auto block font-semibold">{totalPercentage}%</span>
-                </div>
-              */}
+              <span className="px-2.5 py-1.5">{type === 'cpu' ? 'CPU' : 'Memory'}</span>
             </div>
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
               <div className="flex w-full items-center gap-1.5">
@@ -76,9 +63,16 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
                 </span>
               </div>
             </div>
-            {usedPercentage > reservedPercentage && (
+            {usedPercentage > reservedPercentage ? (
               <div className="flex items-center justify-between border-t border-neutral-400 px-2 py-1.5">
                 Exceeds reserved allocation Review workload distribution on high-usage
+              </div>
+            ) : (
+              <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
+                <span>Total Available</span>
+                <span className="ml-auto block font-semibold">
+                  {total} {unit}
+                </span>
               </div>
             )}
           </div>
