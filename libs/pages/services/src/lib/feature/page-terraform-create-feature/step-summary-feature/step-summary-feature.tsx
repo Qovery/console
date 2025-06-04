@@ -11,9 +11,9 @@ import {
   SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
+import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepSummaryFeature() {
@@ -213,7 +213,7 @@ export function StepSummaryFeature() {
               <Button
                 type="button"
                 size="lg"
-                disabled={isLoadingCreate}
+                disabled={true} // TODO [QOV-821] Running plan is not supported yet
                 onClick={() => onSubmit(true)}
                 loading={isLoadingCreateAndDeploy}
               >
