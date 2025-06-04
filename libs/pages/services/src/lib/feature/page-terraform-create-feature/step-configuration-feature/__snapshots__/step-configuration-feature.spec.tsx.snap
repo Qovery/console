@@ -202,7 +202,7 @@ exports[`StepConfigurationFeature should submit a form with a git repository 1`]
               >
                 <div
                   aria-label="input-container"
-                  class="input     "
+                  class="input    input--label-up "
                 >
                   <div
                     class=""
@@ -219,7 +219,7 @@ exports[`StepConfigurationFeature should submit a form with a git repository 1`]
                       id="Storage (GB)"
                       name="job_resources.storage_gib"
                       type="text"
-                      value=""
+                      value="1"
                     />
                   </div>
                 </div>
@@ -460,7 +460,7 @@ exports[`StepConfigurationFeature should submit a form with a yaml 1`] = `
               >
                 <div
                   aria-label="input-container"
-                  class="input     "
+                  class="input    input--label-up "
                 >
                   <div
                     class=""
@@ -477,7 +477,7 @@ exports[`StepConfigurationFeature should submit a form with a yaml 1`] = `
                       id="Storage (GB)"
                       name="job_resources.storage_gib"
                       type="text"
-                      value=""
+                      value="1"
                     />
                   </div>
                 </div>

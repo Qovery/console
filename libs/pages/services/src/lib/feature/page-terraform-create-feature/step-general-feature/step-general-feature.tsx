@@ -12,7 +12,7 @@ import { GeneralSetting } from '@qovery/domains/services/feature'
 import { SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { useTerraformCreateContext } from '../page-terraform-create-feature'
+import { TERRAFORM_VERSIONS, useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Terraform')
@@ -67,24 +67,7 @@ export function StepGeneralFeature() {
                     id: environmentId,
                   },
                   auto_deploy: false,
-                  // TODO [821] some keys do not exist in the API yet
-                  // auto_preview: false,
-                  // source: {
-                  //   repository: {
-                  //     chart_name: '',
-                  //     chart_version: '',
-                  //     repository: {
-                  //       id: '',
-                  //       name: '',
-                  //       url: '',
-                  //     },
-                  //   },
-                  // },
-                  // arguments: [],
                   icon_uri: 'app://qovery-console/terraform',
-                  // allow_cluster_wide_resources: false,
-                  // values_override: {},
-                  //
                   timeout_sec: 60,
                   auto_approve: false,
                   terraform_variables_source: {
@@ -94,7 +77,7 @@ export function StepGeneralFeature() {
                   provider: 'TERRAFORM',
                   provider_version: {
                     read_from_terraform_block: false,
-                    explicit_version: '1.12.1',
+                    explicit_version: TERRAFORM_VERSIONS[0],
                   },
                   job_resources: {
                     cpu_milli: 500,
@@ -141,24 +124,6 @@ export function StepGeneralFeature() {
                 </div>
               )}
             </Section>
-            {/* <Section className="gap-4">
-              <Heading>Deploy</Heading>
-              <DeploymentSetting />
-              {watchFieldProvider === 'GIT' && !watchFieldIsPublicRepository && <AutoDeploySetting source="GIT" />}
-              {watchFieldProvider === 'HELM_REPOSITORY' && (
-                <Callout.Root color="sky" className="mt-5 items-center">
-                  <Callout.Icon>
-                    <Icon iconName="circle-info" iconStyle="regular" />
-                  </Callout.Icon>
-                  <Callout.Text>
-                    <Callout.TextHeading>
-                      Git automations are disabled when using Helm repositories (auto-deploy, automatic preview
-                      environments)
-                    </Callout.TextHeading>
-                  </Callout.Text>
-                </Callout.Root>
-              )}
-            </Section> */}
             <div className="flex justify-between">
               <Button
                 type="button"

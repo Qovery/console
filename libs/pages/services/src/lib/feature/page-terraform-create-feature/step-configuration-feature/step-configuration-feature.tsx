@@ -96,40 +96,6 @@ export function StepConfigurationFeature() {
           />
         </div>
 
-        {/* <hr className="my-4 border-t border-dashed border-neutral-250" />
-        <div className="flex flex-col gap-5">
-          <Controller
-            name="terraform_variables_source.tf_var_file_paths"
-            control={generalForm.control}
-            defaultValue={generalData.terraform_variables_source.tf_var_file_paths}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value.join(',')}
-                label="TF var file paths"
-                error={error?.message}
-                hint="TF variable file paths (separated by comma)"
-              />
-            )}
-          />
-          <Controller
-            name="terraform_variables_source.tf_vars"
-            control={generalForm.control}
-            defaultValue={generalData.terraform_variables_source.tf_vars}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value.join(',')}
-                label="TF vars"
-                error={error?.message}
-                hint="TF variables (separated by comma)"
-              />
-            )}
-          />
-        </div> */}
-
         <div className="mt-10 flex justify-between">
           <Button
             type="button"

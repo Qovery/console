@@ -45,49 +45,6 @@ export function StepSummaryFeature() {
       setIsLoadingCreate(true)
     }
 
-    // const source = match(generalData.source_provider)
-    //   .with('GIT', () => {
-    //     return {
-    //       git_repository: {
-    //         url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
-    //         branch: generalData.branch,
-    //         root_path: generalData.root_path,
-    //         git_token_id: generalData.git_token_id,
-    //       },
-    //     }
-    //   })
-    //   .exhaustive()
-
-    // const valuesOverrideFile = match(valuesOverrideFileData.type)
-    //   .with('GIT_REPOSITORY', () => {
-    //     return {
-    //       git: {
-    //         git_repository: {
-    //           url: buildGitRepoUrl(valuesOverrideFileData.provider ?? '', valuesOverrideFileData.repository!),
-    //           branch: valuesOverrideFileData.branch!,
-    //           git_token_id: valuesOverrideFileData.git_token_id,
-    //         },
-    //         paths: valuesOverrideFileData.paths?.split(',') ?? [],
-    //       },
-    //     }
-    //   })
-    //   .with('YAML', () => ({
-    //     raw: {
-    //       values: [
-    //         {
-    //           name: 'override',
-    //           content: valuesOverrideFileData.content!,
-    //         },
-    //       ],
-    //     },
-    //   }))
-    //   .with('NONE', () => null)
-    //   .exhaustive()
-
-    // const getValuesByType = (type: ArgumentTypes) => {
-    //   return valuesOverrideArgumentData.arguments.filter((a) => a.type === type).map((a) => [a.key, a.json ?? a.value])
-    // }
-
     try {
       const response = await createTerraformService({
         environmentId,
@@ -122,11 +79,6 @@ export function StepSummaryFeature() {
           },
         },
       })
-
-      // if (withDeploy) {
-      //   await deployService({ serviceId: response.id, serviceType: 'TERRAFORM' })
-      //   setIsLoadingCreateAndDeploy(false)
-      // }
 
       if (slug && option) {
         posthog.capture('create-service', {
@@ -194,21 +146,6 @@ export function StepSummaryFeature() {
                 </ul>
               )}
 
-              {/* {generalData.source_provider === 'HELM_REPOSITORY' && (
-                <ul className="list-none space-y-2 text-sm text-neutral-400">
-                  <li>
-                    <strong className="font-medium">Repository:</strong>{' '}
-                    {helmRepositories.find(({ id }) => id === generalData.repository)?.name}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Chart name:</strong> {generalData.chart_name}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Version:</strong> {generalData.chart_version}
-                  </li>
-                </ul>
-              )} */}
-
               <hr className="my-4 border-t border-dashed border-neutral-250" />
               <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
@@ -250,57 +187,6 @@ export function StepSummaryFeature() {
                 </li>
               </ul>
             </Section>
-
-            {/* {(valuesOverrideFileData.type !== 'NONE' || valuesOverrideArgumentData.arguments.length > 0) && (
-              <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
-                <div className="flex justify-between">
-                  <Heading>Values</Heading>
-                  <Button
-                    type="button"
-                    variant="plain"
-                    size="md"
-                    onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)}
-                  >
-                    <Icon className="text-base" iconName="gear-complex" />
-                  </Button>
-                </div>
-                {valuesOverrideFileData.type === 'GIT_REPOSITORY' && (
-                  <ul className="list-none space-y-2 text-sm text-neutral-400">
-                    <li>
-                      <strong className="font-medium">From Git Provider:</strong> {valuesOverrideFileData.provider}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Repository:</strong> {valuesOverrideFileData.repository}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Branch:</strong> {valuesOverrideFileData.branch}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Overrides path:</strong> {valuesOverrideFileData.paths}
-                    </li>
-                  </ul>
-                )}
-
-                {valuesOverrideFileData.type === 'YAML' && (
-                  <ul className="list-none space-y-2 text-sm text-neutral-400">
-                    <li>
-                      <strong className="font-medium">From YAML:</strong>{' '}
-                      {truncateText(valuesOverrideFileData.content!, 50)}
-                      ...
-                    </li>
-                  </ul>
-                )}
-
-                {valuesOverrideArgumentData.arguments.length > 0 && (
-                  <ul className="list-none space-y-2 text-sm text-neutral-400">
-                    <li>
-                      <strong className="font-medium">Manual:</strong> {valuesOverrideArgumentData.arguments.length}{' '}
-                      variables added
-                    </li>
-                  </ul>
-                )}
-              </Section>
-            )} */}
           </div>
 
           <div className="mt-10 flex justify-between">

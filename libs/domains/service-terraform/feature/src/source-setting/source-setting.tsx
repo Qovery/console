@@ -10,7 +10,7 @@ export function SourceSetting() {
         name="source_provider"
         control={control}
         rules={{
-          required: 'Please select a Helm source.',
+          required: 'Please select a Terraform source.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputSelect

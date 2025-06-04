@@ -14,7 +14,7 @@ const defaultValues = {
   job_resources: {
     cpu_milli: 500,
     ram_mib: 256,
-    storage_gb: 1,
+    storage_gib: 1,
   },
 }
 

@@ -116,7 +116,6 @@ export function DeploymentLogsFeature({
 
   const { data: service, isFetched: isFetchedService } = useService({ environmentId: environment.id, serviceId })
   const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({ environmentId: environment.id })
-  console.log('environmentDeploymentHistory', environmentDeploymentHistory)
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading...'}`)
 
