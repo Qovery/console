@@ -19,14 +19,11 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
   nodes?.forEach((node) => {
     // CPU
     totalCpuMilli += node.resources_capacity.cpu_milli
-    usedCpuMilli += node.metrics_usage.cpu_milli_usage || 0
+    usedCpuMilli += node.resources_allocated.request_cpu_milli || 0
 
     // Memory
     totalMemoryMib += node.resources_capacity.memory_mib
-    usedMemoryMib += Math.max(
-      node.metrics_usage.memory_mib_rss_usage || 0,
-      node.metrics_usage.memory_mib_working_set_usage || 0
-    )
+    usedMemoryMib += node.resources_allocated.request_memory_mib || 0
 
     // Disk
     totalDiskMib += node.resources_capacity.ephemeral_storage_mib

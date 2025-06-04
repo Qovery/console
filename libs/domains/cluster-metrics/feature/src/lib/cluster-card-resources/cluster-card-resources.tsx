@@ -23,12 +23,12 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
     value: ResourcesProps
   }[] = [
     {
-      label: 'CPU usage',
+      label: 'CPU reserved',
       icon: 'microchip',
       value: clusterResources.cpu,
     },
     {
-      label: 'Memory usage',
+      label: 'Memory reserved',
       icon: 'memory',
       value: clusterResources.memory,
     },

@@ -15,16 +15,16 @@ export interface ClusterTableNodepoolProps {
 
 interface MetricProgressBarProps {
   type: 'cpu' | 'memory'
-  reserved: number
+  used: number
   total: number | null
   unit: string
 }
 
-function MetricProgressBar({ type, reserved, total, unit }: MetricProgressBarProps) {
+function MetricProgressBar({ type, used, total, unit }: MetricProgressBarProps) {
   const noLimit = total == null
 
-  const reservedPercentage = calculatePercentage(reserved, total ?? 0)
-  const totalPercentage = Math.round(reservedPercentage)
+  const usedPercentage = calculatePercentage(used, total ?? 0)
+  const totalPercentage = Math.round(usedPercentage)
 
   return (
     <Tooltip
@@ -40,11 +40,11 @@ function MetricProgressBar({ type, reserved, total, unit }: MetricProgressBarPro
           <div className="flex flex-col gap-1 px-2.5 py-1.5">
             <div className="flex w-full items-center gap-1.5">
               <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-purple-200" />
-                Reserved
+                <span className="h-2 w-2 rounded-full bg-brand-400" />
+                Used
               </span>
               <span className="ml-auto block font-semibold">
-                {reserved} {unit}
+                {used} {unit}
               </span>
             </div>
           </div>
@@ -56,7 +56,7 @@ function MetricProgressBar({ type, reserved, total, unit }: MetricProgressBarPro
         {noLimit ? (
           <ProgressBar.Cell percentage={100} color="var(--color-neutral-150)" />
         ) : (
-          <ProgressBar.Cell percentage={reservedPercentage} color="var(--color-purple-200)" />
+          <ProgressBar.Cell percentage={usedPercentage} color="var(--color-brand-400)" />
         )}
       </ProgressBar.Root>
     </Tooltip>
@@ -146,7 +146,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       </Tooltip>
                     ))}
                 </div>
-                <MetricProgressBar type="cpu" reserved={metrics.cpuReserved} total={metrics.cpuTotal} unit="vCPU" />
+                <MetricProgressBar type="cpu" used={metrics.cpuUsed} total={metrics.cpuTotal} unit="vCPU" />
               </div>
               <div className="flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5">
                 <div className="flex w-full items-center justify-between">
@@ -182,12 +182,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       </Tooltip>
                     ))}
                 </div>
-                <MetricProgressBar
-                  type="memory"
-                  reserved={metrics.memoryReserved}
-                  total={metrics.memoryTotal}
-                  unit="GB"
-                />
+                <MetricProgressBar type="memory" used={metrics.memoryUsed} total={metrics.memoryTotal} unit="GB" />
               </div>
               <div className="flex w-1/4 flex-col gap-3 px-5">
                 <span className="relative -top-1 flex items-center gap-2 text-sm text-neutral-350">

@@ -81,8 +81,8 @@ describe('ClusterCardResources', () => {
     renderWithProviders(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
     expect(screen.getByText('Total cluster resources')).toBeInTheDocument()
-    expect(screen.getByText('CPU usage')).toBeInTheDocument()
-    expect(screen.getByText('Memory usage')).toBeInTheDocument()
+    expect(screen.getByText('CPU reserved')).toBeInTheDocument()
+    expect(screen.getByText('Memory reserved')).toBeInTheDocument()
     expect(screen.getByText('Disk usage')).toBeInTheDocument()
   })
 

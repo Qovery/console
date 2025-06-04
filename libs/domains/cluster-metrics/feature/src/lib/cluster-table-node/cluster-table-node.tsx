@@ -22,18 +22,21 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
 
   return (
     <div className="flex w-full items-center gap-2 text-ssm">
-      {isPressure ? (
-        <span className="mr-1.5 flex min-w-8 items-center gap-1 text-red-500">
-          99%
+      <span
+        className={clsx('mr-1.5 flex min-w-8 items-center gap-1', {
+          'text-red-500': isPressure,
+          'text-neutral-400': !isPressure,
+        })}
+      >
+        {totalPercentage}%
+        {isPressure && (
           <Tooltip content={`Node has ${type} pressure condition`}>
             <span>
               <Icon iconName="circle-exclamation" iconStyle="regular" />
             </span>
           </Tooltip>
-        </span>
-      ) : (
-        <span className="min-w-8 text-neutral-400">{totalPercentage}%</span>
-      )}
+        )}
+      </span>
       <Tooltip
         content={
           <div className="flex flex-col gap-1">
@@ -232,25 +235,13 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                   })
                 )}
               >
-                {!isDiskPressure ? (
-                  <>
-                    {formatNumber(
-                      calculatePercentage(
-                        node.metrics_usage?.disk_mib_usage || 0,
-                        node.resources_capacity.ephemeral_storage_mib
-                      )
-                    )}
-                    %
-                  </>
-                ) : (
-                  <>
-                    99%
-                    <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
-                      <span className="ml-1 inline-block text-red-500">
-                        <Icon iconName="circle-exclamation" iconStyle="regular" />
-                      </span>
-                    </Tooltip>
-                  </>
+                {node.metrics_usage?.disk_percent_usage || 0}%
+                {isDiskPressure && (
+                  <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
+                    <span className="ml-1 inline-block text-red-500">
+                      <Icon iconName="circle-exclamation" iconStyle="regular" />
+                    </span>
+                  </Tooltip>
                 )}
               </div>
               <div className="flex h-12 w-[calc(20%/3)] items-center px-3 text-neutral-400">

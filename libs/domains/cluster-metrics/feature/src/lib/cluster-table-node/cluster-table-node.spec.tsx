@@ -194,6 +194,6 @@ describe('ClusterTableNode', () => {
       <ClusterTableNode organizationId={mockOrganizationId} clusterId={mockClusterId} nodePool={mockNodePool} />
     )
 
-    expect(screen.getByText('99%')).toBeInTheDocument()
+    expect(screen.getByText('0%')).toBeInTheDocument()
   })
 })
