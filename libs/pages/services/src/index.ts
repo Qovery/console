@@ -6,3 +6,4 @@ export {
   PageHelmCreateFeature,
   type HelmGeneralData,
 } from './lib/feature/page-helm-create-feature/page-helm-create-feature'
+export { PageTerraformCreateFeature } from './lib/feature/page-terraform-create-feature/page-terraform-create-feature'

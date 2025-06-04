@@ -12,6 +12,7 @@ import {
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
+  type CheckedCustomDomainResponse,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
@@ -59,14 +60,21 @@ import {
   JobsApi,
   type RebootServicesRequest,
   type Status,
+  TerraformActionsApi,
+  type TerraformAdvancedSettings,
   TerraformConfigurationApi,
+  TerraformDeploymentHistoryApi,
+  TerraformDeploymentRestrictionApi,
   TerraformMainCallsApi,
+  type TerraformRequest,
+  TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
   type ContainerResponse as _Container,
   type Database as _Database,
   type HelmResponse as _Helm,
   type JobResponse as _Job,
+  type TerraformResponse as _Terraform,
 } from 'qovery-typescript-axios'
 import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
@@ -80,6 +88,7 @@ const containersApi = new ContainersApi()
 const databasesApi = new DatabasesApi()
 const jobsApi = new JobsApi()
 const helmsApi = new HelmsApi()
+const terraformsApi = new TerraformsApi()
 
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
@@ -92,17 +101,20 @@ const terraformMainCallsApi = new TerraformMainCallsApi()
 const applicationDeploymentRestrictionApi = new ApplicationDeploymentRestrictionApi()
 const jobDeploymentRestrictionApi = new JobDeploymentRestrictionApi()
 const helmDeploymentRestrictionApi = new HelmDeploymentRestrictionApi()
+const terraformDeploymentRestrictionApi = new TerraformDeploymentRestrictionApi()
 
 const applicationDeploymentsApi = new ApplicationDeploymentHistoryApi()
 const containerDeploymentsApi = new ContainerDeploymentHistoryApi()
 const databaseDeploymentsApi = new DatabaseDeploymentHistoryApi()
 const helmDeploymentsApi = new HelmDeploymentHistoryApi()
+const terraformDeploymentsApi = new TerraformDeploymentHistoryApi()
 const jobDeploymentsApi = new JobDeploymentHistoryApi()
 
 const applicationActionsApi = new ApplicationActionsApi()
 const containerActionsApi = new ContainerActionsApi()
 const databaseActionsApi = new DatabaseActionsApi()
 const helmActionsApi = new HelmActionsApi()
+const terraformActionsApi = new TerraformActionsApi()
 const jobActionsApi = new JobActionsApi()
 
 const applicationConfigurationApi = new ApplicationConfigurationApi()
@@ -128,6 +140,7 @@ export type ContainerType = Extract<ServiceType, 'CONTAINER'>
 export type DatabaseType = Extract<ServiceType, 'DATABASE'>
 export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
+export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
@@ -151,8 +164,12 @@ export type Helm = _Helm & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: HelmType
 }
+export type Terraform = _Terraform & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: TerraformType
+}
 
-export type AnyService = Application | Database | Container | Job | Helm
+export type AnyService = Application | Database | Container | Job | Helm | Terraform
 
 export type AdvancedSettings =
   | ApplicationAdvancedSettings
@@ -276,8 +293,10 @@ export const services = createQueryKeys('services', {
         .with('HELM', () =>
           helmDeploymentRestrictionApi.getHelmDeploymentRestrictions.bind(helmDeploymentRestrictionApi)
         )
+        .with('TERRAFORM', () =>
+          terraformDeploymentRestrictionApi.getTerraformDeploymentRestrictions.bind(terraformDeploymentRestrictionApi)
+        )
         .with('CONTAINER', 'DATABASE', () => null)
-        .with('TERRAFORM', () => null) // TODO [QOV-821] double check that
         .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
@@ -322,7 +341,7 @@ export const services = createQueryKeys('services', {
     props:
       | {
           serviceId: string
-          serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB'>
+          serviceType: Extract<ServiceType, 'APPLICATION' | 'JOB' | 'CRON_JOB' | 'LIFECYCLE_JOB' | 'TERRAFORM'>
         }
       | {
           serviceId: string
@@ -352,6 +371,13 @@ export const services = createQueryKeys('services', {
             serviceType,
           }
         })
+        .with({ serviceType: 'TERRAFORM' }, async ({ serviceId, serviceType }) => {
+          return {
+            results: [],
+            // results: (await terraformMainCallsApi.listTerraformCommit(serviceId)).data.results,
+            serviceType,
+          }
+        }) // TODO [CQ-821] implement this once the endpoint will be available
         .exhaustive()
       return commits
     },
@@ -379,7 +405,10 @@ export const services = createQueryKeys('services', {
           async () => (await jobDeploymentsApi.listJobDeploymentHistoryV2(serviceId)).data.results
         )
         .with('HELM', async () => (await helmDeploymentsApi.listHelmDeploymentHistoryV2(serviceId)).data.results)
-        .with('TERRAFORM', async () => undefined) // TODO [QOV-821] to be implemented
+        .with(
+          'TERRAFORM',
+          async () => (await terraformDeploymentsApi.listTerraformDeploymentHistoryV2(serviceId)).data.results
+        )
         .exhaustive()
     },
   }),
@@ -448,7 +477,7 @@ export const services = createQueryKeys('services', {
         }))
         .with('HELM', (serviceType) => ({ query: helmsApi.getDefaultHelmAdvancedSettings.bind(helmsApi), serviceType }))
         .with('TERRAFORM', (serviceType) => ({
-          query: async () => ({ data: {} }), // TODO [QOV-821] to be implemented
+          query: terraformsApi.getDefaultTerraformAdvancedSettings.bind(terraformConfigurationApi),
           serviceType,
         }))
         .exhaustive()
@@ -485,7 +514,7 @@ export const services = createQueryKeys('services', {
         .with('TERRAFORM', (serviceType) => ({
           query: terraformConfigurationApi.getTerraformAdvancedSettings.bind(terraformConfigurationApi),
           serviceType,
-        })) // TODO [QOV-821] to double check
+        }))
         .exhaustive()
       const response = await query(serviceId)
       return response.data
@@ -496,7 +525,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM' | 'TERRAFORM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -513,6 +542,10 @@ export const services = createQueryKeys('services', {
           query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
           serviceType,
         }))
+        .with('TERRAFORM', (serviceType) => ({
+          query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
+          serviceType,
+        })) // TODO [QOV-821] replace with customDomainTerraformApi when it will be available
         .exhaustive()
       const response = await query(serviceId)
       return response.data.results
@@ -523,7 +556,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM' | 'TERRAFORM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -538,6 +571,10 @@ export const services = createQueryKeys('services', {
         }))
         .with('HELM', (serviceType) => ({
           query: customDomainHelmApi.checkHelmCustomDomain.bind(customDomainHelmApi),
+          serviceType,
+        }))
+        .with('TERRAFORM', (serviceType) => ({
+          query: async () => ({ data: { results: [] as CheckedCustomDomainResponse[] } }), // TODO [QOV-821] to be implemented
           serviceType,
         }))
         .exhaustive()
@@ -591,6 +628,9 @@ type CreateServiceRequest = {
     | ({
         serviceType: HelmType
       } & HelmRequest)
+    | ({
+        serviceType: TerraformType
+      } & TerraformRequest)
 }
 
 type EditServiceRequest = {
@@ -611,6 +651,9 @@ type EditServiceRequest = {
     | ({
         serviceType: HelmType
       } & HelmRequest)
+    | ({
+        serviceType: TerraformType
+      } & TerraformRequest)
 }
 
 type DeployRequest =
@@ -639,6 +682,10 @@ type DeployRequest =
       serviceId: string
       serviceType: DatabaseType
     }
+  | {
+      serviceId: string
+      serviceType: TerraformType
+    }
 
 type EditAdvancedSettingsRequest = {
   serviceId: string
@@ -655,6 +702,9 @@ type EditAdvancedSettingsRequest = {
     | ({
         serviceType: HelmType
       } & HelmAdvancedSettings)
+    | ({
+        serviceType: TerraformType
+      } & TerraformAdvancedSettings)
 }
 
 export const mutations = {
@@ -672,9 +722,9 @@ export const mutations = {
       }))
       .with('HELM', (serviceType) => ({ mutation: helmsApi.cloneHelm.bind(helmsApi), serviceType }))
       .with('TERRAFORM', (serviceType) => ({
-        mutation: () => ({ data: { id: 'id', environment: { id: 'id' } } }),
+        mutation: terraformsApi.cloneTerraform.bind(terraformsApi),
         serviceType,
-      })) // TODO [QOV-821] to be implemented
+      }))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -784,7 +834,7 @@ export const mutations = {
       .with('TERRAFORM', (serviceType) => ({
         mutation: terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi),
         serviceType,
-      })) // TODO [QOV-821] double check that
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
@@ -811,6 +861,11 @@ export const mutations = {
         mutation: helmsApi.createHelm.bind(helmsApi, environmentId, payload),
         serviceType: 'HELM' as const,
       }))
+      .with({ serviceType: 'TERRAFORM' }, (payload) => ({
+        mutation: terraformsApi.createTerraform.bind(terraformsApi, environmentId, payload),
+        serviceType: 'TERRAFORM' as const,
+      }))
+
       .exhaustive()
     const response = await mutation()
     return response.data
@@ -835,6 +890,10 @@ export const mutations = {
       }))
       .with({ serviceType: 'HELM' }, ({ serviceType, ...payload }) => ({
         mutation: helmMainCallsApi.editHelm.bind(helmMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'TERRAFORM' }, ({ serviceType, ...payload }) => ({
+        mutation: terraformMainCallsApi.editTerraform.bind(terraformMainCallsApi, serviceId, payload),
         serviceType,
       }))
       .exhaustive()
@@ -899,6 +958,10 @@ export const mutations = {
       }))
       .with({ serviceType: 'HELM' }, ({ serviceId, serviceType, request }) => ({
         mutation: helmActionsApi.deployHelm.bind(helmActionsApi, serviceId, undefined, request),
+        serviceType,
+      }))
+      .with({ serviceType: 'TERRAFORM' }, ({ serviceId, serviceType }) => ({
+        mutation: terraformActionsApi.deployTerraform.bind(terraformActionsApi, serviceId),
         serviceType,
       }))
       .exhaustive()
@@ -974,6 +1037,14 @@ export const mutations = {
       }))
       .with({ serviceType: 'HELM' }, ({ serviceType, ...payload }) => ({
         mutation: helmConfigurationApi.editHelmAdvancedSettings.bind(helmConfigurationApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'TERRAFORM' }, ({ serviceType, ...payload }) => ({
+        mutation: terraformConfigurationApi.editTerraformAdvancedSettings.bind(
+          terraformConfigurationApi,
+          serviceId,
+          payload
+        ),
         serviceType,
       }))
       .exhaustive()

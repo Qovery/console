@@ -104,6 +104,7 @@ describe('EnvironmentStagesFeature', () => {
         containers: [],
         jobs: [],
         helms: [],
+        terraforms: [],
       },
     ]
 

@@ -1,4 +1,7 @@
-import { type ApplicationDeploymentRestriction } from 'qovery-typescript-axios'
+import {
+  type ApplicationDeploymentRestriction,
+  type TerraformDeploymentRestrictionResponse,
+} from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { type ApplicationType, type HelmType, type JobType } from '@qovery/domains/services/data-access'
 import {
@@ -90,7 +93,9 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
   const { mutate: deleteRestriction } = useDeleteDeploymentRestriction()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
-  const handleEdit = (deploymentRestriction: ApplicationDeploymentRestriction) => {
+  const handleEdit = (
+    deploymentRestriction: ApplicationDeploymentRestriction | TerraformDeploymentRestrictionResponse
+  ) => {
     openModal({
       content: (
         <CrudModalFeature onClose={closeModal} deploymentRestriction={deploymentRestriction} {...serviceParams} />
@@ -98,7 +103,9 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
     })
   }
 
-  const handleDelete = (deploymentRestriction: ApplicationDeploymentRestriction) => {
+  const handleDelete = (
+    deploymentRestriction: ApplicationDeploymentRestriction | TerraformDeploymentRestrictionResponse
+  ) => {
     openModalConfirmation({
       title: 'Delete Restriction',
       name: `${deploymentRestriction.mode}/${deploymentRestriction.type}/${deploymentRestriction.value}`,
