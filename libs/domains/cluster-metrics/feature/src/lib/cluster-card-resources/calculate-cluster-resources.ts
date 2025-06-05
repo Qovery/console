@@ -1,19 +1,5 @@
 import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
-
-// Converts MiB to GiB
-export const mibToGib = (mib: number): number => {
-  return mib / 1024
-}
-
-// Converts millicores to vCPU
-export const milliCoreToVCPU = (milliCore: number): number => {
-  return milliCore / 1000
-}
-
-// Format number to a specific precision and handle NaN
-export const formatNumber = (num: number, precision = 2): number => {
-  return isNaN(num) ? 0 : Number(num.toFixed(precision))
-}
+import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU } from '@qovery/shared/util-js'
 
 export interface ResourcesProps {
   used: number
@@ -33,11 +19,11 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
   nodes?.forEach((node) => {
     // CPU
     totalCpuMilli += node.resources_capacity.cpu_milli
-    usedCpuMilli += node.resources_allocated.request_cpu_milli
+    usedCpuMilli += node.resources_allocated.request_cpu_milli || 0
 
     // Memory
     totalMemoryMib += node.resources_capacity.memory_mib
-    usedMemoryMib += node.resources_allocated.request_memory_mib
+    usedMemoryMib += node.resources_allocated.request_memory_mib || 0
 
     // Disk
     totalDiskMib += node.resources_capacity.ephemeral_storage_mib
@@ -49,16 +35,15 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
   // Convert to display units
   const cpuUsed = formatNumber(milliCoreToVCPU(usedCpuMilli))
   const cpuTotal = formatNumber(milliCoreToVCPU(totalCpuMilli))
-
-  const cpuPercent = cpuTotal > 0 ? formatNumber((cpuUsed / cpuTotal) * 100) : 0
+  const cpuPercent = formatNumber(calculatePercentage(cpuUsed, cpuTotal))
 
   const memoryUsed = formatNumber(mibToGib(usedMemoryMib))
   const memoryTotal = formatNumber(mibToGib(totalMemoryMib))
-  const memoryPercent = memoryTotal > 0 ? formatNumber((memoryUsed / memoryTotal) * 100) : 0
+  const memoryPercent = formatNumber(calculatePercentage(memoryUsed, memoryTotal))
 
   const diskUsed = formatNumber(mibToGib(usedDiskMib))
   const diskTotal = formatNumber(mibToGib(totalDiskMib))
-  const diskPercent = diskTotal > 0 ? formatNumber((diskUsed / diskTotal) * 100) : 0
+  const diskPercent = formatNumber(calculatePercentage(diskUsed, diskTotal))
 
   return {
     cpu: {
