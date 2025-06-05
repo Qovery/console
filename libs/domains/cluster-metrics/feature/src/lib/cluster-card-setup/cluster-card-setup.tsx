@@ -4,7 +4,7 @@ import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
-import { timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface ClusterCardSetupProps {
@@ -74,6 +74,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
         {cluster?.cloud_provider !== 'ON_PREMISE' && deploymentStatus?.is_deployed && (
           <Skeleton width="65%" height={20} show={isLoading} className="truncate">
             <Link
+              title={deploymentStatus?.last_deployment_date && dateUTCString(deploymentStatus.last_deployment_date)}
               to={INFRA_LOGS_URL(organizationId, clusterId)}
               className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-neutral-150"
               state={{
@@ -97,15 +98,18 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                   () => 'Last deployment failed'
                 )
                 .otherwise((s) => upperCaseFirstLetter(s))}{' '}
-              {deploymentStatus?.last_deployment_date && timeAgo(new Date(deploymentStatus.last_deployment_date))}
+              {deploymentStatus?.last_deployment_date && timeAgo(new Date(deploymentStatus.last_deployment_date))} ago
               <Icon className="ml-auto text-base text-neutral-300" iconName="arrow-up-right" iconStyle="regular" />
             </Link>
           </Skeleton>
         )}
         <Skeleton width="65%" height={20} show={isLoading}>
-          <div className="flex h-8 items-center gap-2.5 p-1.5">
+          <div
+            title={cluster?.created_at && dateUTCString(cluster.created_at)}
+            className="flex h-8 items-center gap-2.5 p-1.5"
+          >
             <Icon className="text-base text-neutral-300" iconName="calendar-day" iconStyle="regular" />
-            Created {cluster?.created_at && timeAgo(new Date(cluster.created_at))}
+            Created {cluster?.created_at && timeAgo(new Date(cluster.created_at))} ago
           </div>
         </Skeleton>
       </div>

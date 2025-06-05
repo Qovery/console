@@ -15,49 +15,60 @@ export interface ClusterTableNodepoolProps {
 
 interface MetricProgressBarProps {
   type: 'cpu' | 'memory'
-  used: number
-  total: number | null
+  capacity: number
+  limit: number | null
   unit: string
 }
 
-function MetricProgressBar({ type, used, total, unit }: MetricProgressBarProps) {
-  const noLimit = total == null
+function MetricProgressBar({ type, capacity, limit, unit }: MetricProgressBarProps) {
+  if (limit === null) return null
 
-  const usedPercentage = calculatePercentage(used, total ?? 0)
-  const totalPercentage = Math.round(usedPercentage)
+  const capacityPercentage = calculatePercentage(capacity, limit)
+  const isLimitReached = capacityPercentage > 80
 
   return (
     <Tooltip
-      disabled={noLimit}
       content={
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col font-normal">
           <div className="flex items-center justify-between border-b border-neutral-400">
             <div className="flex w-full items-center justify-between px-2.5 py-1.5">
-              <span>{type === 'cpu' ? 'CPU' : 'Memory'} nodepool</span>
-              <span className="ml-auto block font-semibold">{totalPercentage}%</span>
+              {type === 'cpu' ? 'CPU' : 'Memory'} nodepool
             </div>
           </div>
           <div className="flex flex-col gap-1 px-2.5 py-1.5">
             <div className="flex w-full items-center gap-1.5">
               <span className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-brand-400" />
-                Used
+                Capacity
               </span>
-              <span className="ml-auto block font-semibold">
-                {used} {unit}
+              <span className="ml-auto block">
+                {capacity} {unit}
+              </span>
+            </div>
+            <div className="flex w-full items-center gap-1.5">
+              <span className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-neutral-150" />
+                Limit
+              </span>
+              <span className="ml-auto block">
+                {limit} {unit}
               </span>
             </div>
           </div>
+          {isLimitReached && (
+            <div className="border-t border-neutral-400 px-2.5 py-1.5 text-yellow-300">
+              Resource limit nearly reached; further node deployments will not be possible
+            </div>
+          )}
         </div>
       }
       classNameContent="w-[173px] p-0"
     >
       <ProgressBar.Root>
-        {noLimit ? (
-          <ProgressBar.Cell value={100} color="var(--color-neutral-150)" />
-        ) : (
-          <ProgressBar.Cell value={usedPercentage} color="var(--color-brand-400)" />
-        )}
+        <ProgressBar.Cell
+          value={capacityPercentage}
+          color={isLimitReached ? 'var(--color-yellow-500)' : 'var(--color-brand-400)'}
+        />
       </ProgressBar.Root>
     </Tooltip>
   )
@@ -117,9 +128,11 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
                     <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
-                      <span className="font-medium text-neutral-400">{metrics.cpuReserved}</span> vCPU
+                      <Tooltip content="Capacity" disabled={metrics.cpuTotal !== null}>
+                        <span className="font-medium text-neutral-400">{metrics.cpuReserved} vCPU</span>
+                      </Tooltip>
                       {metrics.cpuTotal ? (
-                        ` (limit: ${metrics.cpuTotal})`
+                        <span> (limit: {metrics.cpuTotal})</span>
                       ) : (
                         <span>
                           {' '}
@@ -146,14 +159,16 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       </Tooltip>
                     ))}
                 </div>
-                <MetricProgressBar type="cpu" used={metrics.cpuUsed} total={metrics.cpuTotal} unit="vCPU" />
+                <MetricProgressBar type="cpu" capacity={metrics.cpuUsed} limit={metrics.cpuTotal} unit="vCPU" />
               </div>
               <div className="flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5">
                 <div className="flex w-full items-center justify-between">
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
                     <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
-                      <span className="font-medium text-neutral-400">{metrics.memoryReserved}</span> GB
+                      <Tooltip content="Capacity" disabled={metrics.memoryTotal !== null}>
+                        <span className="font-medium text-neutral-400">{metrics.memoryReserved} GB</span>
+                      </Tooltip>
                       {metrics.memoryTotal ? (
                         ` (limit: ${metrics.memoryTotal})`
                       ) : (
@@ -182,7 +197,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       </Tooltip>
                     ))}
                 </div>
-                <MetricProgressBar type="memory" used={metrics.memoryUsed} total={metrics.memoryTotal} unit="GB" />
+                <MetricProgressBar type="memory" capacity={metrics.memoryUsed} limit={metrics.memoryTotal} unit="GB" />
               </div>
               <div className="flex w-1/4 flex-col gap-3 px-5">
                 <span className="relative -top-1 flex items-center gap-2 text-sm text-neutral-350">
