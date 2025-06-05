@@ -63,6 +63,7 @@ import {
   TerraformActionsApi,
   type TerraformAdvancedSettings,
   TerraformConfigurationApi,
+  TerraformDeployRequest,
   TerraformDeploymentHistoryApi,
   TerraformDeploymentRestrictionApi,
   TerraformMainCallsApi,
@@ -684,6 +685,7 @@ type DeployRequest =
   | {
       serviceId: string
       serviceType: TerraformType
+      request?: TerraformDeployRequest
     }
 
 type EditAdvancedSettingsRequest = {
@@ -959,8 +961,8 @@ export const mutations = {
         mutation: helmActionsApi.deployHelm.bind(helmActionsApi, serviceId, undefined, request),
         serviceType,
       }))
-      .with({ serviceType: 'TERRAFORM' }, ({ serviceId, serviceType }) => ({
-        mutation: terraformActionsApi.deployTerraform.bind(terraformActionsApi, serviceId),
+      .with({ serviceType: 'TERRAFORM' }, ({ serviceId, serviceType, request }) => ({
+        mutation: terraformActionsApi.deployTerraform.bind(terraformActionsApi, serviceId, request),
         serviceType,
       }))
       .exhaustive()
