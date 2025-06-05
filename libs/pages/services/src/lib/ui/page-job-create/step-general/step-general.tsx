@@ -81,6 +81,7 @@ export function StepGeneral(props: StepGeneralProps) {
           <Heading>General</Heading>
           <GeneralSetting
             label="Service name"
+            // @ts-expect-error TODO [QOV-821] Fix that
             service={match(props.jobType)
               .with(ServiceTypeEnum.LIFECYCLE_JOB, (): LifecycleJobResponse & { serviceType: 'JOB' } => ({
                 id: '',
