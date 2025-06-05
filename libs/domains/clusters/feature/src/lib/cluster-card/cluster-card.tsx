@@ -89,12 +89,12 @@ export interface ClusterCardProps {
 export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardProps) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
 
-  const isRunningStatusEnabled = useFeatureFlagVariantKey('cluster-running-status')
+  const isClusterOverviewEnabled = useFeatureFlagVariantKey('cluster-running-status')
 
   return (
     <Link
       to={
-        isRunningStatusEnabled
+        isClusterOverviewEnabled
           ? CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_OVERVIEW_URL
           : CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_GENERAL_URL
       }

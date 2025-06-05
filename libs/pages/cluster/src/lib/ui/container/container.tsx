@@ -20,7 +20,7 @@ import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
-  const isRunningStatusEnabled = useFeatureFlagVariantKey('cluster-running-status')
+  const isClusterOverviewEnabled = useFeatureFlagVariantKey('cluster-running-status')
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { mutate: deployCluster } = useDeployCluster()
@@ -94,7 +94,7 @@ export function Container({ children }: PropsWithChildren) {
   )
 
   const tabsItems = [
-    ...(isRunningStatusEnabled
+    ...(isClusterOverviewEnabled
       ? [
           {
             icon: <Icon iconName="cloud-word" iconStyle="regular" className="w-4" />,

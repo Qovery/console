@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
@@ -30,19 +31,31 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
     .with({ cloud_provider: 'AWS', instance_type: 'KARPENTER' }, () => false)
     .otherwise(() => true)
 
-  const totalNodes = (!shouldDisplayMinMaxNodes ? metrics?.nodes?.length : cluster?.max_running_nodes) || 0
+  const totalNodes = useMemo(
+    () => (!shouldDisplayMinMaxNodes ? metrics?.nodes?.length : cluster?.max_running_nodes) || 0,
+    [metrics?.nodes, cluster?.max_running_nodes, shouldDisplayMinMaxNodes]
+  )
 
-  const healthyNodes =
-    metrics?.nodes?.filter(
-      (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'True'
-    ).length || 0
+  const healthyNodes = useMemo(
+    () =>
+      metrics?.nodes?.filter(
+        (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'True'
+      ).length || 0,
+    [metrics?.nodes]
+  )
 
-  const warningNodes = Object.keys(runningStatus?.computed_status?.node_warnings || {}).length || 0
+  const warningNodes = useMemo(
+    () => Object.keys(runningStatus?.computed_status?.node_warnings || {}).length || 0,
+    [runningStatus?.computed_status?.node_warnings]
+  )
 
-  const deployingNodes =
-    metrics?.nodes?.filter(
-      (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'False'
-    ).length || 0
+  const deployingNodes = useMemo(
+    () =>
+      metrics?.nodes?.filter(
+        (node) => node.conditions?.find((condition) => condition.type === 'Ready')?.status === 'False'
+      ).length || 0,
+    [metrics?.nodes]
+  )
 
   const healthyPercentage = calculatePercentage(healthyNodes, totalNodes)
   const warningPercentage = calculatePercentage(warningNodes, totalNodes)

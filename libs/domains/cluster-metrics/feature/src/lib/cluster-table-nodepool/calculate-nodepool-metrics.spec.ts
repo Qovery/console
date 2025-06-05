@@ -286,4 +286,29 @@ describe('calculateNodePoolMetrics', () => {
       nodesDeployingCount: 1,
     })
   })
+
+  it('should handle null cpu_milli_limit', () => {
+    const mockNodePoolWithNullLimit: NodePoolInfoDto = {
+      name: 'default',
+      cpu_milli: 2000,
+      cpu_milli_limit: null,
+      memory_mib: 1024,
+      memory_mib_limit: 2048,
+      nodes_count: 2,
+    }
+
+    const result = calculateNodePoolMetrics(mockNodePoolWithNullLimit, mockNodes, mockNodeWarnings)
+
+    expect(result).toEqual({
+      cpuUsed: 2,
+      cpuTotal: null,
+      cpuReserved: 2,
+      memoryUsed: 1,
+      memoryTotal: 2,
+      memoryReserved: 1,
+      nodesCount: 2,
+      nodesWarningCount: 1,
+      nodesDeployingCount: 0,
+    })
+  })
 })
