@@ -40,7 +40,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
       </span>
       <Tooltip
         content={
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 font-normal">
             <div className="flex items-center justify-between border-b border-neutral-400">
               <span className="px-2.5 py-1.5">{type === 'cpu' ? 'CPU' : 'Memory'}</span>
             </div>
@@ -50,7 +50,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
                   <span className="h-2 w-2 rounded-full bg-purple-200" />
                   Reserved
                 </span>
-                <span className="ml-auto block font-semibold">
+                <span className="ml-auto block">
                   {reserved} {unit}
                 </span>
               </div>
@@ -59,7 +59,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
                   <span className="h-2 w-2 rounded-full bg-brand-400" />
                   Used
                 </span>
-                <span className="ml-auto block font-semibold">
+                <span className="ml-auto block">
                   {used} {unit}
                 </span>
               </div>
@@ -71,7 +71,7 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
             ) : (
               <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
                 <span>Total Available</span>
-                <span className="ml-auto block font-semibold">
+                <span className="ml-auto block">
                   {total} {unit}
                 </span>
               </div>

@@ -16,7 +16,7 @@ export function PlanCard(props: PlanCardProps) {
 
   return (
     <div className="rounded border border-neutral-250 bg-neutral-100 px-5 py-4 lg:w-80">
-      <h2 className="h5 mb-1">{title}</h2>
+      <h2 className="h5 mb-1 text-neutral-400">{title}</h2>
       <p className="mb-2 text-sm text-neutral-400">{text}</p>
       <p className="mb-4 flex items-center text-xs text-neutral-400">
         {name !== PlanEnum.ENTERPRISE ? (
