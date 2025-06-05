@@ -63,7 +63,7 @@ import {
   TerraformActionsApi,
   type TerraformAdvancedSettings,
   TerraformConfigurationApi,
-  TerraformDeployRequest,
+  type TerraformDeployRequest,
   TerraformDeploymentHistoryApi,
   TerraformDeploymentRestrictionApi,
   TerraformMainCallsApi,

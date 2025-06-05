@@ -1,4 +1,5 @@
 import { type ClusterStateEnum, type StateEnum } from 'qovery-typescript-axios'
+import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { RunningState } from '@qovery/shared/enums'
 
@@ -111,5 +112,11 @@ export const isCancelBuildAvailable = (status: keyof typeof StateEnum | keyof ty
       'DELETE_QUEUED',
       () => true
     )
+    .otherwise(() => false)
+}
+
+export const isDryRunAvailable = (serviceType: ServiceType): boolean => {
+  return match(serviceType)
+    .with('TERRAFORM', () => true)
     .otherwise(() => false)
 }
