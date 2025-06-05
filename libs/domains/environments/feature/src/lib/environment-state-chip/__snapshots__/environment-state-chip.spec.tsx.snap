@@ -36,31 +36,37 @@ exports[`EnvironmentStatusChip should match snapshot with deployment status 1`] 
 exports[`EnvironmentStatusChip should match snapshot with running status 1`] = `
 <div>
   <div
-    class=""
-    data-state="closed"
+    aria-busy="false"
+    class="flex"
+    style="border-radius: 100%;"
   >
     <div
-      class="relative flex h-4 w-4 items-center justify-center text-brand-500 dark:text-brand-300"
+      class=""
+      data-state="closed"
     >
       <div
-        class="absolute left-0 top-0 h-full w-full animate-spin rounded-full border-[1.5px] border-current border-r-transparent"
-      />
-      <div
-        class="p-1"
+        class="relative flex h-4 w-4 items-center justify-center text-brand-500 dark:text-brand-300"
       >
-        <svg
-          class="relative left-[1px] mx-auto scale-75"
-          fill="none"
-          height="100%"
-          viewBox="0 0 8 10"
-          width="100%"
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          class="absolute left-0 top-0 h-full w-full animate-spin rounded-full border-[1.5px] border-current border-r-transparent"
+        />
+        <div
+          class="p-1"
         >
-          <path
-            d="M8 5l-8 5V0l8 5z"
-            fill="currentColor"
-          />
-        </svg>
+          <svg
+            class="relative left-[1px] mx-auto scale-75"
+            fill="none"
+            height="100%"
+            viewBox="0 0 8 10"
+            width="100%"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8 5l-8 5V0l8 5z"
+              fill="currentColor"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   </div>
