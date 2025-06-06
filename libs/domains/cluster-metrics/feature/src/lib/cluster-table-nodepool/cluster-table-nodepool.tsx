@@ -1,4 +1,5 @@
 import * as Accordion from '@radix-ui/react-accordion'
+import clsx from 'clsx'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
@@ -38,7 +39,11 @@ function MetricProgressBar({ type, capacity, limit, unit }: MetricProgressBarPro
           <div className="flex flex-col gap-1 px-2.5 py-1.5">
             <div className="flex w-full items-center gap-1.5">
               <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-brand-400" />
+                <span
+                  className={clsx('h-2 w-2 rounded-full bg-brand-400', {
+                    'bg-yellow-500': isLimitReached,
+                  })}
+                />
                 Capacity
               </span>
               <span className="ml-auto block">
@@ -129,7 +134,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
                       <Tooltip content="Capacity" disabled={metrics.cpuTotal !== null}>
-                        <span className="font-medium text-neutral-400">{metrics.cpuReserved} vCPU</span>
+                        <span className="font-medium text-neutral-400">{metrics.cpuCapacity} vCPU</span>
                       </Tooltip>
                       {metrics.cpuTotal ? (
                         <span> (limit: {metrics.cpuTotal})</span>
@@ -159,7 +164,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       </Tooltip>
                     ))}
                 </div>
-                <MetricProgressBar type="cpu" capacity={metrics.cpuUsed} limit={metrics.cpuTotal} unit="vCPU" />
+                <MetricProgressBar type="cpu" capacity={metrics.cpuCapacity} limit={metrics.cpuTotal} unit="vCPU" />
               </div>
               <div className="flex w-1/4 flex-col gap-3 border-r border-neutral-200 px-5">
                 <div className="flex w-full items-center justify-between">
@@ -167,7 +172,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
                       <Tooltip content="Capacity" disabled={metrics.memoryTotal !== null}>
-                        <span className="font-medium text-neutral-400">{metrics.memoryReserved} GB</span>
+                        <span className="font-medium text-neutral-400">{metrics.memoryCapacity} GB</span>
                       </Tooltip>
                       {metrics.memoryTotal ? (
                         ` (limit: ${metrics.memoryTotal})`
@@ -197,7 +202,12 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                       </Tooltip>
                     ))}
                 </div>
-                <MetricProgressBar type="memory" capacity={metrics.memoryUsed} limit={metrics.memoryTotal} unit="GB" />
+                <MetricProgressBar
+                  type="memory"
+                  capacity={metrics.memoryCapacity}
+                  limit={metrics.memoryTotal}
+                  unit="GB"
+                />
               </div>
               <div className="flex w-1/4 flex-col gap-3 px-5">
                 <span className="relative -top-1 flex items-center gap-2 text-sm text-neutral-350">
