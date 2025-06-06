@@ -55,23 +55,24 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
               </span>
             </div>
           </div>
-          {usedPercentage > reservedPercentage ? (
+          <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
+            <span>Total Available</span>
+            <span className="ml-auto block">
+              {total} {unit}
+            </span>
+          </div>
+          {usedPercentage > reservedPercentage && (
             <div className="flex items-center justify-between border-t border-neutral-400 px-2 py-1.5">
               Exceeds reserved allocation Review workload distribution on high-usage
-            </div>
-          ) : (
-            <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
-              <span>Total Available</span>
-              <span className="ml-auto block">
-                {total} {unit}
-              </span>
             </div>
           )}
         </div>
       }
       classNameContent="w-[173px] p-0"
     >
-      <ClusterProgressBarNode used={used} reserved={reserved} total={total} />
+      <div className="w-full">
+        <ClusterProgressBarNode used={used} reserved={reserved} total={total} />
+      </div>
     </Tooltip>
   )
 }
@@ -128,7 +129,6 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
           (condition) => condition.type === 'MemoryPressure' && condition.status === 'True'
         )
 
-        // Calculate CPU usage percentage
         const cpuUsedPercentage = Math.round(
           calculatePercentage(
             formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0)),
@@ -136,7 +136,6 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
           )
         )
 
-        // Calculate Memory usage percentage
         const memoryUsedPercentage = Math.round(
           calculatePercentage(
             formatNumber(
@@ -193,13 +192,6 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                   })}
                 >
                   {memoryUsedPercentage}%
-                  {isMemoryPressure && (
-                    <Tooltip content="Node has memory pressure condition">
-                      <span className="mr-1.5">
-                        <Icon iconName="circle-exclamation" iconStyle="regular" />
-                      </span>
-                    </Tooltip>
-                  )}
                 </span>
                 <MetricProgressBar
                   type="memory"
