@@ -3,7 +3,12 @@ import {
   type TerraformDeploymentRestrictionResponse,
 } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { type ApplicationType, type HelmType, type JobType } from '@qovery/domains/services/data-access'
+import {
+  type ApplicationType,
+  type HelmType,
+  type JobType,
+  type TerraformType,
+} from '@qovery/domains/services/data-access'
 import {
   useDeleteDeploymentRestriction,
   useDeploymentRestrictions,
@@ -37,7 +42,8 @@ export function PageSettingsDeploymentRestrictionsFeature() {
     return null
   }
 
-  const isValidServiceType = serviceType === 'APPLICATION' || serviceType === 'JOB' || serviceType === 'HELM'
+  const isValidServiceType =
+    serviceType === 'APPLICATION' || serviceType === 'JOB' || serviceType === 'HELM' || serviceType === 'TERRAFORM'
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -77,7 +83,7 @@ export function PageSettingsDeploymentRestrictionsFeature() {
 
 interface PageSettingsDeploymentRestrictionsFeatureInnerProps {
   serviceId: string
-  serviceType: ApplicationType | JobType | HelmType
+  serviceType: ApplicationType | JobType | HelmType | TerraformType
 }
 
 function PageSettingsDeploymentRestrictionsFeatureInner({

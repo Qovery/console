@@ -169,9 +169,29 @@ export function ApplicationSettingsResources({
             />
           )}
         />
+        {service?.serviceType === 'TERRAFORM' && (
+          <Controller
+            name="storage_gib"
+            control={control}
+            rules={{
+              required: 'Please set a value.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-memory-memory"
+                type="number"
+                name={field.name}
+                label="Storage (GiB)"
+                value={field.value}
+                onChange={field.onChange}
+                error={error?.message}
+              />
+            )}
+          />
+        )}
       </Section>
 
-      {service?.serviceType !== 'JOB' && displayInstanceLimits && (
+      {!['JOB', 'TERRAFORM'].includes(service?.serviceType || '') && displayInstanceLimits && (
         <Section className="gap-4">
           <Heading>Instances</Heading>
           <div className="grid grid-cols-2 gap-4">

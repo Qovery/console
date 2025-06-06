@@ -22,7 +22,9 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
 
   const defaultInstances = match(service)
     .with({ serviceType: 'JOB' }, () => ({}))
-    .with({ serviceType: 'TERRAFORM' }, () => ({}))
+    .with({ serviceType: 'TERRAFORM' }, (s) => ({
+      storage_gib: s.job_resources.storage_gib,
+    }))
     .otherwise((s) => ({
       min_running_instances: s.min_running_instances || 1,
       max_running_instances: s.max_running_instances || 1,
@@ -31,8 +33,12 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      memory: 'memory' in service ? service.memory : 0,
-      cpu: 'cpu' in service ? service.cpu : 0,
+      memory: match(service)
+        .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources.ram_mib)
+        .otherwise((s) => s.memory || 0),
+      cpu: match(service)
+        .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources.cpu_milli)
+        .otherwise((s) => s.cpu || 0),
       ...defaultInstances,
     },
   })
@@ -71,7 +77,13 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
       .with({ serviceType: 'TERRAFORM' }, (service) =>
         buildEditServicePayload({
           service,
-          // TODO [CQ-821] add request here
+          request: {
+            job_resources: {
+              cpu_milli: Number(data['cpu']),
+              ram_mib: Number(data['memory']),
+              storage_gib: Number(data['storage_gib']),
+            },
+          },
         })
       )
       .exhaustive()
@@ -106,9 +118,13 @@ export function PageSettingsResourcesFeature() {
   if (!environment) return null
 
   return match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'JOB' }, (service) => (
-      <SettingsResourcesFeature service={service} environment={environment} />
-    ))
+    .with(
+      { serviceType: 'APPLICATION' },
+      { serviceType: 'CONTAINER' },
+      { serviceType: 'JOB' },
+      { serviceType: 'TERRAFORM' },
+      (service) => <SettingsResourcesFeature service={service} environment={environment} />
+    )
     .otherwise(() => null)
 }
 

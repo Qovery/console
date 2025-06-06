@@ -53,6 +53,7 @@ type helmProps = {
 
 type terraformProps = {
   service: Terraform
+  request?: Partial<TerraformRequest>
 }
 
 export type responseToRequestProps =
@@ -81,7 +82,7 @@ export function buildEditServicePayload(props: responseToRequestProps) {
       .with({ service: { serviceType: 'DATABASE' } }, (props) => refactoDatabase(props))
       .with({ service: { serviceType: 'JOB' } }, (props) => refactoJob(props))
       .with({ service: { serviceType: 'HELM' } }, (props) => refactoHelm(props))
-      .with({ service: { serviceType: 'TERRAFORM' } }, (props) => props)
+      .with({ service: { serviceType: 'TERRAFORM' } }, (props) => refactoTerraform(props))
       .exhaustive(),
   }
 }
@@ -90,6 +91,9 @@ export function buildEditServicePayload(props: responseToRequestProps) {
 TODO: all this following functions should be removed after the API refactoring and we need to clean it after the Services migration to React Query
 https://www.notion.so/qovery/API-improvements-b54ba305c2ee4e549eb002278c532c7f?pvs=4#7d71ea23b5fa44ca80c15a0c32ebd8da
 */
+function refactoTerraform({ service, request = {} }: terraformProps) {
+  return { ...service, ...request }
+}
 
 function refactoApplication({ service: application, request = {} }: applicationProps): ApplicationEditRequest {
   // refacto because we can't send all git data

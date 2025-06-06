@@ -5,7 +5,12 @@ import {
   type TerraformDeploymentRestrictionResponse,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { type ApplicationType, type HelmType, type JobType } from '@qovery/domains/services/data-access'
+import {
+  type ApplicationType,
+  type HelmType,
+  type JobType,
+  type TerraformType,
+} from '@qovery/domains/services/data-access'
 import { useCreateDeploymentRestriction, useEditDeploymentRestriction } from '@qovery/domains/services/feature'
 import CrudModal from '../../../ui/page-settings-deployment-restrictions/crud-modal/crud-modal'
 
@@ -13,7 +18,7 @@ export interface CrudModalFeatureProps {
   deploymentRestriction?: ApplicationDeploymentRestriction | TerraformDeploymentRestrictionResponse
   onClose: () => void
   serviceId: string
-  serviceType: ApplicationType | JobType | HelmType
+  serviceType: ApplicationType | JobType | HelmType | TerraformType
 }
 export function CrudModalFeature({ deploymentRestriction, serviceId, serviceType, onClose }: CrudModalFeatureProps) {
   const serviceParams = {

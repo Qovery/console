@@ -66,6 +66,7 @@ import {
   type TerraformDeployRequest,
   TerraformDeploymentHistoryApi,
   TerraformDeploymentRestrictionApi,
+  type TerraformDeploymentRestrictionRequest,
   TerraformMainCallsApi,
   type TerraformRequest,
   TerraformsApi,
@@ -609,6 +610,12 @@ type DeploymentRestrictionRequest =
       deploymentRestrictionId: string
       payload: HelmDeploymentRestrictionRequest
     }
+  | {
+      serviceId: string
+      serviceType: TerraformType
+      deploymentRestrictionId: string
+      payload: TerraformDeploymentRestrictionRequest
+    }
 
 type CreateServiceRequest = {
   environmentId: string
@@ -751,6 +758,12 @@ export const mutations = {
         mutation: helmDeploymentRestrictionApi.editHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi),
         serviceType,
       }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: terraformDeploymentRestrictionApi.editTerraformDeploymentRestriction.bind(
+          terraformDeploymentRestrictionApi
+        ),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, deploymentRestrictionId, payload)
     return response.data
@@ -775,6 +788,12 @@ export const mutations = {
         mutation: helmDeploymentRestrictionApi.createHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi),
         serviceType,
       }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: terraformDeploymentRestrictionApi.createTerraformDeploymentRestriction.bind(
+          terraformDeploymentRestrictionApi
+        ),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -797,6 +816,12 @@ export const mutations = {
       }))
       .with('HELM', (serviceType) => ({
         mutation: helmDeploymentRestrictionApi.deleteHelmDeploymentRestriction.bind(helmDeploymentRestrictionApi),
+        serviceType,
+      }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: terraformDeploymentRestrictionApi.deleteTerraformDeploymentRestriction.bind(
+          terraformDeploymentRestrictionApi
+        ),
         serviceType,
       }))
       .exhaustive()

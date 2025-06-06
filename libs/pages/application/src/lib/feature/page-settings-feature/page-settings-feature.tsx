@@ -161,11 +161,9 @@ export function PageSettingsFeature() {
       advancedSettings,
       dangerzoneSettings,
     ])
-    .with({ serviceType: 'TERRAFORM' }, (s) => [
+    .with({ serviceType: 'TERRAFORM' }, () => [
       generalSettings,
-      valuesOverrideSetting,
-      networkingSetting,
-      domainSettings,
+      resourcesSettings,
       deploymentRestrictionsSettings,
       advancedSettings,
       dangerzoneSettings,
