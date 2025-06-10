@@ -159,7 +159,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                             CLUSTER_SETTINGS_RESOURCES_URL
                           }
                         >
-                          <Icon iconName="pen" iconStyle="regular" className="text-neutral-300" />
+                          <Icon iconName="gear" iconStyle="regular" className="text-neutral-300" />
                         </Link>
                       </Tooltip>
                     ))}
@@ -197,7 +197,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                             CLUSTER_SETTINGS_RESOURCES_URL
                           }
                         >
-                          <Icon iconName="pen" iconStyle="regular" className="text-neutral-300" />
+                          <Icon iconName="gear" iconStyle="regular" className="text-neutral-300" />
                         </Link>
                       </Tooltip>
                     ))}
