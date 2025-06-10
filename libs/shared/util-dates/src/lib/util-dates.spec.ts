@@ -9,6 +9,7 @@ import {
   dateYearMonthDayHourMinuteSecond,
   formatDuration,
   formatDurationMinutesSeconds,
+  timeAgo,
 } from './util-dates'
 
 describe('util-dates', () => {
@@ -18,6 +19,10 @@ describe('util-dates', () => {
   beforeAll(() => {
     jest.useFakeTimers()
     jest.setSystemTime(now)
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
   })
 
   it('dateDifferenceMinutes', () => {
@@ -104,5 +109,21 @@ describe('util-dates', () => {
   it('should handle complex duration with hours, minutes and fractional seconds', () => {
     const result = formatDurationMinutesSeconds('PT1H23M45.678S')
     expect(result).toBe('83m 45s')
+  })
+})
+
+describe('timeAgo function', () => {
+  it('should format time ago in compact format', () => {
+    const now = new Date()
+    const date = new Date(now.getTime() - 2 * 60 * 60 * 1000)
+    const result = timeAgo(date, true)
+    expect(result).toBe('2h')
+  })
+
+  it('should format time ago in full format', () => {
+    const now = new Date()
+    const date = new Date(now.getTime() - 2 * 60 * 60 * 1000)
+    const result = timeAgo(date)
+    expect(result).toBe('2 hours')
   })
 })

@@ -1,10 +1,15 @@
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { ClusterCardNodeUsage } from './cluster-card-node-usage'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
   useClusterRunningStatus: jest.fn(),
+}))
+
+jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
+  useClusterMetrics: jest.fn(),
 }))
 
 describe('ClusterCardNodeUsage', () => {
@@ -15,7 +20,7 @@ describe('ClusterCardNodeUsage', () => {
     jest.clearAllMocks()
   })
 
-  const setupMocks = (clusterProvider = 'AWS', instanceType = 'KARPENTER', runningStatus = null) => {
+  const setupMocks = (clusterProvider = 'AWS', instanceType = 'KARPENTER', runningStatus = null, metrics = null) => {
     const mockCluster = {
       cloud_provider: clusterProvider,
       instance_type: instanceType,
@@ -24,14 +29,17 @@ describe('ClusterCardNodeUsage', () => {
     }
 
     const defaultRunningStatus = {
+      computed_status: {
+        node_warnings: { 'node-1': 'warning' },
+      },
+    }
+
+    const defaultMetrics = {
       nodes: [
         { conditions: [{ type: 'Ready', status: 'True' }] },
         { conditions: [{ type: 'Ready', status: 'True' }] },
         { conditions: [{ type: 'Ready', status: 'False' }] },
       ],
-      computed_status: {
-        node_warnings: { 'node-1': 'warning' },
-      },
     }
 
     ;(useCluster as jest.Mock).mockReturnValue({
@@ -39,6 +47,9 @@ describe('ClusterCardNodeUsage', () => {
     })
     ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
       data: runningStatus || defaultRunningStatus,
+    })
+    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+      data: metrics || defaultMetrics,
     })
   }
 
