@@ -55,9 +55,8 @@ import {
   ExternalLink,
   Icon,
   Link,
-  Menu,
-  MenuAlign,
   type MenuData,
+  Skeleton,
   StatusChip,
   TableFilter,
   TablePrimitives,
@@ -423,25 +422,27 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
             )
             .otherwise(({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL)
           return (
-            <Tooltip content="See overview">
-              <Link
-                as="button"
-                to={link}
-                onClick={(e) => e.stopPropagation()}
-                className="gap-2 whitespace-nowrap text-sm"
-                size="md"
-                color="neutral"
-                variant="outline"
-                radius="full"
-              >
-                <StatusChip
-                  status={match(service)
-                    .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
-                    .otherwise((s) => s.runningStatus?.state)}
-                />
-                {value}
-              </Link>
-            </Tooltip>
+            <Skeleton width={102} height={34} show={!value}>
+              <Tooltip content="See overview">
+                <Link
+                  as="button"
+                  to={link}
+                  onClick={(e) => e.stopPropagation()}
+                  className="gap-2 whitespace-nowrap text-sm"
+                  size="md"
+                  color="neutral"
+                  variant="outline"
+                  radius="full"
+                >
+                  <StatusChip
+                    status={match(service)
+                      .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
+                      .otherwise((s) => s.runningStatus?.state)}
+                  />
+                  {value}
+                </Link>
+              </Tooltip>
+            </Skeleton>
           )
         },
       }),

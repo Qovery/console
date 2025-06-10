@@ -56,7 +56,7 @@ export function useServices({ environmentId }: UseServicesProps) {
             }))
             .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
               state: undefined,
-              stateLabel: 'Stopped',
+              stateLabel: undefined,
             }))
             .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
               ...runningStatus,

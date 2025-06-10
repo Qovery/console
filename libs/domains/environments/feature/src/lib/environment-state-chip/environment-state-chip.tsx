@@ -44,7 +44,11 @@ type RunningStateChipProps = Omit<EnvironmentStateChipProps, 'mode'>
 
 function RunningStateChip({ environmentId, ...props }: RunningStateChipProps) {
   const { data: runningStatus } = useRunningStatus({ environmentId })
-  return <StatusChip status={runningStatus?.state ?? 'STOPPED'} {...props} />
+  return (
+    <Skeleton width={16} height={16} show={!runningStatus?.state} rounded>
+      <StatusChip status={runningStatus?.state} {...props} />
+    </Skeleton>
+  )
 }
 
 export function EnvironmentStateChip({ mode, ...props }: EnvironmentStateChipProps) {
