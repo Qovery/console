@@ -20,11 +20,7 @@ export const isTryingToRemoveLastPublicPort = (
   }
 
   return match(serviceType)
-    .with(ServiceTypeEnum.HELM, () => {
-      return (
-        ports?.filter((p) => currentPort && 'id' in currentPort && 'id' in p && p.id !== currentPort.id).length === 0
-      )
-    })
+    .with(ServiceTypeEnum.HELM, () => ports?.length === 1) // Helm ports are public so we're simply checking if there's only one port
     .otherwise(() => {
       return (
         ports?.filter((p) => {
