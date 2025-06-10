@@ -264,44 +264,44 @@ export function CrudModal({
         </Callout.Root>
       )}
       {isEdit && !watchPublicly && getFieldState('publicly_accessible').isDirty && isLastPublicPort && (
-        <Callout.Root className="mt-5" color="red">
+        <Callout.Root className="mt-5 grid grid-cols-[1fr_auto] gap-y-3" color="red">
           <Callout.Icon>
             <Icon iconName="triangle-exclamation" className="text-red-600" />
           </Callout.Icon>
           <Callout.Text>
-            <div className="flex flex-col gap-2">
-              <p className="font-semibold">
-                You are about to remove your last public port.
-                <br />
-                Please confirm that you understand the impact of this operation.
-              </p>
-              <div className="flex items-center gap-4">
-                <Controller
-                  name="confirm"
-                  control={control}
-                  rules={{
-                    required: 'Please check the box to confirm.',
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-start gap-3">
-                        <Checkbox
-                          name={field.name}
-                          id={field.name}
-                          className="mt-1 shrink-0"
-                          color="red"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <label htmlFor={field.name}>
-                          I understand this action is irreversible and will delete all linked domains
-                        </label>
-                      </div>
-                      {error && <p className="text-sm text-red-500">{error.message}</p>}
+            <p className="font-semibold">
+              You are about to remove your last public port.
+              <br />
+              Please confirm that you understand the impact of this operation.
+            </p>
+          </Callout.Text>
+          <Callout.Text className="col-span-2 flex flex-col gap-2">
+            <div className="flex items-center gap-4">
+              <Controller
+                name="confirm"
+                control={control}
+                rules={{
+                  required: 'Please check the box to confirm.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className="flex flex-col gap-1">
+                    <div className="ml-[2px] flex items-start gap-3">
+                      <Checkbox
+                        name={field.name}
+                        id={field.name}
+                        className="mt-0.5 shrink-0"
+                        color="red"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                      <label htmlFor={field.name}>
+                        I understand this action is irreversible and will delete all linked domains
+                      </label>
                     </div>
-                  )}
-                />
-              </div>
+                    {error && <p className="ml-8 text-sm text-red-500">{error.message}</p>}
+                  </div>
+                )}
+              />
             </div>
           </Callout.Text>
         </Callout.Root>
