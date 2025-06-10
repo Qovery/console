@@ -4,11 +4,26 @@ import { PageSettingsDomains, type PageSettingsDomainsProps, hasPublicPort } fro
 
 let props: PageSettingsDomainsProps
 
-let mockIngressDeploymentStatus = 'DEPLOYED'
+let mockLinks = [
+  {
+    url: 'https://p80-z8e0035d9-zb93218f1-gtw.zc531a994.rustrocks.cloud',
+    internal_port: 80,
+    external_port: 443,
+    is_qovery_domain: true,
+    is_default: false,
+  },
+  {
+    url: 'https://z8e0035d9-zb93218f1-gtw.zc531a994.rustrocks.cloud',
+    internal_port: 80,
+    external_port: 443,
+    is_qovery_domain: true,
+    is_default: true,
+  },
+]
 jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),
-  useIngressDeploymentStatus: () => ({
-    data: { routerId: 'id', status: mockIngressDeploymentStatus },
+  useLinks: () => ({
+    data: mockLinks,
     isLoading: false,
   }),
 }))
@@ -152,19 +167,9 @@ describe('PageSettingsDomains', () => {
   })
 
   describe('with ingress deployment status', () => {
-    describe('when the ingress is stopped', () => {
-      it('should show the deploy button', () => {
-        mockIngressDeploymentStatus = 'STOPPED'
-        props.domains = []
-        props.loading = false
-        renderWithProviders(<PageSettingsDomains {...props} />)
-        expect(screen.getByText('Deploy')).toBeInTheDocument()
-      })
-    })
-
     describe('when the ingress is deployed', () => {
       it('should not show the deploy button but show the create public port button instead', () => {
-        mockIngressDeploymentStatus = 'CANCELED'
+        mockLinks = []
         props.domains = []
         props.loading = false
         renderWithProviders(<PageSettingsDomains {...props} />)
