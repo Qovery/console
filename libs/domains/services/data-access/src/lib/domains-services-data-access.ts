@@ -35,7 +35,6 @@ import {
   EnvironmentActionsApi,
   EnvironmentMainCallsApi,
   type EnvironmentServiceIdsAllRequest,
-  type GetIngressDeploymentStatusServiceTypeEnum,
   HelmActionsApi,
   type HelmAdvancedSettings,
   HelmConfigurationApi,
@@ -392,22 +391,6 @@ export const services = createQueryKeys('services', {
     async queryFn() {
       const response = await environmentMainCallsApi.listDeploymentRequestByServiceId(serviceId)
       return response.data.results
-    },
-  }),
-  ingressDeploymentStatus: ({
-    serviceType,
-    serviceId,
-  }: {
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
-    serviceId: string
-  }) => ({
-    queryKey: [serviceType, serviceId],
-    async queryFn() {
-      const response = await serviceStatusApi.getIngressDeploymentStatus(
-        serviceType.toLowerCase() as GetIngressDeploymentStatusServiceTypeEnum, // TODO rename the enum on openai-spec
-        serviceId
-      )
-      return response.data
     },
   }),
   listLinks: ({

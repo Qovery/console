@@ -17,6 +17,7 @@ export function useLinks({ serviceId, serviceType }: UseLinksProps) {
     enabled: match(serviceType)
       .with('APPLICATION', 'CONTAINER', 'HELM', () => true)
       .otherwise(() => false),
+    staleTime: 0,
   })
 }
 

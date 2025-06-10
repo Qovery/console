@@ -12,6 +12,8 @@ export interface CrudModalProps {
 }
 
 export function CrudModal({ customDomain, onSubmit, onClose, loading, isEdit, link }: CrudModalProps) {
+  console.log('customDomain', customDomain)
+  console.log('link', link)
   const { control, watch, setValue } = useFormContext<CustomDomainRequest>()
 
   const watchDomain = watch('domain')

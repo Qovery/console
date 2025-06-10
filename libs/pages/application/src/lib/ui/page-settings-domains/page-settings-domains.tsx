@@ -3,7 +3,7 @@ import { ServiceType } from 'qovery-ws-typescript-axios'
 import { useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useDeployService, useIngressDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { useDeployService, useLinks, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   APPLICATION_SETTINGS_NETWORKING_URL,
@@ -47,19 +47,19 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
   const params = useParams()
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = params
   const { data: service } = useService({ serviceId: applicationId })
-  const { data: ingressStatusData, isLoading: isIngressStatusLoading } = useIngressDeploymentStatus({
-    serviceId: applicationId,
-    serviceType: service?.serviceType ?? ServiceType.APPLICATION,
+  const { data: links = [], isLoading: areLinksLoading } = useLinks({
+    serviceId: service?.id || '',
+    serviceType: service?.serviceType || 'APPLICATION',
   })
+
   const { mutate: deployService } = useDeployService({
     organizationId: organizationId,
     projectId: projectId,
     environmentId: environmentId,
   })
 
-  const ingressStatus = ingressStatusData?.status
-  const isLoading = props.loading || isIngressStatusLoading
-  const canAddDomain = !isLoading && hasPublicPort(ingressStatus)
+  const isLoading = props.loading
+  const canAddDomain = !isLoading && !areLinksLoading && links.length > 0
   const pathToPortsTab = `${APPLICATION_URL(organizationId, projectId, environmentId, applicationId)}${APPLICATION_SETTINGS_URL}${service?.serviceType === ServiceType.HELM ? APPLICATION_SETTINGS_NETWORKING_URL : APPLICATION_SETTINGS_PORT_URL}`
 
   const mutationDeploy = useCallback(() => {
@@ -175,31 +175,14 @@ export function PageSettingsDomains(props: PageSettingsDomainsProps) {
               <Icon iconName="earth-americas" className="text-lg" iconStyle="regular" />
               <div className="flex flex-col items-center">
                 <span className="font-medium text-neutral-400">No domains configured</span>
-                <span className="text-sm text-neutral-350">
-                  {match(ingressStatus)
-                    .with(
-                      StateEnum.STOPPED,
-                      StateEnum.STOP_QUEUED,
-                      () => "You can't set up a domain because your service is currently stopped."
-                    )
-                    .otherwise(() => 'You need at least one exposed port to create a domain.')}
-                </span>
+                <span className="text-sm text-neutral-350">You need at least one exposed port to create a domain.</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              {match(ingressStatus)
-                .with(StateEnum.STOPPED, StateEnum.STOP_QUEUED, () => (
-                  <Button className="gap-1" onClick={mutationDeploy}>
-                    Deploy
-                    <Icon iconName="arrow-right" className="text-xs" />
-                  </Button>
-                ))
-                .otherwise(() => (
-                  <Link as="button" className="gap-1" to={pathToPortsTab}>
-                    Create public port
-                    <Icon iconName="arrow-right" className="text-xs" />
-                  </Link>
-                ))}
+              <Link as="button" className="gap-1" to={pathToPortsTab}>
+                Create public port
+                <Icon iconName="arrow-right" className="text-xs" />
+              </Link>
               <ExternalLink
                 as="button"
                 type="button"
