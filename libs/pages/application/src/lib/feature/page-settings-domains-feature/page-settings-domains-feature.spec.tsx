@@ -4,7 +4,6 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsDomainsFeature from './page-settings-domains-feature'
 
 const mockApplication = applicationFactoryMock(1)[0] as Application
-const mockIngressDeploymentStatus = 'DEPLOYED'
 jest.mock('@qovery/domains/services/feature', () => ({
   useService: () => ({
     data: mockApplication,
@@ -15,7 +14,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
     isFetching: false,
     refetch: jest.fn(),
   }),
-  useIngressDeploymentStatus: () => ({ data: { routerId: 'id', status: mockIngressDeploymentStatus } }),
+  useLinks: () => ({ data: [] }),
   useDeployService: () => ({
     mutate: jest.fn(),
   }),

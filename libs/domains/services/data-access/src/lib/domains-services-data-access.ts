@@ -58,7 +58,6 @@ import {
   type JobRequest,
   JobsApi,
   type RebootServicesRequest,
-  ServiceStatusApi,
   type Status,
   TerraformConfigurationApi,
   TerraformMainCallsApi,
@@ -117,8 +116,6 @@ const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
 const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
-
-const serviceStatusApi = new ServiceStatusApi()
 
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
