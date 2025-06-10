@@ -87,10 +87,7 @@ export function ModalMultiConfirmation({
                               checked={field.value}
                               onCheckedChange={field.onChange}
                             />
-                            <label htmlFor={field.name}>
-                              {check}
-                              {check}
-                            </label>
+                            <label htmlFor={field.name}>{check}</label>
                           </div>
                           {error && <p className="text-sm text-red-500">{error.message}</p>}
                         </div>

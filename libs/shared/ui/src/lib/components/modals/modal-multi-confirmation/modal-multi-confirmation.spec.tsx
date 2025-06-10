@@ -1,5 +1,14 @@
+import { Dialog } from '@radix-ui/react-dialog'
 import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ModalMultiConfirmation, { type ModalMultiConfirmationProps } from './modal-multi-confirmation'
+
+const renderComponent = (props: ModalMultiConfirmationProps) => {
+  return renderWithProviders(
+    <Dialog>
+      <ModalMultiConfirmation {...props} />
+    </Dialog>
+  )
+}
 
 describe('ModalMultiConfirmation', () => {
   let props: ModalMultiConfirmationProps
@@ -14,19 +23,19 @@ describe('ModalMultiConfirmation', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<ModalMultiConfirmation {...props} />)
+    const { baseElement } = renderComponent(props)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the validation checkboxes', () => {
-    renderWithProviders(<ModalMultiConfirmation {...props} />)
+    renderComponent(props)
 
     expect(screen.getByText('one')).toBeInTheDocument()
     expect(screen.getByText('two')).toBeInTheDocument()
   })
 
   it('should not submit until checkboxes are checked', async () => {
-    const { userEvent } = renderWithProviders(<ModalMultiConfirmation {...props} />)
+    const { userEvent } = renderComponent(props)
 
     expect(screen.getByText('one')).toBeInTheDocument()
     expect(screen.getByText('two')).toBeInTheDocument()
@@ -39,7 +48,7 @@ describe('ModalMultiConfirmation', () => {
   })
 
   it('should submit if all checkboxes are checked', async () => {
-    const { userEvent } = renderWithProviders(<ModalMultiConfirmation {...props} />)
+    const { userEvent } = renderComponent(props)
 
     // Checking the confirmation checkboxes
     await userEvent.click(screen.getByText('one'))
@@ -53,7 +62,7 @@ describe('ModalMultiConfirmation', () => {
     props.description = undefined
     props.isDelete = true
 
-    const { container } = renderWithProviders(<ModalMultiConfirmation {...props} />)
+    const { container } = renderComponent(props)
 
     expect(container).toMatchSnapshot()
   })

@@ -2,20 +2,22 @@
 
 exports[`ModalMultiConfirmation should match delete mode without description 1`] = `
 <div>
-  <div
-    class="p-6"
+  <section
+    class="flex flex-col p-5"
   >
-    <h2
-      class="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50"
+    <h1
+      class="font-bold mb-2 max-w-sm text-2xl text-neutral-400"
+      id="radix-:r1b:"
     >
       my title
-    </h2>
-    <div
-      class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
+    </h1>
+    <p
+      class="mb-6 text-sm text-neutral-350"
+      id="radix-:r1c:"
     />
     <form>
       <div
-        class="flex flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mb-5"
+        class="flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mb-5 grid grid-cols-[1fr_auto] gap-y-3"
         data-accent-color="red"
       >
         <div
@@ -35,72 +37,72 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
             <div
               class="font-semibold"
             />
+          </div>
+        </div>
+        <div
+          class="-order-1 mr-auto text-neutral-400 col-span-2 flex flex-col gap-2"
+        >
+          <div>
             <div
-              class="flex items-center gap-4"
+              class="flex flex-col gap-3"
             >
               <div
-                class="flex flex-col gap-2"
+                class="ml-[2px] flex items-start gap-3"
               >
-                <div
-                  class="flex items-center gap-3"
+                <button
+                  aria-checked="false"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 mt-0.5 shrink-0"
+                  data-state="unchecked"
+                  id="one"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+                <input
+                  aria-hidden="true"
+                  name="one"
+                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  tabindex="-1"
+                  type="checkbox"
+                  value="on"
+                />
+                <label
+                  for="one"
                 >
-                  <button
-                    aria-checked="false"
-                    class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 shrink-0"
-                    data-state="unchecked"
-                    id="one"
-                    role="checkbox"
-                    type="button"
-                    value="on"
-                  />
-                  <input
-                    aria-hidden="true"
-                    name="one"
-                    style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
-                    tabindex="-1"
-                    type="checkbox"
-                    value="on"
-                  />
-                  <label
-                    for="one"
-                  >
-                    one
-                  </label>
-                </div>
+                  one
+                </label>
               </div>
             </div>
+          </div>
+          <div>
             <div
-              class="flex items-center gap-4"
+              class="flex flex-col gap-3"
             >
               <div
-                class="flex flex-col gap-2"
+                class="ml-[2px] flex items-start gap-3"
               >
-                <div
-                  class="flex items-center gap-3"
+                <button
+                  aria-checked="false"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 mt-0.5 shrink-0"
+                  data-state="unchecked"
+                  id="two"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+                <input
+                  aria-hidden="true"
+                  name="two"
+                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  tabindex="-1"
+                  type="checkbox"
+                  value="on"
+                />
+                <label
+                  for="two"
                 >
-                  <button
-                    aria-checked="false"
-                    class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 shrink-0"
-                    data-state="unchecked"
-                    id="two"
-                    role="checkbox"
-                    type="button"
-                    value="on"
-                  />
-                  <input
-                    aria-hidden="true"
-                    name="two"
-                    style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
-                    tabindex="-1"
-                    type="checkbox"
-                    value="on"
-                  />
-                  <label
-                    for="two"
-                  >
-                    two
-                  </label>
-                </div>
+                  two
+                </label>
               </div>
             </div>
           </div>
@@ -124,6 +126,6 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
         </button>
       </div>
     </form>
-  </div>
+  </section>
 </div>
 `;
