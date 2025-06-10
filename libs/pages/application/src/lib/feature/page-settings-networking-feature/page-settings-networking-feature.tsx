@@ -30,10 +30,17 @@ export function PageSettingsNetworkingFeature() {
       return
     }
 
-    editService({
-      serviceId: applicationId,
-      payload: buildEditServicePayload({ service, request: data }),
-    })
+    editService(
+      {
+        serviceId: applicationId,
+        payload: buildEditServicePayload({ service, request: data }),
+      },
+      {
+        onError: () => {
+          methods.setValue('ports', service?.ports ?? [])
+        },
+      }
+    )
   })
 
   return (
