@@ -63,6 +63,7 @@ export function ContainerRegistryCreateEditModal({
 
     const {
       type,
+      kind,
       config: { login_type, ...config },
       ...rest
     } = containerRegistryRequest
@@ -73,8 +74,9 @@ export function ContainerRegistryCreateEditModal({
           containerRegistryId: registry.id,
           containerRegistryRequest: {
             ...rest,
+            kind,
             config:
-              type === 'STS'
+              type === 'STS' && kind === 'ECR'
                 ? {
                     role_arn: config?.role_arn,
                     region: config?.region,
@@ -91,8 +93,9 @@ export function ContainerRegistryCreateEditModal({
           organizationId: organizationId,
           containerRegistryRequest: {
             ...rest,
+            kind,
             config:
-              type === 'STS'
+              type === 'STS' && kind === 'ECR'
                 ? {
                     role_arn: config?.role_arn,
                     region: config?.region,

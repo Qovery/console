@@ -23,7 +23,7 @@ function scopeHierarchy(targetScope: APIVariableScopeEnum) {
     .with('BUILT_IN', () => baseHierarchy.slice(0, 1))
     .with('PROJECT', () => baseHierarchy.slice(0, 2))
     .with('ENVIRONMENT', () => baseHierarchy)
-    .with('APPLICATION', 'CONTAINER', 'HELM', 'JOB', (serviceScope) => [
+    .with('APPLICATION', 'CONTAINER', 'HELM', 'JOB', 'TERRAFORM', (serviceScope) => [
       ...baseHierarchy,
       {
         name: serviceScope,
@@ -43,6 +43,7 @@ function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof 
     .with('BUILT_IN', () => APIVariableScopeEnum.BUILT_IN)
     .with('PROJECT', () => APIVariableScopeEnum.PROJECT)
     .with('ENVIRONMENT', () => APIVariableScopeEnum.ENVIRONMENT)
+    .with('TERRAFORM', () => 'TERRAFORM' as APIVariableScopeEnum) // TODO [QOV-821] replace with APIVariableScopeEnum.TERRAFORM once it will be available
     .exhaustive()
 }
 

@@ -116,34 +116,27 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
     args:
       | {
           cloudProvider: Extract<CloudVendorEnum, 'AWS'>
-          clusterType: (typeof KubernetesEnum)[keyof typeof KubernetesEnum]
           region: string
         }
       | {
           cloudProvider: Extract<CloudVendorEnum, 'SCW'>
-          clusterType: Extract<KubernetesEnum, 'MANAGED'>
           region: string
         }
       | {
           cloudProvider: Extract<CloudVendorEnum, 'GCP'>
-          clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
       | {
           cloudProvider: Extract<CloudVendorEnum, 'AZURE'>
-          clusterType: Extract<KubernetesEnum, 'MANAGED'>
           region: string
         }
       | {
           cloudProvider: Extract<CloudVendorEnum, 'ON_PREMISE'>
-          clusterType: Extract<KubernetesEnum, 'MANAGED'>
         }
   ) => ({
-    queryKey: [args.cloudProvider, args.clusterType],
+    queryKey: [args.cloudProvider],
     async queryFn() {
       const response = await match(args)
-        .with({ cloudProvider: 'AWS', clusterType: 'MANAGED' }, ({ region }) =>
-          cloudProviderApi.listAWSEKSInstanceType(region, false, false)
-        )
+        .with({ cloudProvider: 'AWS' }, ({ region }) => cloudProviderApi.listAWSEKSInstanceType(region, false, false))
         .with({ cloudProvider: 'AZURE' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'SCW' }, () => Promise.resolve({ data: { results: [] } }))
@@ -210,11 +203,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           async ({ region, databaseType }) =>
             (await cloudProviderApi.listAWSManagedDatabaseInstanceType(region, databaseType)).data.results
         )
-        .with(
-          { cloudProvider: 'SCW' },
-          async ({ databaseType }) =>
-            (await cloudProviderApi.listSCWManagedDatabaseInstanceType(databaseType)).data.results
-        )
+        .with({ cloudProvider: 'SCW' }, () => undefined)
         .with({ cloudProvider: 'GCP' }, () => undefined)
         .with({ cloudProvider: 'AZURE' }, () => undefined)
         .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)

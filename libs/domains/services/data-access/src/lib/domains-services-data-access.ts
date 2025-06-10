@@ -61,6 +61,8 @@ import {
   type RebootServicesRequest,
   ServiceStatusApi,
   type Status,
+  TerraformConfigurationApi,
+  TerraformMainCallsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
   type ContainerResponse as _Container,
@@ -87,6 +89,7 @@ const databaseMainCallsApi = new DatabaseMainCallsApi()
 const environmentMainCallsApi = new EnvironmentMainCallsApi()
 const jobMainCallsApi = new JobMainCallsApi()
 const helmMainCallsApi = new HelmMainCallsApi()
+const terraformMainCallsApi = new TerraformMainCallsApi()
 
 const applicationDeploymentRestrictionApi = new ApplicationDeploymentRestrictionApi()
 const jobDeploymentRestrictionApi = new JobDeploymentRestrictionApi()
@@ -107,6 +110,7 @@ const jobActionsApi = new JobActionsApi()
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
 const helmConfigurationApi = new HelmConfigurationApi()
+const terraformConfigurationApi = new TerraformConfigurationApi()
 const jobConfigurationApi = new JobConfigurationApi()
 
 const customDomainApplicationApi = new ApplicationCustomDomainApi()
@@ -238,6 +242,10 @@ export const services = createQueryKeys('services', {
             ...s,
             serviceType: 'HELM' as const,
           }))
+          .with({ service_type: 'TERRAFORM' }, (s) => ({
+            ...s,
+            serviceType: 'TERRAFORM' as const,
+          }))
           .exhaustive()
       ) as AnyService[]
     },
@@ -251,6 +259,7 @@ export const services = createQueryKeys('services', {
         .with('DATABASE', () => databaseMainCallsApi.getDatabaseStatus.bind(databaseMainCallsApi))
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
         .with('HELM', () => helmMainCallsApi.getHelmStatus.bind(helmMainCallsApi))
+        .with('TERRAFORM', () => terraformMainCallsApi.getTerraform.bind(terraformMainCallsApi)) // TODO [QOV-821] should it be replaced with `getTerraformStatus` ?
         .exhaustive()
       const response = await fn(serviceId)
       return response.data
@@ -272,6 +281,7 @@ export const services = createQueryKeys('services', {
           helmDeploymentRestrictionApi.getHelmDeploymentRestrictions.bind(helmDeploymentRestrictionApi)
         )
         .with('CONTAINER', 'DATABASE', () => null)
+        .with('TERRAFORM', () => null) // TODO [QOV-821] double check that
         .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
@@ -303,6 +313,10 @@ export const services = createQueryKeys('services', {
         .with('HELM', async () => ({
           ...(await helmMainCallsApi.getHelm(serviceId)).data,
           serviceType: 'HELM' as const,
+        }))
+        .with('TERRAFORM', async () => ({
+          ...(await terraformMainCallsApi.getTerraform(serviceId)).data,
+          serviceType: 'TERRAFORM' as const,
         }))
         .exhaustive()
       return service
@@ -369,6 +383,7 @@ export const services = createQueryKeys('services', {
           async () => (await jobDeploymentsApi.listJobDeploymentHistoryV2(serviceId)).data.results
         )
         .with('HELM', async () => (await helmDeploymentsApi.listHelmDeploymentHistoryV2(serviceId)).data.results)
+        .with('TERRAFORM', async () => undefined) // TODO [QOV-821] to be implemented
         .exhaustive()
     },
   }),
@@ -452,6 +467,10 @@ export const services = createQueryKeys('services', {
           serviceType,
         }))
         .with('HELM', (serviceType) => ({ query: helmsApi.getDefaultHelmAdvancedSettings.bind(helmsApi), serviceType }))
+        .with('TERRAFORM', (serviceType) => ({
+          query: async () => ({ data: {} }), // TODO [QOV-821] to be implemented
+          serviceType,
+        }))
         .exhaustive()
       const response = await query()
       return response.data
@@ -483,6 +502,10 @@ export const services = createQueryKeys('services', {
           query: helmConfigurationApi.getHelmAdvancedSettings.bind(helmConfigurationApi),
           serviceType,
         }))
+        .with('TERRAFORM', (serviceType) => ({
+          query: terraformConfigurationApi.getTerraformAdvancedSettings.bind(terraformConfigurationApi),
+          serviceType,
+        })) // TODO [QOV-821] to double check
         .exhaustive()
       const response = await query(serviceId)
       return response.data
@@ -668,6 +691,10 @@ export const mutations = {
         serviceType,
       }))
       .with('HELM', (serviceType) => ({ mutation: helmsApi.cloneHelm.bind(helmsApi), serviceType }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: () => ({ data: { id: 'id', environment: { id: 'id' } } }),
+        serviceType,
+      })) // TODO [QOV-821] to be implemented
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -774,6 +801,10 @@ export const mutations = {
         serviceType,
       }))
       .with('HELM', (serviceType) => ({ mutation: helmMainCallsApi.deleteHelm.bind(helmMainCallsApi), serviceType }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi),
+        serviceType,
+      })) // TODO [QOV-821] double check that
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
@@ -856,6 +887,10 @@ export const mutations = {
         mutation: helmActionsApi.redeployHelm.bind(helmActionsApi),
         serviceType,
       }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }), // TODO [QOV-821] to be implemented
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
@@ -919,6 +954,10 @@ export const mutations = {
         serviceType,
       }))
       .with('HELM', (serviceType) => ({ mutation: helmActionsApi.stopHelm.bind(helmActionsApi), serviceType }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
+        serviceType,
+      })) // TODO [QOV-821] to implement
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data

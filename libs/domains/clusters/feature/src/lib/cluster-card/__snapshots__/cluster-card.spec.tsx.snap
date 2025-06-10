@@ -3,8 +3,8 @@
 exports[`ClusterCard should match snapshot 1`] = `
 <div>
   <a
-    class="duration-50 flex flex-col gap-5 rounded border border-neutral-200 p-5 shadow-sm outline outline-2 outline-transparent transition-all hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
-    href="/organization/org-id/cluster/cluster-id/settings"
+    class="duration-50 flex flex-col gap-5 rounded border border-neutral-250 p-5 outline outline-2 outline-transparent transition-all [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
+    href="/organization/org-id/cluster/cluster-id/settings/general"
   >
     <div
       class="flex items-start justify-between gap-2"
@@ -153,7 +153,7 @@ exports[`ClusterCard should match snapshot 1`] = `
       class="flex flex-wrap gap-2"
     >
       <span
-        class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md border-neutral-250 text-neutral-400 dark:border-neutral-350 dark:text-neutral-300"
+        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md border-neutral-250 text-neutral-400 dark:border-neutral-350 dark:text-neutral-300"
         data-accent-color="neutral"
       >
         <svg
@@ -240,19 +240,19 @@ exports[`ClusterCard should match snapshot 1`] = `
         Qovery managed
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
         data-accent-color="neutral"
       >
         EKS
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
         data-accent-color="neutral"
       >
         us-east-1
       </span>
       <span
-        class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
         data-accent-color="neutral"
       >
         1.21
@@ -324,7 +324,7 @@ exports[`ClusterCard should match snapshot 1`] = `
             >
               <i
                 aria-hidden="true"
-                class="fa-solid fa-gear "
+                class="fa-solid fa-terminal "
               />
             </button>
             <button
@@ -354,7 +354,7 @@ exports[`ClusterCard should match snapshot 1`] = `
         </div>
       </div>
       <span
-        class="inline-flex items-center shrink-0 text-xs h-6 px-1.5 text-red-500 border rounded-md bg-red-50 border-red-500"
+        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 text-red-500 border rounded-md bg-red-50 border-red-500/30"
         data-accent-color="red"
       >
         Production

@@ -1,35 +1,38 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { useClusterMetricsSocket } from '@qovery/domains/cluster-metrics/feature'
 import {
   ClusterActionToolbar,
   ClusterAvatar,
   ClusterType,
   useCluster,
+  useClusterRunningStatusSocket,
   useClusterStatus,
   useDeployCluster,
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
+import { CLUSTER_OVERVIEW_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Badge, ErrorBoundary, Header, Icon, Section, Skeleton, Tabs } from '@qovery/shared/ui'
 import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 
 export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
+  const isClusterOverviewEnabled = useFeatureFlagVariantKey('cluster-running-status')
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { mutate: deployCluster } = useDeployCluster()
   const { data: clusterStatus, isLoading } = useClusterStatus({ organizationId, clusterId })
 
+  useClusterRunningStatusSocket({ organizationId, clusterId })
+  useClusterMetricsSocket({ organizationId, clusterId })
+
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={isLoading}>
-        {cluster && clusterStatus ? (
-          <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} noSettings />
-        ) : (
-          <div />
-        )}
+        {cluster && clusterStatus ? <ClusterActionToolbar cluster={cluster} clusterStatus={clusterStatus} /> : <div />}
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">
@@ -91,8 +94,18 @@ export function Container({ children }: PropsWithChildren) {
   )
 
   const tabsItems = [
+    ...(isClusterOverviewEnabled
+      ? [
+          {
+            icon: <Icon iconName="cloud-word" iconStyle="regular" className="w-4" />,
+            name: 'Overview',
+            active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL),
+            link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_OVERVIEW_URL}`,
+          },
+        ]
+      : []),
     {
-      icon: <Icon iconName="gear" className="mt-0.5 w-4" />,
+      icon: <Icon iconName="gear" iconStyle="regular" className="mt-0.5 w-4" />,
       name: 'Settings',
       active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL),
       link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_SETTINGS_URL}`,

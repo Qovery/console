@@ -23,16 +23,7 @@ export interface Pod extends Partial<ServiceMetricsDto>, Partial<PodStatusDto> {
 
 function TimelineCircle() {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      className="z-10 bg-neutral-700"
-    >
-      <circle cx="8" cy="8" r="3.75" stroke="#67778E" strokeWidth="1.5" />
-    </svg>
+    <span className="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300" />
   )
 }
 
@@ -51,7 +42,8 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
   const defaultContainer = filteredContainers[0]?.name
 
   return (
-    <div className="relative flex flex-col gap-y-3 pb-4 pl-4 pr-20 pt-3">
+    <div className="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3">
+      <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300" />
       <Link
         to={
           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -99,45 +91,49 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
                       <Dd className="mb-2 flex gap-1">{image}</Dd>
                     </>
                   )}
-                  <div className="relative flex flex-col items-center">
-                    {last_terminated_state && (
-                      <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
-                    )}
-                    <div className="grid items-center gap-2">
-                      <TimelineCircle />
-                    </div>
-                  </div>
+                  <TimelineCircle />
                   <Dt className={last_terminated_state ? 'mb-2' : ''}>Current status:</Dt>
                   <Dd className={last_terminated_state ? 'mb-2' : ''}>
                     {current_state?.state === 'RUNNING' ? (
-                      <span>✅ Running</span>
-                    ) : (
                       <span>
-                        {pod.state === 'ERROR' ? '❌  ' : ''}
-                        {current_state?.state_reason}
-                        {current_state?.state_message ? `:${current_state.state_message}` : ''}
-                        {restart_count && !last_terminated_state ? (
-                          <>
-                            <br />
-                            The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the
-                            last deployment.
-                          </>
-                        ) : undefined}
+                        <span role="img" aria-label="Checkmark">
+                          ✅
+                        </span>{' '}
+                        Running
+                      </span>
+                    ) : (
+                      <span className="flex gap-1.5">
+                        {pod.state === 'ERROR' ? (
+                          <span role="img" aria-label="Error">
+                            ❌
+                          </span>
+                        ) : (
+                          ''
+                        )}
+                        <span>
+                          {current_state?.state_reason}
+                          {current_state?.state_message ? `:${current_state.state_message}` : ''}
+                          {restart_count && !last_terminated_state ? (
+                            <>
+                              <br />
+                              The container has restarted {restart_count} {pluralize(restart_count, 'time')} since the
+                              last deployment.
+                            </>
+                          ) : undefined}
+                        </span>
                       </span>
                     )}
                   </Dd>
                   {last_terminated_state && (
                     <>
-                      <div className="relative flex flex-col items-center">
-                        <div className="absolute left-1/2 min-h-full -translate-x-1/2 border-l border-neutral-350"></div>
-                        <div className="grid gap-2">
-                          <TimelineCircle />
-                        </div>
-                      </div>
-                      <Dt>{last_terminated_state.finished_at && dateFullFormat(last_terminated_state.finished_at)}</Dt>
+                      <TimelineCircle />
+                      <Dt className="mb-2">State reason:</Dt>
+                      <Dd className="mb-2">{upperCaseFirstLetter(last_terminated_state.reason)}</Dd>
+                      <TimelineCircle />
+                      <Dt className="mb-2">State message:</Dt>
                       <Dd>
-                        {upperCaseFirstLetter(last_terminated_state.reason)}: {last_terminated_state.exit_code_message}{' '}
-                        ({last_terminated_state.exit_code}).
+                        {upperCaseFirstLetter(last_terminated_state.exit_code_message)} (
+                        {last_terminated_state.exit_code}).
                         {restart_count ? (
                           <>
                             <br />
@@ -156,27 +152,36 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
         </Tabs.Root>
       ) : (
         <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0">
-          <div className="relative flex flex-col items-center">
-            <div className="grid items-center gap-2">
-              <TimelineCircle />
-            </div>
-          </div>
+          <TimelineCircle />
           <Dt>Current status:</Dt>
           <Dd>
             {pod.state === 'RUNNING' ? (
-              <span>✅ Running</span>
-            ) : (
               <span>
-                {pod.state === 'ERROR' ? '❌ ' : ''}
-                {pod.state_reason}
-                {pod.state_message ? `:${pod.state_message}` : ''}
-                {pod.restart_count ? (
-                  <>
-                    <br />
-                    The pod has restarted {pod.restart_count} {pluralize(pod.restart_count, 'time')} since the last
-                    deployment.
-                  </>
-                ) : undefined}
+                <span role="img" aria-label="checkmark">
+                  ✅
+                </span>{' '}
+                Running
+              </span>
+            ) : (
+              <span className="flex gap-1.5">
+                {pod.state === 'ERROR' ? (
+                  <span role="img" aria-label="Error">
+                    ❌
+                  </span>
+                ) : (
+                  ''
+                )}
+                <span>
+                  {pod.state_reason}
+                  {pod.state_message ? `:${pod.state_message}` : ''}
+                  {pod.restart_count ? (
+                    <>
+                      <br />
+                      The pod has restarted {pod.restart_count} {pluralize(pod.restart_count, 'time')} since the last
+                      deployment.
+                    </>
+                  ) : undefined}
+                </span>
               </span>
             )}
           </Dd>
@@ -186,18 +191,18 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
         pod.last_events?.length > 0 &&
         pod.last_events?.map((event, index) => (
           <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0" key={event.created_at + index}>
-            <div className="relative flex flex-col items-center">
-              <div className="grid items-center gap-2">
-                <TimelineCircle />
-              </div>
-            </div>
+            <TimelineCircle />
             <Dt>{dateFullFormat(event.created_at, undefined, 'dd MMM, HH:mm:ss')}</Dt>
-            <Dd>
-              {event.type.includes('Warning') ? (
-                <Icon iconName="warning" className="mr-1 text-yellow-500" />
-              ) : (
-                <Icon iconName="info-circle" iconStyle="regular" className="mr-1" />
-              )}
+            <Dd className="flex gap-1.5">
+              <span>
+                {event.type.includes('Warning') ? (
+                  <span role="img" aria-label="Warning">
+                    ⚠️
+                  </span>
+                ) : (
+                  <Icon iconName="info-circle" iconStyle="regular" />
+                )}
+              </span>
               {event.reason} - {event.message}
             </Dd>
           </Dl>

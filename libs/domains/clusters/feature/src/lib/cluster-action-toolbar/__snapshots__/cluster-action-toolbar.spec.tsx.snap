@@ -72,7 +72,7 @@ exports[`ClusterActionToolbar should match manage deployment snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-gear "
+        class="fa-solid fa-terminal "
       />
     </button>
     <button
@@ -228,7 +228,7 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-gear "
+        class="fa-solid fa-terminal "
       />
     </button>
     <button
@@ -315,6 +315,20 @@ exports[`ClusterActionToolbar should match other actions snapshot 1`] = `
         />
         Copy identifier
       </div>
+      <a
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        href="/organization/123/cluster/0/settings"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
+        />
+        Open settings
+      </a>
       <div
         class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"
@@ -388,7 +402,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="closed"
-      id="radix-:r1h:"
+      id="radix-:r1i:"
       tabindex="-1"
       type="button"
     >
@@ -429,11 +443,11 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-gear "
+        class="fa-solid fa-terminal "
       />
     </button>
     <button
-      aria-controls="radix-:r1q:"
+      aria-controls="radix-:r1r:"
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
@@ -441,7 +455,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       data-orientation="horizontal"
       data-radix-collection-item=""
       data-state="open"
-      id="radix-:r1p:"
+      id="radix-:r1q:"
       tabindex="-1"
       type="button"
     >
@@ -463,7 +477,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      aria-labelledby="radix-:r1p:"
+      aria-labelledby="radix-:r1q:"
       aria-orientation="vertical"
       class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
       data-align="start"
@@ -472,7 +486,7 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
       data-side="bottom"
       data-state="open"
       dir="ltr"
-      id="radix-:r1q:"
+      id="radix-:r1r:"
       role="menu"
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"
@@ -516,6 +530,20 @@ exports[`ClusterActionToolbar should match outdated snapshot 1`] = `
         />
         Copy identifier
       </div>
+      <a
+        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        href="/organization/123/cluster/0/settings"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-gear text-sm mr-3 text-brand-500"
+        />
+        Open settings
+      </a>
       <div
         class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
         data-orientation="vertical"

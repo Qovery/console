@@ -45,7 +45,7 @@ function Card({
   return (
     <NavLink
       to={link}
-      className="flex items-center gap-5 rounded border border-neutral-200 px-5 py-4 shadow-sm transition hover:bg-neutral-100"
+      className="flex items-center gap-5 rounded border border-neutral-250 px-5 py-4 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-neutral-100"
     >
       <div>
         <h3 className="mb-1 text-ssm font-medium">{title}</h3>
@@ -63,6 +63,7 @@ const servicePath = (type: ServiceType, parentSlug: string, slug: string) =>
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
+    .with('TERRAFORM', () => undefined) // TODO [QOV-821] double check that
     .exhaustive()
 
 interface CardOptionProps extends ServiceTemplateOptionType {
@@ -125,7 +126,7 @@ function CardService({
       <div
         onClick={() => setExpanded(true)}
         className={clsx({
-          'flex cursor-pointer  items-center gap-6 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100':
+          'flex cursor-pointer items-center gap-6 rounded border border-neutral-250 p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-neutral-100':
             true,
           'col-span-3 bg-neutral-100 p-6': expanded,
         })}
@@ -199,7 +200,7 @@ function CardService({
   return (
     <NavLink
       to={link ?? SERVICES_URL(organizationId, projectId, environmentId) + servicePath(type!, slug!, 'current')}
-      className="flex gap-6 rounded border border-neutral-200 p-5 shadow-sm transition hover:bg-neutral-100"
+      className="flex gap-6 rounded border border-neutral-250 p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-neutral-100"
       onClick={() =>
         posthog.capture('select-service', {
           qoveryServiceType: type,
