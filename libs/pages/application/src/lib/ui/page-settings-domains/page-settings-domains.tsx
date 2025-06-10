@@ -25,13 +25,6 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 
-export const hasPublicPort = (ingressDeploymentStatus?: StateEnum) => {
-  return match(ingressDeploymentStatus)
-    .with(StateEnum.DEPLOYED, () => true)
-    .with(StateEnum.WAITING_RUNNING, () => true)
-    .otherwise(() => false)
-}
-
 export interface PageSettingsDomainsProps {
   onCheckCustomDomains: () => void
   checkedCustomDomains?: CheckedCustomDomainResponse[]
