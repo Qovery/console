@@ -5,7 +5,7 @@ import {
   SERVICES_TERRAFORM_CREATION_GENERAL_URL,
   SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
 } from '@qovery/shared/routes'
-import { Button, FunnelFlowBody, InputSelect, InputText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { TERRAFORM_VERSIONS, useTerraformCreateContext } from '../page-terraform-create-feature'
 
@@ -91,6 +91,25 @@ export function StepConfigurationFeature() {
                 label="Storage (GB)"
                 error={error?.message}
                 hint="Amount of storage allocated to the job resources"
+              />
+            )}
+          />
+        </div>
+
+        <hr className="my-4 border-t border-dashed border-neutral-250" />
+
+        <div className="flex flex-col gap-5">
+          <Controller
+            name="use_cluster_credentials"
+            control={generalForm.control}
+            defaultValue={generalData.use_cluster_credentials}
+            render={({ field, fieldState: { error } }) => (
+              <InputToggle
+                value={field.value}
+                onChange={field.onChange}
+                title="Cluster Credentials"
+                forceAlignTop
+                // small
               />
             )}
           />

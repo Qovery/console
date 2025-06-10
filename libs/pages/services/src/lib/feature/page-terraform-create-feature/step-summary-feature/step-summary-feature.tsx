@@ -77,6 +77,7 @@ export function StepSummaryFeature() {
             ram_mib: generalData.job_resources.ram_mib,
             storage_gib: generalData.job_resources.storage_gib,
           },
+          use_cluster_credentials: generalData.use_cluster_credentials,
         },
       })
 
@@ -184,6 +185,14 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">File paths:</span>{' '}
                   {valuesOverrideArgumentData.tf_var_file_paths.join(', ')}
+                </li>
+              </ul>
+
+              <hr className="my-4 border-t border-dashed border-neutral-250" />
+              <ul className="list-none space-y-2 text-sm text-neutral-400">
+                <li>
+                  <span className="font-medium">Use cluster's credentials:</span>{' '}
+                  {generalData.use_cluster_credentials ? 'Yes' : 'No'}
                 </li>
               </ul>
             </Section>

@@ -765,7 +765,6 @@ export const mutations = {
         serviceType,
       }))
       .exhaustive()
-    // @ts-expect-error TODO [QOV-821] Needs to be fixed
     const response = await mutation(serviceId, deploymentRestrictionId, payload)
     return response.data
   },
@@ -796,7 +795,6 @@ export const mutations = {
         serviceType,
       }))
       .exhaustive()
-    // @ts-expect-error TODO [QOV-821] Needs to be fixed
     const response = await mutation(serviceId, payload)
     return response.data
   },
