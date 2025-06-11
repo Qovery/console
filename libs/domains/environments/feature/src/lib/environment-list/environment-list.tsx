@@ -122,24 +122,26 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const value = info.getValue()
           const environment = info.row.original
           return (
-            <Tooltip content="See overview">
-              <Link
-                as="button"
-                to={
-                  SERVICES_URL(environment.organization.id, environment.project.id, environment.id) +
-                  SERVICES_GENERAL_URL
-                }
-                onClick={(e) => e.stopPropagation()}
-                className="gap-2 whitespace-nowrap text-sm"
-                size="md"
-                color="neutral"
-                variant="outline"
-                radius="full"
-              >
-                <StatusChip status={environment.runningStatus?.state} />
-                {value}
-              </Link>
-            </Tooltip>
+            <Skeleton width={102} height={34} show={!value}>
+              <Tooltip content="See overview">
+                <Link
+                  as="button"
+                  to={
+                    SERVICES_URL(environment.organization.id, environment.project.id, environment.id) +
+                    SERVICES_GENERAL_URL
+                  }
+                  onClick={(e) => e.stopPropagation()}
+                  className="gap-2 whitespace-nowrap text-sm"
+                  size="md"
+                  color="neutral"
+                  variant="outline"
+                  radius="full"
+                >
+                  <StatusChip status={environment.runningStatus?.state} />
+                  {value}
+                </Link>
+              </Tooltip>
+            </Skeleton>
           )
         },
       }),

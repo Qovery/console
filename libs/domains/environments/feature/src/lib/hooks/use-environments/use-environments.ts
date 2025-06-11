@@ -51,7 +51,7 @@ export function useEnvironments({ projectId }: UseEnvironmentsProps) {
           const runningStatusOverride = match({ runningStatus })
             .with({ runningStatus: P.nullish }, () => ({
               state: undefined,
-              stateLabel: 'Stopped',
+              stateLabel: undefined,
             }))
             .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
               ...runningStatus,

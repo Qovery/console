@@ -1,5 +1,7 @@
 import { type HelmPortRequestPortsInner } from 'qovery-typescript-axios'
+import { ServiceType } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren } from 'react'
+import { useCustomDomains } from '@qovery/domains/custom-domains/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   BlockContent,
@@ -11,7 +13,9 @@ import {
   Section,
   useModal,
   useModalConfirmation,
+  useModalMultiConfirmation,
 } from '@qovery/shared/ui'
+import { isTryingToRemoveLastPublicPort } from '@qovery/shared/util-services'
 import { NetworkingPortSettingModal } from '../networking-port-setting-modal/networking-port-setting-modal'
 
 export interface NetworkingSettingProps extends PropsWithChildren {
@@ -29,7 +33,13 @@ export function NetworkingSetting({
   children,
 }: NetworkingSettingProps) {
   const { openModal, closeModal } = useModal()
+  const { openModalMultiConfirmation } = useModalMultiConfirmation()
   const { openModalConfirmation } = useModalConfirmation()
+
+  const { data: customDomains } = useCustomDomains({
+    serviceId: helmId,
+    serviceType: 'HELM',
+  })
 
   const onAddPort = () =>
     openModal({
@@ -58,14 +68,34 @@ export function NetworkingSetting({
         />
       ),
     })
-  const onRemovePort = (port: HelmPortRequestPortsInner) =>
-    openModalConfirmation({
-      title: 'Delete Port',
-      isDelete: true,
-      action: () => {
-        onUpdatePorts(ports.filter((p) => p !== port))
-      },
-    })
+  const onRemovePort = (port: HelmPortRequestPortsInner) => {
+    const isTryingToRemoveLastPort = isTryingToRemoveLastPublicPort(ServiceType.HELM, ports, port, customDomains)
+
+    isTryingToRemoveLastPort
+      ? openModalMultiConfirmation({
+          title: 'Delete port',
+          isDelete: true,
+          description: 'Please confirm deletion',
+          warning: (
+            <p>
+              You are about to remove your last public port.
+              <br />
+              Please confirm that you understand the impact of this operation.
+            </p>
+          ),
+          checks: ['I understand this action is irreversible and will delete all linked domains'],
+          action: () => {
+            onUpdatePorts(ports.filter((p) => p !== port))
+          },
+        })
+      : openModalConfirmation({
+          title: 'Delete Port',
+          isDelete: true,
+          action: () => {
+            onUpdatePorts(ports.filter((p) => p !== port))
+          },
+        })
+  }
 
   return (
     <Section className="items-start">

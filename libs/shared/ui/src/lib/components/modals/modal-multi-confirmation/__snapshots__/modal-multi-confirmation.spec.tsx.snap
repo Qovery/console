@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModalMultiConfirmation should match delete mode without description 1`] = `
+<div>
+  <section
+    class="flex flex-col p-5"
+  >
+    <h1
+      class="font-bold mb-2 max-w-sm text-2xl text-neutral-400"
+      id="radix-:r1b:"
+    >
+      my title
+    </h1>
+    <p
+      class="mb-6 text-sm text-neutral-350"
+      id="radix-:r1c:"
+    />
+    <form>
+      <div
+        class="flex-row gap-x-3 p-3 border rounded text-sm border-red-500 bg-red-50 text-red-500 mb-5 grid grid-cols-[1fr_auto] gap-y-3"
+        data-accent-color="red"
+      >
+        <div
+          class="-order-2 text-lg leading-6"
+        >
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-triangle-exclamation text-red-600"
+          />
+        </div>
+        <div
+          class="-order-1 mr-auto gap-x-3 text-neutral-400"
+        >
+          <div
+            class="flex flex-col gap-3"
+          >
+            <div
+              class="font-semibold"
+            />
+          </div>
+        </div>
+        <div
+          class="-order-1 mr-auto text-neutral-400 col-span-2 flex flex-col gap-2"
+        >
+          <div>
+            <div
+              class="flex flex-col gap-3"
+            >
+              <div
+                class="ml-[2px] flex items-start gap-3"
+              >
+                <button
+                  aria-checked="false"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 mt-0.5 shrink-0"
+                  data-state="unchecked"
+                  id="one"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+                <input
+                  aria-hidden="true"
+                  name="one"
+                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  tabindex="-1"
+                  type="checkbox"
+                  value="on"
+                />
+                <label
+                  for="one"
+                >
+                  one
+                </label>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div
+              class="flex flex-col gap-3"
+            >
+              <div
+                class="ml-[2px] flex items-start gap-3"
+              >
+                <button
+                  aria-checked="false"
+                  class="group transition bg-neutral-100 dark:bg-neutral-500 border border-neutral-300 dark:border-neutral-350 rounded-sm w-[18px] h-[18px] hover:border-2 data-[state=checked]:border data-[state=indeterminate]:border-2 disabled:border disabled:border-neutral-250 hover:border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500 data-[state=indeterminate]:border-red-500 disabled:data-[state=checked]:border-red-300 disabled:data-[state=checked]:bg-red-300 disabled:data-[state=indeterminate]:border-red-300 mt-0.5 shrink-0"
+                  data-state="unchecked"
+                  id="two"
+                  role="checkbox"
+                  type="button"
+                  value="on"
+                />
+                <input
+                  aria-hidden="true"
+                  name="two"
+                  style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                  tabindex="-1"
+                  type="checkbox"
+                  value="on"
+                />
+                <label
+                  for="two"
+                >
+                  two
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex justify-end gap-3"
+      >
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm active:[&:not(:focus-visible)]:shadow-none outline-brand-500 text-sm h-11 px-5 rounded border border-transparent text-neutral-350 hover:[&:not(:active):not(:focus-visible)]:border-neutral-300 hover:[&:not(:disabled)]:text-neutral-400 dark:hover:[&:not(:disabled)]:text-neutral-250 focus-visible:text-neutral-400 active:bg-neutral-150 dark:active:bg-transparent active:text-neutral-400 disabled:text-neutral-300 disabled:bg-neutral-150 disabled:border-none"
+          type="button"
+        >
+          Cancel
+        </button>
+        <button
+          class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-red-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
+          disabled=""
+          type="submit"
+        >
+          Confirm
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+`;

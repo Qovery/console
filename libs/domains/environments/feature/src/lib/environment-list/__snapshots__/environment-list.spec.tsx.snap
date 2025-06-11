@@ -169,45 +169,50 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/893c68cb-d1f7-498b-9e00-be841c8d38c3/services/general"
             >
-              <svg
-                class="text-neutral-300"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <g
-                  clip-path="url(#clip0_5424_5935)"
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                    fill="currentColor"
-                  />
-                </g>
-                <defs>
-                  <clippath
-                    id="clip0_5424_5935"
+                  <g
+                    clip-path="url(#clip0_5424_5935)"
                   >
                     <path
-                      d="M0 0H24V24H0z"
-                      fill="#fff"
+                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                      fill="currentColor"
                     />
-                  </clippath>
-                </defs>
-              </svg>
-            </div>
-            Stopped
-          </a>
+                  </g>
+                  <defs>
+                    <clippath
+                      id="clip0_5424_5935"
+                    >
+                      <path
+                        d="M0 0H24V24H0z"
+                        fill="#fff"
+                      />
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              Stopped
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -361,45 +366,50 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/services/general"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/2fe51760-af0b-4f2f-b752-88a813e1375d/services/general"
             >
-              <svg
-                class="text-neutral-300"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <g
-                  clip-path="url(#clip0_5424_5935)"
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                    fill="currentColor"
-                  />
-                </g>
-                <defs>
-                  <clippath
-                    id="clip0_5424_5935"
+                  <g
+                    clip-path="url(#clip0_5424_5935)"
                   >
                     <path
-                      d="M0 0H24V24H0z"
-                      fill="#fff"
+                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                      fill="currentColor"
                     />
-                  </clippath>
-                </defs>
-              </svg>
-            </div>
-            Stopped
-          </a>
+                  </g>
+                  <defs>
+                    <clippath
+                      id="clip0_5424_5935"
+                    >
+                      <path
+                        d="M0 0H24V24H0z"
+                        fill="#fff"
+                      />
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              Stopped
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -532,45 +542,50 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/services/general"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/0cd5d05e-0839-48ff-be67-ca3f4fcf8250/services/general"
             >
-              <svg
-                class="text-neutral-300"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <g
-                  clip-path="url(#clip0_5424_5935)"
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                    fill="currentColor"
-                  />
-                </g>
-                <defs>
-                  <clippath
-                    id="clip0_5424_5935"
+                  <g
+                    clip-path="url(#clip0_5424_5935)"
                   >
                     <path
-                      d="M0 0H24V24H0z"
-                      fill="#fff"
+                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                      fill="currentColor"
                     />
-                  </clippath>
-                </defs>
-              </svg>
-            </div>
-            Stopped
-          </a>
+                  </g>
+                  <defs>
+                    <clippath
+                      id="clip0_5424_5935"
+                    >
+                      <path
+                        d="M0 0H24V24H0z"
+                        fill="#fff"
+                      />
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              Stopped
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
@@ -703,45 +718,50 @@ exports[`EnvironmentList should match snapshot 1`] = `
           class="h-14 px-4 py-0 first:border-r"
           style="width: 15%;"
         >
-          <a
-            class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
-            data-state="closed"
-            href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/services/general"
+          <div
+            aria-busy="false"
+            class="flex rounded"
           >
-            <div
-              class=""
+            <a
+              class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 rounded-full border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none gap-2 whitespace-nowrap text-sm"
               data-state="closed"
+              href="/organization/3d542888-3d2c-474a-b1ad-712556db66da/project/a021261e-4318-4f2f-b480-169ab62efc28/environment/c1567d73-b9cd-4664-8aa0-5c71e2bfd74a/services/general"
             >
-              <svg
-                class="text-neutral-300"
-                fill="none"
-                height="16"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
+              <div
+                class=""
+                data-state="closed"
               >
-                <g
-                  clip-path="url(#clip0_5424_5935)"
+                <svg
+                  class="text-neutral-300"
+                  fill="none"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
-                    fill="currentColor"
-                  />
-                </g>
-                <defs>
-                  <clippath
-                    id="clip0_5424_5935"
+                  <g
+                    clip-path="url(#clip0_5424_5935)"
                   >
                     <path
-                      d="M0 0H24V24H0z"
-                      fill="#fff"
+                      d="M21.75 12a9.75 9.75 0 10-19.5 0 9.75 9.75 0 0019.5 0zM0 12a12 12 0 1124 0 12 12 0 01-24 0zm16.5-4.5v9h-9v-9h9z"
+                      fill="currentColor"
                     />
-                  </clippath>
-                </defs>
-              </svg>
-            </div>
-            Stopped
-          </a>
+                  </g>
+                  <defs>
+                    <clippath
+                      id="clip0_5424_5935"
+                    >
+                      <path
+                        d="M0 0H24V24H0z"
+                        fill="#fff"
+                      />
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              Stopped
+            </a>
+          </div>
         </td>
         <td
           class="h-14 px-4 py-0 first:border-r"
