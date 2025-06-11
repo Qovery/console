@@ -55,7 +55,7 @@ export function StepSummaryFeature() {
           timeout_sec: generalData.timeout_sec,
           auto_deploy: generalData.auto_deploy ?? false,
           auto_approve: false,
-          provider: 'Terraform',
+          provider: 'TERRAFORM',
           terraform_files_source: {
             git_repository: {
               url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
