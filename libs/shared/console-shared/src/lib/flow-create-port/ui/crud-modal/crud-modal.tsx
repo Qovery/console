@@ -2,7 +2,7 @@ import { CloudProviderEnum, type KubernetesEnum, PortProtocolEnum } from 'qovery
 import { type FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
+import { Callout, Checkbox, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   kubernetes?: KubernetesEnum
@@ -15,6 +15,7 @@ export interface CrudModalProps {
   hidePortName?: boolean
   onClose: () => void
   onSubmit: () => void
+  isLastPublicPort?: boolean
 }
 
 export function CrudModal({
@@ -28,8 +29,9 @@ export function CrudModal({
   onSubmit,
   hidePortName,
   isDemo,
+  isLastPublicPort,
 }: CrudModalProps) {
-  const { control, watch, setValue } = useFormContext()
+  const { control, watch, setValue, getFieldState } = useFormContext()
 
   const watchProtocol = watch('protocol')
   const watchPublicly = watch('publicly_accessible') || false
@@ -259,6 +261,49 @@ export function CrudModal({
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>Please verify the health check configuration.</Callout.Text>
+        </Callout.Root>
+      )}
+      {isEdit && !watchPublicly && getFieldState('publicly_accessible').isDirty && isLastPublicPort && (
+        <Callout.Root className="mt-5 grid grid-cols-[1fr_auto] gap-y-3" color="red">
+          <Callout.Icon>
+            <Icon iconName="triangle-exclamation" className="text-red-600" />
+          </Callout.Icon>
+          <Callout.Text>
+            <p className="font-semibold">
+              You are about to remove your last public port.
+              <br />
+              Please confirm that you understand the impact of this operation.
+            </p>
+          </Callout.Text>
+          <Callout.Text className="col-span-2 flex flex-col gap-2">
+            <div className="flex items-center gap-4">
+              <Controller
+                name="confirm"
+                control={control}
+                rules={{
+                  required: 'Please check the box to confirm.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <div className="flex flex-col gap-1">
+                    <div className="ml-[2px] flex items-start gap-3">
+                      <Checkbox
+                        name={field.name}
+                        id={field.name}
+                        className="mt-0.5 shrink-0"
+                        color="red"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                      <label htmlFor={field.name}>
+                        I understand this action is irreversible and will delete all linked domains
+                      </label>
+                    </div>
+                    {error && <p className="ml-8 text-sm text-red-500">{error.message}</p>}
+                  </div>
+                )}
+              />
+            </div>
+          </Callout.Text>
         </Callout.Root>
       )}
     </ModalCrud>

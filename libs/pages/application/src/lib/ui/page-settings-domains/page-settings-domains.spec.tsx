@@ -4,6 +4,30 @@ import { PageSettingsDomains, type PageSettingsDomainsProps } from './page-setti
 
 let props: PageSettingsDomainsProps
 
+let mockLinks = [
+  {
+    url: 'https://p80-z8e0035d9-zb93218f1-gtw.zc531a994.rustrocks.cloud',
+    internal_port: 80,
+    external_port: 443,
+    is_qovery_domain: true,
+    is_default: false,
+  },
+  {
+    url: 'https://z8e0035d9-zb93218f1-gtw.zc531a994.rustrocks.cloud',
+    internal_port: 80,
+    external_port: 443,
+    is_qovery_domain: true,
+    is_default: true,
+  },
+]
+jest.mock('@qovery/domains/services/feature', () => ({
+  ...jest.requireActual('@qovery/domains/services/feature'),
+  useLinks: () => ({
+    data: mockLinks,
+    isLoading: false,
+  }),
+}))
+
 describe('PageSettingsDomains', () => {
   beforeEach(() => {
     props = {
@@ -102,5 +126,18 @@ describe('PageSettingsDomains', () => {
 
     renderWithProviders(<PageSettingsDomains {...props} />)
     expect(screen.queryByTestId('spinner')).not.toBeInTheDocument()
+  })
+
+  describe('with ingress deployment status', () => {
+    describe('when the ingress is deployed', () => {
+      it('should not show the deploy button but show the create public port button instead', () => {
+        mockLinks = []
+        props.domains = []
+        props.loading = false
+        renderWithProviders(<PageSettingsDomains {...props} />)
+        expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+        expect(screen.getByText('Create public port')).toBeInTheDocument()
+      })
+    })
   })
 })
