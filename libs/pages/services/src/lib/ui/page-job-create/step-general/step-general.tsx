@@ -1,15 +1,11 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
-import {
-  type CronJobResponse,
-  type JobLifecycleTypeEnum,
-  type LifecycleJobResponse,
-  type Organization,
-} from 'qovery-typescript-axios'
+import { type JobLifecycleTypeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
+import { type Job } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
@@ -81,48 +77,53 @@ export function StepGeneral(props: StepGeneralProps) {
           <Heading>General</Heading>
           <GeneralSetting
             label="Service name"
-            // @ts-expect-error TODO [QOV-821] Fix that
             service={match(props.jobType)
-              .with(ServiceTypeEnum.LIFECYCLE_JOB, (): LifecycleJobResponse & { serviceType: 'JOB' } => ({
-                id: '',
-                name: '',
-                environment: {
+              .with(
+                ServiceTypeEnum.LIFECYCLE_JOB,
+                (): Job => ({
                   id: '',
-                },
-                service_type: 'JOB',
-                serviceType: 'JOB',
-                job_type: 'LIFECYCLE',
-                auto_preview: false,
-                maximum_cpu: 0,
-                maximum_memory: 0,
-                cpu: 0,
-                memory: 0,
-                created_at: '',
-                healthchecks: {},
-                icon_uri: 'app://qovery-console/lifecycle-job',
-                source: { docker: {} },
-                schedule: { lifecycle_type: props.templateType },
-              }))
-              .with(ServiceTypeEnum.CRON_JOB, (): CronJobResponse & { serviceType: 'JOB' } => ({
-                id: '',
-                name: '',
-                environment: {
+                  name: '',
+                  environment: {
+                    id: '',
+                  },
+                  service_type: 'JOB',
+                  serviceType: 'JOB',
+                  job_type: 'LIFECYCLE',
+                  auto_preview: false,
+                  maximum_cpu: 0,
+                  maximum_memory: 0,
+                  cpu: 0,
+                  memory: 0,
+                  created_at: '',
+                  healthchecks: {},
+                  icon_uri: 'app://qovery-console/lifecycle-job',
+                  source: { docker: {} },
+                  schedule: { lifecycle_type: props.templateType },
+                })
+              )
+              .with(
+                ServiceTypeEnum.CRON_JOB,
+                (): Job => ({
                   id: '',
-                },
-                service_type: 'JOB',
-                serviceType: 'JOB',
-                job_type: 'CRON',
-                auto_preview: false,
-                maximum_cpu: 0,
-                maximum_memory: 0,
-                cpu: 0,
-                memory: 0,
-                created_at: '',
-                healthchecks: {},
-                icon_uri: 'app://qovery-console/cron-job',
-                source: { docker: {} },
-                schedule: { cronjob: { timezone: '', scheduled_at: '' } },
-              }))
+                  name: '',
+                  environment: {
+                    id: '',
+                  },
+                  service_type: 'JOB',
+                  serviceType: 'JOB',
+                  job_type: 'CRON',
+                  auto_preview: false,
+                  maximum_cpu: 0,
+                  maximum_memory: 0,
+                  cpu: 0,
+                  memory: 0,
+                  created_at: '',
+                  healthchecks: {},
+                  icon_uri: 'app://qovery-console/cron-job',
+                  source: { docker: {} },
+                  schedule: { cronjob: { timezone: '', scheduled_at: '' } },
+                })
+              )
               .exhaustive()}
           />
         </Section>
