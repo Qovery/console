@@ -53,6 +53,7 @@ import {
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
+  isDryRunAvailable,
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
@@ -123,6 +124,10 @@ function MenuManageDeployment({
   )
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
+  const mutationDryRun = () => {
+    if (service.serviceType !== 'TERRAFORM') return
+    deployService({ serviceId: service.id, serviceType: service.serviceType, request: { dry_run: true } })
+  }
 
   const mutationRedeploy = () => {
     openModalConfirmation({
@@ -344,6 +349,11 @@ function MenuManageDeployment({
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
+        {isDryRunAvailable(service.serviceType) && (
+          <DropdownMenu.Item icon={<Icon iconName="play" iconStyle="regular" />} onSelect={mutationDryRun}>
+            Dry run
+          </DropdownMenu.Item>
+        )}
         {isDeployAvailable(state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="play" />}
@@ -550,6 +560,7 @@ function MenuManageDeployment({
             }
           )
           .with({ service: { serviceType: 'DATABASE' } }, () => null)
+          .with({ service: { serviceType: 'TERRAFORM' } }, () => null) // TODO [QOV-821] double check that
           .exhaustive()}
         {match(service)
           .with({ serviceType: 'HELM', values_override: P.when(isHelmGitValuesOverride) }, (service) => {

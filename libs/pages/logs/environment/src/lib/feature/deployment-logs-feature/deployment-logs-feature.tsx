@@ -68,6 +68,13 @@ export function getServiceStatusesById(services?: DeploymentStageWithServicesSta
           }
         }
       }
+      if (service.terraforms && service.terraforms?.length > 0) {
+        for (const terraforms of service.terraforms) {
+          if (terraforms.id === serviceId) {
+            return terraforms
+          }
+        }
+      }
     }
   }
   return null
@@ -84,6 +91,7 @@ export function getStageFromServiceId(
       'jobs',
       'databases',
       'helms',
+      'terraforms',
     ]
 
     for (const serviceType of serviceTypes) {
