@@ -3,6 +3,7 @@ import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qover
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
@@ -136,7 +137,13 @@ export function StepGeneral(props: StepGeneralProps) {
                           <p className="text-base font-semibold">
                             A fully managed Kubernetes cluster will be deployed
                             <br />
-                            on your AWS account (EKS)
+                            on your{' '}
+                            {match(currentProvider.short_name as Exclude<CloudProviderEnum, 'ON_PREMISE'>)
+                              .with('AWS', () => 'AWS account (EKS)')
+                              .with('SCW', () => 'Scaleway account (Kapsule)')
+                              .with('AZURE', () => 'Azure account (AKS)')
+                              .with('GCP', () => 'GCP account (Autopilot GKE)')
+                              .exhaustive()}
                           </p>
                           <ul className="list-disc pl-3 text-neutral-350">
                             <li>High-availability infrastructure deployed across multiple zones</li>
