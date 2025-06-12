@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qovery/shared/console-shared'
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
-import { Button, Heading, Icon, IconFlag, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, IconFlag, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
 
@@ -99,7 +99,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 )}
               />
               {currentProvider && (
-                <>
+                <div>
                   <Controller
                     name="region"
                     control={control}
@@ -124,7 +124,42 @@ export function StepGeneral(props: StepGeneralProps) {
                     cloudProvider={currentProvider.short_name as CloudProviderEnum}
                     isSetting={false}
                   />
-                </>
+
+                  <Callout.Root className="mb-5 mt-10 grid grid-cols-[40px_auto] gap-4" color="neutral">
+                    <Callout.Icon className="w-10 text-4xl">
+                      <Icon name="KUBERNETES" className="w-full" />
+                    </Callout.Icon>
+
+                    <Callout.Text>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-base font-semibold">
+                            A fully managed Kubernetes cluster will be deployed
+                            <br />
+                            on your AWS account (EKS)
+                          </p>
+                          <ul className="list-disc pl-3 text-neutral-350">
+                            <li>High-availability infrastructure deployed across multiple zones</li>
+                            <li>Customizable resources (in the next steps)</li>
+                            <li>No Kubernetes expertise required</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </Callout.Text>
+
+                    <div className="col-span-2 flex items-start gap-4 rounded border border-sky-500 bg-sky-50 p-3 pl-4">
+                      <Icon iconName="circle-info" iconStyle="regular" className="text-base" />
+
+                      <div className="flex flex-col gap-1 text-neutral-400">
+                        <p className="font-semibold">Qovery manages this infrastructure for you.</p>
+                        <p>
+                          Secure, stable, and optimized environment with continuous security patches and proactive
+                          health monitoring
+                        </p>
+                      </div>
+                    </div>
+                  </Callout.Root>
+                </div>
               )}
             </>
           ) : (
