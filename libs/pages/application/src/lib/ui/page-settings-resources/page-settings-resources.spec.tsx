@@ -19,6 +19,7 @@ jest.mock('react-hook-form', () => ({
     watch: () => jest.fn(),
     formState: {
       isValid: true,
+      isDirty: true,
     },
   }),
 }))

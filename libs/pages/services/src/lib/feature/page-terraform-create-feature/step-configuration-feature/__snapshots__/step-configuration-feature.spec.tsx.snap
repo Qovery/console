@@ -231,6 +231,47 @@ exports[`StepConfigurationFeature should submit a form with a git repository 1`]
               </p>
             </div>
           </div>
+          <hr
+            class="my-4 border-t border-dashed border-neutral-250"
+          />
+          <div
+            class="flex flex-col gap-5"
+          >
+            <div
+              class="flex text-sm  items-start  "
+              data-testid="input-toggle"
+            >
+              <div
+                aria-label="toggle-btn"
+                class="inline-flex items-center justify-between cursor-pointer"
+                data-testid="input-toggle-button"
+              >
+                <input
+                  class="hidden"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  aria-label="bg"
+                  class="w-12 h-6 flex items-center rounded-full p-0.5  bg-gray-300"
+                >
+                  <div
+                    aria-label="circle"
+                    class="w-5 h-5 transform rounded-full bg-white shadow-lg  "
+                  />
+                </div>
+              </div>
+              <div
+                class=" ml-3 cursor-pointer flex flex-col gap-1"
+              >
+                <p
+                  class="font-medium text-neutral-400"
+                >
+                  Cluster Credentials
+                </p>
+              </div>
+            </div>
+          </div>
           <div
             class="mt-10 flex justify-between"
           >
@@ -487,6 +528,47 @@ exports[`StepConfigurationFeature should submit a form with a yaml 1`] = `
               >
                 Amount of storage allocated to the job resources
               </p>
+            </div>
+          </div>
+          <hr
+            class="my-4 border-t border-dashed border-neutral-250"
+          />
+          <div
+            class="flex flex-col gap-5"
+          >
+            <div
+              class="flex text-sm  items-start  "
+              data-testid="input-toggle"
+            >
+              <div
+                aria-label="toggle-btn"
+                class="inline-flex items-center justify-between cursor-pointer"
+                data-testid="input-toggle-button"
+              >
+                <input
+                  class="hidden"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  aria-label="bg"
+                  class="w-12 h-6 flex items-center rounded-full p-0.5  bg-gray-300"
+                >
+                  <div
+                    aria-label="circle"
+                    class="w-5 h-5 transform rounded-full bg-white shadow-lg  "
+                  />
+                </div>
+              </div>
+              <div
+                class=" ml-3 cursor-pointer flex flex-col gap-1"
+              >
+                <p
+                  class="font-medium text-neutral-400"
+                >
+                  Cluster Credentials
+                </p>
+              </div>
             </div>
           </div>
           <div
