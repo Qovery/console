@@ -236,134 +236,134 @@ export function ContainerRegistryForm({
           () => true
         )
         .otherwise(() => false) && (
-        <>
-          <Controller
-            name="config.login_type"
-            control={methods.control}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                onChange={(value) => {
-                  field.onChange(value)
-                  methods.setValue('config.username', '')
-                  methods.setValue('config.password', '')
-                  methods.clearErrors('config.username')
-                  methods.clearErrors('config.password')
-                }}
-                value={field.value}
-                label="Login type"
-                disabled={cluster?.is_demo}
-                error={error?.message}
-                options={[
-                  {
-                    label: 'Account',
-                    value: 'ACCOUNT',
-                  },
-                  {
-                    label: 'Anonymous',
-                    value: 'ANONYMOUS',
-                  },
-                ]}
-                portal
-              />
-            )}
-          />
-          {watchLoginType === 'ACCOUNT' && (
-            <>
-              <Controller
-                name="config.username"
-                control={methods.control}
-                rules={{
-                  required: 'Please enter a username.',
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <InputText
-                    dataTestId="input-username"
-                    type="text"
-                    name={field.name}
-                    onChange={field.onChange}
-                    value={field.value}
-                    label="Username"
-                    error={error?.message}
-                  />
-                )}
-                shouldUnregister
-              />
-              {isEditDirty && (
-                <>
-                  <hr />
-                  <span className="text-sm text-neutral-350">
-                    {watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                    watchKind === ContainerRegistryKindEnum.GITLAB_CR
-                      ? 'Confirm your personal access token'
-                      : 'Confirm your password'}
-                  </span>
-                </>
+          <>
+            <Controller
+              name="config.login_type"
+              control={methods.control}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  onChange={(value) => {
+                    field.onChange(value)
+                    methods.setValue('config.username', '')
+                    methods.setValue('config.password', '')
+                    methods.clearErrors('config.username')
+                    methods.clearErrors('config.password')
+                  }}
+                  value={field.value}
+                  label="Login type"
+                  disabled={cluster?.is_demo}
+                  error={error?.message}
+                  options={[
+                    {
+                      label: 'Account',
+                      value: 'ACCOUNT',
+                    },
+                    {
+                      label: 'Anonymous',
+                      value: 'ANONYMOUS',
+                    },
+                  ]}
+                  portal
+                />
               )}
-              {(!isEdit || isEditDirty) && (
+            />
+            {watchLoginType === 'ACCOUNT' && (
+              <>
                 <Controller
-                  name="config.password"
+                  name="config.username"
                   control={methods.control}
                   rules={{
-                    required:
-                      watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                      watchKind === ContainerRegistryKindEnum.GITLAB_CR
-                        ? 'Please enter a personal access token.'
-                        : 'Please enter a password.',
+                    required: 'Please enter a username.',
                   }}
                   render={({ field, fieldState: { error } }) => (
-                    <>
-                      <InputText
-                        dataTestId="input-password"
-                        type="password"
-                        name={field.name}
-                        onChange={field.onChange}
-                        value={field.value}
-                        label={
-                          watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                          watchKind === ContainerRegistryKindEnum.GITLAB_CR
-                            ? 'Personal Access Token'
-                            : 'Password'
-                        }
-                        error={error?.message}
-                      />
-                      {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
-                        <p className="my-1 text-xs text-neutral-350">
-                          We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
-                          <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
-                            See here
-                          </ExternalLink>
-                        </p>
-                      )}
-                    </>
+                    <InputText
+                      dataTestId="input-username"
+                      type="text"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Username"
+                      error={error?.message}
+                    />
                   )}
                   shouldUnregister
                 />
-              )}
-            </>
-          )}
-        </>
-      )}
+                {isEditDirty && (
+                  <>
+                    <hr />
+                    <span className="text-sm text-neutral-350">
+                      {watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
+                        watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                        ? 'Confirm your personal access token'
+                        : 'Confirm your password'}
+                    </span>
+                  </>
+                )}
+                {(!isEdit || isEditDirty) && (
+                  <Controller
+                    name="config.password"
+                    control={methods.control}
+                    rules={{
+                      required:
+                        watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
+                          watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                          ? 'Please enter a personal access token.'
+                          : 'Please enter a password.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <>
+                        <InputText
+                          dataTestId="input-password"
+                          type="password"
+                          name={field.name}
+                          onChange={field.onChange}
+                          value={field.value}
+                          label={
+                            watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
+                              watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                              ? 'Personal Access Token'
+                              : 'Password'
+                          }
+                          error={error?.message}
+                        />
+                        {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
+                          <p className="my-1 text-xs text-neutral-350">
+                            We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
+                            <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
+                              See here
+                            </ExternalLink>
+                          </p>
+                        )}
+                      </>
+                    )}
+                    shouldUnregister
+                  />
+                )}
+              </>
+            )}
+          </>
+        )}
       {(watchKind === ContainerRegistryKindEnum.ECR ||
         watchKind === ContainerRegistryKindEnum.SCALEWAY_CR ||
         watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) && (
-        <Controller
-          name="config.region"
-          control={methods.control}
-          rules={{
-            required: 'Please enter a region.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              label="Region"
-              error={error?.message}
-              disabled={isClusterManaged}
-            />
-          )}
-        />
-      )}
+          <Controller
+            name="config.region"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a region.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Region"
+                error={error?.message}
+                disabled={isClusterManaged}
+              />
+            )}
+          />
+        )}
 
       <hr />
 

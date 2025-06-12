@@ -191,28 +191,34 @@ export function ClusterCredentialsModal({
     defaultValues:
       credential?.object_type === 'AWS_ROLE' || (!isEdit && cloudProviderLocal === 'AWS')
         ? {
-            type: 'STS',
-            name: credential?.name || '',
-            role_arn: credential?.role_arn || '',
-          }
+          type: 'STS',
+          name: credential?.name || '',
+          role_arn: credential?.role_arn || '',
+        }
         : {
-            type: 'STATIC',
-            name: credential?.name || '',
-            access_key_id: match(credential)
-              .with({ access_key_id: P.string }, (c) => c.access_key_id)
-              .otherwise(() => undefined),
-            scaleway_organization_id: match(credential)
-              .with({ scaleway_organization_id: P.string }, (c) => c.scaleway_organization_id)
-              .otherwise(() => undefined),
-            scaleway_project_id: match(credential)
-              .with({ scaleway_project_id: P.string }, (c) => c.scaleway_project_id)
-              .otherwise(() => undefined),
-            scaleway_access_key: match(credential)
-              .with({ scaleway_access_key: P.string }, (c) => c.scaleway_access_key)
-              .otherwise(() => undefined),
-            scaleway_secret_key: undefined,
-            gcp_credentials: undefined,
-          },
+          type: 'STATIC',
+          name: credential?.name || '',
+          access_key_id: match(credential)
+            .with({ access_key_id: P.string }, (c) => c.access_key_id)
+            .otherwise(() => undefined),
+          scaleway_organization_id: match(credential)
+            .with({ scaleway_organization_id: P.string }, (c) => c.scaleway_organization_id)
+            .otherwise(() => undefined),
+          scaleway_project_id: match(credential)
+            .with({ scaleway_project_id: P.string }, (c) => c.scaleway_project_id)
+            .otherwise(() => undefined),
+          scaleway_access_key: match(credential)
+            .with({ scaleway_access_key: P.string }, (c) => c.scaleway_access_key)
+            .otherwise(() => undefined),
+          scaleway_secret_key: undefined,
+          gcp_credentials: undefined,
+          azure_tenant_id: match(credential)
+            .with({ azure_tenant_id: P.string }, (c) => c.azure_tenant_id)
+            .otherwise(() => undefined),
+          azure_subscription_id: match(credential)
+            .with({ azure_subscription_id: P.string }, (c) => c.azure_subscription_id)
+            .otherwise(() => undefined),
+        },
   })
 
   const isEditDirty = isEdit && methods.formState.isDirty
