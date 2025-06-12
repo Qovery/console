@@ -555,33 +555,33 @@ export function ContainerRegistryForm({
       {watchKind === ContainerRegistryKindEnum.AZURE_CR && (
         <>
           <Controller
-            name="config.username"
+            name="config.azure_tenant_id"
             control={methods.control}
             rules={{
-              required: 'Please enter an Azure client ID.',
+              required: 'Please enter an Azure tenant ID.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Azure client ID"
+                label="Azure tenant ID"
                 error={error?.message}
               />
             )}
           />
           <Controller
-            name="config.password"
+            name="config.azure_subscription_id"
             control={methods.control}
             rules={{
-              required: 'Please enter an Azure client secret.',
+              required: 'Please enter an Azure subscription ID.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Azure client secret"
+                label="Azure subscription ID."
                 error={error?.message}
               />
             )}

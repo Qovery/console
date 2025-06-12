@@ -39,6 +39,8 @@ export function ContainerRegistryCreateEditModal({
         scaleway_access_key: registry?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
         json_credentials: undefined,
+        azure_tenant_id: registry?.config?.azure_tenant_id,
+        azure_subscription_id: registry?.config?.azure_subscription_id,
         login_type: registry?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
       },
     },
