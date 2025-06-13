@@ -46,7 +46,7 @@ export type Subnets = {
 }
 
 export type ClusterFeaturesData = {
-  vpc_mode: 'DEFAULT' | 'EXISTING_VPC'
+  vpc_mode: 'DEFAULT' | 'EXISTING_VPC' | undefined
   aws_existing_vpc?: {
     aws_vpc_eks_id: string
     eks_subnets?: Subnets[]
