@@ -45,8 +45,10 @@ export function StepFeatures(props: StepFeaturesProps) {
   return (
     <Section>
       <div className="mb-10">
-        <Heading className="mb-2">Features</Heading>
-        <p className="mb-2 text-sm text-neutral-400">Additional features available on your cluster.</p>
+        <Heading className="mb-2">Network configuration</Heading>
+        <p className="mb-2 text-sm text-neutral-400">
+          Configure the network mode by either using an existing VPC or letting Qovery manage the network setup for you.
+        </p>
       </div>
 
       <form onSubmit={onSubmit}>
@@ -82,9 +84,9 @@ export function StepFeatures(props: StepFeaturesProps) {
                     }}
                   >
                     {typeof vpcMode.icon === 'string' ? (
-                      <img className="select-none" width={20} height={20} src={vpcMode.icon} alt={vpcMode.title} />
+                      <img className="mt-1 select-none" width={20} height={20} src={vpcMode.icon} alt={vpcMode.title} />
                     ) : (
-                      cloneElement(vpcMode.icon as ReactElement, { className: 'w-[20px] h-[20px]' })
+                      cloneElement(vpcMode.icon as ReactElement, { className: 'w-[20px] h-[20px] mt-1' })
                     )}
                     <span>
                       <span className="mb-2 inline-flex items-center text-base font-semibold text-neutral-400">
@@ -161,26 +163,27 @@ export function StepFeatures(props: StepFeaturesProps) {
           )}
           {cloudProvider === 'GCP' && (
             <div>
-              {watchVpcMode === 'DEFAULT' ? (
-                features && features.length > 0 ? (
-                  features.map((feature) => (
-                    <CardClusterFeature
-                      key={feature.id}
-                      feature={feature}
-                      cloudProvider={cloudProvider}
-                      control={control}
-                      watch={watch}
-                      setValue={setValue}
-                    />
-                  ))
-                ) : (
-                  <div className="mt-2 flex justify-center">
-                    <LoaderSpinner className="w-4" />
-                  </div>
+              {match(watchVpcMode)
+                .with('DEFAULT', () =>
+                  features && features.length > 0 ? (
+                    features.map((feature) => (
+                      <CardClusterFeature
+                        key={feature.id}
+                        feature={feature}
+                        cloudProvider={cloudProvider}
+                        control={control}
+                        watch={watch}
+                        setValue={setValue}
+                      />
+                    ))
+                  ) : (
+                    <div className="mt-2 flex justify-center">
+                      <LoaderSpinner className="w-4" />
+                    </div>
+                  )
                 )
-              ) : (
-                <GCPVpcFeature />
-              )}
+                .with('EXISTING_VPC', () => <GCPVpcFeature />)
+                .otherwise(() => null)}
             </div>
           )}
         </div>
