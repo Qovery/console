@@ -4,6 +4,7 @@ import {
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
+  SETTINGS_CREDENTIALS_URL,
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_GIT_REPOSITORY_ACCESS_URL,
@@ -21,6 +22,7 @@ import PageOrganizationApiFeature from '../feature/page-organization-api-feature
 import PageOrganizationBillingFeature from '../feature/page-organization-billing-feature/page-organization-billing-feature'
 import PageOrganizationBillingSummaryFeature from '../feature/page-organization-billing-summary-feature/page-organization-billing-summary-feature'
 import { PageOrganizationContainerRegistriesFeature } from '../feature/page-organization-container-registries-feature/page-organization-container-registries-feature'
+import { PageOrganizationCredentialsFeature } from '../feature/page-organization-credentials-feature/page-organization-credentials-feature'
 import { PageOrganizationDangerZoneFeature } from '../feature/page-organization-danger-zone-feature/page-organization-danger-zone-feature'
 import { PageOrganizationGeneralFeature } from '../feature/page-organization-general-feature/page-organization-general-feature'
 import { PageOrganizationGithubRepositoryAccessFeature } from '../feature/page-organization-github-repository-access-feature/page-organization-github-repository-access-feature'
@@ -77,6 +79,10 @@ export const ROUTER_SETTINGS: Route[] = [
   {
     path: SETTINGS_API_URL,
     component: <PageOrganizationApiFeature />,
+  },
+  {
+    path: SETTINGS_CREDENTIALS_URL,
+    component: <PageOrganizationCredentialsFeature />,
   },
   {
     path: SETTINGS_GIT_REPOSITORY_ACCESS_URL,
