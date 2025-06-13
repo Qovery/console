@@ -1,11 +1,11 @@
 import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
 import { type FormEventHandler, type ReactElement, cloneElement } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
 import { match } from 'ts-pattern'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
 import { type ClusterFeaturesData } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import AWSVpcFeature from './aws-vpc-feature/aws-vpc-feature'
 import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
 
