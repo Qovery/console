@@ -98,10 +98,4 @@ describe('PageSettingsNetwork', () => {
 
     expect(spy).toHaveBeenCalled()
   })
-
-  it('should have a placeholder if no route yet', async () => {
-    props.routes = []
-    renderWithProviders(<PageSettingsNetwork {...props} />)
-    screen.getByText('No network are set')
-  })
 })

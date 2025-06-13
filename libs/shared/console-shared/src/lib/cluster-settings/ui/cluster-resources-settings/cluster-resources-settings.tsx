@@ -129,41 +129,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
   return (
     <div className="flex flex-col gap-10">
-      <BlockContent title="Cluster" className="mb-0">
-        {!props.fromDetail ? (
-          <Controller
-            name="cluster_type"
-            control={control}
-            rules={{
-              required: 'Please select a cluster type',
-            }}
-            render={({ field }) => (
-              <div className="pointer-events-none">
-                {props.clusterTypeOptions?.map((option) => (
-                  <InputRadioBox
-                    key={option.value}
-                    fieldValue={field.value}
-                    onChange={(event) => {
-                      setValue('karpenter.enabled', false)
-                      field.onChange(event)
-                    }}
-                    name={field.name}
-                    label={option.label}
-                    value={option.value}
-                    description={option.description}
-                  />
-                ))}
-              </div>
-            )}
-          />
-        ) : (
-          <div className="rounded border border-neutral-250 p-4 text-sm text-neutral-400">
-            {props.clusterTypeOptions &&
-              props.clusterTypeOptions[0] &&
-              `${props.clusterTypeOptions[0].label} - ${props.clusterTypeOptions[0].description}`}
-          </div>
-        )}
-      </BlockContent>
       {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
         <BlockContent
           title={props.isProduction ? 'Reduce your costs with Karpenter' : 'Karpenter configuration'}
