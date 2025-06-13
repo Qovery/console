@@ -24,9 +24,8 @@ export function PageSettingsNetworkFeature() {
 
   return (
     <PageSettingsNetwork
-      features={cluster?.features}
-      cloudProvider={cluster?.cloud_provider}
-      areFeaturesLoading={isClusterLoading}
+      cluster={cluster}
+      isClusterLoading={isClusterLoading}
       routes={clusterRoutingTable}
       areRoutesLoading={isClusterRoutingTableLoading}
       onAddRoute={() => {

@@ -1,8 +1,4 @@
-import {
-  type CloudVendorEnum,
-  type ClusterFeatureResponse,
-  type ClusterRoutingTableResultsInner,
-} from 'qovery-typescript-axios'
+import { type Cluster, type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
@@ -11,17 +7,24 @@ import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 
 export interface PageSettingsNetworkProps {
   routes?: ClusterRoutingTableResultsInner[]
-  features?: ClusterFeatureResponse[]
   onAddRoute: () => void
   onEdit: (currentRoute: ClusterRoutingTableResultsInner) => void
   onDelete: (currentRoute: ClusterRoutingTableResultsInner) => void
   areRoutesLoading: boolean
-  areFeaturesLoading: boolean
-  cloudProvider?: CloudVendorEnum
+  isClusterLoading: boolean
+  cluster: Cluster | undefined
 }
 
-export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
-  const featureExistingVpc = props.features?.find(({ id }) => id === 'EXISTING_VPC')
+export function PageSettingsNetwork({
+  cluster,
+  isClusterLoading,
+  routes,
+  onAddRoute,
+  onEdit,
+  onDelete,
+  areRoutesLoading,
+}: PageSettingsNetworkProps) {
+  const featureExistingVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')
   const featureExistingVpcValue = featureExistingVpc?.value_object
 
   const featureExistingVpcContent = match(featureExistingVpcValue)
@@ -38,14 +41,14 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
         />
 
         <div className="mt-2 flex flex-col gap-5">
-          {(props.areRoutesLoading && props.routes?.length === 0) || !props.routes ? (
+          {(areRoutesLoading && routes?.length === 0) || !routes ? (
             <div className="flex justify-center">
               <LoaderSpinner className="w-4" />
             </div>
           ) : (
             <BlockContent classNameContent="p-0" title="Routes">
-              {props.routes &&
-                props.routes.map((currentRoute, i) => (
+              {routes &&
+                routes.map((currentRoute, i) => (
                   <div
                     key={i}
                     className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 p-5"
@@ -73,7 +76,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                         color="neutral"
                         size="md"
                         className="h-9 w-9 justify-center"
-                        onClick={() => props.onEdit(currentRoute)}
+                        onClick={() => onEdit(currentRoute)}
                       >
                         <Icon iconName="gear" />
                       </Button>
@@ -83,7 +86,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                         color="neutral"
                         size="md"
                         className="h-9 w-9 justify-center"
-                        onClick={() => props.onDelete(currentRoute)}
+                        onClick={() => onDelete(currentRoute)}
                       >
                         <Icon iconName="trash" />
                       </Button>
@@ -92,13 +95,7 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
                 ))}
 
               <div className="flex w-full items-center justify-end gap-3 px-5 py-2">
-                <Button
-                  data-testid="add-button"
-                  size="sm"
-                  variant="solid"
-                  color="brand"
-                  onClick={() => props.onAddRoute()}
-                >
+                <Button data-testid="add-button" size="sm" variant="solid" color="brand" onClick={() => onAddRoute()}>
                   Add route
                   <Icon iconName="circle-plus" iconStyle="regular" className="ml-1" />
                 </Button>
@@ -106,19 +103,24 @@ export function PageSettingsNetwork(props: PageSettingsNetworkProps) {
             </BlockContent>
           )}
 
-          {!props.areFeaturesLoading && featureExistingVpcValue && featureExistingVpcContent}
+          {!isClusterLoading && featureExistingVpcValue && featureExistingVpcContent}
 
           {!featureExistingVpcValue && (
             <BlockContent title="Configured network features" classNameContent="p-0">
-              {props.areFeaturesLoading && (
+              {isClusterLoading && (
                 <div className="flex justify-center p-5">
                   <LoaderSpinner className="w-4" />
                 </div>
               )}
-              {props.features
+              {cluster?.features
                 ?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
                 .map((feature) => (
-                  <CardClusterFeature key={feature.id} feature={feature} cloudProvider={props.cloudProvider} disabled />
+                  <CardClusterFeature
+                    key={feature.id}
+                    feature={feature}
+                    cloudProvider={cluster?.cloud_provider}
+                    disabled
+                  />
                 ))}
             </BlockContent>
           )}
