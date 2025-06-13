@@ -581,7 +581,7 @@ export function ContainerRegistryForm({
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
-                label="Azure subscription ID."
+                label="Azure subscription ID"
                 error={error?.message}
               />
             )}
