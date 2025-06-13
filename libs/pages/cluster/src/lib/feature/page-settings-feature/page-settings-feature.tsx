@@ -91,6 +91,7 @@ export function PageSettingsFeature() {
       generalLink,
       credentialsLink,
       imageRegistryLink,
+      networkLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
@@ -99,6 +100,7 @@ export function PageSettingsFeature() {
       credentialsLink,
       resourcesLink,
       imageRegistryLink,
+      networkLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
