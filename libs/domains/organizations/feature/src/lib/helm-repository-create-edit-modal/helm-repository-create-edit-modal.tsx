@@ -70,6 +70,8 @@ export function HelmRepositoryCreateEditModal({
         scaleway_access_key: repository?.config?.scaleway_access_key,
         scaleway_secret_key: undefined,
         secret_access_key: undefined,
+        azure_tenant_id: repository?.config?.azure_tenant_id,
+        azure_subscription_id: repository?.config?.azure_subscription_id,
         login_type: repository?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
       },
     },
