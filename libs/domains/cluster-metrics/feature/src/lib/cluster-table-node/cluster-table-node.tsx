@@ -27,6 +27,7 @@ interface MetricProgressBarProps {
 function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgressBarProps) {
   const usedPercentage = calculatePercentage(used, total)
   const reservedPercentage = calculatePercentage(reserved, total)
+  const isLimitReached = usedPercentage > 80
 
   return (
     <Tooltip
@@ -62,7 +63,11 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
             </span>
           </div>
           {usedPercentage > reservedPercentage && (
-            <div className="flex items-center justify-between border-t border-neutral-400 px-2 py-1.5">
+            <div
+              className={clsx('flex items-center justify-between border-t border-neutral-400 px-2 py-1.5', {
+                'text-yellow-500': isLimitReached,
+              })}
+            >
               Exceeds reserved allocation Review workload distribution on high-usage
             </div>
           )}

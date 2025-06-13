@@ -2,7 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
-import { type PropsWithChildren, useMemo, useState } from 'react'
+import { type PropsWithChildren, memo, useMemo, useState } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import {
   APPLICATION_URL,
@@ -12,18 +12,7 @@ import {
   ENVIRONMENTS_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import {
-  Badge,
-  Button,
-  Heading,
-  Icon,
-  Link,
-  ProgressBar,
-  Section,
-  SegmentedControl,
-  StatusChip,
-  Tooltip,
-} from '@qovery/shared/ui'
+import { Badge, Button, Heading, Icon, Link, ProgressBar, Section, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import {
   calculatePercentage,
@@ -34,7 +23,7 @@ import {
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
-import ClusterProgressBarNode from '../cluster-progress-bar-node/cluster-progress-bar-node'
+import { ClusterProgressBarNode } from '../cluster-progress-bar-node/cluster-progress-bar-node'
 
 export interface ClusterNodeRightPanelProps extends PropsWithChildren {
   organizationId: string
@@ -43,7 +32,6 @@ export interface ClusterNodeRightPanelProps extends PropsWithChildren {
   className?: string
 }
 
-const KEY_KARPENTER_NODE_POOL = 'karpenter.sh/nodepool'
 const KEY_KARPENTER_CAPACITY_TYPE = 'karpenter.sh/capacity-type'
 
 interface MetricProgressBarProps {
@@ -65,7 +53,7 @@ function MetricProgressBar({
   unit,
   isPressure = false,
 }: MetricProgressBarProps) {
-  const isWarning = used > reserved
+  const isWarning = percentage > 80
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -130,7 +118,7 @@ function NodeProgressBar({ type, used, unit, total }: NodeProgressBarProps) {
   )
 }
 
-export function ClusterNodeRightPanel({
+export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
   node,
   organizationId,
   clusterId,
@@ -138,7 +126,6 @@ export function ClusterNodeRightPanel({
   children,
 }: ClusterNodeRightPanelProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedTab, setSelectedTab] = useState<'pods' | 'events'>('pods')
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId,
     clusterId,
@@ -148,37 +135,54 @@ export function ClusterNodeRightPanel({
     () => runningStatus?.computed_status?.node_warnings || {},
     [runningStatus?.computed_status?.node_warnings]
   )
-  const isWarning = Boolean(nodeWarnings[node.name])
 
-  const cpuUsedPercentage = Math.round(
-    calculatePercentage(
-      formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0)),
-      formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))
-    )
-  )
+  const isWarning = useMemo(() => Boolean(nodeWarnings[node.name]), [nodeWarnings, node.name])
 
-  const memoryUsedPercentage = Math.round(
-    calculatePercentage(
-      formatNumber(
-        mibToGib(
-          Math.max(node.metrics_usage?.memory_mib_rss_usage || 0, node.metrics_usage?.memory_mib_working_set_usage || 0)
+  const cpuUsedPercentage = useMemo(
+    () =>
+      Math.round(
+        calculatePercentage(
+          formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0)),
+          formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))
         )
       ),
-      formatNumber(mibToGib(node.resources_allocatable.memory_mib))
-    )
+    [node.metrics_usage?.cpu_milli_usage, node.resources_allocatable.cpu_milli]
   )
 
-  const isDiskPressure = node.conditions?.some(
-    (condition) => condition.type === 'DiskPressure' && condition.status === 'True'
-  )
-  const isMemoryPressure = node.conditions?.some(
-    (condition) => condition.type === 'MemoryPressure' && condition.status === 'True'
+  const memoryUsedPercentage = useMemo(
+    () =>
+      Math.round(
+        calculatePercentage(
+          formatNumber(
+            mibToGib(
+              Math.max(
+                node.metrics_usage?.memory_mib_rss_usage || 0,
+                node.metrics_usage?.memory_mib_working_set_usage || 0
+              )
+            )
+          ),
+          formatNumber(mibToGib(node.resources_allocatable.memory_mib))
+        )
+      ),
+    [
+      node.metrics_usage?.memory_mib_rss_usage,
+      node.metrics_usage?.memory_mib_working_set_usage,
+      node.resources_allocatable.memory_mib,
+    ]
   )
 
-  console.log(node)
+  const isDiskPressure = useMemo(
+    () => node.conditions?.some((condition) => condition.type === 'DiskPressure' && condition.status === 'True'),
+    [node.conditions]
+  )
+
+  const isMemoryPressure = useMemo(
+    () => node.conditions?.some((condition) => condition.type === 'MemoryPressure' && condition.status === 'True'),
+    [node.conditions]
+  )
 
   return (
-    <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen} aria-describedby="node-right-panel">
       <Dialog.Trigger asChild>
         <div
           className={twMerge(
@@ -334,17 +338,8 @@ export function ClusterNodeRightPanel({
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-4">
-                      <SegmentedControl.Root
-                        defaultValue="pods"
-                        onValueChange={(value) => setSelectedTab(value as 'pods' | 'events')}
-                        value={selectedTab}
-                        className="w-60 text-sm"
-                      >
-                        <SegmentedControl.Item value="pods">Pods</SegmentedControl.Item>
-                        <SegmentedControl.Item value="events">Events</SegmentedControl.Item>
-                      </SegmentedControl.Root>
-                      {}
+                    <Section className="gap-4">
+                      <Heading level={2}>Podnames</Heading>
                       <div className="rounded border border-neutral-250">
                         {node.pods.map((pod) => (
                           <div
@@ -362,6 +357,7 @@ export function ClusterNodeRightPanel({
                                     {pod.qovery_service_info?.project_name && (
                                       <Link
                                         color="brand"
+                                        className="font-normal"
                                         to={ENVIRONMENTS_URL(organizationId, pod.qovery_service_info?.project_id)}
                                       >
                                         {pod.qovery_service_info?.project_name}
@@ -373,6 +369,7 @@ export function ClusterNodeRightPanel({
                                           /
                                           <Link
                                             color="brand"
+                                            className="font-normal"
                                             to={SERVICES_URL(
                                               organizationId,
                                               pod.qovery_service_info?.project_id,
@@ -389,6 +386,7 @@ export function ClusterNodeRightPanel({
                                           /
                                           <Link
                                             color="brand"
+                                            className="font-normal"
                                             to={APPLICATION_URL(
                                               organizationId,
                                               pod.qovery_service_info?.project_id,
@@ -416,38 +414,32 @@ export function ClusterNodeRightPanel({
                             <div className="grid grid-cols-3 gap-6">
                               <NodeProgressBar
                                 type="cpu"
-                                used={formatNumber(milliCoreToVCPU(pod.metrics_usage.cpu_milli_usage || 0))}
-                                total={formatNumber(milliCoreToVCPU(pod.cpu_milli_request || 0))}
-                                unit="vCPU"
+                                used={formatNumber(pod.metrics_usage.cpu_milli_usage || 0)}
+                                total={formatNumber(pod.cpu_milli_request || 0)}
+                                unit="CPU"
                               />
                               <NodeProgressBar
                                 type="memory"
                                 used={formatNumber(
-                                  mibToGib(
-                                    Math.max(
-                                      pod.metrics_usage?.memory_mib_rss_usage || 0,
-                                      pod.metrics_usage?.memory_mib_working_set_usage || 0
-                                    )
+                                  Math.max(
+                                    pod.metrics_usage?.memory_mib_rss_usage || 0,
+                                    pod.metrics_usage?.memory_mib_working_set_usage || 0
                                   )
                                 )}
                                 total={pod.memory_mib_request || 0}
-                                unit="vCPU"
+                                unit="MB"
                               />
                               <NodeProgressBar
                                 type="disk"
-                                used={formatNumber(mibToGib(pod.metrics_usage.disk_mib_usage || 0))}
+                                used={formatNumber(pod.metrics_usage.disk_mib_usage || 0)}
                                 total={100} // TODO: fix it
-                                unit="vCPU"
+                                unit="MB"
                               />
-                            </div>
-                            <div className="rounded border border-neutral-250 bg-neutral-100 px-4 py-3 text-sm text-neutral-400">
-                              Pod name must consist of lower case alphanumeric characters, '-' or '.', and must start
-                              and end with an alphanumeric character (e.g. 'my-name', '123-abc').
                             </div>
                           </div>
                         ))}
                       </div>
-                    </div>
+                    </Section>
                   </Section>
                 </motion.div>
               </Dialog.Content>
@@ -457,6 +449,6 @@ export function ClusterNodeRightPanel({
       </Dialog.Portal>
     </Dialog.Root>
   )
-}
+})
 
 export default ClusterNodeRightPanel
