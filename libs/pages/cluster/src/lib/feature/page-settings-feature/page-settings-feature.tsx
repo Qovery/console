@@ -5,7 +5,6 @@ import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
-  CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
   CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
@@ -51,12 +50,6 @@ export function PageSettingsFeature() {
     url: pathSettings + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   }
 
-  const featuresLink = {
-    title: 'Features',
-    icon: IconAwesomeEnum.PUZZLE_PIECE,
-    url: pathSettings + CLUSTER_SETTINGS_FEATURES_URL,
-  }
-
   const networkLink = {
     title: 'Network',
     icon: IconAwesomeEnum.PLUG,
@@ -82,7 +75,6 @@ export function PageSettingsFeature() {
       credentialsLink,
       resourcesLink,
       imageRegistryLink,
-      featuresLink,
       networkLink,
       advancedSettingsLink,
       dangerZoneLink,
@@ -99,7 +91,6 @@ export function PageSettingsFeature() {
       generalLink,
       credentialsLink,
       imageRegistryLink,
-      featuresLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
@@ -108,7 +99,6 @@ export function PageSettingsFeature() {
       credentialsLink,
       resourcesLink,
       imageRegistryLink,
-      featuresLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])

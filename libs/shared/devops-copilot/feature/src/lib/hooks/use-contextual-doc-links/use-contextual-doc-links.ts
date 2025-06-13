@@ -31,7 +31,6 @@ import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
-  CLUSTER_SETTINGS_FEATURES_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
   CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
@@ -995,7 +994,6 @@ export function useContextualDocLinks() {
   const clusterSettingsImageRegistryURL = useMatch(
     CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
   )
-  const clusterSettingsFeaturesURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_FEATURES_URL)
   const clusterSettingsNetworkURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_NETWORK_URL)
   const clusterSettingsAdvancedSettingsURL = useMatch(
     CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL
@@ -1083,7 +1081,6 @@ export function useContextualDocLinks() {
     clusterSettingsCredentialsURL ??
     clusterSettingsResourcesURL ??
     clusterSettingsImageRegistryURL ??
-    clusterSettingsFeaturesURL ??
     clusterSettingsNetworkURL ??
     clusterSettingsAdvancedSettingsURL ??
     clusterSettingsDangerZoneURL

@@ -15,12 +15,30 @@ export function CrudModal(props: CrudModalProps) {
 
   return (
     <ModalCrud
-      title={props.isEdit ? 'Edit route' : 'Set route'}
+      title={props.isEdit ? 'Edit route' : 'Create route'}
       onSubmit={props.onSubmit}
       onClose={props.onClose}
       loading={props.loading}
       isEdit={props.isEdit}
     >
+      <Controller
+        name="target"
+        control={control}
+        rules={{
+          required: 'Please enter an target.',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            dataTestId="input-target"
+            className="mb-3"
+            name={field.name}
+            onChange={field.onChange}
+            value={field.value}
+            label="Target"
+            error={error?.message}
+          />
+        )}
+      />
       <Controller
         name="destination"
         control={control}
@@ -41,24 +59,6 @@ export function CrudModal(props: CrudModalProps) {
         )}
       />
       <Controller
-        name="target"
-        control={control}
-        rules={{
-          required: 'Please enter an target.',
-        }}
-        render={({ field, fieldState: { error } }) => (
-          <InputText
-            dataTestId="input-target"
-            className="mb-3"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Target"
-            error={error?.message}
-          />
-        )}
-      />
-      <Controller
         name="description"
         control={control}
         rules={{
@@ -70,7 +70,7 @@ export function CrudModal(props: CrudModalProps) {
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="Description"
+            label="Description (optional)"
             error={error?.message}
           />
         )}
