@@ -1,0 +1,9 @@
+{
+  "name": "domains-cluster-metrics-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/cluster-metrics/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:data-access", "slice:cluster-metrics"],
+  "// targets": "to see all targets run: nx show project data-access --web",
+  "targets": {}
+}

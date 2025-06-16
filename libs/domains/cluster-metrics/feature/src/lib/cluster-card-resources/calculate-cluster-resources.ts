@@ -27,8 +27,8 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
 
     // Disk
     totalDiskMib += node.resources_capacity.ephemeral_storage_mib
-    if (node.metrics_usage.disk_mib_usage !== null) {
-      usedDiskMib += node.metrics_usage.disk_mib_usage ?? 0
+    if (node.metrics_usage.ephemeral_storage_usage !== null) {
+      usedDiskMib += node.metrics_usage.ephemeral_storage_usage ?? 0
     }
   })
 

@@ -17,14 +17,18 @@ export const ClusterProgressBarNode = forwardRef<HTMLDivElement, ClusterProgress
 
     return (
       <div ref={ref} className="relative w-full">
-        <ProgressBar.Root mode="absolute">
-          <ProgressBar.Cell value={reservedPercentage} color="var(--color-purple-200)" />
+        <ProgressBar.Root mode="default">
+          <ProgressBar.Cell
+            value={reservedPercentage}
+            color={isLimitReached ? 'var(--color-yellow-500)' : 'var(--color-brand-400)'}
+          />
+          {/* <ProgressBar.Cell value={reservedPercentage} color="var(--color-purple-200)" />
           <ProgressBar.Cell
             className="left-0.5 top-1/2 h-1 -translate-y-1/2 rounded-l-full"
             value={usedPercentage}
             color="var(--color-brand-400)"
-          />
-          {usedPercentage > reservedPercentage && (
+          /> */}
+          {/* {usedPercentage > reservedPercentage && (
             <ProgressBar.Cell
               className="left-0.5 top-1/2 h-1 -translate-y-1/2"
               value={usedPercentage - reservedPercentage + 1} // 1 is hack to compensate border-r and left-0.5
@@ -33,16 +37,16 @@ export const ClusterProgressBarNode = forwardRef<HTMLDivElement, ClusterProgress
                 left: `${reservedPercentage}%`,
               }}
             />
-          )}
+          )} */}
         </ProgressBar.Root>
-        {reservedPercentage < 99 && (
+        {/* {reservedPercentage < 99 && (
           <span
             className="absolute top-0 h-full w-[1px] bg-purple-500"
             style={{
               left: `${reservedPercentage}%`,
             }}
           />
-        )}
+        )} */}
       </div>
     )
   }

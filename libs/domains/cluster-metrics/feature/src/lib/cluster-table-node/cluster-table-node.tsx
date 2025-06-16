@@ -26,7 +26,7 @@ interface MetricProgressBarProps {
 
 function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgressBarProps) {
   const usedPercentage = calculatePercentage(used, total)
-  const reservedPercentage = calculatePercentage(reserved, total)
+  // const reservedPercentage = calculatePercentage(reserved, total)
   const isLimitReached = usedPercentage > 80
 
   return (
@@ -39,14 +39,29 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
           <div className="flex flex-col gap-1 px-2.5 py-1.5">
             <div className="flex w-full items-center gap-1.5">
               <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-purple-200" />
+                <span
+                  className={twMerge(
+                    clsx('h-2 w-2 rounded-full bg-brand-400', {
+                      'bg-yellow-500': isLimitReached,
+                    })
+                  )}
+                />
                 Reserved
               </span>
               <span className="ml-auto block">
                 {reserved} {unit}
               </span>
             </div>
-            <div className="flex w-full items-center gap-1.5">
+            {/* <div className="flex w-full items-center gap-1.5">
+              <span className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-purple-200" />
+                Reserved
+              </span>
+              <span className="ml-auto block">
+                {reserved} {unit}
+              </span>
+            </div> */}
+            {/* <div className="flex w-full items-center gap-1.5">
               <span className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-brand-400" />
                 Used
@@ -54,7 +69,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
               <span className="ml-auto block">
                 {used} {unit}
               </span>
-            </div>
+            </div> */}
           </div>
           <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
             <span>Total Available</span>
@@ -62,7 +77,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
               {total} {unit}
             </span>
           </div>
-          {usedPercentage > reservedPercentage && (
+          {/* {usedPercentage > reservedPercentage && (
             <div
               className={clsx('flex items-center justify-between border-t border-neutral-400 px-2 py-1.5', {
                 'text-yellow-500': isLimitReached,
@@ -70,7 +85,7 @@ function MetricProgressBar({ type, used, reserved, total, unit }: MetricProgress
             >
               Exceeds reserved allocation Review workload distribution on high-usage
             </div>
-          )}
+          )} */}
         </div>
       }
       classNameContent="w-[173px] p-0"
@@ -134,26 +149,40 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
           (condition) => condition.type === 'MemoryPressure' && condition.status === 'True'
         )
 
-        const cpuUsedPercentage = Math.round(
+        const cpuReservedPercentage = Math.round(
           calculatePercentage(
-            formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0)),
+            formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli)),
             formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))
           )
         )
 
-        const memoryUsedPercentage = Math.round(
+        const memoryReservedPercentage = Math.round(
           calculatePercentage(
-            formatNumber(
-              mibToGib(
-                Math.max(
-                  node.metrics_usage?.memory_mib_rss_usage || 0,
-                  node.metrics_usage?.memory_mib_working_set_usage || 0
-                )
-              )
-            ),
+            formatNumber(mibToGib(node.resources_allocated.request_memory_mib)),
             formatNumber(mibToGib(node.resources_allocatable.memory_mib))
           )
         )
+
+        // const cpuUsedPercentage = Math.round(
+        //   calculatePercentage(
+        //     formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0)),
+        //     formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))
+        //   )
+        // )
+
+        // const memoryUsedPercentage = Math.round(
+        //   calculatePercentage(
+        //     formatNumber(
+        //       mibToGib(
+        //         Math.max(
+        //           node.metrics_usage?.memory_mib_rss_usage || 0,
+        //           node.metrics_usage?.memory_mib_working_set_usage || 0
+        //         )
+        //       )
+        //     ),
+        //     formatNumber(mibToGib(node.resources_allocatable.memory_mib))
+        //   )
+        // )
 
         return (
           <ClusterNodeRightPanel
@@ -177,7 +206,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
             <div className="flex h-12 w-1/4 items-center px-3">
               <div className="flex w-full items-center gap-1 text-ssm">
                 <span className="flex min-w-8 items-center gap-1 whitespace-nowrap text-neutral-400">
-                  {cpuUsedPercentage}%
+                  {cpuReservedPercentage}%
                 </span>
                 <MetricProgressBar
                   type="cpu"
@@ -196,7 +225,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                     'text-neutral-400': !isMemoryPressure,
                   })}
                 >
-                  {memoryUsedPercentage}%
+                  {memoryReservedPercentage}%
                 </span>
                 <MetricProgressBar
                   type="memory"
@@ -244,7 +273,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                 })
               )}
             >
-              {node.metrics_usage?.disk_percent_usage || 0}%
+              {node.metrics_usage?.ephemeral_storage_percent_usage || 0}%
               {isDiskPressure && (
                 <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
                   <span className="ml-1 inline-block text-red-500">

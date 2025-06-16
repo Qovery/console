@@ -1,7 +1,8 @@
+import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Dialog from '@radix-ui/react-dialog'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
-import { type ClusterNodeDto } from 'qovery-ws-typescript-axios'
+import { type ClusterNodeDto, type NodePodInfoDto } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren, memo, useMemo, useState } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import {
@@ -53,7 +54,7 @@ function MetricProgressBar({
   unit,
   isPressure = false,
 }: MetricProgressBarProps) {
-  const isWarning = percentage > 80
+  // const isWarning = percentage > 80
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -69,6 +70,20 @@ function MetricProgressBar({
       <div className="mt-1.5 flex gap-6 text-xs text-neutral-400">
         <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 bg-brand-400"></span>
+          Reserved:{' '}
+          <span>
+            {used} {unit}{' '}
+            {/* {isWarning && (
+              <Tooltip content="Exceeds reserved allocation. Review workload distribution on high-usage">
+                <span>
+                  <Icon iconName="circle-exclamation" iconStyle="regular" className="text-xs" />
+                </span>
+              </Tooltip>
+            )} */}
+          </span>
+        </div>
+        {/* <div className="flex items-center gap-1.5">
+          <span className="h-2 w-2 bg-brand-400"></span>
           Used:{' '}
           <span
             className={isWarning ? 'inline-flex items-center gap-1 rounded-sm bg-yellow-50 px-0.5 text-yellow-900' : ''}
@@ -82,11 +97,11 @@ function MetricProgressBar({
               </Tooltip>
             )}
           </span>
-        </div>
-        <div className="flex items-center gap-1.5">
+        </div> */}
+        {/* <div className="flex items-center gap-1.5">
           <span className="h-2 w-2 border border-purple-500 bg-purple-200"></span>
           Reserved: {used} {unit}
-        </div>
+        </div> */}
       </div>
     </div>
   )
@@ -118,6 +133,103 @@ function NodeProgressBar({ type, used, unit, total }: NodeProgressBarProps) {
   )
 }
 
+interface PodItemProps {
+  pod: NodePodInfoDto
+  organizationId: string
+}
+
+function PodItem({ pod, organizationId }: PodItemProps) {
+  return (
+    <div className="flex flex-col gap-4 border-b border-neutral-250 px-5 py-4 text-xs last:border-b-0">
+      <div className="flex items-start justify-between">
+        <span className="flex flex-col gap-2 text-ssm text-neutral-400">
+          <span className="flex items-center gap-2 font-medium">
+            <StatusChip status={pod.status_phase} />
+            {pod.name}
+          </span>
+          {pod.qovery_service_info?.project_name && (
+            <span className="flex gap-0.5 text-neutral-300">
+              {pod.qovery_service_info?.project_name && (
+                <Link
+                  color="brand"
+                  className="font-normal"
+                  to={ENVIRONMENTS_URL(organizationId, pod.qovery_service_info?.project_id)}
+                >
+                  {pod.qovery_service_info?.project_name}
+                </Link>
+              )}
+              {pod.qovery_service_info?.project_name && pod.qovery_service_info?.environment_name && (
+                <>
+                  /
+                  <Link
+                    color="brand"
+                    className="font-normal"
+                    to={SERVICES_URL(
+                      organizationId,
+                      pod.qovery_service_info?.project_id,
+                      pod.qovery_service_info?.environment_id
+                    )}
+                  >
+                    {pod.qovery_service_info?.environment_name}
+                  </Link>
+                </>
+              )}
+              {pod.qovery_service_info?.environment_name && pod.qovery_service_info?.service_name && (
+                <>
+                  /
+                  <Link
+                    color="brand"
+                    className="font-normal"
+                    to={APPLICATION_URL(
+                      organizationId,
+                      pod.qovery_service_info?.project_id,
+                      pod.qovery_service_info?.environment_id,
+                      pod.qovery_service_info?.service_id
+                    )}
+                  >
+                    {pod.qovery_service_info?.service_name}
+                  </Link>
+                </>
+              )}
+            </span>
+          )}
+        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-neutral-350">{timeAgo(new Date(pod.created_at), true)}</span>
+          {pod.restart_count > 0 && (
+            <span className="flex items-center gap-1 bg-yellow-50 px-0.5 text-yellow-900">
+              <Icon iconName="arrow-rotate-left" iconStyle="regular" className="text-xs" />
+              {pod.restart_count} {pluralize(pod.restart_count, 'restart', 'restarts')}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-6">
+        <NodeProgressBar
+          type="cpu"
+          used={formatNumber(pod.metrics_usage.cpu_milli_usage || 0)}
+          total={formatNumber(pod.cpu_milli_request || 0)}
+          unit="CPU"
+        />
+        <NodeProgressBar
+          type="memory"
+          used={formatNumber(
+            Math.max(pod.metrics_usage?.memory_mib_rss_usage || 0, pod.metrics_usage?.cpu_milli_usage || 0)
+          )}
+          total={pod.memory_mib_request || 0}
+          unit="MB"
+        />
+        {/* <NodeProgressBar
+          type="disk"
+          used={formatNumber(pod.metrics_usage.disk_mib_usage || 0)}
+          total={formatNumber(pod.metrics_usage.disk_mib_usage || 0)} // TODO: fix it
+          unit="MB"
+        /> */}
+      </div>
+    </div>
+  )
+}
+
 export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
   node,
   organizationId,
@@ -126,6 +238,7 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
   children,
 }: ClusterNodeRightPanelProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [openSystemPods, setOpenSystemPods] = useState(false)
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId,
     clusterId,
@@ -138,38 +251,60 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
 
   const isWarning = useMemo(() => Boolean(nodeWarnings[node.name]), [nodeWarnings, node.name])
 
-  const cpuUsedPercentage = useMemo(
+  const cpuReservedPercentage = useMemo(
     () =>
       Math.round(
         calculatePercentage(
-          formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0)),
+          formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli)),
           formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))
         )
       ),
-    [node.metrics_usage?.cpu_milli_usage, node.resources_allocatable.cpu_milli]
+    [node.resources_allocated.request_cpu_milli, node.resources_allocatable.cpu_milli]
   )
 
-  const memoryUsedPercentage = useMemo(
+  const memoryReservedPercentage = useMemo(
     () =>
       Math.round(
         calculatePercentage(
-          formatNumber(
-            mibToGib(
-              Math.max(
-                node.metrics_usage?.memory_mib_rss_usage || 0,
-                node.metrics_usage?.memory_mib_working_set_usage || 0
-              )
-            )
-          ),
+          formatNumber(mibToGib(node.resources_allocated.request_memory_mib)),
           formatNumber(mibToGib(node.resources_allocatable.memory_mib))
         )
       ),
-    [
-      node.metrics_usage?.memory_mib_rss_usage,
-      node.metrics_usage?.memory_mib_working_set_usage,
-      node.resources_allocatable.memory_mib,
-    ]
+    [node.resources_allocated.request_memory_mib, node.resources_allocatable.memory_mib]
   )
+
+  // const cpuUsedPercentage = useMemo(
+  //   () =>
+  //     Math.round(
+  //       calculatePercentage(
+  //         formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0)),
+  //         formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))
+  //       )
+  //     ),
+  //   [node.metrics_usage?.cpu_milli_usage, node.resources_allocatable.cpu_milli]
+  // )
+
+  // const memoryUsedPercentage = useMemo(
+  //   () =>
+  //     Math.round(
+  //       calculatePercentage(
+  //         formatNumber(
+  //           mibToGib(
+  //             Math.max(
+  //               node.metrics_usage?.memory_mib_rss_usage || 0,
+  //               node.metrics_usage?.memory_mib_working_set_usage || 0
+  //             )
+  //           )
+  //         ),
+  //         formatNumber(mibToGib(node.resources_allocatable.memory_mib))
+  //       )
+  //     ),
+  //   [
+  //     node.metrics_usage?.memory_mib_rss_usage,
+  //     node.metrics_usage?.memory_mib_working_set_usage,
+  //     node.resources_allocatable.memory_mib,
+  //   ]
+  // )
 
   const isDiskPressure = useMemo(
     () => node.conditions?.some((condition) => condition.type === 'DiskPressure' && condition.status === 'True'),
@@ -180,6 +315,15 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
     () => node.conditions?.some((condition) => condition.type === 'MemoryPressure' && condition.status === 'True'),
     [node.conditions]
   )
+
+  const { podsWithQoveryInfo, podsWithoutQoveryInfo } = useMemo(() => {
+    const withInfo = node.pods.filter((pod) => pod.qovery_service_info?.project_name)
+    const withoutInfo = node.pods.filter((pod) => !pod.qovery_service_info?.project_name)
+    return {
+      podsWithQoveryInfo: withInfo,
+      podsWithoutQoveryInfo: withoutInfo,
+    }
+  }, [node.pods])
 
   return (
     <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen} aria-describedby="node-right-panel">
@@ -263,7 +407,8 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
                           used={formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0))}
                           reserved={formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli))}
                           total={formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))}
-                          percentage={cpuUsedPercentage}
+                          // percentage={cpuUsedPercentage}
+                          percentage={cpuReservedPercentage}
                           unit="vCPU"
                         />
                       </div>
@@ -284,7 +429,8 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
                           )}
                           reserved={formatNumber(mibToGib(node.resources_allocated.request_memory_mib))}
                           total={formatNumber(mibToGib(node.resources_allocatable.memory_mib))}
-                          percentage={memoryUsedPercentage}
+                          // percentage={memoryUsedPercentage}
+                          percentage={memoryReservedPercentage}
                           isPressure={isMemoryPressure}
                           unit="GB"
                         />
@@ -299,14 +445,14 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
                         <span className="text-ssm text-neutral-350">Disk</span>
                         <span className="inline-flex items-center justify-between text-sm font-medium text-neutral-400">
                           <span className={isDiskPressure ? 'text-yellow-900' : ''}>
-                            {formatNumber(mibToGib(node.metrics_usage?.disk_mib_usage || 0))} GB{' '}
+                            {/* {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB{' '}
                             <span
                               className={clsx('font-normal text-neutral-350', {
                                 'text-yellow-900': isDiskPressure,
                               })}
                             >
-                              ({node.metrics_usage?.disk_percent_usage || 0}%)
-                            </span>
+                              ({node.resources_capacity.ephemeral_storage_mib || 0}%)
+                            </span> */}
                           </span>
                           {isDiskPressure && (
                             <Link
@@ -338,108 +484,44 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
                       </div>
                     </div>
 
-                    <Section className="gap-4">
-                      <Heading level={2}>Podnames</Heading>
-                      <div className="rounded border border-neutral-250">
-                        {node.pods.map((pod) => (
-                          <div
-                            key={pod.name}
-                            className="flex flex-col gap-4 border-b border-neutral-250 px-5 py-4 text-xs last:border-b-0"
-                          >
-                            <div className="flex justify-between">
-                              <span className="flex flex-col gap-2 text-ssm text-neutral-400">
-                                <span className="flex items-center gap-2 font-medium">
-                                  <StatusChip status="RUNNING" />
-                                  {pod.name}
-                                </span>
-                                {pod.qovery_service_info?.project_name && (
-                                  <span className="flex gap-0.5 text-neutral-300">
-                                    {pod.qovery_service_info?.project_name && (
-                                      <Link
-                                        color="brand"
-                                        className="font-normal"
-                                        to={ENVIRONMENTS_URL(organizationId, pod.qovery_service_info?.project_id)}
-                                      >
-                                        {pod.qovery_service_info?.project_name}
-                                      </Link>
-                                    )}
-                                    {pod.qovery_service_info?.project_name &&
-                                      pod.qovery_service_info?.environment_name && (
-                                        <>
-                                          /
-                                          <Link
-                                            color="brand"
-                                            className="font-normal"
-                                            to={SERVICES_URL(
-                                              organizationId,
-                                              pod.qovery_service_info?.project_id,
-                                              pod.qovery_service_info?.environment_id
-                                            )}
-                                          >
-                                            {pod.qovery_service_info?.environment_name}
-                                          </Link>
-                                        </>
-                                      )}
-                                    {pod.qovery_service_info?.environment_name &&
-                                      pod.qovery_service_info?.service_name && (
-                                        <>
-                                          /
-                                          <Link
-                                            color="brand"
-                                            className="font-normal"
-                                            to={APPLICATION_URL(
-                                              organizationId,
-                                              pod.qovery_service_info?.project_id,
-                                              pod.qovery_service_info?.environment_id,
-                                              pod.qovery_service_info?.service_id
-                                            )}
-                                          >
-                                            {pod.qovery_service_info?.service_name}
-                                          </Link>
-                                        </>
-                                      )}
-                                  </span>
-                                )}
-                              </span>
-                              <div className="flex items-center gap-3">
-                                <span className="text-neutral-350">{timeAgo(new Date(node.created_at), true)}</span>
-                                {pod.restart_count > 0 && (
-                                  <span className="flex items-center gap-1 bg-yellow-50 px-0.5 text-yellow-900">
-                                    <Icon iconName="arrow-rotate-left" iconStyle="regular" className="text-xs" />
-                                    {pod.restart_count} {pluralize(pod.restart_count, 'restart', 'restarts')}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-6">
-                              <NodeProgressBar
-                                type="cpu"
-                                used={formatNumber(pod.metrics_usage.cpu_milli_usage || 0)}
-                                total={formatNumber(pod.cpu_milli_request || 0)}
-                                unit="CPU"
-                              />
-                              <NodeProgressBar
-                                type="memory"
-                                used={formatNumber(
-                                  Math.max(
-                                    pod.metrics_usage?.memory_mib_rss_usage || 0,
-                                    pod.metrics_usage?.memory_mib_working_set_usage || 0
-                                  )
-                                )}
-                                total={pod.memory_mib_request || 0}
-                                unit="MB"
-                              />
-                              <NodeProgressBar
-                                type="disk"
-                                used={formatNumber(pod.metrics_usage.disk_mib_usage || 0)}
-                                total={100} // TODO: fix it
-                                unit="MB"
-                              />
-                            </div>
+                    {podsWithQoveryInfo.length > 0 && (
+                      <Section className="gap-4">
+                        <Heading level={2}>Services</Heading>
+                        <div className="rounded border border-neutral-250">
+                          {podsWithQoveryInfo.map((pod) => (
+                            <PodItem key={pod.name} pod={pod} organizationId={organizationId} />
+                          ))}
+                        </div>
+                      </Section>
+                    )}
+
+                    {podsWithoutQoveryInfo.length > 0 && (
+                      <Collapsible.Root open={openSystemPods} onOpenChange={setOpenSystemPods} asChild>
+                        <Section className="gap-4">
+                          <div className="flex justify-between">
+                            <Heading level={2}>System Pods</Heading>
+                            <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
+                              {openSystemPods ? (
+                                <>
+                                  Hide <Icon iconName="chevron-up" />
+                                </>
+                              ) : (
+                                <>
+                                  Show <Icon iconName="chevron-down" />
+                                </>
+                              )}
+                            </Collapsible.Trigger>
                           </div>
-                        ))}
-                      </div>
-                    </Section>
+                          <Collapsible.Content>
+                            <div className="rounded border border-neutral-250">
+                              {podsWithoutQoveryInfo.map((pod) => (
+                                <PodItem key={pod.name} pod={pod} organizationId={organizationId} />
+                              ))}
+                            </div>
+                          </Collapsible.Content>
+                        </Section>
+                      </Collapsible.Root>
+                    )}
                   </Section>
                 </motion.div>
               </Dialog.Content>

@@ -6,6 +6,7 @@ import {
   type StateEnum,
   type StepMetricStatusEnum,
 } from 'qovery-typescript-axios'
+import { type PodStatusPhase } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { type RunningState } from '@qovery/shared/enums'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -39,6 +40,7 @@ export interface StatusChipProps {
     | StageStatusEnum
     | DeploymentHistoryActionStatus
     | ServiceActionEnum
+    | PodStatusPhase
     | undefined
   className?: string
   appendTooltipMessage?: string
@@ -67,7 +69,7 @@ export function StatusChip({
   const icon = match(status)
     // success
     .with('READY', () => <StoppedIcon />)
-    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', 'DONE', 'DEPLOY', () => <DeployedIcon />)
+    .with('DEPLOYED', 'RUNNING', 'COMPLETED', 'SUCCESS', 'DONE', 'DEPLOY', 'SUCCEEDED', () => <DeployedIcon />)
     .with('RESTARTED', 'RESTART', () => <RestartedIcon />)
     // spinner
     .with(
@@ -82,7 +84,7 @@ export function StatusChip({
       'WAITING_STOPPING',
       () => <QueuedIcon />
     )
-    .with('DEPLOYING', 'STARTING', 'ONGOING', 'DRY_RUN', () => <DeployingIcon />)
+    .with('DEPLOYING', 'STARTING', 'ONGOING', 'DRY_RUN', 'PENDING', () => <DeployingIcon />)
     .with('RESTARTING', () => <RestartingIcon />)
     .with('BUILDING', () => <BuildingIcon />)
     .with('STOPPING', () => <StoppingIcon />)
@@ -103,6 +105,7 @@ export function StatusChip({
       'DELETE_ERROR',
       'RESTART_ERROR',
       'ERROR',
+      'FAILED',
       'INVALID_CREDENTIALS',
       'RECAP',
       () => (

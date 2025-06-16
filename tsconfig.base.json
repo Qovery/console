@@ -17,6 +17,7 @@
     "paths": {
       "@qovery/domains/cloud-providers/data-access": ["libs/domains/cloud-providers/data-access/src/index.ts"],
       "@qovery/domains/cloud-providers/feature": ["libs/domains/cloud-providers/feature/src/index.ts"],
+      "@qovery/domains/cluster-metrics/data-access": ["libs/domains/cluster-metrics/data-access/src/index.ts"],
       "@qovery/domains/cluster-metrics/feature": ["libs/domains/cluster-metrics/feature/src/index.ts"],
       "@qovery/domains/clusters/data-access": ["libs/domains/clusters/data-access/src/index.ts"],
       "@qovery/domains/clusters/feature": ["libs/domains/clusters/feature/src/index.ts"],
