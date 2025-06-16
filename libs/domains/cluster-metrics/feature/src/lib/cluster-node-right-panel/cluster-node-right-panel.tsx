@@ -109,26 +109,29 @@ function MetricProgressBar({
 
 interface NodeProgressBarProps {
   type: 'cpu' | 'memory' | 'disk'
-  used: number
+  // used: number
   total: number
   unit: string
 }
 
-function NodeProgressBar({ type, used, unit, total }: NodeProgressBarProps) {
-  const usedPercentage = calculatePercentage(used, total)
+function NodeProgressBar({ type, unit, total }: NodeProgressBarProps) {
+  // const usedPercentage = calculatePercentage(used, total)
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex w-full justify-between text-neutral-400">
         <span>{type === 'cpu' ? 'CPU' : upperCaseFirstLetter(type)}</span>
         <span>
+          {total} {unit}
+        </span>
+        {/* <span>
           {used} {unit}
           <span className="text-neutral-350">/{total}</span>
-        </span>
+        </span> */}
       </div>
-      <ProgressBar.Root>
+      {/* <ProgressBar.Root>
         <ProgressBar.Cell value={usedPercentage} color="var(--color-brand-400)" />
-      </ProgressBar.Root>
+      </ProgressBar.Root> */}
     </div>
   )
 }
@@ -207,15 +210,15 @@ function PodItem({ pod, organizationId }: PodItemProps) {
       <div className="grid grid-cols-3 gap-6">
         <NodeProgressBar
           type="cpu"
-          used={formatNumber(pod.metrics_usage.cpu_milli_usage || 0)}
+          // used={formatNumber(pod.metrics_usage.cpu_milli_usage || 0)}
           total={formatNumber(pod.cpu_milli_request || 0)}
           unit="CPU"
         />
         <NodeProgressBar
           type="memory"
-          used={formatNumber(
-            Math.max(pod.metrics_usage?.memory_mib_rss_usage || 0, pod.metrics_usage?.cpu_milli_usage || 0)
-          )}
+          // used={formatNumber(
+          //   Math.max(pod.metrics_usage?.memory_mib_rss_usage || 0, pod.metrics_usage?.cpu_milli_usage || 0)
+          // )}
           total={pod.memory_mib_request || 0}
           unit="MB"
         />
@@ -445,6 +448,7 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
                         <span className="text-ssm text-neutral-350">Disk</span>
                         <span className="inline-flex items-center justify-between text-sm font-medium text-neutral-400">
                           <span className={isDiskPressure ? 'text-yellow-900' : ''}>
+                            {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB
                             {/* {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB{' '}
                             <span
                               className={clsx('font-normal text-neutral-350', {

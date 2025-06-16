@@ -273,7 +273,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                 })
               )}
             >
-              {node.metrics_usage?.ephemeral_storage_percent_usage || 0}%
+              {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB
               {isDiskPressure && (
                 <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
                   <span className="ml-1 inline-block text-red-500">
