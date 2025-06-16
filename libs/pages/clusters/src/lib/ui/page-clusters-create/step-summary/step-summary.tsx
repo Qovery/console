@@ -235,7 +235,7 @@ export function StepSummary(props: StepSummaryProps) {
             className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
           >
             <div className="mr-2 flex-grow">
-              <Heading className="mb-3">Features</Heading>
+              <Heading className="mb-3">Network configuration</Heading>
               <ul className="list-none space-y-2 text-sm text-neutral-400">
                 {props.featuresData.aws_existing_vpc && (
                   <>

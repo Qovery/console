@@ -60,7 +60,7 @@ export function StepFeatures(props: StepFeaturesProps) {
             <Callout.Text>
               <Callout.TextHeading>Choose wisely</Callout.TextHeading>
               <Callout.TextDescription>
-                These features will not be modifiable after cluster creation.
+                This configuration cannot be changed after the cluster is created.
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>
@@ -70,7 +70,7 @@ export function StepFeatures(props: StepFeaturesProps) {
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <div className="mb-4 flex w-full items-start gap-4">
+              <div className="mb-4 grid w-full grid-cols-2 gap-4">
                 {vpcModes.map((vpcMode) => (
                   <button
                     key={vpcMode.title}

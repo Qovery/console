@@ -70,7 +70,7 @@ export function CrudModal(props: CrudModalProps) {
             name={field.name}
             onChange={field.onChange}
             value={field.value}
-            label="Description (optional)"
+            label="Description"
             error={error?.message}
           />
         )}
