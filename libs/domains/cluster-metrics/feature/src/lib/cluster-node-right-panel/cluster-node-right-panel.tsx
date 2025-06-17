@@ -178,7 +178,7 @@ function PodItem({ pod, organizationId }: PodItemProps) {
                 <Link
                   color="brand"
                   size="xs"
-                  className="font-normal hover:underline"
+                  className="max-w-[80px] truncate font-normal hover:underline"
                   to={ENVIRONMENTS_URL(organizationId, pod.qovery_service_info?.project_id)}
                 >
                   {pod.qovery_service_info?.project_name}
@@ -186,13 +186,13 @@ function PodItem({ pod, organizationId }: PodItemProps) {
               </Tooltip>
 
               {pod.qovery_service_info?.environment_name && (
-                <Tooltip content="Environment" side="bottom">
-                  <>
-                    <span className="text-neutral-250">/</span>
+                <>
+                  <span className="text-neutral-250">/</span>
+                  <Tooltip content="Environment" side="bottom">
                     <Link
                       color="brand"
                       size="xs"
-                      className="font-normal hover:underline"
+                      className="max-w-[80px] truncate font-normal hover:underline"
                       to={SERVICES_URL(
                         organizationId,
                         pod.qovery_service_info?.project_id,
@@ -201,18 +201,18 @@ function PodItem({ pod, organizationId }: PodItemProps) {
                     >
                       {pod.qovery_service_info?.environment_name}
                     </Link>
-                  </>
-                </Tooltip>
+                  </Tooltip>
+                </>
               )}
 
               {pod.qovery_service_info?.service_name && (
-                <Tooltip content="Service" side="bottom">
-                  <>
-                    <span className="text-neutral-250">/</span>
+                <>
+                  <span className="text-neutral-250">/</span>
+                  <Tooltip content="Service" side="bottom">
                     <Link
                       color="brand"
                       size="xs"
-                      className="font-normal hover:underline"
+                      className="max-w-[80px] truncate font-normal hover:underline"
                       to={APPLICATION_URL(
                         organizationId,
                         pod.qovery_service_info?.project_id,
@@ -222,8 +222,8 @@ function PodItem({ pod, organizationId }: PodItemProps) {
                     >
                       {pod.qovery_service_info?.service_name}
                     </Link>
-                  </>
-                </Tooltip>
+                  </Tooltip>
+                </>
               )}
             </div>
           )}
@@ -378,11 +378,6 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
                   Healthy
                 </Badge>
               )}
-              <Dialog.Close asChild>
-                <Button variant="outline" size="sm" className="h-8 w-8 justify-center text-sm">
-                  <Icon iconName="xmark" />
-                </Button>
-              </Dialog.Close>
             </div>
 
             <Dialog.Title asChild>

@@ -3,7 +3,7 @@ import { type GetClusterKubernetesEvents200ResponseResultsInner } from 'qovery-t
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren, memo, useState } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
-import { Heading, Icon, Section } from '@qovery/shared/ui'
+import { Badge, Heading, Icon, Section } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { DialogRightPanel } from '../dialog-right-panel/dialog-right-panel'
@@ -43,7 +43,12 @@ export const ClusterNodePoolRightPanel = memo(function ClusterNodePoolRightPanel
                   <div className="flex gap-4">
                     <Icon name={IconEnum.KARPENTER} />
                     <div className="flex flex-col gap-0.5 text-sm text-neutral-400">
-                      <span className="font-medium">{event.reason}</span>
+                      <span className="flex items-center gap-1.5">
+                        <Badge size="sm" color={event.type === 'warning' ? 'yellow' : 'sky'}>
+                          {event.type === 'Normal' ? 'Info' : 'Warning'}
+                        </Badge>
+                        <span className="font-medium">{event.reason}</span>
+                      </span>
                       <span>{event.message}</span>
                     </div>
                   </div>

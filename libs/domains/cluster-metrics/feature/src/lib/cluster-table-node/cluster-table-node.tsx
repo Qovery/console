@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { subMinutes } from 'date-fns'
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
@@ -7,7 +8,12 @@ import { timeAgo } from '@qovery/shared/util-dates'
 import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { ClusterNodeRightPanel } from '../cluster-node-right-panel/cluster-node-right-panel'
 import ClusterProgressBarNode from '../cluster-progress-bar-node/cluster-progress-bar-node'
+import useClusterKubernetesEvents from '../hooks/use-cluster-kubernetes-events/use-cluster-kubernetes-events'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+
+const now = new Date()
+const fromDateTime = subMinutes(now, 15)
+const toDateTime = now
 
 export interface ClusterTableNodeProps {
   organizationId: string
@@ -110,6 +116,13 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
     clusterId: clusterId,
   })
 
+  const { data: events } = useClusterKubernetesEvents({
+    clusterId,
+    fromDateTime: fromDateTime.toISOString(),
+    toDateTime: toDateTime.toISOString(),
+    reportingComponent: 'karpenter',
+  })
+
   const nodes = useMemo(
     () =>
       (nodePool
@@ -184,6 +197,14 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
         //   )
         // )
 
+        const eventsNode = events?.filter((event) => event.name === node.name)
+        const eventsDisruptionBlocked = eventsNode?.filter(
+          (event) => event.reason === 'DisruptionBlocked' || event.reason === 'Unconsolidatable'
+        )
+        const isWarningEventsDisruptionBlocked = eventsDisruptionBlocked?.some((event) => event.type === 'Warning')
+
+        console.log(eventsNode)
+
         return (
           <ClusterNodeRightPanel
             key={node.name}
@@ -199,9 +220,36 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
           >
             <div className="flex h-12 w-1/4 min-w-0 items-center gap-2.5 px-5 font-medium text-neutral-400">
               <StatusChip status={isWarning ? 'WARNING' : 'RUNNING'} className="inline-flex shrink-0" />
-              <Tooltip content={node.name}>
-                <span className="truncate">{node.name}</span>
-              </Tooltip>
+              <span className="flex flex-col truncate">
+                <Tooltip content={node.name}>
+                  <span className="truncate">{node.name}</span>
+                </Tooltip>
+                {eventsDisruptionBlocked && eventsDisruptionBlocked.length > 0 && (
+                  <Tooltip
+                    content={
+                      <>
+                        {eventsDisruptionBlocked.map((event) => (
+                          <div key={event.name} className="flex flex-col gap-0.5">
+                            <span>Status: {event.kind}</span>
+                            <span>Reason: {event.reason}</span>
+                            <span>Message: {event.message}</span>
+                          </div>
+                        ))}
+                      </>
+                    }
+                  >
+                    <span
+                      className={twMerge(
+                        clsx('text-xs text-sky-500 transition-colors hover:text-sky-600', {
+                          'text-yellow-700 hover:text-yellow-800': isWarningEventsDisruptionBlocked,
+                        })
+                      )}
+                    >
+                      {eventsDisruptionBlocked.length} event associated
+                    </span>
+                  </Tooltip>
+                )}
+              </span>
             </div>
             <div className="flex h-12 w-1/4 items-center px-3">
               <div className="flex w-full items-center gap-1 text-ssm">

@@ -1,21 +1,16 @@
 import * as Accordion from '@radix-ui/react-accordion'
 import clsx from 'clsx'
-import { addDays, subDays } from 'date-fns'
+import { subMinutes } from 'date-fns'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
-import { calculatePercentage, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import ClusterNodePoolRightPanel from '../cluster-nodepool-right-panel/cluster-nodepool-right-panel'
+import { calculatePercentage, pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
 import { useClusterKubernetesEvents } from '../hooks/use-cluster-kubernetes-events/use-cluster-kubernetes-events'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
+import { KarpenterEventsHoverCard } from '../karpenter-events-hover-card/karpenter-events-hover-card'
 import { calculateNodePoolMetrics } from './calculate-nodepool-metrics'
-
-export interface ClusterTableNodepoolProps {
-  organizationId: string
-  clusterId: string
-}
 
 interface MetricProgressBarProps {
   type: 'cpu' | 'memory'
@@ -25,8 +20,8 @@ interface MetricProgressBarProps {
 }
 
 const now = new Date()
-const fromDateTime = subDays(now, 1)
-const toDateTime = addDays(now, 1)
+const fromDateTime = subMinutes(now, 15)
+const toDateTime = now
 
 function MetricProgressBar({ type, capacity, limit, unit }: MetricProgressBarProps) {
   if (limit === null) return null
@@ -86,6 +81,11 @@ function MetricProgressBar({ type, capacity, limit, unit }: MetricProgressBarPro
   )
 }
 
+export interface ClusterTableNodepoolProps {
+  organizationId: string
+  clusterId: string
+}
+
 export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTableNodepoolProps) {
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId: organizationId,
@@ -104,7 +104,6 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
     reportingComponent: 'karpenter',
   })
   const eventsNodePool = events?.filter((event) => event.kind === 'NodePool')
-  // console.log(eventsNodePool)
 
   const nodePools = metrics?.node_pools
   const nodes = metrics?.nodes || []
@@ -118,8 +117,9 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
         const metrics = calculateNodePoolMetrics(nodePool, nodes, nodeWarnings)
 
         const nodePoolEvents = eventsNodePool?.filter((event) => event.name === nodePool.name)
-        // Reasons: Unconsolidatable & DisruptionBlocked
         const eventsDisruptionBlocked = nodePoolEvents?.filter((event) => event.reason === 'DisruptionBlocked')
+
+        const isWarningEventsDisruptionBlocked = eventsDisruptionBlocked?.some((event) => event.type === 'Warning')
 
         const nodesHealthyPercentage = calculatePercentage(
           metrics.nodesCount - metrics.nodesWarningCount,
@@ -136,25 +136,27 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
           >
             <Accordion.Trigger className="group flex h-[86px] w-full items-center justify-between py-5">
               <div className="flex h-full w-1/4 items-center justify-between border-r border-neutral-200 px-6">
-                <div className="flex items-center gap-[18px]">
-                  <StatusChip status={metrics.nodesWarningCount > 0 ? 'WARNING' : 'RUNNING'} />
-                  <div className="text-left text-sm font-medium text-neutral-400">
-                    {upperCaseFirstLetter(nodePool.name)} nodepool
-                    <br />
-                    {eventsDisruptionBlocked && eventsDisruptionBlocked.length > 0 && (
-                      <ClusterNodePoolRightPanel
-                        organizationId={organizationId}
-                        clusterId={clusterId}
-                        nodePool={nodePool}
-                        events={eventsDisruptionBlocked}
-                      >
-                        <span className="text-xs text-yellow-700" onClick={(event) => event.stopPropagation()}>
-                          {eventsDisruptionBlocked.length} nodes are blocked from disruption
+                <KarpenterEventsHoverCard events={eventsDisruptionBlocked}>
+                  <div className="flex items-center gap-[18px]">
+                    <StatusChip status={metrics.nodesWarningCount > 0 ? 'WARNING' : 'RUNNING'} />
+                    <div className="text-left text-sm font-medium text-neutral-400">
+                      {upperCaseFirstLetter(nodePool.name)} nodepool
+                      <br />
+                      {eventsDisruptionBlocked && eventsDisruptionBlocked.length > 0 && (
+                        <span
+                          className={twMerge(
+                            clsx('text-xs text-sky-500 transition-colors hover:text-sky-600', {
+                              'text-yellow-700 hover:text-yellow-800': isWarningEventsDisruptionBlocked,
+                            })
+                          )}
+                        >
+                          {eventsDisruptionBlocked.length} Karpenter{' '}
+                          {pluralize(eventsDisruptionBlocked.length, 'event', 'events')} associated
                         </span>
-                      </ClusterNodePoolRightPanel>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
+                </KarpenterEventsHoverCard>
                 <Icon
                   iconName="chevron-down"
                   iconStyle="solid"
