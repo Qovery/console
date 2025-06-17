@@ -7,18 +7,26 @@ const auditLogsApi = new OrganizationEventApi()
 export const clusterMetrics = createQueryKeys('clusterMetrics', {
   events: ({
     clusterId,
-    nodeName,
     fromDateTime,
     toDateTime,
+    reportingComponent,
   }: {
     clusterId: string
-    nodeName: string
     fromDateTime: string
     toDateTime: string
+    reportingComponent: string
+    nodeName?: string
   }) => ({
     queryKey: [clusterId, fromDateTime, toDateTime],
     async queryFn() {
-      const response = await clusterApi.getClusterKubernetesEvents(clusterId, fromDateTime, toDateTime, nodeName)
+      const response = await clusterApi.getClusterKubernetesEvents(
+        clusterId,
+        fromDateTime,
+        toDateTime,
+        undefined,
+        undefined,
+        reportingComponent
+      )
       return response.data.results
     },
   }),

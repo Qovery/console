@@ -3,9 +3,10 @@ import { queries } from '@qovery/state/util-queries'
 
 interface UseClusterKubernetesEventsProps {
   clusterId: string
-  nodeName: string
   fromDateTime: string
   toDateTime: string
+  reportingComponent: string
+  nodeName?: string
   enabled?: boolean
 }
 
@@ -14,10 +15,11 @@ export function useClusterKubernetesEvents({
   nodeName,
   fromDateTime,
   toDateTime,
+  reportingComponent,
   enabled = true,
 }: UseClusterKubernetesEventsProps) {
   return useQuery({
-    ...queries.clusterMetrics.events({ clusterId, nodeName, fromDateTime, toDateTime }),
+    ...queries.clusterMetrics.events({ clusterId, nodeName, fromDateTime, toDateTime, reportingComponent }),
     meta: {
       notifyOnError: true,
     },
