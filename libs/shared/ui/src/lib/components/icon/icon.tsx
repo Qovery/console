@@ -33,6 +33,7 @@ import HelmServiceIcon from './icons/helm-service'
 import HetznerIcon from './icons/hetzner'
 import IbmCloudIcon from './icons/ibm-cloud'
 import InformationIcon from './icons/information'
+import KarpenterIcon from './icons/karpenter'
 import KubernetesIcon from './icons/kubernetes'
 import LifecycleJobIcon from './icons/lifecycle-job'
 import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
@@ -155,6 +156,8 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
       return <HelmOfficialIcon {...formattedProps} />
     case IconEnum.KUBERNETES:
       return <KubernetesIcon {...formattedProps} />
+    case IconEnum.KARPENTER:
+      return <KarpenterIcon {...formattedProps} />
     case IconEnum.MICROSOFT:
       return <MicrosoftIcon {...formattedProps} />
     case IconEnum.EKS:

@@ -13,7 +13,18 @@ import {
   ENVIRONMENTS_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Badge, Button, Heading, Icon, Link, ProgressBar, Section, StatusChip, Tooltip } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Heading,
+  Icon,
+  Link,
+  ProgressBar,
+  Section,
+  StatusChip,
+  Tooltip,
+  Truncate,
+} from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import {
   calculatePercentage,
@@ -25,6 +36,7 @@ import {
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
 import { ClusterProgressBarNode } from '../cluster-progress-bar-node/cluster-progress-bar-node'
+import { DialogRightPanel } from '../dialog-right-panel/dialog-right-panel'
 
 export interface ClusterNodeRightPanelProps extends PropsWithChildren {
   organizationId: string
@@ -148,7 +160,17 @@ function PodItem({ pod, organizationId }: PodItemProps) {
         <StatusChip status={pod.status_phase} />
 
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="truncate font-medium text-neutral-400">{pod.name}</span>
+          <span className="flex items-center gap-1 font-medium text-neutral-400">
+            <Truncate truncateLimit={40} text={pod.name} />
+            {pod.restart_count > 0 && (
+              <Tooltip content="Pod has been restarted">
+                <span className="flex max-w-max items-center gap-1 rounded bg-yellow-50 px-2 py-1 text-yellow-900">
+                  <Icon iconName="arrow-rotate-left" iconStyle="regular" />
+                  <span className="font-medium">{pod.restart_count}</span>
+                </span>
+              </Tooltip>
+            )}
+          </span>
 
           {pod.qovery_service_info?.project_name && (
             <div className="flex items-center gap-1 text-ssm text-neutral-300">
@@ -210,25 +232,20 @@ function PodItem({ pod, organizationId }: PodItemProps) {
 
       <div className="flex flex-shrink-0 items-center gap-4">
         <div className="flex items-center gap-3 text-neutral-350">
-          {pod.restart_count > 0 && (
-            <span className="flex max-w-max items-center gap-1 rounded bg-yellow-50 px-2 py-1 text-yellow-900">
-              <Icon iconName="arrow-rotate-left" iconStyle="regular" />
-              <span className="font-medium">{pod.restart_count}</span>
-            </span>
-          )}
-
-          <div className="flex w-24 items-center gap-1 whitespace-nowrap">
+          <div className="flex w-32 items-center gap-1">
             <span>CPU: </span>
             <span className="font-medium text-neutral-400">{formatNumber(pod.cpu_milli_request || 0)} mCPU</span>
           </div>
 
-          <div className="flex w-24 items-center gap-1 whitespace-nowrap">
+          <div className="flex w-32 items-center gap-1">
             <span>Memory: </span>
             <span className="font-medium text-neutral-400">{formatNumber(pod.memory_mib_request || 0)} MB</span>
           </div>
         </div>
 
-        <span className="whitespace-nowrap text-neutral-350">{timeAgo(new Date(pod.created_at), true)}</span>
+        <span className="w-8 whitespace-nowrap text-right text-neutral-350">
+          {timeAgo(new Date(pod.created_at), true)}
+        </span>
       </div>
     </div>
   )
@@ -330,8 +347,10 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
   }, [node.pods])
 
   return (
-    <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen} aria-describedby="node-right-panel">
-      <Dialog.Trigger asChild>
+    <DialogRightPanel
+      isOpen={isModalOpen}
+      onOpenChange={setIsModalOpen}
+      trigger={
         <div
           className={twMerge(
             clsx(className, {
@@ -342,115 +361,82 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
         >
           {children}
         </div>
-      </Dialog.Trigger>
+      }
+    >
+      {isModalOpen && (
+        <Section className="flex flex-col gap-6 p-8">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex w-full justify-between">
+              {isWarning ? (
+                <Badge variant="surface" color="yellow" className="gap-2 text-neutral-400">
+                  <span className="h-2 w-2 rounded-full bg-yellow-500" />
+                  Warning
+                </Badge>
+              ) : (
+                <Badge variant="surface" color="green" className="gap-2 text-neutral-400">
+                  <span className="h-2 w-2 rounded-full bg-green-500" />
+                  Healthy
+                </Badge>
+              )}
+              <Dialog.Close asChild>
+                <Button variant="outline" size="sm" className="h-8 w-8 justify-center text-sm">
+                  <Icon iconName="xmark" />
+                </Button>
+              </Dialog.Close>
+            </div>
 
-      <Dialog.Portal>
-        <AnimatePresence>
-          {isModalOpen && (
-            <>
-              <Dialog.Overlay asChild>
-                <motion.div
-                  className="fixed inset-0 bg-neutral-700/20"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                />
-              </Dialog.Overlay>
-              <Dialog.Content asChild>
-                <motion.div
-                  className="fixed right-0 top-0 h-screen max-h-screen w-[800px] overflow-auto border border-l-0 border-neutral-200 bg-neutral-50"
-                  initial={{
-                    opacity: 0,
-                    x: '100%',
-                  }}
-                  animate={{
-                    opacity: 1,
-                    x: '0%',
-                    scale: 1,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    x: '100%',
-                  }}
-                  transition={{
-                    x: { duration: 0.32, type: 'spring', bounce: 0 },
-                    ease: [0.39, 0.24, 0.3, 1],
-                  }}
-                >
-                  <Section className="flex flex-col gap-6 p-8">
-                    <div className="flex flex-col gap-1.5">
-                      <div className="flex w-full justify-between">
-                        {isWarning ? (
-                          <Badge variant="surface" color="yellow" className="gap-2 text-neutral-400">
-                            <span className="h-2 w-2 rounded-full bg-yellow-500" />
-                            Warning
-                          </Badge>
-                        ) : (
-                          <Badge variant="surface" color="green" className="gap-2 text-neutral-400">
-                            <span className="h-2 w-2 rounded-full bg-green-500" />
-                            Healthy
-                          </Badge>
-                        )}
-                        <Dialog.Close asChild>
-                          <Button variant="outline" size="sm" className="h-8 w-8 justify-center text-sm">
-                            <Icon iconName="xmark" />
-                          </Button>
-                        </Dialog.Close>
-                      </div>
+            <Dialog.Title asChild>
+              <Heading level={1}>{node.name}</Heading>
+            </Dialog.Title>
+          </div>
 
-                      <Dialog.Title asChild>
-                        <Heading level={1}>{node.name}</Heading>
-                      </Dialog.Title>
-                    </div>
-
-                    <div className="grid grid-cols-2 rounded border border-neutral-250">
-                      <div className="border-b border-r border-neutral-250 px-4 py-3">
-                        <MetricProgressBar
-                          type="cpu"
-                          used={formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0))}
-                          reserved={formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli))}
-                          total={formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))}
-                          // percentage={cpuUsedPercentage}
-                          percentage={cpuReservedPercentage}
-                          unit="vCPU"
-                        />
-                      </div>
-                      <div
-                        className={clsx('border-b border-neutral-250 px-4 py-3', {
-                          'bg-yellow-50': isMemoryPressure,
-                        })}
-                      >
-                        <MetricProgressBar
-                          type="memory"
-                          used={formatNumber(
-                            mibToGib(
-                              Math.max(
-                                node.metrics_usage?.memory_mib_rss_usage || 0,
-                                node.metrics_usage?.memory_mib_working_set_usage || 0
-                              )
-                            )
-                          )}
-                          reserved={formatNumber(mibToGib(node.resources_allocated.request_memory_mib))}
-                          total={formatNumber(mibToGib(node.resources_allocatable.memory_mib))}
-                          // percentage={memoryUsedPercentage}
-                          percentage={memoryReservedPercentage}
-                          isPressure={isMemoryPressure}
-                          unit="GB"
-                        />
-                      </div>
-                      <div
-                        className={twMerge(
-                          clsx('flex flex-col gap-1 border-r border-neutral-250 px-4 py-3', {
-                            'gap-0 bg-yellow-50': isDiskPressure,
-                          })
-                        )}
-                      >
-                        <span className="text-ssm text-neutral-350">Disk</span>
-                        <span className="inline-flex items-center justify-between text-sm font-medium text-neutral-400">
-                          <span className={isDiskPressure ? 'text-yellow-900' : ''}>
-                            {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB
-                            {/* {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB{' '}
+          <div className="grid grid-cols-2 rounded border border-neutral-250">
+            <div className="border-b border-r border-neutral-250 px-4 py-3">
+              <MetricProgressBar
+                type="cpu"
+                used={formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0))}
+                reserved={formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli))}
+                total={formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))}
+                // percentage={cpuUsedPercentage}
+                percentage={cpuReservedPercentage}
+                unit="vCPU"
+              />
+            </div>
+            <div
+              className={clsx('border-b border-neutral-250 px-4 py-3', {
+                'bg-yellow-50': isMemoryPressure,
+              })}
+            >
+              <MetricProgressBar
+                type="memory"
+                used={formatNumber(
+                  mibToGib(
+                    Math.max(
+                      node.metrics_usage?.memory_mib_rss_usage || 0,
+                      node.metrics_usage?.memory_mib_working_set_usage || 0
+                    )
+                  )
+                )}
+                reserved={formatNumber(mibToGib(node.resources_allocated.request_memory_mib))}
+                total={formatNumber(mibToGib(node.resources_allocatable.memory_mib))}
+                // percentage={memoryUsedPercentage}
+                percentage={memoryReservedPercentage}
+                isPressure={isMemoryPressure}
+                unit="GB"
+              />
+            </div>
+            <div
+              className={twMerge(
+                clsx('flex flex-col gap-1 border-r border-neutral-250 px-4 py-3', {
+                  'gap-0 bg-yellow-50': isDiskPressure,
+                })
+              )}
+            >
+              <span className="text-ssm text-neutral-350">Disk</span>
+              <span className="inline-flex items-center justify-between text-sm font-medium text-neutral-400">
+                <span className={isDiskPressure ? 'text-yellow-900' : ''}>
+                  {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB
+                  {/* {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB{' '}
                             <span
                               className={clsx('font-normal text-neutral-350', {
                                 'text-yellow-900': isDiskPressure,
@@ -458,83 +444,74 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
                             >
                               ({node.resources_capacity.ephemeral_storage_mib || 0}%)
                             </span> */}
-                          </span>
-                          {isDiskPressure && (
-                            <Link
-                              as="button"
-                              variant="outline"
-                              className="gap-0.5"
-                              to={
-                                CLUSTER_URL(organizationId, clusterId) +
-                                CLUSTER_SETTINGS_URL +
-                                CLUSTER_SETTINGS_RESOURCES_URL
-                              }
-                            >
-                              Edit
-                              <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
-                                <span className="ml-1 inline-block text-yellow-900">
-                                  <Icon iconName="info-circle" iconStyle="regular" />
-                                </span>
-                              </Tooltip>
-                            </Link>
-                          )}
-                        </span>
-                      </div>
-                      <div className="flex flex-col gap-1 px-4 py-3">
-                        <span className="text-ssm text-neutral-350">Instance type</span>
-                        <span className="text-sm font-medium text-neutral-400">
-                          {node.instance_type?.replace('_', ' ')}
-                          {node.labels[KEY_KARPENTER_CAPACITY_TYPE] === 'spot' && ', spot'}
-                        </span>
-                      </div>
-                    </div>
+                </span>
+                {isDiskPressure && (
+                  <Link
+                    as="button"
+                    variant="outline"
+                    className="gap-0.5"
+                    to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+                  >
+                    Edit
+                    <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
+                      <span className="ml-1 inline-block text-yellow-900">
+                        <Icon iconName="info-circle" iconStyle="regular" />
+                      </span>
+                    </Tooltip>
+                  </Link>
+                )}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 px-4 py-3">
+              <span className="text-ssm text-neutral-350">Instance type</span>
+              <span className="text-sm font-medium text-neutral-400">
+                {node.instance_type?.replace('_', ' ')}
+                {node.labels[KEY_KARPENTER_CAPACITY_TYPE] === 'spot' && ', spot'}
+              </span>
+            </div>
+          </div>
 
-                    {podsWithQoveryInfo.length > 0 && (
-                      <Section className="gap-4">
-                        <Heading level={2}>Services</Heading>
-                        <div className="rounded border border-neutral-250">
-                          {podsWithQoveryInfo.map((pod) => (
-                            <PodItem key={pod.name} pod={pod} organizationId={organizationId} />
-                          ))}
-                        </div>
-                      </Section>
-                    )}
-
-                    {podsWithoutQoveryInfo.length > 0 && (
-                      <Collapsible.Root open={openSystemPods} onOpenChange={setOpenSystemPods} asChild>
-                        <Section className="gap-4">
-                          <div className="flex justify-between">
-                            <Heading level={2}>System Pods</Heading>
-                            <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
-                              {openSystemPods ? (
-                                <>
-                                  Hide <Icon iconName="chevron-up" />
-                                </>
-                              ) : (
-                                <>
-                                  Show <Icon iconName="chevron-down" />
-                                </>
-                              )}
-                            </Collapsible.Trigger>
-                          </div>
-                          <Collapsible.Content>
-                            <div className="rounded border border-neutral-250">
-                              {podsWithoutQoveryInfo.map((pod) => (
-                                <PodItem key={pod.name} pod={pod} organizationId={organizationId} />
-                              ))}
-                            </div>
-                          </Collapsible.Content>
-                        </Section>
-                      </Collapsible.Root>
-                    )}
-                  </Section>
-                </motion.div>
-              </Dialog.Content>
-            </>
+          {podsWithQoveryInfo.length > 0 && (
+            <Section className="gap-4">
+              <Heading level={2}>Services</Heading>
+              <div className="rounded border border-neutral-250">
+                {podsWithQoveryInfo.map((pod) => (
+                  <PodItem key={pod.name} pod={pod} organizationId={organizationId} />
+                ))}
+              </div>
+            </Section>
           )}
-        </AnimatePresence>
-      </Dialog.Portal>
-    </Dialog.Root>
+
+          {podsWithoutQoveryInfo.length > 0 && (
+            <Collapsible.Root open={openSystemPods} onOpenChange={setOpenSystemPods} asChild>
+              <Section className="gap-4">
+                <div className="flex justify-between">
+                  <Heading level={2}>System Pods</Heading>
+                  <Collapsible.Trigger className="flex items-center gap-2 text-sm font-medium">
+                    {openSystemPods ? (
+                      <>
+                        Hide <Icon iconName="chevron-up" />
+                      </>
+                    ) : (
+                      <>
+                        Show <Icon iconName="chevron-down" />
+                      </>
+                    )}
+                  </Collapsible.Trigger>
+                </div>
+                <Collapsible.Content>
+                  <div className="rounded border border-neutral-250">
+                    {podsWithoutQoveryInfo.map((pod) => (
+                      <PodItem key={pod.name} pod={pod} organizationId={organizationId} />
+                    ))}
+                  </div>
+                </Collapsible.Content>
+              </Section>
+            </Collapsible.Root>
+          )}
+        </Section>
+      )}
+    </DialogRightPanel>
   )
 })
 

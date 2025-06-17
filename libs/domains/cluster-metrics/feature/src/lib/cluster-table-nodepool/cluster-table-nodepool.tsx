@@ -6,6 +6,7 @@ import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/fe
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Icon, Link, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import ClusterNodePoolRightPanel from '../cluster-nodepool-right-panel/cluster-nodepool-right-panel'
 import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
 import { useClusterKubernetesEvents } from '../hooks/use-cluster-kubernetes-events/use-cluster-kubernetes-events'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
@@ -119,7 +120,6 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
         const nodePoolEvents = eventsNodePool?.filter((event) => event.name === nodePool.name)
         // Reasons: Unconsolidatable & DisruptionBlocked
         const eventsDisruptionBlocked = nodePoolEvents?.filter((event) => event.reason === 'DisruptionBlocked')
-        console.log(eventsDisruptionBlocked)
 
         const nodesHealthyPercentage = calculatePercentage(
           metrics.nodesCount - metrics.nodesWarningCount,
@@ -142,47 +142,16 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                     {upperCaseFirstLetter(nodePool.name)} nodepool
                     <br />
                     {eventsDisruptionBlocked && eventsDisruptionBlocked.length > 0 && (
-                      <Tooltip
-                        content={
-                          <div className="flex flex-col font-normal">
-                            <div className="flex items-center justify-between border-b border-neutral-500">
-                              <div className="flex w-full items-center justify-between px-2.5 py-1.5">
-                                <span className="font-medium text-white">Disruption Events</span>
-                                <span className="text-xs text-neutral-200">
-                                  {eventsDisruptionBlocked.length}{' '}
-                                  {pluralize(eventsDisruptionBlocked.length, 'event', 'events')}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex max-h-[300px] flex-col gap-3 overflow-y-auto px-2.5 py-1.5">
-                              {eventsDisruptionBlocked.map((event, index) => (
-                                <div key={index} className="flex flex-col gap-1">
-                                  <div className="flex items-start justify-between">
-                                    <span className="text-xs font-medium text-neutral-200">Last occurrence</span>
-                                    <span className="ml-2 text-xs text-neutral-100">{event.last_occurrence}</span>
-                                  </div>
-                                  <div className="flex items-start justify-between">
-                                    <span className="text-xs font-medium text-neutral-200">Reason</span>
-                                    <span className="ml-2 text-xs font-medium text-yellow-400">{event.reason}</span>
-                                  </div>
-                                  <div className="flex flex-col gap-1">
-                                    <span className="text-xs font-medium text-neutral-200">Message</span>
-                                    <span className="text-xs leading-relaxed text-neutral-100">{event.message}</span>
-                                  </div>
-                                  {index < eventsDisruptionBlocked.length - 1 && (
-                                    <div className="mt-2 border-b border-neutral-600"></div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        }
-                        classNameContent="w-auto max-w-[400px] p-0"
+                      <ClusterNodePoolRightPanel
+                        organizationId={organizationId}
+                        clusterId={clusterId}
+                        nodePool={nodePool}
+                        events={eventsDisruptionBlocked}
                       >
-                        <span className="text-xs text-yellow-700">
+                        <span className="text-xs text-yellow-700" onClick={(event) => event.stopPropagation()}>
                           {eventsDisruptionBlocked.length} nodes are blocked from disruption
                         </span>
-                      </Tooltip>
+                      </ClusterNodePoolRightPanel>
                     )}
                   </div>
                 </div>
