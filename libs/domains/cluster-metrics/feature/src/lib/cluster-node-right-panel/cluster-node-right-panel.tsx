@@ -143,91 +143,92 @@ interface PodItemProps {
 
 function PodItem({ pod, organizationId }: PodItemProps) {
   return (
-    <div className="flex flex-col gap-4 border-b border-neutral-250 px-5 py-4 text-xs last:border-b-0">
-      <div className="flex items-start justify-between">
-        <span className="flex flex-col gap-2 text-ssm text-neutral-400">
-          <span className="flex items-center gap-2 font-medium">
-            <StatusChip status={pod.status_phase} />
-            {pod.name}
-          </span>
+    <div className="flex items-center justify-between border-b border-neutral-250 px-4 py-3 text-xs last:border-b-0">
+      <div className="flex min-w-0 flex-1 items-center gap-3">
+        <StatusChip status={pod.status_phase} />
+
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <span className="truncate font-medium text-neutral-400">{pod.name}</span>
+
           {pod.qovery_service_info?.project_name && (
-            <span className="flex gap-0.5 text-neutral-300">
-              {pod.qovery_service_info?.project_name && (
+            <div className="flex items-center gap-1 text-ssm text-neutral-300">
+              <Tooltip content="Project" side="bottom">
                 <Link
                   color="brand"
-                  className="font-normal"
+                  size="xs"
+                  className="font-normal hover:underline"
                   to={ENVIRONMENTS_URL(organizationId, pod.qovery_service_info?.project_id)}
                 >
                   {pod.qovery_service_info?.project_name}
                 </Link>
+              </Tooltip>
+
+              {pod.qovery_service_info?.environment_name && (
+                <Tooltip content="Environment" side="bottom">
+                  <>
+                    <span className="text-neutral-250">/</span>
+                    <Link
+                      color="brand"
+                      size="xs"
+                      className="font-normal hover:underline"
+                      to={SERVICES_URL(
+                        organizationId,
+                        pod.qovery_service_info?.project_id,
+                        pod.qovery_service_info?.environment_id
+                      )}
+                    >
+                      {pod.qovery_service_info?.environment_name}
+                    </Link>
+                  </>
+                </Tooltip>
               )}
-              {pod.qovery_service_info?.project_name && pod.qovery_service_info?.environment_name && (
-                <>
-                  /
-                  <Link
-                    color="brand"
-                    className="font-normal"
-                    to={SERVICES_URL(
-                      organizationId,
-                      pod.qovery_service_info?.project_id,
-                      pod.qovery_service_info?.environment_id
-                    )}
-                  >
-                    {pod.qovery_service_info?.environment_name}
-                  </Link>
-                </>
+
+              {pod.qovery_service_info?.service_name && (
+                <Tooltip content="Service" side="bottom">
+                  <>
+                    <span className="text-neutral-250">/</span>
+                    <Link
+                      color="brand"
+                      size="xs"
+                      className="font-normal hover:underline"
+                      to={APPLICATION_URL(
+                        organizationId,
+                        pod.qovery_service_info?.project_id,
+                        pod.qovery_service_info?.environment_id,
+                        pod.qovery_service_info?.service_id
+                      )}
+                    >
+                      {pod.qovery_service_info?.service_name}
+                    </Link>
+                  </>
+                </Tooltip>
               )}
-              {pod.qovery_service_info?.environment_name && pod.qovery_service_info?.service_name && (
-                <>
-                  /
-                  <Link
-                    color="brand"
-                    className="font-normal"
-                    to={APPLICATION_URL(
-                      organizationId,
-                      pod.qovery_service_info?.project_id,
-                      pod.qovery_service_info?.environment_id,
-                      pod.qovery_service_info?.service_id
-                    )}
-                  >
-                    {pod.qovery_service_info?.service_name}
-                  </Link>
-                </>
-              )}
-            </span>
-          )}
-        </span>
-        <div className="flex items-center gap-3">
-          <span className="text-neutral-350">{timeAgo(new Date(pod.created_at), true)}</span>
-          {pod.restart_count > 0 && (
-            <span className="flex items-center gap-1 bg-yellow-50 px-0.5 text-yellow-900">
-              <Icon iconName="arrow-rotate-left" iconStyle="regular" className="text-xs" />
-              {pod.restart_count} {pluralize(pod.restart_count, 'restart', 'restarts')}
-            </span>
+            </div>
           )}
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-6">
-        <NodeProgressBar
-          type="cpu"
-          // used={formatNumber(pod.metrics_usage.cpu_milli_usage || 0)}
-          total={formatNumber(pod.cpu_milli_request || 0)}
-          unit="CPU"
-        />
-        <NodeProgressBar
-          type="memory"
-          // used={formatNumber(
-          //   Math.max(pod.metrics_usage?.memory_mib_rss_usage || 0, pod.metrics_usage?.cpu_milli_usage || 0)
-          // )}
-          total={pod.memory_mib_request || 0}
-          unit="MB"
-        />
-        {/* <NodeProgressBar
-          type="disk"
-          used={formatNumber(pod.metrics_usage.disk_mib_usage || 0)}
-          total={formatNumber(pod.metrics_usage.disk_mib_usage || 0)} // TODO: fix it
-          unit="MB"
-        /> */}
+
+      <div className="flex flex-shrink-0 items-center gap-4">
+        <div className="flex items-center gap-3 text-neutral-350">
+          {pod.restart_count > 0 && (
+            <span className="flex max-w-max items-center gap-1 rounded bg-yellow-50 px-2 py-1 text-yellow-900">
+              <Icon iconName="arrow-rotate-left" iconStyle="regular" />
+              <span className="font-medium">{pod.restart_count}</span>
+            </span>
+          )}
+
+          <div className="flex w-24 items-center gap-1 whitespace-nowrap">
+            <span>CPU: </span>
+            <span className="font-medium text-neutral-400">{formatNumber(pod.cpu_milli_request || 0)} mCPU</span>
+          </div>
+
+          <div className="flex w-24 items-center gap-1 whitespace-nowrap">
+            <span>Memory: </span>
+            <span className="font-medium text-neutral-400">{formatNumber(pod.memory_mib_request || 0)} MB</span>
+          </div>
+        </div>
+
+        <span className="whitespace-nowrap text-neutral-350">{timeAgo(new Date(pod.created_at), true)}</span>
       </div>
     </div>
   )
