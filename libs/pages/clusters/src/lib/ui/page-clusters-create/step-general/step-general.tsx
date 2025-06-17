@@ -100,7 +100,7 @@ export function StepGeneral(props: StepGeneralProps) {
                 )}
               />
               {currentProvider && (
-                <div>
+                <>
                   <Controller
                     name="region"
                     control={control}
@@ -166,7 +166,7 @@ export function StepGeneral(props: StepGeneralProps) {
                       </div>
                     </div>
                   </Callout.Root>
-                </div>
+                </>
               )}
             </>
           ) : (

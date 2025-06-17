@@ -62,7 +62,7 @@ export function CrudModal(props: CrudModalProps) {
         name="description"
         control={control}
         rules={{
-          required: 'Please enter an description.',
+          required: 'Please enter a description.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputTextArea
