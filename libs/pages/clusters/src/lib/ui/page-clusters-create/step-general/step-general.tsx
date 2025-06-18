@@ -155,7 +155,7 @@ export function StepGeneral(props: StepGeneralProps) {
                     </Callout.Text>
 
                     <div className="col-span-2 flex items-start gap-4 rounded border border-sky-500 bg-sky-50 p-3 pl-4">
-                      <Icon iconName="circle-info" iconStyle="regular" className="text-base" />
+                      <Icon iconName="circle-info" iconStyle="regular" className="text-base text-sky-500" />
 
                       <div className="flex flex-col gap-1 text-neutral-400">
                         <p className="font-semibold">Qovery manages this infrastructure for you.</p>

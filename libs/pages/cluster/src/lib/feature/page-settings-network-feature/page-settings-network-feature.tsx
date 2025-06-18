@@ -17,6 +17,7 @@ export function PageSettingsNetworkFeature() {
     organizationId,
     clusterId,
   })
+  const isLoading = isClusterLoading || isClusterRoutingTableLoading
   const { mutateAsync: editRoutingTable } = useEditRoutingTable()
 
   const { openModal, closeModal } = useModal()
@@ -25,9 +26,8 @@ export function PageSettingsNetworkFeature() {
   return (
     <PageSettingsNetwork
       cluster={cluster}
-      isClusterLoading={isClusterLoading}
+      isLoading={isLoading}
       routes={clusterRoutingTable}
-      areRoutesLoading={isClusterRoutingTableLoading}
       onAddRoute={() => {
         openModal({
           content: (

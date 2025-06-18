@@ -1,5 +1,5 @@
 import { type CloudProviderEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
-import { type FormEventHandler, type ReactElement, cloneElement } from 'react'
+import { type FormEventHandler, cloneElement } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { CardClusterFeature } from '@qovery/shared/console-shared'
@@ -31,7 +31,7 @@ export function StepFeatures(props: StepFeaturesProps) {
       title: 'Qovery managed',
       value: 'DEFAULT',
       description: 'Let Qovery create and manage the VPC and networking resources for you. Best for most use cases.',
-      icon: Qovery,
+      icon: <img className="mt-1 select-none" width={20} height={20} src={Qovery} alt="Qovery managed" />,
       recommended: true,
     },
     {
@@ -75,24 +75,20 @@ export function StepFeatures(props: StepFeaturesProps) {
                   <button
                     key={vpcMode.title}
                     className={twMerge(
-                      'relative flex items-start gap-4 rounded border border-neutral-200 bg-white p-5 text-left shadow outline outline-2 -outline-offset-2 outline-transparent transition-all hover:border-brand-500 hover:outline-brand-500',
-                      field.value === vpcMode.value && 'border-brand-500 outline-brand-500'
+                      'relative flex items-start gap-4 rounded border border-neutral-250 bg-white p-5 text-left shadow outline outline-2 -outline-offset-2 outline-transparent transition-all hover:border-brand-500 hover:outline-brand-500',
+                      field.value === vpcMode.value && 'border-brand-500 outline-2 outline-brand-500'
                     )}
                     onClick={(e) => {
                       e.preventDefault()
                       setValue('vpc_mode', vpcMode.value)
                     }}
                   >
-                    {typeof vpcMode.icon === 'string' ? (
-                      <img className="mt-1 select-none" width={20} height={20} src={vpcMode.icon} alt={vpcMode.title} />
-                    ) : (
-                      cloneElement(vpcMode.icon as ReactElement, { className: 'w-[20px] h-[20px] mt-1' })
-                    )}
-                    <span>
-                      <span className="mb-2 inline-flex items-center text-base font-semibold text-neutral-400">
+                    {cloneElement(vpcMode.icon, { className: 'w-[20px] h-[20px] mt-1' })}
+                    <span className="flex flex-col gap-2">
+                      <span className="flex items-start justify-between text-base font-semibold text-neutral-400">
                         {vpcMode.title}
                         {vpcMode.recommended && (
-                          <span className="absolute right-5 top-5 rounded bg-brand-500 px-1 py-1 text-[8px] font-semibold uppercase leading-none text-neutral-50">
+                          <span className="rounded bg-brand-500 px-1 py-1 text-[8px] font-semibold uppercase leading-none text-neutral-50">
                             recommended
                           </span>
                         )}

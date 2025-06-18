@@ -21,8 +21,7 @@ describe('PageSettingsNetwork', () => {
           description: 'desc',
         },
       ],
-      areRoutesLoading: false,
-      isClusterLoading: false,
+      isLoading: false,
       cluster: mockCluster,
     }
   })
