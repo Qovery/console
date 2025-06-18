@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Badge, Icon, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Badge, Icon, ProgressBar, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
@@ -124,13 +124,42 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
       </div>
 
       {nodes?.map((node) => {
-        const isWarning = Boolean(nodeWarnings[node.name])
+        const nodeWarning = nodeWarnings[node.name]
+
+        const isReady = node.conditions?.some((condition) => condition.type === 'Ready' && condition.status === 'True')
         const isDiskPressure = node.conditions?.some(
           (condition) => condition.type === 'DiskPressure' && condition.status === 'True'
         )
         const isMemoryPressure = node.conditions?.some(
           (condition) => condition.type === 'MemoryPressure' && condition.status === 'True'
         )
+        const isPIDPressure = node.conditions?.some(
+          (condition) => condition.type === 'PIDPressure' && condition.status === 'True'
+        )
+
+        const isWarning = isDiskPressure || isMemoryPressure || !isReady || isPIDPressure || nodeWarning
+
+        const status = () => {
+          if (!isWarning) {
+            return 'Ready'
+          }
+          if (!isReady) {
+            return 'NotReady'
+          }
+          if (isDiskPressure) {
+            return 'DiskPressure - Update the size or your instance type'
+          }
+          if (isMemoryPressure) {
+            return 'MemoryPressure'
+          }
+          if (isPIDPressure) {
+            return 'PIDPressure'
+          }
+          if (nodeWarning) {
+            return nodeWarning[0].message ?? 'Warning'
+          }
+          return 'Warning'
+        }
 
         return (
           <div
@@ -143,7 +172,15 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
             )}
           >
             <div className="flex h-12 w-1/4 min-w-0 items-center gap-2.5 px-5 font-medium text-neutral-400">
-              <StatusChip status={isWarning ? 'WARNING' : 'RUNNING'} className="inline-flex shrink-0" />
+              <Tooltip content={status()}>
+                <span className="flex items-center gap-1">
+                  {isWarning ? (
+                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-base text-yellow-500" />
+                  ) : (
+                    <Icon iconName="circle-check" iconStyle="regular" className="text-base text-green-500" />
+                  )}
+                </span>
+              </Tooltip>
               <Tooltip content={node.name}>
                 <span className="truncate">{node.name}</span>
               </Tooltip>

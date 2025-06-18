@@ -112,7 +112,15 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
             <Accordion.Trigger className="group flex h-[86px] w-full items-center justify-between py-5">
               <div className="flex h-full w-1/4 items-center justify-between border-r border-neutral-200 px-6">
                 <div className="flex items-center gap-[18px]">
-                  <StatusChip status={metrics.nodesWarningCount > 0 ? 'WARNING' : 'RUNNING'} />
+                  <Tooltip content={metrics.nodesWarningCount > 0 ? 'Warning' : 'Ready'}>
+                    <span className="flex items-center gap-1">
+                      {metrics.nodesWarningCount > 0 ? (
+                        <Icon iconName="circle-exclamation" iconStyle="regular" className="text-base text-yellow-500" />
+                      ) : (
+                        <Icon iconName="circle-check" iconStyle="regular" className="text-base text-green-500" />
+                      )}
+                    </span>
+                  </Tooltip>
                   <div className="text-sm font-medium text-neutral-400">
                     {upperCaseFirstLetter(nodePool.name)} nodepool
                   </div>
