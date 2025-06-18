@@ -4,12 +4,10 @@ import { formatNumber, mibToGib, milliCoreToVCPU } from '@qovery/shared/util-js'
 const KEY_KARPENTER_NODE_POOL = 'karpenter.sh/nodepool'
 
 export interface NodePoolMetrics {
-  cpuUsed: number
   cpuTotal: number | null
-  cpuReserved: number
-  memoryUsed: number
+  cpuCapacity: number
   memoryTotal: number | null
-  memoryReserved: number
+  memoryCapacity: number
   nodesCount: number
   nodesWarningCount: number
   nodesDeployingCount: number
@@ -24,11 +22,9 @@ export function calculateNodePoolMetrics(
   const nodePoolNodes = nodes.filter((node) => node.labels[KEY_KARPENTER_NODE_POOL] === nodePoolName)
 
   let cpuTotal: number | null = null
-  let cpuReserved = 0
+  let cpuCapacity = 0
   let memoryTotal: number | null = null
-  let memoryReserved = 0
-  let cpuUsed = 0
-  let memoryUsed = 0
+  let memoryCapacity = 0
 
   // If limits are set, use them, otherwise, set to null
   const hasCpuLimit = nodePool.cpu_milli_limit != null
@@ -36,19 +32,11 @@ export function calculateNodePoolMetrics(
 
   // vCPU
   cpuTotal = hasCpuLimit ? formatNumber(milliCoreToVCPU(nodePool.cpu_milli_limit || 0), 0) : null
-  cpuReserved = formatNumber(milliCoreToVCPU(nodePool.cpu_milli || 0), 0)
-  cpuUsed = formatNumber(
-    milliCoreToVCPU(nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated.request_cpu_milli || 0), 0)),
-    0
-  )
+  cpuCapacity = formatNumber(milliCoreToVCPU(nodePool.cpu_milli || 0), 0)
 
   // Memory
   memoryTotal = hasMemoryLimit ? formatNumber(mibToGib(nodePool.memory_mib_limit || 0), 0) : null
-  memoryReserved = formatNumber(mibToGib(nodePool.memory_mib || 0), 0)
-  memoryUsed = formatNumber(
-    mibToGib(nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated.request_memory_mib || 0), 0)),
-    0
-  )
+  memoryCapacity = formatNumber(mibToGib(nodePool.memory_mib || 0), 0)
 
   // Warning and deploying counts
   const nodesWarningCount = nodePoolNodes.filter((node) => node.name && nodeWarnings && nodeWarnings[node.name]).length
@@ -57,12 +45,10 @@ export function calculateNodePoolMetrics(
   ).length
 
   return {
-    cpuUsed,
     cpuTotal,
-    cpuReserved,
-    memoryUsed,
+    cpuCapacity,
+    memoryCapacity,
     memoryTotal,
-    memoryReserved,
     nodesCount: nodePoolNodes.length,
     nodesWarningCount,
     nodesDeployingCount,
