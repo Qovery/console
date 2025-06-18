@@ -5,7 +5,7 @@ interface UseClusterKubernetesEventsProps {
   clusterId: string
   fromDateTime: string
   toDateTime: string
-  reportingComponent: string
+  reportingComponent?: string
   nodeName?: string
   enabled?: boolean
 }

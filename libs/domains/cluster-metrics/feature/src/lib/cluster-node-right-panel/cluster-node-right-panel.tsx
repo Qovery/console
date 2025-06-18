@@ -1,10 +1,13 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
 import * as Dialog from '@radix-ui/react-dialog'
+import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'
 import clsx from 'clsx'
+import { subHours, subMinutes } from 'date-fns'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type ClusterNodeDto, type NodePodInfoDto } from 'qovery-ws-typescript-axios'
 import { type PropsWithChildren, memo, useMemo, useState } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_URL,
   CLUSTER_SETTINGS_RESOURCES_URL,
@@ -18,14 +21,16 @@ import {
   Button,
   Heading,
   Icon,
+  Indicator,
   Link,
+  LoaderSpinner,
   ProgressBar,
   Section,
   StatusChip,
   Tooltip,
   Truncate,
 } from '@qovery/shared/ui'
-import { timeAgo } from '@qovery/shared/util-dates'
+import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import {
   calculatePercentage,
   formatNumber,
@@ -37,6 +42,7 @@ import {
 } from '@qovery/shared/util-js'
 import { ClusterProgressBarNode } from '../cluster-progress-bar-node/cluster-progress-bar-node'
 import { DialogRightPanel } from '../dialog-right-panel/dialog-right-panel'
+import { useClusterKubernetesEvents } from '../hooks/use-cluster-kubernetes-events/use-cluster-kubernetes-events'
 
 export interface ClusterNodeRightPanelProps extends PropsWithChildren {
   organizationId: string
@@ -251,6 +257,9 @@ function PodItem({ pod, organizationId }: PodItemProps) {
   )
 }
 
+type TimePeriod = '15m' | '1h' | '6h' | '1d' | '1w'
+const timePeriodOptions: TimePeriod[] = ['15m', '1h', '6h', '1d', '1w']
+
 export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
   node,
   organizationId,
@@ -260,10 +269,35 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
 }: ClusterNodeRightPanelProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [openSystemPods, setOpenSystemPods] = useState(false)
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('1d')
+
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId,
     clusterId,
   })
+
+  const timeRanges = useMemo(() => {
+    const now = new Date()
+    const ranges = {
+      '15m': { from: subMinutes(now, 15), to: now },
+      '1h': { from: subHours(now, 1), to: now },
+      '6h': { from: subHours(now, 6), to: now },
+      '1d': { from: subHours(now, 24), to: now },
+      '1w': { from: subHours(now, 24 * 7), to: now },
+      '1m': { from: subHours(now, 24 * 30), to: now },
+    }
+    return ranges
+  }, [])
+
+  const { data: events, isLoading: isLoadingEvents } = useClusterKubernetesEvents({
+    clusterId,
+    fromDateTime: timeRanges[timePeriod].from.toISOString(),
+    toDateTime: timeRanges[timePeriod].to.toISOString(),
+    reportingComponent: 'karpenter',
+    enabled: isModalOpen,
+  })
+
+  const filteredEvents = events?.filter((event) => event.kind !== 'NodePool').slice(-20)
 
   const nodeWarnings = useMemo(
     () => runningStatus?.computed_status?.node_warnings || {},
@@ -504,6 +538,81 @@ export const ClusterNodeRightPanel = memo(function ClusterNodeRightPanel({
               </Section>
             </Collapsible.Root>
           )}
+
+          <Section className="gap-4">
+            <div className="flex items-center justify-between">
+              <Heading level={2}>Last 20 events</Heading>
+              <ToggleGroupPrimitive.Root
+                type="single"
+                value={timePeriod}
+                onValueChange={(value) => value && setTimePeriod(value as typeof timePeriod)}
+                className="flex gap-2 text-neutral-350"
+              >
+                {timePeriodOptions.map((option) => (
+                  <ToggleGroupPrimitive.Item key={option} value={option} className="group text-sm font-medium">
+                    <span className="px-1 pb-1.5 group-data-[state=on]:border-b-2 group-data-[state=on]:border-brand-500 group-data-[state=on]:text-brand-500">
+                      {option}
+                    </span>
+                  </ToggleGroupPrimitive.Item>
+                ))}
+              </ToggleGroupPrimitive.Root>
+            </div>
+
+            {filteredEvents && filteredEvents.length > 0 ? (
+              <div className="space-y-3">
+                {filteredEvents
+                  .sort(
+                    (a, b) => new Date(b.last_occurrence || '').getTime() - new Date(a.last_occurrence || '').getTime()
+                  )
+                  .map((event) => (
+                    <div
+                      key={event.last_occurrence}
+                      className="flex w-full items-center justify-between rounded border border-neutral-250 bg-neutral-100 px-4 py-2"
+                    >
+                      <div className="flex items-center gap-4">
+                        {event.type === 'Warning' ? (
+                          <Indicator
+                            content={
+                              <Tooltip content="Warning">
+                                <span className="rounded-full bg-neutral-100 text-sm">
+                                  <Icon className="text-yellow-900" iconName="exclamation-circle" iconStyle="regular" />
+                                </span>
+                              </Tooltip>
+                            }
+                          >
+                            <Icon name={IconEnum.KUBERNETES} width={22} height={22} />
+                          </Indicator>
+                        ) : (
+                          <Icon name={IconEnum.KUBERNETES} width={22} height={22} />
+                        )}
+                        <div className="flex flex-col gap-0.5 text-ssm text-neutral-400">
+                          <span className="flex items-center gap-1.5">
+                            <span className="font-medium">{event.reason}</span>
+                          </span>
+                          <span
+                            className={clsx('text-sm', {
+                              'text-yellow-900': event.type === 'Warning',
+                            })}
+                          >
+                            {event.message}
+                          </span>
+                        </div>
+                      </div>
+                      <span
+                        title={event.last_occurrence && dateUTCString(event.last_occurrence)}
+                        className="text-xs text-neutral-350"
+                      >
+                        {timeAgo(new Date(event.last_occurrence || ''), true)}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="flex w-full flex-col items-center justify-center gap-3">
+                {isLoadingEvents ? <LoaderSpinner /> : <div className="text-sm text-neutral-400">No data</div>}
+              </div>
+            )}
+          </Section>
         </Section>
       )}
     </DialogRightPanel>

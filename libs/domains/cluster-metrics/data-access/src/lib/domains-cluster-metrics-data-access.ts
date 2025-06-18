@@ -10,20 +10,21 @@ export const clusterMetrics = createQueryKeys('clusterMetrics', {
     fromDateTime,
     toDateTime,
     reportingComponent,
+    nodeName,
   }: {
     clusterId: string
     fromDateTime: string
     toDateTime: string
-    reportingComponent: string
+    reportingComponent?: string
     nodeName?: string
   }) => ({
-    queryKey: [clusterId, fromDateTime, toDateTime],
+    queryKey: [clusterId, fromDateTime, toDateTime, reportingComponent, nodeName],
     async queryFn() {
       const response = await clusterApi.getClusterKubernetesEvents(
         clusterId,
         fromDateTime,
         toDateTime,
-        undefined,
+        nodeName,
         undefined,
         reportingComponent
       )
