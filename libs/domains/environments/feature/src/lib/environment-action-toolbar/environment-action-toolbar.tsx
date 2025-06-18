@@ -3,6 +3,7 @@ import {
   EnvironmentDeploymentStatusEnum,
   type EnvironmentStatus,
   OrganizationEventTargetType,
+  ServiceTypeEnum,
   StateEnum,
 } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
@@ -26,6 +27,7 @@ import {
   isDeployAvailable,
   isRedeployAvailable,
   isStopAvailable,
+  isUninstallAvailable,
 } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
@@ -34,6 +36,7 @@ import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useServiceCount } from '../hooks/use-service-count/use-service-count'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
+import useUninstallEnvironment from '../hooks/use-uninstall-environment/use-uninstall-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
@@ -52,13 +55,16 @@ function MenuManageDeployment({
   const environmentNeedUpdate = deploymentStatus?.deployment_status !== EnvironmentDeploymentStatusEnum.UP_TO_DATE
   const displayYellowColor = environmentNeedUpdate && state !== 'STOPPED'
 
-  const tooltipEnvironmentNeedUpdate = displayYellowColor && (
-    <Tooltip side="bottom" content="Environment has changed and needs to be applied">
+  const tooltipService = (content: string) => (
+    <Tooltip side="bottom" content={content}>
       <div className="absolute right-2">
         <Icon iconName="circle-exclamation" iconStyle="regular" />
       </div>
     </Tooltip>
   )
+
+  const tooltipEnvironmentNeedUpdate =
+    displayYellowColor && tooltipService('Environment has changed and needs to be applied')
 
   const { openModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -71,6 +77,7 @@ function MenuManageDeployment({
     logsLink,
   })
   const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id, logsLink })
+  const { mutate: uninstallEnvironment } = useUninstallEnvironment({ projectId: environment.project.id, logsLink })
   const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
     projectId: environment.project.id,
     logsLink,
@@ -111,6 +118,17 @@ function MenuManageDeployment({
         : null,
       name: environment.name,
       action: () => stopEnvironment({ environmentId: environment.id }),
+    })
+  }
+
+  const mutationUninstall = () => {
+    openModalConfirmation({
+      mode: 'PRODUCTION',
+      title: 'Confirm uninstall',
+      description: 'To confirm the uninstall of your environment, please type the name:',
+      warning: 'Uninstall delete all compute and data of your service',
+      name: environment.name,
+      action: () => uninstallEnvironment({ environmentId: environment.id }),
     })
   }
 
@@ -192,6 +210,13 @@ function MenuManageDeployment({
         {isStopAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
             Stop
+            {tooltipService('Stop compute resources *but* keep the data')}
+          </DropdownMenu.Item>
+        )}
+        {isUninstallAvailable(state) && (
+          <DropdownMenu.Item icon={<Icon iconName="eraser" />} color="red" onSelect={mutationUninstall}>
+            Uninstall
+            {tooltipService('Delete all resources and data associated *but* keep the services configurations')}
           </DropdownMenu.Item>
         )}
         {match(state)

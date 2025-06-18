@@ -77,7 +77,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 checked={field.value}
                 title="Deploy"
                 name="on_start"
-                description="Execute this job when the environment/job is deployed"
+                description="Execute this job when the environment/job is deployed or re-deployed"
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
@@ -117,7 +117,7 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
                 checked={field.value}
                 title="Delete"
                 name="on_delete"
-                description="Execute this job when the environment/job is deleted"
+                description="Execute this job when the environment/job is uninstalled or deleted"
                 setChecked={field.onChange}
               >
                 <EntrypointCmdInputs
