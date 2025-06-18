@@ -174,7 +174,7 @@
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.14",
     "pretty-quick": "^4.0.0",
-    "qovery-ws-typescript-axios": "^0.1.309",
+    "qovery-ws-typescript-axios": "^0.1.334",
     "react-docgen-typescript-plugin": "^1.0.6",
     "react-flat-providers": "^2.2.0",
     "react-refresh": "^0.14.0",
