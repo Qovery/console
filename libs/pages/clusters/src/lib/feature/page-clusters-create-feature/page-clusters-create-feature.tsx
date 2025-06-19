@@ -54,7 +54,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'SCW' }, () => [
       { title: 'Create new cluster', key: 'general' },
-      { title: 'Set resources', key: 'resources' },
+      { title: 'Resources', key: 'resources' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () => [
@@ -64,13 +64,13 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }, () => [
       { title: 'Create new cluster', key: 'general' },
-      { title: 'Set resources', key: 'resources' },
+      { title: 'Resources', key: 'resources' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AWS' }, undefined, () => [
       { title: 'Create new cluster', key: 'general' },
-      { title: 'Set resources', key: 'resources' },
-      { title: 'Set features', key: 'features' },
+      { title: 'Resources', key: 'resources' },
+      { title: 'Network', key: 'features' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .otherwise(() => [])
@@ -100,7 +100,7 @@ export function PageClusterCreateFeature() {
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
   const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>({
-    vpc_mode: 'DEFAULT',
+    vpc_mode: undefined,
     features: {},
   })
   const [kubeconfigData, setKubeconfigData] = useState<ClusterKubeconfigData | undefined>()

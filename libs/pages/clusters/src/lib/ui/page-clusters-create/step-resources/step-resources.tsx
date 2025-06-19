@@ -21,8 +21,12 @@ export function StepResources(props: StepResourcesProps) {
 
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">Set resources</Heading>
+      <div className="mb-10 flex flex-col gap-2">
+        <Heading>Resources</Heading>
+        <p className="text-sm text-neutral-350">
+          Customize the resources allocated to the cluster. You can adjust cluster resources anytime later from the
+          settings panel.
+        </p>
       </div>
 
       <form onSubmit={props.onSubmit}>

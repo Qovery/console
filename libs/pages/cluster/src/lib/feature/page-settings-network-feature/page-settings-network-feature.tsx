@@ -1,6 +1,6 @@
 import { type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useClusterRoutingTable, useEditRoutingTable } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRoutingTable, useEditRoutingTable } from '@qovery/domains/clusters/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import PageSettingsNetwork from '../../ui/page-settings-network/page-settings-network'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
@@ -12,10 +12,12 @@ export const deleteRoutes = (routes: ClusterRoutingTableResultsInner[], destinat
 export function PageSettingsNetworkFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
 
+  const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { data: clusterRoutingTable, isLoading: isClusterRoutingTableLoading } = useClusterRoutingTable({
     organizationId,
     clusterId,
   })
+  const isLoading = isClusterLoading || isClusterRoutingTableLoading
   const { mutateAsync: editRoutingTable } = useEditRoutingTable()
 
   const { openModal, closeModal } = useModal()
@@ -23,8 +25,9 @@ export function PageSettingsNetworkFeature() {
 
   return (
     <PageSettingsNetwork
+      cluster={cluster}
+      isLoading={isLoading}
       routes={clusterRoutingTable}
-      loading={isClusterRoutingTableLoading}
       onAddRoute={() => {
         openModal({
           content: (

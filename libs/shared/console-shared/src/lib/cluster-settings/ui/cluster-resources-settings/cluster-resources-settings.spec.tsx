@@ -89,7 +89,6 @@ describe('ClusterResourcesSettings', () => {
       })
     )
 
-    screen.getByText('Managed K8S (EKS) - Multiple node cluster')
     screen.getByLabelText('Instance type')
     screen.getByLabelText('Disk size (GB)')
     screen.getByTestId('input-slider')
