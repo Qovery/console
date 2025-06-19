@@ -202,25 +202,34 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }
 
-  useEffect(() => {
-    mermaid.initialize({ startOnLoad: true })
+  const hasMermaidChart = (messages: Message[], streamingText?: string) =>
+    messages.some((msg) => msg.text.includes('[start mermaid block]')) ||
+    (streamingText?.includes('[start mermaid block]') ?? false)
 
+  useEffect(() => {
+    if (hasMermaidChart(thread, displayedStreamingMessage)) {
+      mermaid.initialize({ startOnLoad: true })
+    }
+  }, [thread, displayedStreamingMessage])
+
+  useEffect(() => {
     setTimeout(() => {
       if (inputRef.current) {
         adjustTextareaHeight(inputRef.current)
         inputRef.current.scrollTop = inputRef.current.scrollHeight
       }
     }, 50)
+  }, [])
 
+  useEffect(() => {
     const down = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         handleOnClose()
       }
     }
-
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [])
+  }, [thread])
 
   const handleVote = async (messageId: number, vote: 'upvote' | 'downvote') => {
     const currentMessage = thread.find((msg) => msg.id === messageId)
