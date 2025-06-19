@@ -48,8 +48,8 @@ describe('calculatePercentage', () => {
   })
 
   it('should handle decimal values', () => {
-    expect(calculatePercentage(33, 100)).toBe(33.33)
-    expect(calculatePercentage(66, 100)).toBe(66.67)
+    expect(calculatePercentage(33, 100)).toBe(33)
+    expect(calculatePercentage(66, 100)).toBe(66)
   })
 
   it('should handle values greater than total', () => {
