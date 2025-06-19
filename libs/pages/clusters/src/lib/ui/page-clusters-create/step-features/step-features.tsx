@@ -75,8 +75,9 @@ export function StepFeatures(props: StepFeaturesProps) {
                   <button
                     key={vpcMode.title}
                     className={twMerge(
-                      'relative flex items-start gap-4 rounded border border-neutral-250 bg-white p-5 text-left shadow outline outline-2 -outline-offset-2 outline-transparent transition-all hover:border-brand-500 hover:outline-brand-500',
-                      field.value === vpcMode.value && 'border-brand-500 outline-2 outline-brand-500'
+                      'relative flex items-start gap-4 rounded border border-neutral-250 bg-white p-5 text-left shadow transition-all',
+                      'outline-solid outline outline-2 -outline-offset-2 outline-transparent hover:outline-brand-500 focus:outline-2 focus:outline-brand-500',
+                      field.value === vpcMode.value && 'border-brand-500 outline-brand-500'
                     )}
                     onClick={(e) => {
                       e.preventDefault()
