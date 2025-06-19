@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { ClusterDeploymentStatusEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
@@ -20,7 +19,6 @@ import NeedRedeployFlag from '../need-redeploy-flag/need-redeploy-flag'
 export function Container({ children }: PropsWithChildren) {
   const { organizationId = '', clusterId = '' } = useParams()
   const { pathname } = useLocation()
-  const isClusterOverviewEnabled = useFeatureFlagVariantKey('cluster-running-status')
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { mutate: deployCluster } = useDeployCluster()
@@ -94,16 +92,12 @@ export function Container({ children }: PropsWithChildren) {
   )
 
   const tabsItems = [
-    ...(isClusterOverviewEnabled
-      ? [
-          {
-            icon: <Icon iconName="cloud-word" iconStyle="regular" className="w-4" />,
-            name: 'Overview',
-            active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL),
-            link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_OVERVIEW_URL}`,
-          },
-        ]
-      : []),
+    {
+      icon: <Icon iconName="cloud-word" iconStyle="regular" className="w-4" />,
+      name: 'Overview',
+      active: pathname.includes(CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL),
+      link: `${CLUSTER_URL(organizationId, clusterId)}${CLUSTER_OVERVIEW_URL}`,
+    },
     {
       icon: <Icon iconName="gear" iconStyle="regular" className="mt-0.5 w-4" />,
       name: 'Settings',
