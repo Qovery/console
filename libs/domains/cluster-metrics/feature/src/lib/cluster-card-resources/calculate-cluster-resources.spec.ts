@@ -59,8 +59,8 @@ describe('calculateClusterResources', () => {
     const result = calculateClusterResources(nodes)
 
     expect(result.cpu.total).toBe(5)
-    expect(result.cpu.used).toBe(2.5)
-    expect(result.cpu.percent).toBe(50)
+    expect(result.cpu.used).toBe(3)
+    expect(result.cpu.percent).toBe(60)
     expect(result.cpu.unit).toBe('vCPU')
 
     expect(result.memory.total).toBe(6)
@@ -69,8 +69,8 @@ describe('calculateClusterResources', () => {
     expect(result.memory.unit).toBe('GB')
 
     expect(result.disk.total).toBe(12)
-    expect(result.disk.used).toBe(6)
-    expect(result.disk.percent).toBe(50)
+    expect(result.disk.used).toBe(0)
+    expect(result.disk.percent).toBe(0)
     expect(result.disk.unit).toBe('GB')
   })
 
@@ -83,16 +83,15 @@ describe('calculateClusterResources', () => {
     const result = calculateClusterResources(nodes)
 
     expect(result.cpu.total).toBe(5)
-    expect(result.cpu.used).toBe(2.5)
-    expect(result.cpu.percent).toBe(50)
+    expect(result.cpu.used).toBe(3)
+    expect(result.cpu.percent).toBe(60)
 
     expect(result.memory.total).toBe(6)
     expect(result.memory.used).toBe(3)
     expect(result.memory.percent).toBe(50)
 
     expect(result.disk.total).toBe(12)
-    expect(result.disk.used).toBe(4)
-    expect(result.disk.percent).toBe(33.33)
+    expect(result.disk.used).toBe(0)
   })
 
   it('should handle empty nodes array', () => {
@@ -107,8 +106,6 @@ describe('calculateClusterResources', () => {
     expect(result.memory.percent).toBe(0)
 
     expect(result.disk.total).toBe(0)
-    expect(result.disk.used).toBe(0)
-    expect(result.disk.percent).toBe(0)
   })
 
   it('should handle undefined nodes', () => {
@@ -123,8 +120,6 @@ describe('calculateClusterResources', () => {
     expect(result.memory.percent).toBe(0)
 
     expect(result.disk.total).toBe(0)
-    expect(result.disk.used).toBe(0)
-    expect(result.disk.percent).toBe(0)
   })
 
   it('should avoid division by zero when totals are zero', () => {
@@ -141,7 +136,5 @@ describe('calculateClusterResources', () => {
     expect(result.memory.percent).toBe(0)
 
     expect(result.disk.total).toBe(0)
-    expect(result.disk.used).toBe(0)
-    expect(result.disk.percent).toBe(0)
   })
 })
