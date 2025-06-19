@@ -1,3 +1,4 @@
+import { getIconName, getIconClass } from '../utils/icon-utils/icon-utils'
 import { useAuth0 } from '@auth0/auth0-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
@@ -779,28 +780,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                               .filter((p) => p.messageId === thread.id)
                               .map((step, index) => (
                                 <div key={index} className="flex items-start gap-2 text-sm">
-                                  <Icon
-                                    iconName={
-                                      step.status === 'completed'
-                                        ? 'check-circle'
-                                        : step.status === 'in_progress'
-                                          ? 'spinner'
-                                          : step.status === 'waiting'
-                                            ? 'pause-circle'
-                                            : step.status === 'error'
-                                              ? 'exclamation-circle'
-                                              : 'circle'
-                                    }
-                                    className={clsx({
-                                      'text-green-500': step.status === 'completed',
-                                      'animate-spin text-yellow-500': step.status === 'in_progress',
-                                      'text-blue-500': step.status === 'waiting',
-                                      'text-red-500': step.status === 'error',
-                                      'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(
-                                        step.status
-                                      ),
-                                    })}
-                                  />
+                                  <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
                                   <div className="flex flex-col">
                                     <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
                                       {step.description}
@@ -859,28 +839,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                           .filter((p) => p.messageId === -2)
                           .map((step, index) => (
                             <div key={index} className="flex items-start gap-2 text-sm">
-                              <Icon
-                                iconName={
-                                  step.status === 'completed'
-                                    ? 'check-circle'
-                                    : step.status === 'in_progress'
-                                      ? 'spinner'
-                                      : step.status === 'waiting'
-                                        ? 'pause-circle'
-                                        : step.status === 'error'
-                                          ? 'exclamation-circle'
-                                          : 'circle'
-                                }
-                                className={clsx({
-                                  'text-green-500': step.status === 'completed',
-                                  'animate-spin text-yellow-500': step.status === 'in_progress',
-                                  'text-blue-500': step.status === 'waiting',
-                                  'text-red-500': step.status === 'error',
-                                  'text-gray-400': !['completed', 'in_progress', 'waiting', 'error'].includes(
-                                    step.status
-                                  ),
-                                })}
-                              />
+                              <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
                               <div className="flex flex-col">
                                 <span className={clsx({ 'text-neutral-400': step.status === 'completed' })}>
                                   {step.description}
@@ -918,30 +877,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                             .filter((p) => p.messageId === -2)
                             .map((step, index) => (
                               <div key={index} className="flex items-start gap-2 text-sm">
-                                <Icon
-                                  iconName={
-                                    step.status === 'completed'
-                                      ? 'check-circle'
-                                      : step.status === 'in_progress'
-                                        ? 'spinner'
-                                        : step.status === 'waiting'
-                                          ? 'pause-circle'
-                                          : step.status === 'error'
-                                            ? 'exclamation-circle'
-                                            : 'circle'
-                                  }
-                                  className={
-                                    step.status === 'completed'
-                                      ? 'text-green-500'
-                                      : step.status === 'in_progress'
-                                        ? 'animate-spin text-yellow-500'
-                                        : step.status === 'waiting'
-                                          ? 'text-blue-500'
-                                          : step.status === 'error'
-                                            ? 'text-red-500'
-                                            : 'text-gray-400'
-                                  }
-                                />
+                                <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
                                 <div className="flex flex-col">
                                   <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
                                     {step.description}
