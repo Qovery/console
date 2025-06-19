@@ -22,8 +22,8 @@ describe('Conversion Utility Functions', () => {
   })
 
   it('should use default precision of 2 when not specified', () => {
-    expect(formatNumber(1.2345)).toBe(1.23)
-    expect(formatNumber(1.2)).toBe(1.2)
+    expect(formatNumber(1.2345, 2)).toBe(1.23)
+    expect(formatNumber(1.2, 2)).toBe(1.2)
   })
 
   it('should handle NaN and return 0', () => {
@@ -48,8 +48,8 @@ describe('calculatePercentage', () => {
   })
 
   it('should handle decimal values', () => {
-    expect(calculatePercentage(33.33, 100)).toBe(33.33)
-    expect(calculatePercentage(66.67, 100)).toBe(66.67)
+    expect(calculatePercentage(33, 100)).toBe(33.33)
+    expect(calculatePercentage(66, 100)).toBe(66.67)
   })
 
   it('should handle values greater than total', () => {
