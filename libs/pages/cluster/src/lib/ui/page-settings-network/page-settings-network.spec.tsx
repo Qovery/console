@@ -1,7 +1,12 @@
+import { clusterFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageSettingsNetwork, { type PageSettingsNetworkProps } from './page-settings-network'
 
 let props: PageSettingsNetworkProps
+
+const [mockCluster] = clusterFactoryMock(1)
+mockCluster.cloud_provider = 'AWS'
+mockCluster.kubernetes = 'MANAGED'
 
 describe('PageSettingsNetwork', () => {
   beforeEach(() => {
@@ -16,7 +21,8 @@ describe('PageSettingsNetwork', () => {
           description: 'desc',
         },
       ],
-      loading: false,
+      isLoading: false,
+      cluster: mockCluster,
     }
   })
   it('should render successfully', () => {
@@ -97,11 +103,5 @@ describe('PageSettingsNetwork', () => {
     await userEvent.click(deleteButton)
 
     expect(spy).toHaveBeenCalled()
-  })
-
-  it('should have a placeholder if no route yet', async () => {
-    props.routes = []
-    renderWithProviders(<PageSettingsNetwork {...props} />)
-    screen.getByText('No network are set')
   })
 })

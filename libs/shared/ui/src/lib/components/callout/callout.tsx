@@ -9,7 +9,7 @@ const calloutRootVariants = cva(['flex', 'flex-row', 'gap-x-3', 'p-3', 'border',
       red: ['border-red-500', 'bg-red-50', 'text-red-500'],
       sky: ['border-sky-500', 'bg-sky-50', 'text-sky-500'],
       yellow: ['border-yellow-600', 'bg-yellow-50', 'text-yellow-700'],
-      neutral: ['bg-neutral-100', 'border-neutral-300', 'text-neutral-350'],
+      neutral: ['bg-neutral-100', 'border-neutral-250', 'text-neutral-350'],
     },
   },
 })
