@@ -6,7 +6,7 @@ export const milliCoreToVCPU = (milliCore: number): number => {
   return milliCore / 1000
 }
 
-export const formatNumber = (num: number, precision = 2): number => {
+export const formatNumber = (num: number, precision = 0): number => {
   return isNaN(num) ? 0 : Number(num.toFixed(precision))
 }
 
