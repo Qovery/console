@@ -83,7 +83,7 @@ describe('ClusterCardResources', () => {
     expect(screen.getByText('Total cluster resources')).toBeInTheDocument()
     expect(screen.getByText('CPU reserved')).toBeInTheDocument()
     expect(screen.getByText('Memory reserved')).toBeInTheDocument()
-    expect(screen.getByText('Disk usage')).toBeInTheDocument()
+    expect(screen.getByText('Disk capacity')).toBeInTheDocument()
   })
 
   it('should display the correct CPU resource values', () => {
@@ -105,8 +105,6 @@ describe('ClusterCardResources', () => {
   it('should display the correct Disk resource values', () => {
     renderWithProviders(<ClusterCardResources organizationId={mockOrganizationId} clusterId={mockClusterId} />)
 
-    expect(screen.getByText('50')).toBeInTheDocument()
-    expect(screen.getByText(/\/200 GB/)).toBeInTheDocument()
-    expect(screen.getByText('26%')).toBeInTheDocument()
+    expect(screen.getByText('200')).toBeInTheDocument()
   })
 })
