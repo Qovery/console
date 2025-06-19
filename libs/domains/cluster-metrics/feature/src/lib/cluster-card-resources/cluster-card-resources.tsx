@@ -36,7 +36,7 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
       isPercentage: true,
     },
     {
-      label: 'Disk usage',
+      label: 'Disk capacity',
       icon: 'hard-drive',
       value: clusterResources.disk,
       isPercentage: false,
