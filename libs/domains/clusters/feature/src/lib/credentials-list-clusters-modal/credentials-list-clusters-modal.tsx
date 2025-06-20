@@ -42,7 +42,7 @@ export function CredentialsListClustersModal({
 
         <div className="flex flex-col gap-y-4 rounded border border-neutral-250 bg-neutral-100 p-4">
           {clusters.map((cluster) => (
-            <Link key={cluster.id} to={CLUSTER_URL(organizationId, cluster.id)}>
+            <Link key={cluster.id} to={CLUSTER_URL(organizationId, cluster.id)} target="_blank" rel="noreferrer">
               <div className="flex items-center gap-3 text-sm font-semibold text-brand-500 hover:text-brand-600">
                 <Icon name={cluster.cloud_provider?.toUpperCase() ?? ''} className="mt-2 text-sm text-neutral-400" />
                 {cluster.name}

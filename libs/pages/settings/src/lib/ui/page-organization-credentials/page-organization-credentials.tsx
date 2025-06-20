@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import { useCloudProviderCredentials, useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
 import { ClusterCredentialsModal, CredentialsListClustersModal } from '@qovery/domains/clusters/feature'
 import { useOrganizationCredentials } from '@qovery/domains/organizations/feature'
-import { Button, Icon, Indicator, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Icon, Indicator, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 
 export const PageOrganizationCredentials = () => {
   const { openModal, closeModal } = useModal()
@@ -161,26 +161,37 @@ export const PageOrganizationCredentials = () => {
                   color="neutral"
                   onClick={onOpen}
                   type="button"
-                  data-testid="edit-port"
+                  data-testid="edit-credential"
                 >
                   <Icon iconName="link" iconStyle="regular" />
                 </Button>
               </Indicator>
             )}
-            <Button size="md" variant="surface" color="neutral" onClick={onEdit} type="button" data-testid="edit-port">
-              <Icon iconName="gear" iconStyle="regular" />
-            </Button>
+
             <Button
               size="md"
               variant="surface"
               color="neutral"
-              onClick={onDelete}
-              disabled={clusters.length !== 0}
+              onClick={onEdit}
               type="button"
-              data-testid="remove-port"
+              data-testid="edit-credential"
             >
-              <Icon iconName="trash" iconStyle="regular" />
+              <Icon iconName="gear" iconStyle="regular" />
             </Button>
+
+            <Tooltip content="Attached credentials cannot be deleted" side="top" disabled={clusters.length === 0}>
+              <Button
+                size="md"
+                variant="surface"
+                color="neutral"
+                onClick={onDelete}
+                disabled={clusters.length !== 0}
+                type="button"
+                data-testid="remove-credential"
+              >
+                <Icon iconName="trash" iconStyle="regular" />
+              </Button>
+            </Tooltip>
           </div>
         </div>
       )
