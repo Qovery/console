@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ClustersApi } from 'qovery-typescript-axios'
 
 interface UseMetricsWSProps {
+  type: 'cpu' | 'memory'
   organizationId: string
   clusterId: string
   startDate: string
@@ -14,6 +15,7 @@ interface UseMetricsWSProps {
 const clusterApi = new ClustersApi()
 
 export function useMetrics({
+  type,
   organizationId,
   clusterId,
   startDate,
@@ -23,10 +25,23 @@ export function useMetrics({
   customApiEndpoint,
 }: UseMetricsWSProps) {
   return useQuery({
-    queryKey: ['metrics', organizationId, clusterId, serviceId, customQuery, customApiEndpoint, startDate, endDate],
+    queryKey: [
+      'metrics',
+      type,
+      organizationId,
+      clusterId,
+      serviceId,
+      customQuery,
+      customApiEndpoint,
+      startDate,
+      endDate,
+    ],
     queryFn: async () => {
       const serviceFilter = `label_qovery_com_service_id="${serviceId}"`
-      const query = `rate(container_cpu_usage_seconds_total{container!=""}[5m])* on(namespace, pod) group_left(label_value) kube_pod_labels{${serviceFilter}}`
+      const query =
+        type === 'cpu'
+          ? `rate(container_cpu_usage_seconds_total{container!=""}[5m])* on(namespace, pod) group_left(label_value) kube_pod_labels{${serviceFilter}}`
+          : `container_memory_usage_bytes{container!=""} * on(namespace, pod) group_left(label_value) kube_pod_labels{${serviceFilter}}`
 
       let step = '14'
 
