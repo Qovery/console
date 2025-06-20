@@ -1,5 +1,28 @@
 import { subDays, subHours, subMinutes } from 'date-fns'
 
+export const COLORS = [
+  'var(--color-brand-500)',
+  'var(--color-purple-500)',
+  '#D940FF',
+  '#009EDD',
+  '#F4C004',
+  '#00FF66',
+  '#FF5733',
+  '#33CCCC',
+  '#FF3399',
+  '#FFCC00',
+  '#66FF33',
+  '#FF66CC',
+  '#FF9900',
+  '#00FFFF',
+  '#FF00FF',
+  '#8B4513',
+  '#1E90FF',
+  '#32CD32',
+  '#FF1493',
+  '#00CED1',
+]
+
 export type TimeRangeOption =
   | 'live'
   | '5m'
