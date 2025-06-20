@@ -216,7 +216,7 @@ function MenuManageDeployment({
         {isUninstallAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="eraser" />} color="red" onSelect={mutationUninstall}>
             Uninstall
-            {tooltipService('Delete all resources and data associated *but* keep the services configurations')}
+            {tooltipService('Delete all resources and associated data *but* keep the services configuration')}
           </DropdownMenu.Item>
         )}
         {match(state)
