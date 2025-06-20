@@ -1,9 +1,9 @@
 {
-  "name": "domains-projects-data-access",
+  "name": "shared-devops-copilot-data-access",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/domains/projects/data-access/src",
+  "sourceRoot": "libs/shared/devops-copilot/data-access/src",
   "projectType": "library",
-  "tags": ["scope:domain", "type:data-access", "slice:projects"],
+  "tags": ["scope:shared", "type:data-access"],
   "// targets": "to see all targets run: nx show project data-access --web",
   "targets": {}
 }

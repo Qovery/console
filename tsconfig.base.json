@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@qovery/shared/devops-copilot/data-access": ["libs/shared/devops-copilot/data-access/src/index.ts"],
       "@qovery/domains/cloud-providers/data-access": ["libs/domains/cloud-providers/data-access/src/index.ts"],
       "@qovery/domains/cloud-providers/feature": ["libs/domains/cloud-providers/feature/src/index.ts"],
       "@qovery/domains/clusters/data-access": ["libs/domains/clusters/data-access/src/index.ts"],
