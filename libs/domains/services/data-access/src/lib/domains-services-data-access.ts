@@ -59,6 +59,7 @@ import {
   JobsApi,
   type RebootServicesRequest,
   type Status,
+  TerraformActionsApi,
   TerraformConfigurationApi,
   TerraformMainCallsApi,
   type Application as _Application,
@@ -104,6 +105,7 @@ const containerActionsApi = new ContainerActionsApi()
 const databaseActionsApi = new DatabaseActionsApi()
 const helmActionsApi = new HelmActionsApi()
 const jobActionsApi = new JobActionsApi()
+const terraformActionsApi = new TerraformActionsApi()
 
 const applicationConfigurationApi = new ApplicationConfigurationApi()
 const containerConfigurationApi = new ContainerConfigurationApi()
@@ -915,6 +917,16 @@ export const mutations = {
     const response = await environmentActionApi.stopSelectedServices(environment.id, payload)
     return response.data
   },
+  async uninstallAllServices({
+    environment,
+    payload,
+  }: {
+    environment: Environment
+    payload: EnvironmentServiceIdsAllRequest
+  }) {
+    const response = await environmentActionApi.uninstallSelectedServices(environment.id, payload)
+    return response.data
+  },
   async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
@@ -938,6 +950,33 @@ export const mutations = {
         mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
         serviceType,
       })) // TODO [QOV-821] to implement
+      .exhaustive()
+    const response = await mutation(serviceId)
+    return response.data
+  },
+  async uninstallService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+    const { mutation } = match(serviceType)
+      .with('APPLICATION', (serviceType) => ({
+        mutation: applicationActionsApi.uninstallApplication.bind(applicationActionsApi),
+        serviceType,
+      }))
+      .with('CONTAINER', (serviceType) => ({
+        mutation: containerActionsApi.uninstallContainer.bind(containerActionsApi),
+        serviceType,
+      }))
+      .with('DATABASE', (serviceType) => ({
+        mutation: databaseActionsApi.uninstallDatabase.bind(databaseActionsApi),
+        serviceType,
+      }))
+      .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', (serviceType) => ({
+        mutation: jobActionsApi.uninstallJob.bind(jobActionsApi),
+        serviceType,
+      }))
+      .with('HELM', (serviceType) => ({ mutation: helmActionsApi.uninstallHelm.bind(helmActionsApi), serviceType }))
+      .with('TERRAFORM', (serviceType) => ({
+        mutation: terraformActionsApi.uninstallTerraform.bind(jobActionsApi),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data

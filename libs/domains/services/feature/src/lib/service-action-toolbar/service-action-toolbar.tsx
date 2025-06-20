@@ -4,6 +4,7 @@ import {
   type Environment,
   type HelmSourceRepositoryResponse,
   ServiceDeploymentStatusEnum,
+  ServiceTypeEnum,
   StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
@@ -56,6 +57,7 @@ import {
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
+  isUninstallAvailable,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
@@ -67,6 +69,7 @@ import { useRestartService } from '../hooks/use-restart-service/use-restart-serv
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
+import useUninstallService from '../hooks/use-uninstall-service/use-uninstall-service'
 import { RedeployModal } from '../redeploy-modal/redeploy-modal'
 import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
@@ -105,6 +108,11 @@ function MenuManageDeployment({
     projectId: environment.project.id,
     environmentId: environment.id,
   })
+  const { mutate: uninstallService } = useUninstallService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
   const { mutateAsync: cancelBuild } = useCancelDeploymentService({
     organizationId: environment.organization.id,
     projectId: environment.project.id,
@@ -114,13 +122,16 @@ function MenuManageDeployment({
   const serviceNeedUpdate = service_deployment_status !== ServiceDeploymentStatusEnum.UP_TO_DATE
   const displayYellowColor = serviceNeedUpdate && state !== 'STOPPED'
 
-  const tooltipServiceNeedUpdate = displayYellowColor && (
-    <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
+  const tooltipService = (content: string) => (
+    <Tooltip side="bottom" content={content}>
       <div className="absolute right-2">
         <Icon iconName="circle-exclamation" iconStyle="regular" />
       </div>
     </Tooltip>
   )
+
+  const tooltipServiceNeedUpdate =
+    displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
 
@@ -135,10 +146,7 @@ function MenuManageDeployment({
   }
 
   const mutationStop = () => {
-    const isDatabase =
-      service.serviceType === 'DATABASE' &&
-      service.mode === 'MANAGED' &&
-      (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+    const isDatabase = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
 
     const warningMessage = isDatabase
       ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
@@ -151,6 +159,17 @@ function MenuManageDeployment({
       warning: warningMessage,
       name: service.name,
       action: () => stopService({ serviceId: service.id, serviceType: service.serviceType }),
+    })
+  }
+
+  const mutationUninstall = () => {
+    openModalConfirmation({
+      mode: 'PRODUCTION',
+      title: 'Confirm Uninstall',
+      description: 'To confirm the uninstall of your service, please type the name:',
+      warning: 'Uninstall delete all compute and data of your service',
+      name: service.name,
+      action: () => uninstallService({ serviceId: service.id, serviceType: service.serviceType }),
     })
   }
 
@@ -381,7 +400,6 @@ function MenuManageDeployment({
             color={displayYellowColor ? 'yellow' : 'brand'}
           >
             Redeploy
-            {tooltipServiceNeedUpdate}
           </DropdownMenu.Item>
         )}
         {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
@@ -428,6 +446,13 @@ function MenuManageDeployment({
         {isStopAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
             Stop
+            {tooltipService('Stop compute resources *but* keep the data')}
+          </DropdownMenu.Item>
+        )}
+        {isUninstallAvailable(state) && (
+          <DropdownMenu.Item icon={<Icon iconName="eraser" />} color="red" onSelect={mutationUninstall}>
+            {service.service_type === ServiceTypeEnum.TERRAFORM ? 'Destroy' : 'Uninstall'}
+            {tooltipService("Delete all compute and associated data *but* keep the Qovery's service configuration")}
           </DropdownMenu.Item>
         )}
         {match({ service })
