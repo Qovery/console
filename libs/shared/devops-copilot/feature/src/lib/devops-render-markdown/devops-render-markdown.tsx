@@ -1,5 +1,5 @@
 import { isValidElement } from 'react'
-import type { FC, HTMLAttributes } from 'react'
+import type { FC, HTMLAttributes, PropsWithChildren } from 'react'
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -7,17 +7,20 @@ import remarkGfm from 'remark-gfm'
 import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 
-type CodeProps = {
+type CodeProps = PropsWithChildren<{
   inline?: boolean
   className?: string
-  children?: React.ReactNode
-}
+}>
 
 type Props = HTMLAttributes<HTMLDivElement> & {
   children: string
 }
 
-export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
+export const normalizeMermaid = (text: string) => {
+  return text.replace(/\[start mermaid block\]/g, '```mermaid').replace(/\[end mermaid block\]/g, '```')
+}
+
+export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
   <Markdown
     remarkPlugins={[remarkGfm]}
     components={{
@@ -33,6 +36,7 @@ export const CopilotMarkdown: FC<Props> = ({ children, ...props }) => (
         <a
           target="_blank"
           rel="noopener noreferrer"
+          title={typeof children === 'string' ? children : undefined}
           className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
           {...props}
         />
