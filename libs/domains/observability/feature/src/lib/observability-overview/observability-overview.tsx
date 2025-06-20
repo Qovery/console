@@ -1,28 +1,34 @@
-import { subDays } from 'date-fns'
-import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Button, Heading, Icon, InputSelect, Section } from '@qovery/shared/ui'
-import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { useClusters } from '../hooks/use-clusters/use-clusters'
-import { useMetrics } from '../hooks/use-metrics/use-metrics'
 import { useServicesSearch } from '../hooks/use-services-search/use-services-search'
-import { MetricsChart } from './metrics-chart'
-import { type TimeRangeOption, createTimeRangeHandler, timeRangeOptions } from './time-range-utils'
+import { CpuChart } from './cpu-chart'
+import { MemoryChart } from './memory-chart'
+import { ObservabilityProvider, useObservabilityContext } from './observability-context'
+import { type TimeRangeOption, timeRangeOptions } from './time-range-utils'
 
-export function ObservabilityOverview() {
+function ObservabilityOverviewContent() {
   const { organizationId = '' } = useParams()
-
-  const [isAdmin, setIsAdmin] = useState(false)
-  const [clusterId, setClusterId] = useState('3f50657b-1162-4dde-b706-4d5e937f3c09')
-  const [serviceId, setServiceId] = useState('02085927-12dd-40ef-a155-8f1583ffc7a3')
-  const [customQuery, setCustomQuery] = useState<string | undefined>(undefined)
-  const [customApiEndpoint, setCustomApiEndpoint] = useState('api/v1/query_range')
-  const [useLocalTime, setUseLocalTime] = useState(false)
-  const [timeRange, setTimeRange] = useState<TimeRangeOption>('live')
-  const [startDate, setStartDate] = useState(new Date('2025-07-27T10:00:00Z').toISOString())
-  const [endDate, setEndDate] = useState(new Date('2025-07-27T12:00:00Z').toISOString())
-
-  const handleTimeRangeChange = createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)
+  const {
+    isAdmin,
+    setIsAdmin,
+    customQuery,
+    setCustomQuery,
+    customApiEndpoint,
+    setCustomApiEndpoint,
+    clusterId,
+    setClusterId,
+    serviceId,
+    setServiceId,
+    useLocalTime,
+    setUseLocalTime,
+    timeRange,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    handleTimeRangeChange,
+  } = useObservabilityContext()
 
   const { data: clusters } = useClusters({
     organizationId,
@@ -31,19 +37,6 @@ export function ObservabilityOverview() {
   const { data: services } = useServicesSearch({
     organizationId,
     clusterId,
-  })
-
-  const startTimestamp = convertDatetoTimestamp(startDate).toString()
-  const endTimestamp = convertDatetoTimestamp(endDate).toString()
-
-  const { data: metrics, isLoading } = useMetrics({
-    organizationId,
-    clusterId,
-    serviceId,
-    customQuery,
-    customApiEndpoint,
-    startDate: startTimestamp,
-    endDate: endTimestamp,
   })
 
   return (
@@ -170,23 +163,36 @@ export function ObservabilityOverview() {
         </div>
       )}
 
-      <Section className="flex h-full w-full flex-col">
-        <Heading>CPU (mCPU)</Heading>
-        <p className="text-xs text-neutral-400">Monitor your cluster metrics and performance</p>
-        <div className="flex h-full w-full flex-col">
-          <MetricsChart
-            label="CPU (mCPU)"
-            data={metrics}
-            isLoading={isLoading}
-            useLocalTime={useLocalTime}
-            timeRange={{
-              start: new Date(startDate),
-              end: new Date(endDate),
-            }}
-          />
-        </div>
-      </Section>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Section className="flex h-full w-full flex-col gap-5 rounded border border-neutral-200 p-4">
+          <div className="flex flex-col gap-2">
+            <Heading>CPU (mCPU)</Heading>
+            <p className="text-xs text-neutral-400">Monitor your CPU usage metrics</p>
+          </div>
+          <div className="flex h-full w-full flex-col">
+            <CpuChart />
+          </div>
+        </Section>
+
+        <Section className="flex h-full w-full flex-col gap-5 rounded border border-neutral-200 p-4">
+          <div className="flex flex-col gap-2">
+            <Heading>Memory (GiB)</Heading>
+            <p className="text-xs text-neutral-400">Monitor your memory usage metrics</p>
+          </div>
+          <div className="flex h-full w-full flex-col">
+            <MemoryChart />
+          </div>
+        </Section>
+      </div>
     </Section>
+  )
+}
+
+export function ObservabilityOverview() {
+  return (
+    <ObservabilityProvider>
+      <ObservabilityOverviewContent />
+    </ObservabilityProvider>
   )
 }
 
