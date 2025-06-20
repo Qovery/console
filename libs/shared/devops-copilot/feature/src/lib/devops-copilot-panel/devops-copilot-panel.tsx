@@ -11,7 +11,7 @@ import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
-import { CopilotMarkdown } from '../devops-copilot-markdown/devops-copilot-markdown'
+import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
@@ -20,8 +20,9 @@ import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 import DevopsCopilotHistory from './devops-copilot-history'
 import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
-import { useThread } from './use-thread'
+import { useThread } from '../hooks/use-thread/use-thread'
 import { useThreads } from './use-threads'
+import { normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
 
 /*
 XXX: The devops-copilot feature is unstable and requires a full redesign.
@@ -106,10 +107,6 @@ export interface DevopsCopilotPanelProps {
   style?: React.CSSProperties
 }
 
-const normalizeMermaid = (text: string) => {
-  return text.replace(/\[start mermaid block\]/g, '```mermaid').replace(/\[end mermaid block\]/g, '```')
-}
-
 const renderStreamingMessageWithMermaid = (input: string) => {
   const parts = []
   let lastIndex = 0
@@ -124,7 +121,7 @@ const renderStreamingMessageWithMermaid = (input: string) => {
     if (start > lastIndex) {
       const textPart = input.slice(lastIndex, start)
       if (textPart) {
-        parts.push(<CopilotMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</CopilotMarkdown>)
+        parts.push(<RenderMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</RenderMarkdown>)
       }
     }
     parts.push(<MermaidChart key={'mermaid-' + start} code={mermaidCode} />)
@@ -134,7 +131,7 @@ const renderStreamingMessageWithMermaid = (input: string) => {
   if (lastIndex < input.length) {
     const textPart = input.slice(lastIndex)
     if (textPart) {
-      parts.push(<CopilotMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</CopilotMarkdown>)
+      parts.push(<RenderMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</RenderMarkdown>)
     }
   }
   return parts
@@ -791,7 +788,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                               ))}
                           </div>
                         )}
-                        <CopilotMarkdown>{normalizeMermaid(thread.text)}</CopilotMarkdown>
+                        <RenderMarkdown>{normalizeMermaid(thread.text)}</RenderMarkdown>
                         <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
                           <Button
                             type="button"
