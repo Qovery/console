@@ -1,19 +1,21 @@
 import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
+import { useCloudProviderCredentials, useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
 import { ClusterCredentialsModal } from '@qovery/domains/clusters/feature'
-import { Button, Icon, useModal } from '@qovery/shared/ui'
+import { Button, Icon, useModal, useModalConfirmation } from '@qovery/shared/ui'
 
 export const PageOrganizationCredentials = () => {
   const { openModal, closeModal } = useModal()
   const { organizationId = '' } = useParams()
+  const { openModalConfirmation } = useModalConfirmation()
+  const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
+
   const cloudProvider = 'AWS' // TODO [QOV-714] we need a way to get the list of cloud providers
 
   const { data: credentials = [] } = useCloudProviderCredentials({
     organizationId,
     cloudProvider,
   })
-  console.log('credentials', credentials)
 
   const openCredentialsModal = (id?: string, onChange?: (e: string | string[]) => void) => {
     openModal({
@@ -31,6 +33,33 @@ export const PageOrganizationCredentials = () => {
       ),
       options: {
         width: 680,
+      },
+    })
+  }
+
+  const onDelete = async (credential: ClusterCredentials) => {
+    openModalConfirmation({
+      title: 'Delete credential',
+      description: (
+        <p>
+          To confirm the deletion of <strong>{credential?.name}</strong>, please type "delete"
+        </p>
+      ),
+      name: credential?.name,
+      isDelete: true,
+      action: async () => {
+        if (credential?.id) {
+          try {
+            await deleteCloudProviderCredential({
+              organizationId,
+              cloudProvider: cloudProvider,
+              credentialId: credential.id,
+            })
+            // onClose()
+          } catch (error) {
+            console.error(error)
+          }
+        }
       },
     })
   }
@@ -83,7 +112,7 @@ export const PageOrganizationCredentials = () => {
               size="md"
               variant="surface"
               color="neutral"
-              onClick={() => console.log('remove')}
+              onClick={() => onDelete(credential)}
               type="button"
               data-testid="remove-port"
             >
