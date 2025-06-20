@@ -452,7 +452,7 @@ function MenuManageDeployment({
         {isUninstallAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="eraser" />} color="red" onSelect={mutationUninstall}>
             {service.service_type === ServiceTypeEnum.TERRAFORM ? 'Destroy' : 'Uninstall'}
-            {tooltipService("Delete all compute and data associated *but* keep the Qovery's service configuration")}
+            {tooltipService("Delete all compute and associated data *but* keep the Qovery's service configuration")}
           </DropdownMenu.Item>
         )}
         {match({ service })
