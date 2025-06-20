@@ -34,29 +34,28 @@ export function useUninstallService({
         queryKey: queries.services.deploymentHistory({ serviceId, serviceType }).queryKey,
       })
 
-      // TODO(uninstall): Implement toaster, need to return a status from the API
-      //if (data.deployment_request_id) {
-      //  toast(
-      //    'SUCCESS',
-      //    'Your service is queuing',
-      //    undefined,
-      //    () =>
-      //      navigate(APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_DEPLOYMENTS_URL),
-      //    undefined,
-      //    'See deployment queue'
-      //  )
-      //} else {
-      //  // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
-      //  // to implement the correct deployment redirection using `execution_id`
-      //  toast(
-      //    'SUCCESS',
-      //    'Your service is uninstalling',
-      //    undefined,
-      //    () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL()),
-      //    undefined,
-      //    'See deployment logs'
-      //  )
-      //}
+      if (data.deployment_request_id) {
+        toast(
+          'SUCCESS',
+          'Your service is queuing',
+          undefined,
+          () =>
+            navigate(APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_DEPLOYMENTS_URL),
+          undefined,
+          'See deployment queue'
+        )
+      } else {
+        // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
+        // to implement the correct deployment redirection using `execution_id`
+        toast(
+          'SUCCESS',
+          'Your service is uninstalling',
+          undefined,
+          () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL()),
+          undefined,
+          'See deployment logs'
+        )
+      }
     },
     meta: {
       notifyOnError: true,
