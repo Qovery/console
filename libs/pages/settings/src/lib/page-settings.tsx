@@ -6,6 +6,7 @@ import {
   SETTINGS_BILLING_SUMMARY_URL,
   SETTINGS_BILLING_URL,
   SETTINGS_CONTAINER_REGISTRIES_URL,
+  SETTINGS_CREDENTIALS_URL,
   SETTINGS_DANGER_ZONE_URL,
   SETTINGS_GENERAL_URL,
   SETTINGS_GIT_REPOSITORY_ACCESS_URL,
@@ -79,8 +80,13 @@ export function PageSettings() {
       url: pathSettings + SETTINGS_HELM_REPOSITORIES_URL,
     },
     {
-      title: 'Git repositories access',
+      title: 'Cloud credentials',
       icon: IconAwesomeEnum.KEY,
+      url: pathSettings + SETTINGS_CREDENTIALS_URL,
+    },
+    {
+      title: 'Git repositories access',
+      icon: IconAwesomeEnum.KEY, // TODO [QOV-714] we need to use the Git icon here
       url: pathSettings + SETTINGS_GIT_REPOSITORY_ACCESS_URL,
     },
     {
