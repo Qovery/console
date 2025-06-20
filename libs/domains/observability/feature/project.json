@@ -1,0 +1,9 @@
+{
+  "name": "domains-observability-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/observability/feature/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project feature --web",
+  "targets": {}
+}
