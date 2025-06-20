@@ -110,7 +110,7 @@ export function useStatusWebSockets({
             },
           })
         }
-      }, 6_000)
+      }, 20_000)
     },
     onMessage(queryClient, message: ServiceStatusDto) {
       if (!firstMessageReceived.current) {
