@@ -8,6 +8,7 @@ import {
   ENVIRONMENTS_URL,
   INFRA_LOGS_URL,
   ORGANIZATION_AUDIT_LOGS_URL,
+  ORGANIZATION_OBSERVABILITY_URL,
   ORGANIZATION_PROJECT_URL,
   ORGANIZATION_URL,
   SETTINGS_URL,
@@ -27,6 +28,7 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterId))
   const matchOrganizationRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_PROJECT_URL)
   const matchEventsRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_AUDIT_LOGS_URL)
+  const matchObservabilityRoute = pathname.includes(ORGANIZATION_URL(organizationId) + ORGANIZATION_OBSERVABILITY_URL)
   const matchSettingsRoute = pathname.includes(`${SETTINGS_URL(organizationId)}`)
   const matchClusterRoute =
     pathname.includes(CLUSTERS_URL(organizationId)) ||
@@ -108,6 +110,24 @@ export function Navigation({ defaultOrganizationId, clusterNotification }: Navig
                 to={AUDIT_LOGS_URL(organizationId)}
               >
                 <Icon iconName="clock-rotate-left" className="text-[18px]" />
+              </Link>
+            </div>
+          </Tooltip>
+          <Tooltip content="Observability" side="right">
+            <div>
+              <Link
+                as="button"
+                color="neutral"
+                variant="plain"
+                className={clsx(
+                  'h-11 w-11 justify-center hover:!border-transparent hover:!bg-neutral-100 hover:!text-brand-500 dark:hover:!bg-brand-500 dark:hover:!text-neutral-100',
+                  {
+                    'bg-neutral-100 text-brand-500 dark:bg-brand-500 dark:text-neutral-100': matchObservabilityRoute,
+                  }
+                )}
+                to={ORGANIZATION_OBSERVABILITY_URL(organizationId)}
+              >
+                <Icon iconName="chart-line-up" className="text-[18px]" />
               </Link>
             </div>
           </Tooltip>
