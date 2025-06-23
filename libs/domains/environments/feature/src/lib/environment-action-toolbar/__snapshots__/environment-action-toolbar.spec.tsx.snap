@@ -159,7 +159,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-eraser text-sm mr-3 text-red-600"
+          class="fa-solid fa-inbox-out text-sm mr-3 text-red-600"
         />
         Uninstall
         <div
