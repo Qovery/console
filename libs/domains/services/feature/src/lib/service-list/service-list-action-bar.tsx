@@ -346,7 +346,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   <Tooltip content="No uninstallable services" disabled={uninstallableServices.length !== 0}>
                     <DropdownMenu.Item
                       color="red"
-                      icon={<Icon iconName="eraser" />}
+                      icon={<Icon iconName="inbox-out" />}
                       onSelect={handleUninstallAllServices}
                       disabled={uninstallableServices.length === 0}
                     >
