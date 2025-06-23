@@ -33,17 +33,17 @@ export const calculateClusterResources = (nodes?: ClusterNodeDto[]) => {
   })
 
   // Convert to display units
-  const cpuUsed = formatNumber(milliCoreToVCPU(usedCpuMilli))
-  const cpuTotal = formatNumber(milliCoreToVCPU(totalCpuMilli))
-  const cpuPercent = formatNumber(calculatePercentage(cpuUsed, cpuTotal))
+  const cpuUsed = formatNumber(milliCoreToVCPU(usedCpuMilli), 0)
+  const cpuTotal = formatNumber(milliCoreToVCPU(totalCpuMilli), 0)
+  const cpuPercent = formatNumber(calculatePercentage(usedCpuMilli, totalCpuMilli), 0)
 
-  const memoryUsed = formatNumber(mibToGib(usedMemoryMib))
-  const memoryTotal = formatNumber(mibToGib(totalMemoryMib))
-  const memoryPercent = formatNumber(calculatePercentage(memoryUsed, memoryTotal))
+  const memoryUsed = formatNumber(mibToGib(usedMemoryMib), 0)
+  const memoryTotal = formatNumber(mibToGib(totalMemoryMib), 0)
+  const memoryPercent = formatNumber(calculatePercentage(usedMemoryMib, totalMemoryMib), 0)
 
-  const diskUsed = formatNumber(mibToGib(usedDiskMib))
-  const diskTotal = formatNumber(mibToGib(totalDiskMib))
-  const diskPercent = formatNumber(calculatePercentage(diskUsed, diskTotal))
+  const diskUsed = formatNumber(mibToGib(usedDiskMib), 0)
+  const diskTotal = formatNumber(mibToGib(totalDiskMib), 0)
+  const diskPercent = formatNumber(calculatePercentage(usedDiskMib, totalDiskMib), 0)
 
   return {
     cpu: {

@@ -10,13 +10,23 @@ import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metr
 interface MetricProgressBarProps {
   type: 'cpu' | 'memory'
   reserved: number
+  reservedRaw: number
   total: number
+  totalRaw: number
   unit: string
   isPressure?: boolean
 }
 
-function MetricProgressBar({ type, reserved, total, unit, isPressure = false }: MetricProgressBarProps) {
-  const reservedPercentage = calculatePercentage(reserved, total)
+function MetricProgressBar({
+  type,
+  reserved,
+  reservedRaw,
+  total,
+  totalRaw,
+  unit,
+  isPressure = false,
+}: MetricProgressBarProps) {
+  const reservedPercentage = calculatePercentage(reservedRaw, totalRaw)
   const totalPercentage = Math.round(reservedPercentage)
 
   return (
@@ -189,7 +199,9 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
               <MetricProgressBar
                 type="cpu"
                 reserved={formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli))}
+                reservedRaw={milliCoreToVCPU(node.resources_allocated.request_cpu_milli)}
                 total={formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))}
+                totalRaw={milliCoreToVCPU(node.resources_allocatable.cpu_milli)}
                 unit="vCPU"
               />
             </div>
@@ -197,7 +209,9 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
               <MetricProgressBar
                 type="memory"
                 reserved={formatNumber(mibToGib(node.resources_allocated.request_memory_mib))}
+                reservedRaw={mibToGib(node.resources_allocated.request_memory_mib)}
                 total={formatNumber(mibToGib(node.resources_allocatable.memory_mib))}
+                totalRaw={mibToGib(node.resources_allocatable.memory_mib)}
                 unit="GB"
                 isPressure={isMemoryPressure}
               />
