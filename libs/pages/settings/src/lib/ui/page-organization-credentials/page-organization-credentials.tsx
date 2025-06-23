@@ -1,4 +1,5 @@
 import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
@@ -25,6 +26,10 @@ export const PageOrganizationCredentials = () => {
   const { data: organizationCredentials = [] } = useOrganizationCredentials({
     organizationId,
   })
+  const credentials = useMemo(
+    () => organizationCredentials.filter((item) => item.credential?.object_type !== 'OTHER'),
+    [organizationCredentials]
+  )
 
   const onEdit = (credential: ClusterCredentials, clusters: CredentialCluster[]) => {
     openModal({
@@ -95,7 +100,7 @@ export const PageOrganizationCredentials = () => {
     onEdit: () => void
     onOpen: () => void
     onDelete: () => void
-  }[] = organizationCredentials
+  }[] = credentials
     ?.map((item) => {
       const { credential, clusters } = item
 
