@@ -17,7 +17,6 @@ export function useCloudProviderCredentials({ organizationId, cloudProvider }: U
       return data.sort((a, b) => a.name.localeCompare(b.name))
     },
     enabled: !!cloudProvider,
-    suspense: true,
   })
 }
 
