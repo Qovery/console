@@ -19,7 +19,7 @@ const Loader = () =>
   ))
 
 export function PageOrganizationCredentialsFeature() {
-  useDocumentTitle('Could Crendentials - Organization settings')
+  useDocumentTitle('Cloud Crendentials - Organization settings')
 
   return (
     <div className="w-full">

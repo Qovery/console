@@ -121,7 +121,7 @@ export const PageOrganizationCredentials = () => {
             <ClusterAvatar cloudProvider={toCloudProvider(credential.object_type)} size="sm" />
             <div className="flex flex-col gap-2">
               <span className="text-sm font-medium text-neutral-400">{credential.name}</span>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 {'role_arn' in credential && (
                   <div className="text-xs text-neutral-350">
                     <span>Role ARN: </span>
@@ -132,6 +132,30 @@ export const PageOrganizationCredentials = () => {
                   <div className=" text-xs text-neutral-350">
                     <span>Public Access Key: </span>
                     <span className="text-neutral-400">{credential.access_key_id}</span>
+                  </div>
+                )}
+                {'scaleway_access_key' in credential && (
+                  <div className=" text-xs text-neutral-350">
+                    <span>Access Key: </span>
+                    <span className="text-neutral-400">{credential.scaleway_access_key}</span>
+                  </div>
+                )}
+                {'scaleway_project_id' in credential && (
+                  <div className=" text-xs text-neutral-350">
+                    <span>Project ID: </span>
+                    <span className="text-neutral-400">{credential.scaleway_project_id}</span>
+                  </div>
+                )}
+                {'azure_tenant_id' in credential && (
+                  <div className=" text-xs text-neutral-350">
+                    <span>Tenant ID: </span>
+                    <span className="text-neutral-400">{credential.azure_tenant_id}</span>
+                  </div>
+                )}
+                {'azure_subscription_id' in credential && (
+                  <div className=" text-xs text-neutral-350">
+                    <span>Subscription ID: </span>
+                    <span className="text-neutral-400">{credential.azure_subscription_id}</span>
                   </div>
                 )}
               </div>
