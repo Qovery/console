@@ -60,7 +60,7 @@ export const PageOrganizationCredentials = () => {
         />
       ),
       options: {
-        width: 680,
+        width: 480,
       },
     })
   }

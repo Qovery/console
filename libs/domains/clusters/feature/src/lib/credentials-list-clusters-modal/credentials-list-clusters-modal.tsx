@@ -32,16 +32,15 @@ export function CredentialsListClustersModal({
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
           <Callout.Text>
-            The credential change won't be applied to the mirroring registry of this cluster.
-            <br />
-            Make sure to update the credentials properly in this cluster's mirroring registry section.
+            The credential change won't be applied to the mirroring registry of this cluster. Make sure to update the
+            credentials properly in this cluster's mirroring registry section.
           </Callout.Text>
         </Callout.Root>
 
-        <div className="flex flex-col gap-y-4 rounded border border-neutral-250 bg-neutral-100 p-2">
+        <div className="flex flex-col gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-2">
           {clusters.map((cluster) => (
             <Link key={cluster.id} to={CLUSTER_URL(organizationId, cluster.id)} target="_blank" rel="noreferrer">
-              <div className="flex items-center gap-1 text-sm font-semibold text-brand-500 hover:text-brand-600">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-600">
                 <ClusterAvatar cloudProvider={cluster.cloud_provider} size="sm" />
                 {cluster.name}
               </div>

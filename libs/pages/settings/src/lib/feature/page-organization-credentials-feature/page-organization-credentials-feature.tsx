@@ -24,10 +24,7 @@ export function PageOrganizationCredentialsFeature() {
   return (
     <div className="w-full">
       <Section className="flex max-w-content-with-navigation-left flex-col p-8">
-        <SettingsHeading
-          title="Cloud Credentials"
-          description="Manage your API keys and other sensitive credentials."
-        />
+        <SettingsHeading title="Cloud Credentials" description="Manage your Cloud providers credentials" />
         <BlockContent title="Configured credentials" classNameContent="p-0">
           <Suspense fallback={<Loader />}>
             <PageOrganizationCredentials />
