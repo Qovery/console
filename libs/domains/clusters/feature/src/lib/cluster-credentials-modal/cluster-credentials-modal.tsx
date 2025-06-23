@@ -286,7 +286,7 @@ export function ClusterCredentialsModal({
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title={`${isEdit ? `Edit` : 'Create new'} credentials`}
+        title={`${isEdit ? `Edit` : 'Create new'} credential`}
         description={
           <span className="flex gap-1">
             Follow these steps and give Qovery access to your {cloudProviderLocal} account.
