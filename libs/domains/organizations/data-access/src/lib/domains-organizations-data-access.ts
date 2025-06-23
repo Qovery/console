@@ -5,7 +5,6 @@ import {
   ContainerRegistriesApi,
   type ContainerRegistryRequest,
   type CreditCardRequest,
-  DefaultApi,
   type GitProviderEnum,
   type GitTokenRequest,
   GithubAppApi,
@@ -48,13 +47,12 @@ const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
 const githubAppApi = new GithubAppApi()
-const defaultApi = new DefaultApi()
 
 export const organizations = createQueryKeys('organizations', {
   listCredentials: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
-      const response = await defaultApi.getOrganizationOrganizationIdCredentials(organizationId)
+      const response = await organizationApi.listOrganizationCredentials(organizationId)
       return response.data.results
     },
   }),

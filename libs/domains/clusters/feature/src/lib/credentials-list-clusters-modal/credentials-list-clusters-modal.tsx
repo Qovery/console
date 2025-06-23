@@ -1,15 +1,12 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import {
-  type ClusterCredentials,
-  type GetOrganizationOrganizationIdCredentials200ResponseResultsInnerClustersInner,
-} from 'qovery-typescript-axios'
+import { type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
 import { Link } from 'react-router-dom'
 import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 
 export interface CredentialsListClustersModalProps {
-  clusters: GetOrganizationOrganizationIdCredentials200ResponseResultsInnerClustersInner[]
+  clusters: CredentialCluster[]
   onClose: (response?: ClusterCredentials) => void
   credential: ClusterCredentials
   organizationId: string

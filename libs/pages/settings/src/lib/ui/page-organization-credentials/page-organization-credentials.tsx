@@ -1,12 +1,20 @@
-import {
-  type ClusterCredentials,
-  type GetOrganizationOrganizationIdCredentials200ResponseResultsInnerClustersInner,
-} from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterCredentials, type CredentialCluster } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
-import { useCloudProviderCredentials, useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
-import { ClusterCredentialsModal, CredentialsListClustersModal } from '@qovery/domains/clusters/feature'
+import { match } from 'ts-pattern'
+import { useDeleteCloudProviderCredential } from '@qovery/domains/cloud-providers/feature'
+import { ClusterAvatar, ClusterCredentialsModal, CredentialsListClustersModal } from '@qovery/domains/clusters/feature'
 import { useOrganizationCredentials } from '@qovery/domains/organizations/feature'
 import { Button, Icon, Indicator, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+
+const toCloudProvider = (cloudProvider: ClusterCredentials['object_type']): CloudProviderEnum => {
+  return match(cloudProvider)
+    .with('AWS', () => CloudProviderEnum.AWS)
+    .with('AWS_ROLE', () => CloudProviderEnum.AWS)
+    .with('AZURE', () => CloudProviderEnum.AZURE)
+    .with('SCW', () => CloudProviderEnum.SCW)
+    .with('OTHER', () => CloudProviderEnum.ON_PREMISE)
+    .exhaustive()
+}
 
 export const PageOrganizationCredentials = () => {
   const { openModal, closeModal } = useModal()
@@ -14,16 +22,45 @@ export const PageOrganizationCredentials = () => {
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
 
-  const cloudProvider = 'AWS' // TODO [QOV-714] we need a way to get the list of cloud providers
-
-  const { data: credentials = [] } = useCloudProviderCredentials({
-    organizationId,
-    cloudProvider,
-  })
-
   const { data: organizationCredentials = [] } = useOrganizationCredentials({
     organizationId,
   })
+
+  const onEdit = (credential: ClusterCredentials, clusters: CredentialCluster[]) => {
+    openModal({
+      content: (
+        <ClusterCredentialsModal
+          organizationId={organizationId}
+          // clusterId="" // TODO [QOV-714] this value needs to be passed down
+          onClose={(response) => {
+            // response && onChange?.(response.id)
+            closeModal()
+          }}
+          credential={credential}
+          cloudProvider={toCloudProvider(credential.object_type)}
+        />
+      ),
+      options: {
+        width: 680,
+      },
+    })
+  }
+
+  const onOpen = (credential: ClusterCredentials, clusters: CredentialCluster[]) => {
+    openModal({
+      content: (
+        <CredentialsListClustersModal
+          clusters={clusters}
+          credential={credential}
+          onClose={() => closeModal()}
+          organizationId={organizationId}
+        />
+      ),
+      options: {
+        width: 680,
+      },
+    })
+  }
 
   const onDelete = async (credential: ClusterCredentials) => {
     openModalConfirmation({
@@ -40,7 +77,7 @@ export const PageOrganizationCredentials = () => {
           try {
             await deleteCloudProviderCredential({
               organizationId,
-              cloudProvider: cloudProvider,
+              cloudProvider: toCloudProvider(credential.object_type),
               credentialId: credential.id,
             })
             // onClose()
@@ -52,48 +89,9 @@ export const PageOrganizationCredentials = () => {
     })
   }
 
-  const onEdit = (id?: string, onChange?: (e: string | string[]) => void) => {
-    openModal({
-      content: (
-        <ClusterCredentialsModal
-          organizationId={organizationId}
-          clusterId="" // TODO [QOV-714] this value needs to be passed down
-          onClose={(response) => {
-            response && onChange?.(response.id)
-            closeModal()
-          }}
-          credential={credentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
-          cloudProvider={cloudProvider}
-        />
-      ),
-      options: {
-        width: 680,
-      },
-    })
-  }
-
-  const onOpen = (
-    credential: ClusterCredentials,
-    clusters: GetOrganizationOrganizationIdCredentials200ResponseResultsInnerClustersInner[]
-  ) => {
-    openModal({
-      content: (
-        <CredentialsListClustersModal
-          clusters={clusters}
-          credential={credential}
-          onClose={() => closeModal()}
-          organizationId={organizationId}
-        />
-      ),
-      options: {
-        width: 680,
-      },
-    })
-  }
-
   const buildCredentials: {
     credential: ClusterCredentials
-    clusters: GetOrganizationOrganizationIdCredentials200ResponseResultsInnerClustersInner[]
+    clusters: CredentialCluster[]
     onEdit: () => void
     onOpen: () => void
     onDelete: () => void
@@ -108,7 +106,7 @@ export const PageOrganizationCredentials = () => {
       return {
         credential,
         clusters: clusters ?? [],
-        onEdit: () => onEdit(credential?.id),
+        onEdit: () => onEdit(credential, clusters ?? []),
         onOpen: () => onOpen(credential, clusters ?? []),
         onDelete: () => onDelete(credential),
       }
@@ -125,7 +123,7 @@ export const PageOrganizationCredentials = () => {
           key={credential.id}
         >
           <div className="flex items-start gap-4">
-            <Icon name={credential.object_type.split('_')[0]} className="mt-2 text-sm text-neutral-400" />
+            <ClusterAvatar cloudProvider={toCloudProvider(credential.object_type)} size="sm" />
             <div className="flex flex-col gap-2">
               <span className="text-sm font-medium text-neutral-400">{credential.name}</span>
               <div className="flex gap-2">
