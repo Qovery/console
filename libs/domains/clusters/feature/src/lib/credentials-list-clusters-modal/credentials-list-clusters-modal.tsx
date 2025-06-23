@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { CLUSTER_URL } from '@qovery/shared/routes'
 import { Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
+import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 
 export interface CredentialsListClustersModalProps {
   clusters: CredentialCluster[]
@@ -37,11 +38,11 @@ export function CredentialsListClustersModal({
           </Callout.Text>
         </Callout.Root>
 
-        <div className="flex flex-col gap-y-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+        <div className="flex flex-col gap-y-4 rounded border border-neutral-250 bg-neutral-100 p-2">
           {clusters.map((cluster) => (
             <Link key={cluster.id} to={CLUSTER_URL(organizationId, cluster.id)} target="_blank" rel="noreferrer">
-              <div className="flex items-center gap-3 text-sm font-semibold text-brand-500 hover:text-brand-600">
-                <Icon name={cluster.cloud_provider?.toUpperCase() ?? ''} className="mt-2 text-sm text-neutral-400" />
+              <div className="flex items-center gap-1 text-sm font-semibold text-brand-500 hover:text-brand-600">
+                <ClusterAvatar cloudProvider={cluster.cloud_provider} size="sm" />
                 {cluster.name}
               </div>
             </Link>

@@ -31,14 +31,12 @@ export const PageOrganizationCredentials = () => {
     [organizationCredentials]
   )
 
-  const onEdit = (credential: ClusterCredentials, clusters: CredentialCluster[]) => {
+  const onEdit = (credential: ClusterCredentials) => {
     openModal({
       content: (
         <ClusterCredentialsModal
           organizationId={organizationId}
-          // clusterId="" // TODO [QOV-714] this value needs to be passed down
           onClose={(response) => {
-            // response && onChange?.(response.id)
             closeModal()
           }}
           credential={credential}
@@ -77,20 +75,12 @@ export const PageOrganizationCredentials = () => {
       ),
       name: credential.name,
       isDelete: true,
-      action: async () => {
-        if (credential.id) {
-          try {
-            await deleteCloudProviderCredential({
-              organizationId,
-              cloudProvider: toCloudProvider(credential.object_type),
-              credentialId: credential.id,
-            })
-            // onClose()
-          } catch (error) {
-            console.error(error)
-          }
-        }
-      },
+      action: () =>
+        deleteCloudProviderCredential({
+          organizationId,
+          cloudProvider: toCloudProvider(credential.object_type),
+          credentialId: credential.id,
+        }),
     })
   }
 
@@ -111,7 +101,7 @@ export const PageOrganizationCredentials = () => {
       return {
         credential,
         clusters: clusters ?? [],
-        onEdit: () => onEdit(credential, clusters ?? []),
+        onEdit: () => onEdit(credential),
         onOpen: () => onOpen(credential, clusters ?? []),
         onDelete: () => onDelete(credential),
       }
@@ -200,7 +190,6 @@ export const PageOrganizationCredentials = () => {
       )
     })
   ) : (
-    // TODO [QOV-714] check if an empty state exists on the Figma screen
     <div className="my-4 px-10 py-5 text-center">
       <Icon iconName="wave-pulse" className="text-neutral-300" />
       <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No credentials are set.</p>
