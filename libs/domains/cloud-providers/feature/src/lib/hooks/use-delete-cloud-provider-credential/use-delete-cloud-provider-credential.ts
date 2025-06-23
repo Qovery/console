@@ -10,6 +10,9 @@ export function useDeleteCloudProviderCredential() {
       queryClient.invalidateQueries({
         queryKey: queries.cloudProviders.credentials({ organizationId, cloudProvider }).queryKey,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.organizations.listCredentials({ organizationId }).queryKey,
+      })
     },
     meta: {
       notifyOnSuccess: {
