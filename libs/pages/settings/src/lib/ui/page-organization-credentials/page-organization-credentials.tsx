@@ -216,7 +216,9 @@ export const PageOrganizationCredentials = () => {
   ) : (
     <div className="my-4 px-10 py-5 text-center">
       <Icon iconName="wave-pulse" className="text-neutral-300" />
-      <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No credentials are set.</p>
+      <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">
+        All credentials related to your clusters will appear here after creation.
+      </p>
     </div>
   )
 }
