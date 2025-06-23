@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { LoaderSpinner } from '@qovery/shared/ui'
 
@@ -18,6 +19,8 @@ interface ChartProps {
 }
 
 export function Chart({ label, chartData, seriesNames, originalPodNames, colors, isLoading }: ChartProps) {
+  const [onHover, setOnHover] = useState(false)
+
   if (!isLoading && (!chartData || chartData.length === 0)) {
     return (
       <div className="flex h-80 items-center justify-center">
@@ -36,7 +39,12 @@ export function Chart({ label, chartData, seriesNames, originalPodNames, colors,
 
   return (
     <ResponsiveContainer>
-      <LineChart data={chartData}>
+      <LineChart
+        data={chartData}
+        syncId="anyId"
+        onMouseEnter={() => setOnHover(true)}
+        onMouseLeave={() => setOnHover(false)}
+      >
         <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="time"
@@ -66,6 +74,7 @@ export function Chart({ label, chartData, seriesNames, originalPodNames, colors,
             fontSize: 12,
             padding: '6px 0',
           }}
+          content={onHover ? undefined : <span />}
           labelFormatter={(_, payload) => {
             if (payload && payload.length > 0) {
               const dataPoint = payload[0].payload
