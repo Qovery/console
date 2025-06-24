@@ -1,5 +1,5 @@
 import { Skeleton, StatusChip, type StatusChipProps } from '@qovery/shared/ui'
-import { usecheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
@@ -47,7 +47,7 @@ type RunningStateChipProps = Omit<EnvironmentStateChipProps, 'mode'>
 function RunningStateChip({ environmentId, ...props }: RunningStateChipProps) {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: runningStatus } = useRunningStatus({ environmentId })
-  const { data: checkRunningStatusClosed } = usecheckRunningStatusClosed({
+  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId: environment?.cluster_id ?? '',
   })
 
