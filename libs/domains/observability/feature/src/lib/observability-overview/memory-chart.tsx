@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
 import { Chart } from './chart'
 import { useObservabilityContext } from './observability-context'
-import { COLORS } from './time-range-utils'
+import { COLORS, addTimeRangePadding } from './time-range-utils'
 
 export function MemoryChart() {
   const { organizationId = '' } = useParams()
@@ -157,7 +157,10 @@ export function MemoryChart() {
       addBoundaryPoint(start)
       addBoundaryPoint(end)
 
-      return Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
+      const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
+
+      // Ajouter le padding générique
+      return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
     }
 
     // Fallback to original logic if no timeRange provided
@@ -224,8 +227,11 @@ export function MemoryChart() {
       })
     })
 
-    return Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-  }, [metrics, useLocalTime, startDate, endDate])
+    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
+
+    // Ajouter le padding générique
+    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
+  }, [metrics, useLocalTime, startTimestamp, endTimestamp])
 
   const seriesNames = useMemo(() => {
     if (!metrics?.data?.result) return []
@@ -250,6 +256,11 @@ export function MemoryChart() {
       originalPodNames={originalPodNames}
       colors={COLORS}
       isLoading={isLoading}
+      useLocalTime={useLocalTime}
+      timeRange={{
+        start: startTimestamp,
+        end: endTimestamp,
+      }}
     />
   )
 }
