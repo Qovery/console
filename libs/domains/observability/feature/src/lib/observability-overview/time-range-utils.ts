@@ -154,3 +154,129 @@ export const createTimeRangeHandler = (
     }
   }
 }
+
+// Fonction utilitaire générique pour ajouter un padding aux données de graphiques
+export function addTimeRangePadding<T extends { timestamp: number; time: string; fullTime: string }>(
+  chartData: T[],
+  startTimestamp: string,
+  endTimestamp: string,
+  useLocalTime: boolean
+): T[] {
+  if (!chartData.length) return chartData
+
+  const timeSeriesMap = new Map<number, T>()
+
+  // Ajouter toutes les données existantes
+  chartData.forEach((dataPoint) => {
+    timeSeriesMap.set(dataPoint.timestamp, dataPoint)
+  })
+
+  // Fonction helper pour formater les dates
+  const formatTimestamp = (timestampMs: number) => {
+    const date = new Date(timestampMs)
+
+    const timeString = useLocalTime
+      ? date.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        })
+      : date.toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+          timeZone: 'UTC',
+        })
+
+    const fullTimeString = useLocalTime
+      ? date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        })
+      : date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+          timeZone: 'UTC',
+        }) + ' UTC'
+
+    return { timeString, fullTimeString }
+  }
+
+  // Ajouter un point au début de la plage si absent
+  const startTimestampMs = Number(startTimestamp) * 1000
+  if (!timeSeriesMap.has(startTimestampMs)) {
+    const { timeString, fullTimeString } = formatTimestamp(startTimestampMs)
+    timeSeriesMap.set(startTimestampMs, {
+      timestamp: startTimestampMs,
+      time: timeString,
+      fullTime: fullTimeString,
+    } as T)
+  }
+
+  // Ajouter un point à la fin de la plage si absent
+  const endTimestampMs = Number(endTimestamp) * 1000
+  if (!timeSeriesMap.has(endTimestampMs)) {
+    const { timeString, fullTimeString } = formatTimestamp(endTimestampMs)
+    timeSeriesMap.set(endTimestampMs, {
+      timestamp: endTimestampMs,
+      time: timeString,
+      fullTime: fullTimeString,
+    } as T)
+  }
+
+  return Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
+}
+
+// export const chartTimeData: ChartTimeData = {
+//   '1h': {
+//     type: '1m',
+//     expectedInterval: 60_000,
+//     label: () => t`1 hour`,
+//     // ticks: 12,
+//     format: (timestamp: string) => hourWithMinutes(timestamp),
+//     getOffset: (endTime: Date) => timeHour.offset(endTime, -1),
+//   },
+//   '12h': {
+//     type: '10m',
+//     expectedInterval: 60_000 * 10,
+//     label: () => t`12 hours`,
+//     ticks: 12,
+//     format: (timestamp: string) => hourWithMinutes(timestamp),
+//     getOffset: (endTime: Date) => timeHour.offset(endTime, -12),
+//   },
+//   '24h': {
+//     type: '20m',
+//     expectedInterval: 60_000 * 20,
+//     label: () => t`24 hours`,
+//     format: (timestamp: string) => hourWithMinutes(timestamp),
+//     getOffset: (endTime: Date) => timeHour.offset(endTime, -24),
+//   },
+//   '1w': {
+//     type: '120m',
+//     expectedInterval: 60_000 * 120,
+//     label: () => t`1 week`,
+//     ticks: 7,
+//     format: (timestamp: string) => formatDay(timestamp),
+//     getOffset: (endTime: Date) => timeDay.offset(endTime, -7),
+//   },
+//   '30d': {
+//     type: '480m',
+//     expectedInterval: 60_000 * 480,
+//     label: () => t`30 days`,
+//     ticks: 30,
+//     format: (timestamp: string) => formatDay(timestamp),
+//     getOffset: (endTime: Date) => timeDay.offset(endTime, -30),
+//   },
+// }

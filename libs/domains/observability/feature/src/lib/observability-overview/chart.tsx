@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { LoaderSpinner } from '@qovery/shared/ui'
+import type { TimeRangeOption } from './time-range-utils'
 
 interface ChartDataPoint {
   timestamp: number
@@ -15,10 +16,24 @@ interface ChartProps {
   seriesNames: string[]
   originalPodNames: Record<string, string>
   colors: string[]
+  useLocalTime: boolean
+  timeRange?: {
+    start: string
+    end: string
+  }
   isLoading?: boolean
 }
 
-export function Chart({ label, chartData, seriesNames, originalPodNames, colors, isLoading }: ChartProps) {
+export function Chart({
+  label,
+  chartData,
+  seriesNames,
+  originalPodNames,
+  colors,
+  timeRange,
+  isLoading,
+  useLocalTime,
+}: ChartProps) {
   const [onHover, setOnHover] = useState(false)
 
   if (!isLoading && (!chartData || chartData.length === 0)) {
@@ -37,32 +52,82 @@ export function Chart({ label, chartData, seriesNames, originalPodNames, colors,
     )
   }
 
+  // const getXAxisTicks = () => {
+  //   if (!timeRange) return []
+  //   const tickCount = 6
+  //   const ticks = []
+  //   const step = (Number(timeRange.end) - Number(timeRange.start)) / (tickCount - 1)
+
+  //   for (let i = 0; i < tickCount; i++) {
+  //     ticks.push(timeRange.start + step * i)
+  //   }
+
+  //   return ticks
+  // }
+
   return (
     <ResponsiveContainer>
       <LineChart
         data={chartData}
         syncId="anyId"
-        onMouseEnter={() => setOnHover(true)}
+        onMouseMove={() => setOnHover(true)}
         onMouseLeave={() => setOnHover(false)}
+        onMouseUp={() => setOnHover(false)}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
         <XAxis
-          dataKey="time"
+          dataKey="timestamp"
+          type="category"
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)', strokeDasharray: '3 3' }}
+          interval="preserveStartEnd"
+          axisLine={{ stroke: 'var(--color-neutral-250)' }}
+          tickFormatter={(timestamp) => {
+            const date = new Date(timestamp)
+            const isLongRange = () => {
+              if (!timeRange) return false
+              const durationInHours = (Number(timeRange.end) - Number(timeRange.start)) / (60 * 60)
+              return durationInHours > 24
+            }
+
+            if (isLongRange()) {
+              const day = useLocalTime
+                ? date.getDate().toString().padStart(2, '0')
+                : date.getUTCDate().toString().padStart(2, '0')
+              const month = useLocalTime
+                ? (date.getMonth() + 1).toString().padStart(2, '0')
+                : (date.getUTCMonth() + 1).toString().padStart(2, '0')
+              const hours = useLocalTime
+                ? date.getHours().toString().padStart(2, '0')
+                : date.getUTCHours().toString().padStart(2, '0')
+              const minutes = useLocalTime
+                ? date.getMinutes().toString().padStart(2, '0')
+                : date.getUTCMinutes().toString().padStart(2, '0')
+              return `${day}/${month} ${hours}:${minutes}`
+            }
+            const hours = useLocalTime
+              ? date.getHours().toString().padStart(2, '0')
+              : date.getUTCHours().toString().padStart(2, '0')
+            const minutes = useLocalTime
+              ? date.getMinutes().toString().padStart(2, '0')
+              : date.getUTCMinutes().toString().padStart(2, '0')
+            const seconds = useLocalTime
+              ? date.getSeconds().toString().padStart(2, '0')
+              : date.getUTCSeconds().toString().padStart(2, '0')
+            return `${hours}:${minutes}:${seconds}`
+          }}
+          allowDataOverflow={true}
         />
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)', strokeDasharray: '3 3' }}
+          axisLine={{ stroke: 'var(--color-neutral-250)' }}
           label={{
             value: label,
             angle: -90,
             position: 'insideLeft',
             style: { textAnchor: 'middle', fontSize: 12, color: 'var(--color-neutral-350)' },
           }}
-          tickFormatter={(value) => `${value.toFixed(3)}`}
         />
         <Tooltip
           contentStyle={{
@@ -90,6 +155,20 @@ export function Chart({ label, chartData, seriesNames, originalPodNames, colors,
           formatter={(value: string | number, name: string | number) => {
             const podName = originalPodNames[name.toString()] || name.toString()
             const numValue = parseFloat(value.toString())
+            if (isNaN(numValue)) {
+              return [
+                <span
+                  key={name.toString()}
+                  className="flex items-center justify-between gap-7 px-2.5 text-xs leading-5"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="relative top-[1px] block h-2 w-2 rounded-full bg-current" />
+                    <span className="text-neutral-50">{podName}</span>
+                  </span>
+                  <span className="text-neutral-50">N/A</span>
+                </span>,
+              ]
+            }
             const formattedValue = label.includes('Memory') ? numValue.toFixed(3) : numValue.toFixed(2)
             const unit = label.includes('Memory') ? 'GiB' : label.includes('CPU') ? 'mCPU' : ''
             return [
@@ -121,6 +200,7 @@ export function Chart({ label, chartData, seriesNames, originalPodNames, colors,
               dot={{ r: 0 }}
               activeDot={{ r: 2, stroke: color, color }}
               connectNulls={true}
+              isAnimationActive={false}
             />
           )
         })}
