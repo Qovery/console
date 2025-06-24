@@ -425,7 +425,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
           if (checkRunningStatusClosed) {
             return (
-              <Tooltip content="See my cluster">
+              <Tooltip content="See cluster">
                 <Link
                   as="button"
                   to={CLUSTER_URL(organizationId, environment.cluster_id)}

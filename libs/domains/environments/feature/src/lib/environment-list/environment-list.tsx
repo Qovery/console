@@ -94,7 +94,7 @@ function EnvironmentStatusCell({
 
   if (checkRunningStatusClosed) {
     return (
-      <Tooltip content="See my cluster">
+      <Tooltip content="See cluster">
         <Link
           as="button"
           to={CLUSTER_URL(environment.organization.id, environment.cluster_id)}
