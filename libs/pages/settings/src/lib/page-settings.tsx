@@ -87,6 +87,7 @@ export function PageSettings() {
     {
       title: 'Git repositories access',
       iconName: 'git-alt',
+      iconStyle: 'brands',
       url: pathSettings + SETTINGS_GIT_REPOSITORY_ACCESS_URL,
     },
     {
