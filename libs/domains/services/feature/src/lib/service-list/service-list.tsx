@@ -33,16 +33,12 @@ import {
 import {
   APPLICATION_GENERAL_URL,
   APPLICATION_URL,
+  CLUSTER_URL,
   DATABASE_GENERAL_URL,
   DATABASE_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
-  SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_DATABASE_CREATION_URL,
   SERVICES_GENERAL_URL,
-  SERVICES_HELM_CREATION_URL,
-  SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_NEW_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -55,7 +51,6 @@ import {
   ExternalLink,
   Icon,
   Link,
-  type MenuData,
   Skeleton,
   StatusChip,
   TableFilter,
@@ -72,6 +67,7 @@ import {
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
+import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommit } from '../last-commit/last-commit'
 import LastVersion from '../last-version/last-version'
@@ -324,10 +320,15 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
 export function ServiceList({ environment, className, ...props }: ServiceListProps) {
   const {
     id: environmentId,
+    cluster_id: clusterId,
     project: { id: projectId },
     organization: { id: organizationId },
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
+  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
+    clusterId,
+    environmentId,
+  })
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
@@ -421,6 +422,27 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
             )
             .otherwise(({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL)
+
+          if (checkRunningStatusClosed) {
+            return (
+              <Tooltip content="See cluster">
+                <Link
+                  as="button"
+                  to={CLUSTER_URL(organizationId, environment.cluster_id)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="gap-2 whitespace-nowrap text-sm"
+                  size="md"
+                  color="neutral"
+                  variant="outline"
+                  radius="full"
+                >
+                  <StatusChip status="STOPPED" />
+                  Status unavailable
+                </Link>
+              </Tooltip>
+            )
+          }
+
           return (
             <Skeleton width={102} height={34} show={!value}>
               <Tooltip content="See overview">
@@ -703,52 +725,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
       maxSize: Number.MAX_SAFE_INTEGER,
     },
   })
-
-  const newServicesMenu: MenuData = [
-    {
-      items: [
-        {
-          name: 'Create application',
-          contentLeft: <Icon iconName="layer-group" className="text-sm text-brand-500" />,
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_APPLICATION_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create database',
-          contentLeft: <Icon iconName="database" className="text-sm text-brand-500" />,
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DATABASE_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create lifecycle job',
-          contentLeft: (
-            <Icon name={IconEnum.LIFECYCLE_JOB_STROKE} width="14" height="16" className="text-sm text-brand-500" />
-          ),
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_LIFECYCLE_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create cronjob',
-          contentLeft: (
-            <Icon name={IconEnum.CRON_JOB_STROKE} width="14" height="16" className="text-sm text-brand-500" />
-          ),
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_CRONJOB_CREATION_URL}`)
-          },
-        },
-        {
-          name: 'Create helm',
-          contentLeft: <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="16" className="text-sm text-brand-500" />,
-          onClick: () => {
-            navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_HELM_CREATION_URL}`)
-          },
-        },
-      ],
-    },
-  ]
 
   if (services.length === 0 && isServicesLoading) {
     return <ServiceListSkeleton />

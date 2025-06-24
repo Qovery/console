@@ -13,6 +13,7 @@ import { type Environment, type Project } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { type RunningState } from '@qovery/shared/enums'
 import {
   CLUSTERS_NEW_URL,
   CLUSTERS_URL,
@@ -39,6 +40,7 @@ import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { EnvironmentActionToolbar } from '../environment-action-toolbar/environment-action-toolbar'
 import { EnvironmentMode } from '../environment-mode/environment-mode'
+import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useEnvironments } from '../hooks/use-environments/use-environments'
 import { EnvironmentListSkeleton } from './environment-list-skeleton'
 
@@ -74,6 +76,60 @@ function EnvironmentNameCell({ environment }: { environment: Environment }) {
         </div>
       </div>
     </div>
+  )
+}
+
+function EnvironmentStatusCell({
+  environment,
+  runningStatus,
+  value,
+}: {
+  environment: Pick<Environment, 'id' | 'organization' | 'project' | 'cluster_id'>
+  runningStatus?: RunningState
+  value?: string
+}) {
+  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
+    clusterId: environment.cluster_id,
+  })
+
+  if (checkRunningStatusClosed) {
+    return (
+      <Tooltip content="See cluster">
+        <Link
+          as="button"
+          to={CLUSTER_URL(environment.organization.id, environment.cluster_id)}
+          onClick={(e) => e.stopPropagation()}
+          className="gap-2 whitespace-nowrap text-sm"
+          size="md"
+          color="neutral"
+          variant="outline"
+          radius="full"
+        >
+          <StatusChip status={runningStatus} />
+          Status unavailable
+        </Link>
+      </Tooltip>
+    )
+  }
+
+  return (
+    <Skeleton width={102} height={34} show={!value}>
+      <Tooltip content="See overview">
+        <Link
+          as="button"
+          to={SERVICES_URL(environment.organization.id, environment.project.id, environment.id) + SERVICES_GENERAL_URL}
+          onClick={(e) => e.stopPropagation()}
+          className="gap-2 whitespace-nowrap text-sm"
+          size="md"
+          color="neutral"
+          variant="outline"
+          radius="full"
+        >
+          <StatusChip status={runningStatus} />
+          {value}
+        </Link>
+      </Tooltip>
+    </Skeleton>
   )
 }
 
@@ -122,26 +178,11 @@ export function EnvironmentList({ project, clusterAvailable, className, ...props
           const value = info.getValue()
           const environment = info.row.original
           return (
-            <Skeleton width={102} height={34} show={!value}>
-              <Tooltip content="See overview">
-                <Link
-                  as="button"
-                  to={
-                    SERVICES_URL(environment.organization.id, environment.project.id, environment.id) +
-                    SERVICES_GENERAL_URL
-                  }
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip status={environment.runningStatus?.state} />
-                  {value}
-                </Link>
-              </Tooltip>
-            </Skeleton>
+            <EnvironmentStatusCell
+              environment={environment}
+              runningStatus={environment.runningStatus?.state}
+              value={value}
+            />
           )
         },
       }),
