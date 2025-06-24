@@ -199,6 +199,14 @@ export const services = createQueryKeys('services', {
       return new Promise<ApplicationStatusDto | DatabaseStatusDto | null>(() => {})
     },
   }),
+  checkRunningStatusClosed: (clusterId: string, environmentId: string) => ({
+    queryKey: [clusterId, environmentId],
+    // NOTE: Value is set by WebSocket
+    queryFn() {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      return new Promise<{ clusterId: string; environmentId: string; reason: string }>(() => {})
+    },
+  }),
   metrics: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket
