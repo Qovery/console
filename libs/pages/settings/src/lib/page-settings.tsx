@@ -86,7 +86,7 @@ export function PageSettings() {
     },
     {
       title: 'Git repositories access',
-      icon: IconAwesomeEnum.KEY, // TODO [QOV-714] we need to use the Git icon here
+      iconName: 'git-alt',
       url: pathSettings + SETTINGS_GIT_REPOSITORY_ACCESS_URL,
     },
     {
