@@ -1,15 +1,8 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
 import { Link } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import {
-  CLUSTER_OVERVIEW_URL,
-  CLUSTER_SETTINGS_GENERAL_URL,
-  CLUSTER_SETTINGS_URL,
-  CLUSTER_URL,
-  INFRA_LOGS_URL,
-} from '@qovery/shared/routes'
+import { CLUSTER_OVERVIEW_URL, CLUSTER_URL, INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { AnimatedGradientText, Badge, Icon, Indicator, Link as LinkUI, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -89,15 +82,9 @@ export interface ClusterCardProps {
 export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardProps) {
   useClusterRunningStatusSocket({ organizationId: cluster.organization.id, clusterId: cluster.id })
 
-  const isClusterOverviewEnabled = useFeatureFlagVariantKey('cluster-running-status')
-
   return (
     <Link
-      to={
-        isClusterOverviewEnabled
-          ? CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_OVERVIEW_URL
-          : CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_GENERAL_URL
-      }
+      to={CLUSTER_URL(cluster.organization.id, cluster.id) + CLUSTER_OVERVIEW_URL}
       className="duration-50 flex flex-col gap-5 rounded border border-neutral-250 p-5 outline outline-2 outline-transparent transition-all [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:border-brand-500 hover:-outline-offset-2 hover:outline-brand-500"
     >
       <div className="flex items-start justify-between gap-2">

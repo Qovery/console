@@ -7,7 +7,7 @@ import {
   useCluster,
 } from '@qovery/domains/clusters/feature'
 import { NotFoundPage } from '@qovery/pages/layout'
-import { CLUSTER_SETTINGS_GENERAL_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
+import { CLUSTER_OVERVIEW_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { ROUTER_CLUSTER } from './router/router'
 import Container from './ui/container/container'
 
@@ -33,12 +33,7 @@ function PagesClusterWrapped() {
         ))}
         <Route
           path="*"
-          element={
-            <Navigate
-              replace
-              to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_GENERAL_URL}
-            />
-          }
+          element={<Navigate replace to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL} />}
         />
       </Routes>
       {open && cluster && <ClusterTerminal organizationId={cluster.organization.id} clusterId={cluster.id} />}

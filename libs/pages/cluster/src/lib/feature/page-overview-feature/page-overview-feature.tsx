@@ -8,9 +8,25 @@ import {
   useClusterMetrics,
 } from '@qovery/domains/cluster-metrics/feature'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Icon } from '@qovery/shared/ui'
+import { Icon, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { TableSkeleton } from './table-skeleton'
+
+function TableLegend() {
+  return (
+    <div className="flex w-full items-center justify-end gap-1.5 text-xs text-neutral-400">
+      <span className="block h-2 w-2 bg-brand-400"></span>
+      <span className="flex items-center gap-1">
+        Reserved
+        <Tooltip content="Reserved CPU or memory represents the amount of resource guaranteed for this workload.">
+          <span className="relative top-[1px] text-neutral-350">
+            <Icon iconName="circle-question" iconStyle="regular" />
+          </span>
+        </Tooltip>
+      </span>
+    </div>
+  )
+}
 
 export function PageOverviewFeature() {
   useDocumentTitle('Cluster - Overview')
@@ -44,10 +60,16 @@ export function PageOverviewFeature() {
       {isLoading ? (
         <TableSkeleton />
       ) : isKarpenter ? (
-        <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+        <div className="flex flex-col gap-4">
+          <TableLegend />
+          <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+        </div>
       ) : (
-        <div className="overflow-hidden rounded border border-neutral-250">
-          <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
+        <div className="flex flex-col gap-4">
+          <TableLegend />
+          <div className="overflow-hidden rounded border border-neutral-250">
+            <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
+          </div>
         </div>
       )}
     </div>

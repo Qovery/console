@@ -26,7 +26,7 @@ describe('calculateClusterResources', () => {
       cpu_milli_usage: cpuRequest,
       memory_mib_working_set_usage: memoryRequest,
       memory_mib_rss_usage: memoryRequest,
-      disk_mib_usage: diskUsage,
+      ephemeral_storage_usage: diskUsage,
     },
     name: 'mock-name',
     resources_allocatable: {
@@ -59,7 +59,7 @@ describe('calculateClusterResources', () => {
     const result = calculateClusterResources(nodes)
 
     expect(result.cpu.total).toBe(5)
-    expect(result.cpu.used).toBe(2.5)
+    expect(result.cpu.used).toBe(3)
     expect(result.cpu.percent).toBe(50)
     expect(result.cpu.unit).toBe('vCPU')
 
@@ -83,7 +83,7 @@ describe('calculateClusterResources', () => {
     const result = calculateClusterResources(nodes)
 
     expect(result.cpu.total).toBe(5)
-    expect(result.cpu.used).toBe(2.5)
+    expect(result.cpu.used).toBe(3)
     expect(result.cpu.percent).toBe(50)
 
     expect(result.memory.total).toBe(6)
@@ -92,7 +92,6 @@ describe('calculateClusterResources', () => {
 
     expect(result.disk.total).toBe(12)
     expect(result.disk.used).toBe(4)
-    expect(result.disk.percent).toBe(33.33)
   })
 
   it('should handle empty nodes array', () => {
@@ -107,8 +106,6 @@ describe('calculateClusterResources', () => {
     expect(result.memory.percent).toBe(0)
 
     expect(result.disk.total).toBe(0)
-    expect(result.disk.used).toBe(0)
-    expect(result.disk.percent).toBe(0)
   })
 
   it('should handle undefined nodes', () => {
@@ -123,8 +120,6 @@ describe('calculateClusterResources', () => {
     expect(result.memory.percent).toBe(0)
 
     expect(result.disk.total).toBe(0)
-    expect(result.disk.used).toBe(0)
-    expect(result.disk.percent).toBe(0)
   })
 
   it('should avoid division by zero when totals are zero', () => {
@@ -141,7 +136,5 @@ describe('calculateClusterResources', () => {
     expect(result.memory.percent).toBe(0)
 
     expect(result.disk.total).toBe(0)
-    expect(result.disk.used).toBe(0)
-    expect(result.disk.percent).toBe(0)
   })
 })

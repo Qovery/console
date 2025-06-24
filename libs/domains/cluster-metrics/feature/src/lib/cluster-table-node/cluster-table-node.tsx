@@ -2,24 +2,32 @@ import clsx from 'clsx'
 import { type NodePoolInfoDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { useClusterRunningStatus } from '@qovery/domains/clusters/feature'
-import { Badge, Icon, ProgressBar, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Badge, Icon, ProgressBar, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { calculatePercentage, formatNumber, mibToGib, milliCoreToVCPU, twMerge } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 
 interface MetricProgressBarProps {
   type: 'cpu' | 'memory'
-  used: number
   reserved: number
+  reservedRaw: number
   total: number
+  totalRaw: number
   unit: string
   isPressure?: boolean
 }
 
-function MetricProgressBar({ type, used, reserved, total, unit, isPressure = false }: MetricProgressBarProps) {
-  const usedPercentage = calculatePercentage(used, total)
-  const reservedPercentage = calculatePercentage(reserved, total)
-  const totalPercentage = Math.round(usedPercentage)
+function MetricProgressBar({
+  type,
+  reserved,
+  reservedRaw,
+  total,
+  totalRaw,
+  unit,
+  isPressure = false,
+}: MetricProgressBarProps) {
+  const reservedPercentage = calculatePercentage(reservedRaw, totalRaw)
+  const totalPercentage = Math.round(reservedPercentage)
 
   return (
     <div className="flex w-full items-center gap-1 text-ssm">
@@ -47,66 +55,28 @@ function MetricProgressBar({ type, used, reserved, total, unit, isPressure = fal
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-purple-200" />
+                  <span className="h-2 w-2 rounded-full bg-brand-500" />
                   Reserved
                 </span>
                 <span className="ml-auto block">
                   {reserved} {unit}
                 </span>
               </div>
-              <div className="flex w-full items-center gap-1.5">
-                <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-brand-400" />
-                  Used
-                </span>
-                <span className="ml-auto block">
-                  {used} {unit}
-                </span>
-              </div>
             </div>
-            {usedPercentage > reservedPercentage ? (
-              <div className="flex items-center justify-between border-t border-neutral-400 px-2 py-1.5">
-                Exceeds reserved allocation Review workload distribution on high-usage
-              </div>
-            ) : (
-              <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
-                <span>Total Available</span>
-                <span className="ml-auto block">
-                  {total} {unit}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center justify-between border-t border-neutral-400 px-2.5 py-1.5">
+              <span>Total Available</span>
+              <span className="ml-auto block">
+                {total} {unit}
+              </span>
+            </div>
           </div>
         }
         classNameContent="w-[173px] p-0"
       >
         <div className="relative w-full">
-          <ProgressBar.Root mode="absolute">
-            <ProgressBar.Cell value={reservedPercentage} color="var(--color-purple-200)" />
-            <ProgressBar.Cell
-              className="left-0.5 top-1/2 h-1 -translate-y-1/2 rounded-l-full"
-              value={usedPercentage}
-              color="var(--color-brand-400)"
-            />
-            {usedPercentage > reservedPercentage && (
-              <ProgressBar.Cell
-                className="left-0.5 top-1/2 h-1 -translate-y-1/2"
-                value={usedPercentage - reservedPercentage + 0.8} // 0.8 is hack to compensate border-r and left-0.5
-                color="var(--color-yellow-500)"
-                style={{
-                  left: `${reservedPercentage}%`,
-                }}
-              />
-            )}
+          <ProgressBar.Root>
+            <ProgressBar.Cell value={reservedPercentage} color="var(--color-brand-400)" />
           </ProgressBar.Root>
-          {reservedPercentage < 99 && (
-            <span
-              className="absolute top-0 h-full w-[1px] bg-purple-500"
-              style={{
-                left: `${reservedPercentage}%`,
-              }}
-            />
-          )}
         </div>
       </Tooltip>
     </div>
@@ -164,13 +134,42 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
       </div>
 
       {nodes?.map((node) => {
-        const isWarning = Boolean(nodeWarnings[node.name])
+        const nodeWarning = nodeWarnings[node.name]
+
+        const isReady = node.conditions?.some((condition) => condition.type === 'Ready' && condition.status === 'True')
         const isDiskPressure = node.conditions?.some(
           (condition) => condition.type === 'DiskPressure' && condition.status === 'True'
         )
         const isMemoryPressure = node.conditions?.some(
           (condition) => condition.type === 'MemoryPressure' && condition.status === 'True'
         )
+        const isPIDPressure = node.conditions?.some(
+          (condition) => condition.type === 'PIDPressure' && condition.status === 'True'
+        )
+
+        const isWarning = isDiskPressure || isMemoryPressure || !isReady || isPIDPressure || nodeWarning
+
+        const status = () => {
+          if (!isWarning) {
+            return 'Ready'
+          }
+          if (!isReady) {
+            return 'NotReady'
+          }
+          if (isDiskPressure) {
+            return 'DiskPressure - Update the size or your instance type'
+          }
+          if (isMemoryPressure) {
+            return 'MemoryPressure'
+          }
+          if (isPIDPressure) {
+            return 'PIDPressure'
+          }
+          if (nodeWarning) {
+            return nodeWarning[0].message ?? 'Warning'
+          }
+          return 'Warning'
+        }
 
         return (
           <div
@@ -183,7 +182,15 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
             )}
           >
             <div className="flex h-12 w-1/4 min-w-0 items-center gap-2.5 px-5 font-medium text-neutral-400">
-              <StatusChip status={isWarning ? 'WARNING' : 'RUNNING'} className="inline-flex shrink-0" />
+              <Tooltip content={status()}>
+                <span className="flex items-center gap-1">
+                  {isWarning ? (
+                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-base text-yellow-500" />
+                  ) : (
+                    <Icon iconName="circle-check" iconStyle="regular" className="text-base text-green-500" />
+                  )}
+                </span>
+              </Tooltip>
               <Tooltip content={node.name}>
                 <span className="truncate">{node.name}</span>
               </Tooltip>
@@ -191,25 +198,20 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
             <div className="flex h-12 w-1/4 items-center px-3">
               <MetricProgressBar
                 type="cpu"
-                used={formatNumber(milliCoreToVCPU(node.metrics_usage?.cpu_milli_usage || 0))}
                 reserved={formatNumber(milliCoreToVCPU(node.resources_allocated.request_cpu_milli))}
+                reservedRaw={milliCoreToVCPU(node.resources_allocated.request_cpu_milli)}
                 total={formatNumber(milliCoreToVCPU(node.resources_allocatable.cpu_milli))}
+                totalRaw={milliCoreToVCPU(node.resources_allocatable.cpu_milli)}
                 unit="vCPU"
               />
             </div>
             <div className="flex h-12 w-1/4 items-center px-3">
               <MetricProgressBar
                 type="memory"
-                used={formatNumber(
-                  mibToGib(
-                    Math.max(
-                      node.metrics_usage?.memory_mib_rss_usage || 0,
-                      node.metrics_usage?.memory_mib_working_set_usage || 0
-                    )
-                  )
-                )}
                 reserved={formatNumber(mibToGib(node.resources_allocated.request_memory_mib))}
+                reservedRaw={mibToGib(node.resources_allocated.request_memory_mib)}
                 total={formatNumber(mibToGib(node.resources_allocatable.memory_mib))}
+                totalRaw={mibToGib(node.resources_allocatable.memory_mib)}
                 unit="GB"
                 isPressure={isMemoryPressure}
               />
@@ -244,7 +246,7 @@ export function ClusterTableNode({ nodePool, organizationId, clusterId, classNam
                 })
               )}
             >
-              {node.metrics_usage?.disk_percent_usage || 0}%
+              {formatNumber(mibToGib(node.resources_capacity.ephemeral_storage_mib || 0))} GB
               {isDiskPressure && (
                 <Tooltip content="Node has disk pressure condition. Update the size or your instance type.">
                   <span className="ml-1 inline-block text-red-500">
