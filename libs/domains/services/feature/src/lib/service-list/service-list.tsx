@@ -67,7 +67,7 @@ import {
   twMerge,
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
-import { usecheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useServices } from '../hooks/use-services/use-services'
 import { LastCommit } from '../last-commit/last-commit'
 import LastVersion from '../last-version/last-version'
@@ -325,7 +325,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     organization: { id: organizationId },
   } = environment
   const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
-  const { data: checkRunningStatusClosed } = usecheckRunningStatusClosed({
+  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId,
     environmentId,
   })

@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { queries } from '@qovery/state/util-queries'
 
-export interface UsecheckRunningStatusClosedProps {
+export interface UseCheckRunningStatusClosedProps {
   clusterId: string
 }
 
-export function usecheckRunningStatusClosed({ clusterId }: UsecheckRunningStatusClosedProps) {
+export function useCheckRunningStatusClosed({ clusterId }: UseCheckRunningStatusClosedProps) {
   return useQuery({
     ...queries.environments.checkRunningStatusClosed(clusterId),
     refetchOnMount: false,
@@ -15,4 +15,4 @@ export function usecheckRunningStatusClosed({ clusterId }: UsecheckRunningStatus
   })
 }
 
-export default usecheckRunningStatusClosed
+export default useCheckRunningStatusClosed

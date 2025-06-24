@@ -40,7 +40,7 @@ import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { EnvironmentActionToolbar } from '../environment-action-toolbar/environment-action-toolbar'
 import { EnvironmentMode } from '../environment-mode/environment-mode'
-import { usecheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
 import { useEnvironments } from '../hooks/use-environments/use-environments'
 import { EnvironmentListSkeleton } from './environment-list-skeleton'
 
@@ -88,7 +88,7 @@ function EnvironmentStatusCell({
   runningStatus?: RunningState
   value?: string
 }) {
-  const { data: checkRunningStatusClosed } = usecheckRunningStatusClosed({
+  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
     clusterId: environment.cluster_id,
   })
 
