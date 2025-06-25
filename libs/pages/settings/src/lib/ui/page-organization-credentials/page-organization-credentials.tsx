@@ -14,6 +14,7 @@ const toCloudProvider = (cloudProvider: ClusterCredentials['object_type']): Clou
     .with('AZURE', () => CloudProviderEnum.AZURE)
     .with('SCW', () => CloudProviderEnum.SCW)
     .with('OTHER', () => CloudProviderEnum.ON_PREMISE)
+    .with('GCP', () => CloudProviderEnum.GCP)
     .exhaustive()
 }
 
@@ -114,51 +115,50 @@ export const PageOrganizationCredentials = () => {
 
       return (
         <div
-          className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
+          className="grid w-full grid-cols-[1fr_auto] items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
           key={credential.id}
         >
-          <div className="flex items-start gap-4">
+          <div className="grid grid-cols-[32px_1fr] gap-2">
             <ClusterAvatar cloudProvider={toCloudProvider(credential.object_type)} size="sm" />
-            <div className="flex flex-col gap-2">
+            <div className="grid grid-rows-3 items-center gap-1.5">
               <span className="text-sm font-medium text-neutral-400">{credential.name}</span>
-              <div className="flex flex-col gap-2">
-                {'role_arn' in credential && (
-                  <div className="text-xs text-neutral-350">
-                    <span>Role ARN: </span>
-                    <span className="text-neutral-400">{credential.role_arn || ''}</span>
-                  </div>
-                )}
-                {'access_key_id' in credential && (
-                  <div className=" text-xs text-neutral-350">
-                    <span>Public Access Key: </span>
-                    <span className="text-neutral-400">{credential.access_key_id}</span>
-                  </div>
-                )}
-                {'scaleway_access_key' in credential && (
-                  <div className=" text-xs text-neutral-350">
-                    <span>Access Key: </span>
-                    <span className="text-neutral-400">{credential.scaleway_access_key}</span>
-                  </div>
-                )}
-                {'scaleway_project_id' in credential && (
-                  <div className=" text-xs text-neutral-350">
-                    <span>Project ID: </span>
-                    <span className="text-neutral-400">{credential.scaleway_project_id}</span>
-                  </div>
-                )}
-                {'azure_tenant_id' in credential && (
-                  <div className=" text-xs text-neutral-350">
-                    <span>Tenant ID: </span>
-                    <span className="text-neutral-400">{credential.azure_tenant_id}</span>
-                  </div>
-                )}
-                {'azure_subscription_id' in credential && (
-                  <div className=" text-xs text-neutral-350">
-                    <span>Subscription ID: </span>
-                    <span className="text-neutral-400">{credential.azure_subscription_id}</span>
-                  </div>
-                )}
-              </div>
+
+              {'role_arn' in credential && (
+                <span className="text-xs">
+                  <span className="text-neutral-350">Role ARN: </span>
+                  <span className="text-neutral-400">{credential.role_arn || ''}</span>
+                </span>
+              )}
+              {'access_key_id' in credential && (
+                <span className="text-xs">
+                  <span className="text-neutral-350">Public Access Key: </span>
+                  <span className="text-neutral-400">{credential.access_key_id}</span>
+                </span>
+              )}
+              {'scaleway_access_key' in credential && (
+                <span className="text-xs">
+                  <span className="text-neutral-350">Access Key: </span>
+                  <span className="text-neutral-400">{credential.scaleway_access_key}</span>
+                </span>
+              )}
+              {'scaleway_project_id' in credential && (
+                <span className="text-xs">
+                  <span className="text-neutral-350">Project ID: </span>
+                  <span className="text-neutral-400">{credential.scaleway_project_id}</span>
+                </span>
+              )}
+              {'azure_tenant_id' in credential && (
+                <span className="text-xs">
+                  <span className="text-neutral-350">Tenant ID: </span>
+                  <span className="text-neutral-400">{credential.azure_tenant_id}</span>
+                </span>
+              )}
+              {'azure_subscription_id' in credential && (
+                <span className="text-xs">
+                  <span className="text-neutral-350">Subscription ID: </span>
+                  <span className="text-neutral-400">{credential.azure_subscription_id}</span>
+                </span>
+              )}
             </div>
           </div>
           <div className="flex gap-2">
