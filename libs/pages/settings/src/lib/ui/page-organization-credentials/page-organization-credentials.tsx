@@ -120,41 +120,41 @@ export const PageOrganizationCredentials = () => {
         >
           <div className="grid grid-cols-[32px_1fr] gap-2">
             <ClusterAvatar cloudProvider={toCloudProvider(credential.object_type)} size="sm" />
-            <div className="grid grid-rows-3 items-center gap-1.5">
+            <div className="flex flex-col justify-center">
               <span className="text-sm font-medium text-neutral-400">{credential.name}</span>
 
               {'role_arn' in credential && (
-                <span className="text-xs">
+                <span className="mt-1.5 text-xs">
                   <span className="text-neutral-350">Role ARN: </span>
                   <span className="text-neutral-400">{credential.role_arn || ''}</span>
                 </span>
               )}
               {'access_key_id' in credential && (
-                <span className="text-xs">
+                <span className="mt-1.5 text-xs">
                   <span className="text-neutral-350">Public Access Key: </span>
                   <span className="text-neutral-400">{credential.access_key_id}</span>
                 </span>
               )}
               {'scaleway_access_key' in credential && (
-                <span className="text-xs">
+                <span className="mt-1.5 text-xs">
                   <span className="text-neutral-350">Access Key: </span>
                   <span className="text-neutral-400">{credential.scaleway_access_key}</span>
                 </span>
               )}
               {'scaleway_project_id' in credential && (
-                <span className="text-xs">
+                <span className="mt-1.5 text-xs">
                   <span className="text-neutral-350">Project ID: </span>
                   <span className="text-neutral-400">{credential.scaleway_project_id}</span>
                 </span>
               )}
               {'azure_tenant_id' in credential && (
-                <span className="text-xs">
+                <span className="mt-1.5 text-xs">
                   <span className="text-neutral-350">Tenant ID: </span>
                   <span className="text-neutral-400">{credential.azure_tenant_id}</span>
                 </span>
               )}
               {'azure_subscription_id' in credential && (
-                <span className="text-xs">
+                <span className="mt-1.5 text-xs">
                   <span className="text-neutral-350">Subscription ID: </span>
                   <span className="text-neutral-400">{credential.azure_subscription_id}</span>
                 </span>
