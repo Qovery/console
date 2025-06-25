@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { ClustersApi } from 'qovery-typescript-axios'
 
+// import { type MetricData } from '../../observability-overview/time-range-utils'
+
 interface UseMetricsWSProps {
   type: 'cpu' | 'memory'
   organizationId: string

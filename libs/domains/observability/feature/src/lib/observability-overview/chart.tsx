@@ -1,7 +1,6 @@
-import { useState } from 'react'
+import { type PropsWithChildren, useState } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { LoaderSpinner } from '@qovery/shared/ui'
-import type { TimeRangeOption } from './time-range-utils'
 
 interface ChartDataPoint {
   timestamp: number
@@ -10,7 +9,7 @@ interface ChartDataPoint {
   [key: string]: any
 }
 
-interface ChartProps {
+interface ChartProps extends PropsWithChildren {
   label: string
   chartData: ChartDataPoint[]
   seriesNames: string[]
@@ -33,6 +32,7 @@ export function Chart({
   timeRange,
   isLoading,
   useLocalTime,
+  children,
 }: ChartProps) {
   const [onHover, setOnHover] = useState(false)
 
@@ -52,24 +52,11 @@ export function Chart({
     )
   }
 
-  // const getXAxisTicks = () => {
-  //   if (!timeRange) return []
-  //   const tickCount = 6
-  //   const ticks = []
-  //   const step = (Number(timeRange.end) - Number(timeRange.start)) / (tickCount - 1)
-
-  //   for (let i = 0; i < tickCount; i++) {
-  //     ticks.push(timeRange.start + step * i)
-  //   }
-
-  //   return ticks
-  // }
-
   return (
     <ResponsiveContainer>
       <LineChart
         data={chartData}
-        syncId="anyId"
+        syncId="syncId"
         onMouseMove={() => setOnHover(true)}
         onMouseLeave={() => setOnHover(false)}
         onMouseUp={() => setOnHover(false)}
@@ -204,6 +191,7 @@ export function Chart({
             />
           )
         })}
+        {children}
       </LineChart>
     </ResponsiveContainer>
   )

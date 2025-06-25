@@ -1,7 +1,26 @@
 import { subDays, subHours, subMinutes } from 'date-fns'
 
+export interface MetricData {
+  metric: {
+    container: string
+    cpu: string
+    endpoint: string
+    id: string
+    image: string
+    instance: string
+    job: string
+    metrics_path: string
+    name: string
+    namespace: string
+    node: string
+    pod: string
+    prometheus: string
+    service: string
+  }
+  values: [number, string][]
+}
+
 export const COLORS = [
-  'var(--color-brand-500)',
   'var(--color-purple-500)',
   '#D940FF',
   '#009EDD',
@@ -52,7 +71,6 @@ export const timeRangeOptions = [
   { label: 'Custom range (UTC)', value: 'custom' },
 ]
 
-// Utility function to create time ranges
 export function createTimeRange(duration: string, endTime?: Date): { start: Date; end: Date } {
   const end = endTime || new Date()
   const start = new Date(end)
@@ -100,7 +118,6 @@ export const createTimeRangeHandler = (
     const now = new Date()
 
     if (value === 'custom') {
-      // Keep current dates for custom range
       return
     }
 
@@ -155,7 +172,51 @@ export const createTimeRangeHandler = (
   }
 }
 
-// Fonction utilitaire générique pour ajouter un padding aux données de graphiques
+/**
+ * Generic helper to format timestamps for chart data
+ */
+export function formatTimestamp(timestampMs: number, useLocalTime: boolean) {
+  const date = new Date(timestampMs)
+
+  const timeString = useLocalTime
+    ? date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      })
+    : date.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'UTC',
+      })
+
+  const fullTimeString = useLocalTime
+    ? date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      })
+    : date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+        timeZone: 'UTC',
+      }) + ' UTC'
+
+  return { timeString, fullTimeString }
+}
+
 export function addTimeRangePadding<T extends { timestamp: number; time: string; fullTime: string }>(
   chartData: T[],
   startTimestamp: string,
@@ -171,48 +232,6 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
   const firstDataMs = allTimestamps[0]
   const lastDataMs = allTimestamps[allTimestamps.length - 1]
 
-  const formatTimestamp = (timestampMs: number) => {
-    const date = new Date(timestampMs)
-
-    const timeString = useLocalTime
-      ? date.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        })
-      : date.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-          timeZone: 'UTC',
-        })
-
-    const fullTimeString = useLocalTime
-      ? date.toLocaleString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        })
-      : date.toLocaleString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-          timeZone: 'UTC',
-        }) + ' UTC'
-
-    return { timeString, fullTimeString }
-  }
-
   const existingData = new Set(chartData.map((d) => d.timestamp))
   const result = [...chartData]
 
@@ -224,7 +243,7 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
   let current = startMs
   while (current < firstDataMs) {
     if (!existingData.has(current)) {
-      const { timeString, fullTimeString } = formatTimestamp(current)
+      const { timeString, fullTimeString } = formatTimestamp(current, useLocalTime)
       result.push({
         timestamp: current,
         time: timeString,
@@ -237,7 +256,7 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
   current = lastDataMs + dataInterval
   while (current <= endMs) {
     if (!existingData.has(current)) {
-      const { timeString, fullTimeString } = formatTimestamp(current)
+      const { timeString, fullTimeString } = formatTimestamp(current, useLocalTime)
       result.push({
         timestamp: current,
         time: timeString,
@@ -249,45 +268,3 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
 
   return result.sort((a, b) => a.timestamp - b.timestamp)
 }
-
-// export const chartTimeData: ChartTimeData = {
-//   '1h': {
-//     type: '1m',
-//     expectedInterval: 60_000,
-//     label: () => t`1 hour`,
-//     // ticks: 12,
-//     format: (timestamp: string) => hourWithMinutes(timestamp),
-//     getOffset: (endTime: Date) => timeHour.offset(endTime, -1),
-//   },
-//   '12h': {
-//     type: '10m',
-//     expectedInterval: 60_000 * 10,
-//     label: () => t`12 hours`,
-//     ticks: 12,
-//     format: (timestamp: string) => hourWithMinutes(timestamp),
-//     getOffset: (endTime: Date) => timeHour.offset(endTime, -12),
-//   },
-//   '24h': {
-//     type: '20m',
-//     expectedInterval: 60_000 * 20,
-//     label: () => t`24 hours`,
-//     format: (timestamp: string) => hourWithMinutes(timestamp),
-//     getOffset: (endTime: Date) => timeHour.offset(endTime, -24),
-//   },
-//   '1w': {
-//     type: '120m',
-//     expectedInterval: 60_000 * 120,
-//     label: () => t`1 week`,
-//     ticks: 7,
-//     format: (timestamp: string) => formatDay(timestamp),
-//     getOffset: (endTime: Date) => timeDay.offset(endTime, -7),
-//   },
-//   '30d': {
-//     type: '480m',
-//     expectedInterval: 60_000 * 480,
-//     label: () => t`30 days`,
-//     ticks: 30,
-//     format: (timestamp: string) => formatDay(timestamp),
-//     getOffset: (endTime: Date) => timeDay.offset(endTime, -30),
-//   },
-// }
