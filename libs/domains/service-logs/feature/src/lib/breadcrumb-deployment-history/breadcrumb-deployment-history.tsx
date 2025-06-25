@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { Link, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useService, useDeploymentHistory as useServiceDeploymentHistory } from '@qovery/domains/services/feature'
+import { useDeploymentHistory, useService } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
@@ -20,26 +20,14 @@ export interface BreadcrumbDeploymentHistoryProps {
 
 export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: BreadcrumbDeploymentHistoryProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-
   const { data: service } = useService({
     serviceId: serviceId ?? '',
   })
-
-  // const { data: allDeploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
-  //   environmentId,
-  // })
-
-  const { data: serviceDeploymentHistory, isFetched: isFetchedDeloymentHistory } = useServiceDeploymentHistory({
+  const { data: serviceDeploymentHistory, isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId: serviceId ?? '',
     serviceType: service?.service_type ?? 'APPLICATION',
   })
-  console.log(' serviceDeploymentHistory:', serviceDeploymentHistory)
 
-  // const deploymentHistory = serviceId
-  //   ? serviceDeploymentHistory.filter((history) =>
-  //       history.stages.some((stage) => stage.services.some((service) => service.identifier.service_id === serviceId))
-  //     )
-  //   : allDeploymentHistory
   const deploymentHistory = serviceDeploymentHistory ?? []
 
   if (!isFetchedDeloymentHistory || deploymentHistory.length === 0) return null
