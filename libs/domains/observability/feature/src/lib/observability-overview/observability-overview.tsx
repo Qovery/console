@@ -1,6 +1,8 @@
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { Button, Heading, Icon, InputSelect, Section } from '@qovery/shared/ui'
 import { useClusters } from '../hooks/use-clusters/use-clusters'
+import { useEvents } from '../hooks/use-events/use-events'
 import { useServicesSearch } from '../hooks/use-services-search/use-services-search'
 import { CpuChart } from './cpu-chart'
 import { MemoryChart } from './memory-chart'
@@ -27,6 +29,8 @@ function ObservabilityOverviewContent() {
     setStartDate,
     endDate,
     setEndDate,
+    endTimestamp,
+    startTimestamp,
     handleTimeRangeChange,
   } = useObservabilityContext()
 
@@ -37,6 +41,14 @@ function ObservabilityOverviewContent() {
   const { data: services } = useServicesSearch({
     organizationId,
     clusterId,
+  })
+
+  const { data: events } = useEvents({
+    organizationId,
+    serviceId,
+    targetType: OrganizationEventTargetType.CONTAINER,
+    toTimestamp: endTimestamp,
+    fromTimestamp: startTimestamp,
   })
 
   return (
@@ -170,7 +182,7 @@ function ObservabilityOverviewContent() {
             <p className="text-xs text-neutral-400">Monitor your CPU usage metrics</p>
           </div>
           <div className="flex h-full w-full flex-col">
-            <CpuChart />
+            <CpuChart events={events} />
           </div>
         </Section>
 
