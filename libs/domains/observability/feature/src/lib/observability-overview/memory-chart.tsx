@@ -253,7 +253,6 @@ export function MemoryChart() {
       label="Memory (GiB)"
       chartData={chartData}
       seriesNames={seriesNames}
-      originalPodNames={originalPodNames}
       colors={COLORS}
       isLoading={isLoading}
       useLocalTime={useLocalTime}

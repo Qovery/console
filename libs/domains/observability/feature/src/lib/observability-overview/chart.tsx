@@ -1,6 +1,70 @@
-import { type PropsWithChildren, useState } from 'react'
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { type PropsWithChildren } from 'react'
+import * as RechartsPrimitive from 'recharts'
+import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { LoaderSpinner } from '@qovery/shared/ui'
+
+const ResponsiveContainer = RechartsPrimitive.ResponsiveContainer
+const LineChart = RechartsPrimitive.LineChart
+const CartesianGrid = RechartsPrimitive.CartesianGrid
+const XAxis = RechartsPrimitive.XAxis
+const YAxis = RechartsPrimitive.YAxis
+const Line = RechartsPrimitive.Line
+const ChartTooltip = RechartsPrimitive.Tooltip
+const ReferenceLine = RechartsPrimitive.ReferenceLine
+const Label = RechartsPrimitive.Label
+
+interface ChartTooltipContentProps extends RechartsPrimitive.TooltipProps<ValueType, NameType> {
+  title?: string
+  formatValue?: (value: ValueType, dataKey: string) => string
+  formatLabel?: (dataKey: string) => string
+}
+
+function ChartTooltipContent({ active, payload, title, formatValue, formatLabel }: ChartTooltipContentProps) {
+  if (!active || !payload || payload.length === 0) return null
+
+  const dataPoint = payload[0]?.payload
+
+  return (
+    <div className="rounded-md border bg-neutral-600 shadow-lg">
+      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 p-3 pb-2">
+        <span className="text-xs text-neutral-50">{title}</span>
+        <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
+      </div>
+      <div className="space-y-1 p-3 pt-0">
+        {payload
+          .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
+          .map((entry, index) => {
+            const seriesKey = entry.dataKey as string
+            const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey
+            const formattedValue = formatValue ? formatValue(entry.value ?? '', seriesKey) : entry.value?.toString()
+
+            return (
+              <div key={index} className="flex items-center justify-between gap-4 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                  <span className="text-neutral-50">{displayName}</span>
+                </div>
+                <span className="text-neutral-50">{formattedValue}</span>
+              </div>
+            )
+          })}
+      </div>
+    </div>
+  )
+}
+
+export {
+  ResponsiveContainer,
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Line,
+  ChartTooltip,
+  ChartTooltipContent,
+  ReferenceLine,
+  Label,
+}
 
 interface ChartDataPoint {
   timestamp: number
@@ -13,7 +77,6 @@ interface ChartProps extends PropsWithChildren {
   label: string
   chartData: ChartDataPoint[]
   seriesNames: string[]
-  originalPodNames: Record<string, string>
   colors: string[]
   useLocalTime: boolean
   timeRange?: {
@@ -27,15 +90,12 @@ export function Chart({
   label,
   chartData,
   seriesNames,
-  originalPodNames,
   colors,
   timeRange,
   isLoading,
   useLocalTime,
   children,
 }: ChartProps) {
-  const [onHover, setOnHover] = useState(false)
-
   if (!isLoading && (!chartData || chartData.length === 0)) {
     return (
       <div className="flex h-80 items-center justify-center">
@@ -57,9 +117,9 @@ export function Chart({
       <LineChart
         data={chartData}
         syncId="syncId"
-        onMouseMove={() => setOnHover(true)}
-        onMouseLeave={() => setOnHover(false)}
-        onMouseUp={() => setOnHover(false)}
+        // onMouseMove={() => setOnHover(true)}
+        // onMouseLeave={() => setOnHover(false)}
+        // onMouseUp={() => setOnHover(false)}
       >
         <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
         <XAxis
@@ -116,65 +176,6 @@ export function Chart({
             style: { textAnchor: 'middle', fontSize: 12, color: 'var(--color-neutral-350)' },
           }}
         />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: 'var(--color-neutral-600)',
-            border: 'none',
-            borderRadius: '6px',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-            color: 'var(--color-neutral-50)',
-            fontSize: 12,
-            padding: '6px 0',
-          }}
-          content={onHover ? undefined : <span />}
-          labelFormatter={(_, payload) => {
-            if (payload && payload.length > 0) {
-              const dataPoint = payload[0].payload
-              return (
-                <span className="mb-1 flex items-center justify-between gap-4 border-b border-neutral-400 px-2.5 py-2 text-xs">
-                  <span className="text-neutral-50">{label}</span>
-                  <span className="text-neutral-250">{dataPoint.fullTime}</span>
-                </span>
-              )
-            }
-            return null
-          }}
-          formatter={(value: string | number, name: string | number) => {
-            const podName = originalPodNames[name.toString()] || name.toString()
-            const numValue = parseFloat(value.toString())
-            if (isNaN(numValue)) {
-              return [
-                <span
-                  key={name.toString()}
-                  className="flex items-center justify-between gap-7 px-2.5 text-xs leading-5"
-                >
-                  <span className="flex items-center gap-2">
-                    <span className="relative top-[1px] block h-2 w-2 rounded-full bg-current" />
-                    <span className="text-neutral-50">{podName}</span>
-                  </span>
-                  <span className="text-neutral-50">N/A</span>
-                </span>,
-              ]
-            }
-            const formattedValue = label.includes('Memory') ? numValue.toFixed(3) : numValue.toFixed(2)
-            const unit = label.includes('Memory') ? 'GiB' : label.includes('CPU') ? 'mCPU' : ''
-            return [
-              <span key={name.toString()} className="flex items-center justify-between gap-7 px-2.5 text-xs leading-5">
-                <span className="flex items-center gap-2">
-                  <span className="relative top-[1px] block h-2 w-2 rounded-full bg-current" />
-                  <span className="text-neutral-50">{podName}</span>
-                </span>
-                <span className="text-neutral-50">
-                  {formattedValue} {unit}
-                </span>
-              </span>,
-            ]
-          }}
-          cursor={{
-            stroke: 'var(--color-neutral-350)',
-            strokeWidth: 1,
-          }}
-        />
         {seriesNames.map((name, index) => {
           const color = colors[index] ?? 'var(--color-brand-500)'
           return (
@@ -186,7 +187,7 @@ export function Chart({
               strokeWidth={2}
               dot={{ r: 0 }}
               activeDot={{ r: 2, stroke: color, color }}
-              connectNulls={true}
+              connectNulls={false}
               isAnimationActive={false}
             />
           )
@@ -194,6 +195,32 @@ export function Chart({
         {children}
       </LineChart>
     </ResponsiveContainer>
+  )
+}
+
+export interface LegendItem {
+  name: string
+  color: string
+  visible: boolean
+  label: string
+}
+
+export function Legend({ items, onItemClick }: { items: LegendItem[]; onItemClick: (itemName: string) => void }) {
+  return (
+    <div className="mb-4 flex flex-wrap gap-4">
+      {items.map((item) => (
+        <button
+          key={item.name}
+          className={`flex items-center gap-2 rounded px-2 py-1 text-sm transition-opacity hover:bg-neutral-100 ${
+            item.visible ? 'opacity-100' : 'opacity-50'
+          }`}
+          onClick={() => onItemClick(item.name)}
+        >
+          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
+          <span>{item.label}</span>
+        </button>
+      ))}
+    </div>
   )
 }
 

@@ -1,12 +1,12 @@
+import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { Line } from 'recharts'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
-import { Chart } from './chart'
+import { Chart, ChartTooltip, ChartTooltipContent, Label, Line, ReferenceLine } from './chart'
 import { useObservabilityContext } from './observability-context'
 import { COLORS, type MetricData, addTimeRangePadding, formatTimestamp } from './time-range-utils'
 
-export function CpuChart() {
+export function CpuChart({ events }: { events?: OrganizationEventResponse[] }) {
   const { organizationId = '' } = useParams()
   const { clusterId, serviceId, customQuery, customApiEndpoint, startTimestamp, endTimestamp, useLocalTime } =
     useObservabilityContext()
@@ -27,7 +27,7 @@ export function CpuChart() {
     organizationId,
     clusterId,
     serviceId,
-    customQuery: `sum by (pod, label_qovery_com_service_id) (kube_pod_container_resource_limits{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    customQuery: `sum by (label_qovery_com_service_id) (kube_pod_container_resource_limits{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
     customApiEndpoint,
     startDate: startTimestamp,
     endDate: endTimestamp,
@@ -38,11 +38,47 @@ export function CpuChart() {
     organizationId,
     clusterId,
     serviceId,
-    customQuery: `sum by (pod, label_qovery_com_service_id) (kube_pod_container_resource_requests{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    customQuery: `sum by (label_qovery_com_service_id) (bottomk(1,kube_pod_container_resource_requests{resource="cpu", container!="", pod=~".+"}* on(namespace, pod) group_left(label_qovery_com_service_id)kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
     customApiEndpoint,
     startDate: startTimestamp,
     endDate: endTimestamp,
   })
+
+  // const legendItems = useMemo((): LegendItem[] => {
+  //   const items: LegendItem[] = []
+
+  //   seriesNames.forEach((name, index) => {
+  //     const color = COLORS[index] ?? 'var(--color-brand-500)'
+  //     const label = originalPodNames[name] || name
+  //     items.push({
+  //       name,
+  //       color,
+  //       visible: visibleSeries.size === 0 || visibleSeries.has(name),
+  //       label: `Pod: ${label}`,
+  //     })
+  //   })
+
+  //   limitSeriesNames.forEach((name) => {
+  //     items.push({
+  //       name,
+  //       color: 'var(--color-red-500)',
+  //       visible: visibleSeries.size === 0 || visibleSeries.has(name),
+  //       label: 'CPU Limit',
+  //     })
+  //   })
+
+  //   // Ajouter les requêtes CPU
+  //   requestSeriesNames.forEach((name) => {
+  //     items.push({
+  //       name,
+  //       color: 'var(--color-brand-500)',
+  //       visible: visibleSeries.size === 0 || visibleSeries.has(name),
+  //       label: 'CPU Request',
+  //     })
+  //   })
+
+  //   return items
+  // }, [seriesNames, limitSeriesNames, requestSeriesNames, originalPodNames, visibleSeries])
 
   const chartData = useMemo(() => {
     if (!metrics?.data?.result) {
@@ -151,53 +187,116 @@ export function CpuChart() {
     return mapping
   }, [metrics])
 
-  console.log(requestMetrics)
+  const eventsDeployed = events?.filter((event) => event.event_type === 'DEPLOYED')
+
+  const deploymentTimestamps = useMemo(() => {
+    return (
+      eventsDeployed
+        ?.map((event) => {
+          const timestamp = event.timestamp ? new Date(event.timestamp).getTime() : null
+          return timestamp
+        })
+        .filter((timestamp): timestamp is number => timestamp !== null) || []
+    )
+  }, [eventsDeployed])
 
   return (
-    <Chart
-      label="CPU (mCPU)"
-      chartData={chartData}
-      seriesNames={seriesNames}
-      originalPodNames={originalPodNames}
-      colors={COLORS}
-      isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
-      useLocalTime={useLocalTime}
-      timeRange={{
-        start: startTimestamp,
-        end: endTimestamp,
-      }}
-    >
-      {limitSeriesNames.map((name: string) => {
-        return (
-          <Line
-            key={name}
-            type="linear"
-            dataKey={name}
-            stroke="var(--color-red-500)"
-            strokeWidth={2}
-            dot={{ r: 0 }}
-            activeDot={{ r: 2, stroke: 'var(--color-red-500)', color: 'var(--color-red-500)' }}
-            connectNulls={true}
-            isAnimationActive={false}
-          />
-        )
-      })}
-      {requestSeriesNames.map((name: string) => {
-        return (
-          <Line
-            key={name}
-            type="linear"
-            dataKey={name}
-            stroke="var(--color-brand-500)"
-            strokeWidth={2}
-            dot={{ r: 0 }}
-            activeDot={{ r: 2, stroke: 'var(--color-brand-500)', color: 'var(--color-brand-500)' }}
-            connectNulls={true}
-            isAnimationActive={false}
-          />
-        )
-      })}
-    </Chart>
+    <>
+      <Chart
+        label="CPU (mCPU)"
+        chartData={chartData}
+        seriesNames={seriesNames}
+        colors={COLORS}
+        isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
+        useLocalTime={useLocalTime}
+        timeRange={{
+          start: startTimestamp,
+          end: endTimestamp,
+        }}
+      >
+        <ChartTooltip
+          content={(props) => (
+            <ChartTooltipContent
+              {...props}
+              title="CPU Usage"
+              formatLabel={(seriesKey) => {
+                if (seriesKey.startsWith('pod-')) {
+                  return originalPodNames[seriesKey] || seriesKey
+                } else if (seriesKey === 'cpu-limit') {
+                  return 'CPU Limit'
+                } else if (seriesKey === 'cpu-request') {
+                  return 'CPU Request'
+                }
+                return seriesKey
+              }}
+              formatValue={(value) => {
+                const numValue = parseFloat(value?.toString() || '0')
+                return isNaN(numValue) ? 'N/A' : `${numValue.toFixed(2)} mCPU`
+              }}
+            />
+          )}
+        />
+        {limitSeriesNames.map((name: string) => {
+          return (
+            <Line
+              key={name}
+              type="linear"
+              dataKey={name}
+              stroke="var(--color-red-500)"
+              strokeWidth={2}
+              dot={{ r: 0 }}
+              activeDot={{ r: 2, stroke: 'var(--color-red-500)', color: 'var(--color-red-500)' }}
+              connectNulls={false}
+              isAnimationActive={false}
+            />
+          )
+        })}
+        {requestSeriesNames.map((name: string) => {
+          return (
+            <Line
+              key={name}
+              type="linear"
+              dataKey={name}
+              stroke="var(--color-brand-500)"
+              strokeWidth={2}
+              dot={{ r: 0 }}
+              activeDot={{ r: 2, stroke: 'var(--color-brand-500)', color: 'var(--color-brand-500)' }}
+              connectNulls={false}
+              isAnimationActive={false}
+            />
+          )
+        })}
+
+        {deploymentTimestamps.map((timestamp: number, index: number) => {
+          const isInRange = timestamp >= Number(startTimestamp) * 1000 && timestamp <= Number(endTimestamp) * 1000
+          if (!isInRange) return null
+
+          const closestDataPoint = chartData.reduce((closest, current) => {
+            const closestDiff = Math.abs(closest.timestamp - timestamp)
+            const currentDiff = Math.abs(current.timestamp - timestamp)
+            return currentDiff < closestDiff ? current : closest
+          }, chartData[0])
+
+          return (
+            <ReferenceLine
+              key={`deployment-${index}`}
+              x={closestDataPoint?.timestamp || timestamp}
+              stroke="var(--color-brand-500)"
+              strokeWidth={2}
+              strokeOpacity={0.5}
+              strokeDasharray="3 3"
+              label={{
+                value: 'Deployed',
+                position: 'top',
+                offset: -2,
+                style: { fontSize: 10, fill: 'var(--color-brand-500)', backgroundColor: 'var(--color-brand-500)' },
+              }}
+            />
+          )
+        })}
+      </Chart>
+      {/* <ChartLegend items={legendItems} onItemClick={onLegendClick} /> */}
+    </>
   )
 }
 
