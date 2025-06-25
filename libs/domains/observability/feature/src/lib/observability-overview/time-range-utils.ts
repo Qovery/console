@@ -162,16 +162,15 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
   endTimestamp: string,
   useLocalTime: boolean
 ): T[] {
-  if (!chartData.length) return chartData
+  if (!chartData.length) return []
 
-  const timeSeriesMap = new Map<number, T>()
+  const startMs = Number(startTimestamp) * 1000
+  const endMs = Number(endTimestamp) * 1000
 
-  // Ajouter toutes les données existantes
-  chartData.forEach((dataPoint) => {
-    timeSeriesMap.set(dataPoint.timestamp, dataPoint)
-  })
+  const allTimestamps = chartData.map((d) => d.timestamp).sort((a, b) => a - b)
+  const firstDataMs = allTimestamps[0]
+  const lastDataMs = allTimestamps[allTimestamps.length - 1]
 
-  // Fonction helper pour formater les dates
   const formatTimestamp = (timestampMs: number) => {
     const date = new Date(timestampMs)
 
@@ -214,29 +213,41 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
     return { timeString, fullTimeString }
   }
 
-  // Ajouter un point au début de la plage si absent
-  const startTimestampMs = Number(startTimestamp) * 1000
-  if (!timeSeriesMap.has(startTimestampMs)) {
-    const { timeString, fullTimeString } = formatTimestamp(startTimestampMs)
-    timeSeriesMap.set(startTimestampMs, {
-      timestamp: startTimestampMs,
-      time: timeString,
-      fullTime: fullTimeString,
-    } as T)
+  const existingData = new Set(chartData.map((d) => d.timestamp))
+  const result = [...chartData]
+
+  const dataInterval =
+    allTimestamps.length > 1
+      ? (allTimestamps[allTimestamps.length - 1] - allTimestamps[0]) / (allTimestamps.length - 1)
+      : 60000
+
+  let current = startMs
+  while (current < firstDataMs) {
+    if (!existingData.has(current)) {
+      const { timeString, fullTimeString } = formatTimestamp(current)
+      result.push({
+        timestamp: current,
+        time: timeString,
+        fullTime: fullTimeString,
+      } as T)
+    }
+    current += dataInterval
   }
 
-  // Ajouter un point à la fin de la plage si absent
-  const endTimestampMs = Number(endTimestamp) * 1000
-  if (!timeSeriesMap.has(endTimestampMs)) {
-    const { timeString, fullTimeString } = formatTimestamp(endTimestampMs)
-    timeSeriesMap.set(endTimestampMs, {
-      timestamp: endTimestampMs,
-      time: timeString,
-      fullTime: fullTimeString,
-    } as T)
+  current = lastDataMs + dataInterval
+  while (current <= endMs) {
+    if (!existingData.has(current)) {
+      const { timeString, fullTimeString } = formatTimestamp(current)
+      result.push({
+        timestamp: current,
+        time: timeString,
+        fullTime: fullTimeString,
+      } as T)
+    }
+    current += dataInterval
   }
 
-  return Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
+  return result.sort((a, b) => a.timestamp - b.timestamp)
 }
 
 // export const chartTimeData: ChartTimeData = {
