@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
-import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Section, Skeleton } from '@qovery/shared/ui'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
+import { BlockContent, Heading, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { PageOrganizationCredentials } from '../../ui/page-organization-credentials/page-organization-credentials'
 
@@ -24,8 +24,13 @@ export function PageOrganizationCredentialsFeature() {
   return (
     <div className="w-full">
       <Section className="flex max-w-content-with-navigation-left flex-col p-8">
-        <SettingsHeading title="Cloud Credentials" description="Manage your Cloud providers credentials" />
-        <BlockContent title="Configured credentials" classNameContent="p-0">
+        <div className="space-y-3">
+          <Heading>Cloud Credentials</Heading>
+          <p className="text-xs text-neutral-400">Manage your Cloud providers credentials</p>
+          <NeedHelp />
+        </div>
+
+        <BlockContent title="Configured credentials" classNameContent="p-0" className="mt-8">
           <Suspense fallback={<Loader />}>
             <PageOrganizationCredentials />
           </Suspense>

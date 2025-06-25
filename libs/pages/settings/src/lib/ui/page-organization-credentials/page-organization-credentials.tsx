@@ -119,42 +119,42 @@ export const PageOrganizationCredentials = () => {
           key={credential.id}
         >
           <div className="grid grid-cols-[32px_1fr] gap-2">
-            <ClusterAvatar cloudProvider={toCloudProvider(credential.object_type)} size="sm" />
+            <ClusterAvatar cloudProvider={toCloudProvider(credential.object_type)} size="sm" className="-ml-1.5" />
             <div className="flex flex-col justify-center">
-              <span className="text-sm font-medium text-neutral-400">{credential.name}</span>
+              <span className="text-xs font-medium text-neutral-400">{credential.name}</span>
 
               {'role_arn' in credential && (
-                <span className="mt-1.5 text-xs">
+                <span className="mt-1 text-xs">
                   <span className="text-neutral-350">Role ARN: </span>
                   <span className="text-neutral-400">{credential.role_arn || ''}</span>
                 </span>
               )}
               {'access_key_id' in credential && (
-                <span className="mt-1.5 text-xs">
+                <span className="mt-1 text-xs">
                   <span className="text-neutral-350">Public Access Key: </span>
                   <span className="text-neutral-400">{credential.access_key_id}</span>
                 </span>
               )}
               {'scaleway_access_key' in credential && (
-                <span className="mt-1.5 text-xs">
+                <span className="mt-1 text-xs">
                   <span className="text-neutral-350">Access Key: </span>
                   <span className="text-neutral-400">{credential.scaleway_access_key}</span>
                 </span>
               )}
               {'scaleway_project_id' in credential && (
-                <span className="mt-1.5 text-xs">
+                <span className="mt-1 text-xs">
                   <span className="text-neutral-350">Project ID: </span>
                   <span className="text-neutral-400">{credential.scaleway_project_id}</span>
                 </span>
               )}
               {'azure_tenant_id' in credential && (
-                <span className="mt-1.5 text-xs">
+                <span className="mt-1 text-xs">
                   <span className="text-neutral-350">Tenant ID: </span>
                   <span className="text-neutral-400">{credential.azure_tenant_id}</span>
                 </span>
               )}
               {'azure_subscription_id' in credential && (
-                <span className="mt-1.5 text-xs">
+                <span className="mt-1 text-xs">
                   <span className="text-neutral-350">Subscription ID: </span>
                   <span className="text-neutral-400">{credential.azure_subscription_id}</span>
                 </span>
@@ -164,13 +164,11 @@ export const PageOrganizationCredentials = () => {
           <div className="flex gap-2">
             {clusters.length > 0 && (
               <Indicator
-                align="end"
                 content={
-                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1 text-center text-xs text-white">
+                  <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-brand-500 text-3xs font-bold leading-[0] text-white">
                     {clusters.length}
                   </span>
                 }
-                side="top"
               >
                 <Button
                   size="md"
@@ -206,7 +204,7 @@ export const PageOrganizationCredentials = () => {
                 type="button"
                 data-testid="remove-credential"
               >
-                <Icon iconName="trash" iconStyle="regular" />
+                <Icon iconName="trash-can" iconStyle="regular" />
               </Button>
             </Tooltip>
           </div>
