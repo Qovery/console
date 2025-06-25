@@ -29,7 +29,7 @@ export function PageSettingsCredentials(props: PageSettingsCredentialsProps) {
               className="flex gap-1 text-brand-500"
             >
               See all my cloud credentials
-              <Icon iconName="key" />
+              <Icon iconName="key" iconStyle="regular" />
             </Link>
           }
         />

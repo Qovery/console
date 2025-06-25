@@ -1,6 +1,6 @@
 import { type OrganizationCrendentialsResponseListResultsInner } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { PageOrganizationCredentials } from './page-organization-credentials'
+import { PageOrganizationCredentialsFeature } from './page-organization-credentials-feature'
 
 let mockCredentials: OrganizationCrendentialsResponseListResultsInner[] = []
 jest.mock('@qovery/domains/organizations/feature', () => {
@@ -13,15 +13,15 @@ jest.mock('@qovery/domains/organizations/feature', () => {
   }
 })
 
-describe('PageOrganizationCredentials', () => {
+describe('PageOrganizationCredentialsFeature', () => {
   it('should render', () => {
-    const { baseElement } = renderWithProviders(<PageOrganizationCredentials />)
+    const { baseElement } = renderWithProviders(<PageOrganizationCredentialsFeature />)
     expect(baseElement).toBeTruthy()
   })
 
   describe('when there are no credentials', () => {
     it('should render an empty state', () => {
-      renderWithProviders(<PageOrganizationCredentials />)
+      renderWithProviders(<PageOrganizationCredentialsFeature />)
       screen.getByText('All credentials related to your clusters will appear here after creation.')
     })
   })
@@ -52,7 +52,7 @@ describe('PageOrganizationCredentials', () => {
           ],
         },
       ]
-      renderWithProviders(<PageOrganizationCredentials />)
+      renderWithProviders(<PageOrganizationCredentialsFeature />)
 
       screen.getByText('Credential 1')
       screen.getByText('Credential 2')
@@ -90,7 +90,7 @@ describe('PageOrganizationCredentials', () => {
           clusters: [],
         },
       ]
-      renderWithProviders(<PageOrganizationCredentials />)
+      renderWithProviders(<PageOrganizationCredentialsFeature />)
 
       const row = screen.getByText('Credential 1').parentElement?.parentElement?.parentElement
       const deleteButton = row?.querySelectorAll('button')[2] // Delete button is the third button in the row

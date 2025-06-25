@@ -1,4 +1,4 @@
-import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import { Link, useLocation } from 'react-router-dom'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
@@ -38,7 +38,7 @@ export type NavigationLeftLinkProps = {
       }
     | {
         iconName?: IconName
-        iconStyle?: 'solid' | 'regular' | 'brands'
+        iconStyle?: IconStyle
         icon?: never
       }
   )
