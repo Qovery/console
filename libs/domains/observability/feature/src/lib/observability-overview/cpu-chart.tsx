@@ -27,7 +27,7 @@ export function CpuChart({ events }: { events?: OrganizationEventResponse[] }) {
     organizationId,
     clusterId,
     serviceId,
-    customQuery: `sum by (label_qovery_com_service_id) (kube_pod_container_resource_limits{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    customQuery: `sum by (label_qovery_com_service_id) (bottomk(1,kube_pod_container_resource_limits{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
     customApiEndpoint,
     startDate: startTimestamp,
     endDate: endTimestamp,
