@@ -49,6 +49,13 @@ const membersApi = new MembersApi()
 const githubAppApi = new GithubAppApi()
 
 export const organizations = createQueryKeys('organizations', {
+  listCredentials: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.listOrganizationCredentials(organizationId)
+      return response.data.results
+    },
+  }),
   list: {
     queryKey: null,
     async queryFn() {
