@@ -173,6 +173,28 @@ export const createTimeRangeHandler = (
 }
 
 /**
+ * Calculate logical ticks for chart X-axis with exactly 8 ticks
+ */
+export function getLogicalTicks(timeRange: { start: string; end: string }): number[] {
+  const startTime = Number(timeRange.start) * 1000
+  const endTime = Number(timeRange.end) * 1000
+  const durationMs = endTime - startTime
+
+  // Calculate interval to get exactly 8 ticks (7 intervals)
+  const intervalMs = durationMs / 7
+
+  const ticks: number[] = []
+
+  // Generate exactly 8 ticks
+  for (let i = 0; i < 8; i++) {
+    const tickTime = startTime + i * intervalMs
+    ticks.push(tickTime)
+  }
+
+  return ticks
+}
+
+/**
  * Generic helper to format timestamps for chart data
  */
 export function formatTimestamp(timestampMs: number, useLocalTime: boolean) {

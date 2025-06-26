@@ -1,8 +1,10 @@
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
+import { Customized } from 'recharts'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
-import { Chart, ChartTooltip, ChartTooltipContent, Label, Line, ReferenceLine } from './chart'
+import ReferenceLineEvents from '../reference-line-events/reference-line-events'
+import { Chart, ChartTooltip, ChartTooltipContent, Line, ReferenceLine } from './chart'
 import { useObservabilityContext } from './observability-context'
 import { COLORS, type MetricData, addTimeRangePadding, formatTimestamp } from './time-range-utils'
 
@@ -16,7 +18,7 @@ export function CpuChart({ events }: { events?: OrganizationEventResponse[] }) {
     organizationId,
     clusterId,
     serviceId,
-    customQuery,
+    customQuery: `sum by (pod, label_qovery_com_service_id) (rate(container_cpu_usage_seconds_total{container!="", pod=~".+"}[1m]) * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
     customApiEndpoint,
     startDate: startTimestamp,
     endDate: endTimestamp,
@@ -187,116 +189,74 @@ export function CpuChart({ events }: { events?: OrganizationEventResponse[] }) {
     return mapping
   }, [metrics])
 
-  const eventsDeployed = events?.filter((event) => event.event_type === 'DEPLOYED')
-
-  const deploymentTimestamps = useMemo(() => {
-    return (
-      eventsDeployed
-        ?.map((event) => {
-          const timestamp = event.timestamp ? new Date(event.timestamp).getTime() : null
-          return timestamp
-        })
-        .filter((timestamp): timestamp is number => timestamp !== null) || []
-    )
-  }, [eventsDeployed])
-
   return (
-    <>
-      <Chart
-        label="CPU (mCPU)"
-        chartData={chartData}
-        seriesNames={seriesNames}
-        colors={COLORS}
-        isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
-        useLocalTime={useLocalTime}
-        timeRange={{
-          start: startTimestamp,
-          end: endTimestamp,
-        }}
-      >
-        <ChartTooltip
-          content={(props) => (
-            <ChartTooltipContent
-              {...props}
-              title="CPU Usage"
-              formatLabel={(seriesKey) => {
-                if (seriesKey.startsWith('pod-')) {
-                  return originalPodNames[seriesKey] || seriesKey
-                } else if (seriesKey === 'cpu-limit') {
-                  return 'CPU Limit'
-                } else if (seriesKey === 'cpu-request') {
-                  return 'CPU Request'
-                }
-                return seriesKey
-              }}
-              formatValue={(value) => {
-                const numValue = parseFloat(value?.toString() || '0')
-                return isNaN(numValue) ? 'N/A' : `${numValue.toFixed(2)} mCPU`
-              }}
-            />
-          )}
-        />
-        {limitSeriesNames.map((name: string) => {
-          return (
-            <Line
-              key={name}
-              type="linear"
-              dataKey={name}
-              stroke="var(--color-red-500)"
-              strokeWidth={2}
-              dot={{ r: 0 }}
-              activeDot={{ r: 2, stroke: 'var(--color-red-500)', color: 'var(--color-red-500)' }}
-              connectNulls={false}
-              isAnimationActive={false}
-            />
-          )
-        })}
-        {requestSeriesNames.map((name: string) => {
-          return (
-            <Line
-              key={name}
-              type="linear"
-              dataKey={name}
-              stroke="var(--color-brand-500)"
-              strokeWidth={2}
-              dot={{ r: 0 }}
-              activeDot={{ r: 2, stroke: 'var(--color-brand-500)', color: 'var(--color-brand-500)' }}
-              connectNulls={false}
-              isAnimationActive={false}
-            />
-          )
-        })}
+    <Chart
+      label="CPU (mCPU)"
+      chartData={chartData}
+      seriesNames={seriesNames}
+      colors={COLORS}
+      isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
+      useLocalTime={useLocalTime}
+      timeRange={{
+        start: startTimestamp,
+        end: endTimestamp,
+      }}
+    >
+      <ChartTooltip
+        content={(props) => (
+          <ChartTooltipContent
+            {...props}
+            title="CPU Usage"
+            formatLabel={(seriesKey) => {
+              if (seriesKey.startsWith('pod-')) {
+                return originalPodNames[seriesKey] || seriesKey
+              } else if (seriesKey === 'cpu-limit') {
+                return 'CPU Limit'
+              } else if (seriesKey === 'cpu-request') {
+                return 'CPU Request'
+              }
+              return seriesKey
+            }}
+            formatValue={(value) => {
+              const numValue = parseFloat(value?.toString() || '0')
+              return isNaN(numValue) ? 'N/A' : `${numValue.toFixed(2)} mCPU`
+            }}
+          />
+        )}
+      />
+      {limitSeriesNames.map((name: string) => {
+        return (
+          <Line
+            key={name}
+            type="linear"
+            dataKey={name}
+            stroke="var(--color-red-500)"
+            strokeWidth={2}
+            dot={{ r: 0 }}
+            activeDot={{ r: 2, stroke: 'var(--color-red-500)', color: 'var(--color-red-500)' }}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+        )
+      })}
+      {requestSeriesNames.map((name: string) => {
+        return (
+          <Line
+            key={name}
+            type="linear"
+            dataKey={name}
+            stroke="var(--color-brand-500)"
+            strokeWidth={2}
+            dot={{ r: 0 }}
+            activeDot={{ r: 2, stroke: 'var(--color-brand-500)', color: 'var(--color-brand-500)' }}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+        )
+      })}
 
-        {deploymentTimestamps.map((timestamp: number, index: number) => {
-          const isInRange = timestamp >= Number(startTimestamp) * 1000 && timestamp <= Number(endTimestamp) * 1000
-          if (!isInRange) return null
-
-          const closestDataPoint = chartData.reduce((closest, current) => {
-            const closestDiff = Math.abs(closest.timestamp - timestamp)
-            const currentDiff = Math.abs(current.timestamp - timestamp)
-            return currentDiff < closestDiff ? current : closest
-          }, chartData[0])
-
-          return (
-            <ReferenceLine
-              key={`deployment-${index}`}
-              x={closestDataPoint?.timestamp || timestamp}
-              stroke="var(--color-brand-500)"
-              strokeWidth={2}
-              strokeOpacity={0.5}
-              strokeDasharray="3 3"
-              label={{
-                value: 'Deployed',
-                position: 'top',
-                offset: -2,
-                style: { fontSize: 10, fill: 'var(--color-brand-500)', backgroundColor: 'var(--color-brand-500)' },
-              }}
-            />
-          )
-        })}
-      </Chart>
-      {/* <ChartLegend items={legendItems} onItemClick={onLegendClick} /> */}
-    </>
+      <Customized component={ReferenceLineEvents} events={events} />
+    </Chart>
   )
 }
 

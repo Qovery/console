@@ -2,6 +2,7 @@ import { type PropsWithChildren } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent'
 import { LoaderSpinner } from '@qovery/shared/ui'
+import { getLogicalTicks } from './time-range-utils'
 
 const ResponsiveContainer = RechartsPrimitive.ResponsiveContainer
 const LineChart = RechartsPrimitive.LineChart
@@ -66,6 +67,7 @@ export {
   Label,
 }
 
+// Todo: Need to refactor this component
 interface ChartDataPoint {
   timestamp: number
   time: string
@@ -112,11 +114,23 @@ export function Chart({
     )
   }
 
+  const getDomain = () => {
+    if (!chartData || chartData.length === 0) {
+      return timeRange ? [Number(timeRange.start) * 1000, Number(timeRange.end) * 1000] : ['dataMin', 'dataMax']
+    }
+
+    const dataMin = Math.min(...chartData.map((d) => d.timestamp))
+    const dataMax = Math.max(...chartData.map((d) => d.timestamp))
+
+    return [dataMin, dataMax]
+  }
+
   return (
     <ResponsiveContainer>
       <LineChart
         data={chartData}
         syncId="syncId"
+        margin={{ bottom: 10 }}
         // onMouseMove={() => setOnHover(true)}
         // onMouseLeave={() => setOnHover(false)}
         // onMouseUp={() => setOnHover(false)}
@@ -124,10 +138,12 @@ export function Chart({
         <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="timestamp"
-          type="category"
+          type="number"
+          scale="time"
+          domain={getDomain()}
+          ticks={timeRange ? getLogicalTicks(timeRange) : undefined}
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          interval="preserveStartEnd"
           axisLine={{ stroke: 'var(--color-neutral-250)' }}
           tickFormatter={(timestamp) => {
             const date = new Date(timestamp)
@@ -158,12 +174,9 @@ export function Chart({
             const minutes = useLocalTime
               ? date.getMinutes().toString().padStart(2, '0')
               : date.getUTCMinutes().toString().padStart(2, '0')
-            const seconds = useLocalTime
-              ? date.getSeconds().toString().padStart(2, '0')
-              : date.getUTCSeconds().toString().padStart(2, '0')
-            return `${hours}:${minutes}:${seconds}`
+            return `${hours}:${minutes}`
           }}
-          allowDataOverflow={true}
+          allowDataOverflow={false}
         />
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
@@ -195,32 +208,6 @@ export function Chart({
         {children}
       </LineChart>
     </ResponsiveContainer>
-  )
-}
-
-export interface LegendItem {
-  name: string
-  color: string
-  visible: boolean
-  label: string
-}
-
-export function Legend({ items, onItemClick }: { items: LegendItem[]; onItemClick: (itemName: string) => void }) {
-  return (
-    <div className="mb-4 flex flex-wrap gap-4">
-      {items.map((item) => (
-        <button
-          key={item.name}
-          className={`flex items-center gap-2 rounded px-2 py-1 text-sm transition-opacity hover:bg-neutral-100 ${
-            item.visible ? 'opacity-100' : 'opacity-50'
-          }`}
-          onClick={() => onItemClick(item.name)}
-        >
-          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
-          <span>{item.label}</span>
-        </button>
-      ))}
-    </div>
   )
 }
 

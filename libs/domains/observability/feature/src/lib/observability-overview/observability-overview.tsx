@@ -147,7 +147,7 @@ function ObservabilityOverviewContent() {
       </div>
 
       {timeRange === 'custom' && (
-        <div className="grid grid-cols-2 gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+        <div className="grid grid-cols-2 gap-4 rounded border border-neutral-250 bg-neutral-100 p-4 pb-0">
           <div className="flex flex-col space-y-2">
             <label htmlFor="start-date" className="text-sm font-medium text-neutral-700">
               Start Date
