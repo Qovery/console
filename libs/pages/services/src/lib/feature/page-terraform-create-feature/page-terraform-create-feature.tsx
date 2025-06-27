@@ -46,7 +46,7 @@ export const TERRAFORM_VERSIONS = [
 ]
 export const steps: { title: string }[] = [
   { title: 'General information' },
-  { title: 'Values override as file' },
+  { title: 'Terraform configuration' },
   { title: 'Values override as arguments' },
   { title: 'Summary' },
 ]
@@ -63,6 +63,7 @@ export interface TerraformGeneralData
   chart_version?: string
   arguments: string
   timeout_sec: string
+  state: 'kubernetes'
 }
 
 interface TerraformCreateContextInterface {
@@ -95,6 +96,7 @@ export function PageTerraformCreateFeature() {
       name: dataTemplate?.slug ?? '',
       icon_uri: dataTemplate?.icon_uri ?? 'app://qovery-console/terraform',
       source_provider: 'GIT',
+      state: 'kubernetes',
       provider_version: {
         read_from_terraform_block: false,
         explicit_version: TERRAFORM_VERSIONS[0],
@@ -108,6 +110,7 @@ export function PageTerraformCreateFeature() {
         tf_vars: [],
         tf_var_file_paths: [],
       },
+      timeout_sec: '60',
     },
   })
 
