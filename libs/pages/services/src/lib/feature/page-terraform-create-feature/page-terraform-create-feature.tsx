@@ -111,6 +111,7 @@ export function PageTerraformCreateFeature() {
         tf_var_file_paths: [],
       },
       timeout_sec: '60',
+      use_cluster_credentials: true,
     },
   })
 

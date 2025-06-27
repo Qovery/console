@@ -126,7 +126,7 @@ export function StepConfigurationFeature() {
                     <RadioGroup.Root
                       defaultValue={field.value ? 'true' : 'false'}
                       className="flex flex-col gap-5"
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => field.onChange(value === 'true')}
                     >
                       <label className="grid grid-cols-[16px_1fr] gap-3">
                         <RadioGroup.Item value="true" />
@@ -151,7 +151,7 @@ export function StepConfigurationFeature() {
                   )}
                 />
 
-                {!generalData.use_cluster_credentials && (
+                {generalForm.watch('use_cluster_credentials') === false && (
                   <Callout.Root color="sky" className="mt-4">
                     <Callout.Icon>
                       <Icon iconName="info-circle" iconStyle="regular" />

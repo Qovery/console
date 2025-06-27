@@ -84,7 +84,7 @@ export function StepGeneralFeature() {
                     ram_mib: 256,
                     storage_gib: 1000,
                   },
-                  use_cluster_credentials: false,
+                  use_cluster_credentials: true,
                 }}
               />
             </Section>
