@@ -45,7 +45,7 @@ export const TERRAFORM_VERSIONS = [
   '0.1.1',
 ]
 export const steps: { title: string }[] = [
-  { title: 'General data' },
+  { title: 'General information' },
   { title: 'Values override as file' },
   { title: 'Values override as arguments' },
   { title: 'Summary' },

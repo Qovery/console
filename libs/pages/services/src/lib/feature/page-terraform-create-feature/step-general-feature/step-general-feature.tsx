@@ -17,7 +17,7 @@ import { TERRAFORM_VERSIONS, useTerraformCreateContext } from '../page-terraform
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Terraform')
 
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const navigate = useNavigate()
 
@@ -96,7 +96,10 @@ export function StepGeneralFeature() {
                   <GitProviderSetting />
                   {watchFieldIsPublicRepository ? (
                     <>
-                      <GitPublicRepositorySettings />
+                      <GitPublicRepositorySettings
+                        rootPathLabel="Manifest folder path"
+                        rootPathHint="Provide the folder path in the repository where the manifest  is located."
+                      />
                       <Callout.Root color="sky" className="items-center">
                         <Callout.Icon>
                           <Icon iconName="info-circle" iconStyle="regular" />
@@ -116,8 +119,8 @@ export function StepGeneralFeature() {
                         <GitBranchSettings
                           gitProvider={watchFieldGitProvider}
                           gitTokenId={watchFieldGitTokenId}
-                          rootPathLabel="Root module path"
-                          rootPathHint="Provide the folder path in the repository where the root module is located."
+                          rootPathLabel="Manifest folder path"
+                          rootPathHint="Provide the folder path in the repository where the manifest is located."
                         />
                       )}
                     </>
