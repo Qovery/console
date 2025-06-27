@@ -22,6 +22,9 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
 
   const defaultInstances = match(service)
     .with({ serviceType: 'JOB' }, () => ({}))
+    .with({ serviceType: 'TERRAFORM' }, (s) => ({
+      storage_gib: s.job_resources.storage_gib,
+    }))
     .otherwise((s) => ({
       min_running_instances: s.min_running_instances || 1,
       max_running_instances: s.max_running_instances || 1,
@@ -30,8 +33,12 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      memory: service.memory,
-      cpu: service.cpu,
+      memory: match(service)
+        .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources.ram_mib)
+        .otherwise((s) => s.memory || 0),
+      cpu: match(service)
+        .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources.cpu_milli)
+        .otherwise((s) => s.cpu || 0),
       ...defaultInstances,
     },
   })
@@ -67,6 +74,18 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
           request: requestWithInstances,
         })
       )
+      .with({ serviceType: 'TERRAFORM' }, (service) =>
+        buildEditServicePayload({
+          service,
+          request: {
+            job_resources: {
+              cpu_milli: Number(data['cpu']),
+              ram_mib: Number(data['memory']),
+              storage_gib: Number(data['storage_gib']),
+            },
+          },
+        })
+      )
       .exhaustive()
 
     editService({
@@ -75,7 +94,8 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
     })
   })
 
-  const displayWarningCpu: boolean = (methods.watch('cpu') || 0) > (service.maximum_cpu || 0)
+  const displayWarningCpu: boolean =
+    'maximum_cpu' in service && (methods.watch('cpu') || 0) > (service.maximum_cpu || 0)
 
   return (
     <FormProvider {...methods}>
@@ -98,9 +118,13 @@ export function PageSettingsResourcesFeature() {
   if (!environment) return null
 
   return match(service)
-    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, { serviceType: 'JOB' }, (service) => (
-      <SettingsResourcesFeature service={service} environment={environment} />
-    ))
+    .with(
+      { serviceType: 'APPLICATION' },
+      { serviceType: 'CONTAINER' },
+      { serviceType: 'JOB' },
+      { serviceType: 'TERRAFORM' },
+      (service) => <SettingsResourcesFeature service={service} environment={environment} />
+    )
     .otherwise(() => null)
 }
 
