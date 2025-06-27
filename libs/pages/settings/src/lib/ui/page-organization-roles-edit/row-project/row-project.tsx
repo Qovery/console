@@ -72,29 +72,6 @@ export function RowProject(props: RowProjectProps) {
 
   return (
     <>
-      <div data-testid="project-head" className="flex h-10 items-center border-b border-neutral-200 bg-neutral-150">
-        <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral-250 px-4 font-medium">
-          {project.project_name}
-        </div>
-        {Object.keys(OrganizationCustomRoleProjectPermissionAdmin)
-          .reverse()
-          .map((permission) => (
-            <div
-              key={permission}
-              className="flex h-full flex-1 items-center justify-center border-r border-neutral-250 px-4 last:border-0"
-            >
-              <InputCheckbox
-                dataTestId={`project.${permission}`}
-                name={`project_permissions.${project.project_id}`}
-                value={globalCheck}
-                formValue={permission}
-                onChange={(e) => {
-                  onChangeHeadCheckbox(project, permission, globalCheck, setGlobalCheck, setValue)
-                }}
-              />
-            </div>
-          ))}
-      </div>
       <div>
         {(project.is_admin ? defaultProjectPermission('ADMIN') : project.permissions)?.map(
           (
@@ -156,6 +133,29 @@ export function RowProject(props: RowProjectProps) {
             </div>
           )
         )}
+      </div>
+      <div data-testid="project-head" className="flex h-10 items-center border-b border-neutral-200 bg-neutral-150">
+        <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral-250 px-4 font-medium">
+          {project.project_name}
+        </div>
+        {Object.keys(OrganizationCustomRoleProjectPermissionAdmin)
+          .reverse()
+          .map((permission) => (
+            <div
+              key={permission}
+              className="flex h-full flex-1 items-center justify-center border-r border-neutral-250 px-4 last:border-0"
+            >
+              <InputCheckbox
+                dataTestId={`project.${permission}`}
+                name={`project_permissions.${project.project_id}`}
+                value={globalCheck}
+                formValue={permission}
+                onChange={(e) => {
+                  onChangeHeadCheckbox(project, permission, globalCheck, setGlobalCheck, setValue)
+                }}
+              />
+            </div>
+          ))}
       </div>
     </>
   )

@@ -38,9 +38,14 @@ export function TableClusters(props: TableClustersProps) {
         },
       ]}
     >
+      <div>
+        {clusters.map((cluster: OrganizationCustomRoleClusterPermissionsInner) => (
+          <RowCluster key={cluster.cluster_id} cluster={cluster} setGlobalCheck={setGlobalCheck} />
+        ))}
+      </div>
       <div className="flex h-10 items-center border-b border-neutral-200 bg-neutral-150">
         <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral-250 px-4 font-medium">
-          Clusters
+          All Clusters
         </div>
         {Object.keys(OrganizationCustomRoleClusterPermission)
           .reverse()
@@ -69,11 +74,6 @@ export function TableClusters(props: TableClustersProps) {
               />
             </div>
           ))}
-      </div>
-      <div>
-        {clusters.map((cluster: OrganizationCustomRoleClusterPermissionsInner) => (
-          <RowCluster key={cluster.cluster_id} cluster={cluster} setGlobalCheck={setGlobalCheck} />
-        ))}
       </div>
     </Table>
   )
