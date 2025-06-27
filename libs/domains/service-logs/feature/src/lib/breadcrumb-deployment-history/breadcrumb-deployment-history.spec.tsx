@@ -1,5 +1,5 @@
+import { useDeploymentHistory, useService } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { BreadcrumbDeploymentHistory } from './breadcrumb-deployment-history'
 
 jest.mock('react-router-dom', () => ({
@@ -11,7 +11,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }))
 
-jest.mock('../hooks/use-deployment-history/use-deployment-history')
+jest.mock('@qovery/domains/services/feature')
 
 const mockDeploymentHistory = [
   {
@@ -63,6 +63,12 @@ describe('BreadcrumbDeploymentHistory', () => {
   beforeEach(() => {
     useDeploymentHistory.mockReturnValue({
       data: mockDeploymentHistory,
+      isFetched: true,
+    })
+    useService.mockReturnValue({
+      data: {
+        service_type: 'APPLICATION',
+      },
       isFetched: true,
     })
   })

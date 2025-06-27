@@ -121,7 +121,7 @@ export function RowEvent(props: RowEventProps) {
     ))
     .with(OrganizationEventType.DELETE, () => (
       <Badge color="neutral">
-        Delete <Icon iconName="eraser" className="ml-1" />
+        Delete <Icon iconName="inbox-out" className="ml-1" />
       </Badge>
     ))
     .with(
@@ -133,7 +133,7 @@ export function RowEvent(props: RowEventProps) {
       (v) => (
         <Badge color="neutral">
           {upperCaseFirstLetter(v)}
-          <Icon iconName="eraser" className="ml-1" />
+          <Icon iconName="inbox-out" className="ml-1" />
         </Badge>
       )
     )
@@ -149,7 +149,7 @@ export function RowEvent(props: RowEventProps) {
     ))
     .with(OrganizationEventType.TRIGGER_DELETE, () => (
       <Badge color="neutral">
-        Trigger Delete <Icon iconName="eraser" className="ml-1" />
+        Trigger Delete <Icon iconName="inbox-out" className="ml-1" />
       </Badge>
     ))
     .with(OrganizationEventType.TRIGGER_DEPLOY, () => (

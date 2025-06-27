@@ -62,6 +62,22 @@ export const isStopAvailable = (status: keyof typeof StateEnum | keyof typeof Cl
     .otherwise(() => false)
 }
 
+export const isUninstallAvailable = (status: keyof typeof StateEnum | keyof typeof ClusterStateEnum): boolean => {
+  return match(status)
+    .with(
+      'DEPLOYED',
+      'DEPLOYMENT_ERROR',
+      'STOPPED',
+      'STOP_ERROR',
+      'CANCELED',
+      'BUILD_ERROR',
+      'RESTARTED',
+      'RESTART_ERROR',
+      () => true
+    )
+    .otherwise(() => false)
+}
+
 export const isDeleteAvailable = (status: keyof typeof StateEnum | keyof typeof ClusterStateEnum): boolean => {
   return match(status)
     .with(

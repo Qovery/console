@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { Link, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useDeploymentHistory, useService } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
@@ -10,7 +11,6 @@ import {
 import { Button, DropdownMenu, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
-import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 
 export interface BreadcrumbDeploymentHistoryProps {
   type: 'DEPLOYMENT' | 'STAGES' | 'PRE_CHECK'
@@ -20,14 +20,15 @@ export interface BreadcrumbDeploymentHistoryProps {
 
 export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: BreadcrumbDeploymentHistoryProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: allDeploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
-    environmentId,
+  const { data: service } = useService({
+    serviceId: serviceId ?? '',
   })
-  const deploymentHistory = serviceId
-    ? allDeploymentHistory.filter((history) =>
-        history.stages.some((stage) => stage.services.some((service) => service.identifier.service_id === serviceId))
-      )
-    : allDeploymentHistory
+  const { data: serviceDeploymentHistory, isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
+    serviceId: serviceId ?? '',
+    serviceType: service?.service_type ?? 'APPLICATION',
+  })
+
+  const deploymentHistory = serviceDeploymentHistory ?? []
 
   if (!isFetchedDeloymentHistory || deploymentHistory.length === 0) return null
 
@@ -91,12 +92,12 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
                         'PRE_CHECK',
                         () =>
                           ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-                          ENVIRONMENT_PRE_CHECK_LOGS_URL(history.identifier.execution_id)
+                          ENVIRONMENT_PRE_CHECK_LOGS_URL(history.identifier.execution_id ?? '')
                       )
                       .exhaustive()}
                   >
                     <Tooltip content={history.identifier.execution_id}>
-                      <span>{trimId(history.identifier.execution_id)}</span>
+                      <span>{trimId(history.identifier.execution_id ?? '')}</span>
                     </Tooltip>
                     <span className="flex items-center gap-2.5 text-xs text-neutral-250">
                       {dateFullFormat(history.auditing_data.created_at)}

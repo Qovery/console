@@ -120,7 +120,7 @@ describe('ClusterCredentialsModal', () => {
 
       const { userEvent } = renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
 
-      expect(screen.getByText('Edit credentials')).toBeInTheDocument()
+      expect(screen.getByText('Edit credential')).toBeInTheDocument()
       expect(screen.getByText(/The credential change won't be applied/)).toBeInTheDocument()
 
       const nameInput = screen.getByTestId('input-name')

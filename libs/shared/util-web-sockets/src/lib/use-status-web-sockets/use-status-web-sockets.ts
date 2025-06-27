@@ -1,7 +1,5 @@
-import * as Sentry from '@sentry/react'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import { type ServiceStatusDto } from 'qovery-ws-typescript-axios'
-import { useEffect, useRef } from 'react'
 import { v7 as uuidv7 } from 'uuid'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -27,18 +25,7 @@ export function useStatusWebSockets({
   environmentId,
   versionId,
 }: UseStatusWebSocketsProps) {
-  const firstMessageReceived = useRef(false)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const externalRequestId = uuidv7()
-
-  useEffect(() => {
-    return () => {
-      // Cleanup if component unmounts
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
-  }, [])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
@@ -94,39 +81,13 @@ export function useStatusWebSockets({
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
     enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
-    shouldReconnect: true,
-    onOpen(_, event) {
-      timeoutRef.current = setTimeout(() => {
-        if (!firstMessageReceived.current) {
-          Sentry.captureMessage(`No WS message received from /service/status after 6s - id: ${externalRequestId}`, {
-            level: 'error',
-            tags: {
-              organizationId: organizationId ?? 'unknown',
-              environmentId: environmentId ?? 'unknown',
-              projectId: projectId ?? 'unknown',
-              clusterId,
-              externalRequestId,
-              event: JSON.stringify(event),
-            },
-          })
-        }
-      }, 6_000)
-    },
     onMessage(queryClient, message: ServiceStatusDto) {
-      if (!firstMessageReceived.current) {
-        firstMessageReceived.current = true
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current)
-        }
-      }
-
       for (const env of message.environments) {
         queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
           state: env.state,
         }))
         // NOTE: we have to force this reset change because of the way the socket works.
-        // You can have information about an application (eg. if it's stopping)
-        // But you can also lose the information about this application (eg. it it's stopped it won't appear in the socket result)
+        // You can have information about an service (eg. if it's stopping)
         queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
         const services = [...env.applications, ...env.containers, ...env.databases, ...env.jobs, ...env.helms]
         for (const serviceRunningStatus of services) {
@@ -134,6 +95,25 @@ export function useStatusWebSockets({
             queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
             () => serviceRunningStatus
           )
+        }
+      }
+    },
+    onClose(queryClient, event: CloseEvent) {
+      // NOTE: API returns a string for the reason, which allows us to know if the status is available or not
+      // clusterId is required everywhere and environmentId is necessary for the service list
+      const isNotFound = event.reason.includes('NotFound')
+      if (isNotFound && clusterId) {
+        if (environmentId) {
+          queryClient.setQueryData(queries.services.checkRunningStatusClosed(clusterId, environmentId).queryKey, {
+            clusterId,
+            environmentId,
+            reason: event.reason,
+          })
+        } else {
+          queryClient.setQueryData(queries.environments.checkRunningStatusClosed(clusterId).queryKey, {
+            clusterId,
+            reason: event.reason,
+          })
         }
       }
     },

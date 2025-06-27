@@ -1,12 +1,14 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { credentialsMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import PageSettingsGeneral, { type PageSettingsCredentialsProps } from './page-settings-credentials'
+import PageSettingsCredentials, { type PageSettingsCredentialsProps } from './page-settings-credentials'
 
 const mockCredentials = credentialsMock(2)
+const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'useCloudProviderCredentials') as jest.Mock
 
-describe('PageSettingsGeneral', () => {
+describe('PageSettingsCredentials', () => {
   const props: PageSettingsCredentialsProps = {
     onSubmit: jest.fn((e) => e.preventDefault()),
     cloudProvider: CloudProviderEnum.AWS,
@@ -17,14 +19,21 @@ describe('PageSettingsGeneral', () => {
     credentials: mockCredentials[0].id,
   }
 
+  beforeEach(() => {
+    useCloudProviderCredentialsMockSpy.mockReturnValue({
+      data: mockCredentials,
+      isLoading: false,
+    })
+  })
+
   it('should render successfully', async () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsGeneral {...props} />))
+    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<PageSettingsCredentials {...props} />))
     expect(baseElement).toBeTruthy()
   })
 
   it('should submit the form', async () => {
     const { userEvent } = renderWithProviders(
-      wrapWithReactHookForm(<PageSettingsGeneral {...props} />, {
+      wrapWithReactHookForm(<PageSettingsCredentials {...props} />, {
         defaultValues,
       })
     )

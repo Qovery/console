@@ -1,4 +1,4 @@
-import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import { Link, useLocation } from 'react-router-dom'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
@@ -38,6 +38,7 @@ export type NavigationLeftLinkProps = {
       }
     | {
         iconName?: IconName
+        iconStyle?: IconStyle
         icon?: never
       }
   )
@@ -56,7 +57,11 @@ export function LinkContent({ link }: { link: NavigationLeftLinkProps }) {
         <div className="mr-4 flex items-center">
           {link.iconName ? (
             // Prepared for migration to use iconName instead of name
-            <Icon iconName={link.iconName as IconName} className="inline-block w-3 text-sm" />
+            <Icon
+              iconName={link.iconName as IconName}
+              className="inline-block w-3 text-sm"
+              iconStyle={'iconStyle' in link ? link.iconStyle : 'solid'}
+            />
           ) : (
             <Icon name={link.icon} className="inline-block w-4" />
           )}

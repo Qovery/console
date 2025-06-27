@@ -32,54 +32,50 @@ export function useServices({ environmentId }: UseServicesProps) {
 
   const data = useMemo(
     () =>
-      (services ?? [])
-        .map((service, index) => {
-          const runningStatus = runningStatusResults[index].data
-          const deploymentStatus = deploymentStatusResults[index].data
+      (services ?? []).map((service, index) => {
+        const runningStatus = runningStatusResults[index].data
+        const deploymentStatus = deploymentStatusResults[index].data
 
-          const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
-          const deploymentStatusLabel = upperCaseFirstLetter(
-            (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ??
-              'STOPPED'
-          )
-          const isManagedDb = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+        const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
+        const deploymentStatusLabel = upperCaseFirstLetter(
+          (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ??
+            'STOPPED'
+        )
+        const isManagedDb = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
 
-          const runningStatusOverride = match({ runningStatus, isManagedDb })
-            .with({ runningStatus: P.any, isManagedDb: true }, () => ({
-              ...deploymentStatus,
-              state: match(deploymentStatus?.state)
-                .with('DEPLOYED', () => 'RUNNING' as const)
-                .otherwise(() => 'UNKNOWN' as const),
-              stateLabel: match(deploymentStatus?.state)
-                .with('DEPLOYED', () => 'Running')
-                .otherwise(() => 'Unknown'),
-            }))
-            .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
-              state: undefined,
-              stateLabel: undefined,
-            }))
-            .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
-              ...runningStatus,
-              stateLabel: runningStatusLabel,
-            }))
-            .exhaustive()
+        const runningStatusOverride = match({ runningStatus, isManagedDb })
+          .with({ runningStatus: P.any, isManagedDb: true }, () => ({
+            ...deploymentStatus,
+            state: match(deploymentStatus?.state)
+              .with('DEPLOYED', () => 'RUNNING' as const)
+              .otherwise(() => 'UNKNOWN' as const),
+            stateLabel: match(deploymentStatus?.state)
+              .with('DEPLOYED', () => 'Running')
+              .otherwise(() => 'Unknown'),
+          }))
+          .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
+            state: undefined,
+            stateLabel: undefined,
+          }))
+          .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
+            ...runningStatus,
+            stateLabel: runningStatusLabel,
+          }))
+          .exhaustive()
 
-          return {
-            ...service,
-            runningStatus: runningStatusOverride,
-            ...(deploymentStatus
-              ? {
-                  deploymentStatus: {
-                    ...deploymentStatus,
-                    stateLabel: deploymentStatusLabel,
-                  },
-                }
-              : {}),
-          }
-        })
-        // Hide deleted services
-        // https://qovery.atlassian.net/browse/FRT-1141
-        .filter(({ deploymentStatus }) => deploymentStatus?.state !== 'DELETED'),
+        return {
+          ...service,
+          runningStatus: runningStatusOverride,
+          ...(deploymentStatus
+            ? {
+                deploymentStatus: {
+                  ...deploymentStatus,
+                  stateLabel: deploymentStatusLabel,
+                },
+              }
+            : {}),
+        }
+      }),
     [
       services,
       // https://github.com/TanStack/query/issues/5137

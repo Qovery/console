@@ -6,6 +6,7 @@ import {
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
+  isUninstallAvailable,
   pluralize,
   twMerge,
   upperCaseFirstLetter,
@@ -15,6 +16,7 @@ import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deplo
 import { useRestartAllServices } from '../hooks/use-restart-all-services/use-restart-all-services'
 import { type useServices } from '../hooks/use-services/use-services'
 import { useStopAllServices } from '../hooks/use-stop-all-services/use-stop-all-services'
+import useUninstallAllServices from '../hooks/use-uninstall-all-services/use-uninstall-all-services'
 
 function ConfirmationModal({
   verb,
@@ -80,6 +82,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
 
   const { mutateAsync: deployAllServices } = useDeployAllServices()
   const { mutateAsync: restartAllServices } = useRestartAllServices()
+  const { mutateAsync: uninstallAllServices } = useUninstallAllServices()
   const { mutateAsync: deleteAllServices } = useDeleteAllServices()
   const { mutateAsync: stopAllServices } = useStopAllServices()
 
@@ -92,6 +95,9 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
   )
   const deletableServices = selectedRows.filter(
     ({ deploymentStatus }) => deploymentStatus && isDeleteAvailable(deploymentStatus.state)
+  )
+  const uninstallableServices = selectedRows.filter(
+    ({ deploymentStatus }) => deploymentStatus && isUninstallAvailable(deploymentStatus.state)
   )
   const deployableServices = selectedRows.filter(
     ({ deploymentStatus }) =>
@@ -210,6 +216,44 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
       ),
     })
 
+  const handleUninstallAllServices = () =>
+    openModal({
+      content: (
+        <ConfirmationModal
+          verb="uninstall"
+          impactedRows={uninstallableServices}
+          selectedRows={selectedRows}
+          onSubmit={async () => {
+            try {
+              await uninstallAllServices({
+                environment,
+                payload: {
+                  application_ids: uninstallableServices
+                    .filter(({ serviceType }) => serviceType === 'APPLICATION')
+                    .map(({ id }) => id),
+                  container_ids: uninstallableServices
+                    .filter(({ serviceType }) => serviceType === 'CONTAINER')
+                    .map(({ id }) => id),
+                  database_ids: uninstallableServices
+                    .filter(({ serviceType }) => serviceType === 'DATABASE')
+                    .map(({ id }) => id),
+                  helm_ids: uninstallableServices
+                    .filter(({ serviceType }) => serviceType === 'HELM')
+                    .map(({ id }) => id),
+                  job_ids: uninstallableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
+                },
+              })
+              resetRowSelection()
+              closeModal()
+            } catch (error) {
+              console.error(error)
+            }
+          }}
+          onCancel={closeModal}
+        />
+      ),
+    })
+
   const handleDeleteAllServices = () =>
     openModalConfirmation({
       title: `Delete ${deletableServices.length} ${pluralize(deletableServices.length, 'service')}`,
@@ -299,6 +343,16 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                     </DropdownMenu.Item>
                   </Tooltip>
                   <DropdownMenu.Separator />
+                  <Tooltip content="No uninstallable services" disabled={uninstallableServices.length !== 0}>
+                    <DropdownMenu.Item
+                      color="red"
+                      icon={<Icon iconName="inbox-out" />}
+                      onSelect={handleUninstallAllServices}
+                      disabled={uninstallableServices.length === 0}
+                    >
+                      Uninstall selected
+                    </DropdownMenu.Item>
+                  </Tooltip>
                   <Tooltip content="No deletable services" disabled={deletableServices.length !== 0}>
                     <DropdownMenu.Item
                       color="red"
