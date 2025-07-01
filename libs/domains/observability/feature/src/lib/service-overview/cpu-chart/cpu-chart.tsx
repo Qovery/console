@@ -1,6 +1,7 @@
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Customized, Line } from 'recharts'
+import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import ReferenceLineEvents from '../reference-line-events/reference-line-events'
@@ -18,6 +19,7 @@ export function CpuChart({
   events?: OrganizationEventResponse[]
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
+  const getColorByPod = usePodColor()
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
@@ -100,7 +102,7 @@ export function CpuChart({
           key={name}
           dataKey={name}
           type="linear"
-          stroke="var(--color-brand-500)"
+          stroke={getColorByPod(name)}
           strokeWidth={2}
           dot={false}
           connectNulls={false}
