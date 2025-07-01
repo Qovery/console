@@ -174,12 +174,12 @@ export function LocalChart({
   }
 
   return (
-    <Section className={twMerge('h-[300px]', className)}>
+    <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
       <div className="flex w-full justify-between p-4">
         <Heading>{label}</Heading>
         <span className="text-sm text-neutral-400">55%</span>
       </div>
-      <Chart.Container className="pb-4 pr-4" isLoading={isLoading} isEmpty={isEmpty}>
+      <Chart.Container className="-ml-4 h-full w-[calc(100%+1rem)] pr-4" isLoading={isLoading} isEmpty={isEmpty}>
         <LineChart
           data={data}
           syncId="syncId"
