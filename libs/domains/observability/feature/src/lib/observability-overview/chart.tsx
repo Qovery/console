@@ -130,7 +130,7 @@ export function Chart({
       <LineChart
         data={chartData}
         syncId="syncId"
-        margin={{ bottom: 10 }}
+        margin={{ bottom: 10, top: 1 }}
         // onMouseMove={() => setOnHover(true)}
         // onMouseLeave={() => setOnHover(false)}
         // onMouseUp={() => setOnHover(false)}

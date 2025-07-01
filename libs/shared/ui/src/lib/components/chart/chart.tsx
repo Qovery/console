@@ -1,217 +1,93 @@
-import { type ComponentPropsWithoutRef, type ElementRef, createContext, forwardRef, useContext } from 'react'
-import {
-  CartesianGrid,
-  type CartesianGridProps,
-  Legend,
-  type LegendProps,
-  Line,
-  LineChart,
-  type LineProps,
-  ResponsiveContainer,
-  Tooltip,
-  type TooltipProps,
-  XAxis,
-  type XAxisProps,
-  YAxis,
-  type YAxisProps,
-} from 'recharts'
+import { type OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type ComponentProps, forwardRef, useRef } from 'react'
+import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
-import LoaderSpinner from '../loader-spinner/loader-spinner'
+import { LoaderSpinner } from '../loader-spinner/loader-spinner'
 
-type ChartDataPoint = Record<string, string | number | Date | null | undefined>
+const ChartContainer = forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
+    isLoading?: boolean
+    isEmpty?: boolean
+  }
+>(({ children, className, isLoading, isEmpty, ...props }, ref) => {
+  const chartContainerRef = useRef<HTMLDivElement>(null)
 
-interface ChartContextValue<T extends ChartDataPoint = ChartDataPoint> {
-  data: T[]
-  isLoading?: boolean
-  height?: string | number
-}
-
-const ChartContext = createContext<ChartContextValue>({ data: [] })
-
-interface ChartRootProps<T extends ChartDataPoint = ChartDataPoint>
-  extends Omit<ComponentPropsWithoutRef<'div'>, 'children'> {
-  data: T[]
-  isLoading?: boolean
-  height?: string | number
-  title?: string
-  subtitle?: string
-  children?: React.ReactNode
-}
-
-const ChartRoot = forwardRef<ElementRef<'div'>, ChartRootProps>(function ChartRoot(
-  { className, children, data, isLoading = false, height = 320, title, subtitle, ...props },
-  ref
-) {
   if (isLoading) {
     return (
-      <div
-        ref={ref}
-        className={twMerge(
-          'flex items-center justify-center rounded border border-neutral-250 bg-neutral-50',
-          className
-        )}
-        style={{ height }}
-        {...props}
-      >
-        <div className="text-neutral-400">
-          <LoaderSpinner />
-        </div>
+      <div className={twMerge('flex h-full w-full items-center justify-center', className)}>
+        <LoaderSpinner />
       </div>
     )
   }
 
-  if (!data || !data.length) {
+  if (isEmpty) {
     return (
-      <div
-        ref={ref}
-        className={twMerge(
-          'flex items-center justify-center rounded-lg border border-neutral-250 bg-neutral-50',
-          className
-        )}
-        style={{ height }}
-        {...props}
-      >
+      <div className={twMerge('flex h-full w-full items-center justify-center', className)}>
         <div className="text-neutral-400">No data available</div>
       </div>
     )
   }
 
   return (
-    <ChartContext.Provider value={{ data, isLoading, height }}>
-      <div ref={ref} className={twMerge('rounded-lg border border-neutral-250 bg-white p-4', className)} {...props}>
-        {(title || subtitle) && (
-          <div className="mb-4">
-            {title && <h3 className="text-lg font-semibold text-neutral-900">{title}</h3>}
-            {subtitle && <p className="text-sm text-neutral-500">{subtitle}</p>}
-          </div>
-        )}
-
-        <div style={{ height }}>{children}</div>
-      </div>
-    </ChartContext.Provider>
+    <div ref={ref} className={twMerge('flex aspect-video justify-center text-xs', className)} {...props}>
+      <RechartsPrimitive.ResponsiveContainer ref={chartContainerRef} width="100%" height="100%">
+        {children as React.ReactElement}
+      </RechartsPrimitive.ResponsiveContainer>
+    </div>
   )
 })
+ChartContainer.displayName = 'Chart'
 
-interface ChartContainerProps {
-  children: React.ReactNode
-  margin?: {
-    top?: number
-    right?: number
-    left?: number
-    bottom?: number
+const ChartTooltip = RechartsPrimitive.Tooltip
+
+const ChartTooltipContent = forwardRef<
+  HTMLDivElement,
+  RechartsPrimitive.TooltipProps<number, string> & {
+    title: string
+    formatValue?: (value: string, dataKey: string) => string
+    formatLabel?: (dataKey: string) => string
   }
-}
+>(({ active, payload, title, formatValue, formatLabel }, ref) => {
+  if (!active || !payload || payload.length === 0) return null
 
-const ChartContainer = function ChartContainer({
-  children,
-  margin = { top: 10, right: 30, left: 20, bottom: 0 },
-}: ChartContainerProps) {
-  const { data } = useContext(ChartContext)
+  const dataPoint = payload[0]?.payload
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={data} margin={margin}>
-        {children}
-      </LineChart>
-    </ResponsiveContainer>
+    <div ref={ref} className="rounded-md bg-neutral-600 shadow-lg">
+      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 p-3 pb-2">
+        <span className="text-xs text-neutral-50">{title}</span>
+        <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
+      </div>
+      <div className="space-y-1 p-3 pt-0">
+        {payload
+          .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
+          .map((entry, index) => {
+            const seriesKey = entry.dataKey as string
+            const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey
+            const formattedValue = formatValue
+              ? formatValue(entry.value?.toString() ?? '', seriesKey)
+              : entry.value?.toString()
+
+            return (
+              <div key={index} className="flex items-center justify-between gap-4 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                  <span className="text-neutral-50">{displayName}</span>
+                </div>
+                <span className="text-neutral-50">{formattedValue}</span>
+              </div>
+            )
+          })}
+      </div>
+    </div>
   )
-}
+})
+ChartTooltipContent.displayName = 'ChartTooltipContent'
 
-interface ChartXAxisProps extends XAxisProps {}
-
-const ChartXAxis = function ChartXAxis({
-  tick = { fontSize: 12, fill: '#6b7280' },
-  tickLine = { stroke: '#e5e7eb' },
-  axisLine = { stroke: '#e5e7eb' },
-  ...props
-}: ChartXAxisProps) {
-  return <XAxis tick={tick} tickLine={tickLine} axisLine={axisLine} {...props} />
-}
-
-interface ChartYAxisProps extends YAxisProps {}
-
-const ChartYAxis = function ChartYAxis({
-  tick = { fontSize: 12, fill: '#6b7280' },
-  tickLine = { stroke: '#e5e7eb' },
-  axisLine = { stroke: '#e5e7eb' },
-  ...props
-}: ChartYAxisProps) {
-  return <YAxis tick={tick} tickLine={tickLine} axisLine={axisLine} {...props} />
-}
-
-interface ChartGridProps extends CartesianGridProps {}
-
-const ChartGrid = function ChartGrid({ strokeDasharray = '3 3', stroke = '#f3f4f6', ...props }: ChartGridProps) {
-  return <CartesianGrid strokeDasharray={strokeDasharray} stroke={stroke} {...props} />
-}
-
-interface ChartTooltipProps extends TooltipProps<string | number, string | number> {}
-
-const ChartTooltip = function ChartTooltip({
-  contentStyle = {
-    backgroundColor: 'white',
-    border: '1px solid #e5e7eb',
-    borderRadius: '6px',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    color: '#374151',
-  },
-  labelStyle = { color: '#374151' },
-  ...props
-}: ChartTooltipProps) {
-  return <Tooltip contentStyle={contentStyle} labelStyle={labelStyle} {...props} />
-}
-
-type LinePropsWithoutRef = Omit<LineProps, 'ref'>
-
-interface ChartLineProps extends LinePropsWithoutRef {}
-
-const ChartLine = function ChartLine({
-  type = 'monotone',
-  stroke = 'var(--color-brand-500)',
-  strokeWidth = 2,
-  dot = false,
-  activeDot = { r: 4, fill: 'var(--color-brand-500)' },
-  ...props
-}: ChartLineProps) {
-  return <Line type={type} stroke={stroke} strokeWidth={strokeWidth} dot={dot} activeDot={activeDot} {...props} />
-}
-
-type LegendPropsWithoutRef = Omit<LegendProps, 'ref'>
-
-interface ChartLegendProps extends LegendPropsWithoutRef {}
-
-const ChartLegend = function ChartLegend({
-  wrapperStyle = { fontSize: '12px', color: '#6b7280' },
-  iconType = 'line',
-  ...props
-}: ChartLegendProps) {
-  return <Legend wrapperStyle={wrapperStyle} iconType={iconType} {...props} />
-}
-
-const Chart = Object.assign(
-  {},
-  {
-    Root: ChartRoot,
-    Container: ChartContainer,
-    XAxis: ChartXAxis,
-    YAxis: ChartYAxis,
-    Grid: ChartGrid,
-    Tooltip: ChartTooltip,
-    Line: ChartLine,
-    Legend: ChartLegend,
-  }
-)
-
-export { Chart, ChartRoot, ChartContainer, ChartXAxis, ChartYAxis, ChartGrid, ChartTooltip, ChartLine, ChartLegend }
-
-export type {
-  ChartRootProps,
-  ChartContainerProps,
-  ChartXAxisProps,
-  ChartYAxisProps,
-  ChartGridProps,
-  ChartTooltipProps,
-  ChartLineProps,
-  ChartLegendProps,
-  ChartDataPoint,
+export const Chart = {
+  Container: ChartContainer,
+  Tooltip: ChartTooltip,
+  TooltipContent: ChartTooltipContent,
 }
