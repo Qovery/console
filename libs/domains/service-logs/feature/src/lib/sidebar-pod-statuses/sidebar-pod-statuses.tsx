@@ -8,8 +8,8 @@ import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { usePodColor } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { usePodColor } from '../list-service-logs/use-pod-color'
 import { DonutChart } from './donut-chart/donut-chart'
 
 export interface SidebarPodStatusesProps extends PropsWithChildren {
