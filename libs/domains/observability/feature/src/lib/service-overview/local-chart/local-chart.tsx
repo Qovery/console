@@ -14,6 +14,193 @@ interface LocalChartProps extends PropsWithChildren {
   events?: OrganizationEventResponse[]
 }
 
+type TooltipEntry = {
+  dataKey: string
+  value: number
+  color: string
+  payload: { timestamp: number; fullTime: string; [key: string]: string | number | null }
+}
+
+type GroupedEntry = {
+  request?: TooltipEntry
+  limit?: TooltipEntry
+  others: TooltipEntry[]
+}
+
+interface CustomTooltipProps {
+  customLabel: string
+  active?: boolean
+  payload?: TooltipEntry[]
+  events?: OrganizationEventResponse[]
+}
+
+function getBaseNameFromRequestKey(seriesKey: string): string {
+  return seriesKey.slice(0, -8) // Remove '-request'
+}
+
+function getBaseNameFromLimitKey(seriesKey: string): string {
+  return seriesKey.slice(0, -6) // Remove '-limit'
+}
+
+function getDisplayName(seriesKey: string): string {
+  if (seriesKey.endsWith('-request-limit')) {
+    const baseName = seriesKey.slice(0, -14) // Remove '-request-limit'
+    return `${baseName.charAt(0).toUpperCase() + baseName.slice(1)} Request/Limit`
+  } else if (seriesKey.endsWith('-limit')) {
+    const baseName = getBaseNameFromLimitKey(seriesKey)
+    return `${baseName.charAt(0).toUpperCase() + baseName.slice(1)} Limit`
+  } else if (seriesKey.endsWith('-request')) {
+    const baseName = getBaseNameFromRequestKey(seriesKey)
+    return `${baseName.charAt(0).toUpperCase() + baseName.slice(1)} Request`
+  }
+  // Remove the qovery namespace of the series key (<qovery-namespace>-<service-name>-<pod-name>)
+  return seriesKey.replace(/^[^-]+-[^-]+-/, '')
+}
+
+function formatValue(value: number | string | null): string {
+  const numValue = parseFloat(value?.toString() || '0')
+  return isNaN(numValue) ? 'N/A' : `${numValue.toFixed(2)} mCPU`
+}
+
+function groupEntriesByType(payload: TooltipEntry[]): Map<string, GroupedEntry> {
+  const groupedEntries = new Map<string, GroupedEntry>()
+
+  payload.forEach((entry) => {
+    const seriesKey = entry.dataKey
+
+    if (seriesKey.endsWith('-request')) {
+      const baseName = getBaseNameFromRequestKey(seriesKey)
+      if (!groupedEntries.has(baseName)) {
+        groupedEntries.set(baseName, { request: undefined, limit: undefined, others: [] })
+      }
+      groupedEntries.get(baseName)!.request = entry
+    } else if (seriesKey.endsWith('-limit')) {
+      const baseName = getBaseNameFromLimitKey(seriesKey)
+      if (!groupedEntries.has(baseName)) {
+        groupedEntries.set(baseName, { request: undefined, limit: undefined, others: [] })
+      }
+      groupedEntries.get(baseName)!.limit = entry
+    } else {
+      // Other entries that don't follow request/limit pattern
+      if (!groupedEntries.has('others')) {
+        groupedEntries.set('others', { request: undefined, limit: undefined, others: [] })
+      }
+      groupedEntries.get('others')!.others.push(entry)
+    }
+  })
+
+  return groupedEntries
+}
+
+function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): TooltipEntry[] {
+  const processedEntries: TooltipEntry[] = []
+
+  groupedEntries.forEach((group, baseName) => {
+    if (baseName === 'others') {
+      // Handle non-request/limit entries
+      group.others.forEach((entry) => {
+        processedEntries.push(entry)
+      })
+    } else {
+      // Handle request/limit pairs
+      const request = group.request
+      const limit = group.limit
+
+      if (request && limit) {
+        const requestValue = parseFloat(request.value?.toString() || '0')
+        const limitValue = parseFloat(limit.value?.toString() || '0')
+
+        if (!isNaN(requestValue) && !isNaN(limitValue) && requestValue === limitValue) {
+          // Same values - show combined entry
+          const combinedEntry: TooltipEntry = {
+            ...request,
+            dataKey: `${baseName}-request-limit`,
+            color: limit.color, // Use limit color
+          }
+          processedEntries.push(combinedEntry)
+        } else {
+          // Different values - show both entries
+          processedEntries.push(request, limit)
+        }
+      } else {
+        // Only one exists - show it
+        if (request) processedEntries.push(request)
+        if (limit) processedEntries.push(limit)
+      }
+    }
+  })
+
+  return processedEntries
+}
+
+function CustomTooltip({ active, payload, customLabel, events }: CustomTooltipProps) {
+  if (!active || !payload || payload.length === 0) return null
+
+  // Function to get events near a specific timestamp
+  const getEventsNearTimestamp = (timestamp: number) => {
+    if (!events) return []
+
+    const tolerance = 5 * 60 * 1000 // 5 minutes tolerance
+    return events.filter((event) => {
+      if (!event.timestamp) return false
+      const eventTimestamp = new Date(event.timestamp).getTime()
+      return Math.abs(eventTimestamp - timestamp) <= tolerance
+    })
+  }
+
+  const dataPoint = payload[0]?.payload
+  const nearbyEvents = dataPoint?.timestamp
+    ? getEventsNearTimestamp(dataPoint.timestamp).filter((event) => event.event_type === 'DEPLOYED')
+    : []
+
+  const groupedEntries = groupEntriesByType(payload)
+  const processedEntries = processGroupedEntries(groupedEntries)
+
+  return (
+    <div className="rounded-md bg-neutral-600 shadow-lg">
+      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 px-3 py-2">
+        <span className="text-xs text-neutral-50">{customLabel}</span>
+        <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
+      </div>
+      <div className="space-y-1 p-3 pt-0">
+        {processedEntries
+          .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
+          .sort((a, b) => {
+            const isARequestOrLimit =
+              a.dataKey.endsWith('-limit') || a.dataKey.endsWith('-request') || a.dataKey.endsWith('-request-limit')
+            const isBRequestOrLimit =
+              b.dataKey.endsWith('-limit') || b.dataKey.endsWith('-request') || b.dataKey.endsWith('-request-limit')
+            if (isARequestOrLimit && !isBRequestOrLimit) return -1
+            if (!isARequestOrLimit && isBRequestOrLimit) return 1
+            return 0
+          })
+          .map((entry, index) => (
+            <div key={index} className="flex items-center justify-between gap-4 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span className="text-neutral-50">{getDisplayName(entry.dataKey)}</span>
+              </div>
+              <span className="text-neutral-50">{formatValue(entry.value)}</span>
+            </div>
+          ))}
+      </div>
+      {nearbyEvents.length > 0 && (
+        <div className="border-t border-neutral-400 px-3 py-2">
+          <div className="mb-2 text-xs text-neutral-50">{pluralize(nearbyEvents.length, 'Event', 'Events')}</div>
+          {nearbyEvents.map((event, index) => (
+            <div key={index} className="mb-1 flex items-center gap-2 text-xs">
+              <div className="flex w-full justify-between gap-1 text-neutral-50">
+                <span className="font-medium">{event.event_type}</span>
+                {event.id && <span>version: {event.id.substring(0, 7)}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function LocalChart({
   data,
   isLoading = false,
@@ -88,96 +275,11 @@ export function LocalChart({
     })
   }
 
-  // Function to get events near a specific timestamp
-  const getEventsNearTimestamp = (timestamp: number) => {
-    if (!events) return []
-
-    const tolerance = 5 * 60 * 1000 // 5 minutes tolerance
-    return events.filter((event) => {
-      if (!event.timestamp) return false
-      const eventTimestamp = new Date(event.timestamp).getTime()
-      return Math.abs(eventTimestamp - timestamp) <= tolerance
-    })
-  }
-
-  const CustomTooltipContent = ({
-    active,
-    payload,
-  }: {
-    active?: boolean
-    payload?: Array<{
-      dataKey: string
-      value: number
-      color: string
-      payload: { timestamp: number; fullTime: string; [key: string]: string | number | null }
-    }>
-  }) => {
-    if (!active || !payload || payload.length === 0) return null
-
-    const dataPoint = payload[0]?.payload
-    const nearbyEvents = dataPoint?.timestamp
-      ? getEventsNearTimestamp(dataPoint.timestamp).filter((event) => event.event_type === 'DEPLOYED')
-      : []
-
-    return (
-      <div className="rounded-md bg-neutral-600 shadow-lg">
-        <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 px-3 py-2">
-          <span className="text-xs text-neutral-50">{label}</span>
-          <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
-        </div>
-        <div className="space-y-1 p-3 pt-0">
-          {payload
-            .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
-            .map((entry, index) => {
-              const seriesKey = entry.dataKey as string
-              const displayName = (() => {
-                if (seriesKey.startsWith('pod-')) {
-                  return seriesKey
-                } else if (seriesKey === 'cpu-limit') {
-                  return 'CPU Limit'
-                } else if (seriesKey === 'cpu-request') {
-                  return 'CPU Request'
-                }
-                return seriesKey
-              })()
-              const formattedValue = (() => {
-                const numValue = parseFloat(entry.value?.toString() || '0')
-                return isNaN(numValue) ? 'N/A' : `${numValue.toFixed(2)} mCPU`
-              })()
-
-              return (
-                <div key={index} className="flex items-center justify-between gap-4 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                    <span className="text-neutral-50">{displayName}</span>
-                  </div>
-                  <span className="text-neutral-50">{formattedValue}</span>
-                </div>
-              )
-            })}
-        </div>
-        {nearbyEvents.length > 0 && (
-          <div className="border-t border-neutral-400 px-3 py-2">
-            <div className="mb-2 text-xs text-neutral-50">{pluralize(nearbyEvents.length, 'Event', 'Events')}</div>
-            {nearbyEvents.map((event, index) => (
-              <div key={index} className="mb-1 flex items-center gap-2 text-xs">
-                <div className="flex w-full justify-between gap-1 text-neutral-50">
-                  <span className="font-medium">{event.event_type}</span>
-                  {event.id && <span>version: {event.id.substring(0, 7)}</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    )
-  }
-
   return (
     <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
       <div className="flex w-full justify-between p-4">
         <Heading>{label}</Heading>
-        <span className="text-sm text-neutral-400">55%</span>
+        {/* <span className="text-sm text-neutral-400">55%</span> */}
       </div>
       <Chart.Container className="-ml-4 h-full w-[calc(100%+1rem)] pr-4" isLoading={isLoading} isEmpty={isEmpty}>
         <LineChart
@@ -234,7 +336,9 @@ export function LocalChart({
             axisLine={{ stroke: 'var(--color-neutral-250)' }}
           />
 
-          <Chart.Tooltip content={!onHoverHideTooltip ? <div /> : <CustomTooltipContent />} />
+          <Chart.Tooltip
+            content={!onHoverHideTooltip ? <div /> : <CustomTooltip customLabel={label} events={events} />}
+          />
           {children}
         </LineChart>
       </Chart.Container>
