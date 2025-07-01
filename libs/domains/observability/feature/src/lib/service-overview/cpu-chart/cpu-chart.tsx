@@ -110,6 +110,15 @@ export function CpuChart({
         />
       ))}
       <Line
+        dataKey="cpu-request"
+        type="linear"
+        stroke="var(--color-brand-500)"
+        strokeWidth={2}
+        connectNulls={false}
+        dot={false}
+        isAnimationActive={false}
+      />
+      <Line
         dataKey="cpu-limit"
         type="linear"
         stroke="var(--color-red-500)"
