@@ -30,7 +30,7 @@ export function PageGeneralFeature() {
           isCronJob={service?.serviceType === 'JOB' && service.job_type === 'CRON'}
           isLifecycleJob={service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'}
           hasMetrics={
-            (cluster?.metrics_parameters &&
+            (cluster?.metrics_parameters?.enabled &&
               match(service?.serviceType)
                 .with('APPLICATION', 'CONTAINER', () => true)
                 .otherwise(() => false)) ||
