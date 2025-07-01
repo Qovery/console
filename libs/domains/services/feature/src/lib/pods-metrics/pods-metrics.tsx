@@ -294,7 +294,7 @@ function PodsMetricsTable({
 
   return (
     <>
-      <div className="overflow-x-scroll rounded border xl:overflow-hidden">
+      <div className="overflow-x-scroll rounded border border-neutral-200 xl:overflow-hidden">
         <Table.Root className="w-full overflow-y-scroll text-xs xl:overflow-auto">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (

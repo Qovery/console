@@ -1,6 +1,9 @@
 import { memo } from 'react'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
+import { ServiceOverview } from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 import PageGeneral from '../../ui/page-general/page-general'
@@ -10,9 +13,13 @@ const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 export function PageGeneralFeature() {
   const { applicationId = '', organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: service } = useService({ environmentId, serviceId: applicationId })
 
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: cluster } = useCluster({
+    organizationId: environment?.organization.id ?? '',
+    clusterId: environment?.cluster_id ?? '',
+  })
 
   return (
     <>
@@ -22,6 +29,13 @@ export function PageGeneralFeature() {
           environmentId={environmentId}
           isCronJob={service?.serviceType === 'JOB' && service.job_type === 'CRON'}
           isLifecycleJob={service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'}
+          hasMetrics={
+            (cluster?.metrics_parameters &&
+              match(service?.serviceType)
+                .with('APPLICATION', 'CONTAINER', () => true)
+                .otherwise(() => false)) ||
+            false
+          }
         />
       )}
       {service && environment && (

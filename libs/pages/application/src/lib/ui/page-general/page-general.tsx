@@ -1,3 +1,4 @@
+import { ServiceOverview } from '@qovery/domains/observability/feature'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { ExternalLink, Icon } from '@qovery/shared/ui'
@@ -7,13 +8,15 @@ export interface PageGeneralProps {
   environmentId: string
   isCronJob: boolean
   isLifecycleJob: boolean
+  hasMetrics: boolean
 }
 
-export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob }: PageGeneralProps) {
+export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob, hasMetrics }: PageGeneralProps) {
   return (
     <div className="flex grow flex-row">
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
         <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
+        {hasMetrics && <ServiceOverview />}
         <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
           {isCronJob && (
             <div className="grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded border border-neutral-250 bg-neutral-100 p-3 text-xs text-neutral-350">
@@ -34,7 +37,7 @@ export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJo
         {isLifecycleJob && <OutputVariables serviceId={serviceId} />}
       </div>
       <ServiceDetails
-        className="w-1/4 max-w-[360px] flex-1 border-l"
+        className="w-1/4 max-w-[360px] flex-1 border-l border-neutral-200"
         environmentId={environmentId}
         serviceId={serviceId}
       />

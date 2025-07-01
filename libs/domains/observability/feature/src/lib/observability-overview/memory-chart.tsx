@@ -20,15 +20,22 @@ export function MemoryChart() {
   } = useObservabilityContext()
 
   const { data: metrics, isLoading } = useMetrics({
-    type: 'memory',
-    organizationId,
     clusterId,
-    serviceId,
-    customQuery,
-    customApiEndpoint,
-    startDate: startTimestamp,
-    endDate: endTimestamp,
+    query: `sum by (pod, label_qovery_com_service_id) (container_memory_working_set_bytes{container!="", pod=~".+"} * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    startTimestamp,
+    endTimestamp,
   })
+
+  // const { data: metrics, isLoading } = useMetrics({
+  //   type: 'memory',
+  //   organizationId,
+  //   clusterId,
+  //   serviceId,
+  //   customQuery,
+  //   customApiEndpoint,
+  //   startDate: startTimestamp,
+  //   endDate: endTimestamp,
+  // })
 
   const chartData = useMemo(() => {
     const timeRange = {
