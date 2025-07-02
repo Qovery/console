@@ -26,7 +26,7 @@ export function CardMetric({
   onClick,
   ...props
 }: CardMetricProps) {
-  const { setExpandCharts } = useServiceOverviewContext()
+  const { setExpandCharts, handleTimeRangeChange } = useServiceOverviewContext()
 
   const getStatusColor = () => {
     switch (status) {
@@ -59,11 +59,14 @@ export function CardMetric({
     if (onClick) onClick(e)
 
     if (scrollToId) {
+      handleTimeRangeChange('24h')
       setExpandCharts(true)
-      const element = document.getElementById(scrollToId)
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
-      }
+      setTimeout(() => {
+        const element = document.getElementById(scrollToId)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 50)
     }
   }
 
