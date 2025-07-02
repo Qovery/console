@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { Section } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
@@ -5,7 +6,7 @@ import { CardMetric } from './card-metric/card-metric'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
 import { SectionFilters } from './section-filters/section-filters'
-import { ServiceOverviewProvider } from './util-filter/service-overview-context'
+import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
 
 const metrics = [
   {
@@ -39,6 +40,7 @@ function ServiceOverviewContent() {
   const { environmentId = '', applicationId = '' } = useParams()
 
   const { data: environment } = useEnvironment({ environmentId })
+  const { expandCharts } = useServiceOverviewContext()
 
   if (!environment) return null
 
@@ -51,10 +53,15 @@ function ServiceOverviewContent() {
       </Section>
       <Section className="rounded border border-neutral-200">
         <SectionFilters />
-        <Section className="grid grid-cols-1 divide-x border-t border-neutral-200 md:grid-cols-2">
+        <div
+          className={clsx(
+            'grid grid-cols-1 border-t border-neutral-200',
+            expandCharts ? 'grid-cols-1 divide-y' : 'grid-cols-2 divide-x'
+          )}
+        >
           <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
           <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
-        </Section>
+        </div>
       </Section>
     </div>
   )

@@ -3,8 +3,16 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 import { type TimeRangeOption, timeRangeOptions } from '../util-filter/time-range'
 
 export function SectionFilters() {
-  const { useLocalTime, setUseLocalTime, timeRange, handleTimeRangeChange, hideEvents, setHideEvents } =
-    useServiceOverviewContext()
+  const {
+    useLocalTime,
+    setUseLocalTime,
+    timeRange,
+    handleTimeRangeChange,
+    hideEvents,
+    setHideEvents,
+    expandCharts,
+    setExpandCharts,
+  } = useServiceOverviewContext()
 
   return (
     <Section className="flex-row items-center justify-between px-4 py-2">
@@ -31,16 +39,30 @@ export function SectionFilters() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Checkbox
-          id="hide-events"
-          name="hide-events"
-          className="h-4 w-4 min-w-4 text-ssm"
-          checked={hideEvents}
-          onCheckedChange={(checked) => setHideEvents(checked as boolean)}
-        />
-        <label htmlFor="hide-events" className="text-ssm font-medium text-neutral-400">
-          Hide events
-        </label>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="hide-events"
+            name="hide-events"
+            className="h-4 w-4 min-w-4 text-ssm"
+            checked={hideEvents}
+            onCheckedChange={(checked) => setHideEvents(checked as boolean)}
+          />
+          <label htmlFor="hide-events" className="text-ssm font-medium text-neutral-400">
+            Hide events
+          </label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="expand-charts"
+            name="expand-charts"
+            className="h-4 w-4 min-w-4 text-ssm"
+            checked={expandCharts}
+            onCheckedChange={(checked) => setExpandCharts(checked as boolean)}
+          />
+          <label htmlFor="expand-charts" className="text-ssm font-medium text-neutral-400">
+            Expand charts
+          </label>
+        </div>
       </div>
     </Section>
   )
