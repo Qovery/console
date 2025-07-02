@@ -1,24 +1,14 @@
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { Customized, Line } from 'recharts'
+import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
-import ReferenceLineEvents from '../reference-line-events/reference-line-events'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function CpuChart({
-  clusterId,
-  serviceId,
-  events,
-}: {
-  clusterId: string
-  serviceId: string
-  events?: OrganizationEventResponse[]
-}) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
+export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
@@ -40,6 +30,13 @@ export function CpuChart({
     query: `sum by (label_qovery_com_service_id) (bottomk(1,kube_pod_container_resource_requests{resource="cpu", container!="", pod=~".+"}* on(namespace, pod) group_left(label_qovery_com_service_id)kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
     startTimestamp,
     endTimestamp,
+  })
+
+  const { data: kubeEvents, isLoading: isLoadingKubeEvents } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `sum by(type, reason) (increase(k8s_event_logger_q_k8s_events_total{qovery_service_id="${serviceId}", type="Warning"}[1m]))`,
   })
 
   const chartData = useMemo(() => {
@@ -95,7 +92,8 @@ export function CpuChart({
       isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
       isEmpty={chartData.length === 0}
       label="CPU (mCPU)"
-      events={!hideEvents ? events : undefined}
+      serviceId={serviceId}
+      clusterId={clusterId}
     >
       {seriesNames.map((name) => (
         <Line
@@ -127,7 +125,6 @@ export function CpuChart({
         dot={false}
         isAnimationActive={false}
       />
-      {!hideEvents && <Customized component={ReferenceLineEvents} events={events} />}
     </LocalChart>
   )
 }

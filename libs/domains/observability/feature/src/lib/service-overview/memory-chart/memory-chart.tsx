@@ -1,10 +1,9 @@
 import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { Customized, Line } from 'recharts'
+import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
-import ReferenceLineEvents from '../reference-line-events/reference-line-events'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -12,13 +11,13 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 export function MemoryChart({
   clusterId,
   serviceId,
-  events,
+  kubeEvents,
 }: {
   clusterId: string
   serviceId: string
-  events?: OrganizationEventResponse[]
+  kubeEvents?: any
 }) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
@@ -95,7 +94,8 @@ export function MemoryChart({
       isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}
       isEmpty={chartData.length === 0}
       label="Memory (MiB)"
-      events={!hideEvents ? events : undefined}
+      serviceId={serviceId}
+      clusterId={clusterId}
     >
       {seriesNames.map((name) => (
         <Line
@@ -127,7 +127,6 @@ export function MemoryChart({
         connectNulls={false}
         isAnimationActive={false}
       />
-      {!hideEvents && <Customized component={ReferenceLineEvents} events={events} />}
     </LocalChart>
   )
 }
