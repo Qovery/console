@@ -90,6 +90,7 @@ export function MemoryChart({
 
   return (
     <LocalChart
+      id="memory"
       data={chartData}
       unit="MiB"
       isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}

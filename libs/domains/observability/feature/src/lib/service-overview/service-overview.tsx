@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { Section } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { CardInstanceRestarts } from './card-instance-restart/card-instance-restarts'
 import { CardMetric } from './card-metric/card-metric'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
@@ -10,12 +11,6 @@ import { SectionFilters } from './section-filters/section-filters'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
 
 const metrics = [
-  {
-    title: 'Instance restarts',
-    value: 0,
-    status: 'HEALTHY' as const,
-    description: 'Pod restarts in the last 24h',
-  },
   {
     title: 'Memory issues',
     value: 2,
@@ -48,6 +43,7 @@ function ServiceOverviewContent() {
   return (
     <div className="space-y-6">
       <Section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <CardInstanceRestarts clusterId={environment.cluster_id} serviceId={applicationId} />
         {metrics.map((metric, index) => (
           <CardMetric key={index} {...metric} />
         ))}
