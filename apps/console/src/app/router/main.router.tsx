@@ -1,5 +1,4 @@
 import { type ReactElement } from 'react'
-import { ObservabilityOverview } from '@qovery/domains/observability/feature'
 import { PageApplication } from '@qovery/pages/application'
 import { PagesCluster } from '@qovery/pages/cluster'
 import { PageClusterCreateFeature, PageClusters } from '@qovery/pages/clusters'
@@ -34,7 +33,6 @@ import {
   GITHUB_APPLICATION_CALLBACK_URL,
   INFRA_LOGS_URL,
   ONBOARDING_URL,
-  ORGANIZATION_OBSERVABILITY_URL,
   ORGANIZATION_URL,
   OVERVIEW_URL,
   SERVICES_APPLICATION_CREATION_URL,
@@ -232,12 +230,5 @@ export const ROUTER: RouterProps[] = [
     layout: true,
     darkMode: true,
     spotlight: false,
-  },
-  {
-    path: `${ORGANIZATION_OBSERVABILITY_URL()}/*`,
-    component: <ObservabilityOverview />,
-    protected: true,
-    layout: true,
-    topBar: true,
   },
 ]

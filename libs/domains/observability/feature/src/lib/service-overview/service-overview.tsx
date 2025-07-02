@@ -4,6 +4,7 @@ import { Section } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { CardMetric } from './card-metric/card-metric'
 import { CpuChart } from './cpu-chart/cpu-chart'
+import { DiskChart } from './disk-chart/disk-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
 import { SectionFilters } from './section-filters/section-filters'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
@@ -51,16 +52,24 @@ function ServiceOverviewContent() {
           <CardMetric key={index} {...metric} />
         ))}
       </Section>
-      <Section className="rounded border border-neutral-200">
+      <Section className={clsx('rounded border border-neutral-200', expandCharts ? 'border-b-0' : '')}>
         <SectionFilters />
         <div
           className={clsx(
-            'grid grid-cols-1 border-t border-neutral-200',
-            expandCharts ? 'grid-cols-1 divide-y' : 'grid-cols-2 divide-x'
+            'grid border-t border-neutral-200',
+            expandCharts ? 'grid-cols-1 divide-y divide-neutral-200' : 'grid-cols-2'
           )}
         >
-          <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
-          <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
+          <div className={clsx(expandCharts ? '' : 'border-b border-r border-neutral-200')}>
+            <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
+          </div>
+          <div className={clsx(expandCharts ? '' : 'border-b border-neutral-200')}>
+            <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
+          </div>
+          <div className={clsx(expandCharts ? 'border-b-transparent' : 'border-r border-neutral-200')}>
+            <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} />
+          </div>
+          <div />
         </div>
       </Section>
     </div>
