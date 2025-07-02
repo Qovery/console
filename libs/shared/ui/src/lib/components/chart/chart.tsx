@@ -1,4 +1,3 @@
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { type ComponentProps, forwardRef, useRef } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
@@ -32,7 +31,7 @@ const ChartContainer = forwardRef<
 
   return (
     <div ref={ref} className={twMerge('flex justify-center text-xs', className)} {...props}>
-      <RechartsPrimitive.ResponsiveContainer ref={chartContainerRef} width="100%" height="100%" maxHeight={500}>
+      <RechartsPrimitive.ResponsiveContainer ref={chartContainerRef} width="100%" height="100%" maxHeight={600}>
         {children as React.ReactElement}
       </RechartsPrimitive.ResponsiveContainer>
     </div>

@@ -33,12 +33,12 @@ const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefi
 
 export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [useLocalTime, setUseLocalTime] = useState(false)
-  const [timeRange, setTimeRange] = useState<TimeRangeOption>('1h')
+  const [timeRange, setTimeRange] = useState<TimeRangeOption>('30m')
 
   const now = new Date()
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
+  const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
 
-  const [startDate, setStartDate] = useState(oneHourAgo.toISOString())
+  const [startDate, setStartDate] = useState(thirtyMinutesAgo.toISOString())
   const [endDate, setEndDate] = useState(now.toISOString())
 
   const handleTimeRangeChange = createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)

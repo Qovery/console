@@ -85,6 +85,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
       isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
       isEmpty={chartData.length === 0}
       label="CPU (mCPU)"
+      unit="mCPU"
       serviceId={serviceId}
       clusterId={clusterId}
     >
@@ -121,3 +122,5 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
     </LocalChart>
   )
 }
+
+export default CpuChart

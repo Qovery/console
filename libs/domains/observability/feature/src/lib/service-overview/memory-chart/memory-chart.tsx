@@ -91,6 +91,7 @@ export function MemoryChart({
   return (
     <LocalChart
       data={chartData}
+      unit="MiB"
       isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}
       isEmpty={chartData.length === 0}
       label="Memory (MiB)"
@@ -130,3 +131,5 @@ export function MemoryChart({
     </LocalChart>
   )
 }
+
+export default MemoryChart
