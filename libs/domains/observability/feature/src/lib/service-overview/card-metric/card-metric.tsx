@@ -8,7 +8,7 @@ interface CardMetricProps extends ComponentProps<'button'> {
   title: string
   value: string | number
   unit?: string
-  status: 'HEALTHY' | 'WARNING' | 'ERROR'
+  status: 'GREEN' | 'YELLOW' | 'RED'
   description?: string
   isLoading?: boolean
   scrollToId?: string
@@ -30,11 +30,11 @@ export function CardMetric({
 
   const getStatusColor = () => {
     switch (status) {
-      case 'HEALTHY':
+      case 'GREEN':
         return 'green'
-      case 'WARNING':
+      case 'YELLOW':
         return 'yellow'
-      case 'ERROR':
+      case 'RED':
         return 'red'
       default:
         return 'neutral'
@@ -72,8 +72,8 @@ export function CardMetric({
       type="button"
       className={twMerge(
         clsx(
-          'w-full rounded border border-neutral-200 bg-neutral-50 p-4 text-left',
-          !isLoading && 'cursor-pointer transition-colors hover:bg-neutral-100',
+          'w-full cursor-default rounded border border-neutral-200 bg-neutral-50 p-4 text-left',
+          !isLoading && scrollToId && 'cursor-pointer transition-colors hover:bg-neutral-100',
           className
         )
       )}
