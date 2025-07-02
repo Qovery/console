@@ -48,6 +48,7 @@ export interface MetricData {
     pod: string
     prometheus: string
     service: string
+    reason?: string
   }
   values: [number, string][]
 }

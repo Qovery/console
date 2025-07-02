@@ -1,13 +1,11 @@
-import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { Section } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
-import { useEvents } from '../hooks/use-events/use-events'
 import { CardMetric } from './card-metric/card-metric'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
 import { SectionFilters } from './section-filters/section-filters'
-import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
+import { ServiceOverviewProvider } from './util-filter/service-overview-context'
 
 const metrics = [
   {
@@ -38,18 +36,9 @@ const metrics = [
 ]
 
 function ServiceOverviewContent() {
-  const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
+  const { environmentId = '', applicationId = '' } = useParams()
+
   const { data: environment } = useEnvironment({ environmentId })
-
-  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
-
-  const { data: events } = useEvents({
-    organizationId,
-    serviceId: applicationId,
-    targetType: OrganizationEventTargetType.CONTAINER,
-    toTimestamp: endTimestamp,
-    fromTimestamp: startTimestamp,
-  })
 
   if (!environment) return null
 
@@ -63,8 +52,8 @@ function ServiceOverviewContent() {
       <Section className="rounded border border-neutral-200">
         <SectionFilters />
         <Section className="grid grid-cols-1 divide-x border-t border-neutral-200 md:grid-cols-2">
-          <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} events={events} />
-          <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} events={events} />
+          <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
+          <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
         </Section>
       </Section>
     </div>

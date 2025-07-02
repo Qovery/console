@@ -1,8 +1,14 @@
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useState } from 'react'
-import { CartesianGrid, LineChart, XAxis, YAxis } from 'recharts'
+import { useParams } from 'react-router-dom'
+import { CartesianGrid, Customized, LineChart, XAxis, YAxis } from 'recharts'
+import { useService } from '@qovery/domains/services/feature'
 import { Chart, Heading, Section } from '@qovery/shared/ui'
-import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { pluralize, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import useEvents from '../../hooks/use-events/use-events'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import type { MetricData } from '../../hooks/use-metrics/use-metrics'
+import ReferenceLineEvents from '../reference-line-events/reference-line-events'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 interface LocalChartProps extends PropsWithChildren {
@@ -10,8 +16,9 @@ interface LocalChartProps extends PropsWithChildren {
   label: string
   isEmpty: boolean
   isLoading: boolean
+  serviceId: string
+  clusterId: string
   className?: string
-  events?: OrganizationEventResponse[]
 }
 
 type TooltipEntry = {
@@ -32,16 +39,24 @@ interface CustomTooltipProps {
   active?: boolean
   payload?: TooltipEntry[]
   events?: OrganizationEventResponse[]
+  kubeEvents?: {
+    data?: {
+      result?: MetricData[]
+    }
+  }
 }
 
+// Returns the base name by removing '-request' from the series key
 function getBaseNameFromRequestKey(seriesKey: string): string {
-  return seriesKey.slice(0, -8) // Remove '-request'
+  return seriesKey.slice(0, -8)
 }
 
+// Returns the base name by removing '-limit' from the series key
 function getBaseNameFromLimitKey(seriesKey: string): string {
-  return seriesKey.slice(0, -6) // Remove '-limit'
+  return seriesKey.slice(0, -6)
 }
 
+// Returns a display name for a metric series key
 function getDisplayName(seriesKey: string): string {
   if (seriesKey.endsWith('-request-limit')) {
     const baseName = seriesKey.slice(0, -14) // Remove '-request-limit'
@@ -57,17 +72,17 @@ function getDisplayName(seriesKey: string): string {
   return seriesKey.replace(/^[^-]+-[^-]+-/, '')
 }
 
+// Formats a value for display in the tooltip
 function formatValue(value: number | string | null): string {
   const numValue = parseFloat(value?.toString() || '0')
   return isNaN(numValue) ? 'N/A' : `${numValue.toFixed(2)} mCPU`
 }
 
+// Groups tooltip entries by type (request, limit, others)
 function groupEntriesByType(payload: TooltipEntry[]): Map<string, GroupedEntry> {
   const groupedEntries = new Map<string, GroupedEntry>()
-
   payload.forEach((entry) => {
     const seriesKey = entry.dataKey
-
     if (seriesKey.endsWith('-request')) {
       const baseName = getBaseNameFromRequestKey(seriesKey)
       if (!groupedEntries.has(baseName)) {
@@ -88,13 +103,12 @@ function groupEntriesByType(payload: TooltipEntry[]): Map<string, GroupedEntry> 
       groupedEntries.get('others')!.others.push(entry)
     }
   })
-
   return groupedEntries
 }
 
+// Processes grouped entries for tooltip display
 function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): TooltipEntry[] {
   const processedEntries: TooltipEntry[] = []
-
   groupedEntries.forEach((group, baseName) => {
     if (baseName === 'others') {
       // Handle non-request/limit entries
@@ -105,11 +119,9 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
       // Handle request/limit pairs
       const request = group.request
       const limit = group.limit
-
       if (request && limit) {
         const requestValue = parseFloat(request.value?.toString() || '0')
         const limitValue = parseFloat(limit.value?.toString() || '0')
-
         if (!isNaN(requestValue) && !isNaN(limitValue) && requestValue === limitValue) {
           // Same values - show combined entry
           const combinedEntry: TooltipEntry = {
@@ -129,18 +141,35 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
       }
     }
   })
-
   return processedEntries
 }
 
-function CustomTooltip({ active, payload, customLabel, events }: CustomTooltipProps) {
+// Tooltip component for displaying metric and events details
+function CustomTooltip({ active, payload, customLabel, events, kubeEvents }: CustomTooltipProps) {
+  const { hideEvents } = useServiceOverviewContext()
+
   if (!active || !payload || payload.length === 0) return null
+
+  // Returns kubeEvents (Warning) near a given timestamp
+  const getKubeEventsNearTimestamp = (timestamp: number) => {
+    if (!kubeEvents?.data?.result) return []
+    const tolerance = 5 * 60 // 5 minutes in seconds
+    return kubeEvents.data.result.filter((serie) => {
+      return serie.values.some(([ts, value]) => {
+        const tsNum = typeof ts === 'string' ? Number(ts) : ts
+        return Math.abs(tsNum - timestamp / 1000) <= tolerance && parseFloat(value) > 0
+      })
+    })
+  }
+
+  const dataPoint = payload[0]?.payload
+  const kubeEventsAtPoint = dataPoint?.timestamp ? getKubeEventsNearTimestamp(dataPoint.timestamp) : []
 
   // Function to get events near a specific timestamp
   const getEventsNearTimestamp = (timestamp: number) => {
     if (!events) return []
 
-    const tolerance = 5 * 60 * 1000 // 5 minutes tolerance
+    const tolerance = 5 * 60 * 1000 // 5 minutes tolerance in milliseconds
     return events.filter((event) => {
       if (!event.timestamp) return false
       const eventTimestamp = new Date(event.timestamp).getTime()
@@ -148,7 +177,6 @@ function CustomTooltip({ active, payload, customLabel, events }: CustomTooltipPr
     })
   }
 
-  const dataPoint = payload[0]?.payload
   const nearbyEvents = dataPoint?.timestamp
     ? getEventsNearTimestamp(dataPoint.timestamp).filter((event) => event.event_type === 'DEPLOYED')
     : []
@@ -159,7 +187,7 @@ function CustomTooltip({ active, payload, customLabel, events }: CustomTooltipPr
   return (
     <div className="rounded-md bg-neutral-600 shadow-lg">
       <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 px-3 py-2">
-        <span className="text-xs text-neutral-50">{customLabel}</span>
+        <span className="text-xs font-medium text-neutral-50">{customLabel}</span>
         <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
       </div>
       <div className="space-y-1 p-3 pt-0">
@@ -184,18 +212,36 @@ function CustomTooltip({ active, payload, customLabel, events }: CustomTooltipPr
             </div>
           ))}
       </div>
-      {nearbyEvents.length > 0 && (
-        <div className="border-t border-neutral-400 px-3 py-2">
-          <div className="mb-2 text-xs text-neutral-50">{pluralize(nearbyEvents.length, 'Event', 'Events')}</div>
-          {nearbyEvents.map((event, index) => (
-            <div key={index} className="mb-1 flex items-center gap-2 text-xs">
-              <div className="flex w-full justify-between gap-1 text-neutral-50">
-                <span className="font-medium">{event.event_type}</span>
-                {event.id && <span>version: {event.id.substring(0, 7)}</span>}
+      {!hideEvents && (
+        <>
+          {/* Section Events (Deployed only) */}
+          {nearbyEvents.length > 0 && (
+            <div className="border-t border-neutral-400 px-3 py-2">
+              <div className="mb-2 text-xs font-medium text-neutral-50">
+                {pluralize(nearbyEvents.length, 'Event', 'Events')}
               </div>
+              {nearbyEvents.map((event, index) => (
+                <div key={index} className="mb-1 flex items-center gap-2 text-xs">
+                  <div className="flex w-full justify-between gap-1 text-neutral-50">
+                    <span>- {upperCaseFirstLetter(event.event_type).replace(/_/g, ' ')}</span>
+                    {event.id && <span>version: {event.id.substring(0, 7)}</span>}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+          {/* Section KubeEvents Warning */}
+          {kubeEventsAtPoint.length > 0 && (
+            <div className="border-t border-neutral-400 px-3 py-2">
+              <div className="mb-2 text-xs font-medium text-yellow-600">KubeEvents</div>
+              {kubeEventsAtPoint.map((serie: MetricData, idx: number) => (
+                <div key={idx} className="mb-1 flex items-center gap-2 text-xs text-yellow-600">
+                  <span>- {serie.metric.reason ?? ''}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   )
@@ -208,10 +254,33 @@ export function LocalChart({
   label,
   className,
   children,
-  events,
+  serviceId,
+  clusterId,
 }: LocalChartProps) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { organizationId = '' } = useParams()
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
+
+  // Alpha: Workaround to get the events
+  const { data: service } = useService({ serviceId })
+
+  const { data: events } = useEvents({
+    organizationId,
+    serviceId,
+    targetType:
+      service?.service_type === 'CONTAINER'
+        ? OrganizationEventTargetType.CONTAINER
+        : OrganizationEventTargetType.APPLICATION,
+    toTimestamp: endTimestamp,
+    fromTimestamp: startTimestamp,
+  })
+
+  const { data: kubeEvents } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `sum by(type, reason) (increase(k8s_event_logger_q_k8s_events_total{qovery_service_id="${serviceId}", type="Warning"}[1m]))`,
+  })
 
   function getDomain() {
     if (!data || data.length === 0) {
@@ -306,7 +375,6 @@ export function LocalChart({
                 const durationInHours = (Number(endTimestamp) - Number(startTimestamp)) / (60 * 60)
                 return durationInHours > 24
               }
-
               if (isLongRange()) {
                 const day = useLocalTime
                   ? date.getDate().toString().padStart(2, '0')
@@ -335,11 +403,17 @@ export function LocalChart({
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'var(--color-neutral-250)' }}
           />
-
           <Chart.Tooltip
-            content={!onHoverHideTooltip ? <div /> : <CustomTooltip customLabel={label} events={events} />}
+            content={
+              !onHoverHideTooltip ? (
+                <div />
+              ) : (
+                <CustomTooltip customLabel={label} events={events} kubeEvents={kubeEvents} />
+              )
+            }
           />
           {children}
+          {!hideEvents && <Customized component={ReferenceLineEvents} events={events} />}
         </LineChart>
       </Chart.Container>
     </Section>
