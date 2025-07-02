@@ -31,8 +31,8 @@ const ChartContainer = forwardRef<
   }
 
   return (
-    <div ref={ref} className={twMerge('flex aspect-video justify-center text-xs', className)} {...props}>
-      <RechartsPrimitive.ResponsiveContainer ref={chartContainerRef} width="100%" height="100%">
+    <div ref={ref} className={twMerge('flex justify-center text-xs', className)} {...props}>
+      <RechartsPrimitive.ResponsiveContainer ref={chartContainerRef} width="100%" height="100%" maxHeight={500}>
         {children as React.ReactElement}
       </RechartsPrimitive.ResponsiveContainer>
     </div>

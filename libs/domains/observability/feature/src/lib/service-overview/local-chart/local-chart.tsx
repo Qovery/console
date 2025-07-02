@@ -223,7 +223,7 @@ function CustomTooltip({ active, payload, customLabel, events, kubeEvents }: Cus
               {nearbyEvents.map((event, index) => (
                 <div key={index} className="mb-1 flex items-center gap-2 text-xs">
                   <div className="flex w-full justify-between gap-1 text-neutral-50">
-                    <span>- {upperCaseFirstLetter(event.event_type).replace(/_/g, ' ')}</span>
+                    <span>{upperCaseFirstLetter(event.event_type).replace(/_/g, ' ')}</span>
                     {event.id && <span>version: {event.id.substring(0, 7)}</span>}
                   </div>
                 </div>
@@ -236,7 +236,7 @@ function CustomTooltip({ active, payload, customLabel, events, kubeEvents }: Cus
               <div className="mb-2 text-xs font-medium text-yellow-600">KubeEvents</div>
               {kubeEventsAtPoint.map((serie: MetricData, idx: number) => (
                 <div key={idx} className="mb-1 flex items-center gap-2 text-xs text-yellow-600">
-                  <span>- {serie.metric.reason ?? ''}</span>
+                  <span>{serie.metric.reason ?? ''}</span>
                 </div>
               ))}
             </div>
@@ -346,9 +346,8 @@ export function LocalChart({
 
   return (
     <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
-      <div className="flex w-full justify-between p-4">
+      <div className="w-full p-4">
         <Heading>{label}</Heading>
-        {/* <span className="text-sm text-neutral-400">55%</span> */}
       </div>
       <Chart.Container className="-ml-4 h-full w-[calc(100%+1rem)] pr-4" isLoading={isLoading} isEmpty={isEmpty}>
         <LineChart

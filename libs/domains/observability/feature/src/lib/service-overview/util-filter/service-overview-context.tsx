@@ -23,6 +23,10 @@ interface ServiceOverviewContextType {
   // Events
   setHideEvents: (value: boolean) => void
   hideEvents: boolean
+
+  // Settings
+  expandCharts: boolean
+  setExpandCharts: (value: boolean) => void
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
@@ -43,6 +47,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
 
   const [hideEvents, setHideEvents] = useState(false)
+  const [expandCharts, setExpandCharts] = useState(false)
 
   const value: ServiceOverviewContextType = {
     useLocalTime,
@@ -58,6 +63,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     handleTimeRangeChange,
     setHideEvents,
     hideEvents,
+    expandCharts,
+    setExpandCharts,
   }
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>

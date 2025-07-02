@@ -32,13 +32,6 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
     endTimestamp,
   })
 
-  const { data: kubeEvents, isLoading: isLoadingKubeEvents } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum by(type, reason) (increase(k8s_event_logger_q_k8s_events_total{qovery_service_id="${serviceId}", type="Warning"}[1m]))`,
-  })
-
   const chartData = useMemo(() => {
     if (!metrics?.data?.result) {
       return []
