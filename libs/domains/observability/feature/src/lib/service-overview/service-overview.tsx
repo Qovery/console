@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Section } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { CardInstanceRestarts } from './card-instance-restart/card-instance-restarts'
+import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CardMetric } from './card-metric/card-metric'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
@@ -14,21 +15,15 @@ const metrics = [
   {
     title: 'Memory issues',
     value: 2,
-    status: 'WARNING' as const,
+    status: 'YELLOW' as const,
     description: 'Memory issues detected',
   },
   {
     title: 'Error rate',
     value: '0.5',
     unit: '%',
-    status: 'HEALTHY' as const,
+    status: 'GREEN' as const,
     description: 'Error rate over total requests',
-  },
-  {
-    title: 'Log errors',
-    value: 12,
-    status: 'ERROR' as const,
-    description: 'Error logs in the last hour',
   },
 ]
 
@@ -44,6 +39,7 @@ function ServiceOverviewContent() {
     <div className="space-y-6">
       <Section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <CardInstanceRestarts clusterId={environment.cluster_id} serviceId={applicationId} />
+        <CardLogErrors clusterId={environment.cluster_id} serviceId={applicationId} />
         {metrics.map((metric, index) => (
           <CardMetric key={index} {...metric} />
         ))}

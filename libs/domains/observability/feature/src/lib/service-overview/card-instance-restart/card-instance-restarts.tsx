@@ -18,7 +18,7 @@ export function CardInstanceRestarts({ serviceId, clusterId }: { serviceId: stri
     <CardMetric
       title="Instance restarts"
       value={value}
-      status={value > 0 ? 'WARNING' : 'HEALTHY'}
+      status={value > 0 ? 'YELLOW' : 'GREEN'}
       description="Restarts during the last 24h"
       scrollToId="cpu"
       isLoading={isLoadingMetrics}
