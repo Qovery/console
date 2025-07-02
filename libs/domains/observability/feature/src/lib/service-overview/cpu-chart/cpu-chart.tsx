@@ -81,6 +81,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
 
   return (
     <LocalChart
+      id="cpu"
       data={chartData}
       isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
       isEmpty={chartData.length === 0}

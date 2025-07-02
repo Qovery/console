@@ -12,6 +12,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 import { Tooltip, type UnitType } from './tooltip'
 
 interface LocalChartProps extends PropsWithChildren {
+  id: string
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
   unit: UnitType
   label: string
@@ -23,6 +24,7 @@ interface LocalChartProps extends PropsWithChildren {
 }
 
 export function LocalChart({
+  id,
   data,
   unit,
   isLoading = false,
@@ -123,7 +125,9 @@ export function LocalChart({
   return (
     <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
       <div className="w-full p-4">
-        <Heading>{label}</Heading>
+        <Heading id={id} className="scroll-mt-20">
+          {label}
+        </Heading>
       </div>
       <Chart.Container className="-ml-4 h-full w-[calc(100%+1rem)] pr-4" isLoading={isLoading} isEmpty={isEmpty}>
         <LineChart

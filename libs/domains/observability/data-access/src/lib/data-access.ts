@@ -7,6 +7,7 @@ export const observability = createQueryKeys('observability', {
   observability: ({
     clusterId,
     query,
+    queryRange = 'query_range',
     startTimestamp,
     endTimestamp,
     step = '14',
@@ -16,12 +17,13 @@ export const observability = createQueryKeys('observability', {
     startTimestamp: string
     endTimestamp: string
     step?: string
+    queryRange?: 'query' | 'query_range'
   }) => ({
     queryKey: [query, startTimestamp, endTimestamp],
     async queryFn() {
       const response = await clusterApi.getClusterMetrics(
         clusterId,
-        'api/v1/query_range',
+        `api/v1/${queryRange}`,
         query,
         startTimestamp,
         endTimestamp,
