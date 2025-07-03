@@ -10,7 +10,7 @@ export const observability = createQueryKeys('observability', {
     queryRange = 'query_range',
     startTimestamp,
     endTimestamp,
-    step = '14',
+    step,
   }: {
     clusterId: string
     query: string

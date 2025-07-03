@@ -81,7 +81,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       metricsWritePersistentStorage,
       timeSeriesMap,
       () => 'write-persistent-storage',
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
+      (value) => parseFloat(value) / 1024, // Convert to MiB
       useLocalTime
     )
 
@@ -126,7 +126,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="read-persistent-storage"
         type="linear"
-        stroke="var(--color-brand-500)"
+        stroke="var(--color-purple-500)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -135,7 +135,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="write-ephemeral-storage"
         type="linear"
-        stroke="var(--color-purple-500)"
+        stroke="var(--color-green-600)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -144,7 +144,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="write-persistent-storage"
         type="linear"
-        stroke="var(--color-purple-500)"
+        stroke="var(--color-purple-700)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
