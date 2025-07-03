@@ -57,7 +57,7 @@ export function LocalChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by(type, reason) (increase(k8s_event_logger_q_k8s_events_total{qovery_service_id="${serviceId}", type="Warning"}[1m]))`,
+    query: `sum by(type, reason) (increase(k8s_event_logger_q_k8s_events_total{qovery_com_service_id="${serviceId}", type="Warning"}[1m]))`,
   })
 
   function getDomain() {

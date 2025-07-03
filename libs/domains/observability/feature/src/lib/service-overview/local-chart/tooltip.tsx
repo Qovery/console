@@ -52,9 +52,14 @@ function getDisplayName(seriesKey: string): string {
   } else if (seriesKey.endsWith('-request')) {
     const baseName = getBaseNameFromRequestKey(seriesKey)
     return `${upperCaseFirstLetter(baseName)} Request`
+  } else if (seriesKey.endsWith('-storage')) {
+    return `${upperCaseFirstLetter(seriesKey)}`.replace(/-/g, ' ')
   }
   // Remove the qovery namespace of the series key (<qovery-namespace>-<service-name>-<pod-name>)
-  return seriesKey.replace(/^[^-]+-[^-]+-/, '')
+  if (seriesKey.startsWith('qovery-')) {
+    return seriesKey.replace(/^[^-]+-[^-]+-/, '')
+  }
+  return seriesKey
 }
 
 // Formats a value for display in the tooltip
