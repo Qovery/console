@@ -6,8 +6,10 @@ import {
 } from 'qovery-typescript-axios'
 import { useCallback, useState } from 'react'
 import { Navigate, Route, Routes, matchPath, useLocation, useParams } from 'react-router-dom'
-import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
+import { useService } from '@qovery/domains/services/feature'
+import { useDeploymentHistory } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
@@ -28,9 +30,6 @@ export function PageEnvironmentLogs() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
   const { data: environment } = useEnvironment({ environmentId })
-  const { data: environmentDeploymentHistory = [], isFetched: isFetchedDeploymentHistory } = useDeploymentHistory({
-    environmentId,
-  })
 
   useDocumentTitle(`Environment logs ${environment ? `- ${environment?.name}` : '- Loading...'}`)
 
@@ -62,6 +61,13 @@ export function PageEnvironmentLogs() {
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
 
   const versionIdUrl = deploymentVersionId || preCheckVersionId || stageVersionId
+
+  const { data: service } = useService({ environmentId: environment?.id, serviceId: versionIdUrl })
+  const { data: environmentDeploymentHistory = [], isFetched: isFetchedDeploymentHistory } = useDeploymentHistory({
+    serviceId: service?.id ?? '',
+    serviceType: service?.service_type,
+  })
+
   const isLatestVersion = environmentDeploymentHistory[0]?.identifier.execution_id === versionIdUrl
 
   const messageHandler = useCallback(
