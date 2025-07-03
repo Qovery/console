@@ -176,11 +176,13 @@ export function LocalChart({
               return `${hours}:${minutes}`
             }}
             allowDataOverflow={false}
+            strokeDasharray="3 3"
           />
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'var(--color-neutral-250)' }}
+            strokeDasharray="3 3"
           />
           <Chart.Tooltip
             content={
