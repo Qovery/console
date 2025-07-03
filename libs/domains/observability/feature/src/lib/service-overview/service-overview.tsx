@@ -1,48 +1,43 @@
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
+import { useService } from '@qovery/domains/services/feature'
 import { Section } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { CardAutoscalingLimitReached } from './card-autoscaling-limit-reached/card-autoscaling-limit-reached'
+import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceRestarts } from './card-instance-restart/card-instance-restarts'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
-import { CardMetric } from './card-metric/card-metric'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
 import { SectionFilters } from './section-filters/section-filters'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
 
-const metrics = [
-  {
-    title: 'Memory issues',
-    value: 2,
-    status: 'YELLOW' as const,
-    description: 'Memory issues detected',
-  },
-  {
-    title: 'Error rate',
-    value: '0.5',
-    unit: '%',
-    status: 'GREEN' as const,
-    description: 'Error rate over total requests',
-  },
-]
-
 function ServiceOverviewContent() {
   const { environmentId = '', applicationId = '' } = useParams()
 
+  const { data: service } = useService({ serviceId: applicationId })
   const { data: environment } = useEnvironment({ environmentId })
   const { expandCharts } = useServiceOverviewContext()
 
-  if (!environment) return null
+  if (!environment || !service) return null
+
+  const hasPort =
+    (service.serviceType === 'APPLICATION' && (service?.ports || []).length > 0) ||
+    (service.serviceType === 'CONTAINER' && (service?.ports || []).length > 0)
 
   return (
     <div className="space-y-6">
-      <Section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <Section
+        className={clsx(
+          'grid grid-cols-1 gap-4',
+          hasPort ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'
+        )}
+      >
         <CardInstanceRestarts clusterId={environment.cluster_id} serviceId={applicationId} />
+        <CardAutoscalingLimitReached clusterId={environment.cluster_id} serviceId={applicationId} />
         <CardLogErrors clusterId={environment.cluster_id} serviceId={applicationId} />
-        {metrics.map((metric, index) => (
-          <CardMetric key={index} {...metric} />
-        ))}
+        {hasPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
       </Section>
       <Section className={clsx('rounded border border-neutral-200', expandCharts ? 'border-b-0' : '')}>
         <SectionFilters />
