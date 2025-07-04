@@ -22,22 +22,22 @@ function ServiceOverviewContent() {
 
   if (!environment || !service) return null
 
-  const hasPort =
-    (service.serviceType === 'APPLICATION' && (service?.ports || []).length > 0) ||
-    (service.serviceType === 'CONTAINER' && (service?.ports || []).length > 0)
+  const hasPublicPort =
+    (service.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
+    (service.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
 
   return (
     <div className="space-y-6">
       <Section
         className={clsx(
           'grid grid-cols-1 gap-4',
-          hasPort ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'
+          hasPublicPort ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'
         )}
       >
         <CardInstanceRestarts clusterId={environment.cluster_id} serviceId={applicationId} />
         <CardAutoscalingLimitReached clusterId={environment.cluster_id} serviceId={applicationId} />
         <CardLogErrors clusterId={environment.cluster_id} serviceId={applicationId} />
-        {hasPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
+        {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
       </Section>
       <Section className={clsx('rounded border border-neutral-200', expandCharts ? 'border-b-0' : '')}>
         <SectionFilters />
