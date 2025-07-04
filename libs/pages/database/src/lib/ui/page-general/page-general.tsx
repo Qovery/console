@@ -30,7 +30,7 @@ export function PageGeneral(props: PageGeneralProps) {
           )}
         </div>
         <ServiceDetails
-          className="w-1/4 max-w-[360px] flex-1 border-l"
+          className="w-1/4 max-w-[360px] flex-1 border-l border-neutral-200"
           environmentId={environmentId}
           serviceId={databaseId}
         />

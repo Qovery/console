@@ -24,7 +24,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
-import { formatMetric, twMerge } from '@qovery/shared/util-js'
+import { formatMetric, pluralize, twMerge } from '@qovery/shared/util-js'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -76,7 +76,7 @@ function PodsMetricsTable({
 
   const columns = useMemo(() => {
     const podsColumn = columnHelper.accessor('podName', {
-      header: () => `Pods (${pods.length})`,
+      header: () => `${pluralize(pods.length, 'Instance', 'Instances')} (${pods.length})`,
       cell: (info) => {
         const podName = info.getValue()
         return podName.length > 23 ? (
@@ -294,7 +294,7 @@ function PodsMetricsTable({
 
   return (
     <>
-      <div className="overflow-x-scroll rounded border xl:overflow-hidden">
+      <div className="overflow-x-scroll rounded border border-neutral-200 xl:overflow-hidden">
         <Table.Root className="w-full overflow-y-scroll text-xs xl:overflow-auto">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
