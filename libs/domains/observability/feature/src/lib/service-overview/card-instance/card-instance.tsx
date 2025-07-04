@@ -43,8 +43,6 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
     queryRange: 'query',
   })
 
-  console.log('metricsAutoscalingReached', metricsAutoscalingReached)
-
   const autoscalingReached = metricsAutoscalingReached?.data?.result[0]?.value[1] ?? 0
   const maxInstances = metricsMaxInstances?.data?.result[0]?.value[1] ?? 0
 
