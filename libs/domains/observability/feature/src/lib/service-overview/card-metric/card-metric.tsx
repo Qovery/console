@@ -1,12 +1,12 @@
 import clsx from 'clsx'
-import { type ComponentProps } from 'react'
+import { type ComponentProps, type ReactNode } from 'react'
 import { Skeleton } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-interface CardMetricProps extends ComponentProps<'button'> {
+interface CardMetricProps extends Omit<ComponentProps<'button'>, 'value'> {
   title: string
-  value: string | number
+  value: number | ReactNode
   unit?: string
   status: 'GREEN' | 'YELLOW' | 'RED'
   description?: string
