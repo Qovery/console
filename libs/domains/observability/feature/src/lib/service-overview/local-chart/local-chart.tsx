@@ -124,16 +124,16 @@ export function LocalChart({
 
   return (
     <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
-      <div className="w-full p-4">
+      <div className="w-full p-4 pb-0">
         <Heading id={id} className="scroll-mt-20">
           {label}
         </Heading>
       </div>
-      <Chart.Container className="-ml-4 h-full w-[calc(100%+1rem)] pr-4" isLoading={isLoading} isEmpty={isEmpty}>
+      <Chart.Container className="h-full w-full p-4" isLoading={isLoading} isEmpty={isEmpty}>
         <LineChart
           data={data}
           syncId="syncId"
-          margin={{ top: 3, bottom: 10 }}
+          margin={{ top: 2, bottom: 0, left: -32, right: 0 }}
           onMouseMove={() => setOnHoverHideTooltip(true)}
           onMouseLeave={() => setOnHoverHideTooltip(false)}
           onMouseUp={() => setOnHoverHideTooltip(false)}

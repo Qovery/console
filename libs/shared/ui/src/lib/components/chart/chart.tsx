@@ -1,7 +1,8 @@
 import { type ComponentProps, forwardRef, useRef } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
-import { LoaderSpinner } from '../loader-spinner/loader-spinner'
+import { ChartLoader } from './chart-loader'
+import { ChartSkeleton } from './chart-skeleton'
 
 const ChartContainer = forwardRef<
   HTMLDivElement,
@@ -13,27 +14,41 @@ const ChartContainer = forwardRef<
 >(({ children, className, isLoading, isEmpty, ...props }, ref) => {
   const chartContainerRef = useRef<HTMLDivElement>(null)
 
-  if (isLoading) {
-    return (
-      <div className={twMerge('flex h-full w-full items-center justify-center', className)}>
-        <LoaderSpinner />
-      </div>
-    )
-  }
-
-  if (isEmpty) {
-    return (
-      <div className={twMerge('flex h-full w-full items-center justify-center', className)}>
-        <div className="text-neutral-400">No data available</div>
-      </div>
-    )
-  }
-
   return (
-    <div ref={ref} className={twMerge('flex justify-center text-xs', className)} {...props}>
+    <div ref={ref} className={twMerge('relative flex h-[300px] justify-center text-xs', className)} {...props}>
       <RechartsPrimitive.ResponsiveContainer ref={chartContainerRef} width="100%" height="100%" maxHeight={600}>
         {children as React.ReactElement}
       </RechartsPrimitive.ResponsiveContainer>
+
+      <div
+        className={twMerge(
+          'absolute inset-0 bg-white p-4 transition-all duration-100 ease-in-out',
+          isLoading ? 'visible opacity-100' : 'invisible opacity-0'
+        )}
+        style={{ pointerEvents: isLoading ? 'auto' : 'none' }}
+      >
+        <div className="h-full w-full">
+          <ChartSkeleton />
+        </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <ChartLoader />
+          <div className="text-sm text-neutral-400">Fetching data...</div>
+        </div>
+      </div>
+
+      <div
+        className={twMerge(
+          'absolute inset-0 bg-white p-4 transition-all duration-150 ease-in-out',
+          isEmpty && !isLoading ? 'visible opacity-100' : 'invisible opacity-0'
+        )}
+      >
+        <div className="h-full w-full">
+          <ChartSkeleton />
+        </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <div className="text-sm text-neutral-400">No data available</div>
+        </div>
+      </div>
     </div>
   )
 })

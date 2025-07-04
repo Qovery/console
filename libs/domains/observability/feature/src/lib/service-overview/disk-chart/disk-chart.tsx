@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
@@ -9,7 +8,6 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 
 export function DiskChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
-  const getColorByPod = usePodColor()
 
   const { data: metricsReadEphemeralStorage, isLoading: isLoadingMetricsReadEphemeralStorage } = useMetrics({
     clusterId,
@@ -117,7 +115,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="read-ephemeral-storage"
         type="linear"
-        stroke="var(--color-brand-500)"
+        stroke="var(--color-brand-300)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -126,7 +124,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="read-persistent-storage"
         type="linear"
-        stroke="var(--color-purple-500)"
+        stroke="var(--color-purple-300)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
