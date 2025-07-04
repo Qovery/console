@@ -12,10 +12,10 @@ type Context = {
   environment?: Environment
   service?: AnyService
   deployment?:
-    | {
-        execution_id?: string
-      }
-    | undefined
+  | {
+    execution_id?: string
+  }
+  | undefined
 }
 
 export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
@@ -39,7 +39,7 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const response = await addThread(userSub, token, organizationId, message)
+      const response = await addThread({ userSub, token, organizationId, message })
       const responseJson = await response.json()
       _threadId = responseJson.id
     }
@@ -49,15 +49,15 @@ export const submitMessage = async (
     }
 
     // Then, send the message to the thread
-    const messageResponse = await addMessageToThread(
+    const messageResponse = await addMessageToThread({
       userSub,
       token,
       organizationId,
-      _threadId,
+      threadId: _threadId,
       message,
       context,
       signal
-    )
+    })
 
     // Process streaming response if onStream callback is provided
     if (onStream && messageResponse.body) {

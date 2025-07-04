@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
-import { fetchAllThreads } from '../hooks/fetch-all-thread/fetch-all-thread'
+import { fetchAllThreads } from '../fetch-all-thread/fetch-all-thread'
 
 export interface Thread {
   id: string

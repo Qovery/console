@@ -20,8 +20,8 @@ import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 import DevopsCopilotHistory from './devops-copilot-history'
 import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
-import { useThread } from '../hooks/use-thread/use-thread'
-import { useThreads } from './use-threads'
+import { useThreadState } from '../hooks/use-thread-state/use-thread-state'
+import { useThreads } from '../hooks/use-threads/use-threads'
 import { normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
 
 /*
@@ -176,7 +176,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     error: errorThreads,
     isLoading: isLoadingThreads,
   } = useThreads(context?.organization?.id ?? '', user?.sub ?? '', threadId)
-  const { thread, setThread } = useThread({
+  const { thread, setThread } = useThreadState({
     organizationId: context?.organization?.id ?? '',
     threadId,
   })
