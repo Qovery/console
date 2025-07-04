@@ -2,7 +2,6 @@ import clsx from 'clsx'
 import { type ComponentProps, type ReactNode } from 'react'
 import { Skeleton } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 interface CardMetricProps extends Omit<ComponentProps<'button'>, 'value'> {
   title: string
@@ -11,7 +10,6 @@ interface CardMetricProps extends Omit<ComponentProps<'button'>, 'value'> {
   status: 'GREEN' | 'YELLOW' | 'RED'
   description?: string
   isLoading?: boolean
-  scrollToId?: string
 }
 
 export function CardMetric({
@@ -22,12 +20,8 @@ export function CardMetric({
   description,
   isLoading = true,
   className,
-  scrollToId,
-  onClick,
   ...props
 }: CardMetricProps) {
-  const { setExpandCharts, handleTimeRangeChange } = useServiceOverviewContext()
-
   const getStatusColor = () => {
     switch (status) {
       case 'GREEN':
@@ -55,32 +49,16 @@ export function CardMetric({
     )
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (onClick) onClick(e)
-
-    if (scrollToId) {
-      handleTimeRangeChange('24h')
-      setExpandCharts(true)
-      setTimeout(() => {
-        const element = document.getElementById(scrollToId)
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' })
-        }
-      }, 50)
-    }
-  }
-
   return (
     <button
       type="button"
       className={twMerge(
         clsx(
           'w-full cursor-default rounded border border-neutral-200 bg-neutral-50 p-4 text-left',
-          !isLoading && scrollToId && 'cursor-pointer transition-colors hover:bg-neutral-100',
+          !isLoading && 'cursor-pointer transition-colors hover:bg-neutral-100',
           className
         )
       )}
-      onClick={handleClick}
       disabled={isLoading}
       {...props}
     >

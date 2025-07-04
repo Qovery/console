@@ -1,9 +1,14 @@
+import { useState } from 'react'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
+import { CpuChart } from '../cpu-chart/cpu-chart'
+import MemoryChart from '../memory-chart/memory-chart'
+import ModalChart from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function CardInstanceRestarts({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     query: `
@@ -30,14 +35,24 @@ export function CardInstanceRestarts({ serviceId, clusterId }: { serviceId: stri
   const isError = value > 0
 
   return (
-    <CardMetric
-      title="Instance restarts"
-      value={<span>{value} times</span>}
-      status={isError ? 'YELLOW' : 'GREEN'}
-      description={isError ? `Restarts during the last ${timeRange}` : `No restarts during the last ${timeRange}`}
-      scrollToId="cpu"
-      isLoading={isLoadingMetrics}
-    />
+    <>
+      <CardMetric
+        title="Instance restarts"
+        value={<span>{value} times</span>}
+        status={isError ? 'YELLOW' : 'GREEN'}
+        description={isError ? `Restarts during the last ${timeRange}` : `No restarts during the last ${timeRange}`}
+        isLoading={isLoadingMetrics}
+        onClick={() => setIsModalOpen(true)}
+      />
+      {isModalOpen && (
+        <ModalChart open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <div className="grid h-full grid-cols-1">
+            <CpuChart clusterId={clusterId} serviceId={serviceId} />
+            <MemoryChart clusterId={clusterId} serviceId={serviceId} />
+          </div>
+        </ModalChart>
+      )}
+    </>
   )
 }
 
