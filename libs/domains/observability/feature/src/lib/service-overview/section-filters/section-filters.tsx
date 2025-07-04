@@ -15,7 +15,7 @@ export function SectionFilters() {
   } = useServiceOverviewContext()
 
   return (
-    <Section className="flex-row items-center justify-between px-4 py-2">
+    <Section className="flex-row items-center justify-between py-2">
       <div className="flex items-center gap-4">
         <span className="mr-1.5 text-ssm font-medium text-neutral-350">Filters:</span>
         <div className="flex gap-2">

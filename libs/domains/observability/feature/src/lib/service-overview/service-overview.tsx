@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { Section } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
-import { CardAutoscalingLimitReached } from './card-autoscaling-limit-reached/card-autoscaling-limit-reached'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceRestarts } from './card-instance-restart/card-instance-restarts'
+import { CardInstance } from './card-instance/card-instance'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
@@ -28,6 +28,7 @@ function ServiceOverviewContent() {
 
   return (
     <div className="space-y-6">
+      <SectionFilters />
       <Section
         className={clsx(
           'grid grid-cols-1 gap-4',
@@ -35,18 +36,12 @@ function ServiceOverviewContent() {
         )}
       >
         <CardInstanceRestarts clusterId={environment.cluster_id} serviceId={applicationId} />
-        <CardAutoscalingLimitReached clusterId={environment.cluster_id} serviceId={applicationId} />
+        <CardInstance clusterId={environment.cluster_id} serviceId={applicationId} />
         <CardLogErrors clusterId={environment.cluster_id} serviceId={applicationId} />
         {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
       </Section>
       <Section className={clsx('rounded border border-neutral-200', expandCharts ? 'border-b-0' : '')}>
-        <SectionFilters />
-        <div
-          className={clsx(
-            'grid border-t border-neutral-200',
-            expandCharts ? 'grid-cols-1 divide-y divide-neutral-200' : 'grid-cols-2'
-          )}
-        >
+        <div className={clsx('grid', expandCharts ? 'grid-cols-1 divide-y divide-neutral-200' : 'grid-cols-2')}>
           <div className={clsx(expandCharts ? '' : 'border-b border-r border-neutral-200')}>
             <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
           </div>

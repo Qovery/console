@@ -1,4 +1,3 @@
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
@@ -8,15 +7,7 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function MemoryChart({
-  clusterId,
-  serviceId,
-  kubeEvents,
-}: {
-  clusterId: string
-  serviceId: string
-  kubeEvents?: any
-}) {
+export function MemoryChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 
