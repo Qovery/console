@@ -1,6 +1,6 @@
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { HACKATHON_API_BASE_URL } from './submit-message'
+import { addVote } from '../hooks/add-vote/add-vote'
 
 type Context = {
   organization?: Organization
@@ -17,7 +17,7 @@ type Context = {
 
 export async function submitVote(
   userSub: string,
-  messageId: number,
+  messageId: string,
   vote: 'upvote' | 'downvote',
   token: string,
   context?: Context | null
@@ -32,21 +32,7 @@ export async function submitVote(
       throw new Error('Message ID is required but not provided')
     }
 
-    const response = await fetch(
-      `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/message/${messageId}/vote`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_sub: userSub, vote_type: vote, current_page_url: window.location.href }),
-      }
-    )
-
-    if (!response.ok) {
-      throw new Error(`Failed to submit vote: ${response.statusText}`)
-    }
+    const response = await addVote(userSub, messageId, vote, token, organizationId)
 
     return await response.json()
   } catch (error) {
