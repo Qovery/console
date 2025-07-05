@@ -9,15 +9,15 @@ type Context = {
   environment?: Environment
   service?: AnyService
   deployment?:
-    | {
-        execution_id?: string
-      }
-    | undefined
+  | {
+    execution_id?: string
+  }
+  | undefined
 }
 
 export async function submitVote(
   userSub: string,
-  messageId: number,
+  messageId: string,
   vote: 'upvote' | 'downvote',
   token: string,
   context?: Context | null

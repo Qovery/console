@@ -2,7 +2,7 @@ import { HACKATHON_API_BASE_URL } from '../../devops-copilot-panel/submit-messag
 
 export async function addVote(
   userSub: string,
-  messageId: number,
+  messageId: string,
   vote: 'upvote' | 'downvote',
   token: string,
   organizationId: string

@@ -92,7 +92,7 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, load
 })
 
 export type Message = {
-  id: number
+  id: string
   text: string
   owner: 'user' | 'assistant'
   timestamp: number
@@ -161,13 +161,13 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
 
   const [plan, setPlan] = useState<
     {
-      messageId: number
+      messageId: string
       description: string
       toolName: string
       status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
     }[]
   >([])
-  const [showPlans, setShowPlans] = useState<Record<number, boolean>>({})
+  const [showPlans, setShowPlans] = useState<Record<string, boolean>>({})
 
   const pendingThreadId = useRef<string>()
 
@@ -229,7 +229,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     return () => document.removeEventListener('keydown', down)
   }, [thread])
 
-  const handleVote = async (messageId: number, vote: 'upvote' | 'downvote') => {
+  const handleVote = async (messageId: string, vote: 'upvote' | 'downvote') => {
     const currentMessage = thread.find((msg) => msg.id === messageId)
     const currentVote = currentMessage?.vote
     const nextVote = currentVote === vote ? undefined : vote
@@ -262,7 +262,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }
 
-  const lastSubmitResult = useRef<{ thread: Message[] } | null>(null)
+  const lastSubmitResult = useRef<{ id: string; messageId: string } | null>(null)
   const handleSendMessage = async (value?: string) => {
     controllerRef.current = new AbortController()
     lastSubmitResult.current = null
@@ -283,7 +283,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
 
     if (trimmedInputMessage) {
       const newMessage: Message = {
-        id: Date.now(),
+        id: Date.now().toString(),
         text: trimmedInputMessage,
         owner: 'user',
         timestamp: Date.now(),
@@ -321,7 +321,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     setPlan((prev) => [
                       ...prev,
                       ...planArray.map((step: { description: string; tool_name: string }) => ({
-                        messageId: -2,
+                        messageId: 'temp',
                         description: step.description,
                         toolName: step.tool_name,
                         status: 'not_started',
@@ -378,34 +378,28 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       (isStopped && isLoading && isFinish)
     ) {
       controllerRef.current?.abort()
-      if (pendingThreadId.current && lastSubmitResult.current && lastSubmitResult.current.thread.length >= 2) {
-        const result = lastSubmitResult.current
-        const updatedThread = [...thread]
+      if (pendingThreadId.current && lastSubmitResult.current?.messageId) {
 
-        const resultThread: Message[] = [
+        const newAssistantMessageId = lastSubmitResult.current.messageId
+
+        setThread([
+          ...thread,
           {
-            ...updatedThread[updatedThread.length - 1],
-            id: result.thread[result.thread.length - 2].id,
-            owner: 'user',
-          },
-          {
-            id: result.thread[result.thread.length - 1].id,
+            id: newAssistantMessageId,
             text: streamingMessage,
             owner: 'assistant',
             timestamp: Date.now(),
           },
-        ]
+        ])
 
-        setThread(updatedThread.slice(0, -1).concat(resultThread))
-        const newAssistantMessageId = result.thread[result.thread.length - 1].id
         setPlan((prev) =>
-          prev.map((step) => (step.messageId === -2 ? { ...step, messageId: newAssistantMessageId } : step))
+          prev.map((step) => (step.messageId === 'temp' ? { ...step, messageId: newAssistantMessageId } : step))
         )
       } else {
         setThread([
           ...thread,
           {
-            id: Date.now() + 1,
+            id: (Date.now() + 1).toString(),
             text: streamingMessage,
             owner: 'assistant',
             timestamp: Date.now(),
@@ -819,21 +813,21 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <div className="relative top-2 mt-auto">
                     <div
                       className="group flex cursor-pointer items-center gap-2"
-                      onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}
+                      onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
                     >
                       <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
-                      {plan.filter((p) => p.messageId === -2).length > 0 && (
+                      {plan.filter((p) => p.messageId === 'temp').length > 0 && (
                         <Icon
-                          iconName={showPlans[-1] ? 'chevron-circle-up' : 'chevron-circle-down'}
+                          iconName={showPlans['temp'] ? 'chevron-circle-up' : 'chevron-circle-down'}
                           iconStyle="regular"
                           className="transform transition-transform group-hover:scale-110"
                         />
                       )}
                     </div>
-                    {showPlans[-2] && plan.filter((p) => p.messageId === -2).length > 0 && (
+                    {showPlans['temp'] && plan.filter((p) => p.messageId === 'temp').length > 0 && (
                       <div className="mt-2 flex flex-col gap-2">
                         {plan
-                          .filter((p) => p.messageId === -2)
+                          .filter((p) => p.messageId === 'temp')
                           .map((step, index) => (
                             <div key={index} className="flex items-start gap-2 text-sm">
                               <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
@@ -851,27 +845,29 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 )}
                 {isLoading && streamingMessage.length > 0 && (
                   <div className="streaming text-sm">
-                    {plan.filter((p) => p.messageId === -2).length > 0 && (
+                    {plan.filter((p) => p.messageId === 'temp').length > 0 && (
                       <div
                         className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
-                        onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}
+                        onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
                       >
                         <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
                         <Icon
                           iconName={
-                            showPlans[-2] !== undefined && showPlans[-2] ? 'chevron-circle-up' : 'chevron-circle-down'
+                            showPlans['temp'] !== undefined && showPlans['temp']
+                              ? 'chevron-circle-up'
+                              : 'chevron-circle-down'
                           }
                           iconStyle="regular"
                           className="transform transition-transform group-hover:scale-110"
                         />
                       </div>
                     )}
-                    {plan.filter((p) => p.messageId === -2).length > 0 &&
-                      showPlans[-2] !== undefined &&
-                      showPlans[-2] && (
+                    {plan.filter((p) => p.messageId === 'temp').length > 0 &&
+                      showPlans['temp'] !== undefined &&
+                      showPlans['temp'] && (
                         <div className="mt-2 flex flex-col gap-2">
                           {plan
-                            .filter((p) => p.messageId === -2)
+                            .filter((p) => p.messageId === 'temp')
                             .map((step, index) => (
                               <div key={index} className="flex items-start gap-2 text-sm">
                                 <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />

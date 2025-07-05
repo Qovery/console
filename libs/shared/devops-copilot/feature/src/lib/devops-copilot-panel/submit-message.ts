@@ -28,7 +28,7 @@ export const submitMessage = async (
   context?: Context | null,
   onStream?: (chunk: string) => void,
   signal?: AbortSignal
-): Promise<{ id: string; thread: Thread } | null> => {
+): Promise<{ id: string; messageId: string } | null> => {
   try {
     // Ensure we have an organization ID
     const organizationId = context?.organization?.id
@@ -59,60 +59,36 @@ export const submitMessage = async (
       signal
     })
 
-    // Process streaming response if onStream callback is provided
+    let assistantMessageId = ''
+
     if (onStream && messageResponse.body) {
       const reader = messageResponse.body.getReader()
       const decoder = new TextDecoder()
 
-      // Process the stream until it's done
-      const processStream = async () => {
-        let result = await reader.read()
+      let result = await reader.read()
+      while (!result.done) {
+        const chunk = decoder.decode(result.value, { stream: true })
+        const lines = chunk.split('\n').filter(line => line.startsWith('data:'))
 
-        while (!result.done) {
-          const chunk = decoder.decode(result.value, { stream: true })
+        for (const line of lines) {
+          const cleanChunk = line.slice(5).trim()
+          onStream(cleanChunk)
 
-          // Parse SSE data
-          const chunks = chunk
-            .split('\n\n')
-            .map((block) =>
-              block
-                .split('\n')
-                .filter((line) => line.startsWith('data:'))
-                .map((line) => line.slice(5).trim())
-                .join('')
-            )
-            .filter(Boolean)
-
-          // Send each chunk to the callback
-          for (const cleanChunk of chunks) {
-            onStream(cleanChunk)
-          }
-
-          // Read the next chunk
-          result = await reader.read()
+          try {
+            const parsed = JSON.parse(cleanChunk)
+            if (parsed.type === 'complete' && parsed.content?.id) {
+              assistantMessageId = parsed.content.id
+            }
+          } catch { }
         }
+
+        result = await reader.read()
       }
-
-      await processStream()
     }
-
-    // Fetch and format the thread messages
-    const messagesReturn = await fetchThread(userSub, organizationId, _threadId, token)
-    const messageJson = await messagesReturn.json()
-    const messages = messageJson.results || []
-
-    const formattedMessages: Thread = messages.map(
-      (msg: { id: string; media_content: string; owner: string; created_at: string }) => ({
-        id: msg.id,
-        text: msg.media_content,
-        owner: msg.owner,
-        timestamp: new Date(msg.created_at).getTime(),
-      })
-    )
 
     return {
       id: _threadId,
-      thread: formattedMessages,
+      messageId: assistantMessageId || "",
     }
   } catch (error) {
     console.error('Error:', error)
