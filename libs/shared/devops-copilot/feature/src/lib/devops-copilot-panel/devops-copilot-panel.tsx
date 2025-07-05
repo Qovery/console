@@ -1,4 +1,3 @@
-import { getIconName, getIconClass } from '../utils/icon-utils/icon-utils'
 import { useAuth0 } from '@auth0/auth0-react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
@@ -12,17 +11,18 @@ import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qover
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'
+import { normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
+import { useThreadState } from '../hooks/use-thread-state/use-thread-state'
+import { useThreads } from '../hooks/use-threads/use-threads'
 import { MermaidChart } from '../mermaid-chart/mermaid-chart'
+import { getIconClass, getIconName } from '../utils/icon-utils/icon-utils'
 import DevopsCopilotHistory from './devops-copilot-history'
 import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
-import { useThreadState } from '../hooks/use-thread-state/use-thread-state'
-import { useThreads } from '../hooks/use-threads/use-threads'
-import { normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
 
 /*
 XXX: The devops-copilot feature is unstable and requires a full redesign.
@@ -379,7 +379,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     ) {
       controllerRef.current?.abort()
       if (pendingThreadId.current && lastSubmitResult.current?.messageId) {
-
         const newAssistantMessageId = lastSubmitResult.current.messageId
 
         setThread([

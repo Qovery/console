@@ -12,10 +12,10 @@ type Context = {
   environment?: Environment
   service?: AnyService
   deployment?:
-  | {
-    execution_id?: string
-  }
-  | undefined
+    | {
+        execution_id?: string
+      }
+    | undefined
 }
 
 export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
@@ -56,7 +56,7 @@ export const submitMessage = async (
       threadId: _threadId,
       message,
       context,
-      signal
+      signal,
     })
 
     let assistantMessageId = ''
@@ -68,7 +68,7 @@ export const submitMessage = async (
       let result = await reader.read()
       while (!result.done) {
         const chunk = decoder.decode(result.value, { stream: true })
-        const lines = chunk.split('\n').filter(line => line.startsWith('data:'))
+        const lines = chunk.split('\n').filter((line) => line.startsWith('data:'))
 
         for (const line of lines) {
           const cleanChunk = line.slice(5).trim()
@@ -79,7 +79,7 @@ export const submitMessage = async (
             if (parsed.type === 'complete' && parsed.content?.id) {
               assistantMessageId = parsed.content.id
             }
-          } catch { }
+          } catch {}
         }
 
         result = await reader.read()
@@ -88,7 +88,7 @@ export const submitMessage = async (
 
     return {
       id: _threadId,
-      messageId: assistantMessageId || "",
+      messageId: assistantMessageId || '',
     }
   } catch (error) {
     console.error('Error:', error)

@@ -9,10 +9,10 @@ type Context = {
   environment?: Environment
   service?: AnyService
   deployment?:
-  | {
-    execution_id?: string
-  }
-  | undefined
+    | {
+        execution_id?: string
+      }
+    | undefined
 }
 
 export async function submitVote(
