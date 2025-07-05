@@ -79,7 +79,9 @@ export const submitMessage = async (
             if (parsed.type === 'complete' && parsed.content?.id) {
               assistantMessageId = parsed.content.id
             }
-          } catch {}
+          } catch (e) {
+            console.error('Failed to parse chunk:', cleanChunk, e)
+          }
         }
 
         result = await reader.read()
