@@ -65,7 +65,7 @@ describe('PageOrganizationCredentialsFeature', () => {
       expect(deleteButton).toBeEnabled()
     })
 
-    it('delete button should be disabled if no clusters are associated', () => {
+    it('delete button should not be displayed only when no clusters are attached', () => {
       mockCredentials = [
         {
           credential: {
@@ -95,8 +95,7 @@ describe('PageOrganizationCredentialsFeature', () => {
       const row = screen.getByText('Credential 1').parentElement?.parentElement?.parentElement
       const deleteButton = row?.querySelectorAll('button')[2] // Delete button is the third button in the row
 
-      expect(deleteButton).toBeInTheDocument()
-      expect(deleteButton).toBeDisabled()
+      expect(deleteButton).toBeUndefined()
     })
   })
 })
