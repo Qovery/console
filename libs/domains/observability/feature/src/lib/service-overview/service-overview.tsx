@@ -11,8 +11,8 @@ import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
+import { SelectTimeRange } from './select-time-range/select-time-range'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
-import { type TimeRangeOption, timeRangeOptions } from './util-filter/time-range'
 
 type View = 'monitoring' | 'instance'
 
@@ -22,16 +22,8 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
 
   const { data: service } = useService({ serviceId: applicationId })
   const { data: environment } = useEnvironment({ environmentId })
-  const {
-    expandCharts,
-    useLocalTime,
-    setUseLocalTime,
-    timeRange,
-    handleTimeRangeChange,
-    hideEvents,
-    setHideEvents,
-    setExpandCharts,
-  } = useServiceOverviewContext()
+  const { expandCharts, useLocalTime, setUseLocalTime, hideEvents, setHideEvents, setExpandCharts } =
+    useServiceOverviewContext()
 
   if (!environment || !service) return null
 
@@ -53,13 +45,7 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
         </SegmentedControl.Root>
         {view === 'monitoring' && (
           <div className="flex gap-3">
-            <InputSelectSmall
-              name="time-range"
-              className="w-[180px]"
-              items={timeRangeOptions}
-              defaultValue={timeRange}
-              onChange={(e) => handleTimeRangeChange(e as TimeRangeOption)}
-            />
+            <SelectTimeRange />
             <InputSelectSmall
               name="timezone"
               className="w-[120px]"

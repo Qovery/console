@@ -1,18 +1,6 @@
 import { subDays, subHours, subMinutes } from 'date-fns'
 
-export type TimeRangeOption =
-  | 'live'
-  | '5m'
-  | '15m'
-  | '30m'
-  | '1h'
-  | '3h'
-  | '6h'
-  | '12h'
-  | '24h'
-  | '2d'
-  | '7d'
-  | 'custom'
+export type TimeRangeOption = 'live' | '5m' | '15m' | '30m' | '1h' | '3h' | '6h' | '12h' | '24h' | '2d'
 
 export const timeRangeOptions = [
   { label: '📊 Live tailing', value: 'live' },
@@ -25,8 +13,6 @@ export const timeRangeOptions = [
   { label: 'Last 12 hours', value: '12h' },
   { label: 'Last 24 hours', value: '24h' },
   { label: 'Last 2 days', value: '2d' },
-  { label: 'Last 7 days', value: '7d' },
-  { label: 'Custom range (UTC)', value: 'custom' },
 ]
 
 export const createTimeRangeHandler = (
@@ -37,10 +23,6 @@ export const createTimeRangeHandler = (
   return (value: TimeRangeOption) => {
     setTimeRange(value)
     const now = new Date()
-
-    if (value === 'custom') {
-      return
-    }
 
     switch (value) {
       case 'live':
@@ -81,10 +63,6 @@ export const createTimeRangeHandler = (
         break
       case '2d':
         setStartDate(subDays(now, 2).toISOString())
-        setEndDate(now.toISOString())
-        break
-      case '7d':
-        setStartDate(subDays(now, 7).toISOString())
         setEndDate(now.toISOString())
         break
       default:
