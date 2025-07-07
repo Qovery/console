@@ -37,6 +37,7 @@ type ClusterCredentialsFormValues = {
   role_arn?: string
   azure_subscription_id?: string
   azure_tenant_id?: string
+  azure_application_id?: string
 }
 
 export interface ClusterCredentialsModalProps {
@@ -218,6 +219,9 @@ export function ClusterCredentialsModal({
             azure_subscription_id: match(credential)
               .with({ azure_subscription_id: P.string }, (c) => c.azure_subscription_id)
               .otherwise(() => undefined),
+            azure_application_id: match(credential)
+              .with({ azure_application_id: P.string }, (c) => c.azure_application_id)
+              .otherwise(() => undefined),
           },
   })
 
@@ -226,8 +230,10 @@ export function ClusterCredentialsModal({
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    const isAzureSubmitSuccessful = methods.formState.isSubmitSuccessful && cloudProviderLocal === 'AZURE'
+
     // Close without edit when no changes
-    if (!methods.formState.isDirty) {
+    if (!methods.formState.isDirty || isAzureSubmitSuccessful) {
       onClose()
       return
     }
@@ -247,7 +253,20 @@ export function ClusterCredentialsModal({
           organizationId,
           ...credentials,
         })
-        onClose(response)
+
+        match({ cloudProviderLocal, response })
+          .with(
+            {
+              cloudProviderLocal: 'AZURE',
+              response: { azure_application_id: P.string },
+            },
+            ({ response }) => {
+              methods.setValue('azure_application_id', response.azure_application_id)
+            }
+          )
+          .otherwise(() => {
+            onClose(response)
+          })
       }
     } catch (error) {
       console.error(error)
@@ -282,6 +301,27 @@ export function ClusterCredentialsModal({
   }
 
   const watchType = methods.watch('type')
+  const watchAzureApplicationId = methods.watch('azure_application_id')
+  const watchAzureSubscriptionId = methods.watch('azure_subscription_id')
+
+  const submitLabel = isEdit
+    ? 'Confirm'
+    : match({ cloudProviderLocal, watchAzureApplicationId, watchAzureSubscriptionId })
+        .with(
+          {
+            cloudProviderLocal: 'AZURE',
+            watchAzureApplicationId: P.not(P.string),
+          },
+          () => 'Next'
+        )
+        .with(
+          {
+            cloudProviderLocal: 'AZURE',
+            watchAzureApplicationId: P.string,
+          },
+          () => 'Done'
+        )
+        .otherwise(() => 'Create')
 
   return (
     <FormProvider {...methods}>
@@ -316,6 +356,7 @@ export function ClusterCredentialsModal({
         onDelete={onDelete}
         loading={isLoadingCreate || isLoadingEdit}
         isEdit={isEdit}
+        submitLabel={submitLabel}
       >
         <div className="flex flex-col gap-y-4">
           {cloudProviderLocal === 'AWS' && (
@@ -463,7 +504,9 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               <h2 className="text-sm font-medium text-neutral-400">
                 {cloudProviderLocal === 'GCP'
                   ? '3. Download the key.json generated and drag and drop it here'
-                  : cloudProvider === 'AZURE' ? '1. Fill these information' : '2. Fill these information' }
+                  : cloudProvider === 'AZURE'
+                    ? '1. Fill these information'
+                    : '2. Fill these information'}
               </h2>
               <Controller
                 name="name"
@@ -691,39 +734,51 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               <CalloutEdit isEdit={isEdit} organizationId={organizationId} clusterId={clusterId} />
             </div>
           )}
-        </div>
-        <>
-          {cloudProviderLocal === 'AZURE' && (
-                <>
-                  <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                    <h2 className="text-sm font-medium text-neutral-400">
-                      2. Connect to your Azure Console and go to shell console
-                    </h2>
-                    <p className="text-sm text-neutral-350"> Make sure you are connected to the right Azure account</p>
-                    <ExternalLink href="https://portal.azure.com/" size="sm">
-                      https://portal.azure.com/
-                    </ExternalLink>
-                  </div>
-                  <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                    <h2 className="text-sm font-medium text-neutral-400">
-                      3. Open the embedded Azure shell and run the following command
-                    </h2>
-                    <p className="text-sm text-neutral-350"> Select `Bash`, then `No storage account required` and your subscription ID.</p>
-                    <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
-                      <div>
-                        <span className="select-none">$ </span>
-                        curl https://hub.qovery.com/files/create_credentials_azure.sh | \
-bash -s -- --qovery-app-id ICI --subscription-id $ACC_USER_SUBSCRIPTION
-                      </div>
-                      <CopyButton
-                        content=" curl https://hub.qovery.com/files/create_credentials_azure.sh | \
-bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
-                      />
+
+          {match({ cloudProviderLocal, watchAzureApplicationId, watchAzureSubscriptionId })
+            .with(
+              { cloudProviderLocal: 'AZURE', watchAzureApplicationId: P.string, watchAzureSubscriptionId: P.string },
+              ({ watchAzureApplicationId, watchAzureSubscriptionId }) => {
+                const snippet = `curl https://hub.qovery.com/files/create_credentials_azure.sh | bash -s -- --qovery-app-id ${watchAzureApplicationId} --subscription-id ${watchAzureSubscriptionId}`
+
+                return (
+                  <>
+                    <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
+                      <h2 className="text-sm font-medium text-neutral-400">
+                        2. Connect to your Azure Console and go to shell console
+                      </h2>
+                      <p className="text-sm text-neutral-350">
+                        {' '}
+                        Make sure you are connected to the right Azure account
+                      </p>
+                      <ExternalLink href="https://portal.azure.com/" size="sm">
+                        https://portal.azure.com/
+                      </ExternalLink>
                     </div>
-                  </div>
-                </>
-              )}
-        </>
+                    <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
+                      <h2 className="text-sm font-medium text-neutral-400">
+                        3. Open the embedded Azure shell and run the following command
+                      </h2>
+                      <p className="text-sm text-neutral-350">
+                        {' '}
+                        Select `Bash`, then `No storage account required` and your subscription ID.
+                      </p>
+                      <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                        <div>
+                          <span className="select-none">$ </span>
+                          {snippet}
+                        </div>
+                        <CopyButton content={snippet} />
+                      </div>
+                    </div>
+                  </>
+                )
+              }
+            )
+            .otherwise(() => {
+              return null
+            })}
+        </div>
       </ModalCrud>
     </FormProvider>
   )
