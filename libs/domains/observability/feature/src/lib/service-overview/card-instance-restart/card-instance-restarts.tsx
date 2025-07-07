@@ -34,10 +34,12 @@ export function CardInstanceRestarts({ serviceId, clusterId }: { serviceId: stri
   const value = Math.round(Number(metrics?.data?.result[0]?.value[1]))
   const isError = value > 0
 
+  const title = 'Instance restarts'
+
   return (
     <>
       <CardMetric
-        title="Instance restarts"
+        title={title}
         value={<span>{value} times</span>}
         status={isError ? 'YELLOW' : 'GREEN'}
         description={isError ? `Restarts during the last ${timeRange}` : `No restarts during the last ${timeRange}`}
@@ -45,9 +47,10 @@ export function CardInstanceRestarts({ serviceId, clusterId }: { serviceId: stri
         onClick={() => setIsModalOpen(true)}
       />
       {isModalOpen && (
-        <ModalChart open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <ModalChart title={title} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <div className="grid h-full grid-cols-1">
             <CpuChart clusterId={clusterId} serviceId={serviceId} />
+            <hr className="border-neutral-200" />
             <MemoryChart clusterId={clusterId} serviceId={serviceId} />
           </div>
         </ModalChart>

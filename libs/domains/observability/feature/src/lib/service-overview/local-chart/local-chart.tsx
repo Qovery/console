@@ -59,65 +59,21 @@ export function LocalChart({
   })
 
   function getDomain() {
-    if (!data || data.length === 0) {
-      return [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
-    }
-
-    const dataMin = Math.min(...data.map((d) => d.timestamp))
-    const dataMax = Math.max(...data.map((d) => d.timestamp))
-
-    return [dataMin, dataMax]
+    return [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
   }
 
   function getLogicalTicks(): number[] {
     const startTime = Number(startTimestamp) * 1000
     const endTime = Number(endTimestamp) * 1000
-    const durationMs = endTime - startTime
-    const durationHours = durationMs / (1000 * 60 * 60)
-
-    // Calculate appropriate interval based on time range duration
-    let intervalMinutes: number
-    if (durationHours >= 24) {
-      intervalMinutes = 60 // 1 hour
-    } else if (durationHours >= 6) {
-      intervalMinutes = 15 // 15 minutes
-    } else if (durationHours >= 3) {
-      intervalMinutes = 10 // 10 minutes
-    } else if (durationHours >= 1) {
-      intervalMinutes = 5 // 5 minutes
-    } else {
-      intervalMinutes = 1 // 1 minute
-    }
 
     const ticks: number[] = []
+    const interval = (endTime - startTime) / 5 // 5 intervals for 6 ticks
 
-    // Always start from the beginning of the hour and work from there
-    const baseDate = new Date(startTime)
-    if (useLocalTime) {
-      baseDate.setMinutes(0, 0, 0)
-    } else {
-      baseDate.setUTCMinutes(0, 0, 0)
+    for (let i = 0; i < 6; i++) {
+      ticks.push(startTime + interval * i)
     }
 
-    let current = baseDate.getTime()
-
-    // Move forward to find the first tick that should be visible
-    while (current < startTime - intervalMinutes * 60 * 1000) {
-      current += intervalMinutes * 60 * 1000
-    }
-
-    // Generate ticks extending slightly beyond our range for better visual coverage
-    const paddingMs = intervalMinutes * 60 * 1000
-    while (current <= endTime + paddingMs) {
-      ticks.push(current)
-      current += intervalMinutes * 60 * 1000
-    }
-
-    // Only return ticks that make sense for our visible range
-    return ticks.filter((tick) => {
-      // Include ticks that are close enough to our range to be useful
-      return tick >= startTime - paddingMs && tick <= endTime + paddingMs
-    })
+    return ticks
   }
 
   return (
@@ -171,7 +127,8 @@ export function LocalChart({
                 : date.getUTCMinutes().toString().padStart(2, '0')
               return `${hours}:${minutes}`
             }}
-            allowDataOverflow={false}
+            allowDataOverflow={true}
+            interval="preserveStartEnd"
             strokeDasharray="3 3"
           />
           <YAxis
