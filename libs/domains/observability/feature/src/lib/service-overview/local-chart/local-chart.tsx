@@ -133,6 +133,7 @@ interface LocalChartProps extends PropsWithChildren {
   serviceId: string
   clusterId: string
   className?: string
+  fullscreen?: boolean
 }
 
 export function LocalChart({
@@ -145,6 +146,7 @@ export function LocalChart({
   children,
   serviceId,
   clusterId,
+  fullscreen = true,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
   const { startTimestamp, endTimestamp } = useServiceOverviewContext()
@@ -176,10 +178,18 @@ export function LocalChart({
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
         <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
           <Heading className="scroll-mt-20">{label}</Heading>
-          <Button variant="surface" color="neutral" size="xs" className="gap-1.5" onClick={() => setIsModalOpen(true)}>
-            Fullscreen
-            <Icon iconName="eye" iconStyle="regular" />
-          </Button>
+          {fullscreen && (
+            <Button
+              variant="surface"
+              color="neutral"
+              size="xs"
+              className="gap-1.5"
+              onClick={() => setIsModalOpen(true)}
+            >
+              Fullscreen
+              <Icon iconName="eye" iconStyle="regular" />
+            </Button>
+          )}
         </div>
         <ChartContent
           data={data}

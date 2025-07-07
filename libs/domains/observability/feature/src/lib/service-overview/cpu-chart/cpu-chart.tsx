@@ -7,7 +7,15 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function CpuChart({
+  clusterId,
+  serviceId,
+  fullscreen = true,
+}: {
+  clusterId: string
+  serviceId: string
+  fullscreen?: boolean
+}) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 
@@ -88,6 +96,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
       unit="mCPU"
       serviceId={serviceId}
       clusterId={clusterId}
+      fullscreen={fullscreen}
     >
       {seriesNames.map((name) => (
         <Line
