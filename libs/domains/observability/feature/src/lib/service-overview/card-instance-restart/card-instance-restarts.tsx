@@ -49,9 +49,9 @@ export function CardInstanceRestarts({ serviceId, clusterId }: { serviceId: stri
       {isModalOpen && (
         <ModalChart title={title} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <div className="grid h-full grid-cols-1">
-            <CpuChart clusterId={clusterId} serviceId={serviceId} />
+            <CpuChart clusterId={clusterId} serviceId={serviceId} fullscreen={false} />
             <hr className="border-neutral-200" />
-            <MemoryChart clusterId={clusterId} serviceId={serviceId} />
+            <MemoryChart clusterId={clusterId} serviceId={serviceId} fullscreen={false} />
           </div>
         </ModalChart>
       )}
