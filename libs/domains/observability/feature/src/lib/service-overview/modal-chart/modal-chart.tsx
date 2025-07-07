@@ -5,9 +5,9 @@ import { SelectTimeRange } from '../select-time-range/select-time-range'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 interface ModalChartProps extends PropsWithChildren {
+  title: string
   open: boolean
   onOpenChange: (open: boolean) => void
-  title?: string
 }
 
 export function ModalChart({ children, open, onOpenChange, title }: ModalChartProps) {
