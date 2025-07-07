@@ -98,7 +98,6 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
 
   return (
     <LocalChart
-      id="disk"
       data={chartData}
       unit="MiB"
       isLoading={

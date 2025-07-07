@@ -12,7 +12,6 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 import { Tooltip, type UnitType } from './tooltip'
 
 interface LocalChartProps extends PropsWithChildren {
-  id: string
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
   unit: UnitType
   label: string
@@ -24,7 +23,6 @@ interface LocalChartProps extends PropsWithChildren {
 }
 
 export function LocalChart({
-  id,
   data,
   unit,
   isLoading = false,
@@ -124,16 +122,14 @@ export function LocalChart({
 
   return (
     <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
-      <div className="w-full p-4 pb-0">
-        <Heading id={id} className="scroll-mt-20">
-          {label}
-        </Heading>
+      <div className="w-full p-5 pb-0">
+        <Heading className="scroll-mt-20">{label}</Heading>
       </div>
-      <Chart.Container className="h-full w-full p-4" isLoading={isLoading} isEmpty={isEmpty}>
+      <Chart.Container className="h-full w-full p-5 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <LineChart
           data={data}
           syncId="syncId"
-          margin={{ top: 2, bottom: 0, left: -32, right: 0 }}
+          margin={{ top: 2, bottom: 0, left: 0, right: 0 }}
           onMouseMove={() => setOnHoverHideTooltip(true)}
           onMouseLeave={() => setOnHoverHideTooltip(false)}
           onMouseUp={() => setOnHoverHideTooltip(false)}
@@ -183,8 +179,11 @@ export function LocalChart({
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'var(--color-neutral-250)' }}
             strokeDasharray="3 3"
+            orientation="right"
+            tickCount={5}
           />
           <Chart.Tooltip
+            isAnimationActive={false}
             content={
               !onHoverHideTooltip ? (
                 <div />

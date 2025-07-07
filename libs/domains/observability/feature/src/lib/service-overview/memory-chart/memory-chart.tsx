@@ -81,7 +81,6 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
 
   return (
     <LocalChart
-      id="memory"
       data={chartData}
       unit="MiB"
       isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}
@@ -105,7 +104,8 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       <Line
         dataKey="memory-limit"
         type="linear"
-        stroke="var(--color-red-500)"
+        stroke="var(--color-red-600)"
+        strokeDasharray="3 3"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -114,7 +114,8 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       <Line
         dataKey="memory-request"
         type="linear"
-        stroke="var(--color-brand-500)"
+        stroke="var(--color-brand-400)"
+        strokeDasharray="3 3"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
