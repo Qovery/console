@@ -1,8 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type PropsWithChildren } from 'react'
 import { Button, Checkbox, Heading, Icon, InputSelectSmall, Section } from '@qovery/shared/ui'
+import { SelectTimeRange } from '../select-time-range/select-time-range'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-import { type TimeRangeOption, timeRangeOptions } from '../util-filter/time-range'
 
 interface ModalChartProps extends PropsWithChildren {
   open: boolean
@@ -11,8 +11,7 @@ interface ModalChartProps extends PropsWithChildren {
 }
 
 export function ModalChart({ children, open, onOpenChange, title }: ModalChartProps) {
-  const { timeRange, handleTimeRangeChange, useLocalTime, setUseLocalTime, hideEvents, setHideEvents } =
-    useServiceOverviewContext()
+  const { useLocalTime, setUseLocalTime, hideEvents, setHideEvents } = useServiceOverviewContext()
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -33,13 +32,7 @@ export function ModalChart({ children, open, onOpenChange, title }: ModalChartPr
               </div>
               <div className="flex items-center gap-10">
                 <div className="flex items-center gap-5">
-                  <InputSelectSmall
-                    name="time-range"
-                    className="w-[180px]"
-                    items={timeRangeOptions}
-                    defaultValue={timeRange}
-                    onChange={(e) => handleTimeRangeChange(e as TimeRangeOption)}
-                  />
+                  <SelectTimeRange />
                   <InputSelectSmall
                     name="timezone"
                     className="w-[120px]"
