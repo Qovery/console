@@ -104,4 +104,6 @@ export const Chart = {
   Container: ChartContainer,
   Tooltip: ChartTooltip,
   TooltipContent: ChartTooltipContent,
+  Skeleton: ChartSkeleton,
+  Loader: ChartLoader,
 }

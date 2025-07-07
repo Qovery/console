@@ -56,7 +56,7 @@ function getDisplayName(seriesKey: string): string {
     return `${upperCaseFirstLetter(seriesKey)}`.replace(/-/g, ' ')
   }
   // Remove the qovery namespace of the series key (<qovery-namespace>-<service-name>-<pod-name>)
-  if (seriesKey.startsWith('qovery-')) {
+  if (seriesKey.startsWith('qovery-') || seriesKey.startsWith('app-')) {
     return seriesKey.replace(/^[^-]+-[^-]+-/, '')
   }
   return seriesKey
@@ -143,7 +143,7 @@ export function Tooltip({ active, unit, payload, customLabel, events, kubeEvents
   // Returns kubeEvents (Warning) near a given timestamp
   const getKubeEventsNearTimestamp = (timestamp: number) => {
     if (!kubeEvents?.data?.result) return []
-    const tolerance = 5 * 60 // 5 minutes in seconds
+    const tolerance = 5 * 60 // 5 minutes tolerance in seconds
     return kubeEvents.data.result.filter((serie) => {
       return serie.values.some(([ts, value]) => {
         const tsNum = typeof ts === 'string' ? Number(ts) : ts

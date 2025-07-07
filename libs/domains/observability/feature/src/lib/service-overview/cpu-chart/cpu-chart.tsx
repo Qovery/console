@@ -81,7 +81,6 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
 
   return (
     <LocalChart
-      id="cpu"
       data={chartData}
       isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
       isEmpty={chartData.length === 0}
@@ -105,7 +104,8 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
       <Line
         dataKey="cpu-request"
         type="linear"
-        stroke="var(--color-brand-500)"
+        stroke="var(--color-brand-400)"
+        strokeDasharray="3 3"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -114,7 +114,8 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
       <Line
         dataKey="cpu-limit"
         type="linear"
-        stroke="var(--color-red-500)"
+        stroke="var(--color-red-600)"
+        strokeDasharray="3 3"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
