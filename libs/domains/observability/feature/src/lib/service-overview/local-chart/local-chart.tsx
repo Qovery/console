@@ -49,7 +49,7 @@ function ChartContent({ data, unit, label, isEmpty, isLoading, children, events,
   }
 
   return (
-    <Chart.Container className="h-full w-full p-5 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
+    <Chart.Container className="h-full w-full p-5 pb-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
       <LineChart
         data={data}
         syncId="syncId"
