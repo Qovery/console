@@ -284,8 +284,8 @@ function PodsMetricsTable({
     return (
       <div className="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
         <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
-        <span className="font-medium">Metrics for pods are not available, try again</span>
-        <span>There is a technical issue on retrieving the pod metrics.</span>
+        <span className="font-medium">Metrics for instances are not available, try again</span>
+        <span>There is a technical issue on retrieving the instance metrics.</span>
       </div>
     )
   } else if (isServiceLoading || pods.length === 0) {
