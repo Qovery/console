@@ -108,6 +108,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       }
       isEmpty={chartData.length === 0}
       label="Disk usage (MiB)"
+      tooltipLabel="Disk usage"
       serviceId={serviceId}
       clusterId={clusterId}
     >

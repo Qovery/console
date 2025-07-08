@@ -19,11 +19,7 @@ export function CardLogErrors({ serviceId, clusterId }: { serviceId: string; clu
       title={`Log ${pluralize(value, 'error', 'errors')} rate`}
       value={value}
       status={isError ? 'RED' : 'GREEN'}
-      description={
-        isError
-          ? `${pluralize(value, 'Error', 'Errors')} in the last ${timeRange}`
-          : `No error in the last ${timeRange}`
-      }
+      description={`in the last ${timeRange}`}
       isLoading={isLoadingMetrics}
     />
   )

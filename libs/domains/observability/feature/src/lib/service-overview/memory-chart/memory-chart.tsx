@@ -94,6 +94,7 @@ export function MemoryChart({
       isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}
       isEmpty={chartData.length === 0}
       label="Memory (MiB)"
+      tooltipLabel="Memory"
       serviceId={serviceId}
       clusterId={clusterId}
       fullscreen={fullscreen}

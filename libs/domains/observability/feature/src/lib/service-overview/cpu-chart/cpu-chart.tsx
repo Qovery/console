@@ -93,6 +93,7 @@ export function CpuChart({
       isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
       isEmpty={chartData.length === 0}
       label="CPU (mCPU)"
+      tooltipLabel="CPU"
       unit="mCPU"
       serviceId={serviceId}
       clusterId={clusterId}

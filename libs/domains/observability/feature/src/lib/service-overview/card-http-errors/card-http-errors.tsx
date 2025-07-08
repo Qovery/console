@@ -37,11 +37,7 @@ export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; cl
       title={`HTTP ${pluralize(value, 'error', 'errors')} rate`}
       value={`${value}%`}
       status={isError ? 'RED' : 'GREEN'}
-      description={
-        isError
-          ? `${pluralize(value, 'Error', 'Errors')} in the last ${timeRange}`
-          : `No error in the last ${timeRange}`
-      }
+      description={`in the last ${timeRange}`}
       isLoading={isLoadingMetrics}
     />
   )
