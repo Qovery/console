@@ -11,6 +11,8 @@ import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
+import { NetworkRequestDurationChart } from './network-request-duration-chart/network-request-duration-chart'
+import { NetworkRequestSizeChart } from './network-request-size-chart/network-request-size-chart'
 import { NetworkRequestStatusChart } from './network-request-status-chart/network-request-status-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
@@ -73,7 +75,7 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
             <CardLogErrors clusterId={environment.cluster_id} serviceId={applicationId} />
             {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
           </Section>
-          <Section className={clsx('rounded border border-neutral-200', expandCharts ? 'border-b-0' : '')}>
+          <Section className="overflow-hidden rounded border border-neutral-200">
             <div className="flex h-12 w-full items-center justify-end gap-5 border-b border-neutral-200 px-5">
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -107,11 +109,17 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
               <div className={clsx(expandCharts ? '' : 'border-b border-neutral-200')}>
                 <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
               </div>
-              <div className={clsx(expandCharts ? 'border-b-transparent' : 'border-r border-neutral-200')}>
+              <div className={clsx(expandCharts ? 'border-b-transparent' : 'border-b border-r border-neutral-200')}>
                 <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} />
               </div>
               <div className={clsx(expandCharts ? '' : 'border-b border-neutral-200')}>
                 <NetworkRequestStatusChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              </div>
+              <div className={clsx(expandCharts ? 'border-b border-neutral-200' : 'border-r border-neutral-200')}>
+                <NetworkRequestDurationChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              </div>
+              <div className={clsx(expandCharts ? 'border-b border-neutral-200' : '')}>
+                <NetworkRequestSizeChart clusterId={environment.cluster_id} serviceId={applicationId} />
               </div>
             </div>
           </Section>
