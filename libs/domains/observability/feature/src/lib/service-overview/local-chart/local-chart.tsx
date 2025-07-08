@@ -3,14 +3,14 @@ import { type PropsWithChildren, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, Customized, LineChart, XAxis, YAxis } from 'recharts'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Chart, Heading, Icon, Section } from '@qovery/shared/ui'
+import { Button, Chart, Heading, Section, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { type MetricData, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { ModalChart } from '../modal-chart/modal-chart'
 import ReferenceLineEvents from '../reference-line-events/reference-line-events'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-import { Tooltip, type UnitType } from './tooltip'
+import { Tooltip as TooltipChart, type UnitType } from './tooltip'
 
 interface ChartContentProps extends PropsWithChildren {
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
@@ -18,6 +18,7 @@ interface ChartContentProps extends PropsWithChildren {
   label: string
   isEmpty: boolean
   isLoading: boolean
+  tooltipLabel?: string
   events?: OrganizationEventResponse[]
   kubeEvents?: {
     data?: {
@@ -26,7 +27,17 @@ interface ChartContentProps extends PropsWithChildren {
   }
 }
 
-function ChartContent({ data, unit, label, isEmpty, isLoading, children, events, kubeEvents }: ChartContentProps) {
+function ChartContent({
+  data,
+  unit,
+  label,
+  tooltipLabel,
+  isEmpty,
+  isLoading,
+  children,
+  events,
+  kubeEvents,
+}: ChartContentProps) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
@@ -113,7 +124,7 @@ function ChartContent({ data, unit, label, isEmpty, isLoading, children, events,
             !onHoverHideTooltip ? (
               <div />
             ) : (
-              <Tooltip customLabel={label} unit={unit} events={events} kubeEvents={kubeEvents} />
+              <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} events={events} kubeEvents={kubeEvents} />
             )
           }
         />
@@ -134,6 +145,7 @@ interface LocalChartProps extends PropsWithChildren {
   clusterId: string
   className?: string
   fullscreen?: boolean
+  tooltipLabel?: string
 }
 
 export function LocalChart({
@@ -142,6 +154,7 @@ export function LocalChart({
   isLoading = false,
   isEmpty = false,
   label,
+  tooltipLabel,
   className,
   children,
   serviceId,
@@ -179,22 +192,33 @@ export function LocalChart({
         <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
           <Heading className="scroll-mt-20">{label}</Heading>
           {fullscreen && (
-            <Button
-              variant="surface"
-              color="neutral"
-              size="xs"
-              className="gap-1.5"
-              onClick={() => setIsModalOpen(true)}
-            >
-              Fullscreen
-              <Icon iconName="eye" iconStyle="regular" />
-            </Button>
+            <Tooltip content="Mode fullscreen">
+              <Button
+                variant="plain"
+                color="neutral"
+                size="sm"
+                className="w-7 items-center justify-center p-0"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+                  <g fill="#67778E" fillRule="evenodd" clipPath="url(#clip0_25081_61823)" clipRule="evenodd">
+                    <path d="M2.866 2.133a.733.733 0 0 0-.733.733v1.467a.733.733 0 1 1-1.467 0V2.866a2.2 2.2 0 0 1 2.2-2.2h1.467a.733.733 0 1 1 0 1.467zM10.933 1.4c0-.406.328-.734.733-.734h1.467a2.2 2.2 0 0 1 2.2 2.2v1.467a.733.733 0 1 1-1.467 0V2.866a.733.733 0 0 0-.733-.733h-1.467a.733.733 0 0 1-.733-.734M14.6 10.933c.404 0 .733.328.733.733v1.467a2.2 2.2 0 0 1-2.2 2.2h-1.467a.733.733 0 0 1 0-1.467h1.467a.733.733 0 0 0 .733-.733v-1.467c0-.405.328-.733.733-.733M1.4 10.933c.404 0 .733.328.733.733v1.467a.733.733 0 0 0 .733.733h1.467a.733.733 0 1 1 0 1.467H2.866a2.2 2.2 0 0 1-2.2-2.2v-1.467c0-.405.328-.733.733-.733M3.6 5.8c0-.81.656-1.467 1.466-1.467h5.867c.81 0 1.466.656 1.466 1.466v4.4c0 .81-.656 1.467-1.466 1.467H5.066c-.81 0-1.467-.657-1.467-1.467zm7.333 0H5.066v4.4h5.867z"></path>
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_25081_61823">
+                      <path fill="#fff" d="M0 0h16v16H0z"></path>
+                    </clipPath>
+                  </defs>
+                </svg>
+              </Button>
+            </Tooltip>
           )}
         </div>
         <ChartContent
           data={data}
           unit={unit}
           label={label}
+          tooltipLabel={tooltipLabel}
           isEmpty={isEmpty}
           isLoading={isLoading}
           events={events}
@@ -209,6 +233,7 @@ export function LocalChart({
             data={data}
             unit={unit}
             label={label}
+            tooltipLabel={tooltipLabel}
             isEmpty={isEmpty}
             isLoading={isLoading}
             events={events}

@@ -40,9 +40,9 @@ export function CardInstanceRestarts({ serviceId, clusterId }: { serviceId: stri
     <>
       <CardMetric
         title={title}
-        value={<span>{value} times</span>}
+        value={value}
         status={isError ? 'YELLOW' : 'GREEN'}
-        description={isError ? `Restarts during the last ${timeRange}` : `No restarts during the last ${timeRange}`}
+        description={`in last ${timeRange}`}
         isLoading={isLoadingMetrics}
         onClick={() => setIsModalOpen(true)}
       />

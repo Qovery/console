@@ -51,12 +51,12 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
   return (
     <CardMetric
       title="Autoscaling limit reached"
-      value={<span>{autoscalingReached} times</span>}
+      value={autoscalingReached}
       status={autoscalingReached > 0 ? 'RED' : 'GREEN'}
       isLoading={isLoadingMetricsAutoscalingReached || isLoadingMetricsMaxInstances}
       description={
         isError
-          ? `Blocked by the max instance limit: ${maxInstances} ${pluralize(maxInstances, 'instance', 'instances')}`
+          ? `Blocked by max instance limit (${maxInstances})`
           : `Max ${pluralize(maxInstances, 'instance', 'instances')}: ${maxInstances}`
       }
     />

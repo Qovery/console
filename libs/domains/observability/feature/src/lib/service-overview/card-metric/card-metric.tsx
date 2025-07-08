@@ -38,15 +38,12 @@ export function CardMetric({
   const getStatusDot = () => {
     const color = getStatusColor()
     const dotClasses = {
-      green: 'bg-green-500 border-green-200',
-      yellow: 'bg-yellow-500 border-yellow-200',
-      red: 'bg-red-500 border-red-200',
-      neutral: 'bg-neutral-500 border-neutral-200',
+      green: 'bg-green-500',
+      yellow: 'bg-yellow-500',
+      red: 'bg-red-500',
     }
 
-    return (
-      <div className={`box-content h-2 w-2 rounded-full border-2 ${dotClasses[color as keyof typeof dotClasses]}`} />
-    )
+    return <div className={`relative top-[1px] h-2 w-2 rounded-full ${dotClasses[color as keyof typeof dotClasses]}`} />
   }
 
   return (
@@ -54,34 +51,29 @@ export function CardMetric({
       type="button"
       className={twMerge(
         clsx(
-          'w-full cursor-default rounded border border-neutral-200 bg-neutral-50 p-4 text-left',
-          !isLoading && 'cursor-pointer transition-colors hover:bg-neutral-100',
+          'w-full cursor-default rounded border border-neutral-200 bg-neutral-50 px-5 py-4 shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)]',
+          !isLoading && 'cursor-pointer transition-shadow hover:shadow-md',
           className
         )
       )}
       disabled={isLoading}
       {...props}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="mb-1 flex items-center gap-2">
-            <h3 className="text-sm font-medium text-neutral-400">{title}</h3>
-            <Skeleton show={isLoading} width={12} height={12} rounded>
-              {getStatusDot()}
-            </Skeleton>
-          </div>
-          <div className="flex items-baseline gap-1">
-            <Skeleton show={isLoading} width={32} height={32} rounded>
-              <span className="text-2xl font-bold text-neutral-400">{value}</span>
-            </Skeleton>
-            {unit && !isLoading && <span className="text-sm text-neutral-400">{unit}</span>}
-          </div>
-          {description && (
-            <Skeleton className="mt-1" show={isLoading} width={130} height={16}>
-              <p className="text-xs text-neutral-400">{description}</p>
-            </Skeleton>
-          )}
+      <div className="flex flex-col justify-between gap-1 text-left">
+        <div className="flex items-center gap-2.5">
+          <p className="text-sm text-neutral-400">{title}</p>
+          <Skeleton show={isLoading} width={8} height={8} rounded>
+            {getStatusDot()}
+          </Skeleton>
         </div>
+        <Skeleton show={isLoading} width={32} height={32} rounded>
+          <span className="text-xl font-bold text-neutral-400">{value}</span>
+        </Skeleton>
+        {description && (
+          <Skeleton show={isLoading} width={130} height={16}>
+            <p className="text-sm text-neutral-350">{description}</p>
+          </Skeleton>
+        )}
       </div>
     </button>
   )
