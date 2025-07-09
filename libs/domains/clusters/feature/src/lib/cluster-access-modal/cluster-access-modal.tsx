@@ -1,7 +1,6 @@
 import { type KubernetesEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { ExternalLink, Heading, Section } from '@qovery/shared/ui'
-import { CopyButton } from '../cluster-setup/copy-button/copy-button'
+import { CopyButton, ExternalLink, Heading, Section } from '@qovery/shared/ui'
 
 const CommandBlock = ({ command }: { command: string }) => (
   <div className="flex justify-between gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">

@@ -21,7 +21,7 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import CopyButton from '../cluster-setup/copy-button/copy-button'
+import { CopyButton } from '@qovery/shared/ui'
 import { useClusterCloudProviderInfo } from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 
 type ClusterCredentialsFormValues = {

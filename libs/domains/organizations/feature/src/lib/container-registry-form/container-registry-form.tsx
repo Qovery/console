@@ -9,7 +9,16 @@ import { useDropzone } from 'react-dropzone'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, Dropzone, ExternalLink, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyButton,
+  Dropzone,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+} from '@qovery/shared/ui'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
 
@@ -83,10 +92,14 @@ export function ContainerRegistryForm({
   const watchKind: undefined | ContainerRegistryKindEnum = methods.watch('kind')
   const watchType = methods.watch('type')
   const watchLoginType = methods.watch('config.login_type')
+  const watchAzureApplicationId = methods.watch('config.azure_application_id')
   const isClusterManaged = cluster?.kubernetes === 'MANAGED'
   const isClusterSelfManaged = cluster?.kubernetes === 'SELF_MANAGED'
   const isClusterDemo = cluster?.is_demo
   const isClusterOnPremise = cluster?.cloud_provider === 'ON_PREMISE'
+
+  // TODO [QOV-911] replace placeholders with actual values
+  const snippet = `curl https://hub.qovery.com/files/create_credentials_azure.sh | bash -s -- --qovery-app-id $watchAzureApplicationId --subscription-id $watchAzureSubscriptionId`
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -553,40 +566,72 @@ export function ContainerRegistryForm({
         />
       )}
       {watchKind === ContainerRegistryKindEnum.AZURE_CR && (
-        <>
-          <Controller
-            name="config.azure_tenant_id"
-            control={methods.control}
-            rules={{
-              required: 'Please enter an Azure tenant ID.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Azure tenant ID"
-                error={error?.message}
-              />
-            )}
-          />
-          <Controller
-            name="config.azure_subscription_id"
-            control={methods.control}
-            rules={{
-              required: 'Please enter an Azure subscription ID.',
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-                label="Azure subscription ID"
-                error={error?.message}
-              />
-            )}
-          />
-        </>
+        <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-4 rounded border border-neutral-250 p-4">
+            <h2 className="text-sm font-medium text-neutral-400">1. Fill these information</h2>
+            <Controller
+              name="config.azure_tenant_id"
+              control={methods.control}
+              rules={{
+                required: 'Please enter an Azure tenant ID.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Azure tenant ID"
+                  error={error?.message}
+                />
+              )}
+            />
+            <Controller
+              name="config.azure_subscription_id"
+              control={methods.control}
+              rules={{
+                required: 'Please enter an Azure subscription ID.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Azure subscription ID"
+                  error={error?.message}
+                />
+              )}
+            />
+          </div>
+
+          {watchAzureApplicationId && (
+            <>
+              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
+                <h2 className="text-sm font-medium text-neutral-400">
+                  2. Connect to your Azure Console and go to shell console
+                </h2>
+                <p className="text-sm text-neutral-350">Make sure you are connected to the right Azure account</p>
+                <ExternalLink href="https://portal.azure.com/" size="sm">
+                  https://portal.azure.com/
+                </ExternalLink>
+              </div>
+              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
+                <h2 className="text-sm font-medium text-neutral-400">
+                  3. Open the embedded Azure shell and run the following command
+                </h2>
+                <p className="text-sm text-neutral-350">
+                  Select `Bash`, then `No storage account required` and your subscription ID.
+                </p>
+                <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                  <div>
+                    <span className="select-none">$ </span>
+                    {snippet}
+                  </div>
+                  <CopyButton content={snippet} />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       )}
     </div>
   )

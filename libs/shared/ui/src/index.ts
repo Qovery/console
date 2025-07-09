@@ -1,6 +1,7 @@
 export * from './lib/components/action-toolbar/action-toolbar'
 export * from './lib/components/callout/callout'
 export * from './lib/components/button/button'
+export * from './lib/components/copy-button/copy-button'
 export * from './lib/components/description-list/description-list'
 export * from './lib/components/heading/heading'
 export * from './lib/components/section/section'
