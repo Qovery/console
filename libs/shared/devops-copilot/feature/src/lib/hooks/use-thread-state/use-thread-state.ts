@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
-import { type Thread } from './devops-copilot-panel'
-import { HACKATHON_API_BASE_URL } from './submit-message'
+import { type Thread } from '../../devops-copilot-panel/devops-copilot-panel'
+import { useThread } from '../use-thread/use-thread'
 
 interface UseCurrentThreadOptions {
   organizationId: string
@@ -15,30 +15,27 @@ interface UseCurrentThreadResult {
   error: Error | null
 }
 
-export async function fetchThread(userSub: string, organizationId: string, threadId: string, token: string) {
-  const response = await fetch(
-    `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  )
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch thread')
-  }
-
-  const data = await response.json()
-  return data.results || []
+type RawMessage = {
+  id: number
+  media_content: string
+  owner: 'user' | 'assistant'
+  created_at: string
+  vote_type?: 'upvote' | 'downvote'
 }
 
-export function useThread({ organizationId, threadId }: UseCurrentThreadOptions): UseCurrentThreadResult {
+export function useThreadState({ organizationId, threadId }: UseCurrentThreadOptions): UseCurrentThreadResult {
   const [thread, setThread] = useState<Thread>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
-  const { getAccessTokenSilently, user } = useAuth0()
+  const { user } = useAuth0()
   const userSub = user?.sub || ''
+
+  const { data } = useThread({
+    userId: userSub,
+    organizationId,
+    threadId: threadId || '',
+    enabled: !!threadId,
+  })
 
   useEffect(() => {
     if (!threadId) {
@@ -51,10 +48,9 @@ export function useThread({ organizationId, threadId }: UseCurrentThreadOptions)
       setError(null)
 
       try {
-        const token = await getAccessTokenSilently()
-        const messages = await fetchThread(userSub, organizationId, threadId, token)
+        const messages = data.results || []
 
-        const formattedMessages: Thread = messages.map((msg: any) => ({
+        const formattedMessages: Thread = messages.map((msg: RawMessage) => ({
           id: msg.id,
           text: msg.media_content,
           owner: msg.owner,
@@ -72,8 +68,10 @@ export function useThread({ organizationId, threadId }: UseCurrentThreadOptions)
       }
     }
 
-    loadThread()
-  }, [threadId, getAccessTokenSilently])
+    if (data?.results) {
+      loadThread()
+    }
+  }, [threadId, data])
 
   return {
     thread,
