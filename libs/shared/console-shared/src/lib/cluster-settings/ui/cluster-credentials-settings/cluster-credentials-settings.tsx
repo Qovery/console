@@ -1,8 +1,14 @@
 import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
-import { Callout, ExternalLink, Icon, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
+import {
+  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
+  CLUSTER_SETTINGS_URL,
+  CLUSTER_URL,
+  SETTINGS_CREDENTIALS_URL,
+  SETTINGS_URL,
+} from '@qovery/shared/routes'
+import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner } from '@qovery/shared/ui'
 
 export interface ClusterCredentialsSettingsProps {
   openCredentialsModal: (id?: string, onChange?: (e: string | string[]) => void) => void
@@ -19,7 +25,7 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
   const buildCredentials = credentials?.map((item: ClusterCredentials) => ({
     label: `${item.name}${'access_key_id' in item ? ` (${item.access_key_id})` : ''}`,
     value: item.id,
-    onClickEditable: () => openCredentialsModal(item.id),
+    onClickEditable: !isSetting ? () => openCredentialsModal(item.id) : undefined,
   }))
 
   return (
@@ -55,8 +61,18 @@ export function ClusterCredentialsSettings(props: ClusterCredentialsSettingsProp
               />
             )}
           />
+
+          <Link
+            color="current"
+            to={`${SETTINGS_URL(organizationId)}${SETTINGS_CREDENTIALS_URL}`}
+            className="flex gap-1 text-brand-500"
+          >
+            See and edit all Cloud credentials
+            <Icon iconName="key" iconStyle="regular" />
+          </Link>
+
           {isSetting && formState.isDirty && (
-            <Callout.Root color="yellow">
+            <Callout.Root color="yellow" className="mt-4">
               <Callout.Icon>
                 <Icon iconName="circle-exclamation" iconStyle="regular" />
               </Callout.Icon>
