@@ -1,6 +1,5 @@
-import { useAuth0 } from '@auth0/auth0-react'
-import { useEffect, useState } from 'react'
-import { fetchAllThreads } from '../fetch-all-thread/fetch-all-thread'
+import { useQuery } from '@tanstack/react-query'
+import { queries } from '@qovery/state/util-queries'
 
 export interface Thread {
   id: string
@@ -17,37 +16,18 @@ interface UseThreadsReturn {
   refetchThreads: () => Promise<void>
 }
 
-export const useThreads = (organizationId: string, owner: string, threadId?: string): UseThreadsReturn => {
-  const { getAccessTokenSilently } = useAuth0()
-  const [threads, setThreads] = useState<Thread[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchThreads = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
-
-      const token = await getAccessTokenSilently()
-      const response = await fetchAllThreads(owner, organizationId, token)
-
-      const data = await response.json()
-      setThreads(data.threads)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred')
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchThreads()
-  }, [organizationId, threadId])
+export const useThreads = ({ organizationId, owner }: { organizationId: string; owner: string }): UseThreadsReturn => {
+  const { data, isLoading, error, refetch } = useQuery({
+    ...queries.devopsCopilot.threads({ userId: owner, organizationId }),
+    enabled: !!organizationId && !!owner,
+  })
 
   return {
-    threads,
+    threads: data?.threads || [],
     isLoading,
-    error,
-    refetchThreads: fetchThreads,
+    error: error instanceof Error ? error.message : null,
+    refetchThreads: async () => {
+      await refetch()
+    },
   }
 }

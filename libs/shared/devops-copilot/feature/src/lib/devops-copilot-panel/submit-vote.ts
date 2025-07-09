@@ -1,6 +1,6 @@
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { addVote } from '../hooks/add-vote/add-vote'
+import { mutations } from '@qovery/shared/devops-copilot/data-access'
 
 type Context = {
   organization?: Organization
@@ -19,7 +19,6 @@ export async function submitVote(
   userSub: string,
   messageId: string,
   vote: 'upvote' | 'downvote',
-  token: string,
   context?: Context | null
 ): Promise<{ id: string }> {
   try {
@@ -32,9 +31,8 @@ export async function submitVote(
       throw new Error('Message ID is required but not provided')
     }
 
-    const response = await addVote(userSub, messageId, vote, token, organizationId)
-
-    return await response.json()
+    const response = await mutations.addVote({ userSub, messageId, vote, organizationId })
+    return response.data
   } catch (error) {
     console.error('Error submitting vote:', error)
     throw error

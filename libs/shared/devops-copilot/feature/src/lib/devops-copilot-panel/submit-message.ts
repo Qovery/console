@@ -1,9 +1,6 @@
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { addMessageToThread } from '../hooks/add-message-to-thread/add-message-to-thread'
-import { addThread } from '../hooks/add-thread/add-thread'
-import { fetchThread } from '../hooks/fetch-thread/fetch-thread'
-import { type Thread } from './devops-copilot-panel'
+import { mutations } from '@qovery/shared/devops-copilot/data-access'
 
 type Context = {
   organization?: Organization
@@ -17,8 +14,6 @@ type Context = {
       }
     | undefined
 }
-
-export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
 
 export const submitMessage = async (
   userSub: string,
@@ -39,8 +34,8 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const response = await addThread({ userSub, token, organizationId, message })
-      const responseJson = await response.json()
+      const response = await mutations.addThread({ userSub, organizationId, message })
+      const responseJson = response.data
       _threadId = responseJson.id
     }
 
@@ -49,7 +44,7 @@ export const submitMessage = async (
     }
 
     // Then, send the message to the thread
-    const messageResponse = await addMessageToThread({
+    const messageResponse = await mutations.addMessage({
       userSub,
       token,
       organizationId,

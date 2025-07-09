@@ -24,10 +24,6 @@ import DevopsCopilotHistory from './devops-copilot-history'
 import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
 
-/*
-XXX: The devops-copilot feature is unstable and requires a full redesign.
-*/
-
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
   onClick?: () => void
@@ -175,7 +171,8 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     threads = [],
     error: errorThreads,
     isLoading: isLoadingThreads,
-  } = useThreads(context?.organization?.id ?? '', user?.sub ?? '', threadId)
+  } = useThreads({ organizationId: context?.organization?.id ?? '', owner: user?.sub ?? '' })
+
   const { thread, setThread } = useThreadState({
     organizationId: context?.organization?.id ?? '',
     threadId,
@@ -238,12 +235,10 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     setThread(updatedThread)
 
     try {
-      const token = await getAccessTokenSilently()
       const response = await submitVote(
         user?.sub ?? '',
         messageId,
         vote,
-        token,
         withContext ? context : { organization: context.organization }
       )
 

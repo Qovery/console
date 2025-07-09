@@ -1,7 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 import { type Thread } from '../../devops-copilot-panel/devops-copilot-panel'
-// import { fetchThread } from '../fetch-thread/fetch-thread'
 import { useThread } from '../use-thread/use-thread'
 
 interface UseCurrentThreadOptions {
@@ -28,26 +27,15 @@ export function useThreadState({ organizationId, threadId }: UseCurrentThreadOpt
   const [thread, setThread] = useState<Thread>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
-  const { getAccessTokenSilently, user } = useAuth0()
-  const [token, setToken] = useState<string | null>(null)
+  const { user } = useAuth0()
   const userSub = user?.sub || ''
 
-  useEffect(() => {
-    const getToken = async () => {
-      try {
-        const accessToken = await getAccessTokenSilently()
-        setToken(accessToken)
-      } catch (error) {
-        console.error('Error getting token:', error)
-      }
-    }
-    getToken()
-  }, [getAccessTokenSilently])
-
-  const { data } = useThread(
-    { userId: userSub, organizationId, threadId: threadId ?? '', token: token || '' },
-    { enabled: !!threadId && !!token }
-  )
+  const { data } = useThread({
+    userId: userSub,
+    organizationId,
+    threadId: threadId || '',
+    enabled: !!threadId,
+  })
 
   useEffect(() => {
     if (!threadId) {
@@ -83,7 +71,7 @@ export function useThreadState({ organizationId, threadId }: UseCurrentThreadOpt
     if (data?.results) {
       loadThread()
     }
-  }, [threadId, getAccessTokenSilently, data])
+  }, [threadId, data])
 
   return {
     thread,

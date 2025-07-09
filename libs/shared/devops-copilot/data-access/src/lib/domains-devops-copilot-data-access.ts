@@ -1,35 +1,29 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+import axios from 'axios'
 
-export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
+export const DEVOPS_COPILOT_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
+
+// Create a dedicated axios instance for DevOps Copilot
+export const devopsCopilotAxios = axios.create()
 
 export const devopsCopilot = createQueryKeys('devopsCopilot', {
-  thread: ({
-    userId,
-    organizationId,
-    threadId,
-    token,
-  }: {
-    userId: string
-    organizationId: string
-    threadId: string
-    token: string
-  }) => ({
+  threads: ({ userId, organizationId }: { userId: string; organizationId: string }) => ({
+    queryKey: [organizationId, userId],
+    async queryFn() {
+      const response = await devopsCopilotAxios.get(`/owner/${userId}/organization/${organizationId}/thread`)
+
+      return response.data
+    },
+  }),
+
+  thread: ({ userId, organizationId, threadId }: { userId: string; organizationId: string; threadId: string }) => ({
     queryKey: [organizationId, userId, threadId],
     async queryFn() {
-      const response = await fetch(
-        `${HACKATHON_API_BASE_URL}/owner/${userId}/organization/${organizationId}/thread/${threadId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await devopsCopilotAxios.get(
+        `/owner/${userId}/organization/${organizationId}/thread/${threadId}`
       )
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch thread')
-      }
-
-      return response.json()
+      return response.data
     },
   }),
 })
@@ -56,8 +50,10 @@ export const mutations = {
     }
     signal?: AbortSignal
   }) => {
+    // Using fetch instead of axios for streaming responses
+    // Axios doesn't support streaming in the same way as fetch
     const response = await fetch(
-      `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}/text`,
+      `${DEVOPS_COPILOT_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}/text`,
       {
         method: 'POST',
         headers: {
@@ -88,29 +84,39 @@ export const mutations = {
 
   addThread: async ({
     userSub,
-    token,
     organizationId,
     message,
   }: {
     userSub: string
-    token: string
     organizationId: string
     message: string
   }) => {
-    const response = await fetch(`${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: message.substring(0, 50),
-      }),
+    const response = await devopsCopilotAxios.post(`/owner/${userSub}/organization/${organizationId}/thread`, {
+      title: message.substring(0, 50),
     })
 
-    if (!response.ok) {
-      throw new Error(`Failed to create thread: ${response.status}`)
-    }
+    return response
+  },
+
+  addVote: async ({
+    userSub,
+    messageId,
+    vote,
+    organizationId,
+  }: {
+    userSub: string
+    messageId: string
+    vote: 'upvote' | 'downvote'
+    organizationId: string
+  }) => {
+    const response = await devopsCopilotAxios.post(
+      `/owner/${userSub}/organization/${organizationId}/message/${messageId}/vote`,
+      {
+        user_sub: userSub,
+        vote_type: vote,
+        current_page_url: window.location.href,
+      }
+    )
 
     return response
   },
