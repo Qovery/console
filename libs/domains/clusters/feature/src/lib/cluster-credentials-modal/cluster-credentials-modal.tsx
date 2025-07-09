@@ -747,10 +747,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       <h2 className="text-sm font-medium text-neutral-400">
                         2. Connect to your Azure Console and go to shell console
                       </h2>
-                      <p className="text-sm text-neutral-350">
-                        {' '}
-                        Make sure you are connected to the right Azure account
-                      </p>
+                      <p className="text-sm text-neutral-350">Make sure you are connected to the right Azure account</p>
                       <ExternalLink href="https://portal.azure.com/" size="sm">
                         https://portal.azure.com/
                       </ExternalLink>
@@ -760,7 +757,6 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                         3. Open the embedded Azure shell and run the following command
                       </h2>
                       <p className="text-sm text-neutral-350">
-                        {' '}
                         Select `Bash`, then `No storage account required` and your subscription ID.
                       </p>
                       <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
