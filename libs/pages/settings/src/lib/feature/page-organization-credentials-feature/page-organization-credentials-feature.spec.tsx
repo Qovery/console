@@ -65,7 +65,7 @@ describe('PageOrganizationCredentialsFeature', () => {
       expect(deleteButton).toBeEnabled()
     })
 
-    it('delete button should not be displayed only when no clusters are attached', () => {
+    it('delete button should be displayed only when no clusters are attached', () => {
       mockCredentials = [
         {
           credential: {
