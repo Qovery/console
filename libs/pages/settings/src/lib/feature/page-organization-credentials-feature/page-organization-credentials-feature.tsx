@@ -48,7 +48,7 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
           {'role_arn' in credential && (
             <span className="mt-1 text-xs">
               <span className="text-neutral-350">Role ARN: </span>
-              <span className="text-neutral-400">{credential.role_arn || ''}</span>
+              <span className="text-neutral-400">{credential.role_arn}</span>
             </span>
           )}
           {'access_key_id' in credential && (
@@ -126,7 +126,7 @@ const CredentialRow = ({ credential, clusters, onEdit, onOpen, onDelete }: Crede
             onClick={onDelete}
             disabled={clusters.length !== 0}
             type="button"
-            data-testid="remove-credential"
+            data-testid="delete-credential"
             className="h-9 w-9 justify-center p-0"
           >
             <Icon iconName="trash-can" iconStyle="regular" />

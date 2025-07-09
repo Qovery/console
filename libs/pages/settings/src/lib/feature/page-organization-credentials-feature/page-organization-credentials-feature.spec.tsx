@@ -93,9 +93,42 @@ describe('PageOrganizationCredentialsFeature', () => {
       renderWithProviders(<PageOrganizationCredentialsFeature />)
 
       const row = screen.getByText('Credential 1').parentElement?.parentElement?.parentElement
-      const deleteButton = row?.querySelectorAll('button')[2] // Delete button is the third button in the row
+      const deleteButton = row?.querySelector('button[data-testid="delete-credential"]')
 
-      expect(deleteButton).toBeUndefined()
+      expect(deleteButton).toBeNull()
+    })
+
+    it('view button should be displayed only if clusters are attached', () => {
+      mockCredentials = [
+        {
+          credential: {
+            id: '1',
+            name: 'Credential 1',
+            object_type: 'AWS',
+            access_key_id: '123',
+          },
+          clusters: [
+            {
+              id: '1',
+              name: 'Cluster 1',
+            },
+          ],
+        },
+        {
+          credential: {
+            id: '2',
+            name: 'Credential 2',
+            object_type: 'GCP',
+          },
+          clusters: [],
+        },
+      ]
+      renderWithProviders(<PageOrganizationCredentialsFeature />)
+
+      const row = screen.getByText('Credential 1').parentElement?.parentElement?.parentElement
+      const viewButton = row?.querySelector('button[data-testid="view-credential"]') // View button is the first button in the row
+
+      expect(viewButton).toBeInTheDocument()
     })
   })
 })
