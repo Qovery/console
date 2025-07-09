@@ -114,7 +114,7 @@ export function CpuChart({
       <Line
         dataKey="cpu-request"
         type="linear"
-        stroke="var(--color-brand-400)"
+        stroke="var(--color-sky-500)"
         strokeDasharray="3 3"
         strokeWidth={2}
         connectNulls={false}
@@ -124,7 +124,7 @@ export function CpuChart({
       <Line
         dataKey="cpu-limit"
         type="linear"
-        stroke="var(--color-red-600)"
+        stroke="var(--color-red-500)"
         strokeDasharray="3 3"
         strokeWidth={2}
         connectNulls={false}

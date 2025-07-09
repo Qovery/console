@@ -114,7 +114,7 @@ export function MemoryChart({
       <Line
         dataKey="memory-limit"
         type="linear"
-        stroke="var(--color-red-600)"
+        stroke="var(--color-red-500)"
         strokeDasharray="3 3"
         strokeWidth={2}
         dot={false}
@@ -124,7 +124,7 @@ export function MemoryChart({
       <Line
         dataKey="memory-request"
         type="linear"
-        stroke="var(--color-brand-400)"
+        stroke="var(--color-sky-500)"
         strokeDasharray="3 3"
         strokeWidth={2}
         dot={false}
