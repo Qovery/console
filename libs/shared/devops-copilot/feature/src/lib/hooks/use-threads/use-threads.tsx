@@ -17,13 +17,18 @@ interface UseThreadsReturn {
 }
 
 export const useThreads = ({ organizationId, owner }: { organizationId: string; owner: string }): UseThreadsReturn => {
-  const { data, isLoading, error, refetch } = useQuery({
+  const {
+    data: threads = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     ...queries.devopsCopilot.threads({ userId: owner, organizationId }),
     enabled: !!organizationId && !!owner,
   })
 
   return {
-    threads: data?.threads || [],
+    threads,
     isLoading,
     error: error instanceof Error ? error.message : null,
     refetchThreads: async () => {

@@ -12,7 +12,7 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
     async queryFn() {
       const response = await devopsCopilotAxios.get(`/owner/${userId}/organization/${organizationId}/thread`)
 
-      return response.data
+      return response.data.threads
     },
   }),
 
