@@ -6,11 +6,12 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 
 interface ModalChartProps extends PropsWithChildren {
   title: string
+  description?: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function ModalChart({ children, open, onOpenChange, title }: ModalChartProps) {
+export function ModalChart({ children, open, onOpenChange, title, description }: ModalChartProps) {
   const { useLocalTime, setUseLocalTime, hideEvents, setHideEvents } = useServiceOverviewContext()
 
   return (
@@ -23,12 +24,13 @@ export function ModalChart({ children, open, onOpenChange, title }: ModalChartPr
         <Dialog.Content className="modal__content fixed left-1/2 top-6 h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]">
           <Section>
             <div className="flex h-14 w-full items-center justify-between gap-5 border-b border-neutral-200 px-5">
-              <div>
+              <div className="flex items-baseline gap-2">
                 {title && (
                   <Dialog.Title>
                     <Heading>{title}</Heading>
                   </Dialog.Title>
                 )}
+                {description && <p className="text-xs text-neutral-350">{description}</p>}
               </div>
               <div className="flex items-center gap-10">
                 <div className="flex items-center gap-5">

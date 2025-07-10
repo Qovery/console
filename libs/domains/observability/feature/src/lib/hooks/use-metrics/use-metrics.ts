@@ -28,6 +28,7 @@ interface UseMetricsProps {
   startTimestamp?: string
   endTimestamp?: string
   queryRange?: 'query' | 'query_range'
+  step?: string
 }
 
 export function useMetrics({
@@ -38,22 +39,39 @@ export function useMetrics({
   queryRange = 'query_range',
 }: UseMetricsProps) {
   let step: string | undefined
+
   if (startTimestamp && endTimestamp) {
     const start =
       typeof startTimestamp === 'string' && !isNaN(Number(startTimestamp))
-        ? Number(startTimestamp) * 1000
-        : new Date(startTimestamp).getTime()
+        ? Number(startTimestamp)
+        : Math.floor(new Date(startTimestamp).getTime() / 1000)
+
     const end =
       typeof endTimestamp === 'string' && !isNaN(Number(endTimestamp))
-        ? Number(endTimestamp) * 1000
-        : new Date(endTimestamp).getTime()
+        ? Number(endTimestamp)
+        : Math.floor(new Date(endTimestamp).getTime() / 1000)
 
     if (!isNaN(start) && !isNaN(end) && end > start) {
-      const durationInSeconds = (end - start) / 1000
-      // 6h (21600s) = 86 step, 2h (7200s) = 28 step
-      // This gives us approximately 250 seconds per step
-      const calculatedStep = Math.max(Math.round(durationInSeconds / 250), 1)
-      step = calculatedStep.toString()
+      const durationInSeconds = end - start
+      const durationInHours = durationInSeconds / 3600
+      const durationInDays = durationInHours / 24
+
+      // Calculate step based on duration
+      if (durationInHours <= 12) {
+        step = '15' // 15 seconds
+      } else if (durationInHours <= 24) {
+        step = '30' // 30 seconds
+      } else if (durationInHours <= 48) {
+        step = '60' // 1 minute
+      } else if (durationInDays <= 7) {
+        step = '120' // 2 minutes
+      } else if (durationInDays <= 30) {
+        step = '300' // 5 minutes
+      } else if (durationInDays <= 60) {
+        step = '1800' // 30 minutes
+      } else {
+        step = '7200' // 2 hours
+      }
     }
   }
 

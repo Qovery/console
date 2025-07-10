@@ -10,6 +10,7 @@ interface CardMetricProps extends Omit<ComponentProps<'button'>, 'value'> {
   status: 'GREEN' | 'YELLOW' | 'RED'
   description?: string
   isLoading?: boolean
+  isClickable?: boolean
 }
 
 export function CardMetric({
@@ -20,6 +21,7 @@ export function CardMetric({
   description,
   isLoading = true,
   className,
+  isClickable = false,
   ...props
 }: CardMetricProps) {
   const getStatusColor = () => {
@@ -51,8 +53,8 @@ export function CardMetric({
       type="button"
       className={twMerge(
         clsx(
-          'w-full cursor-default rounded border border-neutral-200 bg-neutral-50 px-5 py-4 shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)]',
-          !isLoading && 'cursor-pointer transition-shadow hover:shadow-md',
+          'w-full cursor-default rounded border border-neutral-200 bg-neutral-50 px-5 py-4',
+          !isLoading && isClickable && 'cursor-pointer shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)] hover:shadow-md',
           className
         )
       )}

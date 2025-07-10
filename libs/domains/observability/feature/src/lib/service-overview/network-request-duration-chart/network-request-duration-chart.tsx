@@ -6,15 +6,7 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function NetworkRequestDurationChart({
-  clusterId,
-  serviceId,
-  fullscreen = true,
-}: {
-  clusterId: string
-  serviceId: string
-  fullscreen?: boolean
-}) {
+export function NetworkRequestDurationChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
 
   const { data: metrics95, isLoading: isLoadingMetrics } = useMetrics({
@@ -116,7 +108,6 @@ export function NetworkRequestDurationChart({
       unit="ms"
       serviceId={serviceId}
       clusterId={clusterId}
-      fullscreen={fullscreen}
     >
       <Line
         key="95th-percentile"
