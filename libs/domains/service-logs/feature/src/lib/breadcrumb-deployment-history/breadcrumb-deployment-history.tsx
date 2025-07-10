@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { Link, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useService, useDeploymentHistory as useServicesDeploymentHistory } from '@qovery/domains/services/feature'
+import { useService, useDeploymentHistory as useServiceDeploymentHistory } from '@qovery/domains/services/feature'
 import {
   DEPLOYMENT_LOGS_VERSION_URL,
   ENVIRONMENT_LOGS_URL,
@@ -24,7 +24,7 @@ export function BreadcrumbDeploymentHistory({ type, serviceId, versionId }: Brea
   const { data: service } = useService({
     serviceId: serviceId ?? '',
   })
-  const { data: serviceDeploymentHistory } = useServicesDeploymentHistory({
+  const { data: serviceDeploymentHistory } = useServiceDeploymentHistory({
     serviceId: serviceId ?? '',
     serviceType: service?.service_type ?? 'APPLICATION',
   })
