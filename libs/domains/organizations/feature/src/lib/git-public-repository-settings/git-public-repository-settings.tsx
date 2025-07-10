@@ -6,12 +6,16 @@ export interface GitPublicRepositorySettingsProps {
   disabled?: boolean
   hideRootPath?: boolean
   urlRepository?: string
+  rootPathLabel?: string
+  rootPathHint?: string
 }
 
 export function GitPublicRepositorySettings({
   disabled = false,
   urlRepository,
   hideRootPath,
+  rootPathLabel = 'Root service path',
+  rootPathHint = 'Provide the path in the repository where the service is located',
 }: GitPublicRepositorySettingsProps) {
   const { control, setValue } = useFormContext()
 
@@ -76,7 +80,7 @@ export function GitPublicRepositorySettings({
         )}
       />
       {!hideRootPath && (
-        <>
+        <div>
           <Controller
             name="root_path"
             control={control}
@@ -86,7 +90,7 @@ export function GitPublicRepositorySettings({
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                label="Root service path"
+                label={rootPathLabel}
                 name={field.name}
                 onChange={field.onChange}
                 value={field.value}
@@ -95,10 +99,8 @@ export function GitPublicRepositorySettings({
               />
             )}
           />
-          <p className="ml-4 mt-1 text-xs text-neutral-350">
-            Provide the path in the repository where the service is located
-          </p>
-        </>
+          <p className="ml-4 mt-1 text-xs text-neutral-350">{rootPathHint}</p>
+        </div>
       )}
     </>
   )
