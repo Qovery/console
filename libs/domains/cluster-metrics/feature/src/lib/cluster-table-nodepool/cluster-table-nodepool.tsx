@@ -1,4 +1,5 @@
 import * as Accordion from '@radix-ui/react-accordion'
+import clsx from 'clsx'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { CLUSTER_SETTINGS_RESOURCES_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
@@ -27,6 +28,7 @@ function MetricProgressBar({ type, capacity, capacityRaw, limit, limitRaw, unit 
 
   const capacityPercentage = calculatePercentage(capacityRaw, limitRaw)
   const isLimitReached = capacityPercentage > 80
+  const isCapacityReached = capacityRaw > limitRaw
 
   return (
     <Tooltip
@@ -40,8 +42,13 @@ function MetricProgressBar({ type, capacity, capacityRaw, limit, limitRaw, unit 
           <div className="flex flex-col gap-1 px-2.5 py-1.5">
             <div className="flex w-full items-center gap-1.5">
               <span className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-brand-400" />
-                Capacity
+                <span
+                  className={clsx(
+                    'h-2 w-2 rounded-full',
+                    isCapacityReached ? 'bg-red-500' : isLimitReached ? 'bg-yellow-500' : 'bg-brand-400'
+                  )}
+                />
+                Reserved
               </span>
               <span className="ml-auto block">
                 {capacity} {unit}
@@ -57,9 +64,14 @@ function MetricProgressBar({ type, capacity, capacityRaw, limit, limitRaw, unit 
               </span>
             </div>
           </div>
-          {isLimitReached && (
+          {isLimitReached && !isCapacityReached && (
             <div className="border-t border-neutral-400 px-2.5 py-1.5 text-yellow-300">
               Resource limit nearly reached; further node deployments will not be possible
+            </div>
+          )}
+          {isCapacityReached && (
+            <div className="border-t border-neutral-400 px-2.5 py-1.5 text-yellow-300">
+              Resource reserved exceed the limit; further node deployments will not be possible
             </div>
           )}
         </div>
@@ -67,10 +79,14 @@ function MetricProgressBar({ type, capacity, capacityRaw, limit, limitRaw, unit 
       classNameContent="w-[173px] p-0"
     >
       <ProgressBar.Root>
-        <ProgressBar.Cell
-          value={capacityPercentage}
-          color={isLimitReached ? 'var(--color-yellow-500)' : 'var(--color-brand-400)'}
-        />
+        {isCapacityReached ? (
+          <ProgressBar.Cell value={100} color="var(--color-red-500)" />
+        ) : (
+          <ProgressBar.Cell
+            value={capacityPercentage}
+            color={isLimitReached ? 'var(--color-yellow-500)' : 'var(--color-brand-400)'}
+          />
+        )}
       </ProgressBar.Root>
     </Tooltip>
   )
@@ -138,8 +154,8 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
                     <Icon iconName="microchip" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
-                      <Tooltip content="Capacity" disabled={metrics.cpuTotal !== null}>
-                        <span className="font-medium text-neutral-400">{metrics.cpuReserved} vCPU</span>
+                      <Tooltip content="Capacity">
+                        <span className="font-medium text-neutral-400">{metrics.cpuUsed} vCPU</span>
                       </Tooltip>
                       {metrics.cpuTotal ? (
                         <span> (limit: {metrics.cpuTotal})</span>
@@ -164,15 +180,15 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                             CLUSTER_SETTINGS_RESOURCES_URL
                           }
                         >
-                          <Icon iconName="pen" iconStyle="regular" className="text-neutral-300" />
+                          <Icon iconName="gear" iconStyle="regular" className="text-neutral-300" />
                         </Link>
                       </Tooltip>
                     ))}
                 </div>
                 <MetricProgressBar
                   type="cpu"
-                  capacity={metrics.cpuUsed}
-                  capacityRaw={metrics.cpuUsedRaw}
+                  capacity={metrics.cpuReserved}
+                  capacityRaw={metrics.cpuReservedRaw}
                   limit={metrics.cpuTotal}
                   limitRaw={metrics.cpuTotalRaw}
                   unit="vCPU"
@@ -183,8 +199,8 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                   <span className="flex items-center gap-2 text-sm text-neutral-350">
                     <Icon iconName="memory" iconStyle="regular" className="relative top-[1px] text-neutral-300" />
                     <span>
-                      <Tooltip content="Capacity" disabled={metrics.memoryTotal !== null}>
-                        <span className="font-medium text-neutral-400">{metrics.memoryReserved} GB</span>
+                      <Tooltip content="Capacity">
+                        <span className="font-medium text-neutral-400">{metrics.memoryUsed} GB</span>
                       </Tooltip>
                       {metrics.memoryTotal ? (
                         ` (limit: ${metrics.memoryTotal})`
@@ -209,15 +225,15 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                             CLUSTER_SETTINGS_RESOURCES_URL
                           }
                         >
-                          <Icon iconName="pen" iconStyle="regular" className="text-neutral-300" />
+                          <Icon iconName="gear" iconStyle="regular" className="text-neutral-300" />
                         </Link>
                       </Tooltip>
                     ))}
                 </div>
                 <MetricProgressBar
                   type="memory"
-                  capacity={metrics.memoryUsed}
-                  capacityRaw={metrics.memoryUsedRaw}
+                  capacity={metrics.memoryReserved}
+                  capacityRaw={metrics.memoryReservedRaw}
                   limit={metrics.memoryTotal}
                   limitRaw={metrics.memoryTotalRaw}
                   unit="GB"
