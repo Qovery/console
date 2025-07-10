@@ -5,7 +5,7 @@ import { useService } from '@qovery/domains/services/feature'
 import { Checkbox, InputSelectSmall, Section, SegmentedControl } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
-import { CardInstanceRestarts } from './card-instance-restart/card-instance-restarts'
+import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardInstance } from './card-instance/card-instance'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CpuChart } from './cpu-chart/cpu-chart'
@@ -70,7 +70,7 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
               hasPublicPort ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'
             )}
           >
-            <CardInstanceRestarts clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardInstanceStatus clusterId={environment.cluster_id} serviceId={applicationId} />
             <CardInstance clusterId={environment.cluster_id} serviceId={applicationId} />
             <CardLogErrors clusterId={environment.cluster_id} serviceId={applicationId} />
             {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}

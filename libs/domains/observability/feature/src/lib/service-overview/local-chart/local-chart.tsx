@@ -1,7 +1,7 @@
 import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CartesianGrid, Customized, LineChart, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, ComposedChart, Customized, XAxis, YAxis } from 'recharts'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Chart, Heading, Section, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -18,6 +18,8 @@ interface ChartContentProps extends PropsWithChildren {
   label: string
   isEmpty: boolean
   isLoading: boolean
+  xDomain?: [number | string, number | string]
+  yDomain?: [number | string, number | string]
   tooltipLabel?: string
   events?: OrganizationEventResponse[]
   kubeEvents?: {
@@ -37,12 +39,14 @@ function ChartContent({
   children,
   events,
   kubeEvents,
+  xDomain,
+  yDomain,
 }: ChartContentProps) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
-  function getDomain() {
-    return [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
+  function getXDomain() {
+    return xDomain ?? [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
   }
 
   function getLogicalTicks(): number[] {
@@ -61,7 +65,7 @@ function ChartContent({
 
   return (
     <Chart.Container className="h-full w-full p-5 pb-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
-      <LineChart
+      <ComposedChart
         data={data}
         syncId="syncId"
         margin={{ top: 2, bottom: 0, left: 0, right: 0 }}
@@ -74,7 +78,7 @@ function ChartContent({
           dataKey="timestamp"
           type="number"
           scale="time"
-          domain={getDomain()}
+          domain={getXDomain()}
           ticks={getLogicalTicks()}
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
@@ -110,14 +114,6 @@ function ChartContent({
           interval="preserveStartEnd"
           strokeDasharray="3 3"
         />
-        <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
-          orientation="right"
-          tickCount={5}
-        />
         <Chart.Tooltip
           isAnimationActive={false}
           content={
@@ -130,7 +126,16 @@ function ChartContent({
         />
         {children}
         {!hideEvents && <Customized component={ReferenceLineEvents} events={events} />}
-      </LineChart>
+        <YAxis
+          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+          tickLine={{ stroke: 'transparent' }}
+          axisLine={{ stroke: 'var(--color-neutral-250)' }}
+          strokeDasharray="3 3"
+          orientation="right"
+          tickCount={5}
+          domain={yDomain}
+        />
+      </ComposedChart>
     </Chart.Container>
   )
 }
@@ -138,14 +143,15 @@ function ChartContent({
 interface LocalChartProps extends PropsWithChildren {
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
   unit: UnitType
-  label: string
   isEmpty: boolean
   isLoading: boolean
   serviceId: string
   clusterId: string
+  label?: string
   className?: string
-  fullscreen?: boolean
   tooltipLabel?: string
+  yDomain?: [number | string, number | string]
+  xDomain?: [number | string, number | string]
 }
 
 export function LocalChart({
@@ -159,7 +165,8 @@ export function LocalChart({
   children,
   serviceId,
   clusterId,
-  fullscreen = true,
+  yDomain,
+  xDomain,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
   const { startTimestamp, endTimestamp } = useServiceOverviewContext()
@@ -189,9 +196,9 @@ export function LocalChart({
   return (
     <>
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
-        <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
-          <Heading className="scroll-mt-20">{label}</Heading>
-          {fullscreen && (
+        {label && (
+          <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
+            <Heading className="scroll-mt-20">{label}</Heading>
             <Tooltip content="Mode fullscreen">
               <Button
                 variant="plain"
@@ -212,32 +219,36 @@ export function LocalChart({
                 </svg>
               </Button>
             </Tooltip>
-          )}
-        </div>
+          </div>
+        )}
         <ChartContent
           data={data}
           unit={unit}
-          label={label}
+          label={label ?? ''}
           tooltipLabel={tooltipLabel}
           isEmpty={isEmpty}
           isLoading={isLoading}
           events={events}
           kubeEvents={kubeEvents}
+          xDomain={xDomain}
+          yDomain={yDomain}
         >
           {children}
         </ChartContent>
       </Section>
       {isModalOpen && (
-        <ModalChart title={label} open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <ChartContent
             data={data}
             unit={unit}
-            label={label}
+            label={label ?? ''}
             tooltipLabel={tooltipLabel}
             isEmpty={isEmpty}
             isLoading={isLoading}
             events={events}
             kubeEvents={kubeEvents}
+            xDomain={xDomain}
+            yDomain={yDomain}
           >
             {children}
           </ChartContent>

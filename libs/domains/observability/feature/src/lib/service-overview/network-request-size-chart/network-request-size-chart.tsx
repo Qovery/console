@@ -6,15 +6,7 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function NetworkRequestSizeChart({
-  clusterId,
-  serviceId,
-  fullscreen = true,
-}: {
-  clusterId: string
-  serviceId: string
-  fullscreen?: boolean
-}) {
+export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
 
   const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
@@ -89,7 +81,6 @@ export function NetworkRequestSizeChart({
       unit="bytes"
       serviceId={serviceId}
       clusterId={clusterId}
-      fullscreen={fullscreen}
     >
       <Line
         key="response-size"
