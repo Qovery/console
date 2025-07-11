@@ -93,13 +93,13 @@ export function ContainerRegistryForm({
   const watchType = methods.watch('type')
   const watchLoginType = methods.watch('config.login_type')
   const watchAzureApplicationId = methods.watch('config.azure_application_id')
+  const watchAzureSubscriptionId = methods.watch('config.azure_subscription_id')
   const isClusterManaged = cluster?.kubernetes === 'MANAGED'
   const isClusterSelfManaged = cluster?.kubernetes === 'SELF_MANAGED'
   const isClusterDemo = cluster?.is_demo
   const isClusterOnPremise = cluster?.cloud_provider === 'ON_PREMISE'
 
-  // TODO [QOV-911] replace placeholders with actual values
-  const snippet = `curl https://hub.qovery.com/files/create_credentials_azure.sh | bash -s -- --qovery-app-id $watchAzureApplicationId --subscription-id $watchAzureSubscriptionId`
+  const snippet = `curl https://hub.qovery.com/files/create_credentials_azure.sh | bash -s -- --qovery-app-id ${watchAzureApplicationId} --subscription-id ${watchAzureSubscriptionId}`
 
   return (
     <div className="flex flex-col gap-y-4">

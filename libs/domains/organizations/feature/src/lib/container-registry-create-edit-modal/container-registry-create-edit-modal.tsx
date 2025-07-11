@@ -49,6 +49,7 @@ export function ContainerRegistryCreateEditModal({
         json_credentials: undefined,
         azure_tenant_id: registry?.config?.azure_tenant_id,
         azure_subscription_id: registry?.config?.azure_subscription_id,
+        azure_application_id: registry?.config?.azure_application_id,
         login_type: registry?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
       },
     },
@@ -60,12 +61,14 @@ export function ContainerRegistryCreateEditModal({
   const { mutateAsync: createContainerRegistry, isLoading: isLoadingCreateContainerRegistry } =
     useCreateContainerRegistry()
 
+  const isAzure = methods.watch('kind') === ContainerRegistryKindEnum.AZURE_CR
+  const watchAzureApplicationId = methods.watch('config.azure_application_id')
+
   useEffect(() => {
     setTimeout(() => methods.clearErrors('config'), 0)
   }, [methods])
 
   const onSubmit = methods.handleSubmit(async (containerRegistryRequest) => {
-    const isAzure = methods.watch('kind') === ContainerRegistryKindEnum.AZURE_CR
     const isAzureSubmitSuccessful = methods.formState.isSubmitSuccessful && isAzure
 
     // Close without edit when no changes
@@ -105,8 +108,7 @@ export function ContainerRegistryCreateEditModal({
         .exhaustive()
 
       if (isAzure) {
-        // TODO [QOV-911] to uncomment once the API is updated
-        // methods.setValue('config.azure_application_id', response.azure_application_id)
+        methods.setValue('config.azure_application_id', response.config?.azure_application_id)
       } else {
         onClose(response)
       }
@@ -114,6 +116,25 @@ export function ContainerRegistryCreateEditModal({
       console.error(error)
     }
   })
+
+  const submitLabel = isEdit
+    ? 'Confirm'
+    : match({ isAzure, watchAzureApplicationId })
+        .with(
+          {
+            isAzure: true,
+            watchAzureApplicationId: P.not(P.string),
+          },
+          () => 'Next'
+        )
+        .with(
+          {
+            isAzure: true,
+            watchAzureApplicationId: P.string,
+          },
+          () => 'Done'
+        )
+        .otherwise(() => 'Create')
 
   return (
     <FormProvider {...methods}>
@@ -138,6 +159,7 @@ export function ContainerRegistryCreateEditModal({
             </ExternalLink>
           </>
         }
+        submitLabel={submitLabel}
       >
         <ContainerRegistryForm isEdit={isEdit} registry={registry} />
       </ModalCrud>
