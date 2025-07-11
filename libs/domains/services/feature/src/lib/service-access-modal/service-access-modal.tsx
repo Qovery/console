@@ -6,6 +6,7 @@ import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_UR
 import {
   Accordion,
   Button,
+  CopyButton,
   ExternalLink,
   Heading,
   Icon,
@@ -19,7 +20,6 @@ import {
 } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import useMasterCredentials from '../hooks/use-master-credentials/use-master-credentials'
-import CopyButton from './copy-button/copy-button'
 import SectionExpand from './section-expand/section-expand'
 
 const { Tabs } = TabsPrimitives

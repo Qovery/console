@@ -278,7 +278,7 @@ export const mutations = {
         return response.data
       })
       .with({ cloudProvider: 'AZURE' }, async ({ organizationId, credentialId }) => {
-        const response = await cloudProviderCredentialsApi.deleteAzureCredentials(credentialId, organizationId)
+        const response = await cloudProviderCredentialsApi.deleteAzureCredentials(organizationId, credentialId)
         return response.data
       })
       .with({ cloudProvider: 'ON_PREMISE' }, () => undefined)
