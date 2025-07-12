@@ -366,6 +366,8 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isAtBottom, setIsAtBottom] = useState(true)
   const panelRef = useRef<HTMLDivElement>(null)
 
+  const mermaidRenderCache = useRef<Map<string, JSX.Element>>(new Map())
+
   useEffect(() => {
     // Once the animation is finished, we can stop the loading and set the message
     if (
@@ -776,8 +778,16 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                               ))}
                           </div>
                         )}
-                        <RenderMarkdown>{normalizeMermaid(thread.text)}</RenderMarkdown>
-                        <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
+                        {(() => {
+                          if (!mermaidRenderCache.current.has(thread.id)) {
+                            const { RenderMarkdown, normalizeMermaid } = require('../devops-render-markdown/devops-render-markdown')
+                            mermaidRenderCache.current.set(
+                              thread.id,
+                              <RenderMarkdown>{normalizeMermaid(thread.text)}</RenderMarkdown>
+                            )
+                          }
+                          return mermaidRenderCache.current.get(thread.id)
+                        })()}                        <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
                           <Button
                             type="button"
                             variant="surface"
