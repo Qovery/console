@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import React from 'react'
+import { memo } from 'react'
 import { Button, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
 import { type Thread } from '../hooks/use-threads/use-threads'
 import { isToday, isWithinLastSevenDays, isWithinLastThirtyDays, isYesterday } from '../utils/date-utils/date-utils'
@@ -126,7 +126,7 @@ export const DevopsCopilotHistory = ({
   )
 }
 
-export default React.memo(DevopsCopilotHistory, (prev, next) => {
+export default memo(DevopsCopilotHistory, (prev, next) => {
   const propsChanged = {
     threadIdChanged: prev.threadId !== next.threadId,
     orgIdChanged: prev.organizationId !== next.organizationId,
