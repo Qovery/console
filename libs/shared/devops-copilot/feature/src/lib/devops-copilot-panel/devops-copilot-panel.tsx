@@ -10,8 +10,7 @@ import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
-import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'
-import { normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
+import { RenderMarkdown, normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
@@ -780,10 +779,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                         )}
                         {(() => {
                           if (!mermaidRenderCache.current.has(thread.id)) {
-                            const {
-                              RenderMarkdown,
-                              normalizeMermaid,
-                            } = require('../devops-render-markdown/devops-render-markdown')
                             mermaidRenderCache.current.set(
                               thread.id,
                               <RenderMarkdown>{normalizeMermaid(thread.text)}</RenderMarkdown>
