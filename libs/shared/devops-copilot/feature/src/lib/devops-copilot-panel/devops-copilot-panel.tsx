@@ -13,6 +13,7 @@ import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'
 import { normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
 import { DotStatus } from '../dot-status/dot-status'
+import { useConfig } from '../hooks/use-config/use-config'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
@@ -154,6 +155,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isFinish, setIsFinish] = useState(false)
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
+  const { readOnly: isReadOnly } = useConfig({
+    organizationId: context?.organization?.id ?? '',
+  })
 
   const [plan, setPlan] = useState<
     {
@@ -171,6 +175,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     threads = [],
     error: errorThreads,
     isLoading: isLoadingThreads,
+    refetchThreads: refetchThreads,
   } = useThreads({ organizationId: context?.organization?.id ?? '', owner: user?.sub ?? '' })
 
   const { thread, setThread } = useThreadState({
@@ -303,10 +308,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
           withContext ? context : { organization: context.organization },
           (chunk) => {
             try {
-              const parsed = JSON.parse(chunk.replace(/^data: /, ''))
+              const parsed = JSON.parse(chunk)
               if (parsed.type === 'start' && parsed.content.thread_id) {
                 pendingThreadId.current = parsed.content.thread_id
                 setThreadId(parsed.content.thread_id)
+                refetchThreads()
                 return
               }
               if (parsed.type === 'chunk' && parsed.content) {
@@ -837,7 +843,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     )}
                   </div>
                 )}
-                {isLoading && streamingMessage.length > 0 && (
+                {isLoading && streamingMessage.length > 0 && pendingThreadId.current === threadId && (
                   <div className="streaming text-sm">
                     {plan.filter((p) => p.messageId === 'temp').length > 0 && (
                       <div
@@ -968,6 +974,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     </div>
                   )}
                   <Input
+                    disabled={appStatus?.status !== 'OPERATIONAL'}
                     ref={inputRef}
                     value={inputMessage}
                     rows={1}
@@ -989,33 +996,46 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     }}
                   />
                 </div>
-                {appStatus && appStatus.status ? (
-                  <a
-                    className="ml-auto inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-350 opacity-0 transition hover:text-neutral-600 dark:text-neutral-250"
-                    href={QOVERY_STATUS_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span>
-                      {match(appStatus)
-                        .with({ status: 'OPERATIONAL' }, () => 'All systems operational')
-                        .with({ status: 'MAJOROUTAGE' }, () => 'Major outage ongoing')
-                        .with({ status: 'MINOROUTAGE' }, () => 'Minor outage ongoing')
-                        .with({ status: 'PARTIALOUTAGE' }, () => 'Partial outage ongoing')
-                        .exhaustive()}
-                    </span>
-                    <DotStatus
-                      color={match(appStatus)
-                        .with({ status: 'OPERATIONAL' }, () => 'green' as const)
-                        .with({ status: 'MAJOROUTAGE' }, () => 'red' as const)
-                        .with({ status: 'MINOROUTAGE' }, () => 'yellow' as const)
-                        .with({ status: 'PARTIALOUTAGE' }, () => 'yellow' as const)
-                        .exhaustive()}
-                    />
-                  </a>
-                ) : (
-                  <div className="h-4" />
-                )}
+                <div className="flex w-full items-center justify-between">
+                  <div className="inline-flex items-center gap-2 text-xs text-neutral-350 dark:text-neutral-250">
+                    <span>{isReadOnly ? 'Read-only mode' : 'Read-write mode'}</span>
+                    <Tooltip
+                      content={isReadOnly ? 'Your Copilot can’t make any changes' : 'It can perform actions'}
+                      classNameContent="z-10"
+                    >
+                      <button type="button">
+                        <Icon iconName="circle-info" className="text-neutral-350 dark:text-neutral-250" />
+                      </button>
+                    </Tooltip>
+                  </div>
+                  {appStatus && appStatus.status ? (
+                    <a
+                      className="inline-flex max-w-max animate-[fadein_0.22s_ease-in-out_forwards_0.20s] items-center gap-2 text-xs text-neutral-350 opacity-0 transition hover:text-neutral-600 dark:text-neutral-250"
+                      href={QOVERY_STATUS_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span>
+                        {match(appStatus)
+                          .with({ status: 'OPERATIONAL' }, () => 'All systems operational')
+                          .with({ status: 'MAJOROUTAGE' }, () => 'Major outage ongoing')
+                          .with({ status: 'MINOROUTAGE' }, () => 'Minor outage ongoing')
+                          .with({ status: 'PARTIALOUTAGE' }, () => 'Partial outage ongoing')
+                          .exhaustive()}
+                      </span>
+                      <DotStatus
+                        color={match(appStatus)
+                          .with({ status: 'OPERATIONAL' }, () => 'green' as const)
+                          .with({ status: 'MAJOROUTAGE' }, () => 'red' as const)
+                          .with({ status: 'MINOROUTAGE' }, () => 'yellow' as const)
+                          .with({ status: 'PARTIALOUTAGE' }, () => 'yellow' as const)
+                          .exhaustive()}
+                      />
+                    </a>
+                  ) : (
+                    <div className="h-4" />
+                  )}
+                </div>
               </div>
             </div>
           </div>
