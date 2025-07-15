@@ -1,7 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useState } from 'react'
-import { Button, Icon } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import Button from '../button/button'
+import Icon from '../icon/icon'
 
 export interface CopyButtonProps {
   content: string

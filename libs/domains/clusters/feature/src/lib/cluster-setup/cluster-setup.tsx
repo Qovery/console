@@ -1,5 +1,4 @@
-import { Callout, ExternalLink, Icon } from '@qovery/shared/ui'
-import CopyButton from './copy-button/copy-button'
+import { Callout, CopyButton, ExternalLink, Icon } from '@qovery/shared/ui'
 
 export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) {
   return (

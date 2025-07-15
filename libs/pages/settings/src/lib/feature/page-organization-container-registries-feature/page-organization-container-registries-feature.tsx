@@ -32,6 +32,7 @@ export function PageOrganizationContainerRegistriesFeature() {
           content: <ContainerRegistryCreateEditModal organizationId={organizationId} onClose={closeModal} />,
           options: {
             fakeModal: true,
+            width: 680,
           },
         })
       }}
@@ -47,6 +48,7 @@ export function PageOrganizationContainerRegistriesFeature() {
           ),
           options: {
             fakeModal: true,
+            width: 680,
           },
         })
       }}
