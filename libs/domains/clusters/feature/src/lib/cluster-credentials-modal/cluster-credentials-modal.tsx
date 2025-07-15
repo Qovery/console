@@ -739,7 +739,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
             .with(
               { cloudProviderLocal: 'AZURE', watchAzureApplicationId: P.string, watchAzureSubscriptionId: P.string },
               ({ watchAzureApplicationId, watchAzureSubscriptionId }) => {
-                const snippet = `curl https://hub.qovery.com/files/create_credentials_azure.sh | bash -s -- --qovery-app-id ${watchAzureApplicationId} --subscription-id ${watchAzureSubscriptionId}`
+                const snippet = `bash <(curl -s https://hub.qovery.com/files/create_credentials_azure.sh) --qovery-app-id ${watchAzureApplicationId}  --subscription-id ${watchAzureSubscriptionId}`
 
                 return (
                   <>
