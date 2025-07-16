@@ -220,9 +220,13 @@ export function EnvironmentStagesFeature({
                           >
                             <div
                               style={{
-                                width: `${serviceDurationPercentage}%`,
+                                width: fullService.id === expandedStageId ? '65%' : `${serviceDurationPercentage}%`,
                                 // minWidth: `${minWidth}px`,
-                                marginLeft: `${durationOfPreviousStagesPercentage}%`,
+                                marginLeft: `${fullService.id === expandedStageId ? Math.min(50, durationOfPreviousStagesPercentage) : durationOfPreviousStagesPercentage}%`,
+                                // margin:
+                                //   fullService.id === expandedStageId
+                                //     ? '0 auto'
+                                //     : `0 0 0 ${durationOfPreviousStagesPercentage}%`,
                               }}
                               className={twMerge(
                                 'flex flex-col rounded border border-neutral-400 bg-neutral-550 px-4 py-3 transition-all duration-300 hover:border-brand-500'
