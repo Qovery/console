@@ -65,7 +65,7 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                 </Dialog.Close>
               </div>
             </div>
-            <div className="h-[calc(100vh-48px-56px)]">{children}</div>
+            <div className="h-[calc(100vh-48px-56px)] overflow-hidden">{children}</div>
           </Section>
         </Dialog.Content>
       </Dialog.Portal>
