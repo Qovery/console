@@ -62,6 +62,16 @@ export function matchServicesWithStatuses(deploymentStages?: DeploymentStageWith
   })
 }
 
+const formatDuration = (duration: number | null | undefined) => {
+  if (!duration) return '0s'
+
+  const hours = Math.floor(duration / 3600)
+  const minutes = Math.floor((duration % 3600) / 60)
+  const seconds = duration % 60
+
+  return `${hours ? `${hours}h ` : ''}${minutes ? `${minutes}m ` : ''}${seconds ? `${seconds}s` : ''}`
+}
+
 export function EnvironmentStagesFeature({
   environment,
   environmentStatus,
@@ -203,73 +213,140 @@ export function EnvironmentStagesFeature({
 
               const currentStageDurationPercentage = (stageTotalDurationSec / totalDurationSec) * 100
 
+              const width = s.services.some((service) => service.id === expandedStageId)
+                ? Math.max(50, currentStageDurationPercentage)
+                : currentStageDurationPercentage
+              const marginLeft = s.services.some((service) => service.id === expandedStageId)
+                ? Math.min(50, durationOfPreviousStagesPercentage)
+                : durationOfPreviousStagesPercentage
+
               return (
-                <Fragment key={s.stage?.id}>
-                  {s.services.length > 0 &&
-                    s.services.map((service) => {
-                      const fullService = getServiceById(service.id!)
-                      const serviceTotalDurationSec = service?.steps?.total_duration_sec
-                      const serviceDurationPercentage = ((serviceTotalDurationSec ?? 0) / totalDurationSec) * 100
-
-                      console.log('🚀 ~service:', { service, s, fullService })
-                      return (
-                        <div className="flex w-full flex-col" key={service.id}>
-                          <div
-                            className="flex w-full cursor-pointer"
-                            onClick={() => expandRow(fullService.id === expandedStageId ? undefined : fullService.id)}
-                          >
-                            <div
-                              style={{
-                                width: fullService.id === expandedStageId ? '65%' : `${serviceDurationPercentage}%`,
-                                // minWidth: `${minWidth}px`,
-                                marginLeft: `${fullService.id === expandedStageId ? Math.min(50, durationOfPreviousStagesPercentage) : durationOfPreviousStagesPercentage}%`,
-                                // margin:
-                                //   fullService.id === expandedStageId
-                                //     ? '0 auto'
-                                //     : `0 0 0 ${durationOfPreviousStagesPercentage}%`,
-                              }}
-                              className={twMerge(
-                                'flex flex-col rounded border border-neutral-400 bg-neutral-550 px-4 py-3 transition-all duration-300 hover:border-brand-500'
-                              )}
-                            >
-                              <div className="flex flex-col gap-1">
-                                <div className="inline-flex items-center gap-2">
-                                  <ServiceAvatar
-                                    service={fullService}
-                                    border="solid"
-                                    size="xs"
-                                    className={clsx('border-neutral-400', {
-                                      'opacity-50': !service.is_part_last_deployment,
-                                    })}
-                                  />
-                                  <span className="text-sm text-neutral-250">
-                                    <Truncate text={fullService.name} truncateLimit={35} />
-                                  </span>
-                                  <span className="text-sm text-neutral-350">•</span>
-                                  <span className="text-sm text-neutral-250">{stageName.toLocaleLowerCase()}</span>
-                                </div>
-                                <span className="text-sm">
-                                  {Math.max(0, Math.floor((serviceTotalDurationSec ?? 0) / 60))}m{' '}
-                                  {serviceTotalDurationSec ?? 0 % 60}s
-                                </span>
-                              </div>
-
-                              {expandedStageId === fullService.id && (
-                                <div className="mt-3">
-                                  <img
-                                    width="100%"
-                                    height="100%"
-                                    src="/assets/images/gantt-dark-mode.png"
-                                    alt="Gantt"
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )
+                <div key={s.stage?.id} style={{ width: `${width}%`, marginLeft: `${marginLeft}%` }}>
+                  <div
+                    className={clsx('h-fit overflow-hidden rounded border border-neutral-500 bg-neutral-650', {
+                      'text-neutral-50': s?.stage?.status !== 'SKIPPED',
+                      'text-neutral-300': s?.stage?.status === 'SKIPPED',
                     })}
-                </Fragment>
+                  >
+                    <div className="flex h-[58px] items-center gap-3.5 border-b border-neutral-500 px-3 py-2.5">
+                      <Indicator
+                        align="end"
+                        side="right"
+                        content={
+                          s?.stage?.status !== 'SKIPPED' && (
+                            <Tooltip content={upperCaseFirstLetter(deploymentHistory?.trigger_action)}>
+                              <span>
+                                <TriggerActionIcon
+                                  triggerAction={deploymentHistory?.trigger_action}
+                                  className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-650 text-xs text-neutral-250"
+                                />
+                              </span>
+                            </Tooltip>
+                          )
+                        }
+                      >
+                        <Tooltip content={upperCaseFirstLetter(s.stage?.status)}>
+                          <span>
+                            <StageStatusChip status={s.stage?.status} />
+                          </span>
+                        </Tooltip>
+                      </Indicator>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="flex gap-1.5 text-sm font-medium">
+                          <Truncate text={upperCaseFirstLetter(stageName) || ''} truncateLimit={20} />
+                          {s?.stage?.description && (
+                            <Tooltip content={s?.stage?.description}>
+                              <span className="text-neutral-250">
+                                <Icon iconName="info-circle" iconStyle="regular" />
+                              </span>
+                            </Tooltip>
+                          )}
+                        </span>
+                        {match(s.stage?.status)
+                          .with('CANCELED', 'DONE', 'ERROR', () => (
+                            <span className="text-xs">
+                              {Math.floor(stageTotalDurationSec / 60)}m {stageTotalDurationSec % 60}s
+                            </span>
+                          ))
+                          .otherwise(() => null)}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5 bg-neutral-800 p-1.5">
+                      {s.services.length > 0 &&
+                        s.services.map((service) => {
+                          const fullService = getServiceById(service.id!)
+                          const serviceTotalDurationSec = service?.steps?.total_duration_sec
+                          const serviceDurationPercentage =
+                            ((serviceTotalDurationSec ?? 0) / stageTotalDurationSec) * 100
+
+                          console.log('🚀 ~service:', { service, s, fullService })
+
+                          const width = fullService.id === expandedStageId ? 100 : serviceDurationPercentage
+
+                          return (
+                            <div className="flex w-full flex-col" key={service.id}>
+                              <div
+                                className="flex w-full cursor-pointer"
+                                onClick={() =>
+                                  expandRow(fullService.id === expandedStageId ? undefined : fullService.id)
+                                }
+                              >
+                                <div
+                                  style={{
+                                    width: `${width}%`,
+                                    // marginLeft: `${marginLeft}%`
+                                  }}
+                                  className={twMerge(
+                                    'flex flex-col rounded border border-neutral-400 bg-neutral-550 px-4 py-3 transition-all duration-300 hover:border-brand-500'
+                                  )}
+                                >
+                                  <div className={twMerge('flex flex-col gap-1')}>
+                                    <div
+                                      className={twMerge(
+                                        'inline-flex items-center gap-2',
+                                        width < 20 && 'flex-col items-start'
+                                      )}
+                                    >
+                                      <div className="inline-flex items-center gap-2">
+                                        <ServiceAvatar
+                                          service={fullService}
+                                          border="solid"
+                                          size="xs"
+                                          className={clsx('border-neutral-400', {
+                                            'opacity-50': !service.is_part_last_deployment,
+                                          })}
+                                        />
+                                        <span className="text-sm">
+                                          <Truncate text={fullService.name} truncateLimit={35} />
+                                        </span>
+                                      </div>
+                                      {/* <span className="text-sm text-neutral-350">•</span> */}
+                                      {/* <span className="text-sm text-neutral-250">{stageName.toLocaleLowerCase()}</span> */}
+                                    </div>
+                                    <span className="text-sm">
+                                      {/* Format duration in minutes and seconds */}
+                                      {formatDuration(serviceTotalDurationSec)}
+                                    </span>
+                                  </div>
+
+                                  {expandedStageId === fullService.id && (
+                                    <div className="mt-3">
+                                      <img
+                                        width="100%"
+                                        height="100%"
+                                        src="/assets/images/gantt-dark-mode.png"
+                                        alt="Gantt"
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                    </div>
+                  </div>
+                </div>
               )
             })}
           </div>
