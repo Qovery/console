@@ -6,10 +6,10 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { type Dispatch, type PropsWithChildren, type SetStateAction } from 'react'
+import { type Dispatch, type PropsWithChildren, type SetStateAction, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_PRE_CHECK_LOGS_URL } from '@qovery/shared/routes'
-import { Checkbox, Icon, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Checkbox, Icon, InputToggle, LoaderSpinner, StageStatusChip, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
 
@@ -54,6 +54,7 @@ export function EnvironmentStages({
           <label htmlFor="skipped">Hide skipped</label>
         </div>
       </HeaderEnvironmentStages>
+
       <div className="flex h-[calc(100vh-120px)] justify-center border border-t-0 border-neutral-500 bg-neutral-600">
         <div className="h-full w-full">
           <div className="flex h-full gap-0.5 overflow-y-scroll py-6 pl-4 pr-3">
