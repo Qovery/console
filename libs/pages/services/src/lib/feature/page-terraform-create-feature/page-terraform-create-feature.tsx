@@ -64,6 +64,10 @@ export interface TerraformGeneralData
   arguments: string
   timeout_sec: string
   state: 'kubernetes'
+  provider_version: {
+    read_from_terraform_block: boolean
+    explicit_version: string
+  }
 }
 
 interface TerraformCreateContextInterface {

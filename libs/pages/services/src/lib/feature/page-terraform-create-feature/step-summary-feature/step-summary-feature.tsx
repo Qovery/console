@@ -1,4 +1,5 @@
 import posthog from 'posthog-js'
+import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -45,40 +46,44 @@ export function StepSummaryFeature() {
       setIsLoadingCreate(true)
     }
 
+    const payload: TerraformRequest = {
+      name: generalData.name,
+      description: generalData.description ?? '',
+      icon_uri: generalData.icon_uri,
+      timeout_sec: generalData.timeout_sec,
+      auto_deploy: generalData.auto_deploy ?? false,
+      auto_approve: false,
+      provider: 'TERRAFORM',
+      terraform_files_source: {
+        git_repository: {
+          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+          branch: generalData.branch ?? '',
+          root_path: generalData.root_path ?? '',
+          git_token_id: generalData.git_token_id ?? '',
+        },
+      },
+      terraform_variables_source: {
+        tf_var_file_paths: valuesOverrideArgumentData.tf_var_file_paths,
+        tf_vars: valuesOverrideArgumentData.tf_vars.map((tfVar) => [tfVar.key, tfVar.value]),
+      },
+      provider_version: {
+        read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
+        explicit_version: generalData.provider_version.explicit_version,
+      },
+      job_resources: {
+        cpu_milli: generalData.job_resources.cpu_milli,
+        ram_mib: generalData.job_resources.ram_mib,
+        storage_gib: generalData.job_resources.storage_gib,
+      },
+      use_cluster_credentials: generalData.use_cluster_credentials,
+    }
+
+    console.log('payload', payload)
+
     try {
       const response = await createTerraformService({
         environmentId,
-        terraformRequest: {
-          name: generalData.name,
-          description: generalData.description ?? '',
-          icon_uri: generalData.icon_uri,
-          timeout_sec: generalData.timeout_sec,
-          auto_deploy: generalData.auto_deploy ?? false,
-          auto_approve: false,
-          provider: 'TERRAFORM',
-          terraform_files_source: {
-            git_repository: {
-              url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
-              branch: generalData.branch ?? '',
-              root_path: generalData.root_path ?? '',
-              git_token_id: generalData.git_token_id ?? '',
-            },
-          },
-          terraform_variables_source: {
-            tf_var_file_paths: valuesOverrideArgumentData.tf_var_file_paths,
-            tf_vars: valuesOverrideArgumentData.tf_vars.map((tfVar) => [tfVar.key, tfVar.value]),
-          },
-          provider_version: {
-            read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
-            explicit_version: generalData.provider_version.explicit_version,
-          },
-          job_resources: {
-            cpu_milli: generalData.job_resources.cpu_milli,
-            ram_mib: generalData.job_resources.ram_mib,
-            storage_gib: generalData.job_resources.storage_gib,
-          },
-          use_cluster_credentials: generalData.use_cluster_credentials,
-        },
+        terraformRequest: payload,
       })
 
       if (slug && option) {

@@ -55,7 +55,6 @@ export function StepConfigurationFeature() {
               name="provider_version.explicit_version"
               control={generalForm.control}
               defaultValue={generalData.provider_version.explicit_version}
-              disabled={true}
               render={({ field }) => (
                 <InputSelect
                   label="State configuration"
