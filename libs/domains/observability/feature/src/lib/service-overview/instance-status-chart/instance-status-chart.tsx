@@ -1,6 +1,11 @@
-import { useMemo } from 'react'
-import { Bar, Scatter } from 'recharts'
-import type { ScatterProps } from 'recharts'
+import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
+import clsx from 'clsx'
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { useMemo, useState } from 'react'
+import { Line, ReferenceLine } from 'recharts'
+import { useService } from '@qovery/domains/services/feature'
+import { Icon } from '@qovery/shared/ui'
+import { useEvents } from '../../hooks/use-events/use-events'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
@@ -11,40 +16,43 @@ function calculateDynamicRange(startTimestamp: string, endTimestamp: string): st
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
-  const durationHours = durationMs / (1000 * 60 * 60)
-  const durationDays = durationHours / 24
+  let stepMs: number
 
-  // Calculate range based on time range duration with appropriate scaling
-  let rangeMinutes: number
-
-  if (durationDays >= 7) {
-    // For 7+ days: 4 hours
-    rangeMinutes = 4 * 60
-  } else if (durationDays >= 2) {
-    // For 2-7 days: 2 hours
-    rangeMinutes = 2 * 60
-  } else if (durationDays >= 1) {
-    // For 1-2 days: 1 hour
-    rangeMinutes = 60
-  } else if (durationHours >= 6) {
-    // For 6-24 hours: 30 minutes
-    rangeMinutes = 30
-  } else if (durationHours >= 3) {
-    // For 3-6 hours: 15 minutes
-    rangeMinutes = 15
-  } else if (durationHours >= 1) {
-    // For 1-3 hours: 10 minutes
-    rangeMinutes = 10
+  if (durationMs <= 12 * 60 * 60 * 1000) {
+    // <= 12h
+    stepMs = 15000
+  } else if (durationMs <= 24 * 60 * 60 * 1000) {
+    // <= 24h
+    stepMs = 30000
+  } else if (durationMs <= 48 * 60 * 60 * 1000) {
+    // <= 48h
+    stepMs = 60000
+  } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
+    // <= 7d
+    stepMs = 120000
+  } else if (durationMs <= 30 * 24 * 60 * 60 * 1000) {
+    // <= 30d
+    stepMs = 300000
+  } else if (durationMs <= 60 * 24 * 60 * 60 * 1000) {
+    // <= 60d
+    stepMs = 1800000
   } else {
-    // For less than 1 hour: 5 minutes minimum
-    rangeMinutes = 5
+    stepMs = 7200000 // > 60d
   }
 
-  return `${rangeMinutes}m`
+  return `${stepMs}ms`
 }
 
-export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+export function InstanceStatusChart({
+  organizationId,
+  clusterId,
+  serviceId,
+}: {
+  organizationId: string
+  clusterId: string
+  serviceId: string
+}) {
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
 
   // Calculate dynamic range based on time range
   const dynamicRange = useMemo(
@@ -52,201 +60,272 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     [startTimestamp, endTimestamp]
   )
 
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+  const { data: metricsUnhealthy, isLoading: isLoadingUnhealthy } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    step: dynamicRange,
+    query: `sum by (condition)(kube_pod_status_ready{condition=~"false"}
+    * on(namespace,pod) group_left(label_qovery_com_service_id)
+      max by(namespace,pod,label_qovery_com_service_id)(
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )) > 0`,
+  })
+
+  const { data: metricsHealthy, isLoading: isLoadingHealthy } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    step: dynamicRange,
+    query: `sum by (condition)(kube_pod_status_ready{condition=~"true"}
+    * on(namespace,pod) group_left(label_qovery_com_service_id)
+      max by(namespace,pod,label_qovery_com_service_id)(
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )) > 0`,
+  })
+
+  const { data: metricsReason, isLoading: isLoadingMetricsReason } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     query: `
-      sum by (condition)(
-        max_over_time(
-          (
-            kube_pod_status_ready{condition=~"true|false"}
-            * on(namespace,pod) group_left(label_qovery_com_service_id)
-              max by(namespace,pod,label_qovery_com_service_id)(
-                kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-              )
-          )[${dynamicRange}:]
-        )
-      )`,
+    sum by (pod, reason) (
+      ((kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange}) * on(pod, namespace, container) group_left(reason) 
+      (max by(pod, namespace, container, reason) (kube_pod_container_status_last_terminated_reason))
+      * on(pod, namespace) group_left(label_qovery_com_service_id) 
+      (max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"}))
+      ) > 0
+    ) > bool 0`,
+    step: dynamicRange,
   })
 
-  const intervalMs = 15000
-
-  const { data: metricsErrors, isLoading: isLoadingMetricsErrors } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum by (reason)((
-        kube_pod_container_status_last_terminated_reason{} == 1
-      )
-      * on(namespace, pod) group_left(label_qovery_com_service_id)
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      unless on(namespace, pod, reason)
-      (
-        (
-          kube_pod_container_status_last_terminated_reason{} offset ${intervalMs}ms == 1
-        )
-        * on(namespace, pod) group_left(label_qovery_com_service_id)
-          kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      ))`,
+  // Alpha: Workaround to get the events
+  const { data: service } = useService({ serviceId })
+  const { data: events } = useEvents({
+    organizationId,
+    serviceId,
+    targetType:
+      service?.service_type === 'CONTAINER'
+        ? OrganizationEventTargetType.CONTAINER
+        : OrganizationEventTargetType.APPLICATION,
+    toTimestamp: endTimestamp,
+    fromTimestamp: startTimestamp,
   })
 
   const chartData = useMemo(() => {
-    if (!metrics?.data?.result) {
-      return []
-    }
-
+    // Merge healthy and unhealthy metrics into a single timeSeriesMap
     const timeSeriesMap = new Map<
       number,
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process regular instance status metrics (pods) - healthy vs unhealthy
-    processMetricsData(
-      metrics,
-      timeSeriesMap,
-      (_, index) =>
-        metrics.data.result[index].metric.condition === 'false' ? 'Instance unhealthy' : 'Instance healthy',
-      (value) => parseFloat(value),
-      useLocalTime
-    )
-
-    // Process instance errors and map them to the closest unhealthy timestamp
-    if (metricsErrors?.data?.result) {
-      const chartTimestamps = Array.from(timeSeriesMap.keys())
-      if (chartTimestamps.length === 0) return
-
-      metricsErrors.data.result.forEach((series: { metric: { reason: string }; values: [number, string][] }) => {
-        const seriesName = series.metric.reason
-        series.values.forEach(([timestamp, value]: [number, string]) => {
-          const timestampNum = timestamp * 1000 // Convert to ms
-
-          // Find timestamps where instances were unhealthy to place error icons
-          const unhealthyTimestamps = chartTimestamps.filter((ts) => {
-            const point = timeSeriesMap.get(ts)
-            return point && point['Instance unhealthy']
-          })
-
-          if (unhealthyTimestamps.length === 0) return // No unhealthy instances to attach errors to
-
-          // Find the closest unhealthy timestamp to place the error icon
-          let targetTimestamp = unhealthyTimestamps[0]
-          let minDiff = Math.abs(targetTimestamp - timestampNum)
-          for (const ts of unhealthyTimestamps) {
-            const diff = Math.abs(ts - timestampNum)
-            if (diff < minDiff) {
-              minDiff = diff
-              targetTimestamp = ts
-            }
-          }
-
-          // Add error data to the closest unhealthy point
-          const dataPoint = timeSeriesMap.get(targetTimestamp)!
-          dataPoint[seriesName] = parseFloat(value)
-
-          // Also add Completed if not already set (for consistency)
-          if (seriesName !== 'Completed') {
-            dataPoint['Completed'] = parseFloat(value)
-          }
-        })
-      })
+    // Process unhealthy
+    if (metricsUnhealthy?.data?.result) {
+      processMetricsData(
+        metricsUnhealthy,
+        timeSeriesMap,
+        () => 'Instance unhealthy',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+    // Process healthy
+    if (metricsHealthy?.data?.result) {
+      processMetricsData(
+        metricsHealthy,
+        timeSeriesMap,
+        () => 'Instance healthy',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
     }
 
     // Convert map to sorted array and add time range padding
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-
-    // Add padding to the time range for better visualization
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics, metricsErrors, useLocalTime, startTimestamp, endTimestamp])
+  }, [metricsUnhealthy, metricsHealthy, useLocalTime, startTimestamp, endTimestamp])
 
-  // Extract error series names from metrics data
   const seriesNames = useMemo(() => {
-    if (!metricsErrors?.data?.result) return []
-    return metricsErrors.data.result.map(
-      (_: unknown, index: number) => metricsErrors.data.result[index].metric.reason
-    ) as string[]
-  }, [metricsErrors])
+    if (!metricsReason?.data?.result) return []
+    return metricsReason.data.result.map((series: { metric: { reason: string } }) => series.metric.reason) as string[]
+  }, [metricsReason])
 
-  // Filter to only include series that have actual data points in the chart
   const validSeriesNames = useMemo(() => {
-    if (!(chartData || []).length || !seriesNames.length) return []
-
+    if (!seriesNames.length) return []
     const validNames = seriesNames.filter((name) => {
-      return (chartData || []).some((point) => {
-        const value = point[name]
-        return value !== null && value !== undefined && typeof value === 'number' && value > 0
+      return metricsReason?.data?.result?.some((series: { metric: { reason: string }; values: [number, string][] }) => {
+        return series.metric.reason === name && series.values.some(([, value]) => parseFloat(value) > 0)
       })
     })
 
     return validNames
-  }, [seriesNames, chartData])
+  }, [seriesNames, metricsReason])
+
+  const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
+
+  const referenceLineData = useMemo(() => {
+    if (!metricsReason?.data?.result || !validSeriesNames.length) return []
+
+    const referenceLines: Array<{
+      type: 'metric' | 'event'
+      timestamp: number
+      reason: string
+      icon: IconName
+      key: string
+      iconStyle?: IconStyle
+    }> = []
+
+    // Add metric-based reference lines
+    metricsReason.data.result.forEach(
+      (series: { metric: { reason: string; pod: string }; values: [number, string][] }) => {
+        if (validSeriesNames.includes(series.metric.reason)) {
+          series.values.forEach(([timestamp, value]: [number, string]) => {
+            const numValue = parseFloat(value)
+            if (numValue > 0) {
+              const key = `${series.metric.reason}-${timestamp}`
+              referenceLines.push({
+                type: 'metric',
+                timestamp: timestamp * 1000,
+                reason: series.metric.reason,
+                icon: 'newspaper',
+                key,
+              })
+            }
+          })
+        }
+      }
+    )
+
+    // Add events as reference lines
+    if (Array.isArray(events)) {
+      events
+        .filter((event) => event.event_type === 'DEPLOYED')
+        .forEach((event) => {
+          if (event.timestamp) {
+            const eventTimestamp = new Date(event.timestamp).getTime()
+            const key = `event-${event.id || eventTimestamp}`
+            referenceLines.push({
+              type: 'event',
+              timestamp: eventTimestamp,
+              reason: 'Deployed',
+              icon: 'play',
+              iconStyle: 'solid',
+              key,
+            })
+          }
+        })
+    }
+
+    // Sort by timestamp ascending
+    referenceLines.sort((a, b) => a.timestamp - b.timestamp)
+    return referenceLines
+  }, [metricsReason, validSeriesNames, events])
 
   return (
-    <LocalChart
-      data={chartData || []}
-      isLoading={isLoadingMetrics || isLoadingMetricsErrors}
-      isEmpty={(chartData || []).length === 0}
-      tooltipLabel="Instance issues"
-      unit="instance"
-      serviceId={serviceId}
-      clusterId={clusterId}
-      yDomain={[0, 'dataMax + 1']}
-    >
-      <Bar
-        key="false"
-        barSize={30}
-        stackId="stack"
-        dataKey="Instance unhealthy"
-        fill="var(--color-red-500)"
-        isAnimationActive={false}
-      />
-      <Bar
-        key="true"
-        barSize={30}
-        stackId="stack"
-        dataKey="Instance healthy"
-        fill="var(--color-green-500)"
-        isAnimationActive={false}
-      />
-      {validSeriesNames.map((name) => (
-        <Scatter
-          key={name}
-          name={name}
-          dataKey={name}
-          isAnimationActive={false}
-          fill="var(--color-red-400)"
-          shape={(props: ScatterProps) => {
-            const cx = Number(props.cx ?? 0)
-            const cy = Number(props.cy ?? 0)
-            return (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                x={cx - 10}
-                y={cy - 20}
-                width="20"
-                height="20"
-                fill="none"
-                viewBox="0 0 20 20"
-                style={{ pointerEvents: 'none' }}
-              >
-                <path fill="#FF6240" d="M0 10C0 4.477 4.477 0 10 0s10 4.477 10 10-4.477 10-10 10S0 15.523 0 10"></path>
-                <g clipPath="url(#clip0_25163_80956)">
-                  <path
-                    fill="#fff"
-                    d="M7.938 5.875a.56.56 0 0 0-.563.563v7.125c0 .196-.033.386-.096.562h7.034c.311 0 .562-.25.562-.562V6.437a.56.56 0 0 0-.562-.562zm-2.25 9.375A1.686 1.686 0 0 1 4 13.563V6.625c0-.312.25-.562.563-.562.311 0 .562.25.562.562v6.938c0 .311.25.562.563.562.311 0 .562-.25.562-.562V6.437c0-.932.755-1.687 1.688-1.687h6.375c.932 0 1.687.755 1.687 1.688v7.125c0 .932-.755 1.687-1.687 1.687zm2.437-8.062c0-.312.25-.563.563-.563h2.25c.311 0 .562.25.562.563v1.875c0 .311-.25.562-.562.562h-2.25a.56.56 0 0 1-.563-.562zm4.688-.563h.75c.311 0 .562.25.562.563 0 .311-.25.562-.562.562h-.75a.56.56 0 0 1-.563-.562c0-.312.25-.563.563-.563m0 1.875h.75c.311 0 .562.25.562.563 0 .311-.25.562-.562.562h-.75a.56.56 0 0 1-.563-.562c0-.312.25-.563.563-.563m-4.126 1.875h4.876c.311 0 .562.25.562.563 0 .311-.25.562-.562.562H8.686a.56.56 0 0 1-.562-.562c0-.312.25-.563.563-.563m0 1.875h4.876c.311 0 .562.25.562.563 0 .311-.25.562-.562.562H8.686a.56.56 0 0 1-.562-.562c0-.312.25-.563.563-.563"
-                  ></path>
-                </g>
-                <defs>
-                  <clipPath id="clip0_25163_80956">
-                    <path fill="#fff" d="M4 4h12v12H4z"></path>
-                  </clipPath>
-                </defs>
-              </svg>
-            )
-          }}
-        />
-      ))}
-    </LocalChart>
+    <div className="flex h-full">
+      <LocalChart
+        data={chartData || []}
+        isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsReason}
+        isEmpty={(chartData || []).length === 0}
+        tooltipLabel="Instance issues"
+        unit="instance"
+        serviceId={serviceId}
+        clusterId={clusterId}
+        margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+        hideQoveryEvents
+      >
+        <Line key="true" dataKey="Instance healthy" stroke="var(--color-green-500)" isAnimationActive={false} />
+        <Line key="false" dataKey="Instance unhealthy" stroke="var(--color-red-500)" isAnimationActive={false} />
+        {!hideEvents && (
+          <>
+            {referenceLineData
+              .filter((event) => event.type === 'metric')
+              .map((event) => (
+                <ReferenceLine
+                  key={event.key}
+                  x={event.timestamp}
+                  stroke="var(--color-red-500)"
+                  strokeDasharray="3 3"
+                  opacity={hoveredEventKey === event.key ? 1 : 0.4}
+                  strokeWidth={2}
+                  onMouseEnter={() => setHoveredEventKey(event.key)}
+                  onMouseLeave={() => setHoveredEventKey(null)}
+                  label={{
+                    value: hoveredEventKey === event.key ? event.reason : undefined,
+                    position: 'top',
+                    fill: 'var(--color-red-500)',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                  }}
+                />
+              ))}
+            {referenceLineData
+              .filter((event) => event.type === 'event')
+              .map((event) => (
+                <ReferenceLine
+                  key={event.key}
+                  x={event.timestamp}
+                  stroke="var(--color-brand-500)"
+                  strokeDasharray="3 3"
+                  opacity={hoveredEventKey === event.key ? 1 : 0.4}
+                  strokeWidth={2}
+                  onMouseEnter={() => setHoveredEventKey(event.key)}
+                  onMouseLeave={() => setHoveredEventKey(null)}
+                  label={{
+                    value: hoveredEventKey === event.key ? event.reason : undefined,
+                    position: 'top',
+                    fill: 'var(--color-brand-500)',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                  }}
+                />
+              ))}
+          </>
+        )}
+      </LocalChart>
+      {!hideEvents && (
+        <div className="flex w-full min-w-96 max-w-96 flex-col border-l border-neutral-200">
+          <p className="border-b border-neutral-200 px-4 py-4 text-sm font-medium text-neutral-500">
+            Events associated
+          </p>
+          <div className="h-full overflow-y-auto">
+            {referenceLineData.map((event) => {
+              const timestamp = new Date(event.timestamp)
+              return (
+                <div
+                  key={event.key}
+                  className={clsx(
+                    'flex gap-2 border-b border-neutral-200 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-100',
+                    {
+                      'bg-neutral-100': hoveredEventKey === event.key,
+                    }
+                  )}
+                  onMouseEnter={() => setHoveredEventKey(event.key)}
+                  onMouseLeave={() => setHoveredEventKey(null)}
+                >
+                  <span
+                    className={clsx(
+                      'flex h-5 w-5 items-center justify-center rounded-full',
+                      event.type === 'event' ? 'bg-brand-500' : 'bg-red-500'
+                    )}
+                  >
+                    <Icon
+                      iconName={event.icon}
+                      iconStyle={event.iconStyle ?? 'regular'}
+                      className="text-xs text-white"
+                    />
+                  </span>
+                  <div className="flex flex-col">
+                    <span>{event.reason}</span>
+                    <span className="text-xs text-neutral-350">{timestamp.toLocaleString()}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 

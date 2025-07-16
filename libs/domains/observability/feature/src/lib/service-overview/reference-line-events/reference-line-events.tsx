@@ -51,9 +51,9 @@ export function ReferenceLineEvents({ events }: ReferenceLineEventsProps) {
                 const y = (viewBox.height || 0) + 30
 
                 return (
-                  <foreignObject x={x - 8} y={y - 50} width={16} height={16}>
+                  <foreignObject x={x - 10} y={y - 54} width={20} height={20}>
                     <div className="flex cursor-pointer justify-center text-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 20 20">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20">
                         <path
                           fill="#5B50D6"
                           d="M0 10C0 4.477 4.477 0 10 0s10 4.477 10 10-4.477 10-10 10S0 15.523 0 10"

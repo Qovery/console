@@ -6,7 +6,6 @@ import { useService } from '@qovery/domains/services/feature'
 import { Button, Chart, Heading, Section, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
-import { type MetricData, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { ModalChart } from '../modal-chart/modal-chart'
 import ReferenceLineEvents from '../reference-line-events/reference-line-events'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -22,10 +21,12 @@ interface ChartContentProps extends PropsWithChildren {
   yDomain?: [number | string, number | string]
   tooltipLabel?: string
   events?: OrganizationEventResponse[]
-  kubeEvents?: {
-    data?: {
-      result?: MetricData[]
-    }
+  hideQoveryEvents?: boolean
+  margin?: {
+    top?: number
+    bottom?: number
+    left?: number
+    right?: number
   }
 }
 
@@ -38,9 +39,10 @@ function ChartContent({
   isLoading,
   children,
   events,
-  kubeEvents,
   xDomain,
   yDomain,
+  margin = { top: 2, bottom: 0, left: 0, right: 0 },
+  hideQoveryEvents,
 }: ChartContentProps) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
@@ -64,11 +66,11 @@ function ChartContent({
   }
 
   return (
-    <Chart.Container className="h-full w-full p-5 pb-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
+    <Chart.Container className="h-full w-full p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
       <ComposedChart
         data={data}
         syncId="syncId"
-        margin={{ top: 2, bottom: 0, left: 0, right: 0 }}
+        margin={margin}
         onMouseMove={() => setOnHoverHideTooltip(true)}
         onMouseLeave={() => setOnHoverHideTooltip(false)}
         onMouseUp={() => setOnHoverHideTooltip(false)}
@@ -120,12 +122,12 @@ function ChartContent({
             !onHoverHideTooltip ? (
               <div />
             ) : (
-              <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} events={events} kubeEvents={kubeEvents} />
+              <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} events={events} />
             )
           }
         />
         {children}
-        {!hideEvents && <Customized component={ReferenceLineEvents} events={events} />}
+        {!hideEvents && !hideQoveryEvents && <Customized component={ReferenceLineEvents} events={events} />}
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
@@ -146,12 +148,20 @@ interface LocalChartProps extends PropsWithChildren {
   isEmpty: boolean
   isLoading: boolean
   serviceId: string
+  // TODO: remove clusterId
   clusterId: string
   label?: string
   className?: string
   tooltipLabel?: string
   yDomain?: [number | string, number | string]
   xDomain?: [number | string, number | string]
+  margin?: {
+    top?: number
+    bottom?: number
+    left?: number
+    right?: number
+  }
+  hideQoveryEvents?: boolean
 }
 
 export function LocalChart({
@@ -167,6 +177,8 @@ export function LocalChart({
   clusterId,
   yDomain,
   xDomain,
+  margin,
+  hideQoveryEvents = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
   const { startTimestamp, endTimestamp } = useServiceOverviewContext()
@@ -186,18 +198,11 @@ export function LocalChart({
     fromTimestamp: startTimestamp,
   })
 
-  const { data: kubeEvents } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum by(type, reason) (increase(k8s_event_logger_q_k8s_events_total{qovery_com_service_id="${serviceId}", type="Warning"}[1m]))`,
-  })
-
   return (
     <>
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
         {label && (
-          <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
+          <div className="flex w-full items-center justify-between gap-1 p-5 pb-2">
             <Heading className="scroll-mt-20">{label}</Heading>
             <Tooltip content="Mode fullscreen">
               <Button
@@ -229,9 +234,10 @@ export function LocalChart({
           isEmpty={isEmpty}
           isLoading={isLoading}
           events={events}
-          kubeEvents={kubeEvents}
           xDomain={xDomain}
           yDomain={yDomain}
+          margin={margin}
+          hideQoveryEvents={hideQoveryEvents}
         >
           {children}
         </ChartContent>
@@ -246,9 +252,10 @@ export function LocalChart({
             isEmpty={isEmpty}
             isLoading={isLoading}
             events={events}
-            kubeEvents={kubeEvents}
             xDomain={xDomain}
             yDomain={yDomain}
+            margin={margin}
+            hideQoveryEvents={hideQoveryEvents}
           >
             {children}
           </ChartContent>

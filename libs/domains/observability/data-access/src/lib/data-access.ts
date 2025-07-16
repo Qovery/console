@@ -16,7 +16,7 @@ export const observability = createQueryKeys('observability', {
     query: string
     startTimestamp?: string
     endTimestamp?: string
-    step?: string
+    step?: string | number
     queryRange?: 'query' | 'query_range'
   }) => ({
     queryKey: [query, startTimestamp, endTimestamp],
@@ -27,7 +27,7 @@ export const observability = createQueryKeys('observability', {
         query,
         startTimestamp,
         endTimestamp,
-        step
+        step?.toString()
       )
       return response.data.metrics && JSON.parse(response.data.metrics)
     },

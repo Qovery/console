@@ -49,7 +49,8 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
   chartData: T[],
   startTimestamp: string,
   endTimestamp: string,
-  useLocalTime: boolean
+  useLocalTime: boolean,
+  excludeKeys?: string[]
 ): T[] {
   if (!chartData.length) return []
 
@@ -88,7 +89,7 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
 
   const dataInterval = calculateInterval(startMs, endMs, existingDataInterval)
 
-  // Helper function to create padding point with 0 values for all series
+  // Helper function to create padding point with 0 values for all series except excluded ones
   const createPaddingPoint = (timestamp: number): T => {
     const { timeString, fullTimeString } = formatTimestamp(timestamp, useLocalTime)
     const point: {
@@ -99,13 +100,15 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
       fullTime: fullTimeString,
     }
 
-    // Add 0 values for all existing series to show 0 during gaps
-    // Add null values for all existing series to hide lines during gaps
-    // seriesKeys.forEach((key) => {
-    //   point[key] = null
-    // })
+    // Add values for all existing series
     seriesKeys.forEach((key) => {
-      point[key] = 0
+      // For excluded keys (like scatter series), don't add any value
+      // For other series, add null to hide lines during gaps
+      if (!excludeKeys?.includes(key)) {
+        point[key] = null
+      } else {
+        point[key] = 0
+      }
     })
 
     return point as T

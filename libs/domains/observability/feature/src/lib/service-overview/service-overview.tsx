@@ -70,7 +70,11 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
               hasPublicPort ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'
             )}
           >
-            <CardInstanceStatus clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardInstanceStatus
+              organizationId={environment.organization.id}
+              clusterId={environment.cluster_id}
+              serviceId={applicationId}
+            />
             <CardInstance clusterId={environment.cluster_id} serviceId={applicationId} />
             <CardLogErrors clusterId={environment.cluster_id} serviceId={applicationId} />
             {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}

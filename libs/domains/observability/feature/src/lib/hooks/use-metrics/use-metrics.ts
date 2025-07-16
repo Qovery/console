@@ -28,7 +28,7 @@ interface UseMetricsProps {
   startTimestamp?: string
   endTimestamp?: string
   queryRange?: 'query' | 'query_range'
-  step?: string
+  step?: string | number
 }
 
 export function useMetrics({
@@ -37,10 +37,13 @@ export function useMetrics({
   startTimestamp,
   endTimestamp,
   queryRange = 'query_range',
+  step,
 }: UseMetricsProps) {
-  let step: string | undefined
+  let calculatedStep: string | number | undefined
 
-  if (startTimestamp && endTimestamp) {
+  if (step) {
+    calculatedStep = step
+  } else if (startTimestamp && endTimestamp) {
     const start =
       typeof startTimestamp === 'string' && !isNaN(Number(startTimestamp))
         ? Number(startTimestamp)
@@ -58,24 +61,31 @@ export function useMetrics({
 
       // Calculate step based on duration
       if (durationInHours <= 12) {
-        step = '15' // 15 seconds
+        calculatedStep = '15' // 15 seconds
       } else if (durationInHours <= 24) {
-        step = '30' // 30 seconds
+        calculatedStep = '30' // 30 seconds
       } else if (durationInHours <= 48) {
-        step = '60' // 1 minute
+        calculatedStep = '60' // 1 minute
       } else if (durationInDays <= 7) {
-        step = '120' // 2 minutes
+        calculatedStep = '120' // 2 minutes
       } else if (durationInDays <= 30) {
-        step = '300' // 5 minutes
+        calculatedStep = '300' // 5 minutes
       } else if (durationInDays <= 60) {
-        step = '1800' // 30 minutes
+        calculatedStep = '1800' // 30 minutes
       } else {
-        step = '7200' // 2 hours
+        calculatedStep = '7200' // 2 hours
       }
     }
   }
 
   return useQuery({
-    ...observability.observability({ clusterId, query, queryRange, startTimestamp, endTimestamp, step }),
+    ...observability.observability({
+      clusterId,
+      query,
+      queryRange,
+      startTimestamp,
+      endTimestamp,
+      step: calculatedStep,
+    }),
   })
 }

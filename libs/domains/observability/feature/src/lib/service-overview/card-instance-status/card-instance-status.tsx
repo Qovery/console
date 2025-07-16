@@ -5,7 +5,15 @@ import { InstanceStatusChart } from '../instance-status-chart/instance-status-ch
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+export function CardInstanceStatus({
+  organizationId,
+  serviceId,
+  clusterId,
+}: {
+  organizationId: string
+  serviceId: string
+  clusterId: string
+}) {
   const { timeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
@@ -54,7 +62,7 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
     <>
       <CardMetric
         title={title}
-        value={value}
+        value={value ?? 0}
         status={isError ? 'RED' : 'GREEN'}
         description={`in last ${timeRange}`}
         isLoading={isLoadingMetrics}
@@ -69,7 +77,7 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
           onOpenChange={setIsModalOpen}
         >
           <div className="grid h-full grid-cols-1">
-            <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} />
+            <InstanceStatusChart organizationId={organizationId} clusterId={clusterId} serviceId={serviceId} />
           </div>
         </ModalChart>
       )}
