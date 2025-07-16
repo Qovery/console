@@ -51,10 +51,7 @@ export function CrudModal({
           protocol === PortProtocolEnum.TCP || protocol === PortProtocolEnum.UDP ? internal_port : 443
         )
       } else {
-        setValue(
-          'external_port',
-          protocol === PortProtocolEnum.TCP || protocol === PortProtocolEnum.UDP ? undefined : 443
-        )
+        setValue('external_port', undefined)
       }
     }
 
