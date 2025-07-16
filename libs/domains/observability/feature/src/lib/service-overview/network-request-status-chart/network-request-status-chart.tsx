@@ -63,7 +63,6 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
       label="Network request status"
       unit="req/s"
       serviceId={serviceId}
-      clusterId={clusterId}
     >
       {seriesNames.map((name) => (
         <Line

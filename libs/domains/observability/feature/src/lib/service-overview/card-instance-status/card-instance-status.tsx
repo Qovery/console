@@ -53,7 +53,7 @@ export function CardInstanceStatus({
     queryRange: 'query',
   })
 
-  const value = Math.round(Number(metrics?.data?.result[0]?.value[1]))
+  const value = Math.round(Number(metrics?.data?.result[0]?.value[1])) || 0
   const isError = value > 0
 
   const title = 'Instance issues'
@@ -62,7 +62,7 @@ export function CardInstanceStatus({
     <>
       <CardMetric
         title={title}
-        value={value ?? 0}
+        value={value}
         status={isError ? 'RED' : 'GREEN'}
         description={`in last ${timeRange}`}
         isLoading={isLoadingMetrics}

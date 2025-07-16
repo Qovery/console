@@ -14,9 +14,9 @@ export const observability = createQueryKeys('observability', {
   }: {
     clusterId: string
     query: string
+    step: string
     startTimestamp?: string
     endTimestamp?: string
-    step?: string | number
     queryRange?: 'query' | 'query_range'
   }) => ({
     queryKey: [query, startTimestamp, endTimestamp],
@@ -27,7 +27,7 @@ export const observability = createQueryKeys('observability', {
         query,
         startTimestamp,
         endTimestamp,
-        step?.toString()
+        step
       )
       return response.data.metrics && JSON.parse(response.data.metrics)
     },

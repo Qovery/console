@@ -28,7 +28,6 @@ interface UseMetricsProps {
   startTimestamp?: string
   endTimestamp?: string
   queryRange?: 'query' | 'query_range'
-  step?: string | number
 }
 
 export function useMetrics({
@@ -37,45 +36,11 @@ export function useMetrics({
   startTimestamp,
   endTimestamp,
   queryRange = 'query_range',
-  step,
 }: UseMetricsProps) {
-  let calculatedStep: string | number | undefined
+  let step = '15000ms'
 
-  if (step) {
-    calculatedStep = step
-  } else if (startTimestamp && endTimestamp) {
-    const start =
-      typeof startTimestamp === 'string' && !isNaN(Number(startTimestamp))
-        ? Number(startTimestamp)
-        : Math.floor(new Date(startTimestamp).getTime() / 1000)
-
-    const end =
-      typeof endTimestamp === 'string' && !isNaN(Number(endTimestamp))
-        ? Number(endTimestamp)
-        : Math.floor(new Date(endTimestamp).getTime() / 1000)
-
-    if (!isNaN(start) && !isNaN(end) && end > start) {
-      const durationInSeconds = end - start
-      const durationInHours = durationInSeconds / 3600
-      const durationInDays = durationInHours / 24
-
-      // Calculate step based on duration
-      if (durationInHours <= 12) {
-        calculatedStep = '15' // 15 seconds
-      } else if (durationInHours <= 24) {
-        calculatedStep = '30' // 30 seconds
-      } else if (durationInHours <= 48) {
-        calculatedStep = '60' // 1 minute
-      } else if (durationInDays <= 7) {
-        calculatedStep = '120' // 2 minutes
-      } else if (durationInDays <= 30) {
-        calculatedStep = '300' // 5 minutes
-      } else if (durationInDays <= 60) {
-        calculatedStep = '1800' // 30 minutes
-      } else {
-        calculatedStep = '7200' // 2 hours
-      }
-    }
+  if (startTimestamp && endTimestamp) {
+    step = calculateDynamicRange(startTimestamp, endTimestamp)
   }
 
   return useQuery({
@@ -85,7 +50,38 @@ export function useMetrics({
       queryRange,
       startTimestamp,
       endTimestamp,
-      step: calculatedStep,
+      step,
     }),
   })
+}
+
+export function calculateDynamicRange(startTimestamp: string, endTimestamp: string): string {
+  const startMs = Number(startTimestamp) * 1000
+  const endMs = Number(endTimestamp) * 1000
+  const durationMs = endMs - startMs
+  let stepMs: number
+
+  if (durationMs <= 12 * 60 * 60 * 1000) {
+    // <= 12h
+    stepMs = 15000
+  } else if (durationMs <= 24 * 60 * 60 * 1000) {
+    // <= 24h
+    stepMs = 30000
+  } else if (durationMs <= 48 * 60 * 60 * 1000) {
+    // <= 48h
+    stepMs = 60000
+  } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
+    // <= 7d
+    stepMs = 120000
+  } else if (durationMs <= 30 * 24 * 60 * 60 * 1000) {
+    // <= 30d
+    stepMs = 300000
+  } else if (durationMs <= 60 * 24 * 60 * 60 * 1000) {
+    // <= 60d
+    stepMs = 1800000
+  } else {
+    stepMs = 7200000 // > 60d
+  }
+
+  return `${stepMs}ms`
 }

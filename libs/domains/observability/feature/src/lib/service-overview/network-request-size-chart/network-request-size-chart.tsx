@@ -80,7 +80,6 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
       label="Network request size"
       unit="bytes"
       serviceId={serviceId}
-      clusterId={clusterId}
     >
       <Line
         key="response-size"

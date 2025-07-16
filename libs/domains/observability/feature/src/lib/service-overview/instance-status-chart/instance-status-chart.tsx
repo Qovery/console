@@ -5,43 +5,14 @@ import { useMemo, useState } from 'react'
 import { Line, ReferenceLine } from 'recharts'
 import { useService } from '@qovery/domains/services/feature'
 import { Icon } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
+import { formatTimestamp } from '../util-chart/format-timestamp'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-
-function calculateDynamicRange(startTimestamp: string, endTimestamp: string): string {
-  const startMs = Number(startTimestamp) * 1000
-  const endMs = Number(endTimestamp) * 1000
-  const durationMs = endMs - startMs
-  let stepMs: number
-
-  if (durationMs <= 12 * 60 * 60 * 1000) {
-    // <= 12h
-    stepMs = 15000
-  } else if (durationMs <= 24 * 60 * 60 * 1000) {
-    // <= 24h
-    stepMs = 30000
-  } else if (durationMs <= 48 * 60 * 60 * 1000) {
-    // <= 48h
-    stepMs = 60000
-  } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
-    // <= 7d
-    stepMs = 120000
-  } else if (durationMs <= 30 * 24 * 60 * 60 * 1000) {
-    // <= 30d
-    stepMs = 300000
-  } else if (durationMs <= 60 * 24 * 60 * 60 * 1000) {
-    // <= 60d
-    stepMs = 1800000
-  } else {
-    stepMs = 7200000 // > 60d
-  }
-
-  return `${stepMs}ms`
-}
 
 export function InstanceStatusChart({
   organizationId,
@@ -64,7 +35,6 @@ export function InstanceStatusChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    step: dynamicRange,
     query: `sum by (condition)(kube_pod_status_ready{condition=~"false"}
     * on(namespace,pod) group_left(label_qovery_com_service_id)
       max by(namespace,pod,label_qovery_com_service_id)(
@@ -76,7 +46,6 @@ export function InstanceStatusChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    step: dynamicRange,
     query: `sum by (condition)(kube_pod_status_ready{condition=~"true"}
     * on(namespace,pod) group_left(label_qovery_com_service_id)
       max by(namespace,pod,label_qovery_com_service_id)(
@@ -96,7 +65,6 @@ export function InstanceStatusChart({
       (max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"}))
       ) > 0
     ) > bool 0`,
-    step: dynamicRange,
   })
 
   // Alpha: Workaround to get the events
@@ -173,6 +141,8 @@ export function InstanceStatusChart({
       icon: IconName
       key: string
       iconStyle?: IconStyle
+      version?: string
+      repository?: string
     }> = []
 
     // Add metric-based reference lines
@@ -199,17 +169,31 @@ export function InstanceStatusChart({
     // Add events as reference lines
     if (Array.isArray(events)) {
       events
-        .filter((event) => event.event_type === 'DEPLOYED')
+        .filter((event) => event.event_type === 'TRIGGER_DEPLOY' && event.target_id === serviceId)
         .forEach((event) => {
           if (event.timestamp) {
             const eventTimestamp = new Date(event.timestamp).getTime()
             const key = `event-${event.id || eventTimestamp}`
+            const change = JSON.parse(event.change || '')
+            // TODO: Add support for other service types and clean-up api endpoint
+            const version =
+              change?.service_source?.image?.tag ??
+              change?.service_source?.docker?.git_repository?.deployed_commit_id ??
+              'Unknown'
+
+            const repository =
+              change?.service_source?.image?.image_name ??
+              change?.service_source?.docker?.git_repository?.url ??
+              'Unknown'
+
             referenceLines.push({
               type: 'event',
               timestamp: eventTimestamp,
-              reason: 'Deployed',
+              reason: 'Trigger deploy',
               icon: 'play',
               iconStyle: 'solid',
+              version,
+              repository,
               key,
             })
           }
@@ -217,12 +201,12 @@ export function InstanceStatusChart({
     }
 
     // Sort by timestamp ascending
-    referenceLines.sort((a, b) => a.timestamp - b.timestamp)
+    referenceLines.sort((a, b) => b.timestamp - a.timestamp)
     return referenceLines
-  }, [metricsReason, validSeriesNames, events])
+  }, [metricsReason, validSeriesNames, events, serviceId])
 
   return (
-    <div className="flex h-full">
+    <div className="flex">
       <LocalChart
         data={chartData || []}
         isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsReason}
@@ -230,12 +214,26 @@ export function InstanceStatusChart({
         tooltipLabel="Instance issues"
         unit="instance"
         serviceId={serviceId}
-        clusterId={clusterId}
         margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+        yDomain={[0, 'dataMax + 1']}
         hideQoveryEvents
       >
-        <Line key="true" dataKey="Instance healthy" stroke="var(--color-green-500)" isAnimationActive={false} />
-        <Line key="false" dataKey="Instance unhealthy" stroke="var(--color-red-500)" isAnimationActive={false} />
+        <Line
+          key="true"
+          dataKey="Instance healthy"
+          stroke="var(--color-green-500)"
+          isAnimationActive={false}
+          dot={false}
+          strokeWidth={2}
+        />
+        <Line
+          key="false"
+          dataKey="Instance unhealthy"
+          stroke="var(--color-red-500)"
+          isAnimationActive={false}
+          dot={false}
+          strokeWidth={2}
+        />
         {!hideEvents && (
           <>
             {referenceLineData
@@ -246,7 +244,7 @@ export function InstanceStatusChart({
                   x={event.timestamp}
                   stroke="var(--color-red-500)"
                   strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.4}
+                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
                   strokeWidth={2}
                   onMouseEnter={() => setHoveredEventKey(event.key)}
                   onMouseLeave={() => setHoveredEventKey(null)}
@@ -267,7 +265,7 @@ export function InstanceStatusChart({
                   x={event.timestamp}
                   stroke="var(--color-brand-500)"
                   strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.4}
+                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
                   strokeWidth={2}
                   onMouseEnter={() => setHoveredEventKey(event.key)}
                   onMouseLeave={() => setHoveredEventKey(null)}
@@ -283,14 +281,14 @@ export function InstanceStatusChart({
           </>
         )}
       </LocalChart>
-      {!hideEvents && (
-        <div className="flex w-full min-w-96 max-w-96 flex-col border-l border-neutral-200">
-          <p className="border-b border-neutral-200 px-4 py-4 text-sm font-medium text-neutral-500">
-            Events associated
+      {referenceLineData.length > 0 && !hideEvents && (
+        <div className="flex h-[87vh] w-full min-w-96 max-w-96 flex-col border-l border-neutral-200">
+          <p className="border-b border-neutral-200 px-4 py-2 text-xs font-medium text-neutral-500">
+            {pluralize(referenceLineData.length, 'Event', 'Events')} associated
           </p>
           <div className="h-full overflow-y-auto">
             {referenceLineData.map((event) => {
-              const timestamp = new Date(event.timestamp)
+              const timestamp = formatTimestamp(event.timestamp, useLocalTime)
               return (
                 <div
                   key={event.key}
@@ -305,7 +303,7 @@ export function InstanceStatusChart({
                 >
                   <span
                     className={clsx(
-                      'flex h-5 w-5 items-center justify-center rounded-full',
+                      'flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full',
                       event.type === 'event' ? 'bg-brand-500' : 'bg-red-500'
                     )}
                   >
@@ -315,9 +313,26 @@ export function InstanceStatusChart({
                       className="text-xs text-white"
                     />
                   </span>
-                  <div className="flex flex-col">
-                    <span>{event.reason}</span>
-                    <span className="text-xs text-neutral-350">{timestamp.toLocaleString()}</span>
+                  <div className="flex w-full flex-col">
+                    <div className="flex w-full items-center justify-between gap-1">
+                      <span>{event.reason}</span>
+                      {event.type === 'event' && (
+                        <span className="text-xs text-neutral-350">{timestamp.fullTimeString}</span>
+                      )}
+                    </div>
+                    {event.type === 'event' && (
+                      <>
+                        <span className="text-xs text-neutral-350">
+                          {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
+                        </span>
+                        <span className="text-xs text-neutral-350">
+                          {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
+                        </span>
+                      </>
+                    )}
+                    {event.type !== 'event' && (
+                      <span className="text-xs text-neutral-350">{timestamp.fullTimeString}</span>
+                    )}
                   </div>
                 </div>
               )

@@ -168,7 +168,7 @@ export function Tooltip({ active, unit, payload, customLabel, events, kubeEvents
   }
 
   const nearbyEvents = dataPoint?.timestamp
-    ? getEventsNearTimestamp(dataPoint.timestamp).filter((event) => event.event_type === 'DEPLOYED')
+    ? getEventsNearTimestamp(dataPoint.timestamp).filter((event) => event.event_type === 'TRIGGER_DEPLOY')
     : []
 
   const groupedEntries = groupEntriesByType(payload)
@@ -210,14 +210,30 @@ export function Tooltip({ active, unit, payload, customLabel, events, kubeEvents
               <div className="mb-2 text-xs font-medium text-neutral-50">
                 {pluralize(nearbyEvents.length, 'Event', 'Events')}
               </div>
-              {nearbyEvents.map((event, index) => (
-                <div key={index} className="mb-1 flex items-center gap-2 text-xs">
-                  <div className="flex w-full justify-between gap-1 text-neutral-50">
-                    <span>{upperCaseFirstLetter(event.event_type).replace(/_/g, ' ')}</span>
-                    {event.id && <span>version: {event.id.substring(0, 7)}</span>}
+              {nearbyEvents.map((event, index) => {
+                const change = JSON.parse(event.change || '')
+                const version =
+                  change?.service_source?.image?.tag ??
+                  change?.service_source?.docker?.git_repository?.deployed_commit_id ??
+                  'Unknown'
+                const repository =
+                  change?.service_source?.image?.image_name ??
+                  change?.service_source?.docker?.git_repository?.url ??
+                  'Unknown'
+
+                return (
+                  <div key={index} className="mb-1 flex items-center gap-2 text-xs">
+                    <div className="flex w-full justify-between gap-1 text-neutral-50">
+                      <span>{upperCaseFirstLetter(event.event_type).replace(/_/g, ' ')}</span>
+                      {version && repository && (
+                        <span className="text-neutral-250">
+                          {repository} | {version.substring(0, 7)}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
           {/* Section KubeEvents Warning */}

@@ -107,7 +107,6 @@ export function NetworkRequestDurationChart({ clusterId, serviceId }: { clusterI
       label="Network request duration"
       unit="ms"
       serviceId={serviceId}
-      clusterId={clusterId}
     >
       <Line
         key="95th-percentile"

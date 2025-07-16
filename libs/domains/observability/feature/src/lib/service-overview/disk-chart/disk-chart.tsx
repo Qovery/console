@@ -110,7 +110,6 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       label="Disk usage (MiB)"
       tooltipLabel="Disk usage"
       serviceId={serviceId}
-      clusterId={clusterId}
     >
       <Line
         dataKey="read-ephemeral-storage"

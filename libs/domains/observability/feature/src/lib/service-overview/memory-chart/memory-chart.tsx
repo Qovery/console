@@ -88,7 +88,6 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       label="Memory (MiB)"
       tooltipLabel="Memory"
       serviceId={serviceId}
-      clusterId={clusterId}
     >
       {seriesNames.map((name) => (
         <Line

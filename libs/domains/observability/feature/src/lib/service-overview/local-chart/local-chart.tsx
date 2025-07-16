@@ -148,8 +148,6 @@ interface LocalChartProps extends PropsWithChildren {
   isEmpty: boolean
   isLoading: boolean
   serviceId: string
-  // TODO: remove clusterId
-  clusterId: string
   label?: string
   className?: string
   tooltipLabel?: string
@@ -174,7 +172,6 @@ export function LocalChart({
   className,
   children,
   serviceId,
-  clusterId,
   yDomain,
   xDomain,
   margin,
@@ -197,6 +194,8 @@ export function LocalChart({
     toTimestamp: endTimestamp,
     fromTimestamp: startTimestamp,
   })
+
+  const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
   return (
     <>
@@ -233,7 +232,7 @@ export function LocalChart({
           tooltipLabel={tooltipLabel}
           isEmpty={isEmpty}
           isLoading={isLoading}
-          events={events}
+          events={eventsFiltered}
           xDomain={xDomain}
           yDomain={yDomain}
           margin={margin}
@@ -251,7 +250,7 @@ export function LocalChart({
             tooltipLabel={tooltipLabel}
             isEmpty={isEmpty}
             isLoading={isLoading}
-            events={events}
+            events={eventsFiltered}
             xDomain={xDomain}
             yDomain={yDomain}
             margin={margin}
