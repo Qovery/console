@@ -20,6 +20,7 @@ export function PageVariablesFeature() {
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', () => APIVariableScopeEnum.JOB)
     .with('HELM', () => APIVariableScopeEnum.HELM)
+    .with('TERRAFORM', () => APIVariableScopeEnum.TERRAFORM)
     .otherwise(() => undefined)
 
   const { mutate: deployService } = useDeployService({
