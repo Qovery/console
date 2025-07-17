@@ -295,7 +295,16 @@ export function ContainerRegistryForm({
                     name={field.name}
                     onChange={field.onChange}
                     value={field.value}
-                    label="Username"
+                    label={match(watchKind)
+                      .with(ContainerRegistryKindEnum.GITHUB_CR, () => 'Container registry prefix')
+                      .otherwise(() => 'Username')}
+                    hint={match(watchKind)
+                      .with(
+                        ContainerRegistryKindEnum.GITHUB_CR,
+                        () =>
+                          'The prefix is the part of the URL before the repository name. For example, in ghcr.io/qovery/my-app, the prefix is qovery'
+                      )
+                      .otherwise(() => undefined)}
                     error={error?.message}
                   />
                 )}
