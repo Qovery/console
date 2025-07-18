@@ -1,15 +1,30 @@
+import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
+import clsx from 'clsx'
 import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CartesianGrid, ComposedChart, Customized, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, ComposedChart, ReferenceLine, XAxis, YAxis } from 'recharts'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Chart, Heading, Section, Tooltip } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
+import { Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
-import ReferenceLineEvents from '../reference-line-events/reference-line-events'
+import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
+
+export interface ReferenceLineEvent {
+  type: 'metric' | 'event' | 'exit-code'
+  timestamp: number
+  reason: string
+  icon: IconName
+  key: string
+  description?: string
+  iconStyle?: IconStyle
+  version?: string
+  repository?: string
+}
 
 interface ChartContentProps extends PropsWithChildren {
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
@@ -21,13 +36,15 @@ interface ChartContentProps extends PropsWithChildren {
   yDomain?: [number | string, number | string]
   tooltipLabel?: string
   events?: OrganizationEventResponse[]
-  hideQoveryEvents?: boolean
   margin?: {
     top?: number
     bottom?: number
     left?: number
     right?: number
   }
+  referenceLineData?: ReferenceLineEvent[]
+  service?: AnyService
+  isFullscreen?: boolean
 }
 
 function ChartContent({
@@ -41,10 +58,13 @@ function ChartContent({
   events,
   xDomain,
   yDomain,
-  margin = { top: 2, bottom: 0, left: 0, right: 0 },
-  hideQoveryEvents,
+  margin = { top: 14, bottom: 0, left: 0, right: 0 },
+  referenceLineData,
+  service,
+  isFullscreen = true,
 }: ChartContentProps) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
+    useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
   function getXDomain() {
@@ -66,79 +86,135 @@ function ChartContent({
   }
 
   return (
-    <Chart.Container className="h-full w-full p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
-      <ComposedChart
-        data={data}
-        syncId="syncId"
-        margin={margin}
-        onMouseMove={() => setOnHoverHideTooltip(true)}
-        onMouseLeave={() => setOnHoverHideTooltip(false)}
-        onMouseUp={() => setOnHoverHideTooltip(false)}
-      >
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
-        <XAxis
-          dataKey="timestamp"
-          type="number"
-          scale="time"
-          domain={getXDomain()}
-          ticks={getLogicalTicks()}
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          tickFormatter={(timestamp) => {
-            const date = new Date(timestamp)
-            const isLongRange = () => {
-              const durationInHours = (Number(endTimestamp) - Number(startTimestamp)) / (60 * 60)
-              return durationInHours > 24
-            }
-            if (isLongRange()) {
-              const day = useLocalTime
-                ? date.getDate().toString().padStart(2, '0')
-                : date.getUTCDate().toString().padStart(2, '0')
-              const month = useLocalTime ? (date.getMonth() + 1).toString().padStart(2, '0') : date.getUTCMonth() + 1
+    <div className="flex h-full">
+      <Chart.Container className="h-full w-full p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
+        <ComposedChart
+          data={data}
+          syncId="syncId"
+          margin={margin}
+          onMouseMove={() => setOnHoverHideTooltip(true)}
+          onMouseLeave={() => setOnHoverHideTooltip(false)}
+          onMouseUp={() => setOnHoverHideTooltip(false)}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={getXDomain()}
+            ticks={getLogicalTicks()}
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'var(--color-neutral-250)' }}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const isLongRange = () => {
+                const durationInHours = (Number(endTimestamp) - Number(startTimestamp)) / (60 * 60)
+                return durationInHours > 24
+              }
+              if (isLongRange()) {
+                const day = useLocalTime
+                  ? date.getDate().toString().padStart(2, '0')
+                  : date.getUTCDate().toString().padStart(2, '0')
+                const month = useLocalTime ? (date.getMonth() + 1).toString().padStart(2, '0') : date.getUTCMonth() + 1
+                const hours = useLocalTime
+                  ? date.getHours().toString().padStart(2, '0')
+                  : date.getUTCHours().toString().padStart(2, '0')
+                const minutes = useLocalTime
+                  ? date.getMinutes().toString().padStart(2, '0')
+                  : date.getUTCMinutes().toString().padStart(2, '0')
+                return `${day}/${month} ${hours}:${minutes}`
+              }
               const hours = useLocalTime
                 ? date.getHours().toString().padStart(2, '0')
                 : date.getUTCHours().toString().padStart(2, '0')
               const minutes = useLocalTime
                 ? date.getMinutes().toString().padStart(2, '0')
                 : date.getUTCMinutes().toString().padStart(2, '0')
-              return `${day}/${month} ${hours}:${minutes}`
+              return `${hours}:${minutes}`
+            }}
+            allowDataOverflow={true}
+            interval="preserveStartEnd"
+            strokeDasharray="3 3"
+          />
+          <Chart.Tooltip
+            isAnimationActive={false}
+            content={
+              !onHoverHideTooltip ? (
+                <div />
+              ) : (
+                <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} events={events} />
+              )
             }
-            const hours = useLocalTime
-              ? date.getHours().toString().padStart(2, '0')
-              : date.getUTCHours().toString().padStart(2, '0')
-            const minutes = useLocalTime
-              ? date.getMinutes().toString().padStart(2, '0')
-              : date.getUTCMinutes().toString().padStart(2, '0')
-            return `${hours}:${minutes}`
-          }}
-          allowDataOverflow={true}
-          interval="preserveStartEnd"
-          strokeDasharray="3 3"
-        />
-        <Chart.Tooltip
-          isAnimationActive={false}
-          content={
-            !onHoverHideTooltip ? (
-              <div />
-            ) : (
-              <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} events={events} />
-            )
-          }
-        />
-        {children}
-        {!hideEvents && !hideQoveryEvents && <Customized component={ReferenceLineEvents} events={events} />}
-        <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
-          orientation="right"
-          tickCount={5}
-          domain={yDomain}
-        />
-      </ComposedChart>
-    </Chart.Container>
+          />
+          {children}
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'var(--color-neutral-250)' }}
+            strokeDasharray="3 3"
+            orientation="right"
+            tickCount={5}
+            domain={yDomain}
+          />
+        </ComposedChart>
+      </Chart.Container>
+      {isFullscreen && referenceLineData && referenceLineData.length > 0 && !hideEvents && (
+        <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-200">
+          <p className="border-b border-neutral-200 px-4 py-2 text-xs font-medium text-neutral-500">
+            {pluralize(referenceLineData.length, 'Event', 'Events')} associated
+          </p>
+          <div className="h-full overflow-y-auto">
+            {referenceLineData.map((event) => {
+              const timestamp = formatTimestamp(event.timestamp, useLocalTime)
+              return (
+                <div
+                  key={event.key}
+                  className={clsx(
+                    'flex gap-2 border-b border-neutral-200 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-100',
+                    {
+                      'bg-neutral-100': hoveredEventKey === event.key,
+                    }
+                  )}
+                  onMouseEnter={() => setHoveredEventKey(event.key)}
+                  onMouseLeave={() => setHoveredEventKey(null)}
+                >
+                  <span
+                    className={clsx(
+                      'flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full',
+                      event.type === 'event' ? 'bg-brand-500' : 'bg-red-500'
+                    )}
+                  >
+                    <Icon
+                      iconName={event.icon}
+                      iconStyle={event.iconStyle ?? 'regular'}
+                      className="text-xs text-white"
+                    />
+                  </span>
+                  <div className="flex w-full flex-col gap-1 text-xs">
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <span className="font-medium">{event.reason}</span>
+                      <span className="text-neutral-350">{timestamp.fullTimeString}</span>
+                    </div>
+                    {event.type === 'event' && (
+                      <>
+                        <span className="text-neutral-350">
+                          {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
+                        </span>
+                        <span className="text-neutral-350">
+                          {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
+                        </span>
+                      </>
+                    )}
+                    {event.description && <span className="text-neutral-350">{event.description}</span>}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -159,7 +235,8 @@ interface LocalChartProps extends PropsWithChildren {
     left?: number
     right?: number
   }
-  hideQoveryEvents?: boolean
+  referenceLineData?: ReferenceLineEvent[]
+  isFullscreen?: boolean
 }
 
 export function LocalChart({
@@ -175,10 +252,11 @@ export function LocalChart({
   yDomain,
   xDomain,
   margin,
-  hideQoveryEvents = false,
+  referenceLineData,
+  isFullscreen = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Alpha: Workaround to get the events
@@ -197,11 +275,41 @@ export function LocalChart({
 
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
+  const eventReferenceLines: ReferenceLineEvent[] = (eventsFiltered || [])
+    .filter((event) => event.event_type === 'TRIGGER_DEPLOY' && event.target_id === serviceId)
+    .map((event) => {
+      const eventTimestamp = new Date(event.timestamp!).getTime()
+      const key = `event-${event.id || eventTimestamp}`
+      const change = JSON.parse(event.change || '')
+      // TODO: Add support for other service types and clean-up api endpoint
+      const version =
+        change?.service_source?.image?.tag ??
+        change?.service_source?.docker?.git_repository?.deployed_commit_id ??
+        'Unknown'
+
+      const repository =
+        change?.service_source?.image?.image_name ?? change?.service_source?.docker?.git_repository?.url ?? 'Unknown'
+
+      return {
+        type: 'event',
+        timestamp: eventTimestamp,
+        reason: 'Trigger deploy',
+        icon: 'play',
+        iconStyle: 'solid',
+        version,
+        repository,
+        key,
+      }
+    })
+
+  // Merge with any referenceLineData passed as prop
+  const mergedReferenceLineData = [...(referenceLineData || []), ...eventReferenceLines]
+
   return (
     <>
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
         {label && (
-          <div className="flex w-full items-center justify-between gap-1 p-5 pb-2">
+          <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
             <Heading className="scroll-mt-20">{label}</Heading>
             <Tooltip content="Mode fullscreen">
               <Button
@@ -236,8 +344,32 @@ export function LocalChart({
           xDomain={xDomain}
           yDomain={yDomain}
           margin={margin}
-          hideQoveryEvents={hideQoveryEvents}
+          referenceLineData={mergedReferenceLineData}
+          service={service}
+          isFullscreen={isFullscreen}
         >
+          {/* Render reference lines for events of type 'event' */}
+          {mergedReferenceLineData
+            .filter((event) => event.type === 'event')
+            .map((event) => (
+              <ReferenceLine
+                key={event.key}
+                x={event.timestamp}
+                stroke="var(--color-brand-500)"
+                strokeDasharray="3 3"
+                opacity={hoveredEventKey === event.key ? 1 : 0.3}
+                strokeWidth={2}
+                onMouseEnter={() => setHoveredEventKey(event.key)}
+                onMouseLeave={() => setHoveredEventKey(null)}
+                label={{
+                  value: hoveredEventKey === event.key ? event.reason : undefined,
+                  position: 'top',
+                  fill: 'var(--color-brand-500)',
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}
+              />
+            ))}
           {children}
         </ChartContent>
       </Section>
@@ -254,8 +386,32 @@ export function LocalChart({
             xDomain={xDomain}
             yDomain={yDomain}
             margin={margin}
-            hideQoveryEvents={hideQoveryEvents}
+            referenceLineData={mergedReferenceLineData}
+            service={service}
+            isFullscreen={true}
           >
+            {/* Render reference lines for events of type 'event' in modal as well */}
+            {mergedReferenceLineData
+              .filter((event) => event.type === 'event')
+              .map((event) => (
+                <ReferenceLine
+                  key={event.key}
+                  x={event.timestamp}
+                  stroke="var(--color-brand-500)"
+                  strokeDasharray="3 3"
+                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
+                  strokeWidth={2}
+                  onMouseEnter={() => setHoveredEventKey(event.key)}
+                  onMouseLeave={() => setHoveredEventKey(null)}
+                  label={{
+                    value: hoveredEventKey === event.key ? event.reason : undefined,
+                    position: 'top',
+                    fill: 'var(--color-brand-500)',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                  }}
+                />
+              ))}
             {children}
           </ChartContent>
         </ModalChart>

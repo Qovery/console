@@ -11,7 +11,7 @@ export const ChartSkeleton = ({ className }: ChartSkeletonProps) => {
     <div className={twMerge('h-full w-full', className)}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-200)" />
           <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 336 216">
             <path
               fill="#C7D3E4"

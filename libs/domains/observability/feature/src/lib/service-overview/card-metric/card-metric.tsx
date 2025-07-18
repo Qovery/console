@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { type ComponentProps, type ReactNode } from 'react'
-import { Skeleton } from '@qovery/shared/ui'
+import { Button, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 interface CardMetricProps extends Omit<ComponentProps<'button'>, 'value'> {
@@ -62,11 +62,25 @@ export function CardMetric({
       {...props}
     >
       <div className="flex flex-col justify-between gap-1 text-left">
-        <div className="flex items-center gap-2.5">
-          <p className="text-sm text-neutral-400">{title}</p>
-          <Skeleton show={isLoading} width={8} height={8} rounded>
-            {getStatusDot()}
-          </Skeleton>
+        <div className="flex items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2.5">
+            <p className="text-sm text-neutral-400">{title}</p>
+            <Skeleton show={isLoading} width={8} height={8} rounded>
+              {getStatusDot()}
+            </Skeleton>
+          </div>
+          {isClickable && (
+            <Tooltip content="Show chart">
+              <Button
+                variant="plain"
+                color="neutral"
+                size="sm"
+                className="relative left-2 w-7 items-center justify-center p-0"
+              >
+                <Icon iconName="chart-line" />
+              </Button>
+            </Tooltip>
+          )}
         </div>
         <Skeleton show={isLoading} width={32} height={32} rounded>
           <span className="text-xl font-bold text-neutral-400">{value}</span>

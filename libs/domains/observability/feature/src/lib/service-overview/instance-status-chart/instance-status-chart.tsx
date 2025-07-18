@@ -1,14 +1,10 @@
-import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { Line, ReferenceLine } from 'recharts'
-import { useService } from '@qovery/domains/services/feature'
 import { Icon } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useEvents } from '../../hooks/use-events/use-events'
 import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
-import { LocalChart } from '../local-chart/local-chart'
+import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { processMetricsData } from '../util-chart/process-metrics-data'
@@ -103,7 +99,8 @@ export function InstanceStatusChart({
   clusterId: string
   serviceId: string
 }) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
+    useServiceOverviewContext()
 
   // Calculate dynamic range based on time range
   const dynamicRange = useMemo(
@@ -162,21 +159,6 @@ export function InstanceStatusChart({
 )`,
   })
 
-  console.log(metricsExitCode)
-
-  // Alpha: Workaround to get the events
-  const { data: service } = useService({ serviceId })
-  const { data: events } = useEvents({
-    organizationId,
-    serviceId,
-    targetType:
-      service?.service_type === 'CONTAINER'
-        ? OrganizationEventTargetType.CONTAINER
-        : OrganizationEventTargetType.APPLICATION,
-    toTimestamp: endTimestamp,
-    fromTimestamp: startTimestamp,
-  })
-
   const chartData = useMemo(() => {
     // Merge healthy and unhealthy metrics into a single timeSeriesMap
     const timeSeriesMap = new Map<
@@ -210,22 +192,10 @@ export function InstanceStatusChart({
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metricsUnhealthy, metricsHealthy, useLocalTime, startTimestamp, endTimestamp])
 
-  const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
-
   const referenceLineData = useMemo(() => {
     if (!metricsReason?.data?.result && !metricsExitCode?.data?.result) return []
 
-    const referenceLines: Array<{
-      type: 'metric' | 'event' | 'exit-code'
-      timestamp: number
-      reason: string
-      icon: IconName
-      key: string
-      description?: string
-      iconStyle?: IconStyle
-      version?: string
-      repository?: string
-    }> = []
+    const referenceLines: ReferenceLineEvent[] = []
 
     // Add metric-based reference lines
     if (metricsReason?.data?.result) {
@@ -270,198 +240,87 @@ export function InstanceStatusChart({
       })
     }
 
-    // Add events as reference lines
-    if (Array.isArray(events)) {
-      events
-        .filter((event) => event.event_type === 'TRIGGER_DEPLOY' && event.target_id === serviceId)
-        .forEach((event) => {
-          if (event.timestamp) {
-            const eventTimestamp = new Date(event.timestamp).getTime()
-            const key = `event-${event.id || eventTimestamp}`
-            const change = JSON.parse(event.change || '')
-            // TODO: Add support for other service types and clean-up api endpoint
-            const version =
-              change?.service_source?.image?.tag ??
-              change?.service_source?.docker?.git_repository?.deployed_commit_id ??
-              'Unknown'
-
-            const repository =
-              change?.service_source?.image?.image_name ??
-              change?.service_source?.docker?.git_repository?.url ??
-              'Unknown'
-
-            referenceLines.push({
-              type: 'event',
-              timestamp: eventTimestamp,
-              reason: 'Trigger deploy',
-              icon: 'play',
-              iconStyle: 'solid',
-              version,
-              repository,
-              key,
-            })
-          }
-        })
-    }
-
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
     return referenceLines
-  }, [metricsReason, events, serviceId, metricsExitCode])
+  }, [metricsReason, metricsExitCode])
 
   return (
-    <div className="flex">
-      <LocalChart
-        data={chartData || []}
-        isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsReason || isLoadingMetricsExitCode}
-        isEmpty={(chartData || []).length === 0}
-        tooltipLabel="Instance issues"
-        unit="instance"
-        serviceId={serviceId}
-        margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-        yDomain={[0, 'dataMax + 1']}
-        hideQoveryEvents
-      >
-        <Line
-          key="true"
-          dataKey="Instance healthy"
-          stroke="var(--color-green-500)"
-          isAnimationActive={false}
-          dot={false}
-          strokeWidth={2}
-        />
-        <Line
-          key="false"
-          dataKey="Instance unhealthy"
-          stroke="var(--color-red-500)"
-          isAnimationActive={false}
-          dot={false}
-          strokeWidth={2}
-        />
-        {!hideEvents && (
-          <>
-            {referenceLineData
-              .filter((event) => event.type === 'metric')
-              .map((event) => (
-                <ReferenceLine
-                  key={event.key}
-                  x={event.timestamp}
-                  stroke="var(--color-red-500)"
-                  strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                  strokeWidth={2}
-                  onMouseEnter={() => setHoveredEventKey(event.key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
-                  label={{
-                    value: hoveredEventKey === event.key ? event.reason : undefined,
-                    position: 'top',
-                    fill: 'var(--color-red-500)',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                  }}
-                />
-              ))}
-            {referenceLineData
-              .filter((event) => event.type === 'event')
-              .map((event) => (
-                <ReferenceLine
-                  key={event.key}
-                  x={event.timestamp}
-                  stroke="var(--color-brand-500)"
-                  strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                  strokeWidth={2}
-                  onMouseEnter={() => setHoveredEventKey(event.key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
-                  label={{
-                    value: hoveredEventKey === event.key ? event.reason : undefined,
-                    position: 'top',
-                    fill: 'var(--color-brand-500)',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                  }}
-                />
-              ))}
-            {referenceLineData
-              .filter((event) => event.type === 'exit-code')
-              .map((event) => (
-                <ReferenceLine
-                  key={event.key}
-                  x={event.timestamp}
-                  stroke="var(--color-red-500)"
-                  strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                  strokeWidth={2}
-                  onMouseEnter={() => setHoveredEventKey(event.key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
-                  label={{
-                    value: hoveredEventKey === event.key ? event.reason : undefined,
-                    position: 'top',
-                    fill: 'var(--color-red-500)',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                  }}
-                />
-              ))}
-          </>
-        )}
-      </LocalChart>
-      {referenceLineData.length > 0 && !hideEvents && (
-        <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-200">
-          <p className="border-b border-neutral-200 px-4 py-2 text-xs font-medium text-neutral-500">
-            {pluralize(referenceLineData.length, 'Event', 'Events')} associated
-          </p>
-          <div className="h-full overflow-y-auto">
-            {referenceLineData.map((event) => {
-              const timestamp = formatTimestamp(event.timestamp, useLocalTime)
-              return (
-                <div
-                  key={event.key}
-                  className={clsx(
-                    'flex gap-2 border-b border-neutral-200 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-100',
-                    {
-                      'bg-neutral-100': hoveredEventKey === event.key,
-                    }
-                  )}
-                  onMouseEnter={() => setHoveredEventKey(event.key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
-                >
-                  <span
-                    className={clsx(
-                      'flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full',
-                      event.type === 'event' ? 'bg-brand-500' : 'bg-red-500'
-                    )}
-                  >
-                    <Icon
-                      iconName={event.icon}
-                      iconStyle={event.iconStyle ?? 'regular'}
-                      className="text-xs text-white"
-                    />
-                  </span>
-                  <div className="flex w-full flex-col gap-1 text-xs">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <span className="font-medium">{event.reason}</span>
-                      <span className="text-neutral-350">{timestamp.fullTimeString}</span>
-                    </div>
-                    {event.type === 'event' && (
-                      <>
-                        <span className="text-neutral-350">
-                          {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
-                        </span>
-                        <span className="text-neutral-350">
-                          {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
-                        </span>
-                      </>
-                    )}
-                    {event.description && <span className="text-neutral-350">{event.description}</span>}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+    <LocalChart
+      data={chartData || []}
+      isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsReason || isLoadingMetricsExitCode}
+      isEmpty={(chartData || []).length === 0}
+      tooltipLabel="Instance issues"
+      unit="instance"
+      serviceId={serviceId}
+      margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+      yDomain={[0, 'dataMax + 1']}
+      referenceLineData={referenceLineData}
+      isFullscreen={true}
+    >
+      <Line
+        key="true"
+        dataKey="Instance healthy"
+        stroke="var(--color-green-500)"
+        isAnimationActive={false}
+        dot={false}
+        strokeWidth={2}
+      />
+      <Line
+        key="false"
+        dataKey="Instance unhealthy"
+        stroke="var(--color-red-500)"
+        isAnimationActive={false}
+        dot={false}
+        strokeWidth={2}
+      />
+      {!hideEvents && (
+        <>
+          {referenceLineData
+            .filter((event) => event.type === 'event')
+            .map((event) => (
+              <ReferenceLine
+                key={event.key}
+                x={event.timestamp}
+                stroke="var(--color-brand-500)"
+                strokeDasharray="3 3"
+                opacity={hoveredEventKey === event.key ? 1 : 0.3}
+                strokeWidth={2}
+                onMouseEnter={() => setHoveredEventKey(event.key)}
+                onMouseLeave={() => setHoveredEventKey(null)}
+                label={{
+                  value: hoveredEventKey === event.key ? event.reason : undefined,
+                  position: 'top',
+                  fill: 'var(--color-brand-500)',
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}
+              />
+            ))}
+          {referenceLineData
+            .filter((event) => event.type === 'exit-code')
+            .map((event) => (
+              <ReferenceLine
+                key={event.key}
+                x={event.timestamp}
+                stroke="var(--color-red-500)"
+                strokeDasharray="3 3"
+                opacity={hoveredEventKey === event.key ? 1 : 0.3}
+                strokeWidth={2}
+                onMouseEnter={() => setHoveredEventKey(event.key)}
+                onMouseLeave={() => setHoveredEventKey(null)}
+                label={{
+                  value: hoveredEventKey === event.key ? event.reason : undefined,
+                  position: 'top',
+                  fill: 'var(--color-red-500)',
+                  fontSize: 12,
+                  fontWeight: 'bold',
+                }}
+              />
+            ))}
+        </>
       )}
-    </div>
+    </LocalChart>
   )
 }
 

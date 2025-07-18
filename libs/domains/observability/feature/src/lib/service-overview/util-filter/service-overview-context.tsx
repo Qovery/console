@@ -31,6 +31,10 @@ interface ServiceOverviewContextType {
   // Calendar
   hasCalendarValue: boolean
   setHasCalendarValue: (value: boolean) => void
+
+  // Hovered event
+  hoveredEventKey: string | null
+  setHoveredEventKey: (value: string | null) => void
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
@@ -55,6 +59,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   const [hasCalendarValue, setHasCalendarValue] = useState(false)
 
+  const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
+
   const value: ServiceOverviewContextType = {
     useLocalTime,
     setUseLocalTime,
@@ -73,6 +79,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setExpandCharts,
     hasCalendarValue,
     setHasCalendarValue,
+    hoveredEventKey,
+    setHoveredEventKey,
   }
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>

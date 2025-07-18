@@ -62,22 +62,22 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   let stepMs: number
 
   if (durationMs <= 12 * 60 * 60 * 1000) {
-    // <= 12h
+    // < 12h
     stepMs = 15000
-  } else if (durationMs <= 24 * 60 * 60 * 1000) {
-    // <= 24h
+  } else if (durationMs < 24 * 60 * 60 * 1000) {
+    // < 24h
     stepMs = 30000
-  } else if (durationMs <= 48 * 60 * 60 * 1000) {
-    // <= 48h
+  } else if (durationMs < 48 * 60 * 60 * 1000) {
+    // < 48h
     stepMs = 60000
-  } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
-    // <= 7d
+  } else if (durationMs < 7 * 24 * 60 * 60 * 1000) {
+    // < 7d
     stepMs = 120000
-  } else if (durationMs <= 30 * 24 * 60 * 60 * 1000) {
-    // <= 30d
+  } else if (durationMs < 30 * 24 * 60 * 60 * 1000) {
+    // < 30d
     stepMs = 300000
-  } else if (durationMs <= 60 * 24 * 60 * 60 * 1000) {
-    // <= 60d
+  } else if (durationMs < 60 * 24 * 60 * 60 * 1000) {
+    // < 60d
     stepMs = 1800000
   } else {
     stepMs = 7200000 // > 60d
