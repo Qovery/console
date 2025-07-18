@@ -15,19 +15,19 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod, label_qovery_com_service_id) (rate(container_cpu_usage_seconds_total{container!="", pod=~".+"}[1m]) * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    query: `sum by (pod, label_qovery_com_service_id) (rate(container_cpu_usage_seconds_total{container!="", pod=~".+"}[1m]) * on(namespace, pod) group_left() group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
   })
 
   const { data: limitMetrics, isLoading: isLoadingLimit } = useMetrics({
     clusterId,
-    query: `sum by (label_qovery_com_service_id) (bottomk(1,kube_pod_container_resource_limits{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+    query: `sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_limits{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})))`,
     startTimestamp,
     endTimestamp,
   })
 
   const { data: requestMetrics, isLoading: isLoadingRequest } = useMetrics({
     clusterId,
-    query: `sum by (label_qovery_com_service_id) (bottomk(1,kube_pod_container_resource_requests{resource="cpu", container!="", pod=~".+"}* on(namespace, pod) group_left(label_qovery_com_service_id)kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+    query: `sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_requests{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})))`,
     startTimestamp,
     endTimestamp,
   })

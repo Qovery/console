@@ -15,21 +15,21 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod, label_qovery_com_service_id) (container_memory_working_set_bytes{container!="", pod=~".+"} * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    query: `sum by (pod, label_qovery_com_service_id) (container_memory_working_set_bytes{container!="", pod=~".+"} * on(namespace, pod) group_left() group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"} ))`,
   })
 
   const { data: metricsLimit, isLoading: isLoadingMetricsLimit } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_requests{resource="memory", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+    query: `sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_limits{resource="memory", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"} )))`,
   })
 
   const { data: metricsRequest, isLoading: isLoadingMetricsRequest } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod, label_qovery_com_service_id) (container_memory_working_set_bytes{container!="", pod=~".+"} * on(namespace, pod) group_left() kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    query: `sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_requests{resource="memory", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"} )))`,
   })
 
   const chartData = useMemo(() => {
@@ -48,7 +48,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       timeSeriesMap,
       (_, index) => metrics.data.result[index].metric.pod,
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
+      useLocalTime,
     )
 
     // Process memory limit metrics
@@ -57,7 +57,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       timeSeriesMap,
       () => 'memory-limit',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
+      useLocalTime,
     )
 
     // Process memory request metrics
@@ -66,7 +66,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       timeSeriesMap,
       () => 'memory-request',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
+      useLocalTime,
     )
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
