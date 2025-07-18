@@ -1,17 +1,10 @@
 import { useMemo } from 'react'
 import { Line, ReferenceLine } from 'recharts'
-import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-
-const getExitCodeInfo = (exitCode: string): { name: string; description: string } => {
-  return {
-    name: 'ScalingLimited',
-    description: 'Auto scaling reached the maximum number of replicas. You can increase it in the settings',
-  }
-}
 
 export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
@@ -115,23 +108,25 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
 
     // Add hpa max limit reached lines
     if (metricsHpaMaxLimitReached?.data?.result) {
-      metricsHpaMaxLimitReached.data.result.forEach((series: { metric: { pod: string }; values: [number, string][] }) => {
-        series.values.forEach(([timestamp, value]: [number, string]) => {
-          const numValue = parseFloat(value)
-          if (numValue > 0) {
-            const key = `${series.metric.pod}-${timestamp}`
-            const exitCodeInfo = getExitCodeInfo(series.values[0][1])
-            referenceLines.push({
-              type: 'exit-code',
-              timestamp: timestamp * 1000,
-              reason: exitCodeInfo.name,
-              description: exitCodeInfo.description,
-              icon: 'exclamation',
-              key,
-            })
-          }
-        })
-      })
+      metricsHpaMaxLimitReached.data.result.forEach(
+        (series: { metric: { pod: string }; values: [number, string][] }) => {
+          series.values.forEach(([timestamp, value]: [number, string]) => {
+            const numValue = parseFloat(value)
+            if (numValue > 0) {
+              const key = `${series.metric.pod}-${timestamp}`
+              referenceLines.push({
+                type: 'exit-code',
+                timestamp: timestamp * 1000,
+                reason: 'ScalingLimited',
+                description:
+                  'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
+                icon: 'exclamation',
+                key,
+              })
+            }
+          })
+        }
+      )
     }
 
     // Sort by timestamp ascending
@@ -142,7 +137,9 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
   return (
     <LocalChart
       data={chartData || []}
-      isLoading={isLoadingNumberOfInstances || isLoadingHpaMinReplicas || isLoadingHpaMaxReplicas || isHpaMaxLimitReached}
+      isLoading={
+        isLoadingNumberOfInstances || isLoadingHpaMinReplicas || isLoadingHpaMaxReplicas || isHpaMaxLimitReached
+      }
       isEmpty={(chartData || []).length === 0}
       tooltipLabel="Instance issues"
       unit="instance"
