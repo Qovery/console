@@ -6,7 +6,7 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
 
@@ -216,4 +216,4 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
   )
 }
 
-export default InstanceAutoscalingChart
+export default InstanceHTTPErrorsChart

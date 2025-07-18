@@ -67,7 +67,7 @@ export function CardInstanceStatus({
         description={`in last ${timeRange}`}
         isLoading={isLoadingMetrics}
         onClick={() => setIsModalOpen(true)}
-        isClickable
+        hasModalLink
       />
       {isModalOpen && (
         <ModalChart

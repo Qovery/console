@@ -68,7 +68,7 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
             : `Max ${pluralize(maxInstances, 'instance', 'instances')}: ${maxInstances}`
         }
         onClick={() => setIsModalOpen(true)}
-        isClickable
+        hasModalLink
       />
       {isModalOpen && (
         <ModalChart
