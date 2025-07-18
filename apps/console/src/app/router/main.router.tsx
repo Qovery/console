@@ -15,6 +15,7 @@ import {
   PageHelmCreateFeature,
   PageJobCreateFeature,
   PageServices,
+  PageTerraformCreateFeature,
 } from '@qovery/pages/services'
 import { PageSettings } from '@qovery/pages/settings'
 import { PageUser } from '@qovery/pages/user'
@@ -44,6 +45,7 @@ import {
   SERVICES_HELM_TEMPLATE_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
+  SERVICES_TERRAFORM_CREATION_URL,
   SERVICES_URL,
   SETTINGS_URL,
   USER_URL,
@@ -175,6 +177,12 @@ export const ROUTER: RouterProps[] = [
   {
     path: `${SERVICES_URL()}${SERVICES_HELM_TEMPLATE_CREATION_URL()}/*`,
     component: <PageHelmCreateFeature />,
+    protected: true,
+    layout: false,
+  },
+  {
+    path: `${SERVICES_URL()}${SERVICES_TERRAFORM_CREATION_URL}/*`,
+    component: <PageTerraformCreateFeature />,
     protected: true,
     layout: false,
   },

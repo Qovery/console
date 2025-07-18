@@ -1,4 +1,3 @@
-import { type ServiceTypeEnum } from 'qovery-typescript-axios'
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
