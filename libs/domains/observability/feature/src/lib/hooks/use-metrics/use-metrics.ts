@@ -55,7 +55,7 @@ export function useMetrics({
   })
 }
 
-export function calculateDynamicRange(startTimestamp: string, endTimestamp: string): string {
+export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, multi = 1): string {
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
@@ -82,6 +82,8 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   } else {
     stepMs = 7200000 // > 60d
   }
+
+  stepMs = stepMs * multi
 
   return `${stepMs}ms`
 }
