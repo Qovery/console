@@ -27,7 +27,7 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
           label_qovery_com_service_id =~ "${serviceId}"
         }
       )
-  ) 
+  )
     `,
     queryRange: 'query',
   })
@@ -73,7 +73,7 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
       {isModalOpen && (
         <ModalChart
           title={title}
-          description="The number of autoscaling limit reached over time."
+          description="The number of instances over time."
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
         >

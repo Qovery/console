@@ -6,83 +6,10 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const getDescriptionFromReason = (reason: string): string => {
-  switch (reason) {
-    case 'OOMKilled':
-      return 'Container killed due to out-of-memory.'
-    case 'Error':
-      return 'Container exited with non-zero exit code.'
-    default:
-      return 'Unknown'
-  }
-}
-
 const getExitCodeInfo = (exitCode: string): { name: string; description: string } => {
-  const code = parseInt(exitCode, 10)
-
-  switch (code) {
-    case 0:
-      return {
-        name: 'Purposely stopped',
-        description: 'Used by developers to indicate that the container was automatically stopped.',
-      }
-    case 1:
-      return {
-        name: 'Application error',
-        description:
-          'Container was stopped due to application error or incorrect reference in the image specification.',
-      }
-    case 125:
-      return {
-        name: 'Container failed to run error',
-        description: 'The docker run command did not execute successfully.',
-      }
-    case 126:
-      return {
-        name: 'Command invoke error',
-        description: 'A command specified in the image specification could not be invoked.',
-      }
-    case 127:
-      return {
-        name: 'File or directory not found',
-        description: 'File or directory specified in the image specification was not found.',
-      }
-    case 128:
-      return {
-        name: 'Invalid argument used on exit',
-        description: 'Exit was triggered with an invalid exit code (valid codes are integers between 0-255).',
-      }
-    case 134:
-      return {
-        name: 'Abnormal termination (SIGABRT)',
-        description: 'The container aborted itself using the abort() function.',
-      }
-    case 137:
-      return {
-        name: 'Immediate termination (SIGKILL)',
-        description: 'Container was immediately terminated by the operating system via SIGKILL signal.',
-      }
-    case 139:
-      return {
-        name: 'Segmentation fault (SIGSEGV)',
-        description: 'Container attempted to access memory that was not assigned to it and was terminated.',
-      }
-    case 143:
-      return {
-        name: 'Graceful termination (SIGTERM)',
-        description: 'Container received warning that it was about to be terminated, then terminated.',
-      }
-    case 255:
-      return {
-        name: 'Exit Status Out Of Range',
-        description:
-          'Container exited, returning an exit code outside the acceptable range, meaning the cause of the error is not known.',
-      }
-    default:
-      return {
-        name: `Exit Code ${exitCode}`,
-        description: 'Unknown exit code.',
-      }
+  return {
+    name: 'ScalingLimited',
+    description: 'Auto scaling reached the maximum number of replicas. You can increase it in the settings',
   }
 }
 
@@ -90,47 +17,52 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
 
-  // Calculate dynamic range based on time range
-  const dynamicRange = useMemo(
-    () => calculateDynamicRange(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
+  const { data: metricsNumberOfInstances, isLoading: isLoadingNumberOfInstances } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `sum(kube_pod_status_ready{condition="true"} * on(namespace,pod) group_left(label_qovery_com_service_id) max by(namespace,pod,label_qovery_com_service_id)(kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+  })
+
+  const { data: metricsHpaMinReplicas, isLoading: isLoadingHpaMinReplicas } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+  })
+
+  const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+  })
+
+  const { data: metricsHpaMaxLimitReached, isLoading: isHpaMaxLimitReached } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `sum by(label_qovery_com_service_id) (
+  1 - (
+    kube_horizontalpodautoscaler_status_condition{
+      condition="ScalingLimited",
+      status="true"
+    }
+    * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id)
+      kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}
+    and on(namespace,horizontalpodautoscaler)
+      (
+        max by(namespace,horizontalpodautoscaler)(
+          kube_horizontalpodautoscaler_status_current_replicas
+        )
+        ==
+        on(namespace,horizontalpodautoscaler)
+        max by(namespace,horizontalpodautoscaler)(
+          kube_horizontalpodautoscaler_spec_max_replicas
+        )
+      )
   )
-
-  const { data: metricsUnhealthy, isLoading: isLoadingUnhealthy } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum by (condition)(kube_pod_status_ready{condition=~"false"}
-    * on(namespace,pod) group_left(label_qovery_com_service_id)
-      max by(namespace,pod,label_qovery_com_service_id)(
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      )) > 0`,
-  })
-
-  const { data: metricsHealthy, isLoading: isLoadingHealthy } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum by (condition)(kube_pod_status_ready{condition=~"true"}
-    * on(namespace,pod) group_left(label_qovery_com_service_id)
-      max by(namespace,pod,label_qovery_com_service_id)(
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      )) > 0`,
-  })
-
-  const { data: metricsExitCode, isLoading: isLoadingMetricsExitCode } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum by (pod) (
-  (
-    (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange}) 
-    * on(pod, namespace, container) group_left() 
-    max by(pod, namespace, container) (kube_pod_container_status_last_terminated_exitcode)
-    * on(pod, namespace) group_left(label_qovery_com_service_id) 
-    max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
-  ) > 0
-)`,
+) > 0`,
   })
 
   const chartData = useMemo(() => {
@@ -140,22 +72,32 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process unhealthy
-    if (metricsUnhealthy?.data?.result) {
+    // Process number of instances
+    if (metricsNumberOfInstances?.data?.result) {
       processMetricsData(
-        metricsUnhealthy,
+        metricsNumberOfInstances,
         timeSeriesMap,
-        () => 'Instance unhealthy',
+        () => 'Number of instances',
         (value) => parseFloat(value),
         useLocalTime
       )
     }
-    // Process healthy
-    if (metricsHealthy?.data?.result) {
+    // Process HPA min replicas
+    if (metricsHpaMinReplicas?.data?.result) {
       processMetricsData(
-        metricsHealthy,
+        metricsHpaMinReplicas,
         timeSeriesMap,
-        () => 'Instance healthy',
+        () => 'Autoscaling min replicas',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+    // Process HPA max replicas
+    if (metricsHpaMaxReplicas?.data?.result) {
+      processMetricsData(
+        metricsHpaMaxReplicas,
+        timeSeriesMap,
+        () => 'Autoscaling max replicas',
         (value) => parseFloat(value),
         useLocalTime
       )
@@ -164,16 +106,16 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
     // Convert map to sorted array and add time range padding
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metricsUnhealthy, metricsHealthy, useLocalTime, startTimestamp, endTimestamp])
+  }, [metricsNumberOfInstances, metricsHpaMinReplicas, useLocalTime, startTimestamp, endTimestamp])
 
   const referenceLineData = useMemo(() => {
-    if (metricsExitCode?.data?.result && !metricsExitCode?.data?.result) return []
+    if (metricsHpaMaxLimitReached?.data?.result && !metricsHpaMaxLimitReached?.data?.result) return []
 
     const referenceLines: ReferenceLineEvent[] = []
 
-    // Add exit code as reference lines
-    if (metricsExitCode?.data?.result) {
-      metricsExitCode.data.result.forEach((series: { metric: { pod: string }; values: [number, string][] }) => {
+    // Add hpa max limit reached lines
+    if (metricsHpaMaxLimitReached?.data?.result) {
+      metricsHpaMaxLimitReached.data.result.forEach((series: { metric: { pod: string }; values: [number, string][] }) => {
         series.values.forEach(([timestamp, value]: [number, string]) => {
           const numValue = parseFloat(value)
           if (numValue > 0) {
@@ -195,12 +137,12 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
     return referenceLines
-  }, [metricsExitCode])
+  }, [metricsHpaMaxLimitReached])
 
   return (
     <LocalChart
       data={chartData || []}
-      isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsExitCode}
+      isLoading={isLoadingNumberOfInstances || isLoadingHpaMinReplicas || isLoadingHpaMaxReplicas || isHpaMaxLimitReached}
       isEmpty={(chartData || []).length === 0}
       tooltipLabel="Instance issues"
       unit="instance"
@@ -211,21 +153,36 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
       isFullscreen={true}
     >
       <Line
-        key="true"
-        dataKey="Instance healthy"
+        key="instance"
+        dataKey="Number of instances"
         stroke="var(--color-green-500)"
         isAnimationActive={false}
         dot={false}
         strokeWidth={2}
       />
       <Line
-        key="false"
-        dataKey="Instance unhealthy"
-        stroke="var(--color-red-500)"
-        isAnimationActive={false}
-        dot={false}
+        key="min"
+        dataKey="Autoscaling min replicas"
+        type="linear"
+        stroke="var(--color-neutral-300)"
+        strokeDasharray="4 4"
         strokeWidth={2}
+        connectNulls={false}
+        dot={false}
+        isAnimationActive={false}
       />
+      <Line
+        key="max"
+        dataKey="Autoscaling max replicas"
+        type="linear"
+        stroke="var(--color-red-500)"
+        strokeDasharray="4 4"
+        strokeWidth={2}
+        connectNulls={false}
+        dot={false}
+        isAnimationActive={false}
+      />
+
       {!hideEvents && (
         <>
           {referenceLineData
