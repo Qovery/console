@@ -1,7 +1,6 @@
 import { type Cluster, type Environment, type Organization, type Project } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { type Thread } from './devops-copilot-panel'
-import { fetchThread } from './use-thread'
+import { mutations } from '@qovery/shared/devops-copilot/data-access'
 
 type Context = {
   organization?: Organization
@@ -16,8 +15,6 @@ type Context = {
     | undefined
 }
 
-export const HACKATHON_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
-
 export const submitMessage = async (
   userSub: string,
   message: string,
@@ -26,7 +23,7 @@ export const submitMessage = async (
   context?: Context | null,
   onStream?: (chunk: string) => void,
   signal?: AbortSignal
-): Promise<{ id: string; thread: Thread } | null> => {
+): Promise<{ id: string; messageId: string } | null> => {
   try {
     // Ensure we have an organization ID
     const organizationId = context?.organization?.id
@@ -37,112 +34,58 @@ export const submitMessage = async (
     // First, create a new thread
     let _threadId = threadId
     if (!threadId) {
-      const createThreadResponse = await fetch(
-        `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            title: message.substring(0, 50), // Use first 50 chars as title
-          }),
-        }
-      )
-
-      if (!createThreadResponse.ok) {
-        throw new Error(`Failed to create thread: ${createThreadResponse.status}`)
-      }
-
-      const threadData = await createThreadResponse.json()
-      _threadId = threadData.id
-    }
-
-    // Then, send the message to the thread
-    const messageResponse = await fetch(
-      `${HACKATHON_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${_threadId}/text`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-        },
-        body: JSON.stringify({
-          organization_id: organizationId,
-          project_id: context?.project?.id,
-          environment_id: context?.environment?.id,
-          service_type: context?.service?.service_type,
-          service_id: context?.service?.id,
-          text: message,
-          instructions: 'Please provide a concise response in Markdown format',
-          stream: true,
-        }),
-        signal,
-      }
-    )
-
-    if (!messageResponse.ok) {
-      throw new Error(`Failed to send message: ${messageResponse.status}`)
+      const response = await mutations.addThread({ userSub, organizationId, message })
+      const responseJson = response.data
+      _threadId = responseJson.id
     }
 
     if (!_threadId) {
       throw new Error('Failed to fetch thread')
     }
 
-    // Process streaming response if onStream callback is provided
+    // Then, send the message to the thread
+    const messageResponse = await mutations.addMessage({
+      userSub,
+      token,
+      organizationId,
+      threadId: _threadId,
+      message,
+      context,
+      signal,
+    })
+
+    let assistantMessageId = ''
+
     if (onStream && messageResponse.body) {
       const reader = messageResponse.body.getReader()
       const decoder = new TextDecoder()
 
-      // Process the stream until it's done
-      const processStream = async () => {
-        let result = await reader.read()
+      let result = await reader.read()
+      while (!result.done) {
+        const chunk = decoder.decode(result.value, { stream: true })
+        const lines = chunk.split('\n').filter((line) => line.startsWith('data:'))
 
-        while (!result.done) {
-          const chunk = decoder.decode(result.value, { stream: true })
+        for (const line of lines) {
+          const cleanChunk = line.slice(5).trim()
+          onStream(cleanChunk)
 
-          // Parse SSE data
-          const chunks = chunk
-            .split('\n\n')
-            .map((block) =>
-              block
-                .split('\n')
-                .filter((line) => line.startsWith('data:'))
-                .map((line) => line.slice(5).trim())
-                .join('')
-            )
-            .filter(Boolean)
-
-          // Send each chunk to the callback
-          for (const cleanChunk of chunks) {
-            onStream(cleanChunk)
+          try {
+            const parsed = JSON.parse(cleanChunk)
+            if (parsed.type === 'complete' && parsed.content?.id) {
+              assistantMessageId = parsed.content.id
+            }
+          } catch (e) {
+            console.error('Failed to parse chunk:', cleanChunk, e)
           }
-
-          // Read the next chunk
-          result = await reader.read()
         }
+
+        result = await reader.read()
       }
-
-      await processStream()
     }
-
-    // Fetch and format the thread messages
-    const messages = await fetchThread(userSub, organizationId, _threadId, token)
-
-    const formattedMessages: Thread = messages.map(
-      (msg: { id: string; media_content: string; owner: string; created_at: string }) => ({
-        id: msg.id,
-        text: msg.media_content,
-        owner: msg.owner,
-        timestamp: new Date(msg.created_at).getTime(),
-      })
-    )
 
     return {
       id: _threadId,
-      thread: formattedMessages,
+      messageId: assistantMessageId || '',
     }
   } catch (error) {
     console.error('Error:', error)

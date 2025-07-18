@@ -7,11 +7,13 @@ export interface NodePoolMetrics {
   cpuUsed: number
   cpuTotal: number | null
   cpuReserved: number
+  cpuReservedRaw: number
   cpuUsedRaw: number
   cpuTotalRaw: number | null
   memoryUsed: number
   memoryTotal: number | null
   memoryReserved: number
+  memoryReservedRaw: number
   memoryUsedRaw: number
   memoryTotalRaw: number | null
   nodesCount: number
@@ -61,10 +63,12 @@ export function calculateNodePoolMetrics(
   ).length
 
   // Calculate raw values for accurate percentage calculation
+  const cpuReservedRaw = milliCoreToVCPU(nodePool.cpu_milli || 0)
   const cpuUsedRaw = milliCoreToVCPU(
     nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated.request_cpu_milli || 0), 0)
   )
   const cpuTotalRaw = hasCpuLimit ? milliCoreToVCPU(nodePool.cpu_milli_limit || 0) : null
+  const memoryReservedRaw = mibToGib(nodePool.memory_mib || 0)
   const memoryUsedRaw = mibToGib(
     nodePoolNodes.reduce((acc, node) => acc + (node.resources_allocated.request_memory_mib || 0), 0)
   )
@@ -74,11 +78,13 @@ export function calculateNodePoolMetrics(
     cpuUsed,
     cpuTotal,
     cpuReserved,
+    cpuReservedRaw,
     cpuUsedRaw,
     cpuTotalRaw,
     memoryUsed,
     memoryTotal,
     memoryReserved,
+    memoryReservedRaw,
     memoryUsedRaw,
     memoryTotalRaw,
     nodesCount: nodePoolNodes.length,

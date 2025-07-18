@@ -19,6 +19,7 @@ import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
 import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
+import { DEVOPS_COPILOT_API_BASE_URL, devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { ProtectedRoute } from '@qovery/shared/router'
 import { HELM_DEFAULT_VALUES, KUBECONFIG, LOGIN_URL, LOGOUT_URL, PREVIEW_CODE } from '@qovery/shared/routes'
@@ -61,8 +62,9 @@ export function App() {
     })
   }, [])
 
-  // init axios interceptor
+  // init axios interceptors
   useAuthInterceptor(axios, QOVERY_API)
+  useAuthInterceptor(devopsCopilotAxios, DEVOPS_COPILOT_API_BASE_URL)
 
   useEffect(() => {
     // init Sentry

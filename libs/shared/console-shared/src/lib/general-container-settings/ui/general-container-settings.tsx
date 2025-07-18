@@ -64,6 +64,7 @@ export function GeneralContainerSettings({ organization, isSetting }: GeneralCon
                     ),
                     options: {
                       fakeModal: true,
+                      width: 680,
                     },
                   })
                 },

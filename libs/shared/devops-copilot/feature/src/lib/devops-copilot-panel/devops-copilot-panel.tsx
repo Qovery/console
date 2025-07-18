@@ -3,49 +3,31 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import clsx from 'clsx'
 import mermaid from 'mermaid'
-import {
-  Children,
-  type ComponentProps,
-  type HTMLAttributes,
-  forwardRef,
-  isValidElement,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import Markdown from 'react-markdown'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import remarkGfm from 'remark-gfm'
+import { type ComponentProps, forwardRef, useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { AnimatedGradientText, Button, DropdownMenu, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { ToastEnum, toast } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL, QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
+import { RenderMarkdown } from '../devops-render-markdown/devops-render-markdown'
+import { normalizeMermaid } from '../devops-render-markdown/devops-render-markdown'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
 import { useQoveryContext } from '../hooks/use-qovery-context/use-qovery-context'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
+import { useThreadState } from '../hooks/use-thread-state/use-thread-state'
+import { useThreads } from '../hooks/use-threads/use-threads'
+import { MermaidChart } from '../mermaid-chart/mermaid-chart'
+import { getIconClass, getIconName } from '../utils/icon-utils/icon-utils'
 import DevopsCopilotHistory from './devops-copilot-history'
 import { submitMessage } from './submit-message'
 import { submitVote } from './submit-vote'
-import { useThread } from './use-thread'
-import { useThreads } from './use-threads'
-
-/*
-XXX: The devops-copilot feature is unstable and requires a full redesign.
-*/
 
 interface InputProps extends ComponentProps<'textarea'> {
   loading: boolean
   onClick?: () => void
   stop?: () => void
-}
-
-interface CodeProps extends HTMLAttributes<HTMLElement> {
-  inline?: boolean
-  node?: any
 }
 
 const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, loading, ...props }, ref) => {
@@ -105,38 +87,8 @@ const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, stop, load
   )
 })
 
-const MermaidChart = ({ code }: { code: string }) => {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!containerRef.current) return
-
-    const id = 'mermaid-' + Math.random().toString(36).slice(2)
-    try {
-      mermaid
-        .render(id, code)
-        .then(({ svg }) => {
-          if (containerRef.current) {
-            containerRef.current.innerHTML = svg
-          }
-        })
-        .catch(() => {
-          if (containerRef.current) {
-            containerRef.current.innerHTML = '<pre>' + code + '</pre>'
-          }
-        })
-    } catch (e) {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '<pre>' + code + '</pre>'
-      }
-    }
-  }, [code])
-
-  return <div className="mermaid" ref={containerRef} />
-}
-
 export type Message = {
-  id: number
+  id: string
   text: string
   owner: 'user' | 'assistant'
   timestamp: number
@@ -149,10 +101,6 @@ export interface DevopsCopilotPanelProps {
   onClose: () => void
   smaller?: boolean
   style?: React.CSSProperties
-}
-
-const normalizeMermaid = (text: string) => {
-  return text.replace(/\[start mermaid block\]/g, '```mermaid').replace(/\[end mermaid block\]/g, '```')
 }
 
 const renderStreamingMessageWithMermaid = (input: string) => {
@@ -169,88 +117,7 @@ const renderStreamingMessageWithMermaid = (input: string) => {
     if (start > lastIndex) {
       const textPart = input.slice(lastIndex, start)
       if (textPart) {
-        parts.push(
-          <Markdown
-            key={'md-' + lastIndex}
-            remarkPlugins={[remarkGfm]}
-            components={{
-              h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
-              h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
-              h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
-              h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
-              p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
-              ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
-              ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
-              li: ({ node, ...props }) => <li className="my-1" {...props} />,
-              a: ({ node, ...props }) => (
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
-                  {...props}
-                />
-              ),
-              pre: ({ node, children, ...props }) => {
-                return (
-                  <div className="relative my-4">
-                    <pre
-                      className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
-                      {...props}
-                    >
-                      {children}
-                    </pre>
-                  </div>
-                )
-              },
-              code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                const match = /language-(\w+)/.exec(className || '')
-                if (match && match[1] === 'mermaid') {
-                  return <MermaidChart code={String(children).replace(/\n$/, '')} />
-                }
-                const isInline =
-                  inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className)
-                if (isInline) {
-                  return (
-                    <code
-                      className="rounded border border-yellow-200 bg-yellow-50 px-1 py-0.5 font-mono text-[13px] text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
-                      {...props}
-                    >
-                      {children}
-                    </code>
-                  )
-                }
-                if (match) {
-                  return (
-                    <SyntaxHighlighter
-                      language={match[1]}
-                      style={materialDark as any}
-                      PreTag="div"
-                      customStyle={{
-                        borderRadius: '0.5rem',
-                        padding: '1rem',
-                        fontSize: '0.875rem',
-                        lineHeight: '1.5',
-                      }}
-                      {...props}
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                  )
-                }
-                return (
-                  <code className="font-mono text-sm" {...props}>
-                    {children}
-                  </code>
-                )
-              },
-              blockquote: ({ node, ...props }) => (
-                <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600" {...props} />
-              ),
-            }}
-          >
-            {normalizeMermaid(textPart)}
-          </Markdown>
-        )
+        parts.push(<RenderMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</RenderMarkdown>)
       }
     }
     parts.push(<MermaidChart key={'mermaid-' + start} code={mermaidCode} />)
@@ -260,96 +127,13 @@ const renderStreamingMessageWithMermaid = (input: string) => {
   if (lastIndex < input.length) {
     const textPart = input.slice(lastIndex)
     if (textPart) {
-      parts.push(
-        <Markdown
-          key={'md-' + lastIndex}
-          remarkPlugins={[remarkGfm]}
-          components={{
-            h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
-            h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
-            h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
-            h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
-            p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
-            ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
-            ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
-            li: ({ node, ...props }) => <li className="my-1" {...props} />,
-            a: ({ node, ...props }) => (
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
-                {...props}
-              />
-            ),
-            pre: ({ node, children, ...props }) => {
-              return (
-                <div className="relative my-4">
-                  <pre
-                    className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
-                    {...props}
-                  >
-                    {children}
-                  </pre>
-                </div>
-              )
-            },
-            code: ({ node, inline, className, children, ...props }: CodeProps) => {
-              const match = /language-(\w+)/.exec(className || '')
-              if (match && match[1] === 'mermaid') {
-                return <MermaidChart code={String(children).replace(/\n$/, '')} />
-              }
-              const isInline = inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className)
-              if (isInline) {
-                return (
-                  <code
-                    className="rounded border border-yellow-200 bg-yellow-50 px-1 py-0.5 font-mono text-[13px] text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                )
-              }
-              if (match) {
-                return (
-                  <SyntaxHighlighter
-                    language={match[1]}
-                    style={materialDark as any}
-                    PreTag="div"
-                    customStyle={{
-                      borderRadius: '0.5rem',
-                      padding: '1rem',
-                      fontSize: '0.875rem',
-                      lineHeight: '1.5',
-                    }}
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                )
-              }
-              return (
-                <code className="font-mono text-sm" {...props}>
-                  {children}
-                </code>
-              )
-            },
-            blockquote: ({ node, ...props }) => (
-              <blockquote className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600" {...props} />
-            ),
-          }}
-        >
-          {normalizeMermaid(textPart)}
-        </Markdown>
-      )
+      parts.push(<RenderMarkdown key={'md-' + lastIndex}>{normalizeMermaid(textPart)}</RenderMarkdown>)
     }
   }
   return parts
 }
 
 export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) {
-  useEffect(() => {
-    mermaid.initialize({ startOnLoad: true })
-  }, [])
   const controllerRef = useRef<AbortController | null>(null)
   const STORAGE_KEY = 'assistant-panel-size'
   const { data } = useQoveryStatus()
@@ -373,13 +157,13 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
 
   const [plan, setPlan] = useState<
     {
-      messageId: number
+      messageId: string
       description: string
       toolName: string
       status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
     }[]
   >([])
-  const [showPlans, setShowPlans] = useState<Record<number, boolean>>({})
+  const [showPlans, setShowPlans] = useState<Record<string, boolean>>({})
 
   const pendingThreadId = useRef<string>()
 
@@ -387,8 +171,9 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     threads = [],
     error: errorThreads,
     isLoading: isLoadingThreads,
-  } = useThreads(context?.organization?.id ?? '', user?.sub ?? '', threadId)
-  const { thread, setThread } = useThread({
+  } = useThreads({ organizationId: context?.organization?.id ?? '', owner: user?.sub ?? '' })
+
+  const { thread, setThread } = useThreadState({
     organizationId: context?.organization?.id ?? '',
     threadId,
   })
@@ -412,6 +197,16 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }
 
+  const hasMermaidChart = (messages: Message[], streamingText?: string) =>
+    messages.some((msg) => msg.text.includes('[start mermaid block]')) ||
+    (streamingText?.includes('[start mermaid block]') ?? false)
+
+  useEffect(() => {
+    if (hasMermaidChart(thread, displayedStreamingMessage)) {
+      mermaid.initialize({ startOnLoad: true })
+    }
+  }, [thread, displayedStreamingMessage])
+
   useEffect(() => {
     setTimeout(() => {
       if (inputRef.current) {
@@ -427,12 +222,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
         handleOnClose()
       }
     }
-
     document.addEventListener('keydown', down)
     return () => document.removeEventListener('keydown', down)
-  }, [])
+  }, [thread])
 
-  const handleVote = async (messageId: number, vote: 'upvote' | 'downvote') => {
+  const handleVote = async (messageId: string, vote: 'upvote' | 'downvote') => {
     const currentMessage = thread.find((msg) => msg.id === messageId)
     const currentVote = currentMessage?.vote
     const nextVote = currentVote === vote ? undefined : vote
@@ -441,12 +235,10 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     setThread(updatedThread)
 
     try {
-      const token = await getAccessTokenSilently()
       const response = await submitVote(
         user?.sub ?? '',
         messageId,
         vote,
-        token,
         withContext ? context : { organization: context.organization }
       )
 
@@ -465,7 +257,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }
 
-  const lastSubmitResult = useRef<any>(null)
+  const lastSubmitResult = useRef<{ id: string; messageId: string } | null>(null)
   const handleSendMessage = async (value?: string) => {
     controllerRef.current = new AbortController()
     lastSubmitResult.current = null
@@ -486,7 +278,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
 
     if (trimmedInputMessage) {
       const newMessage: Message = {
-        id: Date.now(),
+        id: Date.now().toString(),
         text: trimmedInputMessage,
         owner: 'user',
         timestamp: Date.now(),
@@ -523,8 +315,8 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                     const planArray = JSON.parse(parsed.content.replace('__plan__:', ''))
                     setPlan((prev) => [
                       ...prev,
-                      ...planArray.map((step: any) => ({
-                        messageId: -2,
+                      ...planArray.map((step: { description: string; tool_name: string }) => ({
+                        messageId: 'temp',
                         description: step.description,
                         toolName: step.tool_name,
                         status: 'not_started',
@@ -569,6 +361,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     }
   }
 
+  const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
+
+  const [isAtBottom, setIsAtBottom] = useState(true)
+  const panelRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     // Once the animation is finished, we can stop the loading and set the message
     if (
@@ -576,34 +373,27 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       (isStopped && isLoading && isFinish)
     ) {
       controllerRef.current?.abort()
-      if (pendingThreadId.current && lastSubmitResult.current && lastSubmitResult.current.thread.length >= 2) {
-        const result = lastSubmitResult.current
-        const updatedThread = [...thread]
+      if (pendingThreadId.current && lastSubmitResult.current?.messageId) {
+        const newAssistantMessageId = lastSubmitResult.current.messageId
 
-        const resultThread: Message[] = [
+        setThread([
+          ...thread,
           {
-            ...updatedThread[updatedThread.length - 1],
-            id: result.thread[result.thread.length - 2].id,
-            owner: 'user',
-          },
-          {
-            id: result.thread[result.thread.length - 1].id,
+            id: newAssistantMessageId,
             text: streamingMessage,
             owner: 'assistant',
             timestamp: Date.now(),
           },
-        ]
+        ])
 
-        setThread(updatedThread.slice(0, -1).concat(resultThread))
-        const newAssistantMessageId = result.thread[result.thread.length - 1].id
         setPlan((prev) =>
-          prev.map((step) => (step.messageId === -2 ? { ...step, messageId: newAssistantMessageId } : step))
+          prev.map((step) => (step.messageId === 'temp' ? { ...step, messageId: newAssistantMessageId } : step))
         )
       } else {
         setThread([
           ...thread,
           {
-            id: Date.now() + 1,
+            id: (Date.now() + 1).toString(),
             text: streamingMessage,
             owner: 'assistant',
             timestamp: Date.now(),
@@ -643,10 +433,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     return () => clearInterval(typingInterval)
   }, [streamingMessage, displayedStreamingMessage])
 
-  const currentThreadHistoryTitle = threads.find((t) => t.id === threadId)?.title ?? 'No title'
-
-  const [isAtBottom, setIsAtBottom] = useState(true)
-
   useEffect(() => {
     const node = scrollAreaRef.current
 
@@ -665,8 +451,6 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
       node.removeEventListener('scroll', handleScroll)
     }
   }, [threadId, displayedStreamingMessage])
-
-  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const applyPanelSize = () => {
@@ -981,30 +765,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                               .filter((p) => p.messageId === thread.id)
                               .map((step, index) => (
                                 <div key={index} className="flex items-start gap-2 text-sm">
-                                  <Icon
-                                    iconName={
-                                      step.status === 'completed'
-                                        ? 'check-circle'
-                                        : step.status === 'in_progress'
-                                          ? 'spinner'
-                                          : step.status === 'waiting'
-                                            ? 'pause-circle'
-                                            : step.status === 'error'
-                                              ? 'exclamation-circle'
-                                              : 'circle'
-                                    }
-                                    className={
-                                      step.status === 'completed'
-                                        ? 'text-green-500'
-                                        : step.status === 'in_progress'
-                                          ? 'animate-spin text-yellow-500'
-                                          : step.status === 'waiting'
-                                            ? 'text-blue-500'
-                                            : step.status === 'error'
-                                              ? 'text-red-500'
-                                              : 'text-gray-400'
-                                    }
-                                  />
+                                  <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
                                   <div className="flex flex-col">
                                     <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
                                       {step.description}
@@ -1015,157 +776,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                               ))}
                           </div>
                         )}
-                        <Markdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            h1: ({ node, ...props }) => <h1 className="my-3 text-2xl font-bold" {...props} />,
-                            h2: ({ node, ...props }) => <h2 className="my-3 text-xl font-semibold" {...props} />,
-                            h3: ({ node, ...props }) => <h3 className="my-2 text-lg font-medium" {...props} />,
-                            h4: ({ node, ...props }) => <h4 className="my-2 text-base font-medium" {...props} />,
-                            p: ({ node, ...props }) => <p className="my-3 leading-relaxed" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
-                            ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
-                            li: ({ node, ...props }) => <li className="my-1" {...props} />,
-                            a: ({ node, ...props }) => (
-                              <a
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
-                                {...props}
-                              />
-                            ),
-                            pre: ({ node, children, ...props }) => {
-                              const codeContent = isValidElement(children)
-                                ? (children.props as { children?: string })?.children
-                                : null
-
-                              return (
-                                <div className="relative my-4">
-                                  <pre
-                                    className="w-full whitespace-pre-wrap rounded bg-neutral-100 p-4 font-code text-ssm dark:bg-neutral-800"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </pre>
-                                  {typeof codeContent === 'string' && (
-                                    <Button
-                                      variant="surface"
-                                      className="absolute right-2 top-2 flex aspect-square items-center justify-center p-0"
-                                      onClick={async (e) => {
-                                        const btn = e.currentTarget
-                                        const copyIcon = btn.querySelector('.copy-icon') as HTMLElement
-                                        const checkIcon = btn.querySelector('.check-icon') as HTMLElement
-                                        if (!copyIcon || !checkIcon) return
-
-                                        await navigator.clipboard.writeText(codeContent)
-
-                                        copyIcon.classList.add('opacity-0', 'scale-75')
-                                        copyIcon.classList.remove('opacity-100', 'scale-100')
-
-                                        checkIcon.classList.remove('opacity-0', 'scale-75')
-                                        checkIcon.classList.add('opacity-100', 'scale-100')
-
-                                        setTimeout(() => {
-                                          checkIcon.classList.remove('opacity-100', 'scale-100')
-                                          checkIcon.classList.add('opacity-0', 'scale-75')
-
-                                          copyIcon.classList.remove('opacity-0', 'scale-75')
-                                          copyIcon.classList.add('opacity-100', 'scale-100')
-                                        }, 1000)
-                                      }}
-                                    >
-                                      <Icon
-                                        iconName="copy"
-                                        className="copy-icon absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-100 transform opacity-100 transition-all duration-300 ease-in-out"
-                                      />
-                                      <Icon
-                                        iconName="check"
-                                        className="check-icon pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-75 transform opacity-0 transition-all duration-300 ease-in-out"
-                                      />
-                                    </Button>
-                                  )}
-                                </div>
-                              )
-                            },
-                            code: ({ node, inline, className, children, ...props }: CodeProps) => {
-                              const match = /language-(\w+)/.exec(className || '')
-                              const content = Children.toArray(children).join('')
-                              if (content.includes('Optimized Dockerfile')) {
-                                console.log(match)
-                              }
-
-                              if (match && match[1] === 'mermaid') {
-                                return <MermaidChart code={String(children).replace(/\n$/, '')} />
-                              }
-                              const isInline =
-                                inline ?? (typeof children === 'string' && !/\n/.test(children as string) && !className)
-                              if (isInline) {
-                                return (
-                                  <code
-                                    className="rounded border border-yellow-200 bg-yellow-50 px-1 py-0.5 font-mono text-[13px] text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900 dark:text-yellow-200"
-                                    {...props}
-                                  >
-                                    {children}
-                                  </code>
-                                )
-                              }
-                              if (match) {
-                                return (
-                                  <SyntaxHighlighter
-                                    language={match[1]}
-                                    style={materialDark as any}
-                                    PreTag="div"
-                                    customStyle={{
-                                      borderRadius: '0.5rem',
-                                      padding: '1rem',
-                                      fontSize: '0.875rem',
-                                      lineHeight: '1.5',
-                                    }}
-                                    {...props}
-                                  >
-                                    {String(children).replace(/\n$/, '')}
-                                  </SyntaxHighlighter>
-                                )
-                              }
-                              return (
-                                <code className="font-mono text-sm" {...props}>
-                                  {children}
-                                </code>
-                              )
-                            },
-                            blockquote: ({ node, ...props }) => (
-                              <blockquote
-                                className="my-4 border-l-4 border-gray-300 pl-4 italic dark:border-gray-600"
-                                {...props}
-                              />
-                            ),
-                            table: ({ node, ...props }) => (
-                              <div className="my-6 w-full overflow-x-auto">
-                                <table className="w-full border-collapse text-sm" {...props} />
-                              </div>
-                            ),
-                            thead: ({ node, ...props }) => (
-                              <thead className="bg-neutral-100 dark:bg-neutral-700" {...props} />
-                            ),
-                            tbody: ({ node, ...props }) => (
-                              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-600" {...props} />
-                            ),
-                            tr: ({ node, ...props }) => (
-                              <tr className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50" {...props} />
-                            ),
-                            th: ({ node, ...props }) => (
-                              <th
-                                className="border border-neutral-200 px-4 py-2 text-left font-medium dark:border-neutral-600"
-                                {...props}
-                              />
-                            ),
-                            td: ({ node, ...props }) => (
-                              <td className="border border-neutral-200 px-4 py-2 dark:border-neutral-600" {...props} />
-                            ),
-                          }}
-                        >
-                          {normalizeMermaid(thread.text)}
-                        </Markdown>
+                        <RenderMarkdown>{normalizeMermaid(thread.text)}</RenderMarkdown>
                         <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
                           <Button
                             type="button"
@@ -1196,49 +807,26 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <div className="relative top-2 mt-auto">
                     <div
                       className="group flex cursor-pointer items-center gap-2"
-                      onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}
+                      onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
                     >
                       <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
-                      {plan.filter((p) => p.messageId === -2).length > 0 && (
+                      {plan.filter((p) => p.messageId === 'temp').length > 0 && (
                         <Icon
-                          iconName={showPlans[-1] ? 'chevron-circle-up' : 'chevron-circle-down'}
+                          iconName={showPlans['temp'] ? 'chevron-circle-up' : 'chevron-circle-down'}
                           iconStyle="regular"
                           className="transform transition-transform group-hover:scale-110"
                         />
                       )}
                     </div>
-                    {showPlans[-2] && plan.filter((p) => p.messageId === -2).length > 0 && (
+                    {showPlans['temp'] && plan.filter((p) => p.messageId === 'temp').length > 0 && (
                       <div className="mt-2 flex flex-col gap-2">
                         {plan
-                          .filter((p) => p.messageId === -2)
+                          .filter((p) => p.messageId === 'temp')
                           .map((step, index) => (
                             <div key={index} className="flex items-start gap-2 text-sm">
-                              <Icon
-                                iconName={
-                                  step.status === 'completed'
-                                    ? 'check-circle'
-                                    : step.status === 'in_progress'
-                                      ? 'spinner'
-                                      : step.status === 'waiting'
-                                        ? 'pause-circle'
-                                        : step.status === 'error'
-                                          ? 'exclamation-circle'
-                                          : 'circle'
-                                }
-                                className={
-                                  step.status === 'completed'
-                                    ? 'text-green-500'
-                                    : step.status === 'in_progress'
-                                      ? 'animate-spin text-yellow-500'
-                                      : step.status === 'waiting'
-                                        ? 'text-blue-500'
-                                        : step.status === 'error'
-                                          ? 'text-red-500'
-                                          : 'text-gray-400'
-                                }
-                              />
+                              <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
                               <div className="flex flex-col">
-                                <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
+                                <span className={clsx({ 'text-neutral-400': step.status === 'completed' })}>
                                   {step.description}
                                 </span>
                                 <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
@@ -1251,53 +839,32 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 )}
                 {isLoading && streamingMessage.length > 0 && (
                   <div className="streaming text-sm">
-                    {plan.filter((p) => p.messageId === -2).length > 0 && (
+                    {plan.filter((p) => p.messageId === 'temp').length > 0 && (
                       <div
                         className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
-                        onClick={() => setShowPlans((prev) => ({ ...prev, [-2]: !prev[-2] }))}
+                        onClick={() => setShowPlans((prev) => ({ ...prev, ['temp']: !prev['temp'] }))}
                       >
                         <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
                         <Icon
                           iconName={
-                            showPlans[-2] !== undefined && showPlans[-2] ? 'chevron-circle-up' : 'chevron-circle-down'
+                            showPlans['temp'] !== undefined && showPlans['temp']
+                              ? 'chevron-circle-up'
+                              : 'chevron-circle-down'
                           }
                           iconStyle="regular"
                           className="transform transition-transform group-hover:scale-110"
                         />
                       </div>
                     )}
-                    {plan.filter((p) => p.messageId === -2).length > 0 &&
-                      showPlans[-2] !== undefined &&
-                      showPlans[-2] && (
+                    {plan.filter((p) => p.messageId === 'temp').length > 0 &&
+                      showPlans['temp'] !== undefined &&
+                      showPlans['temp'] && (
                         <div className="mt-2 flex flex-col gap-2">
                           {plan
-                            .filter((p) => p.messageId === -2)
+                            .filter((p) => p.messageId === 'temp')
                             .map((step, index) => (
                               <div key={index} className="flex items-start gap-2 text-sm">
-                                <Icon
-                                  iconName={
-                                    step.status === 'completed'
-                                      ? 'check-circle'
-                                      : step.status === 'in_progress'
-                                        ? 'spinner'
-                                        : step.status === 'waiting'
-                                          ? 'pause-circle'
-                                          : step.status === 'error'
-                                            ? 'exclamation-circle'
-                                            : 'circle'
-                                  }
-                                  className={
-                                    step.status === 'completed'
-                                      ? 'text-green-500'
-                                      : step.status === 'in_progress'
-                                        ? 'animate-spin text-yellow-500'
-                                        : step.status === 'waiting'
-                                          ? 'text-blue-500'
-                                          : step.status === 'error'
-                                            ? 'text-red-500'
-                                            : 'text-gray-400'
-                                  }
-                                />
+                                <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
                                 <div className="flex flex-col">
                                   <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>
                                     {step.description}
