@@ -1,10 +1,15 @@
+import { useState } from 'react'
 import { pluralize } from '@qovery/shared/util-js'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
+import { InstanceAutoscalingChart } from '../instance-autoscaling-chart/instance-autoscaling-chart'
+import ModalChart from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function CardInstance({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useMetrics({
     clusterId,
     query: `sum by(label_qovery_com_service_id) (
@@ -48,18 +53,36 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
 
   const isError = autoscalingReached > 0
 
+  const title = 'Autoscaling limit reached'
+
   return (
-    <CardMetric
-      title="Autoscaling limit reached"
-      value={autoscalingReached}
-      status={autoscalingReached > 0 ? 'RED' : 'GREEN'}
-      isLoading={isLoadingMetricsAutoscalingReached || isLoadingMetricsMaxInstances}
-      description={
-        isError
-          ? `Blocked max ${maxInstances} ${pluralize(maxInstances, 'instance', 'instances')}`
-          : `Max ${pluralize(maxInstances, 'instance', 'instances')}: ${maxInstances}`
-      }
-    />
+    <>
+      <CardMetric
+        title={title}
+        value={autoscalingReached}
+        status={autoscalingReached > 0 ? 'RED' : 'GREEN'}
+        isLoading={isLoadingMetricsAutoscalingReached || isLoadingMetricsMaxInstances}
+        description={
+          isError
+            ? `Blocked max ${maxInstances} ${pluralize(maxInstances, 'instance', 'instances')}`
+            : `Max ${pluralize(maxInstances, 'instance', 'instances')}: ${maxInstances}`
+        }
+        onClick={() => setIsModalOpen(true)}
+        isClickable
+      />
+      {isModalOpen && (
+        <ModalChart
+          title={title}
+          description="The number of autoscaling limit reached over time."
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+        >
+          <div className="grid h-full grid-cols-1">
+            <InstanceAutoscalingChart clusterId={clusterId} serviceId={serviceId} />
+          </div>
+        </ModalChart>
+      )}
+    </>
   )
 }
 

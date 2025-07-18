@@ -86,15 +86,7 @@ const getExitCodeInfo = (exitCode: string): { name: string; description: string 
   }
 }
 
-export function InstanceStatusChart({
-  organizationId,
-  clusterId,
-  serviceId,
-}: {
-  organizationId: string
-  clusterId: string
-  serviceId: string
-}) {
+export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
 
@@ -124,20 +116,6 @@ export function InstanceStatusChart({
       max by(namespace,pod,label_qovery_com_service_id)(
         kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
       )) > 0`,
-  })
-
-  const { data: metricsReason, isLoading: isLoadingMetricsReason } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `
-    sum by (pod, reason) (
-      ((kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange}) * on(pod, namespace, container) group_left(reason) 
-      (max by(pod, namespace, container, reason) (kube_pod_container_status_last_terminated_reason))
-      * on(pod, namespace) group_left(label_qovery_com_service_id) 
-      (max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"}))
-      ) > 0
-    ) > bool 0`,
   })
 
   const { data: metricsExitCode, isLoading: isLoadingMetricsExitCode } = useMetrics({
@@ -189,31 +167,9 @@ export function InstanceStatusChart({
   }, [metricsUnhealthy, metricsHealthy, useLocalTime, startTimestamp, endTimestamp])
 
   const referenceLineData = useMemo(() => {
-    if (!metricsReason?.data?.result && !metricsExitCode?.data?.result) return []
+    if (metricsExitCode?.data?.result && !metricsExitCode?.data?.result) return []
 
     const referenceLines: ReferenceLineEvent[] = []
-
-    // Add metric-based reference lines
-    if (metricsReason?.data?.result) {
-      metricsReason.data.result.forEach(
-        (series: { metric: { reason: string; pod: string }; values: [number, string][] }) => {
-          series.values.forEach(([timestamp, value]: [number, string]) => {
-            const numValue = parseFloat(value)
-            if (numValue > 0) {
-              const key = `${series.metric.reason}-${timestamp}`
-              referenceLines.push({
-                type: 'metric',
-                timestamp: timestamp * 1000,
-                reason: series.metric.reason,
-                description: getDescriptionFromReason(series.metric.reason),
-                icon: 'newspaper',
-                key,
-              })
-            }
-          })
-        }
-      )
-    }
 
     // Add exit code as reference lines
     if (metricsExitCode?.data?.result) {
@@ -239,12 +195,12 @@ export function InstanceStatusChart({
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
     return referenceLines
-  }, [metricsReason, metricsExitCode])
+  }, [metricsExitCode])
 
   return (
     <LocalChart
       data={chartData || []}
-      isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsReason || isLoadingMetricsExitCode}
+      isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsExitCode}
       isEmpty={(chartData || []).length === 0}
       tooltipLabel="Instance issues"
       unit="instance"
@@ -273,27 +229,6 @@ export function InstanceStatusChart({
       {!hideEvents && (
         <>
           {referenceLineData
-            .filter((event) => event.type === 'event')
-            .map((event) => (
-              <ReferenceLine
-                key={event.key}
-                x={event.timestamp}
-                stroke="var(--color-brand-500)"
-                strokeDasharray="3 3"
-                opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                strokeWidth={2}
-                onMouseEnter={() => setHoveredEventKey(event.key)}
-                onMouseLeave={() => setHoveredEventKey(null)}
-                label={{
-                  value: hoveredEventKey === event.key ? event.reason : undefined,
-                  position: 'top',
-                  fill: 'var(--color-brand-500)',
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                }}
-              />
-            ))}
-          {referenceLineData
             .filter((event) => event.type === 'exit-code')
             .map((event) => (
               <ReferenceLine
@@ -320,4 +255,4 @@ export function InstanceStatusChart({
   )
 }
 
-export default InstanceStatusChart
+export default InstanceAutoscalingChart
