@@ -100,7 +100,7 @@ export function InstanceStatusChart({
 
   // Calculate dynamic range based on time range
   const dynamicRange = useMemo(
-    () => calculateDynamicRange(startTimestamp, endTimestamp),
+    () => calculateDynamicRange(startTimestamp, endTimestamp, 1.5),
     [startTimestamp, endTimestamp]
   )
 
@@ -132,9 +132,9 @@ export function InstanceStatusChart({
     endTimestamp,
     query: `
     sum by (pod, reason) (
-      ((kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange}) * on(pod, namespace, container) group_left(reason) 
+      ((kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange}) * on(pod, namespace, container) group_left(reason)
       (max by(pod, namespace, container, reason) (kube_pod_container_status_last_terminated_reason))
-      * on(pod, namespace) group_left(label_qovery_com_service_id) 
+      * on(pod, namespace) group_left(label_qovery_com_service_id)
       (max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"}))
       ) > 0
     ) > bool 0`,
@@ -146,10 +146,10 @@ export function InstanceStatusChart({
     endTimestamp,
     query: `sum by (pod) (
   (
-    (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange}) 
-    * on(pod, namespace, container) group_left() 
+    (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange})
+    * on(pod, namespace, container) group_left()
     max by(pod, namespace, container) (kube_pod_container_status_last_terminated_exitcode)
-    * on(pod, namespace) group_left(label_qovery_com_service_id) 
+    * on(pod, namespace) group_left(label_qovery_com_service_id)
     max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
   ) > 0
 )`,
