@@ -155,9 +155,11 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   const [isFinish, setIsFinish] = useState(false)
   const [isStopped, setIsStopped] = useState(false)
   const [loadingText, setLoadingText] = useState('Loading...')
-  const { readOnly: isReadOnly } = useConfig({
+  const { data: readOnlyData } = useConfig({
     organizationId: context?.organization?.id ?? '',
   })
+
+  const isReadOnly = readOnlyData?.org_config?.read_only ?? true
 
   const [plan, setPlan] = useState<
     {

@@ -9,29 +9,9 @@ export interface Config {
   organization_id: string
 }
 
-interface UseConfigReturn {
-  enabled: boolean
-  readOnly: boolean
-  instructions: string
-  isLoading: boolean
-  error: string | null
-  refetchConfig: () => Promise<void>
-}
-
-export const useConfig = ({ organizationId }: { organizationId: string }): UseConfigReturn => {
-  const { data, isLoading, error, refetch } = useQuery({
+export const useConfig = ({ organizationId }: { organizationId: string }) => {
+  return useQuery({
     ...queries.devopsCopilot.config({ organizationId }),
     enabled: !!organizationId,
   })
-
-  return {
-    enabled: data?.org_config?.enabled ?? false,
-    readOnly: data?.org_config?.read_only ?? true,
-    instructions: data?.org_config?.instructions ?? '',
-    isLoading,
-    error: error instanceof Error ? error.message : null,
-    refetchConfig: async () => {
-      await refetch()
-    },
-  }
 }
