@@ -47,6 +47,7 @@ import {
   Skeleton,
   Tooltip,
   useModal,
+  useModalActionSelect,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -69,7 +70,7 @@ import { useRestartService } from '../hooks/use-restart-service/use-restart-serv
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
-import useUninstallService from '../hooks/use-uninstall-service/use-uninstall-service'
+import { useUninstallService } from '../hooks/use-uninstall-service/use-uninstall-service'
 import { RedeployModal } from '../redeploy-modal/redeploy-modal'
 import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
@@ -104,11 +105,6 @@ function MenuManageDeployment({
     environmentId: environment.id,
   })
   const { mutate: stopService } = useStopService({
-    organizationId: environment.organization.id,
-    projectId: environment.project.id,
-    environmentId: environment.id,
-  })
-  const { mutate: uninstallService } = useUninstallService({
     organizationId: environment.organization.id,
     projectId: environment.project.id,
     environmentId: environment.id,
@@ -159,17 +155,6 @@ function MenuManageDeployment({
       warning: warningMessage,
       name: service.name,
       action: () => stopService({ serviceId: service.id, serviceType: service.serviceType }),
-    })
-  }
-
-  const mutationUninstall = () => {
-    openModalConfirmation({
-      mode: 'PRODUCTION',
-      title: 'Confirm Uninstall',
-      description: 'To confirm the uninstall of your service, please type the name:',
-      warning: 'Uninstall delete all compute and data of your service',
-      name: service.name,
-      action: () => uninstallService({ serviceId: service.id, serviceType: service.serviceType }),
     })
   }
 
@@ -449,12 +434,6 @@ function MenuManageDeployment({
             {tooltipService('Stop compute resources *but* keep the data')}
           </DropdownMenu.Item>
         )}
-        {isUninstallAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="inbox-out" />} color="red" onSelect={mutationUninstall}>
-            {service.service_type === ServiceTypeEnum.TERRAFORM ? 'Destroy' : 'Uninstall'}
-            {tooltipService("Delete all compute and associated data *but* keep the Qovery's service configuration")}
-          </DropdownMenu.Item>
-        )}
         {match({ service })
           .with(
             { service: { serviceType: 'APPLICATION' } },
@@ -612,26 +591,97 @@ function MenuOtherActions({
   } = environment
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
+  const { openModalActionSelect } = useModalActionSelect()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
+  const { mutateAsync: uninstallService } = useUninstallService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
 
   const [, copyToClipboard] = useCopyToClipboard()
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
 
-  const mutationDelete = async () => {
-    openModalConfirmation({
-      title: 'Delete service',
-      name: service.name,
-      isDelete: true,
-      action: async () => {
-        try {
-          await deleteService({ serviceId: service.id, serviceType: service.serviceType })
-          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
-        } catch (error) {
-          console.error(error)
-        }
-      },
-    })
+  const mutationRemove = async () => {
+    if (isUninstallAvailable(state)) {
+      openModalActionSelect({
+        title: 'Remove service',
+        name: service.name,
+        description: 'Choose how you to remove this service',
+        actions: [
+          {
+            id: 'uninstall',
+            title: 'Uninstall',
+            description: (
+              <div className="flex flex-col gap-2 text-neutral-350">
+                <span>
+                  Stop and remove the service but keep all configuration, data, and settings. You can easily reinstall
+                  later with the same configuration.
+                </span>
+                <span className="font-medium text-neutral-400">What's kept:</span>
+                <ul className="list-disc pl-4">
+                  <li>Configuration files</li>
+                  <li>Environment variables</li>
+                  <li>Network settings</li>
+                </ul>
+              </div>
+            ),
+            icon: 'box-taped',
+            color: 'brand',
+            callback: async () => {
+              try {
+                await uninstallService({ serviceId: service.id, serviceType: service.serviceType })
+              } catch (error) {
+                console.error(error)
+              }
+            },
+          },
+          {
+            id: 'delete',
+            title: 'Delete completely',
+            description: (
+              <div className="flex flex-col gap-2 text-neutral-350">
+                <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
+                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <ul className="list-disc pl-4">
+                  <li>All service data</li>
+                  <li>Configuration files</li>
+                  <li>Logs and history</li>
+                  <li>Environment variables</li>
+                  <li>Network settings</li>
+                </ul>
+              </div>
+            ),
+            icon: 'trash-can',
+            color: 'red',
+            callback: async () => {
+              try {
+                await deleteService({ serviceId: service.id, serviceType: service.serviceType })
+                navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+              } catch (error) {
+                console.error(error)
+              }
+            },
+          },
+        ],
+        isDelete: true,
+      })
+    } else {
+      openModalConfirmation({
+        title: 'Delete service',
+        name: service.name,
+        isDelete: true,
+        action: async () => {
+          try {
+            await deleteService({ serviceId: service.id, serviceType: service.serviceType })
+            navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+          } catch (error) {
+            console.error(error)
+          }
+        },
+      })
+    }
   }
 
   const openServiceCloneModal = () => {
@@ -739,8 +789,12 @@ function MenuOtherActions({
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationDelete}>
-              Delete service
+            <DropdownMenu.Item
+              color="red"
+              icon={<Icon iconName="trash-can" iconStyle="regular" />}
+              onSelect={mutationRemove}
+            >
+              Remove service
             </DropdownMenu.Item>
           </>
         )}
