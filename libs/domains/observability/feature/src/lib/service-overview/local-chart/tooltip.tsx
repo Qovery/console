@@ -16,7 +16,7 @@ type GroupedEntry = {
   others: TooltipEntry[]
 }
 
-export type UnitType = 'mCPU' | 'MiB' | 'req/s' | 'ms' | 'bytes' | 'instance'
+export type UnitType = 'mCPU' | 'MiB' | 'req/s' | 'ms' | 'bytes' | 'instance' | '%'
 
 interface TooltipProps {
   customLabel: string
