@@ -38,6 +38,8 @@ type ClusterCredentialsFormValues = {
   azure_subscription_id?: string
   azure_tenant_id?: string
   azure_application_id?: string
+  azure_application_object_id?: string
+  id?: string
 }
 
 export interface ClusterCredentialsModalProps {
@@ -232,8 +234,24 @@ export function ClusterCredentialsModal({
   const onSubmit = methods.handleSubmit(async (data) => {
     const isAzureSubmitSuccessful = methods.formState.isSubmitSuccessful && cloudProviderLocal === 'AZURE'
 
+    // When Azure credential is submitted (second click on "Done"), we need to close the modal with the response so that it fills the form automatically
+    if (isAzureSubmitSuccessful) {
+      const response: ClusterCredentials = {
+        id: methods.getValues('id') ?? '',
+        name: methods.getValues('name'),
+        object_type: 'AZURE',
+        azure_subscription_id: methods.getValues('azure_subscription_id') ?? '',
+        azure_tenant_id: methods.getValues('azure_tenant_id') ?? '',
+        azure_application_id: methods.getValues('azure_application_id') ?? '',
+        azure_application_object_id: methods.getValues('azure_application_object_id') ?? '',
+      }
+
+      onClose(response)
+      return
+    }
+
     // Close without edit when no changes
-    if (!methods.formState.isDirty || isAzureSubmitSuccessful) {
+    if (!methods.formState.isDirty) {
       onClose()
       return
     }
@@ -261,7 +279,9 @@ export function ClusterCredentialsModal({
               response: { azure_application_id: P.string },
             },
             ({ response }) => {
+              methods.setValue('id', response.id)
               methods.setValue('azure_application_id', response.azure_application_id)
+              methods.setValue('azure_application_object_id', response.azure_application_object_id)
             }
           )
           .otherwise(() => {
