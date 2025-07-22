@@ -377,6 +377,7 @@ export function ClusterCredentialsModal({
         loading={isLoadingCreate || isLoadingEdit}
         isEdit={isEdit}
         submitLabel={submitLabel}
+        customLoader="Processing..."
       >
         <div className="flex flex-col gap-y-4">
           {cloudProviderLocal === 'AWS' && (
@@ -776,9 +777,14 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       <h2 className="text-sm font-medium text-neutral-400">
                         3. Open the embedded Azure shell and run the following command
                       </h2>
-                      <p className="text-sm text-neutral-350">
-                        Select `Bash`, then `No storage account required` and your subscription ID.
-                      </p>
+                      <div>
+                        <p className="text-sm text-neutral-350">
+                          Select `Bash`, then `No storage account required` and your subscription ID.
+                        </p>
+                        <p className="text-sm text-neutral-350">
+                          Please note that this script can take up to 30 seconds to complete.
+                        </p>
+                      </div>
                       <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
                         <div>
                           <span className="select-none">$ </span>
