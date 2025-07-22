@@ -4,20 +4,20 @@ import { twMerge } from '@qovery/shared/util-js'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
 
-const ChartContainer = forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
-    isLoading?: boolean
-    isEmpty?: boolean
-  }
->(({ children, className, isLoading, isEmpty, ...props }, ref) => {
+interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+  children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
+  isLoading?: boolean
+  isEmpty?: boolean
+}
+
+const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
+  ({ children, className, isLoading, isEmpty, ...htmlProps }, ref) => {
   const chartContainerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div ref={ref} className={twMerge('relative flex h-[300px] justify-center text-xs', className)} {...props}>
+    <div ref={ref} className={twMerge('relative flex h-[300px] justify-center text-xs', className)} {...htmlProps}>
       <RechartsPrimitive.ResponsiveContainer ref={chartContainerRef} width="100%" height="100%">
-        {children as React.ReactElement}
+        {children}
       </RechartsPrimitive.ResponsiveContainer>
 
       <div
