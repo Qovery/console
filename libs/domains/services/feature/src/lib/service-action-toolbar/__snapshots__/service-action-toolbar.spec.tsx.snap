@@ -351,9 +351,9 @@ exports[`ServiceActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-trash text-sm mr-3 text-red-600"
+          class="fa-regular fa-trash-can text-sm mr-3 text-red-600"
         />
-        Delete service
+        Remove service
       </div>
     </div>
   </div>
