@@ -1,4 +1,4 @@
-import { type DeploymentHistoryEnvironmentV2, type Status } from 'qovery-typescript-axios'
+import { type Status } from 'qovery-typescript-axios'
 import { useDeploymentStatus, useLinks, useService } from '@qovery/domains/services/feature'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'

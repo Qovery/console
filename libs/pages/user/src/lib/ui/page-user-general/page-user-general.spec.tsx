@@ -34,10 +34,10 @@ describe('PageUserGeneral', () => {
       })
     )
 
-    screen.getByLabelText('First name')
-    screen.getByLabelText('Last name')
-    screen.getAllByLabelText('Account email')
-    screen.getByLabelText('Communication email')
+    expect(screen.getByLabelText('First name')).toBeInTheDocument()
+    expect(screen.getByLabelText('Last name')).toBeInTheDocument()
+    expect(screen.getAllByLabelText('Account email')).toHaveLength(2)
+    expect(screen.getByLabelText('Communication email')).toBeInTheDocument()
   })
 
   it('should submit the form', async () => {

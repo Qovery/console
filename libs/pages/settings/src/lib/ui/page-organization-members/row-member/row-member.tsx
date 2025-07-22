@@ -43,6 +43,8 @@ export interface RowMemberProps {
   availableRoles?: OrganizationAvailableRole[]
   loadingUpdateRole?: boolean
   userIsOwner?: boolean
+  userIsAdmin?: boolean
+  enableMember?: (userEmail: string, provider?: string) => void
 }
 
 export const RolesIcons: { [key: string]: IconName } = {
@@ -81,6 +83,8 @@ export function RowMember(props: RowMemberProps) {
     transferOwnership,
     resendInvite,
     userIsOwner,
+    userIsAdmin,
+    enableMember,
     filter,
   } = props
 
@@ -152,6 +156,22 @@ export function RowMember(props: RowMemberProps) {
               ]
             : [],
         },
+        ...(userIsAdmin
+          ? [
+              {
+                items: [
+                  {
+                    name: 'Enable member',
+                    onClick: () => {
+                      enableMember && enableMember(member.email)
+                    },
+                    contentLeft: <Icon iconName="check" iconStyle="regular" className="text-sm text-green-600" />,
+                    containerClassName: 'text-green-600',
+                  },
+                ],
+              },
+            ]
+          : []),
         {
           items: [
             {
@@ -303,7 +323,7 @@ export function RowMember(props: RowMemberProps) {
         <div className="flex items-center px-4 text-xs font-medium text-neutral-400">
           <Skeleton className="shrink-0" show={loading} width={64} height={16}>
             {(member as Member).last_activity_at ? (
-              <Tooltip content={dateUTCString((member as Member).last_activity_at!)}>
+              <Tooltip content={dateUTCString((member as Member).last_activity_at || '')}>
                 <span data-testid="last-activity">
                   {timeAgo(new Date((member as Member).last_activity_at || ''))} ago
                 </span>

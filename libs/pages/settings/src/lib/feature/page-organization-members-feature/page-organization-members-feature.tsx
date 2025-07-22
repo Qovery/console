@@ -8,11 +8,13 @@ import {
   useDeleteInviteMember,
   useDeleteMember,
   useEditMemberRole,
+  useEnableUserConnect,
   useInviteMembers,
   useMembers,
   useTransferOwnershipMemberRole,
 } from '@qovery/domains/organizations/feature'
 import { membersMock } from '@qovery/shared/factories'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
@@ -36,8 +38,10 @@ export function PageOrganizationMembersFeature() {
   const { mutateAsync: deleteInviteMember } = useDeleteInviteMember()
   const { mutateAsync: transferOwnershipMemberRole } = useTransferOwnershipMemberRole()
   const { mutateAsync: createInviteMember } = useCreateInviteMember()
+  const { mutateAsync: enableUserConnect } = useEnableUserConnect()
 
   const { user } = useAuth0()
+  const { isQoveryAdminUser } = useUserRole()
 
   const { openModal, closeModal } = useModal()
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
@@ -97,6 +101,14 @@ export function PageOrganizationMembersFeature() {
     }
   }
 
+  const onClickEnableMember = async (userEmail: string, provider?: string) => {
+    try {
+      await enableUserConnect({ userEmail, provider })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <PageOrganizationMembers
       userId={user?.sub}
@@ -110,6 +122,8 @@ export function PageOrganizationMembersFeature() {
       deleteMember={onClickDeleteMember}
       deleteInviteMember={onClickRevokeMemberInvite}
       resendInvite={onClickResendInvite}
+      userIsAdmin={isQoveryAdminUser}
+      enableMember={onClickEnableMember}
       onAddMember={() => {
         openModal({
           content: (

@@ -736,6 +736,7 @@ export const mutations = {
     const response = await githubAppApi.organizationGithubAppConnect(organizationId, appConnectRequest)
     return response.data
   },
+
   async disconnectGithubApp({ organizationId, force }: { organizationId: string; force?: boolean }) {
     const response = await githubAppApi.organizationGithubAppDisconnect(organizationId, force)
     return response.data

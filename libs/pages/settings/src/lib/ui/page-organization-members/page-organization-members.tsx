@@ -24,6 +24,8 @@ export interface PageOrganizationMembersProps {
   availableRoles?: OrganizationAvailableRole[]
   userId?: string
   onAddMember?: () => void
+  userIsAdmin?: boolean
+  enableMember?: (userEmail: string, provider?: string) => void
 }
 
 const inviteMembersHead = [
@@ -61,6 +63,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     userId,
     onAddMember,
     resendInvite,
+    userIsAdmin,
+    enableMember,
   } = props
 
   const membersHead = [
@@ -145,6 +149,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
                 key={member.id}
                 filter={filterMembers}
                 userIsOwner={userIsOwner?.role_name?.toUpperCase() === MemberRoleEnum.OWNER}
+                userIsAdmin={userIsAdmin}
+                enableMember={enableMember}
                 loading={!isFetchedMembers || member.id === index.toString()}
                 member={member}
                 availableRoles={availableRoles}
@@ -179,6 +185,8 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
                   transferOwnership={transferOwnership}
                   deleteInviteMember={deleteInviteMember}
                   resendInvite={resendInvite}
+                  userIsAdmin={userIsAdmin}
+                  enableMember={enableMember}
                   columnsWidth={columnsWidth}
                 />
               ))}

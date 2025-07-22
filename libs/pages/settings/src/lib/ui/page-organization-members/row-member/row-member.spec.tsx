@@ -105,4 +105,33 @@ describe('RowMember', () => {
 
     expect(spy).toHaveBeenCalled()
   })
+
+  it('should have menu with enable member action for admin users', async () => {
+    const spy = jest.fn()
+    props.enableMember = spy
+    props.userIsAdmin = true
+    props.member = membersMock(1)[0]
+
+    const { userEvent } = renderWithProviders(<RowMember {...props} />)
+    await userEvent.click(screen.getByTestId('element'))
+
+    const items = screen.getAllByTestId('menuItem')
+    const enableMemberItem = items.find((item) => item.textContent?.includes('Enable member'))
+
+    expect(enableMemberItem).toBeTruthy()
+    if (enableMemberItem) {
+      await userEvent.click(enableMemberItem)
+    }
+    expect(spy).toHaveBeenCalledWith(props.member.email)
+  })
+
+  it('should not show enable member action for non-admin users', () => {
+    props.userIsAdmin = false
+    props.member = membersMock(1)[0]
+
+    renderWithProviders(<RowMember {...props} />)
+
+    const enableMemberItem = screen.queryByText('Enable member')
+    expect(enableMemberItem).not.toBeInTheDocument()
+  })
 })

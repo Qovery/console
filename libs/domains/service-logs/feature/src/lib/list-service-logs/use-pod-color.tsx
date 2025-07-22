@@ -53,17 +53,21 @@ export const getColorByPod = (pod: string): string => {
 export const usePodColor = () => {
   const colorMap = useMemo(() => new Map<string, string>(), [])
 
-  const getPodColor = useCallback((podName: string) => {
-    if (!podName) return COLORS[0]
+  const getPodColor = useCallback(
+    (podName: string) => {
+      if (!podName) return COLORS[0]
 
-    if (colorMap.has(podName)) {
-      return colorMap.get(podName)!
-    }
+      const existing = colorMap.get(podName)
+      if (existing) {
+        return existing
+      }
 
-    const color = getColorByPod(podName)
-    colorMap.set(podName, color)
-    return color
-  }, [])
+      const color = getColorByPod(podName)
+      colorMap.set(podName, color)
+      return color
+    },
+    [colorMap]
+  )
 
   return getPodColor
 }

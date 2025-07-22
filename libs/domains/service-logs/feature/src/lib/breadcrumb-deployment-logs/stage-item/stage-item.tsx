@@ -82,7 +82,11 @@ export function StageItem({ stage, index, getService, serviceId, versionId, sear
                   }
                 >
                   <span className="flex items-center gap-2.5">
-                    <ServiceAvatar size="xs" service={getService(service.id)!} border="none" />
+                    <ServiceAvatar
+                      size="xs"
+                      service={getService(service.id) || { icon_uri: '', serviceType: 'APPLICATION' }}
+                      border="none"
+                    />
                     <Truncate text={fullService?.name ?? ''} truncateLimit={28} />
                   </span>
                   <span className="flex items-center gap-2">

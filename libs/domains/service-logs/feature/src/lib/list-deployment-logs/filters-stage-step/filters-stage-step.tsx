@@ -53,7 +53,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
     }
     // On the first load, if status is 'ERROR', the column filter is toggled
     // For all subsequent renders, the column filter is toggled only if the status is 'ERROR'
-  }, [status, toggleColumnFilter, isFirstLoad, hash])
+  }, [status, toggleColumnFilter, isFirstLoad, hash, type])
 
   const isBuildingOrDeploying =
     (type === 'BUILD' && status === 'BUILDING') || (type === 'DEPLOY' && status === 'DEPLOYING')

@@ -59,7 +59,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
           }
           return a.podName.localeCompare(b.podName)
         }),
-    [pods]
+    [pods, service?.serviceType]
   )
 
   const podStatusCount = useMemo(() => {
@@ -100,13 +100,13 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
   const shouldBeOpen = useMemo(() => {
     if (isMetricsLoading || isRunningStatusesLoading) return false
     return podsFiltered.filter((pod) => pod.state === 'ERROR').length > 0 && runningStatuses?.state !== 'STOPPED'
-  }, [isMetricsLoading, isRunningStatusesLoading, podsFiltered.length, runningStatuses?.state])
+  }, [isMetricsLoading, isRunningStatusesLoading, podsFiltered, runningStatuses?.state])
 
   const [open, setOpen] = useState(shouldBeOpen)
 
   const currentPadding = useMemo(() => {
     return open ? PADDING_SIDEBAR_OPEN : PADDING_SIDEBAR_CLOSE
-  }, [isMetricsLoading, isRunningStatusesLoading, runningStatuses?.state, open])
+  }, [open])
 
   const toggleOpen = () => {
     setOpen(!open)

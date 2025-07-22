@@ -136,7 +136,7 @@ export function useServiceLogs({
   }, [debouncedServiceMessages, debouncedInfraMessages, enabledNginx, showPreviousLogs, now])
 
   const debouncedLogs = useDebounce(data, DEBOUNCE_TIME)
-  const pausedDataLogs = useMemo(() => debouncedLogs, [pauseLogs])
+  const pausedDataLogs = useMemo(() => debouncedLogs, [debouncedLogs, pauseLogs])
 
   return {
     data: pauseLogs ? pausedDataLogs : debouncedLogs,

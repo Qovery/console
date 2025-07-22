@@ -81,7 +81,7 @@ export function BreadcrumbDeploymentLogs({
           }),
         }))
         .filter((stage) => stage.mergedServices.length > 0),
-    [stagesWithMergedServices, searchTerm, services]
+    [stagesWithMergedServices, searchTerm, services, getService]
   )
 
   // XXX: https://github.com/radix-ui/primitives/issues/1342

@@ -9,7 +9,7 @@ import SpyInstance = jest.SpyInstance
 
 jest.mock('@qovery/shared/spotlight/feature', () => ({
   ...jest.requireActual('@qovery/shared/spotlight/feature'),
-  Spotlight: () => <></>,
+  Spotlight: () => <div data-testid="spotlight-mock" />,
 }))
 
 const useOrganizationsSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useOrganizations')

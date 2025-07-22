@@ -46,6 +46,7 @@ export function useReactQueryWsSubscription({
   const { getAccessTokenSilently } = useAuth0()
 
   const MAX_RECONNECT_ATTEMPTS = typeof shouldReconnect === 'number' ? shouldReconnect : Infinity
+  const shouldReconnectRef = useRef(shouldReconnect)
 
   let _urlSearchParams: string[][] | Record<string, string> | string | URLSearchParams
 
@@ -63,6 +64,7 @@ export function useReactQueryWsSubscription({
 
   const searchParams = new URLSearchParams(_urlSearchParams)
   const reconnectCount = useRef<number>(0)
+  const searchParamsString = searchParams.toString()
 
   useEffect(() => {
     if (!enabled) {
@@ -77,7 +79,7 @@ export function useReactQueryWsSubscription({
         // signal already aborted do nothing
         return
       }
-      const websocket = new WebSocket(`${url}?${searchParams.toString()}`, ['v1', 'auth.bearer.' + token])
+      const websocket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
 
       websocket.onopen = async (event) => {
         onOpen?.(queryClient, event)
@@ -97,7 +99,7 @@ export function useReactQueryWsSubscription({
         onError?.(queryClient, event)
       }
       websocket.onclose = async (event) => {
-        if (shouldReconnect && reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
+        if (shouldReconnectRef.current && reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
           timeout = setTimeout(
             function () {
               reconnectCount.current++
@@ -113,7 +115,7 @@ export function useReactQueryWsSubscription({
       }
 
       const onAbort = () => {
-        shouldReconnect = false
+        shouldReconnectRef.current = false
         websocket.close()
         if (timeout) {
           clearTimeout(timeout)
@@ -128,7 +130,18 @@ export function useReactQueryWsSubscription({
     return () => {
       controller.abort()
     }
-  }, [queryClient, getAccessTokenSilently, onOpen, onMessage, onClose, url, searchParams.toString(), enabled])
+  }, [
+    queryClient,
+    getAccessTokenSilently,
+    onOpen,
+    onMessage,
+    onError,
+    onClose,
+    url,
+    searchParamsString,
+    enabled,
+    MAX_RECONNECT_ATTEMPTS,
+  ])
 }
 
 export default useReactQueryWsSubscription

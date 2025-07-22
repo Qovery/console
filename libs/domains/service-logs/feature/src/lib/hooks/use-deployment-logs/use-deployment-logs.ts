@@ -99,7 +99,7 @@ export function useDeploymentLogs({
     return () => {
       clearTimeout(timerId)
     }
-  }, [messageChunks, pauseLogs, hash])
+  }, [messageChunks, pauseLogs, hash, debounceTime, logs.length])
 
   // Filter deployment logs by serviceId and stageId
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId

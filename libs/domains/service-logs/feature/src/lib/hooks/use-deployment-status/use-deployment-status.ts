@@ -8,8 +8,7 @@ export interface UseDeploymentStatusProps {
 
 export function useDeploymentStatus({ environmentId, serviceId }: UseDeploymentStatusProps) {
   return useQuery({
-    // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-    ...queries.services.deploymentStatus(environmentId!!, serviceId!!),
+    ...queries.services.deploymentStatus(environmentId || '', serviceId || ''),
     enabled: Boolean(environmentId) && Boolean(serviceId),
     refetchOnMount: false,
     refetchOnWindowFocus: false,

@@ -162,7 +162,7 @@
     "eslint-plugin-storybook": "^0.8.0",
     "husky": "^8.0.2",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "29.7.0",
+    "jest": "^30.0.4",
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "29.7.0",
     "jest-environment-node": "^29.7.0",
