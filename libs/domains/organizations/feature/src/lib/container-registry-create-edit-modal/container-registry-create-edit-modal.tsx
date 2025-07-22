@@ -160,6 +160,7 @@ export function ContainerRegistryCreateEditModal({
           </>
         }
         submitLabel={submitLabel}
+        customLoader="Loading..."
       >
         <ContainerRegistryForm isEdit={isEdit} registry={registry} />
       </ModalCrud>
