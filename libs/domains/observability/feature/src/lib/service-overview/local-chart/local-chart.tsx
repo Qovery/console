@@ -96,7 +96,7 @@ function ChartContent({
           onMouseLeave={() => setOnHoverHideTooltip(false)}
           onMouseUp={() => setOnHoverHideTooltip(false)}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-200)" vertical={false} />
           <XAxis
             dataKey="timestamp"
             type="number"
@@ -105,7 +105,7 @@ function ChartContent({
             ticks={getLogicalTicks()}
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'var(--color-neutral-250)' }}
+            axisLine={{ stroke: 'transparent' }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
               const isLongRange = () => {
@@ -135,7 +135,6 @@ function ChartContent({
             }}
             allowDataOverflow={true}
             interval="preserveStartEnd"
-            strokeDasharray="3 3"
           />
           <Chart.Tooltip
             isAnimationActive={false}
@@ -151,8 +150,8 @@ function ChartContent({
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'var(--color-neutral-250)' }}
-            strokeDasharray="3 3"
+            axisLine={{ stroke: 'transparent' }}
+            stroke="transparent"
             orientation="right"
             tickCount={5}
             domain={yDomain}

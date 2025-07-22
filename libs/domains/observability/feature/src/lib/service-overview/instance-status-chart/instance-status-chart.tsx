@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Line, ReferenceLine } from 'recharts'
+import { Area, Line, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
@@ -254,21 +254,27 @@ export function InstanceStatusChart({
       referenceLineData={referenceLineData}
       isFullscreen={true}
     >
-      <Line
+      <Area
         key="true"
         dataKey="Instance healthy"
         stroke="var(--color-green-500)"
+        fill="var(--color-green-500)"
+        fillOpacity={0.3}
         isAnimationActive={false}
         dot={false}
         strokeWidth={2}
+        stackId="status"
       />
-      <Line
+      <Area
         key="false"
         dataKey="Instance unhealthy"
         stroke="var(--color-red-500)"
+        fill="var(--color-red-500)"
+        fillOpacity={0.3}
         isAnimationActive={false}
         dot={false}
         strokeWidth={2}
+        stackId="status"
       />
       {!hideEvents && (
         <>

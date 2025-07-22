@@ -72,14 +72,13 @@ sum (
       unit="%"
       serviceId={serviceId}
       margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-      referenceLineData={[]}
-      isFullscreen={true}
+      isFullscreen
     >
       {seriesNames.map((name) => (
         <Area
           key={name}
           dataKey={name}
-          stackId="httpErrors" // This makes them stack
+          stackId="httpErrors"
           stroke={getColorByPod(name)}
           fill={getColorByPod(name)}
           fillOpacity={0.6}
