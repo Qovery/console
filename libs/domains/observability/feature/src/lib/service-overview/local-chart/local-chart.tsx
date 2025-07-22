@@ -160,8 +160,8 @@ function ChartContent({
         </ComposedChart>
       </Chart.Container>
       {isFullscreen && referenceLineData && referenceLineData.length > 0 && !hideEvents && (
-        <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-200">
-          <p className="border-b border-neutral-200 px-4 py-2 text-xs font-medium text-neutral-500">
+        <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-250">
+          <p className="border-b border-neutral-250 bg-neutral-100 px-4 py-2 text-xs font-medium text-neutral-500">
             {pluralize(referenceLineData.length, 'Event', 'Events')} associated
           </p>
           <div className="h-full overflow-y-auto">
@@ -171,7 +171,7 @@ function ChartContent({
                 <div
                   key={event.key}
                   className={clsx(
-                    'flex gap-2 border-b border-neutral-200 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-100',
+                    'flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150',
                     {
                       'bg-neutral-100': hoveredEventKey === event.key,
                     }
@@ -313,19 +313,20 @@ export function LocalChart({
             <Heading className="scroll-mt-20">{label}</Heading>
             <Tooltip content="Mode fullscreen">
               <Button
-                variant="plain"
+                variant="surface"
                 color="neutral"
-                size="sm"
-                className="w-7 items-center justify-center p-0"
+                size="xs"
+                className="gap-1 pr-1"
                 onClick={() => setIsModalOpen(true)}
               >
+                View events details
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <g fill="#67778E" fillRule="evenodd" clipPath="url(#clip0_25081_61823)" clipRule="evenodd">
-                    <path d="M2.866 2.133a.733.733 0 0 0-.733.733v1.467a.733.733 0 1 1-1.467 0V2.866a2.2 2.2 0 0 1 2.2-2.2h1.467a.733.733 0 1 1 0 1.467zM10.933 1.4c0-.406.328-.734.733-.734h1.467a2.2 2.2 0 0 1 2.2 2.2v1.467a.733.733 0 1 1-1.467 0V2.866a.733.733 0 0 0-.733-.733h-1.467a.733.733 0 0 1-.733-.734M14.6 10.933c.404 0 .733.328.733.733v1.467a2.2 2.2 0 0 1-2.2 2.2h-1.467a.733.733 0 0 1 0-1.467h1.467a.733.733 0 0 0 .733-.733v-1.467c0-.405.328-.733.733-.733M1.4 10.933c.404 0 .733.328.733.733v1.467a.733.733 0 0 0 .733.733h1.467a.733.733 0 1 1 0 1.467H2.866a2.2 2.2 0 0 1-2.2-2.2v-1.467c0-.405.328-.733.733-.733M3.6 5.8c0-.81.656-1.467 1.466-1.467h5.867c.81 0 1.466.656 1.466 1.466v4.4c0 .81-.656 1.467-1.466 1.467H5.066c-.81 0-1.467-.657-1.467-1.467zm7.333 0H5.066v4.4h5.867z"></path>
+                  <g fill="#383E50" fillRule="evenodd" clipPath="url(#clip0_25356_47547)" clipRule="evenodd">
+                    <path d="M4.15 3.6a.55.55 0 0 0-.55.55v1.1a.55.55 0 1 1-1.1 0v-1.1A1.65 1.65 0 0 1 4.15 2.5h1.1a.55.55 0 1 1 0 1.1zM10.2 3.05a.55.55 0 0 1 .55-.55h1.1a1.65 1.65 0 0 1 1.65 1.65v1.1a.55.55 0 1 1-1.1 0v-1.1a.55.55 0 0 0-.55-.55h-1.1a.55.55 0 0 1-.55-.55M12.95 10.2a.55.55 0 0 1 .55.55v1.1a1.65 1.65 0 0 1-1.65 1.65h-1.1a.55.55 0 1 1 0-1.1h1.1a.55.55 0 0 0 .55-.55v-1.1a.55.55 0 0 1 .55-.55M3.05 10.2a.55.55 0 0 1 .55.55v1.1a.55.55 0 0 0 .55.55h1.1a.55.55 0 1 1 0 1.1h-1.1a1.65 1.65 0 0 1-1.65-1.65v-1.1a.55.55 0 0 1 .55-.55M4.7 6.35a1.1 1.1 0 0 1 1.1-1.1h4.4a1.1 1.1 0 0 1 1.1 1.1v3.3a1.1 1.1 0 0 1-1.1 1.1H5.8a1.1 1.1 0 0 1-1.1-1.1zm5.5 0H5.8v3.3h4.4z"></path>
                   </g>
                   <defs>
-                    <clipPath id="clip0_25081_61823">
-                      <path fill="#fff" d="M0 0h16v16H0z"></path>
+                    <clipPath id="clip0_25356_47547">
+                      <path fill="#fff" d="M2 2h12v12H2z"></path>
                     </clipPath>
                   </defs>
                 </svg>

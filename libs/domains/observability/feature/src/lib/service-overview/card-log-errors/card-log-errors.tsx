@@ -1,9 +1,25 @@
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { pluralize } from '@qovery/shared/util-js'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function CardLogErrors({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+export function CardLogErrors({
+  organizationId,
+  projectId,
+  environmentId,
+  serviceId,
+  clusterId,
+}: {
+  organizationId: string
+  projectId: string
+  environmentId: string
+  serviceId: string
+  clusterId: string
+}) {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { timeRange } = useServiceOverviewContext()
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
@@ -21,6 +37,12 @@ export function CardLogErrors({ serviceId, clusterId }: { serviceId: string; clu
       status={isError ? 'RED' : 'GREEN'}
       description={`in the last ${timeRange}`}
       isLoading={isLoadingMetrics}
+      icon="scroll"
+      onClick={() =>
+        navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId), {
+          state: { prevUrl: pathname },
+        })
+      }
     />
   )
 }

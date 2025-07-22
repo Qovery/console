@@ -23,7 +23,7 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
         />
         <Dialog.Content className="modal__content fixed left-1/2 top-6 h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]">
           <Section>
-            <div className="flex h-14 w-full items-center justify-between gap-5 border-b border-neutral-200 px-5">
+            <div className="flex h-14 w-full items-center justify-between gap-5 border-b border-neutral-250 px-5">
               <div className="flex items-baseline gap-2">
                 {title && (
                   <Dialog.Title>
@@ -34,6 +34,15 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
               </div>
               <div className="flex items-center gap-10">
                 <div className="flex items-center gap-5">
+                  <Button
+                    variant="plain"
+                    size="xs"
+                    className="flex items-center gap-1"
+                    onClick={() => setHideEvents(!hideEvents)}
+                  >
+                    {hideEvents ? 'Show events' : 'Hide events'}
+                    <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
+                  </Button>
                   <SelectTimeRange />
                   <InputSelectSmall
                     name="timezone"
@@ -45,18 +54,6 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                     defaultValue={useLocalTime ? 'local' : 'utc'}
                     onChange={(e) => setUseLocalTime(e === 'local')}
                   />
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="hide-events"
-                      name="hide-events"
-                      className="h-4 w-4 min-w-4"
-                      checked={hideEvents}
-                      onCheckedChange={(checked) => setHideEvents(checked as boolean)}
-                    />
-                    <label htmlFor="hide-events" className="text-sm text-neutral-400">
-                      Hide events
-                    </label>
-                  </div>
                 </div>
                 <Dialog.Close>
                   <Button variant="outline" size="md">

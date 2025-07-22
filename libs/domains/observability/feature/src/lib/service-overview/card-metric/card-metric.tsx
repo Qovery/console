@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { type ComponentProps, type ReactNode } from 'react'
 import { Button, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
@@ -11,6 +12,7 @@ interface CardMetricProps extends Omit<ComponentProps<'button'>, 'value'> {
   description?: string
   isLoading?: boolean
   hasModalLink?: boolean
+  icon?: IconName
 }
 
 export function CardMetric({
@@ -22,6 +24,8 @@ export function CardMetric({
   isLoading = true,
   className,
   hasModalLink = false,
+  icon = 'chart-line',
+  onClick,
   ...props
 }: CardMetricProps) {
   const getStatusColor = () => {
@@ -53,12 +57,13 @@ export function CardMetric({
       type="button"
       className={twMerge(
         clsx(
-          'w-full cursor-default rounded border border-neutral-200 bg-neutral-50 px-5 py-4',
-          !isLoading && hasModalLink && 'cursor-pointer shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)] hover:shadow-md',
+          'w-full cursor-default rounded border border-neutral-250 bg-neutral-50 px-5 py-4',
+          !isLoading && 'cursor-pointer shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)] hover:shadow-md',
           className
         )
       )}
       disabled={isLoading}
+      onClick={onClick}
       {...props}
     >
       <div className="flex flex-col justify-between gap-1 text-left">
@@ -69,15 +74,15 @@ export function CardMetric({
               {getStatusDot()}
             </Skeleton>
           </div>
-          {hasModalLink && (
-            <Tooltip content="Show chart">
+          {(hasModalLink || onClick) && (
+            <Tooltip content={!hasModalLink ? 'Show logs' : 'Show chart'}>
               <Button
                 variant="plain"
                 color="neutral"
                 size="sm"
                 className="relative left-2 w-7 items-center justify-center p-0"
               >
-                <Icon iconName="chart-line" />
+                <Icon iconName={icon} />
               </Button>
             </Tooltip>
           )}

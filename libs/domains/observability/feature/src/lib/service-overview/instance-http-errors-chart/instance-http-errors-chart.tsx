@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { Area } from 'recharts'
+import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-import { getColorByPod } from '@qovery/shared/util-hooks'
 
 export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
@@ -47,43 +47,35 @@ sum (
         timeSeriesMap,
         (_, index) => JSON.stringify(metricsHttpStatusErrorRatio.data.result[index].metric),
         (value) => parseFloat(value),
-        useLocalTime,
+        useLocalTime
       )
     }
 
     // Convert map to sorted array and add time range padding
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [
-    metricsHttpStatusErrorRatio,
-    useLocalTime,
-    startTimestamp,
-    endTimestamp,
-  ])
+  }, [metricsHttpStatusErrorRatio, useLocalTime, startTimestamp, endTimestamp])
 
   const seriesNames = useMemo(() => {
     if (!metricsHttpStatusErrorRatio?.data?.result) return []
     return metricsHttpStatusErrorRatio.data.result.map((_: unknown, index: number) =>
-      JSON.stringify(metricsHttpStatusErrorRatio.data.result[index].metric),
+      JSON.stringify(metricsHttpStatusErrorRatio.data.result[index].metric)
     ) as string[]
   }, [metricsHttpStatusErrorRatio])
 
   return (
     <LocalChart
       data={chartData || []}
-      isLoading={
-        isLoadingHttpStatusErrorRatio
-      }
+      isLoading={isLoadingHttpStatusErrorRatio}
       isEmpty={(chartData || []).length === 0}
       tooltipLabel="HTTP Error Rate"
       unit="%"
       serviceId={serviceId}
       margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-      yDomain={[0, 'dataMax + 1']}
       referenceLineData={[]}
       isFullscreen={true}
     >
-      {seriesNames.map((name, _) => (
+      {seriesNames.map((name) => (
         <Area
           key={name}
           dataKey={name}
