@@ -611,7 +611,7 @@ function MenuOtherActions({
           <div className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200">
             <ServiceAvatar service={service} size="xs" />
           </div>
-          <span className="font-medium text-neutral-400">{service.name}</span>
+          <span className="text-sm font-medium text-neutral-400">{service.name}</span>
         </div>,
       ],
       actions: [
