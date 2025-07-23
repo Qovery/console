@@ -34,7 +34,7 @@ export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; cl
     queryRange: 'query',
   })
 
-  const value = Math.round(metrics?.data?.result[0]?.value[1]) ?? 0
+  const value = Math.round(metrics?.data?.result[0]?.value[1]) || 0
   const isError = value > 0
 
   const title = `HTTP ${pluralize(value, 'error', 'errors')} rate`

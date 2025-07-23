@@ -27,7 +27,7 @@ export function CardLogErrors({
     queryRange: 'query',
   })
 
-  const value = metrics?.data?.result.length
+  const value = metrics?.data?.result.length || 0
   const isError = value > 0
 
   return (
