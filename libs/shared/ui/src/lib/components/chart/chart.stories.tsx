@@ -28,7 +28,7 @@ export const LineChartExample = {
   render: () => (
     <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
       <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="timestamp"
           type="number"
@@ -48,10 +48,10 @@ export const LineChartExample = {
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
+          axisLine={{ stroke: 'transparent' }}
           orientation="right"
           tickCount={5}
+          tickFormatter={(value) => value === 0 ? '' : value}
         />
         <Chart.Tooltip content={<Chart.TooltipContent title="Performance Metrics" />} />
         <Line type="linear" dataKey="value" stroke="var(--color-brand-500)" strokeWidth={2} dot={false} connectNulls={false} isAnimationActive={false} />
@@ -65,7 +65,7 @@ export const AreaChartExample = {
   render: () => (
     <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
       <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="timestamp"
           type="number"
@@ -85,10 +85,10 @@ export const AreaChartExample = {
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
+          axisLine={{ stroke: 'transparent' }}
           orientation="right"
           tickCount={5}
+          tickFormatter={(value) => value === 0 ? '' : value}
         />
         <Chart.Tooltip content={<Chart.TooltipContent title="Usage Metrics" />} />
         <Area type="linear" dataKey="value" stackId="httpErrors" stroke="var(--color-brand-500)" fill="var(--color-brand-500)" fillOpacity={0.6} strokeWidth={2} isAnimationActive={false} />
@@ -102,10 +102,10 @@ export const LoadingState = {
   args: {
     isLoading: true,
   },
-  render: (args: any) => (
+  render: (args: { isLoading?: boolean }) => (
     <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
       <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="timestamp"
           type="number"
@@ -119,10 +119,10 @@ export const LoadingState = {
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
+          axisLine={{ stroke: 'transparent' }}
           orientation="right"
           tickCount={5}
+          tickFormatter={(value) => value === 0 ? '' : value}
         />
         <Line type="linear" dataKey="value" stroke="var(--color-brand-500)" strokeWidth={2} dot={false} connectNulls={false} isAnimationActive={false} />
       </ComposedChart>
@@ -134,10 +134,10 @@ export const EmptyState = {
   args: {
     isEmpty: true,
   },
-  render: (args: any) => (
+  render: (args: { isEmpty?: boolean }) => (
     <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
       <ComposedChart data={[]} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="timestamp"
           type="number"
@@ -150,10 +150,10 @@ export const EmptyState = {
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
+          axisLine={{ stroke: 'transparent' }}
           orientation="right"
           tickCount={5}
+          tickFormatter={(value) => value === 0 ? '' : value}
         />
         <Line type="linear" dataKey="value" stroke="var(--color-brand-500)" strokeWidth={2} dot={false} connectNulls={false} isAnimationActive={false} />
       </ComposedChart>
@@ -165,7 +165,7 @@ export const CustomTooltip = {
   render: () => (
     <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
       <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="timestamp"
           type="number"
@@ -185,10 +185,10 @@ export const CustomTooltip = {
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
+          axisLine={{ stroke: 'transparent' }}
           orientation="right"
           tickCount={5}
+          tickFormatter={(value) => value === 0 ? '' : value}
         />
         <Chart.Tooltip
           content={
@@ -218,7 +218,7 @@ export const WithReferenceLines = {
   render: () => (
     <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
       <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-250)" />
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
         <XAxis
           dataKey="timestamp"
           type="number"
@@ -238,10 +238,10 @@ export const WithReferenceLines = {
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
+          axisLine={{ stroke: 'transparent' }}
           orientation="right"
           tickCount={5}
+          tickFormatter={(value) => value === 0 ? '' : value}
         />
         <Chart.Tooltip content={<Chart.TooltipContent title="Performance with Events" />} />
         <Line type="linear" dataKey="value" stroke="var(--color-brand-500)" strokeWidth={2} dot={false} connectNulls={false} isAnimationActive={false} />

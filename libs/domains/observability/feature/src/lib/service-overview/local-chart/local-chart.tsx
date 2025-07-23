@@ -95,7 +95,7 @@ function ChartContent({
           onMouseLeave={() => setOnHoverHideTooltip(false)}
           onMouseUp={() => setOnHoverHideTooltip(false)}
         >
-          <CartesianGrid stroke="var(--color-neutral-200)" vertical={false} />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
           <XAxis
             dataKey="timestamp"
             type="number"
@@ -144,10 +144,10 @@ function ChartContent({
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
-            stroke="transparent"
             orientation="right"
             tickCount={5}
             domain={yDomain}
+            tickFormatter={(value) => value === 0 ? '' : value}
           />
         </ComposedChart>
       </Chart.Container>
