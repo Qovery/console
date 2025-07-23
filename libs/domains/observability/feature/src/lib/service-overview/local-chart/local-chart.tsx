@@ -15,7 +15,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
 
 export interface ReferenceLineEvent {
-  type: 'metric' | 'event' | 'exit-code'
+  type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe'
   timestamp: number
   reason: string
   icon: IconName
