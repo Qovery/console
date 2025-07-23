@@ -79,6 +79,20 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
     return metrics.data.result.map((_: unknown, index: number) => metrics.data.result[index].metric.pod) as string[]
   }, [metrics])
 
+  const renderCpuLimitLabel = (props: any) => {
+    const { x, y, index, value } = props
+    // Only render for the last point with a value
+    if (chartData && index === chartData.length - 1 && value != null) {
+      return (
+        <text x={x} y={y - 8} fill="var(--color-red-500)" fontSize={12} fontWeight={500} textAnchor="end">
+          CPU limit
+        </text>
+      )
+    }
+    // Return an empty SVG group instead of null to satisfy type requirements
+    return <g />
+  }
+
   return (
     <LocalChart
       data={chartData}
@@ -118,6 +132,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         stroke="var(--color-red-500)"
         strokeDasharray="4 4"
         strokeWidth={2}
+        label={renderCpuLimitLabel}
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
