@@ -1,5 +1,4 @@
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
-import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import type { MetricData } from '../../hooks/use-metrics/use-metrics'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
@@ -23,12 +22,6 @@ interface TooltipProps {
   unit: UnitType
   active?: boolean
   payload?: TooltipEntry[]
-  events?: OrganizationEventResponse[]
-  kubeEvents?: {
-    data?: {
-      result?: MetricData[]
-    }
-  }
 }
 
 // Returns the base name by removing '-request' from the series key
@@ -135,41 +128,12 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
 }
 
 // Tooltip component for displaying metric and events details
-export function Tooltip({ active, unit, payload, customLabel, events, kubeEvents }: TooltipProps) {
+export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
   const { hideEvents } = useServiceOverviewContext()
 
   if (!active || !payload || payload.length === 0) return null
 
-  // Returns kubeEvents (Warning) near a given timestamp
-  const getKubeEventsNearTimestamp = (timestamp: number) => {
-    if (!kubeEvents?.data?.result) return []
-    const tolerance = 5 * 60 // 5 minutes tolerance in seconds
-    return kubeEvents.data.result.filter((serie) => {
-      return serie.values.some(([ts, value]) => {
-        const tsNum = typeof ts === 'string' ? Number(ts) : ts
-        return Math.abs(tsNum - timestamp / 1000) <= tolerance && parseFloat(value) > 0
-      })
-    })
-  }
-
   const dataPoint = payload[0]?.payload
-  const kubeEventsAtPoint = dataPoint?.timestamp ? getKubeEventsNearTimestamp(dataPoint.timestamp) : []
-
-  // Function to get events near a specific timestamp
-  const getEventsNearTimestamp = (timestamp: number) => {
-    if (!events) return []
-
-    const tolerance = 5 * 60 * 1000 // 5 minutes tolerance in milliseconds
-    return events.filter((event) => {
-      if (!event.timestamp) return false
-      const eventTimestamp = new Date(event.timestamp).getTime()
-      return Math.abs(eventTimestamp - timestamp) <= tolerance
-    })
-  }
-
-  const nearbyEvents = dataPoint?.timestamp
-    ? getEventsNearTimestamp(dataPoint.timestamp).filter((event) => event.event_type === 'TRIGGER_DEPLOY')
-    : []
 
   const groupedEntries = groupEntriesByType(payload)
   const processedEntries = processGroupedEntries(groupedEntries)
@@ -202,53 +166,6 @@ export function Tooltip({ active, unit, payload, customLabel, events, kubeEvents
             </div>
           ))}
       </div>
-      {!hideEvents && (
-        <>
-          {/* Section Events (Deployed only) */}
-          {nearbyEvents.length > 0 && (
-            <div className="border-t border-neutral-400 px-3 py-2">
-              <div className="mb-2 text-xs font-medium text-neutral-50">
-                {pluralize(nearbyEvents.length, 'Event', 'Events')}
-              </div>
-              {nearbyEvents.map((event, index) => {
-                const change = JSON.parse(event.change || '')
-                const version =
-                  change?.service_source?.image?.tag ??
-                  change?.service_source?.docker?.git_repository?.deployed_commit_id ??
-                  'Unknown'
-                const repository =
-                  change?.service_source?.image?.image_name ??
-                  change?.service_source?.docker?.git_repository?.url ??
-                  'Unknown'
-
-                return (
-                  <div key={index} className="mb-1 flex items-center gap-2 text-xs">
-                    <div className="flex w-full justify-between gap-1 text-neutral-50">
-                      <span>{upperCaseFirstLetter(event.event_type).replace(/_/g, ' ')}</span>
-                      {version && repository && (
-                        <span className="text-neutral-250">
-                          {repository} | {version.substring(0, 7)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-          {/* Section KubeEvents Warning */}
-          {kubeEventsAtPoint.length > 0 && (
-            <div className="border-t border-neutral-400 px-3 py-2">
-              <div className="mb-2 text-xs font-medium text-yellow-600">KubeEvents</div>
-              {kubeEventsAtPoint.map((serie: MetricData, idx: number) => (
-                <div key={idx} className="mb-1 flex items-center gap-2 text-xs text-yellow-600">
-                  <span>{serie.metric.reason ?? ''}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
     </div>
   )
 }

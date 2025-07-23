@@ -1,6 +1,6 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceLine, XAxis, YAxis } from 'recharts'
@@ -35,7 +35,6 @@ interface ChartContentProps extends PropsWithChildren {
   xDomain?: [number | string, number | string]
   yDomain?: [number | string, number | string]
   tooltipLabel?: string
-  events?: OrganizationEventResponse[]
   margin?: {
     top?: number
     bottom?: number
@@ -55,7 +54,6 @@ function ChartContent({
   isEmpty,
   isLoading,
   children,
-  events,
   xDomain,
   yDomain,
   margin = { top: 14, bottom: 0, left: 0, right: 0 },
@@ -138,13 +136,7 @@ function ChartContent({
           />
           <Chart.Tooltip
             isAnimationActive={false}
-            content={
-              !onHoverHideTooltip ? (
-                <div />
-              ) : (
-                <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} events={events} />
-              )
-            }
+            content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
           />
           {children}
           <YAxis
@@ -340,7 +332,6 @@ export function LocalChart({
           tooltipLabel={tooltipLabel}
           isEmpty={isEmpty}
           isLoading={isLoading}
-          events={eventsFiltered}
           xDomain={xDomain}
           yDomain={yDomain}
           margin={margin}
@@ -382,7 +373,6 @@ export function LocalChart({
             tooltipLabel={tooltipLabel}
             isEmpty={isEmpty}
             isLoading={isLoading}
-            events={eventsFiltered}
             xDomain={xDomain}
             yDomain={yDomain}
             margin={margin}

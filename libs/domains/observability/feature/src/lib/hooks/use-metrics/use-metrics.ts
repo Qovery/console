@@ -52,6 +52,7 @@ export function useMetrics({
       endTimestamp,
       step,
     }),
+    refetchInterval: 5_000,
   })
 }
 
