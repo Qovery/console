@@ -12,22 +12,36 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
 
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useMetrics({
     clusterId,
-    query: `sum by(label_qovery_com_service_id) (
+    query: `max_over_time(
     (
-      changes(
+    sum by (label_qovery_com_service_id) (
+
+      increase(
         kube_horizontalpodautoscaler_status_condition{
-          condition = "ScalingLimited",
-          status    = "true"
-        }[${timeRange}]
-      ) / 1
-    )
-    * on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
+          condition="ScalingLimited", status="true"
+        }[5m]
+      )
+      *
+      on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
+      (
+        max by(namespace, horizontalpodautoscaler)(
+          kube_horizontalpodautoscaler_status_current_replicas
+        )
+        == bool on(namespace, horizontalpodautoscaler)
+        max by(namespace, horizontalpodautoscaler)(
+          kube_horizontalpodautoscaler_spec_max_replicas
+        )
+      )
+      *
+      on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
       max by(namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
         kube_horizontalpodautoscaler_labels{
           label_qovery_com_service_id =~ "${serviceId}"
         }
       )
-  )
+    ) > bool 0
+  )[${timeRange}:])
+
     `,
     queryRange: 'query',
   })
