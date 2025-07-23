@@ -12,6 +12,8 @@ const getDescriptionFromReason = (reason: string): string => {
       return 'Container killed due to out-of-memory.'
     case 'Error':
       return 'Container exited with non-zero exit code.'
+    case 'Completed':
+      return 'Container completed successfully with exit code 0.'
     default:
       return 'Unknown'
   }
@@ -92,7 +94,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
 
   // Calculate dynamic range based on time range
   const dynamicRange = useMemo(
-    () => calculateDynamicRange(startTimestamp, endTimestamp, 1.5),
+    () => calculateDynamicRange(startTimestamp, endTimestamp, 1),
     [startTimestamp, endTimestamp]
   )
 
@@ -123,28 +125,46 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     startTimestamp,
     endTimestamp,
     query: `
-    sum by (pod, reason) (
-      ((kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange}) * on(pod, namespace, container) group_left(reason)
-      (max by(pod, namespace, container, reason) (kube_pod_container_status_last_terminated_reason))
-      * on(pod, namespace) group_left(label_qovery_com_service_id)
-      (max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"}))
-      ) > 0
-    ) > bool 0`,
+  sum by (pod, reason) (
+    (
+      kube_pod_container_status_last_terminated_reason{} == 1
+    )
+    * on(namespace, pod) group_left(label_qovery_com_service_id)
+      max by(namespace, pod, label_qovery_com_service_id) (
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )
+    unless on(namespace, pod, reason)
+    (
+      (
+        kube_pod_container_status_last_terminated_reason{} offset ${dynamicRange} == 1
+      )
+      * on(namespace, pod) group_left(label_qovery_com_service_id)
+        max by(namespace, pod, label_qovery_com_service_id) (
+          kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+        )
+    )
+  )`,
   })
 
   const { data: metricsExitCode, isLoading: isLoadingMetricsExitCode } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod) (
+    query: `
   (
-    (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset ${dynamicRange})
-    * on(pod, namespace, container) group_left()
-    max by(pod, namespace, container) (kube_pod_container_status_last_terminated_exitcode)
-    * on(pod, namespace) group_left(label_qovery_com_service_id)
-    max by(pod, namespace, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
-  ) > 0
-)`,
+    kube_pod_container_status_last_terminated_exitcode
+    * on(namespace, pod) group_left(label_qovery_com_service_id)
+      max by(namespace, pod, label_qovery_com_service_id) (
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )
+  )
+  and on(namespace, pod, container)
+  (
+    kube_pod_container_status_restarts_total
+    >
+    kube_pod_container_status_restarts_total offset ${dynamicRange}
+  )
+`,
   })
 
   const chartData = useMemo(() => {
@@ -212,7 +232,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
       metricsExitCode.data.result.forEach((series: { metric: { pod: string }; values: [number, string][] }) => {
         series.values.forEach(([timestamp, value]: [number, string]) => {
           const numValue = parseFloat(value)
-          if (numValue > 0) {
+          if (numValue >= 0) {
             const key = `${series.metric.pod}-${timestamp}`
             const exitCodeInfo = getExitCodeInfo(series.values[0][1])
             referenceLines.push({
@@ -292,7 +312,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
               />
             ))}
           {referenceLineData
-            .filter((event) => event.type === 'exit-code')
+            .filter((event) => event.type === 'exit-code' || event.type === 'metric')
             .map((event) => (
               <ReferenceLine
                 key={event.key}
