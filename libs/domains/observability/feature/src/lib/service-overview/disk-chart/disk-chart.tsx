@@ -13,28 +13,28 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod, device) (rate(container_fs_reads_bytes_total{container!="", pod=~".+", device=""}[1m]) and on(namespace, pod) (max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}) > 0))`,
+    query: `sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
   })
 
   const { data: metricsReadPersistentStorage, isLoading: isLoadingMetricsReadPersistentStorage } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod, device) (rate(container_fs_reads_bytes_total{container!="", pod=~".+",   device=~"/dev/nvme.*"}[1m]) and on(namespace, pod) (max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}) > 0))`,
+    query: `sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
   })
 
   const { data: metricsWriteEphemeralStorage, isLoading: isLoadingMetricsWriteEphemeralStorage } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod, device) (rate(container_fs_writes_bytes_total{container!="", pod=~".+", device=""}[1m]) and on(namespace, pod) (max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}) > 0))`,
+    query: `sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
   })
 
   const { data: metricsWritePersistentStorage, isLoading: isLoadingMetricsWritePersistentStorage } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (pod, device) (rate(container_fs_writes_bytes_total{container!="", pod=~".+",   device=~"/dev/nvme.*"}[1m]) and on(namespace, pod) (max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}) > 0))`,
+    query: `sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
   })
 
   const chartData = useMemo(() => {
@@ -53,7 +53,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       timeSeriesMap,
       () => 'read-ephemeral-storage',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
+      useLocalTime,
     )
 
     // Process read persistent storage metrics
@@ -62,7 +62,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       timeSeriesMap,
       () => 'read-persistent-storage',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
+      useLocalTime,
     )
 
     // Process write ephemeral storage metrics
@@ -71,7 +71,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       timeSeriesMap,
       () => 'write-ephemeral-storage',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
+      useLocalTime,
     )
 
     // Process write persistent storage metrics
@@ -79,8 +79,8 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       metricsWritePersistentStorage,
       timeSeriesMap,
       () => 'write-persistent-storage',
-      (value) => parseFloat(value) / 1024, // Convert to MiB
-      useLocalTime
+      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
+      useLocalTime,
     )
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
@@ -99,7 +99,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
   return (
     <LocalChart
       data={chartData}
-      unit="MiB"
+      unit="MiB/sec"
       isLoading={
         isLoadingMetricsReadEphemeralStorage ||
         isLoadingMetricsReadPersistentStorage ||
@@ -107,8 +107,8 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
         isLoadingMetricsWritePersistentStorage
       }
       isEmpty={chartData.length === 0}
-      label="Disk usage (MiB)"
-      tooltipLabel="Disk usage"
+      label="Storages usage (MiB/sec)"
+      tooltipLabel="Storages usage"
       serviceId={serviceId}
     >
       <Line
