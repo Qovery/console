@@ -11,32 +11,31 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: `100 *
-      sum(
-        rate(nginx_ingress_controller_requests{status!~"2.."}[${timeRange}])
-          * on(ingress) group_left(label_qovery_com_associated_service_id)
-            max by(ingress, label_qovery_com_associated_service_id)(
-              kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
-            )
-      )
-      /
-      clamp_min(
-        sum(
-          rate(nginx_ingress_controller_requests[${timeRange}])
-            * on(ingress) group_left(label_qovery_com_associated_service_id)
-              max by(ingress, label_qovery_com_associated_service_id)(
-                kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
-              )
-        ),
-        1
-      ) or vector(0)`,
+    query: `
+  max (max_over_time(
+  (
+    (
+      kubelet_volume_stats_used_bytes
+      * on(namespace, persistentvolumeclaim)
+        group_left(label_qovery_com_service_id)
+          max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
+    )
+    /
+    (
+      kubelet_volume_stats_capacity_bytes
+      * on(namespace, persistentvolumeclaim)
+        group_left(label_qovery_com_service_id)
+          max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
+    ) * 100
+  )[${timeRange}:1m]
+))`,
     queryRange: 'query',
   })
 
   const value = Math.round(metrics?.data?.result[0]?.value[1]) ?? 0
-  const isError = value > 0
+  const isError = value > 80
 
-  const title = `Storage Usage`
+  const title = `Storages Usage`
 
   return (
     <>
@@ -52,7 +51,7 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
       {isModalOpen && (
         <ModalChart
           title={title}
-          description="The number of storage usage over time."
+          description="The storage usage over time."
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
         >

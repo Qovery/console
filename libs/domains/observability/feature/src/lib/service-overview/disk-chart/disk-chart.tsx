@@ -107,7 +107,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
         isLoadingMetricsWritePersistentStorage
       }
       isEmpty={chartData.length === 0}
-      label="Storages usage (MiB/sec)"
+      label="Storages I/O (MiB/sec)"
       tooltipLabel="Storages usage"
       serviceId={serviceId}
     >
