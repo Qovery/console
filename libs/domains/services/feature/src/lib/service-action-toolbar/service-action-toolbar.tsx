@@ -4,7 +4,6 @@ import {
   type Environment,
   type HelmSourceRepositoryResponse,
   ServiceDeploymentStatusEnum,
-  ServiceTypeEnum,
   StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
@@ -58,7 +57,6 @@ import {
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
-  isUninstallAvailable,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
@@ -74,6 +72,7 @@ import { useUninstallService } from '../hooks/use-uninstall-service/use-uninstal
 import { RedeployModal } from '../redeploy-modal/redeploy-modal'
 import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
+import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
@@ -590,7 +589,6 @@ function MenuOtherActions({
     organization: { id: organizationId },
   } = environment
   const { openModal, closeModal } = useModal()
-  const { openModalConfirmation } = useModalConfirmation()
   const { openModalActionSelect } = useModalActionSelect()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
@@ -604,84 +602,76 @@ function MenuOtherActions({
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
 
   const mutationRemove = async () => {
-    if (isUninstallAvailable(state)) {
-      openModalActionSelect({
-        title: 'Remove service',
-        name: service.name,
-        description: 'Choose how you to remove this service',
-        actions: [
-          {
-            id: 'uninstall',
-            title: 'Uninstall',
-            description: (
-              <div className="flex flex-col gap-2 text-neutral-350">
-                <span>
-                  Stop and remove the service but keep all configuration, data, and settings. You can easily reinstall
-                  later with the same configuration.
-                </span>
-                <span className="font-medium text-neutral-400">What's kept:</span>
-                <ul className="list-disc pl-4">
-                  <li>Configuration files</li>
-                  <li>Environment variables</li>
-                  <li>Network settings</li>
-                </ul>
-              </div>
-            ),
-            icon: 'box-taped',
-            color: 'brand',
-            callback: async () => {
-              try {
-                await uninstallService({ serviceId: service.id, serviceType: service.serviceType })
-              } catch (error) {
-                console.error(error)
-              }
-            },
+    openModalActionSelect({
+      title: 'Remove service',
+      name: service.name,
+      description: 'Choose how you to remove this service',
+      entities: [
+        <div className="flex items-center gap-2" key={`service-avatar-${service.id}`}>
+          <div className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200">
+            <ServiceAvatar service={service} size="xs" />
+          </div>
+          <span className="font-medium text-neutral-400">{service.name}</span>
+        </div>,
+      ],
+      actions: [
+        {
+          id: 'uninstall',
+          title: 'Uninstall',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <span>
+                Stop and remove the service but keep all configuration, data, and settings. You can easily reinstall
+                later with the same configuration.
+              </span>
+              <span className="font-medium text-neutral-400">What's kept:</span>
+              <ul className="list-disc pl-4">
+                <li>Configuration files</li>
+                <li>Environment variables</li>
+                <li>Network settings</li>
+              </ul>
+            </div>
+          ),
+          icon: 'box-taped',
+          color: 'brand',
+          callback: async () => {
+            try {
+              await uninstallService({ serviceId: service.id, serviceType: service.serviceType })
+            } catch (error) {
+              console.error(error)
+            }
           },
-          {
-            id: 'delete',
-            title: 'Delete completely',
-            description: (
-              <div className="flex flex-col gap-2 text-neutral-350">
-                <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
-                <span className="font-medium text-neutral-400">What's deleted:</span>
-                <ul className="list-disc pl-4">
-                  <li>All service data</li>
-                  <li>Configuration files</li>
-                  <li>Logs and history</li>
-                  <li>Environment variables</li>
-                  <li>Network settings</li>
-                </ul>
-              </div>
-            ),
-            icon: 'trash-can',
-            color: 'red',
-            callback: async () => {
-              try {
-                await deleteService({ serviceId: service.id, serviceType: service.serviceType })
-                navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
-              } catch (error) {
-                console.error(error)
-              }
-            },
-          },
-        ],
-        isDelete: true,
-      })
-    } else {
-      openModalConfirmation({
-        title: 'Delete service',
-        name: service.name,
-        isDelete: true,
-        action: async () => {
-          try {
-            await deleteService({ serviceId: service.id, serviceType: service.serviceType })
-            navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
-          } catch (error) {
-            console.error(error)
-          }
         },
-      })
-    }
+        {
+          id: 'delete',
+          title: 'Delete completely',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
+              <span className="font-medium text-neutral-400">What's deleted:</span>
+              <ul className="list-disc pl-4">
+                <li>All service data</li>
+                <li>Configuration files</li>
+                <li>Logs and history</li>
+                <li>Environment variables</li>
+                <li>Network settings</li>
+              </ul>
+            </div>
+          ),
+          icon: 'trash-can',
+          color: 'red',
+          callback: async () => {
+            try {
+              await deleteService({ serviceId: service.id, serviceType: service.serviceType })
+              navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+      ],
+      isDelete: true,
+    })
   }
 
   const openServiceCloneModal = () => {
