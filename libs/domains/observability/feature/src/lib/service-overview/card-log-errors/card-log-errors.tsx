@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
-import { pluralize } from '@qovery/shared/util-js'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -32,7 +31,7 @@ export function CardLogErrors({
 
   return (
     <CardMetric
-      title={`Log ${pluralize(value, 'error', 'errors')} rate`}
+      title="Log error rate"
       value={value}
       status={isError ? 'RED' : 'GREEN'}
       description={`in the last ${timeRange}`}

@@ -58,7 +58,7 @@ export function CardMetric({
       className={twMerge(
         clsx(
           'w-full cursor-default rounded border border-neutral-250 bg-neutral-50 px-5 py-4',
-          !isLoading && 'cursor-pointer shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)] hover:shadow-md',
+          !isLoading && onClick && 'cursor-pointer shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)] hover:shadow-md',
           className
         )
       )}

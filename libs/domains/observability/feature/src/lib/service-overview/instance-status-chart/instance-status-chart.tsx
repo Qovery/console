@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Area, Line, ReferenceLine } from 'recharts'
+import { Area, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
@@ -86,15 +86,7 @@ const getExitCodeInfo = (exitCode: string): { name: string; description: string 
   }
 }
 
-export function InstanceStatusChart({
-  organizationId,
-  clusterId,
-  serviceId,
-}: {
-  organizationId: string
-  clusterId: string
-  serviceId: string
-}) {
+export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
 
