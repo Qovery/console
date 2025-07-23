@@ -38,7 +38,7 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
     (service.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
     (service.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
 
-  const hasStorage = service.serviceType === 'CONTAINER' && service.storage
+  const hasStorage = service.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
   return (
     <div className="space-y-6">
@@ -134,16 +134,25 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
             <div className={clsx('grid', expandCharts ? 'grid-cols-1 divide-y divide-neutral-250' : 'grid-cols-2')}>
               {chartView === 'global' ? (
                 <>
-                  <div className={clsx(!expandCharts && 'border-b border-r border-neutral-250')}>
+                  <div
+                    className={clsx(
+                      !expandCharts && 'border-b border-r border-neutral-250',
+                      !hasStorage && 'border-b-0'
+                    )}
+                  >
                     <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
                   </div>
-                  <div className={clsx(!expandCharts && 'border-b border-neutral-250')}>
+                  <div className={clsx(!expandCharts && hasStorage && 'border-b border-neutral-250')}>
                     <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
                   </div>
-                  <div className={clsx(!expandCharts && 'border-r border-neutral-250')}>
-                    <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} />
-                  </div>
-                  {!expandCharts && <div className="h-full w-full bg-neutral-100" />}
+                  {hasStorage && (
+                    <>
+                      <div className={clsx(!expandCharts && 'border-r border-neutral-250')}>
+                        <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                      </div>
+                      {!expandCharts && <div className="h-full w-full bg-neutral-100" />}
+                    </>
+                  )}
                 </>
               ) : (
                 <>

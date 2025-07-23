@@ -35,7 +35,7 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
   const value = Math.round(metrics?.data?.result[0]?.value[1]) ?? 0
   const isError = value > 80
 
-  const title = `Storages Usage`
+  const title = `Storage Usage`
 
   return (
     <>

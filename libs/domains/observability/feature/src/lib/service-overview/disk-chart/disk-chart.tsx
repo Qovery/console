@@ -53,7 +53,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       timeSeriesMap,
       () => 'read-ephemeral-storage',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime,
+      useLocalTime
     )
 
     // Process read persistent storage metrics
@@ -62,7 +62,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       timeSeriesMap,
       () => 'read-persistent-storage',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime,
+      useLocalTime
     )
 
     // Process write ephemeral storage metrics
@@ -70,8 +70,8 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       metricsWriteEphemeralStorage,
       timeSeriesMap,
       () => 'write-ephemeral-storage',
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime,
+      (value) => -parseFloat(value) / 1024 / 1024, // Mirror by multiplying by -1 (MiB)
+      useLocalTime
     )
 
     // Process write persistent storage metrics
@@ -79,8 +79,8 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       metricsWritePersistentStorage,
       timeSeriesMap,
       () => 'write-persistent-storage',
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime,
+      (value) => -parseFloat(value) / 1024 / 1024, // Mirror by multiplying by -1 (MiB)
+      useLocalTime
     )
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
@@ -96,6 +96,19 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     endTimestamp,
   ])
 
+  // Calculate symmetric yDomain
+  const maxAbs = chartData.length
+    ? Math.max(
+        ...chartData.flatMap((d) => [
+          Math.abs(Number(d['read-ephemeral-storage'] ?? 0)),
+          Math.abs(Number(d['read-persistent-storage'] ?? 0)),
+          Math.abs(Number(d['write-ephemeral-storage'] ?? 0)),
+          Math.abs(Number(d['write-persistent-storage'] ?? 0)),
+        ])
+      )
+    : 1
+  const yDomain: [number, number] = [-Math.round(maxAbs), Math.round(maxAbs)]
+
   return (
     <LocalChart
       data={chartData}
@@ -107,14 +120,15 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
         isLoadingMetricsWritePersistentStorage
       }
       isEmpty={chartData.length === 0}
-      label="Storages I/O (MiB/sec)"
-      tooltipLabel="Storages usage"
+      label="Storage I/O (MiB/sec)"
+      tooltipLabel="Storage I/O"
       serviceId={serviceId}
+      yDomain={yDomain}
     >
       <Line
         dataKey="read-ephemeral-storage"
         type="linear"
-        stroke="var(--color-brand-300)"
+        stroke="var(--color-green-500)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -123,7 +137,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="read-persistent-storage"
         type="linear"
-        stroke="var(--color-purple-300)"
+        stroke="var(--color-green-700)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -132,7 +146,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="write-ephemeral-storage"
         type="linear"
-        stroke="var(--color-green-600)"
+        stroke="var(--color-yellow-500)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -141,7 +155,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       <Line
         dataKey="write-persistent-storage"
         type="linear"
-        stroke="var(--color-purple-700)"
+        stroke="var(--color-yellow-700)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}

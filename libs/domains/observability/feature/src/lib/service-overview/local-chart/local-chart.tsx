@@ -94,7 +94,7 @@ function ChartContent({
           onMouseLeave={() => setOnHoverHideTooltip(false)}
           onMouseUp={() => setOnHoverHideTooltip(false)}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-neutral-200)" vertical={false} />
+          <CartesianGrid stroke="var(--color-neutral-200)" vertical={false} />
           <XAxis
             dataKey="timestamp"
             type="number"
@@ -349,7 +349,7 @@ export function LocalChart({
                 stroke="var(--color-brand-500)"
                 strokeDasharray="3 3"
                 opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                strokeWidth={2}
+                strokeWidth={1}
                 onMouseEnter={() => setHoveredEventKey(event.key)}
                 onMouseLeave={() => setHoveredEventKey(null)}
                 label={{
@@ -390,7 +390,7 @@ export function LocalChart({
                   stroke="var(--color-brand-500)"
                   strokeDasharray="3 3"
                   opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                  strokeWidth={2}
+                  strokeWidth={1}
                   onMouseEnter={() => setHoveredEventKey(event.key)}
                   onMouseLeave={() => setHoveredEventKey(null)}
                   label={{

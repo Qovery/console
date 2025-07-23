@@ -57,7 +57,7 @@ function getDisplayName(seriesKey: string): string {
 
 // Formats a value for display in the tooltip
 function formatValue(value: number | string | null, unit: UnitType): string {
-  const numValue = parseFloat(value?.toString() || '0')
+  const numValue = Math.abs(parseFloat(value?.toString() || '0'))
   return isNaN(numValue) ? 'N/A' : unit === 'instance' ? `${numValue}` : `${numValue.toFixed(2)} ${unit}`
 }
 
