@@ -16,6 +16,7 @@ export interface ActionSelectItem {
 export interface UseModalActionSelectProps {
   title: string
   actions: ActionSelectItem[]
+  entities?: ReactNode[]
   description?: ReactNode
   name?: string
   mode?: keyof typeof EnvironmentModeEnum | string | undefined
@@ -34,6 +35,7 @@ export function useModalActionSelect() {
           <ModalActionSelect
             title={modalActionSelect.title}
             actions={modalActionSelect.actions}
+            entities={modalActionSelect.entities}
             description={modalActionSelect.description}
             name={modalActionSelect.name}
             warning={modalActionSelect.warning}

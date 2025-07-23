@@ -1,12 +1,11 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { Button, Callout, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Badge, Button, Callout, DropdownMenu, Icon, Tooltip, useModal, useModalActionSelect } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
   isDeployAvailable,
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
-  isUninstallAvailable,
   pluralize,
   twMerge,
   upperCaseFirstLetter,
@@ -87,7 +86,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
   const { mutateAsync: stopAllServices } = useStopAllServices()
 
   const { openModal, closeModal } = useModal()
-  const { openModalConfirmation } = useModalConfirmation()
+  const { openModalActionSelect } = useModalActionSelect()
 
   const restartableServices = selectedRows.filter(
     ({ deploymentStatus, runningStatus }) =>
@@ -97,7 +96,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
     ({ deploymentStatus }) => deploymentStatus && isDeleteAvailable(deploymentStatus.state)
   )
   const uninstallableServices = selectedRows.filter(
-    ({ deploymentStatus }) => deploymentStatus && isUninstallAvailable(deploymentStatus.state)
+    ({ deploymentStatus }) => deploymentStatus && isDeleteAvailable(deploymentStatus.state)
   )
   const deployableServices = selectedRows.filter(
     ({ deploymentStatus }) =>
@@ -216,14 +215,36 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
       ),
     })
 
-  const handleUninstallAllServices = () =>
-    openModal({
-      content: (
-        <ConfirmationModal
-          verb="uninstall"
-          impactedRows={uninstallableServices}
-          selectedRows={selectedRows}
-          onSubmit={async () => {
+  const handleDeleteAllServices = () => {
+    openModalActionSelect({
+      title: `Remove ${deletableServices.length} ${pluralize(deletableServices.length, 'service')}`,
+      description: 'Choose how to remove these services',
+      entities: deletableServices.map((service) => (
+        <Badge variant="surface" size="base" key={`service-badge-${service.id}`}>
+          {service.name}
+        </Badge>
+      )),
+      actions: [
+        {
+          id: 'uninstall',
+          title: 'Uninstall',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <span>
+                Stop and remove the service but keep all configuration, data, and settings. You can easily reinstall
+                later with the same configuration.
+              </span>
+              <span className="font-medium text-neutral-400">What's kept:</span>
+              <ul className="list-disc pl-4">
+                <li>Configuration files</li>
+                <li>Environment variables</li>
+                <li>Network settings</li>
+              </ul>
+            </div>
+          ),
+          icon: 'box-taped',
+          color: 'brand',
+          callback: async () => {
             try {
               await uninstallAllServices({
                 environment,
@@ -248,41 +269,54 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
             } catch (error) {
               console.error(error)
             }
-          }}
-          onCancel={closeModal}
-        />
-      ),
-    })
-
-  const handleDeleteAllServices = () =>
-    openModalConfirmation({
-      title: `Delete ${deletableServices.length} ${pluralize(deletableServices.length, 'service')}`,
-      name: 'these services',
+          },
+        },
+        {
+          id: 'delete',
+          title: 'Delete completely',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
+              <span className="font-medium text-neutral-400">What's deleted:</span>
+              <ul className="list-disc pl-4">
+                <li>All service data</li>
+                <li>Configuration files</li>
+                <li>Logs and history</li>
+                <li>Environment variables</li>
+                <li>Network settings</li>
+              </ul>
+            </div>
+          ),
+          icon: 'trash-can',
+          color: 'red',
+          callback: async () => {
+            try {
+              await deleteAllServices({
+                environment,
+                payload: {
+                  application_ids: deletableServices
+                    .filter(({ serviceType }) => serviceType === 'APPLICATION')
+                    .map(({ id }) => id),
+                  container_ids: deletableServices
+                    .filter(({ serviceType }) => serviceType === 'CONTAINER')
+                    .map(({ id }) => id),
+                  database_ids: deletableServices
+                    .filter(({ serviceType }) => serviceType === 'DATABASE')
+                    .map(({ id }) => id),
+                  helm_ids: deletableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
+                  job_ids: deletableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
+                },
+              })
+              resetRowSelection()
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+      ],
       isDelete: true,
-      action: async () => {
-        try {
-          await deleteAllServices({
-            environment,
-            payload: {
-              application_ids: deletableServices
-                .filter(({ serviceType }) => serviceType === 'APPLICATION')
-                .map(({ id }) => id),
-              container_ids: deletableServices
-                .filter(({ serviceType }) => serviceType === 'CONTAINER')
-                .map(({ id }) => id),
-              database_ids: deletableServices
-                .filter(({ serviceType }) => serviceType === 'DATABASE')
-                .map(({ id }) => id),
-              helm_ids: deletableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
-              job_ids: deletableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
-            },
-          })
-          resetRowSelection()
-        } catch (error) {
-          console.error(error)
-        }
-      },
     })
+  }
 
   return (
     <div className="sticky bottom-4">
@@ -343,16 +377,6 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                     </DropdownMenu.Item>
                   </Tooltip>
                   <DropdownMenu.Separator />
-                  <Tooltip content="No uninstallable services" disabled={uninstallableServices.length !== 0}>
-                    <DropdownMenu.Item
-                      color="red"
-                      icon={<Icon iconName="inbox-out" />}
-                      onSelect={handleUninstallAllServices}
-                      disabled={uninstallableServices.length === 0}
-                    >
-                      Uninstall selected
-                    </DropdownMenu.Item>
-                  </Tooltip>
                   <Tooltip content="No deletable services" disabled={deletableServices.length !== 0}>
                     <DropdownMenu.Item
                       color="red"
@@ -360,7 +384,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                       onSelect={handleDeleteAllServices}
                       disabled={deletableServices.length === 0}
                     >
-                      Delete selected
+                      Remove selected
                     </DropdownMenu.Item>
                   </Tooltip>
                 </DropdownMenu.Content>

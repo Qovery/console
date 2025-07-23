@@ -15,9 +15,18 @@ export interface ModalActionSelectProps extends PropsWithChildren {
   actions: ActionSelectItem[]
   name?: string
   warning?: ReactNode
+  entities?: ReactNode[]
 }
 
-export function ModalActionSelect({ title, description, actions, name, warning, children }: ModalActionSelectProps) {
+export function ModalActionSelect({
+  title,
+  description,
+  actions,
+  name,
+  warning,
+  children,
+  entities,
+}: ModalActionSelectProps) {
   const {
     handleSubmit,
     control,
@@ -45,14 +54,17 @@ export function ModalActionSelect({ title, description, actions, name, warning, 
   return (
     <div className="p-6">
       <h2 className="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
-      <div className="mb-6 text-sm text-neutral-350 dark:text-neutral-50">
-        {description ? (
-          description
-        ) : (
-          <>
-            To confirm the deletion of <strong>{name}</strong>, please type "delete"
-          </>
-        )}
+      <div className="mb-6">
+        <div className="text-sm text-neutral-350 dark:text-neutral-50">
+          {description ? (
+            description
+          ) : (
+            <>
+              To confirm the deletion of <strong>{name}</strong>, please type "delete"
+            </>
+          )}
+        </div>
+        {entities && <div className="mt-2 flex gap-1.5">{entities.map((entity) => entity)}</div>}
       </div>
 
       <form onSubmit={onSubmit}>
