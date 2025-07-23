@@ -52,32 +52,20 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
     )
   }
 
-  const renderContent = () =>
-    isAzureFeatureFlag ? (
-      <span>
-        <span className="mb-2 inline-flex items-center text-base font-semibold text-neutral-400">
-          {title}
-          {recommended && (
-            <span className="absolute right-5 top-5 h-5 rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
-              recommended
-            </span>
-          )}
-        </span>
-        <span className="inline-block text-sm text-neutral-350">{description}</span>
-      </span>
-    ) : (
-      <span>
-        <span
-          className={twMerge(
-            clsx('mb-2 inline-flex items-center text-base font-semibold text-neutral-400', {
-              'text-neutral-350': selectedCloudProvider === 'AZURE' && recommended,
-            })
-          )}
-        >
-          {title}
-          {recommended && (
-            <span>
-              {selectedCloudProvider === 'AZURE' ? (
+  const renderContent = () => (
+    <span>
+      <span
+        className={twMerge(
+          clsx('mb-2 inline-flex items-center text-base font-semibold text-neutral-400', {
+            'text-neutral-350': selectedCloudProvider === 'AZURE' && recommended,
+          })
+        )}
+      >
+        {title}
+        {recommended && (
+          <span>
+            {match({ selectedCloudProvider, isAzureFeatureFlag })
+              .with({ selectedCloudProvider: 'AZURE', isAzureFeatureFlag: false }, () => (
                 <Tooltip
                   content={
                     <span>
@@ -92,17 +80,28 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
                     coming soon
                   </span>
                 </Tooltip>
-              ) : (
+              ))
+              .with({ selectedCloudProvider: 'AZURE', isAzureFeatureFlag: true }, () => (
+                <div className="absolute right-5 top-5 flex h-5 gap-2">
+                  <span className="rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
+                    recommended
+                  </span>
+                  <span className="rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
+                    beta
+                  </span>
+                </div>
+              ))
+              .otherwise(() => (
                 <span className="absolute right-5 top-5 h-5 rounded-lg bg-brand-500 px-1.5 text-[11px] font-semibold leading-5 text-neutral-50">
                   recommended
                 </span>
-              )}
-            </span>
-          )}
-        </span>
-        <span className="inline-block text-sm text-neutral-350">{description}</span>
+              ))}
+          </span>
+        )}
       </span>
-    )
+      <span className="inline-block text-sm text-neutral-350">{description}</span>
+    </span>
+  )
 
   const handleAnalytics = (selectedInstallationType: string) => {
     posthog.capture('select-cluster', {
