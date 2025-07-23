@@ -244,7 +244,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
       margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
       yDomain={[0, 'dataMax + 1']}
       referenceLineData={referenceLineData}
-      isFullscreen={true}
+      isFullscreen
     >
       <Area
         key="true"

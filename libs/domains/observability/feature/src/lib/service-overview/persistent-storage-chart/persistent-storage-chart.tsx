@@ -71,9 +71,8 @@ export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: st
       unit="%"
       serviceId={serviceId}
       margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-      yDomain={[0, '110']}
-      referenceLineData={[]}
-      isFullscreen={true}
+      yDomain={[0, 110]}
+      isFullscreen
     >
       {seriesNames.map((name) => (
         <Line

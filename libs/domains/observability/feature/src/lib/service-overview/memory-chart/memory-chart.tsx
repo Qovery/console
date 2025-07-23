@@ -48,7 +48,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       timeSeriesMap,
       (_, index) => metrics.data.result[index].metric.pod,
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime,
+      useLocalTime
     )
 
     // Process memory limit metrics
@@ -57,7 +57,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       timeSeriesMap,
       () => 'memory-limit',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime,
+      useLocalTime
     )
 
     // Process memory request metrics
@@ -66,7 +66,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       timeSeriesMap,
       () => 'memory-request',
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime,
+      useLocalTime
     )
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
@@ -86,6 +86,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}
       isEmpty={chartData.length === 0}
       label="Memory (MiB)"
+      description="The memory usage per instance in MiB, along with memory request and limit thresholds."
       tooltipLabel="Memory"
       serviceId={serviceId}
     >

@@ -216,6 +216,7 @@ interface LocalChartProps extends PropsWithChildren {
   isLoading: boolean
   serviceId: string
   label?: string
+  description?: string
   className?: string
   tooltipLabel?: string
   yDomain?: [number | string, number | string]
@@ -237,6 +238,7 @@ export function LocalChart({
   isEmpty = false,
   label,
   tooltipLabel,
+  description,
   className,
   children,
   serviceId,
@@ -301,7 +303,16 @@ export function LocalChart({
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
         {label && (
           <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
-            <Heading className="scroll-mt-20">{label}</Heading>
+            <Heading className="flex items-center gap-1">
+              {label}
+              {description && (
+                <Tooltip content={description}>
+                  <span>
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-350" />
+                  </span>
+                </Tooltip>
+              )}
+            </Heading>
             <Tooltip content="View events details">
               <Button
                 variant="surface"
