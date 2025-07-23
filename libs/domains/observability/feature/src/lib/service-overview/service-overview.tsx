@@ -9,6 +9,7 @@ import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardInstance } from './card-instance/card-instance'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
+import { CardStorage } from './card-storage/card-storage'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
 import { MemoryChart } from './memory-chart/memory-chart'
@@ -36,6 +37,8 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
   const hasPublicPort =
     (service.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
     (service.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
+
+  const hasStorage = service.serviceType === 'CONTAINER' && service.storage
 
   return (
     <div className="space-y-6">
@@ -73,11 +76,7 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
               hasPublicPort ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'
             )}
           >
-            <CardInstanceStatus
-              organizationId={environment.organization.id}
-              clusterId={environment.cluster_id}
-              serviceId={applicationId}
-            />
+            <CardInstanceStatus clusterId={environment.cluster_id} serviceId={applicationId} />
             <CardInstance clusterId={environment.cluster_id} serviceId={applicationId} />
             <CardLogErrors
               organizationId={environment.organization.id}
@@ -87,6 +86,7 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
               clusterId={environment.cluster_id}
             />
             {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
+            {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
           </Section>
           <Section className="overflow-hidden rounded border border-neutral-250">
             <div className="flex h-9 items-center bg-neutral-100 text-sm">

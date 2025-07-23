@@ -86,7 +86,7 @@ const getExitCodeInfo = (exitCode: string): { name: string; description: string 
   }
 }
 
-export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
 
@@ -318,4 +318,4 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
   )
 }
 
-export default InstanceStatusChart
+export default PersistentStorageChart
