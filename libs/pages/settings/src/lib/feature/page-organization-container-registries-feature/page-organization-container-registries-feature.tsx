@@ -166,7 +166,7 @@ const Loader = () => (
   </BlockContent>
 )
 
-const PageOrganizationContainerRegistries = () => {
+export const PageOrganizationContainerRegistries = () => {
   const { organizationId = '' } = useParams()
   const { data: containerRegistries = [] } = useContainerRegistries({
     organizationId,
@@ -185,21 +185,36 @@ const PageOrganizationContainerRegistries = () => {
       .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
   }, [containerRegistries])
 
+  const registriesCount = useMemo(() => {
+    return containerRegistries.length
+  }, [containerRegistries])
+
   return (
     <div className="space-y-8">
-      {usedRegistries && usedRegistries.length > 0 && (
-        <BlockContent title="Container registries" classNameContent="p-0">
-          {usedRegistries.map((registry) => (
-            <RegistryRow key={registry.id} registry={registry} />
-          ))}
-        </BlockContent>
-      )}
-      {unusedRegistries && unusedRegistries.length > 0 && (
-        <BlockContent title="Unused container registries" classNameContent="p-0">
-          {unusedRegistries.map((registry) => (
-            <RegistryRow key={registry.id} registry={registry} />
-          ))}
-        </BlockContent>
+      {registriesCount > 0 ? (
+        <>
+          {usedRegistries && usedRegistries.length > 0 && (
+            <BlockContent title="Container registries" classNameContent="p-0">
+              {usedRegistries.map((registry) => (
+                <RegistryRow key={registry.id} registry={registry} />
+              ))}
+            </BlockContent>
+          )}
+          {unusedRegistries && unusedRegistries.length > 0 && (
+            <BlockContent title="Unused container registries" classNameContent="p-0">
+              {unusedRegistries.map((registry) => (
+                <RegistryRow key={registry.id} registry={registry} />
+              ))}
+            </BlockContent>
+          )}
+        </>
+      ) : (
+        <div className="my-4 px-5 text-center">
+          <Icon iconName="wave-pulse" className="text-neutral-350" />
+          <p className="mt-1 text-xs font-medium text-neutral-350">
+            No container registry found. <br /> Please add one.
+          </p>
+        </div>
       )}
     </div>
   )
