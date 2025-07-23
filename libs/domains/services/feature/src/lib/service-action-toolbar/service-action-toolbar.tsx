@@ -644,7 +644,7 @@ function MenuOtherActions({
         },
         {
           id: 'delete',
-          title: 'Delete completely',
+          title: 'Delete permanently',
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
               <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
@@ -779,11 +779,7 @@ function MenuOtherActions({
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item
-              color="red"
-              icon={<Icon iconName="trash-can" iconStyle="regular" />}
-              onSelect={mutationRemove}
-            >
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationRemove}>
               Remove service
             </DropdownMenu.Item>
           </>

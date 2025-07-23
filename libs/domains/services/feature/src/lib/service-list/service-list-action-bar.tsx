@@ -273,7 +273,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
         },
         {
           id: 'delete',
-          title: 'Delete completely',
+          title: 'Delete permanently',
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
               <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
