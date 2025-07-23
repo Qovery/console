@@ -605,7 +605,7 @@ function MenuOtherActions({
     openModalActionSelect({
       title: 'Remove service',
       name: service.name,
-      description: 'Choose how you to remove this service',
+      description: 'Choose how to remove this service',
       entities: [
         <div className="flex items-center gap-2" key={`service-avatar-${service.id}`}>
           <div className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200">
