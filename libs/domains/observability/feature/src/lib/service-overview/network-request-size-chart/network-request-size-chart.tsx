@@ -53,7 +53,7 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
     processMetricsData(
       metricsResponseSize,
       timeSeriesMap,
-      () => 'response-size',
+      () => 'Response size',
       (value) => parseFloat(value), // Convert to bytes
       useLocalTime
     )
@@ -62,7 +62,7 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
     processMetricsData(
       metricsRequestSize,
       timeSeriesMap,
-      () => 'request-size',
+      () => 'Request size',
       (value) => parseFloat(value), // Convert to bytes
       useLocalTime
     )
@@ -84,7 +84,7 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
     >
       <Line
         key="response-size"
-        dataKey="response-size"
+        dataKey="Response size"
         type="linear"
         stroke="var(--color-brand-400)"
         strokeWidth={2}
@@ -94,7 +94,7 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
       />
       <Line
         key="request-size"
-        dataKey="request-size"
+        dataKey="Request size"
         type="linear"
         stroke="var(--color-purple-400)"
         strokeWidth={2}

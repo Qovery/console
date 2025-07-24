@@ -1,6 +1,4 @@
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import type { MetricData } from '../../hooks/use-metrics/use-metrics'
-import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 type TooltipEntry = {
   dataKey: string
@@ -38,7 +36,7 @@ function getBaseNameFromLimitKey(seriesKey: string): string {
 function getDisplayName(seriesKey: string): string {
   if (seriesKey.endsWith('-request-limit')) {
     const baseName = seriesKey.slice(0, -14) // Remove '-request-limit'
-    return `${upperCaseFirstLetter(baseName)} Request/Limit`
+    return `${baseName === 'cpu' ? 'CPU' : upperCaseFirstLetter(baseName)} Request/Limit`
   } else if (seriesKey.endsWith('-limit')) {
     const baseName = getBaseNameFromLimitKey(seriesKey)
     return `${upperCaseFirstLetter(baseName)} Limit`
@@ -129,8 +127,6 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
 
 // Tooltip component for displaying metric and events details
 export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
-  const { hideEvents } = useServiceOverviewContext()
-
   if (!active || !payload || payload.length === 0) return null
 
   const dataPoint = payload[0]?.payload

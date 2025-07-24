@@ -30,7 +30,8 @@ export function processMetricsData(
       }
 
       const dataPoint = timeSeriesMap.get(timestampNum)!
-      dataPoint[seriesName] = transformValue(value)
+      const transformed = transformValue(value)
+      dataPoint[seriesName] = isNaN(transformed) ? 0 : transformed
     })
   })
 }

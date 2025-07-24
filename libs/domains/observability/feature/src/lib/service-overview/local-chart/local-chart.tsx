@@ -249,7 +249,7 @@ export function LocalChart({
   isFullscreen = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey, hideEvents } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Alpha: Workaround to get the events
@@ -393,27 +393,28 @@ export function LocalChart({
           isFullscreen={isFullscreen}
         >
           {/* Render reference lines for events of type 'event' */}
-          {mergedReferenceLineData
-            .filter((event) => event.type === 'event')
-            .map((event) => (
-              <ReferenceLine
-                key={event.key}
-                x={event.timestamp}
-                stroke="var(--color-brand-500)"
-                strokeDasharray="3 3"
-                opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                strokeWidth={1}
-                onMouseEnter={() => setHoveredEventKey(event.key)}
-                onMouseLeave={() => setHoveredEventKey(null)}
-                label={{
-                  value: hoveredEventKey === event.key ? event.reason : undefined,
-                  position: 'top',
-                  fill: 'var(--color-brand-500)',
-                  fontSize: 12,
-                  fontWeight: 'bold',
-                }}
-              />
-            ))}
+          {!hideEvents &&
+            mergedReferenceLineData
+              .filter((event) => event.type === 'event')
+              .map((event) => (
+                <ReferenceLine
+                  key={event.key}
+                  x={event.timestamp}
+                  stroke="var(--color-brand-500)"
+                  strokeDasharray="3 3"
+                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
+                  strokeWidth={1}
+                  onMouseEnter={() => setHoveredEventKey(event.key)}
+                  onMouseLeave={() => setHoveredEventKey(null)}
+                  label={{
+                    value: hoveredEventKey === event.key ? event.reason : undefined,
+                    position: 'top',
+                    fill: 'var(--color-brand-500)',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                  }}
+                />
+              ))}
           {children}
         </ChartContent>
       </Section>
@@ -434,27 +435,28 @@ export function LocalChart({
             isFullscreen={true}
           >
             {/* Render reference lines for events of type 'event' in modal as well */}
-            {mergedReferenceLineData
-              .filter((event) => event.type === 'event')
-              .map((event) => (
-                <ReferenceLine
-                  key={event.key}
-                  x={event.timestamp}
-                  stroke="var(--color-brand-500)"
-                  strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.6}
-                  strokeWidth={3}
-                  onMouseEnter={() => setHoveredEventKey(event.key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
-                  label={{
-                    value: hoveredEventKey === event.key ? event.reason : undefined,
-                    position: 'top',
-                    fill: 'var(--color-brand-500)',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                  }}
-                />
-              ))}
+            {!hideEvents &&
+              mergedReferenceLineData
+                .filter((event) => event.type === 'event')
+                .map((event) => (
+                  <ReferenceLine
+                    key={event.key}
+                    x={event.timestamp}
+                    stroke="var(--color-brand-500)"
+                    strokeDasharray="3 3"
+                    opacity={hoveredEventKey === event.key ? 1 : 0.6}
+                    strokeWidth={3}
+                    onMouseEnter={() => setHoveredEventKey(event.key)}
+                    onMouseLeave={() => setHoveredEventKey(null)}
+                    label={{
+                      value: hoveredEventKey === event.key ? event.reason : undefined,
+                      position: 'top',
+                      fill: 'var(--color-brand-500)',
+                      fontSize: 12,
+                      fontWeight: 'bold',
+                    }}
+                  />
+                ))}
             {children}
           </ChartContent>
         </ModalChart>
