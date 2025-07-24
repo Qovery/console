@@ -74,7 +74,7 @@ export function ModalActionSelect({
               name="action"
               control={control}
               render={({ field }) => (
-                <RadioGroup.Root onValueChange={field.onChange} value={field.value} className="flex flex-col gap-4">
+                <RadioGroup.Root onValueChange={field.onChange} value={field.value} className="grid grid-cols-2 gap-4">
                   {actions.map((action) => (
                     <label
                       key={action.id}
