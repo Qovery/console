@@ -7,6 +7,7 @@ import { CartesianGrid, ComposedChart, ReferenceLine, XAxis, YAxis } from 'recha
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
+import { createXAxisConfig } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
@@ -70,19 +71,7 @@ function ChartContent({
     return xDomain ?? [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
   }
 
-  function getLogicalTicks(): number[] {
-    const startTime = Number(startTimestamp) * 1000
-    const endTime = Number(endTimestamp) * 1000
-
-    const ticks: number[] = []
-    const interval = (endTime - startTime) / 5 // 5 intervals for 6 ticks
-
-    for (let i = 0; i < 6; i++) {
-      ticks.push(startTime + interval * i)
-    }
-
-    return ticks
-  }
+  const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
     <div className="flex h-full">
@@ -97,14 +86,8 @@ function ChartContent({
         >
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
           <XAxis
-            dataKey="timestamp"
-            type="number"
-            scale="time"
+            {...xAxisConfig}
             domain={getXDomain()}
-            ticks={getLogicalTicks()}
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
               const isLongRange = () => {

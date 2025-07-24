@@ -1,6 +1,7 @@
 import type { Meta } from '@storybook/react'
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { Chart } from './chart'
+import { createXAxisConfig } from './chart-axis-utils'
 
 const Story: Meta<typeof Chart.Container> = {
   component: Chart.Container,
@@ -149,26 +150,21 @@ const maximalEdgeCaseData = generateTimeSeriesData(gaffotronMetrics)
 const colorPalette = generateColorPalette()
 
 export const LineChart = {
-  render: () => (
-    <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-      <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-        <XAxis
-          dataKey="timestamp"
-          type="number"
-          scale="time"
-          domain={[1704067200000, 1704081600000]}
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          tickFormatter={(timestamp) => {
-            const date = new Date(timestamp)
-            const hours = date.getHours().toString().padStart(2, '0')
-            const minutes = date.getMinutes().toString().padStart(2, '0')
-            return `${hours}:${minutes}`
-          }}
-          strokeDasharray="3 3"
-        />
+  render: () => {
+    const xAxisConfig = createXAxisConfig(1704067200, 1704081600)
+    return (
+      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
+        <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
@@ -190,32 +186,28 @@ export const LineChart = {
             isAnimationActive={false}
           />
         ))}
-      </ComposedChart>
-    </Chart.Container>
-  ),
+        </ComposedChart>
+      </Chart.Container>
+    )
+  },
 }
 
 export const AreaChart = {
-  render: () => (
-    <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
-      <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-        <XAxis
-          dataKey="timestamp"
-          type="number"
-          scale="time"
-          domain={[1704067200000, 1704088800000]}
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          tickFormatter={(timestamp) => {
-            const date = new Date(timestamp)
-            const hours = date.getHours().toString().padStart(2, '0')
-            const minutes = date.getMinutes().toString().padStart(2, '0')
-            return `${hours}:${minutes}`
-          }}
-          strokeDasharray="3 3"
-        />
+  render: () => {
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    return (
+      <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
+        <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
@@ -255,111 +247,112 @@ export const AreaChart = {
           strokeWidth={2}
           isAnimationActive={false}
         />
-      </ComposedChart>
-    </Chart.Container>
-  ),
+        </ComposedChart>
+      </Chart.Container>
+    )
+  },
 }
 
 export const LoadingState = {
   args: {
     isLoading: true,
   },
-  render: (args: { isLoading?: boolean }) => (
-    <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
-      <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-        <XAxis
-          dataKey="timestamp"
-          type="number"
-          scale="time"
-          domain={[1704067200000, 1704088800000]}
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
-        />
-        <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'transparent' }}
-          orientation="right"
-          tickCount={5}
-          tickFormatter={(value) => (value === 0 ? '' : value)}
-        />
-        <Line
-          type="linear"
-          dataKey="cpu"
-          stroke="var(--color-yellow-500)"
-          strokeWidth={2}
-          dot={false}
-          connectNulls={false}
-          isAnimationActive={false}
-        />
-      </ComposedChart>
-    </Chart.Container>
-  ),
+  render: (args: { isLoading?: boolean }) => {
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    return (
+      <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
+        <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
+          />
+          <Line
+            type="linear"
+            dataKey="cpu"
+            stroke="var(--color-yellow-500)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+        </ComposedChart>
+      </Chart.Container>
+    )
+  },
 }
 
 export const EmptyState = {
   args: {
     isEmpty: true,
   },
-  render: (args: { isEmpty?: boolean }) => (
-    <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
-      <ComposedChart data={[]} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-        <XAxis
-          dataKey="timestamp"
-          type="number"
-          scale="time"
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          strokeDasharray="3 3"
-        />
-        <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'transparent' }}
-          orientation="right"
-          tickCount={5}
-          tickFormatter={(value) => (value === 0 ? '' : value)}
-        />
-        <Line
-          type="linear"
-          dataKey="cpu"
-          stroke="var(--color-yellow-500)"
-          strokeWidth={2}
-          dot={false}
-          connectNulls={false}
-          isAnimationActive={false}
-        />
-      </ComposedChart>
-    </Chart.Container>
-  ),
+  render: (args: { isEmpty?: boolean }) => {
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    return (
+      <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
+        <ComposedChart data={[]} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
+          />
+          <Line
+            type="linear"
+            dataKey="cpu"
+            stroke="var(--color-yellow-500)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+        </ComposedChart>
+      </Chart.Container>
+    )
+  },
 }
 
 export const EventMarkers = {
-  render: () => (
-    <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
-      <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-        <XAxis
-          dataKey="timestamp"
-          type="number"
-          scale="time"
-          domain={[1704067200000, 1704088800000]}
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'var(--color-neutral-250)' }}
-          tickFormatter={(timestamp) => {
-            const date = new Date(timestamp)
-            const hours = date.getHours().toString().padStart(2, '0')
-            const minutes = date.getMinutes().toString().padStart(2, '0')
-            return `${hours}:${minutes}`
-          }}
-          strokeDasharray="3 3"
-        />
+  render: () => {
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    return (
+      <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
+        <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
           tickLine={{ stroke: 'transparent' }}
@@ -422,9 +415,10 @@ export const EventMarkers = {
             fontWeight: 'bold',
           }}
         />
-      </ComposedChart>
-    </Chart.Container>
-  ),
+        </ComposedChart>
+      </Chart.Container>
+    )
+  },
 }
 
 export default Story
