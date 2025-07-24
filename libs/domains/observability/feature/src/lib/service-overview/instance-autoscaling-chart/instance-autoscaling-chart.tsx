@@ -35,27 +35,32 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by(label_qovery_com_service_id) (
-  1 - (
+    query: `sum by (label_qovery_com_service_id) (
+  increase(
     kube_horizontalpodautoscaler_status_condition{
-      condition="ScalingLimited",
-      status="true"
-    }
-    * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id)
-      kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}
-    and on(namespace,horizontalpodautoscaler)
-      (
-        max by(namespace,horizontalpodautoscaler)(
-          kube_horizontalpodautoscaler_status_current_replicas
-        )
-        ==
-        on(namespace,horizontalpodautoscaler)
-        max by(namespace,horizontalpodautoscaler)(
-          kube_horizontalpodautoscaler_spec_max_replicas
-        )
-      )
+      condition = "ScalingLimited",
+      status    = "true"
+    }[5m]
   )
-) > 0`,
+  *
+  on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
+  (
+    max by (namespace, horizontalpodautoscaler)(
+      kube_horizontalpodautoscaler_status_current_replicas
+    )
+    == bool on (namespace, horizontalpodautoscaler)
+    max by (namespace, horizontalpodautoscaler)(
+      kube_horizontalpodautoscaler_spec_max_replicas
+    )
+  )
+  *
+  on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
+  max by (namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
+    kube_horizontalpodautoscaler_labels{
+      label_qovery_com_service_id =~ "${serviceId}"
+    }
+  ) > 0
+)`,
   })
 
   const chartData = useMemo(() => {

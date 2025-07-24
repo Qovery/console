@@ -15,7 +15,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
 
 export interface ReferenceLineEvent {
-  type: 'metric' | 'event' | 'exit-code'
+  type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe'
   timestamp: number
   reason: string
   icon: IconName
@@ -24,6 +24,7 @@ export interface ReferenceLineEvent {
   iconStyle?: IconStyle
   version?: string
   repository?: string
+  color?: string
 }
 
 interface ChartContentProps extends PropsWithChildren {
@@ -171,10 +172,8 @@ function ChartContent({
                   onMouseLeave={() => setHoveredEventKey(null)}
                 >
                   <span
-                    className={clsx(
-                      'flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full',
-                      event.type === 'event' ? 'bg-brand-500' : 'bg-red-500'
-                    )}
+                    className="flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full"
+                    style={{ backgroundColor: event.color ?? 'var(--color-red-500)' }}
                   >
                     <Icon
                       iconName={event.icon}

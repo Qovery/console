@@ -19,6 +19,46 @@ const getDescriptionFromReason = (reason: string): string => {
   }
 }
 
+export const getDescriptionFromProbeType = (probeType: string): string => {
+  switch (probeType.toLowerCase()) {
+    case 'readiness':
+      return 'Readiness probe failed: the container is not ready to receive traffic.'
+    case 'liveness':
+      return 'Liveness probe failed: Kubernetes will restart the container.'
+    case 'startup':
+      return 'Startup probe failed: the container did not finish its startup sequence in time.'
+    default:
+      return 'Unknown probe type'
+  }
+}
+
+export const getDescriptionFromK8sEvent = (reason: string): string => {
+  switch (reason) {
+    case 'OOMKilled':
+      return 'Container was killed because it exceeded its memory limit (Out-Of-Memory).'
+    case 'Failed':
+      return 'Pod or container failed to start or run.'
+    case 'BackOff':
+      return 'Container restart is being delayed due to repeated failures (CrashLoopBackOff or image-pull back-off).'
+    case 'Unhealthy':
+      return 'Container reported as unhealthy after failing its health checks.'
+    case 'Evicted':
+      return 'Pod was evicted from the node due to resource pressure or eviction policy.'
+    case 'FailedScheduling':
+      return 'Scheduler could not place the pod on any node (resource constraints or node selectors).'
+    case 'FailedMount':
+      return 'Kubernetes could not mount one or more volumes required by the pod.'
+    case 'FailedAttachVolume':
+      return 'Kubernetes could not attach a volume to the node for this pod.'
+    case 'Preempted':
+      return 'Pod was pre-empted by another higher-priority pod.'
+    case 'NodeNotReady':
+      return 'The node hosting the pod became NotReady.'
+    default:
+      return 'Unknown'
+  }
+}
+
 const getExitCodeInfo = (exitCode: string): { name: string; description: string } => {
   const code = parseInt(exitCode, 10)
 
@@ -167,6 +207,43 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
 `,
   })
 
+  const { data: metricsK8sEvent, isLoading: isLoadingMetricsK8sEvent } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `
+  sum by (pod,reason)(
+  (
+    k8s_event_logger_q_k8s_events_total{
+      qovery_com_service_id=~"${serviceId}",
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+    }
+    -
+    k8s_event_logger_q_k8s_events_total{
+      qovery_com_service_id=~"${serviceId}",
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+    } offset ${dynamicRange}
+  ) > 0
+)
+`,
+  })
+
+  const { data: metricsProbe, isLoading: isLoadingMetricsProbe } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: `
+ sum by (probe_type) (   increase(
+      prober_probe_total{result!="successful", probe_type="Readiness"}[1m]
+    )
+    * on(namespace,pod) group_left(label_qovery_com_service_id)
+      max by(namespace,pod,label_qovery_com_service_id)(
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )
+      )
+`,
+  })
+
   const chartData = useMemo(() => {
     // Merge healthy and unhealthy metrics into a single timeSeriesMap
     const timeSeriesMap = new Map<
@@ -201,7 +278,13 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
   }, [metricsUnhealthy, metricsHealthy, useLocalTime, startTimestamp, endTimestamp])
 
   const referenceLineData = useMemo(() => {
-    if (!metricsReason?.data?.result && !metricsExitCode?.data?.result) return []
+    if (
+      !metricsReason?.data?.result &&
+      !metricsExitCode?.data?.result &&
+      !metricsK8sEvent?.data?.result &&
+      !metricsProbe?.data?.result
+    )
+      return []
 
     const referenceLines: ReferenceLineEvent[] = []
 
@@ -218,7 +301,8 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
                 timestamp: timestamp * 1000,
                 reason: series.metric.reason,
                 description: getDescriptionFromReason(series.metric.reason),
-                icon: 'newspaper',
+                icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
+                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-500)' : 'var(--color-red-500)',
                 key,
               })
             }
@@ -248,15 +332,66 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
       })
     }
 
+    // Add k8s event as reference lines
+    if (metricsK8sEvent?.data?.result) {
+      metricsK8sEvent.data.result.forEach(
+        (series: { metric: { reason: string; pod: string }; values: [number, string][] }) => {
+          series.values.forEach(([timestamp, value]: [number, string]) => {
+            const numValue = parseFloat(value)
+            if (numValue > 0) {
+              const key = `${series.metric.reason}-${timestamp}`
+              referenceLines.push({
+                type: 'k8s-event',
+                timestamp: timestamp * 1000,
+                reason: series.metric.reason,
+                description: getDescriptionFromK8sEvent(series.metric.reason),
+                icon: 'xmark',
+                color: 'var(--color-red-500)',
+                key,
+              })
+            }
+          })
+        }
+      )
+    }
+
+    // Add probe event as reference lines
+    if (metricsProbe?.data?.result) {
+      metricsProbe.data.result.forEach(
+        (series: { metric: { probe_type: string; pod: string }; values: [number, string][] }) => {
+          series.values.forEach(([timestamp, value]: [number, string]) => {
+            const numValue = parseFloat(value)
+            if (numValue > 0) {
+              const key = `${series.metric.probe_type}-${timestamp}`
+              referenceLines.push({
+                type: 'probe',
+                timestamp: timestamp * 1000,
+                reason: series.metric.probe_type,
+                description: getDescriptionFromProbeType(series.metric.probe_type),
+                icon: 'exclamation',
+                key,
+              })
+            }
+          })
+        }
+      )
+    }
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
     return referenceLines
-  }, [metricsReason, metricsExitCode])
+  }, [metricsReason, metricsExitCode, metricsK8sEvent, metricsProbe])
 
   return (
     <LocalChart
       data={chartData || []}
-      isLoading={isLoadingUnhealthy || isLoadingHealthy || isLoadingMetricsReason || isLoadingMetricsExitCode}
+      isLoading={
+        isLoadingUnhealthy ||
+        isLoadingHealthy ||
+        isLoadingMetricsReason ||
+        isLoadingMetricsExitCode ||
+        isLoadingMetricsK8sEvent ||
+        isLoadingMetricsProbe
+      }
       isEmpty={(chartData || []).length === 0}
       tooltipLabel="Instance issues"
       unit="instance"
@@ -312,7 +447,13 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
               />
             ))}
           {referenceLineData
-            .filter((event) => event.type === 'exit-code' || event.type === 'metric')
+            .filter(
+              (event) =>
+                event.type === 'exit-code' ||
+                event.type === 'metric' ||
+                event.type === 'k8s-event' ||
+                event.type === 'probe'
+            )
             .map((event) => (
               <ReferenceLine
                 key={event.key}
