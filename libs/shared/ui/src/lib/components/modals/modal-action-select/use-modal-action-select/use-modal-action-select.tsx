@@ -42,7 +42,7 @@ export function useModalActionSelect() {
           />
         ),
         options: {
-          width: 700,
+          width: 740,
         },
       })
     }

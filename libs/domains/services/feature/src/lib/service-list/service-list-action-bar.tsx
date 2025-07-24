@@ -231,14 +231,14 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
               <span>
-                Stop and remove the servcie but keep all Qovery configuration, data and settings.
+                Stop and remove the services but keep all Qovery configuration, data and settings.
                 <br />
                 You can easily reinstall or redeploy later with the same configuration.
               </span>
               <div>
                 <span className="font-medium text-neutral-400">What's deleted:</span>
                 <ul className="list-disc pl-4">
-                  <li>All service data</li>
+                  <li>All services data</li>
                 </ul>
               </div>
               <div>
@@ -285,11 +285,15 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           title: 'Delete permanently',
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
-              <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
+              <span>
+                Permanently remove the services and all associated data.
+                <br />
+                This action cannot be undone.
+              </span>
               <div>
                 <span className="font-medium text-neutral-400">What's deleted:</span>
                 <ul className="list-disc pl-4">
-                  <li>All service data</li>
+                  <li>All services data</li>
                   <li>Qovery configuration</li>
                   <li>Logs and history</li>
                   <li>Environment variables</li>
