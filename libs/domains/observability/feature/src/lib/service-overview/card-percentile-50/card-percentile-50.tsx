@@ -6,50 +6,36 @@ export function CardPercentile50({ serviceId, clusterId }: { serviceId: string; 
   const { timeRange } = useServiceOverviewContext()
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: `
+    query: `max_over_time(
+  histogram_quantile(
+    0.5,
     (
-      round(
-        sum(
-          increase(
-            kube_pod_container_status_restarts_total{container!="POD"}[${timeRange}]
-          )
-          * on(namespace, pod) group_left(label_qovery_com_service_id)
-            max by(namespace, pod, label_qovery_com_service_id)(
-              kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-            )
-        )
+      sum by(le, ingress) (
+        rate(nginx_ingress_controller_request_duration_seconds_bucket[1m])
       )
-      or vector(0)
-    )
-    +
-    sum_over_time(
-      (
-        sum(
-          (
-            kube_pod_container_status_waiting_reason{
-              container!="POD",
-              reason!~"ContainerCreating|PodInitializing|Completed"
-            }
-            * on(namespace, pod) group_left(label_qovery_com_service_id)
-              kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-          )
-          or vector(0)
+      * on(ingress) group_left(label_qovery_com_associated_service_id)
+        max by(ingress, label_qovery_com_associated_service_id)(
+          kube_ingress_labels{
+            label_qovery_com_associated_service_id =~ "${serviceId}"
+          }
         )
-      )[${timeRange}:]
     )
+  )[${timeRange}:]
+)
+
   `,
     queryRange: 'query',
   })
 
-  const value = Math.round(Number(metrics?.data?.result[0]?.value[1])) || 0
-  const isError = value > 0
+  const value = Math.round(Number(metrics?.data?.result[0]?.value[1]) * 1000) || 0
+  const isError = value > 100
 
   const title = '50th percentile'
 
   return (
     <CardMetric
       title={title}
-      value={value}
+      value={`${value} ms`}
       status={isError ? 'RED' : 'GREEN'}
       description={`in last ${timeRange}`}
       isLoading={isLoadingMetrics}
