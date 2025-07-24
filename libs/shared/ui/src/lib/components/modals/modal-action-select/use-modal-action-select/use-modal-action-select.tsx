@@ -41,6 +41,9 @@ export function useModalActionSelect() {
             warning={modalActionSelect.warning}
           />
         ),
+        options: {
+          width: 700,
+        },
       })
     }
   }, [modalActionSelect, openModal])

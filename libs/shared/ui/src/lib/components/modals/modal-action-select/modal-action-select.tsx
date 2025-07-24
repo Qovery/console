@@ -53,8 +53,8 @@ export function ModalActionSelect({
 
   return (
     <div className="p-6">
-      <h2 className="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
-      <div className="mb-6">
+      <h2 className="h4 mb-1 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
+      <div className="mb-4">
         <div className="text-sm text-neutral-350 dark:text-neutral-50">
           {description ? (
             description
@@ -64,7 +64,7 @@ export function ModalActionSelect({
             </>
           )}
         </div>
-        {entities && <div className="mt-2 flex gap-1.5">{entities.map((entity) => entity)}</div>}
+        {entities && <div className="mt-1 flex gap-1.5">{entities.map((entity) => entity)}</div>}
       </div>
 
       <form onSubmit={onSubmit}>
@@ -74,7 +74,7 @@ export function ModalActionSelect({
               name="action"
               control={control}
               render={({ field }) => (
-                <RadioGroup.Root onValueChange={field.onChange} value={field.value} className="flex flex-col gap-5">
+                <RadioGroup.Root onValueChange={field.onChange} value={field.value} className="flex flex-col gap-4">
                   {actions.map((action) => (
                     <label
                       key={action.id}
