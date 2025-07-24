@@ -2,6 +2,7 @@ import type { Meta } from '@storybook/react'
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { Chart } from './chart'
 import { createXAxisConfig } from './chart-axis-utils'
+import { EXTENDED_COLOR_PALETTE } from '@qovery/shared/utils'
 
 const Story: Meta<typeof Chart.Container> = {
   component: Chart.Container,
@@ -123,31 +124,9 @@ const generateTimeSeriesData = (metrics: ReturnType<typeof generateGaffotronMetr
   })
 }
 
-// Generate color palette mapping
-const generateColorPalette = (): string[] => {
-  const colorFamilies = [
-    { family: 'brand', shades: ['500', '400', '300', '600'] },
-    { family: 'red', shades: ['500', '400', '300', '600'] },
-    { family: 'yellow', shades: ['500', '400', '300', '600'] },
-    { family: 'green', shades: ['500', '400', '300', '600'] },
-    { family: 'purple', shades: ['500', '400', '300', '600'] },
-    { family: 'sky', shades: ['500', '400', '300', '600'] },
-  ]
-
-  const colors: string[] = []
-  colorFamilies.forEach((colorFamily) => {
-    colorFamily.shades.forEach((shade) => {
-      colors.push(`var(--color-${colorFamily.family}-${shade})`)
-    })
-  })
-
-  return colors.slice(0, 20) // Ensure exactly 20 colors
-}
-
 // Generate all data
 const gaffotronMetrics = generateGaffotronMetrics()
 const maximalEdgeCaseData = generateTimeSeriesData(gaffotronMetrics)
-const colorPalette = generateColorPalette()
 
 export const LineChart = {
   render: () => {
@@ -179,7 +158,7 @@ export const LineChart = {
               key={metric.key}
               type="linear"
               dataKey={metric.key}
-              stroke={colorPalette[index]}
+              stroke={EXTENDED_COLOR_PALETTE[index]}
               strokeWidth={2}
               dot={false}
               connectNulls={false}
