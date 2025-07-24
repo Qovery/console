@@ -151,7 +151,7 @@ const colorPalette = generateColorPalette()
 
 export const LineChart = {
   render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704081600)
+    const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
     return (
       <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
         <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
@@ -165,27 +165,27 @@ export const LineChart = {
               return `${hours}:${minutes}`
             }}
           />
-        <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'transparent' }}
-          orientation="right"
-          tickCount={5}
-          tickFormatter={(value) => (value === 0 ? '' : value)}
-        />
-        <Chart.Tooltip content={<Chart.TooltipContent title="CPU" />} />
-        {gaffotronMetrics.map((metric, index) => (
-          <Line
-            key={metric.key}
-            type="linear"
-            dataKey={metric.key}
-            stroke={colorPalette[index]}
-            strokeWidth={2}
-            dot={false}
-            connectNulls={false}
-            isAnimationActive={false}
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
           />
-        ))}
+          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" />} />
+          {gaffotronMetrics.map((metric, index) => (
+            <Line
+              key={metric.key}
+              type="linear"
+              dataKey={metric.key}
+              stroke={colorPalette[index]}
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+              isAnimationActive={false}
+            />
+          ))}
         </ComposedChart>
       </Chart.Container>
     )
@@ -194,7 +194,7 @@ export const LineChart = {
 
 export const AreaChart = {
   render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800) // Default tick count
     return (
       <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
@@ -208,45 +208,45 @@ export const AreaChart = {
               return `${hours}:${minutes}`
             }}
           />
-        <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'transparent' }}
-          orientation="right"
-          tickCount={5}
-          tickFormatter={(value) => (value === 0 ? '' : value)}
-        />
-        <Chart.Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
-        <Area
-          type="linear"
-          dataKey="cpu"
-          stackId="systemMetrics"
-          stroke="var(--color-yellow-500)"
-          fill="var(--color-yellow-500)"
-          fillOpacity={0.6}
-          strokeWidth={2}
-          isAnimationActive={false}
-        />
-        <Area
-          type="linear"
-          dataKey="memory"
-          stackId="systemMetrics"
-          stroke="var(--color-purple-500)"
-          fill="var(--color-purple-500)"
-          fillOpacity={0.6}
-          strokeWidth={2}
-          isAnimationActive={false}
-        />
-        <Area
-          type="linear"
-          dataKey="disk"
-          stackId="systemMetrics"
-          stroke="var(--color-sky-500)"
-          fill="var(--color-sky-500)"
-          fillOpacity={0.6}
-          strokeWidth={2}
-          isAnimationActive={false}
-        />
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
+          />
+          <Chart.Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
+          <Area
+            type="linear"
+            dataKey="cpu"
+            stackId="systemMetrics"
+            stroke="var(--color-yellow-500)"
+            fill="var(--color-yellow-500)"
+            fillOpacity={0.6}
+            strokeWidth={2}
+            isAnimationActive={false}
+          />
+          <Area
+            type="linear"
+            dataKey="memory"
+            stackId="systemMetrics"
+            stroke="var(--color-purple-500)"
+            fill="var(--color-purple-500)"
+            fillOpacity={0.6}
+            strokeWidth={2}
+            isAnimationActive={false}
+          />
+          <Area
+            type="linear"
+            dataKey="disk"
+            stackId="systemMetrics"
+            stroke="var(--color-sky-500)"
+            fill="var(--color-sky-500)"
+            fillOpacity={0.6}
+            strokeWidth={2}
+            isAnimationActive={false}
+          />
         </ComposedChart>
       </Chart.Container>
     )
@@ -258,7 +258,7 @@ export const LoadingState = {
     isLoading: true,
   },
   render: (args: { isLoading?: boolean }) => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800) // Default tick count
     return (
       <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
@@ -300,7 +300,7 @@ export const EmptyState = {
     isEmpty: true,
   },
   render: (args: { isEmpty?: boolean }) => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800) // Default tick count
     return (
       <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={[]} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
@@ -339,7 +339,7 @@ export const EmptyState = {
 
 export const EventMarkers = {
   render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800)
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800) // Default tick count
     return (
       <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
@@ -353,68 +353,68 @@ export const EventMarkers = {
               return `${hours}:${minutes}`
             }}
           />
-        <YAxis
-          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-          tickLine={{ stroke: 'transparent' }}
-          axisLine={{ stroke: 'transparent' }}
-          orientation="right"
-          tickCount={5}
-          tickFormatter={(value) => (value === 0 ? '' : value)}
-        />
-        <Chart.Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
-        <Line
-          type="linear"
-          dataKey="cpu"
-          stroke="var(--color-yellow-500)"
-          strokeWidth={2}
-          dot={false}
-          connectNulls={false}
-          isAnimationActive={false}
-        />
-        <Line
-          type="linear"
-          dataKey="memory"
-          stroke="var(--color-purple-500)"
-          strokeWidth={2}
-          dot={false}
-          connectNulls={false}
-          isAnimationActive={false}
-        />
-        <Line
-          type="linear"
-          dataKey="disk"
-          stroke="var(--color-sky-500)"
-          strokeWidth={2}
-          dot={false}
-          connectNulls={false}
-          isAnimationActive={false}
-        />
-        <ReferenceLine
-          x={1704074400000}
-          stroke="var(--color-brand-500)"
-          strokeDasharray="3 3"
-          strokeWidth={2}
-          label={{
-            value: 'Deploy Event',
-            position: 'top',
-            fill: 'var(--color-brand-500)',
-            fontSize: 12,
-            fontWeight: 'bold',
-          }}
-        />
-        <ReferenceLine
-          x={1704081600000}
-          stroke="var(--color-red-500)"
-          strokeDasharray="3 3"
-          strokeWidth={2}
-          label={{
-            value: 'Alert Triggered',
-            position: 'top',
-            fill: 'var(--color-red-500)',
-            fontSize: 12,
-            fontWeight: 'bold',
-          }}
-        />
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
+          />
+          <Chart.Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
+          <Line
+            type="linear"
+            dataKey="cpu"
+            stroke="var(--color-yellow-500)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+          <Line
+            type="linear"
+            dataKey="memory"
+            stroke="var(--color-purple-500)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+          <Line
+            type="linear"
+            dataKey="disk"
+            stroke="var(--color-sky-500)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+          />
+          <ReferenceLine
+            x={1704074400000}
+            stroke="var(--color-brand-500)"
+            strokeDasharray="3 3"
+            strokeWidth={2}
+            label={{
+              value: 'Deploy Event',
+              position: 'top',
+              fill: 'var(--color-brand-500)',
+              fontSize: 12,
+              fontWeight: 'bold',
+            }}
+          />
+          <ReferenceLine
+            x={1704081600000}
+            stroke="var(--color-red-500)"
+            strokeDasharray="3 3"
+            strokeWidth={2}
+            label={{
+              value: 'Alert Triggered',
+              position: 'top',
+              fill: 'var(--color-red-500)',
+              fontSize: 12,
+              fontWeight: 'bold',
+            }}
+          />
         </ComposedChart>
       </Chart.Container>
     )

@@ -1,11 +1,11 @@
-function getLogicalTicks(startTimestamp: number, endTimestamp: number): number[] {
+function getLogicalTicks(startTimestamp: number, endTimestamp: number, tickCount = 6): number[] {
   const startTime = startTimestamp * 1000
   const endTime = endTimestamp * 1000
 
   const ticks: number[] = []
-  const interval = (endTime - startTime) / 5 // 5 intervals for 6 ticks
+  const interval = (endTime - startTime) / (tickCount - 1) // N-1 intervals for N ticks
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < tickCount; i++) {
     ticks.push(startTime + interval * i)
   }
 
@@ -36,16 +36,17 @@ export function createXAxisConfig(
   options: {
     axisLineColor?: string
     tickColor?: string
+    tickCount?: number
   } = {}
 ): Omit<XAxisConfig, 'tickFormatter'> {
-  const { axisLineColor = 'var(--color-neutral-250)', tickColor = 'var(--color-neutral-350)' } = options
+  const { axisLineColor = 'var(--color-neutral-250)', tickColor = 'var(--color-neutral-350)', tickCount = 6 } = options
 
   return {
     dataKey: 'timestamp',
     type: 'number',
     scale: 'time',
     domain: getXAxisDomain(startTimestamp, endTimestamp),
-    ticks: getLogicalTicks(startTimestamp, endTimestamp),
+    ticks: getLogicalTicks(startTimestamp, endTimestamp, tickCount),
     tick: { fontSize: 12, fill: tickColor },
     tickLine: { stroke: 'transparent' },
     axisLine: { stroke: axisLineColor },
