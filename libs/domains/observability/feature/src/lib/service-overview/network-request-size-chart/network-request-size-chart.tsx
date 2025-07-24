@@ -77,7 +77,8 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
       data={chartData}
       isLoading={isLoadingMetricsResponseSize || isLoadingMetricsRequestSize}
       isEmpty={chartData.length === 0}
-      label="Network request size"
+      label="Network request size (bytes)"
+      description="Network request size: response size, request size in bytes"
       unit="bytes"
       serviceId={serviceId}
     >
