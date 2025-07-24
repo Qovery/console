@@ -301,7 +301,8 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
                 timestamp: timestamp * 1000,
                 reason: series.metric.reason,
                 description: getDescriptionFromReason(series.metric.reason),
-                icon: 'newspaper',
+                icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
+                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-500)' : 'var(--color-red-500)',
                 key,
               })
             }
@@ -344,7 +345,8 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
                 timestamp: timestamp * 1000,
                 reason: series.metric.reason,
                 description: getDescriptionFromK8sEvent(series.metric.reason),
-                icon: 'google',
+                icon: 'xmark',
+                color: 'var(--color-red-500)',
                 key,
               })
             }
@@ -358,8 +360,6 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
       metricsProbe.data.result.forEach(
         (series: { metric: { probe_type: string; pod: string }; values: [number, string][] }) => {
           series.values.forEach(([timestamp, value]: [number, string]) => {
-            console.log('PGB')
-            console.log(series.metric)
             const numValue = parseFloat(value)
             if (numValue > 0) {
               const key = `${series.metric.probe_type}-${timestamp}`
@@ -368,7 +368,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
                 timestamp: timestamp * 1000,
                 reason: series.metric.probe_type,
                 description: getDescriptionFromProbeType(series.metric.probe_type),
-                icon: 'google',
+                icon: 'exclamation',
                 key,
               })
             }
