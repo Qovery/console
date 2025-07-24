@@ -1,20 +1,8 @@
 import type { Meta } from '@storybook/react'
-import { Area, CartesianGrid, ComposedChart, Line, ReferenceLine, XAxis, YAxis } from 'recharts'
+import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts'
+import { EXTENDED_COLOR_PALETTE } from '@qovery/shared/utils'
 import { Chart } from './chart'
 import { createXAxisConfig } from './chart-axis-utils'
-import { EXTENDED_COLOR_PALETTE } from '@qovery/shared/utils'
-
-const Story: Meta<typeof Chart.Container> = {
-  component: Chart.Container,
-  title: 'Chart',
-  decorators: [
-    (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
-        <Story />
-      </div>
-    ),
-  ],
-}
 
 // Sample data with independent system metrics: CPU, Memory, Disk usage (percentages)
 const sampleData = [
@@ -128,7 +116,72 @@ const generateTimeSeriesData = (metrics: ReturnType<typeof generateGaffotronMetr
 const gaffotronMetrics = generateGaffotronMetrics()
 const maximalEdgeCaseData = generateTimeSeriesData(gaffotronMetrics)
 
-export const LineChart = {
+const Story: Meta<typeof Chart.Container> = {
+  component: Chart.Container,
+  title: 'Chart',
+  decorators: [
+    (Story) => (
+      <div style={{ background: 'white', padding: '3em' }}>
+        <Story />
+      </div>
+    ),
+  ],
+}
+
+export const Composed = {
+  render: () => {
+    const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Match LineChart
+    return (
+      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
+        <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
+          />
+          <Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
+          <Legend />
+          <Area
+            type="linear"
+            dataKey="cpu"
+            stroke="var(--color-yellow-500)"
+            fill="var(--color-yellow-500)"
+            fillOpacity={0.15}
+            strokeWidth={2}
+            isAnimationActive={false}
+            name="CPU"
+          />
+          <Bar dataKey="memory" fill="var(--color-purple-500)" barSize={20} isAnimationActive={false} name="Memory" />
+          <Line
+            type="linear"
+            dataKey="disk"
+            stroke="var(--color-sky-500)"
+            strokeWidth={2}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={false}
+            name="Disk"
+          />
+        </ComposedChart>
+      </Chart.Container>
+    )
+  },
+}
+
+export const Maximal = {
   render: () => {
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
     return (
@@ -171,7 +224,7 @@ export const LineChart = {
   },
 }
 
-export const AreaChart = {
+export const EventMarkers = {
   render: () => {
     const xAxisConfig = createXAxisConfig(1704067200, 1704088800) // Default tick count
     return (
@@ -196,35 +249,31 @@ export const AreaChart = {
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
           <Chart.Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
-          <Area
-            type="linear"
-            dataKey="cpu"
-            stackId="systemMetrics"
-            stroke="var(--color-yellow-500)"
-            fill="var(--color-yellow-500)"
-            fillOpacity={0.6}
+          <ReferenceLine
+            x={1704074400000}
+            stroke="var(--color-brand-500)"
+            strokeDasharray="3 3"
             strokeWidth={2}
-            isAnimationActive={false}
+            label={{
+              value: 'Deploy Event',
+              position: 'top',
+              fill: 'var(--color-brand-500)',
+              fontSize: 12,
+              fontWeight: 'bold',
+            }}
           />
-          <Area
-            type="linear"
-            dataKey="memory"
-            stackId="systemMetrics"
-            stroke="var(--color-purple-500)"
-            fill="var(--color-purple-500)"
-            fillOpacity={0.6}
+          <ReferenceLine
+            x={1704081600000}
+            stroke="var(--color-red-500)"
+            strokeDasharray="3 3"
             strokeWidth={2}
-            isAnimationActive={false}
-          />
-          <Area
-            type="linear"
-            dataKey="disk"
-            stackId="systemMetrics"
-            stroke="var(--color-sky-500)"
-            fill="var(--color-sky-500)"
-            fillOpacity={0.6}
-            strokeWidth={2}
-            isAnimationActive={false}
+            label={{
+              value: 'Alert Triggered',
+              position: 'top',
+              fill: 'var(--color-red-500)',
+              fontSize: 12,
+              fontWeight: 'bold',
+            }}
           />
         </ComposedChart>
       </Chart.Container>
@@ -309,90 +358,6 @@ export const EmptyState = {
             dot={false}
             connectNulls={false}
             isAnimationActive={false}
-          />
-        </ComposedChart>
-      </Chart.Container>
-    )
-  },
-}
-
-export const EventMarkers = {
-  render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800) // Default tick count
-    return (
-      <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
-        <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-          <XAxis
-            {...xAxisConfig}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
-              const hours = date.getHours().toString().padStart(2, '0')
-              const minutes = date.getMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
-            }}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          <Chart.Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
-          <Line
-            type="linear"
-            dataKey="cpu"
-            stroke="var(--color-yellow-500)"
-            strokeWidth={2}
-            dot={false}
-            connectNulls={false}
-            isAnimationActive={false}
-          />
-          <Line
-            type="linear"
-            dataKey="memory"
-            stroke="var(--color-purple-500)"
-            strokeWidth={2}
-            dot={false}
-            connectNulls={false}
-            isAnimationActive={false}
-          />
-          <Line
-            type="linear"
-            dataKey="disk"
-            stroke="var(--color-sky-500)"
-            strokeWidth={2}
-            dot={false}
-            connectNulls={false}
-            isAnimationActive={false}
-          />
-          <ReferenceLine
-            x={1704074400000}
-            stroke="var(--color-brand-500)"
-            strokeDasharray="3 3"
-            strokeWidth={2}
-            label={{
-              value: 'Deploy Event',
-              position: 'top',
-              fill: 'var(--color-brand-500)',
-              fontSize: 12,
-              fontWeight: 'bold',
-            }}
-          />
-          <ReferenceLine
-            x={1704081600000}
-            stroke="var(--color-red-500)"
-            strokeDasharray="3 3"
-            strokeWidth={2}
-            label={{
-              value: 'Alert Triggered',
-              position: 'top',
-              fill: 'var(--color-red-500)',
-              fontSize: 12,
-              fontWeight: 'bold',
-            }}
           />
         </ComposedChart>
       </Chart.Container>
