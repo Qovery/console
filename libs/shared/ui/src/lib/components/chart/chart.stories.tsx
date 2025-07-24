@@ -159,10 +159,18 @@ export const Composed = {
             tickCount={5}
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
-          <Tooltip content={<Chart.TooltipContent title="System Usage" formatLabel={(key) => {
-            const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
-            return labelMap[key] || key
-          }} formatValue={(value) => `${value}%`} />} />
+          <Tooltip
+            content={
+              <Chart.TooltipContent
+                title="System Usage"
+                formatLabel={(key) => {
+                  const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
+                  return labelMap[key] || key
+                }}
+                formatValue={(value) => `${value}%`}
+              />
+            }
+          />
           <Legend />
           <Area
             type="linear"
@@ -191,7 +199,7 @@ export const Composed = {
   },
 }
 
-export const Maximal = {
+export const MaximalEdgeCase = {
   render: () => {
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
     return (
@@ -215,12 +223,14 @@ export const Maximal = {
             tickCount={5}
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
-          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" />} />
+          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
+          <Legend />
           {gaffotronMetrics.map((metric, index) => (
             <Line
               key={metric.key}
               type="linear"
               dataKey={metric.key}
+              name={metric.key}
               stroke={EXTENDED_COLOR_PALETTE[index]}
               strokeWidth={2}
               dot={false}

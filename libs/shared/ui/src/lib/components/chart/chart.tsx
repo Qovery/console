@@ -10,8 +10,10 @@ interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   isEmpty?: boolean
 }
 
-const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
-  function ChartContainer({ children, className, isLoading, isEmpty, ...htmlProps }, ref) {
+const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function ChartContainer(
+  { children, className, isLoading, isEmpty, ...htmlProps },
+  ref
+) {
   return (
     <div ref={ref} className={twMerge('relative flex h-[300px] justify-center text-xs', className)} {...htmlProps}>
       <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
@@ -53,10 +55,11 @@ const ChartTooltipContent = forwardRef<
     title: string
     formatValue?: (value: string, dataKey: string) => string
     formatLabel?: (dataKey: string) => string
+    maxItems?: number
   }
->(function ChartTooltipContent({ active, payload, title, formatValue, formatLabel }, ref) {
-  const filteredPayload = useMemo(() => 
-    payload?.filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index) || [],
+>(function ChartTooltipContent({ active, payload, title, formatValue, formatLabel, maxItems }, ref) {
+  const filteredPayload = useMemo(
+    () => payload?.filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index) || [],
     [payload]
   )
 
@@ -71,23 +74,29 @@ const ChartTooltipContent = forwardRef<
         <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
       </div>
       <div className="space-y-1 p-3 pt-0">
-        {filteredPayload.map((entry) => {
-            const seriesKey = typeof entry.dataKey === 'string' ? entry.dataKey : String(entry.dataKey)
-            const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey
-            const formattedValue = formatValue
-              ? formatValue(entry.value?.toString() ?? '', seriesKey)
-              : entry.value?.toString()
+        {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry) => {
+          const seriesKey = typeof entry.dataKey === 'string' ? entry.dataKey : String(entry.dataKey)
+          const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey
+          const formattedValue = formatValue
+            ? formatValue(entry.value?.toString() ?? '', seriesKey)
+            : entry.value?.toString()
 
-            return (
-              <div key={seriesKey} className="flex items-center justify-between gap-4 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                  <span className="text-neutral-50">{displayName}</span>
-                </div>
-                <span className="text-neutral-50">{formattedValue}</span>
+          return (
+            <div key={seriesKey} className="flex items-center justify-between gap-4 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span className="text-neutral-50">{displayName}</span>
               </div>
-            )
-          })}
+              <span className="text-neutral-50">{formattedValue}</span>
+            </div>
+          )
+        })}
+        {maxItems && filteredPayload.length > maxItems && (
+          <>
+            <div className="-mx-3 mt-2 border-t border-neutral-400" />
+            <div className="text-left text-xs text-neutral-250">+{filteredPayload.length - maxItems} more</div>
+          </>
+        )}
       </div>
     </div>
   )
