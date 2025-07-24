@@ -9,6 +9,9 @@ import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardInstance } from './card-instance/card-instance'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
+import { CardPercentile50 } from './card-percentile-50/card-percentile-50'
+import { CardPercentile95 } from './card-percentile-95/card-percentile-95'
+import { CardPercentile99 } from './card-percentile-99/card-percentile-99'
 import { CardStorage } from './card-storage/card-storage'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
@@ -85,8 +88,11 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
               serviceId={applicationId}
               clusterId={environment.cluster_id}
             />
-            {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
             {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
+            {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
+            <CardPercentile99 clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardPercentile95 clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardPercentile50 clusterId={environment.cluster_id} serviceId={applicationId} />
           </Section>
           <Section className="overflow-hidden rounded border border-neutral-250">
             <div className="flex h-9 items-center bg-neutral-100 text-sm">
