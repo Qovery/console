@@ -269,7 +269,13 @@ export function LocalChart({
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
   const eventReferenceLines: ReferenceLineEvent[] = (eventsFiltered || [])
-    .filter((event) => event.event_type === 'TRIGGER_DEPLOY' && event.target_id === serviceId)
+    .filter(
+      (event) =>
+        (event.event_type === 'TRIGGER_DEPLOY' ||
+          event.event_type === 'DEPLOY_FAILED' ||
+          event.event_type === 'DEPLOYED') &&
+        event.target_id === serviceId
+    )
     .map((event) => {
       const eventTimestamp = new Date(event.timestamp!).getTime()
       const key = `event-${event.id || eventTimestamp}`
@@ -283,15 +289,51 @@ export function LocalChart({
       const repository =
         change?.service_source?.image?.image_name ?? change?.service_source?.docker?.git_repository?.url ?? 'Unknown'
 
+      if (event.event_type === 'DEPLOY_FAILED') {
+        return {
+          type: 'event',
+          timestamp: eventTimestamp,
+          reason: 'Deploy failed',
+          icon: 'xmark',
+          color: 'var(--color-red-500)',
+          key,
+          version,
+          repository,
+        }
+      } else if (event.event_type === 'DEPLOYED') {
+        return {
+          type: 'event',
+          timestamp: eventTimestamp,
+          reason: 'Deployed',
+          icon: 'check',
+          color: 'var(--color-green-500)',
+          key,
+          version,
+          repository,
+        }
+      } else if (event.event_type === 'TRIGGER_DEPLOY') {
+        return {
+          type: 'event',
+          timestamp: eventTimestamp,
+          reason: 'Trigger deploy',
+          icon: 'play',
+          iconStyle: 'solid',
+          color: 'var(--color-brand-500)',
+          key,
+          version,
+          repository,
+        }
+      }
+
       return {
         type: 'event',
         timestamp: eventTimestamp,
-        reason: 'Trigger deploy',
-        icon: 'play',
-        iconStyle: 'solid',
+        reason: 'Unknown',
+        icon: 'question',
+        color: 'var(--color-neutral-350)',
+        key,
         version,
         repository,
-        key,
       }
     })
 

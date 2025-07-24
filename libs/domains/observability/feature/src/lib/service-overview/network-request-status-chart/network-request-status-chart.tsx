@@ -60,7 +60,8 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
       data={chartData}
       isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
-      label="Network request status"
+      label="Network request status (req/s)"
+      description="Network request status: 2xx, 3xx, 4xx, 5xx"
       unit="req/s"
       serviceId={serviceId}
     >

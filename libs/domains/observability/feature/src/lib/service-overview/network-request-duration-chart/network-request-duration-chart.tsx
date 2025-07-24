@@ -104,7 +104,8 @@ export function NetworkRequestDurationChart({ clusterId, serviceId }: { clusterI
       data={chartData}
       isLoading={isLoadingMetrics || isLoadingMetrics99 || isLoadingMetrics50}
       isEmpty={chartData.length === 0}
-      label="Network request duration"
+      label="Network request duration (ms)"
+      description="Network request duration: 95th percentile, 99th percentile, 50th percentile"
       unit="ms"
       serviceId={serviceId}
     >
