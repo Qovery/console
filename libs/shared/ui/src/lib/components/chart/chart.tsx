@@ -11,7 +11,7 @@ interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
 }
 
 const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
-  ({ children, className, isLoading, isEmpty, ...htmlProps }, ref) => {
+  function ChartContainer({ children, className, isLoading, isEmpty, ...htmlProps }, ref) {
   return (
     <div ref={ref} className={twMerge('relative flex h-[300px] justify-center text-xs', className)} {...htmlProps}>
       <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
@@ -44,7 +44,6 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
     </div>
   )
 })
-ChartContainer.displayName = 'Chart'
 
 const ChartTooltip = RechartsPrimitive.Tooltip
 
@@ -55,7 +54,7 @@ const ChartTooltipContent = forwardRef<
     formatValue?: (value: string, dataKey: string) => string
     formatLabel?: (dataKey: string) => string
   }
->(({ active, payload, title, formatValue, formatLabel }, ref) => {
+>(function ChartTooltipContent({ active, payload, title, formatValue, formatLabel }, ref) {
   const filteredPayload = useMemo(() => 
     payload?.filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index) || [],
     [payload]
@@ -93,7 +92,6 @@ const ChartTooltipContent = forwardRef<
     </div>
   )
 })
-ChartTooltipContent.displayName = 'ChartTooltipContent'
 
 export const Chart = {
   Container: ChartContainer,
