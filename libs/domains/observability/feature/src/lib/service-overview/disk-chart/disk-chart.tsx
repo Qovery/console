@@ -121,6 +121,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       }
       isEmpty={chartData.length === 0}
       label="Storage I/O (MiB/sec)"
+      description="Storage I/O: read/write ephemeral storage, read/write persistent storage"
       tooltipLabel="Storage I/O"
       serviceId={serviceId}
       yDomain={yDomain}
