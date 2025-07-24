@@ -130,10 +130,17 @@ const Story: Meta<typeof Chart.Container> = {
 
 export const Composed = {
   render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Match LineChart
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 }) // Show all 7 items
+
+    // Create modified data where first and last bars are hidden
+    const modifiedData = sampleData.map((item, index) => ({
+      ...item,
+      memory: index === 0 || index === sampleData.length - 1 ? undefined : item.memory,
+    }))
+
     return (
       <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-        <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+        <ComposedChart data={modifiedData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
           <XAxis
             {...xAxisConfig}
@@ -152,7 +159,10 @@ export const Composed = {
             tickCount={5}
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
-          <Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
+          <Tooltip content={<Chart.TooltipContent title="System Usage" formatLabel={(key) => {
+            const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
+            return labelMap[key] || key
+          }} formatValue={(value) => `${value}%`} />} />
           <Legend />
           <Area
             type="linear"
@@ -164,11 +174,11 @@ export const Composed = {
             isAnimationActive={false}
             name="CPU"
           />
-          <Bar dataKey="memory" fill="var(--color-purple-500)" barSize={20} isAnimationActive={false} name="Memory" />
+          <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
           <Line
             type="linear"
             dataKey="disk"
-            stroke="var(--color-sky-500)"
+            stroke="var(--color-green-500)"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
