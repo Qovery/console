@@ -164,7 +164,7 @@ function ChartContent({
                   className={clsx(
                     'flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150',
                     {
-                      'bg-neutral-100': hoveredEventKey === event.key,
+                      'bg-neutral-150': hoveredEventKey === event.key,
                     }
                   )}
                   onMouseEnter={() => setHoveredEventKey(event.key)}
@@ -198,6 +198,7 @@ function ChartContent({
                       </>
                     )}
                     {event.description && <span className="text-neutral-350">{event.description}</span>}
+                    {event.type === 'exit-code' && <span className="text-neutral-350">Instance: {event.key}</span>}
                   </div>
                 </div>
               )
@@ -400,8 +401,8 @@ export function LocalChart({
                   x={event.timestamp}
                   stroke="var(--color-brand-500)"
                   strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                  strokeWidth={1}
+                  opacity={hoveredEventKey === event.key ? 1 : 0.6}
+                  strokeWidth={3}
                   onMouseEnter={() => setHoveredEventKey(event.key)}
                   onMouseLeave={() => setHoveredEventKey(null)}
                   label={{
