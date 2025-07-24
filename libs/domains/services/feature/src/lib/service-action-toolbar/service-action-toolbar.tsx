@@ -621,15 +621,24 @@ function MenuOtherActions({
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
               <span>
-                Stop and remove the service but keep all configuration, data, and settings. You can easily reinstall
-                later with the same configuration.
+                Stop and remove the servcie but keep all Qovery configuration, data and settings.
+                <br />
+                You can easily reinstall or redeploy later with the same configuration.
               </span>
-              <span className="font-medium text-neutral-400">What's kept:</span>
-              <ul className="list-disc pl-4">
-                <li>Configuration files</li>
-                <li>Environment variables</li>
-                <li>Network settings</li>
-              </ul>
+              <div>
+                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <ul className="list-disc pl-4">
+                  <li>All service data</li>
+                </ul>
+              </div>
+              <div>
+                <span className="font-medium text-neutral-400">What's kept:</span>
+                <ul className="list-disc pl-4">
+                  <li>Qovery configuration</li>
+                  <li>Environment variables</li>
+                  <li>Network settings</li>
+                </ul>
+              </div>
             </div>
           ),
           icon: 'box-taped',
@@ -648,14 +657,16 @@ function MenuOtherActions({
           description: (
             <div className="flex flex-col gap-2 text-neutral-350">
               <span>Permanently remove the service and ALL associated data. This action cannot be undone.</span>
-              <span className="font-medium text-neutral-400">What's deleted:</span>
-              <ul className="list-disc pl-4">
-                <li>All service data</li>
-                <li>Configuration files</li>
-                <li>Logs and history</li>
-                <li>Environment variables</li>
-                <li>Network settings</li>
-              </ul>
+              <div>
+                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <ul className="list-disc pl-4">
+                  <li>All service data</li>
+                  <li>Qovery configuration</li>
+                  <li>Logs and history</li>
+                  <li>Environment variables</li>
+                  <li>Network settings</li>
+                </ul>
+              </div>
             </div>
           ),
           icon: 'trash-can',
