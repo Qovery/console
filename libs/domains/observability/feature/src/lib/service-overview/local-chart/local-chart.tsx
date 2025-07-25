@@ -7,12 +7,41 @@ import { CartesianGrid, ComposedChart, ReferenceLine, XAxis, YAxis } from 'recha
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
+import { createXAxisConfig } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
+
+export type LineLabelProps = {
+  x?: number
+  y?: number
+  index?: number
+  value?: number | string
+  [key: string]: unknown
+}
+
+export function renderResourceLimitLabel(
+  labelText: string,
+  chartData: Array<{ [key: string]: string | number | null }>,
+  color = 'var(--color-red-500)'
+) {
+  return (props: LineLabelProps) => {
+    const { x, y, index, value } = props
+    // Only render for the last point with a value
+    if (chartData && index === chartData.length - 1 && value != null) {
+      return (
+        <text x={x} y={(y ?? 0) - 8} fill={color} fontSize={12} fontWeight={500} textAnchor="end">
+          {labelText}
+        </text>
+      )
+    }
+    // Return an empty SVG group instead of null to satisfy type requirements
+    return <g />
+  }
+}
 
 export interface ReferenceLineEvent {
   type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe'
@@ -70,19 +99,7 @@ function ChartContent({
     return xDomain ?? [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
   }
 
-  function getLogicalTicks(): number[] {
-    const startTime = Number(startTimestamp) * 1000
-    const endTime = Number(endTimestamp) * 1000
-
-    const ticks: number[] = []
-    const interval = (endTime - startTime) / 5 // 5 intervals for 6 ticks
-
-    for (let i = 0; i < 6; i++) {
-      ticks.push(startTime + interval * i)
-    }
-
-    return ticks
-  }
+  const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
     <div className="flex h-full">
@@ -95,16 +112,10 @@ function ChartContent({
           onMouseLeave={() => setOnHoverHideTooltip(false)}
           onMouseUp={() => setOnHoverHideTooltip(false)}
         >
-          <CartesianGrid stroke="var(--color-neutral-200)" vertical={false} />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
           <XAxis
-            dataKey="timestamp"
-            type="number"
-            scale="time"
+            {...xAxisConfig}
             domain={getXDomain()}
-            ticks={getLogicalTicks()}
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
               const isLongRange = () => {
@@ -144,10 +155,10 @@ function ChartContent({
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
-            stroke="transparent"
             orientation="right"
             tickCount={5}
             domain={yDomain}
+            tickFormatter={(value) => value === 0 ? '' : value}
           />
         </ComposedChart>
       </Chart.Container>

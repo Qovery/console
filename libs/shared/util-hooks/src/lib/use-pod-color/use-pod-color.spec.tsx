@@ -1,9 +1,10 @@
 import { act, renderHook } from '@testing-library/react'
-import { COLORS, getColorByPod, usePodColor } from './use-pod-color'
+import { CHART_COLORS } from '@qovery/shared/ui'
+import { getColorByPod, usePodColor } from './use-pod-color'
 
 describe('getColorByPod', () => {
   it('returns first color for empty string', () => {
-    expect(getColorByPod('')).toBe('hsl(217.2 91.2% 59.8%)')
+    expect(getColorByPod('')).toBe(CHART_COLORS[0])
   })
 
   it('returns consistent color for same pod string', () => {
@@ -18,27 +19,26 @@ describe('getColorByPod', () => {
     expect(color1).not.toBe(color2)
   })
 
-  it('returns a color from the COLORS array', () => {
+  it('returns a color from the CHART_COLORS array', () => {
     const color = getColorByPod('somepod')
-    expect(COLORS).toContain(color)
+    expect(CHART_COLORS).toContain(color)
   })
 
   it('handles long pod names', () => {
     const longPodName = 'a'.repeat(30)
     expect(() => getColorByPod(longPodName)).not.toThrow()
-    expect(COLORS).toContain(getColorByPod(longPodName))
+    expect(CHART_COLORS).toContain(getColorByPod(longPodName))
   })
 
-  it('can return a reasonable number of unique colors from the COLORS array', () => {
+  it('can return all colors in the CHART_COLORS array', () => {
     const usedColors = new Set()
     for (let i = 0; i < 1000; i++) {
       usedColors.add(getColorByPod(`pod${i}`))
     }
-    expect(usedColors.size).toBeGreaterThanOrEqual(10)
-    expect(usedColors.size).toBeLessThanOrEqual(COLORS.length)
+    expect(usedColors.size).toBe(CHART_COLORS.length)
   })
 
-  it('maintains a reasonable color distribution across COLORS array', () => {
+  it('maintains color distribution across CHART_COLORS array', () => {
     const colorCounts = new Map<string, number>()
     const iterations = 10000
 
@@ -47,9 +47,8 @@ describe('getColorByPod', () => {
       colorCounts.set(color, (colorCounts.get(color) || 0) + 1)
     }
 
-    const counts = Array.from(colorCounts.values())
-    const expectedAverage = iterations / COLORS.length
-    const maxAllowed = expectedAverage * 2.5
+    const expectedAverage = iterations / CHART_COLORS.length
+    const tolerance = expectedAverage * 0.5
 
     expect(Math.max(...counts)).toBeLessThanOrEqual(maxAllowed)
     expect(Math.min(...counts)).toBeGreaterThan(0)
@@ -96,7 +95,7 @@ describe('usePodColor hook', () => {
       }
     })
 
-    expect(colors.size).toBeLessThanOrEqual(COLORS.length)
+    expect(colors.size).toBeLessThanOrEqual(CHART_COLORS.length)
   })
 
   it('maintains color mapping after component updates', () => {
