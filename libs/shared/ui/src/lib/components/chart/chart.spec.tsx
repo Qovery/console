@@ -1,5 +1,5 @@
 import { ComposedChart, Line } from 'recharts'
-import { render, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { Chart } from './chart'
 import { getLogicalTicks } from './chart-utils'
 
@@ -31,7 +31,7 @@ const sampleData = [
 describe('Chart.Container', () => {
   describe('with data', () => {
     it('renders chart content when data is provided', () => {
-      render(
+      renderWithProviders(
         <Chart.Container className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
@@ -44,7 +44,7 @@ describe('Chart.Container', () => {
     })
 
     it('renders with correct semantic attributes', () => {
-      render(
+      renderWithProviders(
         <Chart.Container className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
@@ -58,7 +58,7 @@ describe('Chart.Container', () => {
 
   describe('with no data', () => {
     it('shows no data message when isEmpty is true', () => {
-      render(
+      renderWithProviders(
         <Chart.Container isEmpty className="h-[300px] w-full">
           <ComposedChart data={[]}>
             <Line dataKey="cpu" />
@@ -71,7 +71,7 @@ describe('Chart.Container', () => {
     })
 
     it('renders chart skeleton when isEmpty is true', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <Chart.Container isEmpty className="h-[300px] w-full">
           <ComposedChart data={[]}>
             <Line dataKey="cpu" />
@@ -85,7 +85,7 @@ describe('Chart.Container', () => {
     })
 
     it('has correct pointer events when isEmpty', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <Chart.Container isEmpty className="h-[300px] w-full">
           <ComposedChart data={[]}>
             <Line dataKey="cpu" />
@@ -100,7 +100,7 @@ describe('Chart.Container', () => {
 
   describe('with loading state', () => {
     it('shows loading message when isLoading is true', () => {
-      render(
+      renderWithProviders(
         <Chart.Container isLoading className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
@@ -113,7 +113,7 @@ describe('Chart.Container', () => {
     })
 
     it('renders chart skeleton when isLoading is true', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <Chart.Container isLoading className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
@@ -127,7 +127,7 @@ describe('Chart.Container', () => {
     })
 
     it('has correct pointer events when isLoading', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <Chart.Container isLoading className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
@@ -140,7 +140,7 @@ describe('Chart.Container', () => {
     })
 
     it('shows loader component when isLoading is true', () => {
-      render(
+      renderWithProviders(
         <Chart.Container isLoading className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
@@ -154,7 +154,7 @@ describe('Chart.Container', () => {
 
   describe('priority of states', () => {
     it('shows loading state when both isLoading and isEmpty are true', () => {
-      render(
+      renderWithProviders(
         <Chart.Container isLoading isEmpty className="h-[300px] w-full">
           <ComposedChart data={[]}>
             <Line dataKey="cpu" />
@@ -169,7 +169,7 @@ describe('Chart.Container', () => {
 
   describe('default props', () => {
     it('renders without overlay when no state props are provided', () => {
-      const { container } = render(
+      const { container } = renderWithProviders(
         <Chart.Container className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
