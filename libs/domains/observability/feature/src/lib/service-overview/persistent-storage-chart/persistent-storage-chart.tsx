@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
+import { match } from 'ts-pattern'
+import { useService } from '@qovery/domains/services/feature'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
@@ -8,6 +10,7 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+  const { data: service } = useService({ serviceId })
   const getColorByVolume = usePodColor()
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
 
@@ -27,41 +30,30 @@ export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: st
         group_left(label_qovery_com_service_id)
           max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
     ) * 100
-  )`;
+  )`
 
     // Inject label_replace for each known volume id
     for (const { id, mount_point } of storage) {
       promQL = `label_replace(
       ${promQL},
       "persistentvolumeclaim", "${mount_point}", "persistentvolumeclaim", "^${id}.*"
-    )`;
+    )`
     }
 
-    return promQL;
-  };
+    return promQL
+  }
 
-  const storage = [
-    {
-      type: "FAST_SSD",
-      size: 4,
-      mount_point: "/data",
-      id: "b53f590f-c032-4cac-83fb-6b0f51c9826d"
-    },
-    {
-      type: "FAST_SSD",
-      size: 4,
-      mount_point: "/output",
-      id: "04abfea6-ef03-493b-abad-e5cf49325cd3"
-    }
-  ];
+  const storage = match(service)
+    .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (service) => service.storage ?? [])
+    .otherwise(() => [])
 
-  const query = buildVolumeQuery(serviceId, storage);
+  const query = buildVolumeQuery(serviceId, storage)
 
   const { data: metricsVolumeUsed, isLoading: isLoadingVolumeUsed } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: query
+    query,
   })
 
   const chartData = useMemo(() => {
