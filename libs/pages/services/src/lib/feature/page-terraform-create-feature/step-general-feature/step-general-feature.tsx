@@ -71,7 +71,6 @@ export function StepGeneralFeature() {
                   timeout_sec: 60,
                   auto_approve: false,
                   terraform_variables_source: {
-                    tf_vars: [],
                     tf_var_file_paths: [],
                   },
                   provider: 'TERRAFORM',

@@ -121,6 +121,10 @@ export function PageTerraformCreateFeature() {
 
   const valuesOverrideArgumentsForm = useForm<TerraformValuesArgumentsData>({
     mode: 'onChange',
+    defaultValues: {
+      tf_vars: [],
+      tf_var_file_paths: [],
+    },
   })
 
   const creationFlowUrl = SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL
