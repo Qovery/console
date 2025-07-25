@@ -2,7 +2,7 @@ import type { Meta } from '@storybook/react'
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts'
 import { EXTENDED_COLOR_PALETTE } from '@qovery/shared/utils'
 import { Chart } from './chart'
-import { createXAxisConfig } from './chart-axis-utils'
+import { createXAxisConfig } from './chart-utils'
 
 // Sample data with independent system metrics: CPU, Memory, Disk usage (percentages)
 const sampleData = [
