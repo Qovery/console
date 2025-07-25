@@ -57,7 +57,7 @@ const ChartTooltipContent = forwardRef<
     formatLabel?: (dataKey: string) => string
     maxItems?: number
   }
->(function ChartTooltipContent({ active, payload, title, formatValue, formatLabel, maxItems }, ref) {
+>(function ChartTooltipContent({ active, payload, title, formatValue, formatLabel, maxItems = 15 }, ref) {
   const filteredPayload = useMemo(
     () => payload?.filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index) || [],
     [payload]
