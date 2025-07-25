@@ -1,4 +1,4 @@
-function getLogicalTicks(startTimestamp: number, endTimestamp: number, tickCount = 6): number[] {
+export function getLogicalTicks(startTimestamp: number, endTimestamp: number, tickCount = 6): number[] {
   const startTime = startTimestamp * 1000
   const endTime = endTimestamp * 1000
 

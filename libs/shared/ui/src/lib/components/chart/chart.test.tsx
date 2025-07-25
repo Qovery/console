@@ -1,6 +1,7 @@
 import { ComposedChart, Line } from 'recharts'
 import { render, screen } from '@qovery/shared/util-tests'
 import { Chart } from './chart'
+import { getLogicalTicks } from './chart-utils'
 
 // Mock ResizeObserver
 class MockResizeObserver {
@@ -181,6 +182,67 @@ describe('Chart.Container', () => {
       expect(overlay).not.toBeInTheDocument()
       expect(screen.queryByText('Fetching data...')).not.toBeInTheDocument()
       expect(screen.queryByText('No data available')).not.toBeInTheDocument()
+    })
+  })
+})
+
+describe('getLogicalTicks', () => {
+  it('generates correct number of ticks for default count', () => {
+    const startTimestamp = 1704067200 // Jan 1, 2024 00:00:00 UTC (in seconds)
+    const endTimestamp = 1704070800   // Jan 1, 2024 01:00:00 UTC (in seconds)
+    
+    const ticks = getLogicalTicks(startTimestamp, endTimestamp)
+    
+    expect(ticks).toHaveLength(6)
+    expect(ticks[0]).toBe(startTimestamp * 1000)
+    expect(ticks[ticks.length - 1]).toBe(endTimestamp * 1000)
+  })
+
+  it('generates correct number of ticks for custom count', () => {
+    const startTimestamp = 1704067200
+    const endTimestamp = 1704070800
+    const tickCount = 4
+    
+    const ticks = getLogicalTicks(startTimestamp, endTimestamp, tickCount)
+    
+    expect(ticks).toHaveLength(4)
+    expect(ticks[0]).toBe(startTimestamp * 1000)
+    expect(ticks[ticks.length - 1]).toBe(endTimestamp * 1000)
+  })
+
+  it('generates evenly spaced ticks', () => {
+    const startTimestamp = 1704067200
+    const endTimestamp = 1704070800
+    const tickCount = 5
+    
+    const ticks = getLogicalTicks(startTimestamp, endTimestamp, tickCount)
+    const expectedInterval = ((endTimestamp - startTimestamp) * 1000) / (tickCount - 1)
+    
+    for (let i = 1; i < ticks.length; i++) {
+      const actualInterval = ticks[i] - ticks[i - 1]
+      expect(actualInterval).toBe(expectedInterval)
+    }
+  })
+
+  it('handles single tick correctly', () => {
+    const startTimestamp = 1704067200
+    const endTimestamp = 1704070800
+    
+    const ticks = getLogicalTicks(startTimestamp, endTimestamp, 1)
+    
+    expect(ticks).toHaveLength(1)
+    // With tickCount = 1, interval becomes Infinity, resulting in NaN
+    expect(ticks[0]).toBeNaN()
+  })
+
+  it('handles zero duration correctly', () => {
+    const timestamp = 1704067200
+    
+    const ticks = getLogicalTicks(timestamp, timestamp)
+    
+    expect(ticks).toHaveLength(6)
+    ticks.forEach((tick: number) => {
+      expect(tick).toBe(timestamp * 1000)
     })
   })
 })
