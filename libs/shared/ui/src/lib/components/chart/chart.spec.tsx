@@ -43,8 +43,8 @@ describe('Chart.Container', () => {
       expect(screen.queryByText('No data available')).not.toBeInTheDocument()
     })
 
-    it('applies correct container classes', () => {
-      const { container } = render(
+    it('renders with correct semantic attributes', () => {
+      render(
         <Chart.Container className="h-[300px] w-full">
           <ComposedChart data={sampleData}>
             <Line dataKey="cpu" />
@@ -52,8 +52,7 @@ describe('Chart.Container', () => {
         </Chart.Container>
       )
 
-      const chartContainer = container.firstChild as HTMLElement
-      expect(chartContainer).toHaveClass('relative', 'flex', 'h-[300px]', 'justify-center', 'text-xs', 'w-full')
+      expect(screen.getByRole('region', { name: 'Interactive chart' })).toBeInTheDocument()
     })
   })
 

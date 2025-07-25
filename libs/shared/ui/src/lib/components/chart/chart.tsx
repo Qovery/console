@@ -15,7 +15,7 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
   ref
 ) {
   return (
-    <div ref={ref} className={twMerge('relative flex h-[300px] justify-center text-xs', className)} {...htmlProps}>
+    <div ref={ref} role="region" aria-label="Interactive chart" className={twMerge('relative flex h-[300px] justify-center text-xs', className)} {...htmlProps}>
       <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
         {children}
       </RechartsPrimitive.ResponsiveContainer>
