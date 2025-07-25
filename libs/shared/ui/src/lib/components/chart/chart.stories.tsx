@@ -10,10 +10,6 @@ const CHART_COLORS = [
   'var(--color-r-bog)',
   'var(--color-r-bom)',
   'var(--color-r-bos)',
-  'var(--color-r-cdg)',
-  'var(--color-r-ewr)',
-  'var(--color-r-fra)',
-  'var(--color-r-gdl)',
   'var(--color-r-gig)',
   'var(--color-r-gru)',
   'var(--color-r-hkg)',
@@ -26,7 +22,6 @@ const CHART_COLORS = [
   'var(--color-r-phx)',
   'var(--color-r-qro)',
   'var(--color-r-scl)',
-  'var(--color-r-waw)',
 ]
 
 // Sample data with independent system metrics: CPU, Memory, Disk usage (percentages)
