@@ -15,6 +15,34 @@ import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
 
+export type LineLabelProps = {
+  x?: number
+  y?: number
+  index?: number
+  value?: number | string
+  [key: string]: unknown
+}
+
+export function renderResourceLimitLabel(
+  labelText: string,
+  chartData: Array<{ [key: string]: string | number | null }>,
+  color = 'var(--color-red-500)'
+) {
+  return (props: LineLabelProps) => {
+    const { x, y, index, value } = props
+    // Only render for the last point with a value
+    if (chartData && index === chartData.length - 1 && value != null) {
+      return (
+        <text x={x} y={(y ?? 0) - 8} fill={color} fontSize={12} fontWeight={500} textAnchor="end">
+          {labelText}
+        </text>
+      )
+    }
+    // Return an empty SVG group instead of null to satisfy type requirements
+    return <g />
+  }
+}
+
 export interface ReferenceLineEvent {
   type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe'
   timestamp: number

@@ -2,10 +2,11 @@ import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
-import { LocalChart } from '../local-chart/local-chart'
+import { LocalChart, renderResourceLimitLabel } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
+
 
 export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
@@ -79,19 +80,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
     return metrics.data.result.map((_: unknown, index: number) => metrics.data.result[index].metric.pod) as string[]
   }, [metrics])
 
-  const renderCpuLimitLabel = (props: any) => {
-    const { x, y, index, value } = props
-    // Only render for the last point with a value
-    if (chartData && index === chartData.length - 1 && value != null) {
-      return (
-        <text x={x} y={y - 8} fill="var(--color-red-500)" fontSize={12} fontWeight={500} textAnchor="end">
-          CPU limit
-        </text>
-      )
-    }
-    // Return an empty SVG group instead of null to satisfy type requirements
-    return <g />
-  }
+  const renderCpuLimitLabel = renderResourceLimitLabel('CPU limit', chartData)
 
   return (
     <LocalChart
