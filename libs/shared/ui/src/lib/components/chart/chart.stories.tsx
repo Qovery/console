@@ -15,8 +15,8 @@ const sampleData = [
   { timestamp: 1704088800000, time: '06:00', fullTime: '2024-01-01 06:00:00', cpu: 52, memory: 69, disk: 48 },
 ]
 
-// Generate 20 unique gaffotron instance metrics
-const generateGaffotronMetrics = () => {
+// Generate 20 unique instance metrics
+const generateMetrics = () => {
   const baseUUIDs = [
     'dk2ms',
     'zwdnt',
@@ -41,7 +41,7 @@ const generateGaffotronMetrics = () => {
   ]
 
   return baseUUIDs.map((uuid) => ({
-    key: `gaffotron-889b7db58-${uuid}`,
+    key: `pod-889b7db58-${uuid}`,
     baseValue: 400 + Math.floor(Math.random() * 2000), // Random base between 400-2400
     variance: 50 + Math.floor(Math.random() * 200), // Random variance between 50-250
     // Unique pattern parameters for each metric
@@ -56,7 +56,7 @@ const generateGaffotronMetrics = () => {
 }
 
 // Generate time series data with realistic variations
-const generateTimeSeriesData = (metrics: ReturnType<typeof generateGaffotronMetrics>) => {
+const generateTimeSeriesData = (metrics: ReturnType<typeof generateMetrics>) => {
   const startTime = 1704067200000 // 2024-01-01 00:00:00
   const endTime = 1704081600000 // 2024-01-01 04:00:00
   const pointCount = 100 // Granularity
@@ -113,7 +113,7 @@ const generateTimeSeriesData = (metrics: ReturnType<typeof generateGaffotronMetr
 }
 
 // Generate all data
-const gaffotronMetrics = generateGaffotronMetrics()
+const gaffotronMetrics = generateMetrics()
 const maximalEdgeCaseData = generateTimeSeriesData(gaffotronMetrics)
 
 const Story: Meta<typeof Chart.Container> = {
