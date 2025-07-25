@@ -90,9 +90,9 @@ function ServiceOverviewContent({ children }: PropsWithChildren) {
             />
             {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
             {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
-            <CardPercentile99 clusterId={environment.cluster_id} serviceId={applicationId} />
-            <CardPercentile95 clusterId={environment.cluster_id} serviceId={applicationId} />
             <CardPercentile50 clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardPercentile95 clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardPercentile99 clusterId={environment.cluster_id} serviceId={applicationId} />
           </Section>
           <Section className="overflow-hidden rounded border border-neutral-250">
             <div className="flex h-9 items-center bg-neutral-100 text-sm">

@@ -1,9 +1,13 @@
+import { useState } from 'react'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
+import ModalChart from '../modal-chart/modal-chart'
+import NetworkRequestDurationChart from '../network-request-duration-chart/network-request-duration-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function CardPercentile95({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     query: `
@@ -33,13 +37,24 @@ export function CardPercentile95({ serviceId, clusterId }: { serviceId: string; 
   const title = '95th percentile'
 
   return (
-    <CardMetric
-      title={title}
-      value={`${value} ms`}
-      status={isError ? 'RED' : 'GREEN'}
-      description={`in last ${timeRange}`}
-      isLoading={isLoadingMetrics}
-    />
+    <>
+      <CardMetric
+        title={title}
+        value={value}
+        status={isError ? 'RED' : 'GREEN'}
+        description={`in last ${timeRange}`}
+        isLoading={isLoadingMetrics}
+        onClick={() => setIsModalOpen(true)}
+        hasModalLink
+      />
+      {isModalOpen && (
+        <ModalChart title={title} open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <div className="grid h-full grid-cols-1">
+            <NetworkRequestDurationChart clusterId={clusterId} serviceId={serviceId} isFullscreen />
+          </div>
+        </ModalChart>
+      )}
+    </>
   )
 }
 

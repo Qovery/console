@@ -6,7 +6,15 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function NetworkRequestDurationChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function NetworkRequestDurationChart({
+  clusterId,
+  serviceId,
+  isFullscreen,
+}: {
+  clusterId: string
+  serviceId: string
+  isFullscreen?: boolean
+}) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
 
   const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
@@ -99,23 +107,21 @@ export function NetworkRequestDurationChart({ clusterId, serviceId }: { clusterI
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metrics95, metrics99, metrics50, useLocalTime, startTimestamp, endTimestamp])
 
-  console.log(chartData)
-
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoadingMetrics || isLoadingMetrics99 || isLoadingMetrics50}
       isEmpty={chartData.length === 0}
-      label="Network request duration (ms)"
+      label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="Network request duration: 95th percentile, 99th percentile, 50th percentile"
       unit="ms"
       serviceId={serviceId}
     >
       <Line
-        key="99th-percentile"
-        dataKey="99th percentile"
+        key="50th-percentile"
+        dataKey="50th percentile"
         type="linear"
-        stroke="var(--color-purple-600)"
+        stroke="var(--color-purple-400)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -132,10 +138,10 @@ export function NetworkRequestDurationChart({ clusterId, serviceId }: { clusterI
         isAnimationActive={false}
       />
       <Line
-        key="50th-percentile"
-        dataKey="50th percentile"
+        key="99th-percentile"
+        dataKey="99th percentile"
         type="linear"
-        stroke="var(--color-purple-400)"
+        stroke="var(--color-purple-600)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
