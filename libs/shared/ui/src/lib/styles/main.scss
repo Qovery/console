@@ -79,6 +79,33 @@ $fa-font-path: '/assets/fonts/font-awesome';
   --color-purple-700: theme('colors.purple.700');
   --color-purple-800: theme('colors.purple.800');
   --color-purple-900: theme('colors.purple.900');
+
+  --color-sky-50: theme('colors.sky.50');
+  --color-sky-100: theme('colors.sky.100');
+  --color-sky-200: theme('colors.sky.200');
+  --color-sky-300: theme('colors.sky.300');
+  --color-sky-400: theme('colors.sky.400');
+  --color-sky-500: theme('colors.sky.500');
+  --color-sky-600: theme('colors.sky.600');
+
+  --color-r-ams: hsl(217.2 91.2% 59.8%);
+  --color-r-arn: hsl(238.7 83.5% 66.7%);
+  --color-r-atl: hsl(258.3 89.5% 66.3%);
+  --color-r-bog: hsl(270.7 91% 65.1%);
+  --color-r-bom: hsl(292.2 84.1% 60.6%);
+  --color-r-bos: hsl(330.4 81.2% 60.4%);
+  --color-r-gig: hsl(24.6 95% 53.1%);
+  --color-r-gru: hsl(37.7 92.1% 50.2%);
+  --color-r-hkg: hsl(45.4 93.4% 47.5%);
+  --color-r-lhr: hsl(173.4 80.4% 40%);
+  --color-r-mad: hsl(188.7 94.5% 42.7%);
+  --color-r-mia: hsl(198.6 88.7% 48.4%);
+  --color-r-nrt: hsl(217.2 91.2% 59.8%);
+  --color-r-ord: hsl(238.7 83.5% 66.7%);
+  --color-r-otp: hsl(258.3 89.5% 66.3%);
+  --color-r-phx: hsl(270.7 91% 65.1%);
+  --color-r-qro: hsl(292.2 84.1% 60.6%);
+  --color-r-scl: hsl(330.4 81.2% 60.4%);
 }
 
 @import 'base/variable';

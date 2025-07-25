@@ -135,7 +135,7 @@ export const Modal = (props: ModalProps) => {
           }
           className={`modal__content fixed left-1/2 top-[84px] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)] dark:bg-neutral-550 ${className}`}
         >
-          <div className={`overflow-auto ${fullScreen ? '' : 'max-h-[80vh]'}`}>
+          <div className={`overflow-auto ${fullScreen ? 'h-full' : 'max-h-[80vh]'}`}>
             {cloneElement(children, {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
             })}

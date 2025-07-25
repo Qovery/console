@@ -311,7 +311,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           </Dd>
         </Dl>
       </Section>
-      <hr />
+      <hr className="border-neutral-200" />
       <Section className={sectionClassName}>
         <div className="flex flex-row justify-between">
           {/* XXX: Should be Heading, typography & design wanted */}
@@ -438,7 +438,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       </Section>
       {resources && (
         <>
-          <hr />
+          <hr className="border-neutral-200" />
           <Section className={sectionClassName}>
             <div className="flex flex-row justify-between">
               {/* XXX: Should be Heading, typography & design wanted */}
@@ -464,7 +464,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       )}
       {valuesOverride && (
         <>
-          <hr />
+          <hr className="border-neutral-200" />
           <Section className={sectionClassName}>
             <div className="flex flex-row justify-between">
               {/* XXX: Should be Heading, typography & design wanted */}
