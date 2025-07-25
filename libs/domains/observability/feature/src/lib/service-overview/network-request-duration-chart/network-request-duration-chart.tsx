@@ -29,7 +29,7 @@ export function NetworkRequestDurationChart({ clusterId, serviceId }: { clusterI
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `histogram_quantile(0.9,(
+    query: `histogram_quantile(0.99,(
     sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
     * on(ingress) group_left(label_qovery_com_associated_service_id)
       max by(ingress, label_qovery_com_associated_service_id)(
