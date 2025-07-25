@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react'
 import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts'
-import { EXTENDED_COLOR_PALETTE } from '@qovery/shared/utils'
+import { CHART_COLORS } from './chart-colors'
 import { Chart } from './chart'
 import { createXAxisConfig } from './chart-utils'
 
@@ -231,7 +231,7 @@ export const MaximalEdgeCase = {
               type="linear"
               dataKey={metric.key}
               name={metric.key}
-              stroke={EXTENDED_COLOR_PALETTE[index]}
+              stroke={CHART_COLORS[index]}
               strokeWidth={2}
               dot={false}
               connectNulls={false}

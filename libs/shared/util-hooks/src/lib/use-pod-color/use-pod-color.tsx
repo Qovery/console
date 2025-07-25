@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import { EXTENDED_COLOR_PALETTE } from '@qovery/shared/utils'
+import { CHART_COLORS } from '@qovery/shared/ui'
 
 const hashString = (string: string): number => {
   let hash = 0
@@ -25,15 +25,15 @@ const hashString = (string: string): number => {
 }
 
 export const getColorByPod = (pod: string): string => {
-  if (!pod) return EXTENDED_COLOR_PALETTE[0]
-  return EXTENDED_COLOR_PALETTE[hashString(pod) % EXTENDED_COLOR_PALETTE.length]
+  if (!pod) return CHART_COLORS[0]
+  return CHART_COLORS[hashString(pod) % CHART_COLORS.length]
 }
 
 export const usePodColor = () => {
   const colorMap = useMemo(() => new Map<string, string>(), [])
 
   const getPodColor = useCallback((podName: string) => {
-    if (!podName) return EXTENDED_COLOR_PALETTE[0]
+    if (!podName) return CHART_COLORS[0]
 
     if (colorMap.has(podName)) {
       return colorMap.get(podName)!

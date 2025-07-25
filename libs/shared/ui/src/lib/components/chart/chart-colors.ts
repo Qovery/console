@@ -1,5 +1,5 @@
 /**
- * Extended color palette derived from the design system
+ * Chart color palette for observability visualizations
  * Used for charts, pod colors, and other visualizations requiring many distinct colors
  */
 
@@ -13,10 +13,10 @@ const COLOR_FAMILIES = [
 ] as const
 
 /**
- * Generate an extended color palette from design system colors
+ * Generate a chart color palette from design system colors
  * Returns CSS custom property references for consistent theming
  */
-export const generateExtendedColorPalette = (): string[] => {
+export const generateChartColorPalette = (): string[] => {
   const colors: string[] = []
   
   COLOR_FAMILIES.forEach((colorFamily) => {
@@ -29,7 +29,7 @@ export const generateExtendedColorPalette = (): string[] => {
 }
 
 /**
- * Extended color palette for use in charts, pod colors, and visualizations
+ * Chart color palette for use in charts, pod colors, and visualizations
  * Provides 25 distinct colors from the design system that have CSS variables defined
  */
-export const EXTENDED_COLOR_PALETTE = generateExtendedColorPalette()
+export const CHART_COLORS = generateChartColorPalette()
