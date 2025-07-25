@@ -9,6 +9,7 @@ import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
+  SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
   SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
@@ -151,12 +152,37 @@ export function StepSummaryFeature() {
                   </li>
                 </ul>
               )}
+            </Section>
 
-              <hr className="my-4 border-t border-dashed border-neutral-250" />
+            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+              <div className="flex justify-between">
+                <Heading>Terraform configuration</Heading>
+                <Button
+                  type="button"
+                  variant="plain"
+                  size="md"
+                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)}
+                >
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </div>
               <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
                   <span className="font-medium">Terraform version:</span>{' '}
                   {generalData.provider_version.explicit_version}
+                </li>
+                <li>
+                  <span className="font-medium">Execution credentials:</span>{' '}
+                  {generalData.use_cluster_credentials ? 'Cluster credentials' : 'Environment variables'}
+                </li>
+                <li>
+                  <span className="font-medium">State:</span> Kubernetes (Default)
+                </li>
+                <li>
+                  <span className="font-medium">Auto-deploy:</span>{' '}
+                  {match(generalData.auto_deploy)
+                    .with(true, () => 'On')
+                    .otherwise(() => 'Off')}
                 </li>
                 <li>
                   <span className="font-medium">CPU:</span> {generalData.job_resources.cpu_milli}
@@ -167,15 +193,22 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">Storage:</span> {generalData.job_resources.storage_gib}gb
                 </li>
-                <li>
-                  <span className="font-medium">Auto-deploy:</span>{' '}
-                  {match(generalData.auto_deploy)
-                    .with(true, () => 'On')
-                    .otherwise(() => 'Off')}
-                </li>
               </ul>
+            </Section>
 
-              <hr className="my-4 border-t border-dashed border-neutral-250" />
+            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+              <div className="flex justify-between">
+                <Heading>Input variables</Heading>
+                <Button
+                  type="button"
+                  variant="plain"
+                  size="md"
+                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL)}
+                >
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </div>
+
               <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
                   <span className="font-medium">Variables:</span>
@@ -190,14 +223,6 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">File paths:</span>{' '}
                   {valuesOverrideArgumentData.tf_var_file_paths.join(', ')}
-                </li>
-              </ul>
-
-              <hr className="my-4 border-t border-dashed border-neutral-250" />
-              <ul className="list-none space-y-2 text-sm text-neutral-400">
-                <li>
-                  <span className="font-medium">Use cluster's credentials:</span>{' '}
-                  {generalData.use_cluster_credentials ? 'Yes' : 'No'}
                 </li>
               </ul>
             </Section>
