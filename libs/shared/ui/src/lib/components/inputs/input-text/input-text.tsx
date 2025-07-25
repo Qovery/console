@@ -13,6 +13,7 @@ export interface InputTextProps {
   disabled?: boolean
   dataTestId?: string
   rightElement?: ReactNode
+  spellCheck?: boolean
 }
 
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(props, ref) {
@@ -28,6 +29,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     disabled,
     rightElement,
     dataTestId,
+    spellCheck = true,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -87,6 +89,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               }}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}
+              spellCheck={spellCheck}
             />
             {isInputDate && (
               <div className="absolute right-4 top-1/2 -translate-y-1/2">

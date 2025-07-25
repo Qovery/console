@@ -59,6 +59,7 @@ export function TriggerActionIcon({
         .with('DEPLOY', () => <Icon iconStyle="solid" iconName="play" />)
         .with('RESTART', () => <Icon iconStyle="solid" iconName="arrow-rotate-right" />)
         .with('STOP', () => <Icon iconStyle="solid" iconName="stop" />)
+        .with('UNINSTALL', () => <Icon iconStyle="solid" iconName="trash-can-xmark" />)
         .exhaustive()}
     </span>
   )
