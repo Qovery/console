@@ -1,8 +1,5 @@
 import { createXAxisConfig, getLogicalTicks } from './chart-utils'
 
-// chart-utils
-// -----------
-
 describe('getLogicalTicks', () => {
   it('generates correct number of ticks for default count', () => {
     const startTimestamp = 1704067200 // Jan 1, 2024 00:00:00 UTC (in seconds)

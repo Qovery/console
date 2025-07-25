@@ -1,5 +1,30 @@
 import { useCallback, useMemo } from 'react'
-import { CHART_COLORS } from '@qovery/shared/ui'
+
+export const RANDOM_COLORS = [
+  'var(--color-r-ams)',
+  'var(--color-r-arn)',
+  'var(--color-r-atl)',
+  'var(--color-r-bog)',
+  'var(--color-r-bom)',
+  'var(--color-r-bos)',
+  'var(--color-r-cdg)',
+  'var(--color-r-ewr)',
+  'var(--color-r-fra)',
+  'var(--color-r-gdl)',
+  'var(--color-r-gig)',
+  'var(--color-r-gru)',
+  'var(--color-r-hkg)',
+  'var(--color-r-lhr)',
+  'var(--color-r-mad)',
+  'var(--color-r-mia)',
+  'var(--color-r-nrt)',
+  'var(--color-r-ord)',
+  'var(--color-r-otp)',
+  'var(--color-r-phx)',
+  'var(--color-r-qro)',
+  'var(--color-r-scl)',
+  'var(--color-r-waw)',
+]
 
 const hashString = (string: string): number => {
   let hash = 0
@@ -25,24 +50,27 @@ const hashString = (string: string): number => {
 }
 
 export const getColorByPod = (pod: string): string => {
-  if (!pod) return CHART_COLORS[0]
-  return CHART_COLORS[hashString(pod) % CHART_COLORS.length]
+  if (!pod) return RANDOM_COLORS[0]
+  return RANDOM_COLORS[hashString(pod) % RANDOM_COLORS.length]
 }
 
 export const usePodColor = () => {
   const colorMap = useMemo(() => new Map<string, string>(), [])
 
-  const getPodColor = useCallback((podName: string) => {
-    if (!podName) return CHART_COLORS[0]
+  const getPodColor = useCallback(
+    (podName: string) => {
+      if (!podName) return RANDOM_COLORS[0]
 
-    if (colorMap.has(podName)) {
-      return colorMap.get(podName)!
-    }
+      if (colorMap.has(podName)) {
+        return colorMap.get(podName)!
+      }
 
-    const color = getColorByPod(podName)
-    colorMap.set(podName, color)
-    return color
-  }, [colorMap])
+      const color = getColorByPod(podName)
+      colorMap.set(podName, color)
+      return color
+    },
+    [colorMap]
+  )
 
   return getPodColor
 }

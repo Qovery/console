@@ -2,11 +2,10 @@ import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
-import { LocalChart, renderResourceLimitLabel } from '../local-chart/local-chart'
+import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-
 
 export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
@@ -80,7 +79,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
     return metrics.data.result.map((_: unknown, index: number) => metrics.data.result[index].metric.pod) as string[]
   }, [metrics])
 
-  const renderCpuLimitLabel = renderResourceLimitLabel('CPU limit', chartData)
+  // const renderCpuLimitLabel = renderResourceLimitLabel('CPU limit', chartData)
 
   return (
     <LocalChart
@@ -121,7 +120,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         stroke="var(--color-red-500)"
         strokeDasharray="4 4"
         strokeWidth={2}
-        label={renderCpuLimitLabel}
+        // label={renderCpuLimitLabel}
         connectNulls={false}
         dot={false}
         isAnimationActive={false}

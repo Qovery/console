@@ -158,7 +158,7 @@ function ChartContent({
             orientation="right"
             tickCount={5}
             domain={yDomain}
-            tickFormatter={(value) => value === 0 ? '' : value}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
           />
         </ComposedChart>
       </Chart.Container>
