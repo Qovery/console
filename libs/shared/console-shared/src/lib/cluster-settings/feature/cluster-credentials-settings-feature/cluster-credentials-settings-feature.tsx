@@ -20,6 +20,7 @@ export function ClusterCredentialsSettingsFeature({
     organizationId,
     cloudProvider,
   })
+  const sortedCredentials = credentials.sort((a, b) => a.name.localeCompare(b.name))
 
   const openCredentialsModal = (id?: string, onChange?: (e: string | string[]) => void) => {
     openModal({
@@ -31,7 +32,7 @@ export function ClusterCredentialsSettingsFeature({
             response && onChange?.(response.id)
             closeModal()
           }}
-          credential={credentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
+          credential={sortedCredentials.find((currentCredentials: ClusterCredentials) => currentCredentials.id === id)}
           cloudProvider={cloudProvider}
         />
       ),
@@ -43,7 +44,7 @@ export function ClusterCredentialsSettingsFeature({
 
   return (
     <ClusterCredentialsSettings
-      credentials={credentials}
+      credentials={sortedCredentials}
       openCredentialsModal={openCredentialsModal}
       loading={isLoadingCloudProviderCredentials}
       isSetting={isSetting}

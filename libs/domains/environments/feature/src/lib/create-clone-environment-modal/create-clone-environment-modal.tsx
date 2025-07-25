@@ -222,7 +222,7 @@ export function CreateCloneEnvironmentModal({
                     .with(['GCP', P._], () => 'GKE (Autopilot)')
                     .with(['ON_PREMISE', P._], () => 'On-premise')
                     .with(['AZURE', KubernetesEnum.SELF_MANAGED], () => 'Self-managed')
-                    .with(['AZURE', P._], () => 'Azure (Karpenter)')
+                    .with(['AZURE', P._], () => 'Azure')
                     .with(['DO', P._], () => 'DO')
                     .with(['OVH', P._], () => 'OVH')
                     .with(['CIVO', P._], () => 'CIVO')
