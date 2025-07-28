@@ -6,8 +6,9 @@ import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
 import { createXAxisConfig } from '@qovery/shared/ui'
+import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
@@ -208,7 +209,25 @@ function ChartContent({
                       </>
                     )}
                     {event.description && <span className="text-neutral-350">{event.description}</span>}
-                    {event.type === 'exit-code' && <span className="text-neutral-350">Instance: {event.key}</span>}
+                    {event.type === 'exit-code' && (
+                      <div className="flex items-center gap-1">
+                        <span className="text-neutral-350">Instance name:</span>
+                        <Tooltip content={event.key}>
+                          <Badge
+                            variant="surface"
+                            color="neutral"
+                            size="sm"
+                            className="max-w-max gap-1 font-code text-2xs"
+                          >
+                            <span
+                              className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
+                              style={{ backgroundColor: getColorByPod(event.key) }}
+                            />
+                            {event.key.substring(event.key.length - 5)}
+                          </Badge>
+                        </Tooltip>
+                      </div>
+                    )}
                   </div>
                 </div>
               )
