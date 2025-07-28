@@ -1,5 +1,4 @@
 import type { Meta } from '@storybook/react'
-import { useState } from 'react'
 import {
   Area,
   Bar,
@@ -279,150 +278,6 @@ export const MaximalEdgeCase = {
 
 export const ZoomableChart = {
   render: () => {
-    const [state, setState] = useState({
-      data: sampleData,
-      left: 'dataMin' as string | number,
-      right: 'dataMax' as string | number,
-      refAreaLeft: '',
-      refAreaRight: '',
-    })
-
-    const zoom = () => {
-      let { refAreaLeft, refAreaRight } = state
-      const { data } = state
-
-      if (refAreaLeft === refAreaRight || refAreaRight === '') {
-        setState((prevState) => ({
-          ...prevState,
-          refAreaLeft: '',
-          refAreaRight: '',
-        }))
-        return
-      }
-
-      // xAxis domain - only zoom on X axis
-      if (refAreaLeft > refAreaRight) [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft]
-
-      setState((prevState) => ({
-        ...prevState,
-        refAreaLeft: '',
-        refAreaRight: '',
-        data: data.slice(),
-        left: refAreaLeft,
-        right: refAreaRight,
-      }))
-    }
-
-    const zoomOut = () => {
-      setState((prevState) => ({
-        ...prevState,
-        data: sampleData.slice(),
-        refAreaLeft: '',
-        refAreaRight: '',
-        left: 'dataMin',
-        right: 'dataMax',
-      }))
-    }
-
-    const { data, refAreaLeft, refAreaRight, left, right } = state
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
-
-    return (
-      <div style={{ userSelect: 'none', width: '100%' }}>
-        <button
-          type="button"
-          onClick={zoomOut}
-          style={{
-            marginBottom: '10px',
-            padding: '8px 16px',
-            backgroundColor: 'var(--color-brand-500)',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Zoom Out
-        </button>
-
-        <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-          <ComposedChart
-            data={data}
-            margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-            onMouseDown={(e) => e && setState((prevState) => ({ ...prevState, refAreaLeft: e.activeLabel || '' }))}
-            onMouseMove={(e) =>
-              state.refAreaLeft && e && setState((prevState) => ({ ...prevState, refAreaRight: e.activeLabel || '' }))
-            }
-            onMouseUp={zoom}
-          >
-            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-            <XAxis
-              {...xAxisConfig}
-              allowDataOverflow
-              domain={[left, right]}
-              type="number"
-              dataKey="timestamp"
-              tickFormatter={(timestamp) => {
-                const date = new Date(timestamp)
-                const hours = date.getHours().toString().padStart(2, '0')
-                const minutes = date.getMinutes().toString().padStart(2, '0')
-                return `${hours}:${minutes}`
-              }}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-              tickLine={{ stroke: 'transparent' }}
-              axisLine={{ stroke: 'transparent' }}
-              orientation="right"
-              tickCount={5}
-              tickFormatter={(value) => (value === 0 ? '' : value)}
-            />
-            <Tooltip
-              content={
-                <Chart.TooltipContent
-                  title="System Usage"
-                  formatLabel={(key) => {
-                    const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
-                    return labelMap[key] || key
-                  }}
-                  formatValue={(value) => `${value}%`}
-                />
-              }
-            />
-            <Legend />
-            <Area
-              type="linear"
-              dataKey="cpu"
-              stroke="var(--color-yellow-500)"
-              fill="var(--color-yellow-500)"
-              fillOpacity={0.15}
-              strokeWidth={2}
-              isAnimationActive={false}
-              name="CPU"
-            />
-            <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
-            <Line
-              type="linear"
-              dataKey="disk"
-              stroke="var(--color-green-500)"
-              strokeWidth={2}
-              dot={false}
-              connectNulls={false}
-              isAnimationActive={false}
-              name="Disk"
-            />
-            {refAreaLeft && refAreaRight ? (
-              <ReferenceArea x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
-            ) : null}
-          </ComposedChart>
-        </Chart.Container>
-      </div>
-    )
-  },
-}
-
-export const ZoomableChartKeyboardClick = {
-  render: () => {
     const {
       zoomState,
       isCtrlPressed,
@@ -439,31 +294,18 @@ export const ZoomableChartKeyboardClick = {
 
     return (
       <div style={{ userSelect: 'none', width: '100%', position: 'relative' }}>
-        {isCtrlPressed && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-              color: 'white',
-              padding: '8px 12px',
-              borderRadius: '4px',
-              fontSize: '14px',
-              zIndex: 1000,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            <span style={{ fontSize: '16px' }} role="img" aria-label="zoom out icon">
-              🔍➖
-            </span>
-            Click to zoom out one step
-          </div>
-        )}
-
-        <div style={{ marginBottom: '10px', fontSize: '14px', color: 'var(--color-neutral-500)' }}>
+        <div
+          style={{
+            background: 'var(--color-neutral-100)',
+            border: '1px solid var(--color-neutral-400)',
+            borderRadius: '8px',
+            padding: '10px 16px',
+            marginBottom: '16px',
+            fontSize: '14px',
+            color: 'var(--color-neutral-900)',
+            fontWeight: 500,
+          }}
+        >
           Drag to zoom in • Hold Ctrl/Cmd + Click to zoom out one step • Double-click to reset zoom
         </div>
 
@@ -540,6 +382,51 @@ export const ZoomableChartKeyboardClick = {
           </ComposedChart>
         </Chart.Container>
       </div>
+    )
+  },
+}
+
+export const MaximalEdgeCase = {
+  render: () => {
+    const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
+    return (
+      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
+        <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
+          />
+          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
+          <Legend />
+          {gaffotronMetrics.map((metric, index) => (
+            <Line
+              key={metric.key}
+              type="linear"
+              dataKey={metric.key}
+              name={metric.key}
+              stroke={CHART_COLORS[index]}
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+              isAnimationActive={false}
+            />
+          ))}
+        </ComposedChart>
+      </Chart.Container>
     )
   },
 }
