@@ -2,6 +2,7 @@ import { type FormEventHandler, type ReactNode, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import Button from '../../button/button'
 import Icon from '../../icon/icon'
+import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
 import { Popover } from '../../popover/popover'
 import Truncate from '../../truncate/truncate'
 
@@ -18,6 +19,7 @@ export interface ModalCrudProps {
   onDelete?: () => void
   deleteButtonLabel?: string
   howItWorks?: ReactNode
+  customLoader?: ReactNode
 }
 
 export function ModalCrud(props: ModalCrudProps) {
@@ -34,6 +36,7 @@ export function ModalCrud(props: ModalCrudProps) {
     submitLabel,
     deleteButtonLabel,
     howItWorks = null,
+    customLoader = null,
   } = props
   const { formState, trigger } = useFormContext()
 
@@ -103,10 +106,16 @@ export function ModalCrud(props: ModalCrudProps) {
             type="submit"
             color="brand"
             size="lg"
-            disabled={!formState.isValid}
-            loading={loading}
+            disabled={!formState.isValid || (!!customLoader && loading)}
+            loading={loading && !customLoader}
           >
-            {submitLabel || (isEdit ? 'Confirm' : 'Create')}
+            {customLoader && loading ? (
+              <div className="flex items-center gap-2">
+                <LoaderSpinner className="m-auto" /> {customLoader}
+              </div>
+            ) : (
+              submitLabel || (isEdit ? 'Confirm' : 'Create')
+            )}
           </Button>
         </div>
       </form>

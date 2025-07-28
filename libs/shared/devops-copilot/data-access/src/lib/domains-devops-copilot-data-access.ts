@@ -26,6 +26,14 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
       return response.data
     },
   }),
+  config: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await devopsCopilotAxios.get(`/organization/${organizationId}/config`)
+
+      return response.data
+    },
+  }),
 })
 
 export const mutations = {

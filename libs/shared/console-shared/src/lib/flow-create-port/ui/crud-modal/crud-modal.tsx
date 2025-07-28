@@ -70,6 +70,7 @@ export function CrudModal({
         .with(CloudProviderEnum.GCP, () => true)
         .with(CloudProviderEnum.AWS, () => true)
         .with(CloudProviderEnum.ON_PREMISE, () => true)
+        .with(CloudProviderEnum.AZURE, () => true)
         .otherwise(() => false)
     )
 
