@@ -120,7 +120,6 @@ export function ValuesOverrideArgumentsSetting({ methods, children, onSubmit }: 
                   label="Path to .tfvar file(s)"
                   error={error?.message}
                   hint="Comma separated file paths"
-                  spellCheck={false}
                 />
               )}
             />
