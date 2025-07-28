@@ -103,7 +103,9 @@ function ChartContent({
     refAreaLeft: '',
     refAreaRight: '',
   })
+  const [zoomHistory, setZoomHistory] = useState<Array<{ left: string | number; right: string | number }>>([])
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
+  const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null)
 
   // Keyboard event handlers for zoom
   useEffect(() => {
@@ -144,6 +146,9 @@ function ChartContent({
     // xAxis domain - only zoom on X axis
     if (refAreaLeft > refAreaRight) [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft]
 
+    // Save current zoom level to history before zooming in
+    setZoomHistory((prevHistory) => [...prevHistory, { left: zoomState.left, right: zoomState.right }])
+
     setZoomState((prevState) => ({
       ...prevState,
       refAreaLeft: '',
@@ -154,6 +159,22 @@ function ChartContent({
   }
 
   const zoomOut = () => {
+    if (zoomHistory.length > 0) {
+      // Go back one zoom level
+      const previousZoom = zoomHistory[zoomHistory.length - 1]
+      setZoomHistory((prevHistory) => prevHistory.slice(0, -1))
+      setZoomState((prevState) => ({
+        ...prevState,
+        refAreaLeft: '',
+        refAreaRight: '',
+        left: previousZoom.left,
+        right: previousZoom.right,
+      }))
+    }
+  }
+
+  const resetZoom = () => {
+    setZoomHistory([])
     setZoomState((prevState) => ({
       ...prevState,
       refAreaLeft: '',
@@ -165,8 +186,14 @@ function ChartContent({
 
   const handleChartClick = () => {
     if (isCtrlPressed) {
+      // Single click with ctrl/cmd: zoom out one step
       zoomOut()
     }
+  }
+
+  const handleChartDoubleClick = () => {
+    // Double click: reset zoom completely
+    resetZoom()
   }
 
   function getXDomain(): [number | string, number | string] {
@@ -211,6 +238,7 @@ function ChartContent({
             }
             setOnHoverHideTooltip(false)
           }}
+          onDoubleClick={handleChartDoubleClick}
           style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
         >
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
