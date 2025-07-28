@@ -1,9 +1,9 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useState } from 'react'
+import { type PropsWithChildren, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CartesianGrid, ComposedChart, ReferenceLine, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Badge, Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
@@ -96,27 +96,130 @@ function ChartContent({
     useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
-  function getXDomain() {
-    return xDomain ?? [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
+  // Zoom state
+  const [zoomState, setZoomState] = useState({
+    left: 'dataMin' as string | number,
+    right: 'dataMax' as string | number,
+    refAreaLeft: '',
+    refAreaRight: '',
+  })
+  const [isCtrlPressed, setIsCtrlPressed] = useState(false)
+
+  // Keyboard event handlers for zoom
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Control' || e.key === 'Meta') {
+        setIsCtrlPressed(true)
+      }
+    }
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Control' || e.key === 'Meta') {
+        setIsCtrlPressed(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [])
+
+  // Zoom functions
+  const zoom = () => {
+    let { refAreaLeft, refAreaRight } = zoomState
+
+    if (refAreaLeft === refAreaRight || refAreaRight === '') {
+      setZoomState((prevState) => ({
+        ...prevState,
+        refAreaLeft: '',
+        refAreaRight: '',
+      }))
+      return
+    }
+
+    // xAxis domain - only zoom on X axis
+    if (refAreaLeft > refAreaRight) [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft]
+
+    setZoomState((prevState) => ({
+      ...prevState,
+      refAreaLeft: '',
+      refAreaRight: '',
+      left: refAreaLeft,
+      right: refAreaRight,
+    }))
+  }
+
+  const zoomOut = () => {
+    setZoomState((prevState) => ({
+      ...prevState,
+      refAreaLeft: '',
+      refAreaRight: '',
+      left: 'dataMin',
+      right: 'dataMax',
+    }))
+  }
+
+  const handleChartClick = () => {
+    if (isCtrlPressed) {
+      zoomOut()
+    }
+  }
+
+  function getXDomain(): [number | string, number | string] {
+    const defaultDomain: [number | string, number | string] = xDomain ?? [
+      Number(startTimestamp) * 1000,
+      Number(endTimestamp) * 1000,
+    ]
+    // Use zoom domain if zoomed, otherwise use provided or default domain
+    if (zoomState.left !== 'dataMin' || zoomState.right !== 'dataMax') {
+      return [zoomState.left, zoomState.right]
+    }
+    return defaultDomain
   }
 
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full" style={{ position: 'relative' }}>
       <Chart.Container className="h-full w-full p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={data}
           syncId="syncId"
           margin={margin}
-          onMouseMove={() => setOnHoverHideTooltip(true)}
+          onMouseDown={(e) => {
+            if (!isCtrlPressed && e) {
+              setZoomState((prevState) => ({ ...prevState, refAreaLeft: e.activeLabel || '' }))
+            }
+            setOnHoverHideTooltip(true)
+          }}
+          onMouseMove={(e) => {
+            if (!isCtrlPressed && zoomState.refAreaLeft && e) {
+              setZoomState((prevState) => ({ ...prevState, refAreaRight: e.activeLabel || '' }))
+            }
+            setOnHoverHideTooltip(true)
+          }}
           onMouseLeave={() => setOnHoverHideTooltip(false)}
-          onMouseUp={() => setOnHoverHideTooltip(false)}
+          onMouseUp={() => {
+            if (isCtrlPressed) {
+              handleChartClick()
+            } else {
+              zoom()
+            }
+            setOnHoverHideTooltip(false)
+          }}
+          style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
         >
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
+            allowDataOverflow
             domain={getXDomain()}
+            type="number"
+            dataKey="timestamp"
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
               const isLongRange = () => {
@@ -144,7 +247,6 @@ function ChartContent({
                 : date.getUTCMinutes().toString().padStart(2, '0')
               return `${hours}:${minutes}`
             }}
-            allowDataOverflow={true}
             interval="preserveStartEnd"
           />
           <Chart.Tooltip
@@ -161,6 +263,9 @@ function ChartContent({
             domain={yDomain}
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
+          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+          ) : null}
         </ComposedChart>
       </Chart.Container>
       {isFullscreen && referenceLineData && referenceLineData.length > 0 && !hideEvents && (
