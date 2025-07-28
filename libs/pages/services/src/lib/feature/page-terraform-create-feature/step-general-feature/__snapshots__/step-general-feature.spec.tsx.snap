@@ -1084,43 +1084,45 @@ exports[`StepGeneralFeature should submit a form with a public git repository 1`
                       </div>
                     </div>
                   </div>
-                  <div
-                    class=""
-                    data-testid="input-text-wrapper"
-                  >
+                  <div>
                     <div
-                      class="relative"
+                      class=""
+                      data-testid="input-text-wrapper"
                     >
                       <div
-                        aria-label="input-container"
-                        class="input    input--label-up "
+                        class="relative"
                       >
                         <div
-                          class=""
+                          aria-label="input-container"
+                          class="input    input--label-up "
                         >
-                          <label
-                            class="translate-y-2 text-sm"
-                            for="Root service path"
+                          <div
+                            class=""
                           >
-                            Root service path
-                          </label>
-                          <input
-                            class="input__value "
-                            data-testid="input-text"
-                            id="Root service path"
-                            name="root_path"
-                            type="text"
-                            value="/"
-                          />
+                            <label
+                              class="translate-y-2 text-sm"
+                              for="Manifest folder path"
+                            >
+                              Manifest folder path
+                            </label>
+                            <input
+                              class="input__value "
+                              data-testid="input-text"
+                              id="Manifest folder path"
+                              name="root_path"
+                              type="text"
+                              value="/"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
+                    <p
+                      class="ml-4 mt-1 text-xs text-neutral-350"
+                    >
+                      Provide the folder path in the repository where the manifest  is located.
+                    </p>
                   </div>
-                  <p
-                    class="ml-4 mt-1 text-xs text-neutral-350"
-                  >
-                    Provide the path in the repository where the service is located
-                  </p>
                   <div
                     class="flex flex-row gap-x-3 p-3 border rounded text-sm border-sky-500 bg-sky-50 text-sky-500 items-center"
                     data-accent-color="sky"
