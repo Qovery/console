@@ -119,7 +119,7 @@ function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div className="flex h-full" style={{ position: 'relative' }}>
+    <div className="relative flex h-full">
       <Chart.Container className="h-full w-full p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={data}
