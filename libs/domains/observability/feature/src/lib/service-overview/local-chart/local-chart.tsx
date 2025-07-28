@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Badge, Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, Chart, Heading, Icon, Section, Tooltip, useZoomableChart } from '@qovery/shared/ui'
 import { createXAxisConfig } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
@@ -96,116 +96,24 @@ function ChartContent({
     useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
-  // Zoom state
-  const [zoomState, setZoomState] = useState({
-    left: 'dataMin' as string | number,
-    right: 'dataMax' as string | number,
-    refAreaLeft: '',
-    refAreaRight: '',
-  })
-  const [zoomHistory, setZoomHistory] = useState<Array<{ left: string | number; right: string | number }>>([])
-  const [isCtrlPressed, setIsCtrlPressed] = useState(false)
-  const [clickTimeout, setClickTimeout] = useState<NodeJS.Timeout | null>(null)
-
-  // Keyboard event handlers for zoom
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Control' || e.key === 'Meta') {
-        setIsCtrlPressed(true)
-      }
-    }
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === 'Control' || e.key === 'Meta') {
-        setIsCtrlPressed(false)
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('keyup', handleKeyUp)
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-      window.removeEventListener('keyup', handleKeyUp)
-    }
-  }, [])
-
-  // Zoom functions
-  const zoom = () => {
-    let { refAreaLeft, refAreaRight } = zoomState
-
-    if (refAreaLeft === refAreaRight || refAreaRight === '') {
-      setZoomState((prevState) => ({
-        ...prevState,
-        refAreaLeft: '',
-        refAreaRight: '',
-      }))
-      return
-    }
-
-    // xAxis domain - only zoom on X axis
-    if (refAreaLeft > refAreaRight) [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft]
-
-    // Save current zoom level to history before zooming in
-    setZoomHistory((prevHistory) => [...prevHistory, { left: zoomState.left, right: zoomState.right }])
-
-    setZoomState((prevState) => ({
-      ...prevState,
-      refAreaLeft: '',
-      refAreaRight: '',
-      left: refAreaLeft,
-      right: refAreaRight,
-    }))
-  }
-
-  const zoomOut = () => {
-    if (zoomHistory.length > 0) {
-      // Go back one zoom level
-      const previousZoom = zoomHistory[zoomHistory.length - 1]
-      setZoomHistory((prevHistory) => prevHistory.slice(0, -1))
-      setZoomState((prevState) => ({
-        ...prevState,
-        refAreaLeft: '',
-        refAreaRight: '',
-        left: previousZoom.left,
-        right: previousZoom.right,
-      }))
-    }
-  }
-
-  const resetZoom = () => {
-    setZoomHistory([])
-    setZoomState((prevState) => ({
-      ...prevState,
-      refAreaLeft: '',
-      refAreaRight: '',
-      left: 'dataMin',
-      right: 'dataMax',
-    }))
-  }
-
-  const handleChartClick = () => {
-    if (isCtrlPressed) {
-      // Single click with ctrl/cmd: zoom out one step
-      zoomOut()
-    }
-  }
-
-  const handleChartDoubleClick = () => {
-    // Double click: reset zoom completely
-    resetZoom()
-  }
+  // Use the zoomable chart hook
+  const {
+    zoomState,
+    isCtrlPressed,
+    handleChartDoubleClick,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleMouseLeave,
+    getXDomain: getZoomXDomain,
+  } = useZoomableChart()
 
   function getXDomain(): [number | string, number | string] {
     const defaultDomain: [number | string, number | string] = xDomain ?? [
       Number(startTimestamp) * 1000,
       Number(endTimestamp) * 1000,
     ]
-    // Use zoom domain if zoomed, otherwise use provided or default domain
-    if (zoomState.left !== 'dataMin' || zoomState.right !== 'dataMax') {
-      return [zoomState.left, zoomState.right]
-    }
-    return defaultDomain
+    return getZoomXDomain(defaultDomain)
   }
 
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
@@ -218,24 +126,19 @@ function ChartContent({
           syncId="syncId"
           margin={margin}
           onMouseDown={(e) => {
-            if (!isCtrlPressed && e) {
-              setZoomState((prevState) => ({ ...prevState, refAreaLeft: e.activeLabel || '' }))
-            }
+            handleMouseDown(e)
             setOnHoverHideTooltip(true)
           }}
           onMouseMove={(e) => {
-            if (!isCtrlPressed && zoomState.refAreaLeft && e) {
-              setZoomState((prevState) => ({ ...prevState, refAreaRight: e.activeLabel || '' }))
-            }
+            handleMouseMove(e)
             setOnHoverHideTooltip(true)
           }}
-          onMouseLeave={() => setOnHoverHideTooltip(false)}
+          onMouseLeave={() => {
+            handleMouseLeave()
+            setOnHoverHideTooltip(false)
+          }}
           onMouseUp={() => {
-            if (isCtrlPressed) {
-              handleChartClick()
-            } else {
-              zoom()
-            }
+            handleMouseUp()
             setOnHoverHideTooltip(false)
           }}
           onDoubleClick={handleChartDoubleClick}

@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Area,
   Bar,
@@ -13,7 +13,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Chart } from './chart'
+import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig } from './chart-utils'
 
 const CHART_COLORS = [
@@ -423,83 +423,19 @@ export const ZoomableChart = {
 
 export const ZoomableChartKeyboardClick = {
   render: () => {
-    const [state, setState] = useState({
-      data: sampleData,
-      left: 'dataMin' as string | number,
-      right: 'dataMax' as string | number,
-      refAreaLeft: '',
-      refAreaRight: '',
-    })
+    const {
+      zoomState,
+      isCtrlPressed,
+      handleChartDoubleClick,
+      handleMouseDown,
+      handleMouseMove,
+      handleMouseUp,
+      handleMouseLeave,
+      getXDomain,
+    } = useZoomableChart()
 
-    const [isCtrlPressed, setIsCtrlPressed] = useState(false)
-
-    useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Control' || e.key === 'Meta') {
-          setIsCtrlPressed(true)
-        }
-      }
-
-      const handleKeyUp = (e: KeyboardEvent) => {
-        if (e.key === 'Control' || e.key === 'Meta') {
-          setIsCtrlPressed(false)
-        }
-      }
-
-      window.addEventListener('keydown', handleKeyDown)
-      window.addEventListener('keyup', handleKeyUp)
-
-      return () => {
-        window.removeEventListener('keydown', handleKeyDown)
-        window.removeEventListener('keyup', handleKeyUp)
-      }
-    }, [])
-
-    const zoom = () => {
-      let { refAreaLeft, refAreaRight } = state
-      const { data } = state
-
-      if (refAreaLeft === refAreaRight || refAreaRight === '') {
-        setState((prevState) => ({
-          ...prevState,
-          refAreaLeft: '',
-          refAreaRight: '',
-        }))
-        return
-      }
-
-      // xAxis domain - only zoom on X axis
-      if (refAreaLeft > refAreaRight) [refAreaLeft, refAreaRight] = [refAreaRight, refAreaLeft]
-
-      setState((prevState) => ({
-        ...prevState,
-        refAreaLeft: '',
-        refAreaRight: '',
-        data: data.slice(),
-        left: refAreaLeft,
-        right: refAreaRight,
-      }))
-    }
-
-    const zoomOut = () => {
-      setState((prevState) => ({
-        ...prevState,
-        data: sampleData.slice(),
-        refAreaLeft: '',
-        refAreaRight: '',
-        left: 'dataMin',
-        right: 'dataMax',
-      }))
-    }
-
-    const handleChartClick = () => {
-      if (isCtrlPressed) {
-        zoomOut()
-      }
-    }
-
-    const { data, refAreaLeft, refAreaRight, left, right } = state
     const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
+    const domain = getXDomain(['dataMin', 'dataMax'])
 
     return (
       <div style={{ userSelect: 'none', width: '100%', position: 'relative' }}>
@@ -523,42 +459,30 @@ export const ZoomableChartKeyboardClick = {
             <span style={{ fontSize: '16px' }} role="img" aria-label="zoom out icon">
               🔍➖
             </span>
-            Click to zoom out
+            Click to zoom out one step
           </div>
         )}
 
         <div style={{ marginBottom: '10px', fontSize: '14px', color: 'var(--color-neutral-500)' }}>
-          Drag to zoom in • Hold Ctrl/Cmd + Click to zoom out
+          Drag to zoom in • Hold Ctrl/Cmd + Click to zoom out one step • Double-click to reset zoom
         </div>
 
         <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
           <ComposedChart
-            data={data}
+            data={sampleData}
             margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-            onMouseDown={(e) => {
-              if (!isCtrlPressed && e) {
-                setState((prevState) => ({ ...prevState, refAreaLeft: e.activeLabel || '' }))
-              }
-            }}
-            onMouseMove={(e) => {
-              if (!isCtrlPressed && state.refAreaLeft && e) {
-                setState((prevState) => ({ ...prevState, refAreaRight: e.activeLabel || '' }))
-              }
-            }}
-            onMouseUp={() => {
-              if (isCtrlPressed) {
-                handleChartClick()
-              } else {
-                zoom()
-              }
-            }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onDoubleClick={handleChartDoubleClick}
             style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
           >
             <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
             <XAxis
               {...xAxisConfig}
               allowDataOverflow
-              domain={[left, right]}
+              domain={domain}
               type="number"
               dataKey="timestamp"
               tickFormatter={(timestamp) => {
@@ -610,8 +534,8 @@ export const ZoomableChartKeyboardClick = {
               isAnimationActive={false}
               name="Disk"
             />
-            {!isCtrlPressed && refAreaLeft && refAreaRight ? (
-              <ReferenceArea x1={refAreaLeft} x2={refAreaRight} strokeOpacity={0.3} />
+            {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+              <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
             ) : null}
           </ComposedChart>
         </Chart.Container>
