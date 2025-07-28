@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 
+interface ChartMouseEvent {
+  activeLabel?: string
+}
+
 interface ZoomState {
   left: string | number
   right: string | number
-  refAreaLeft: string
-  refAreaRight: string
+  refAreaLeft: string | number
+  refAreaRight: string | number
 }
 
 interface ZoomLevel {
@@ -26,8 +30,8 @@ interface UseZoomableChartReturn {
   // Event handlers
   handleChartClick: () => void
   handleChartDoubleClick: () => void
-  handleMouseDown: (e: any) => void
-  handleMouseMove: (e: any) => void
+  handleMouseDown: (e?: ChartMouseEvent) => void
+  handleMouseMove: (e?: ChartMouseEvent) => void
   handleMouseUp: () => void
   handleMouseLeave: () => void
 
@@ -47,7 +51,6 @@ export function useZoomableChart(): UseZoomableChartReturn {
 
   const [zoomHistory, setZoomHistory] = useState<ZoomLevel[]>([])
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
-  const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
   // Keyboard event handlers for zoom
   useEffect(() => {
@@ -139,18 +142,16 @@ export function useZoomableChart(): UseZoomableChartReturn {
     resetZoom()
   }
 
-  const handleMouseDown = (e: any) => {
+  const handleMouseDown = (e?: ChartMouseEvent) => {
     if (!isCtrlPressed && e) {
       setZoomState((prevState) => ({ ...prevState, refAreaLeft: e.activeLabel || '' }))
     }
-    setOnHoverHideTooltip(true)
   }
 
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e?: ChartMouseEvent) => {
     if (!isCtrlPressed && zoomState.refAreaLeft && e) {
       setZoomState((prevState) => ({ ...prevState, refAreaRight: e.activeLabel || '' }))
     }
-    setOnHoverHideTooltip(true)
   }
 
   const handleMouseUp = () => {
@@ -159,11 +160,10 @@ export function useZoomableChart(): UseZoomableChartReturn {
     } else {
       zoom()
     }
-    setOnHoverHideTooltip(false)
   }
 
   const handleMouseLeave = () => {
-    setOnHoverHideTooltip(false)
+    // Reset any dragging state if needed
   }
 
   // Utilities
