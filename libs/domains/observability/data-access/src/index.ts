@@ -1,1 +1,1 @@
-export * from './lib/data-access'
+export * from './lib/domains-observability-data-access'
