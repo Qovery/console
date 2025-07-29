@@ -116,7 +116,7 @@ const TerraformVariables = () => {
   })
 
   useEffect(() => {
-    if (variablesResponse) {
+    if (variablesResponse && !valuesOverrideArgumentsForm.formState.isDirty) {
       const payload =
         variablesResponse?.results?.map((variable) => ({
           key: variable.key,
