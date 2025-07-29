@@ -332,6 +332,7 @@ export const ZoomableChart = {
               ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
               type="number"
               dataKey="timestamp"
+              tick={{ ...xAxisConfig.tick, style: { userSelect: 'none' } }}
               tickFormatter={(timestamp) => {
                 const date = new Date(timestamp)
                 const hours = date.getHours().toString().padStart(2, '0')
@@ -340,7 +341,7 @@ export const ZoomableChart = {
               }}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)', style: { userSelect: 'none' } }}
               tickLine={{ stroke: 'transparent' }}
               axisLine={{ stroke: 'transparent' }}
               orientation="right"

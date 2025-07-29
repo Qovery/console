@@ -156,6 +156,7 @@ function ChartContent({
             ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
             type="number"
             dataKey="timestamp"
+            tick={{ ...xAxisConfig.tick, style: { userSelect: 'none' } }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
               const isLongRange = () => {
@@ -191,7 +192,7 @@ function ChartContent({
           />
           {children}
           <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)', style: { userSelect: 'none' } }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
             orientation="right"
