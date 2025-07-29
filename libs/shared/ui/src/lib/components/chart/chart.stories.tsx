@@ -161,7 +161,7 @@ export const Composed = {
     return (
       <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
         <ComposedChart data={modifiedData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -225,7 +225,7 @@ export const MaximalEdgeCase = {
     return (
       <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
         <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -270,7 +270,7 @@ export const EventMarkers = {
     return (
       <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -330,7 +330,7 @@ export const LoadingState = {
     return (
       <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -372,7 +372,7 @@ export const EmptyState = {
     return (
       <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={[]} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {

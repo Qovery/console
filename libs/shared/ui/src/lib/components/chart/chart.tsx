@@ -1,6 +1,7 @@
 import { type ComponentProps, forwardRef, useMemo } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
+import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
 
@@ -44,7 +45,17 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
                 <div className="text-sm text-neutral-400">Fetching data...</div>
               </>
             ) : (
-              <div className="text-sm text-neutral-400">No data available</div>
+              <>
+                <div className="rounded border border-neutral-300 bg-white p-2">
+                  <Icon
+                    iconName="chart-column"
+                    iconStyle="light"
+                    className="text-neutral-400"
+                    style={{ fontSize: '20px' }}
+                  />
+                </div>
+                <div className="text-sm text-neutral-400">No data available</div>
+              </>
             )}
           </div>
         </div>

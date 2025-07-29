@@ -113,7 +113,7 @@ describe('createXAxisConfig', () => {
         ticks: getLogicalTicks(startTimestamp, endTimestamp, 6),
         tick: { fontSize: 12, fill: 'var(--color-neutral-350)' },
         tickLine: { stroke: 'transparent' },
-        axisLine: { stroke: 'var(--color-neutral-250)' },
+        axisLine: { stroke: 'var(--color-neutral-200)' },
         allowDataOverflow: true,
         interval: 'preserveStartEnd',
         strokeDasharray: '3 3',
