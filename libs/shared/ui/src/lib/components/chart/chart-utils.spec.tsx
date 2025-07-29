@@ -116,7 +116,6 @@ describe('createXAxisConfig', () => {
         axisLine: { stroke: 'var(--color-neutral-200)' },
         allowDataOverflow: true,
         interval: 'preserveStartEnd',
-        strokeDasharray: '3 3',
       })
     })
 
@@ -205,7 +204,6 @@ describe('createXAxisConfig', () => {
       expect(config.tickLine.stroke).toBe('transparent')
       expect(config.allowDataOverflow).toBe(true)
       expect(config.interval).toBe('preserveStartEnd')
-      expect(config.strokeDasharray).toBe('3 3')
     })
   })
 

@@ -27,7 +27,6 @@ export interface XAxisConfig {
   axisLine: { stroke: string }
   allowDataOverflow: boolean
   interval: 'preserveStartEnd'
-  strokeDasharray: string
 }
 
 export function createXAxisConfig(
@@ -52,6 +51,5 @@ export function createXAxisConfig(
     axisLine: { stroke: axisLineColor },
     allowDataOverflow: true,
     interval: 'preserveStartEnd',
-    strokeDasharray: '3 3',
   }
 }
