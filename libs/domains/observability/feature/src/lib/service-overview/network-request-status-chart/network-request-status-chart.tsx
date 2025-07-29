@@ -8,12 +8,13 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `sum by(path,status)( rate(nginx_ingress_controller_requests{}[1m])
       * on(ingress) group_left(label_qovery_com_associated_service_id)
         max by(ingress, label_qovery_com_associated_service_id)(

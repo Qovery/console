@@ -8,7 +8,7 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const { data: metricsHttpStatusErrorRatio, isLoading: isLoadingHttpStatusErrorRatio } = useMetrics({
     clusterId,
@@ -31,6 +31,7 @@ sum (
     )
 ) * 100
 `,
+    timeRange,
   })
 
   const chartData = useMemo(() => {

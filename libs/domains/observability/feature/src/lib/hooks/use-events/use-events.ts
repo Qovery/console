@@ -9,7 +9,6 @@ import { toastError } from '@qovery/shared/ui'
 const eventsApi = new OrganizationEventApi()
 
 // https://api.qovery.com/organization/460616f0-94da-4d35-b631-6fa4ed08eb9a/events?pageSize=30&targetType=CONTAINER&targetId=02085927-12dd-40ef-a155-8f1583ffc7a3
-
 export function useEvents({
   organizationId,
   serviceId,

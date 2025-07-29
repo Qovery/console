@@ -43,6 +43,7 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
     )
   `,
     queryRange: 'query',
+    timeRange,
   })
 
   const value = Math.round(Number(metrics?.data?.result[0]?.value[1])) || 0

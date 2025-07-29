@@ -24,6 +24,7 @@ export function CardLogErrors({
     clusterId,
     query: `sum (increase(promtail_custom_q_log_errors_total{qovery_com_service_id=~"${serviceId}"}[${timeRange}]))`,
     queryRange: 'query',
+    timeRange,
   })
 
   const value = metrics?.data?.result.length || 0

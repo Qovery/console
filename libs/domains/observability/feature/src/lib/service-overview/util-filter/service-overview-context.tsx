@@ -1,4 +1,4 @@
-import { type PropsWithChildren, createContext, useContext, useState } from 'react'
+import { type PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
@@ -50,6 +50,62 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [endDate, setEndDate] = useState(now.toISOString())
 
   const handleTimeRangeChange = createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)
+
+  // Update every 15 seconds to match actual scrape_interval
+  // use-metrics.tsx: refetchInterval: 15_000ms
+  useEffect(() => {
+    const isLiveRange = ['5m', '15m', '30m'].includes(timeRange)
+
+    if (!isLiveRange) return
+
+    const roundDateToStep = (date: Date, stepSeconds: number): Date => {
+      const timestamp = Math.floor(date.getTime() / 1000)
+      const rounded = Math.floor(timestamp / stepSeconds) * stepSeconds
+      return new Date(rounded * 1000)
+    }
+
+    const getStepSeconds = (timeRange: TimeRangeOption) => {
+      // Actual scrape_interval = 15s
+      switch (timeRange) {
+        case '5m':
+          return 15 // 15 seconds (match actual scrape_interval)
+        case '15m':
+          return 30 // 30 seconds (2x scrape_interval)
+        case '30m':
+          return 60 // 1 minute (4x scrape_interval)
+        default:
+          return 15
+      }
+    }
+
+    const updateDates = () => {
+      const now = new Date()
+      const stepSeconds = getStepSeconds(timeRange)
+      const roundedEnd = roundDateToStep(now, stepSeconds)
+      setEndDate(roundedEnd.toISOString())
+
+      let roundedStart: Date
+      switch (timeRange) {
+        case '5m':
+          roundedStart = roundDateToStep(new Date(roundedEnd.getTime() - 5 * 60 * 1000), stepSeconds)
+          break
+        case '15m':
+          roundedStart = roundDateToStep(new Date(roundedEnd.getTime() - 15 * 60 * 1000), stepSeconds)
+          break
+        case '30m':
+          roundedStart = roundDateToStep(new Date(roundedEnd.getTime() - 30 * 60 * 1000), stepSeconds)
+          break
+        default:
+          roundedStart = roundDateToStep(new Date(roundedEnd.getTime() - 30 * 60 * 1000), stepSeconds)
+      }
+      setStartDate(roundedStart.toISOString())
+    }
+
+    updateDates()
+
+    const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
+    return () => clearInterval(interval)
+  }, [timeRange])
 
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
   const endTimestamp = convertDatetoTimestamp(endDate).toString()

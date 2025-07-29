@@ -129,7 +129,7 @@ const getExitCodeInfo = (exitCode: string): { name: string; description: string 
 }
 
 export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey, timeRange } =
     useServiceOverviewContext()
 
   // Calculate dynamic range based on time range
@@ -142,6 +142,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `sum by (condition)(kube_pod_status_ready{condition=~"false"}
     * on(namespace,pod) group_left(label_qovery_com_service_id)
       max by(namespace,pod,label_qovery_com_service_id)(
@@ -153,6 +154,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `sum by (condition)(kube_pod_status_ready{condition=~"true"}
     * on(namespace,pod) group_left(label_qovery_com_service_id)
       max by(namespace,pod,label_qovery_com_service_id)(
@@ -164,6 +166,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `
   sum by (pod, reason) (
     (
@@ -190,6 +193,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `
   (
     kube_pod_container_status_last_terminated_exitcode
@@ -211,6 +215,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `
   sum by (pod,reason)(
   (
@@ -232,6 +237,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `
  sum by (probe_type) (   increase(
       prober_probe_total{result!="successful", probe_type="Readiness"}[1m]

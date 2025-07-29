@@ -30,6 +30,7 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
   )[${timeRange}:1m]
 ))`,
     queryRange: 'query',
+    timeRange,
   })
 
   const value = Math.round(metrics?.data?.result[0]?.value[1]) ?? 0

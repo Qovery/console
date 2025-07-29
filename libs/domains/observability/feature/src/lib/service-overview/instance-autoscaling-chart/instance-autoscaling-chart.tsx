@@ -7,7 +7,7 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey, timeRange } =
     useServiceOverviewContext()
 
   const { data: metricsNumberOfInstances, isLoading: isLoadingNumberOfInstances } = useMetrics({
@@ -15,6 +15,7 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
     startTimestamp,
     endTimestamp,
     query: `sum(kube_pod_status_ready{condition="true"} * on(namespace,pod) group_left(label_qovery_com_service_id) max by(namespace,pod,label_qovery_com_service_id)(kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+    timeRange,
   })
 
   const { data: metricsHpaMinReplicas, isLoading: isLoadingHpaMinReplicas } = useMetrics({
@@ -22,6 +23,7 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
     startTimestamp,
     endTimestamp,
     query: `max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+    timeRange,
   })
 
   const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
@@ -29,6 +31,7 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
     startTimestamp,
     endTimestamp,
     query: `max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
+    timeRange,
   })
 
   const { data: metricsHpaMaxLimitReached, isLoading: isHpaMaxLimitReached } = useMetrics({
@@ -61,6 +64,7 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
     }
   ) > 0
 )`,
+    timeRange,
   })
 
   const chartData = useMemo(() => {

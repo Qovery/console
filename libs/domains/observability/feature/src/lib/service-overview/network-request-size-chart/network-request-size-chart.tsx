@@ -7,12 +7,13 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `sum by (path) (
   rate(nginx_ingress_controller_response_size_count{}[1m])
    * on(ingress) group_left(label_qovery_com_associated_service_id)
@@ -28,6 +29,7 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `sum by (path) (
   rate(nginx_ingress_controller_request_size_count{}[1m])
    * on(ingress) group_left(label_qovery_com_associated_service_id)

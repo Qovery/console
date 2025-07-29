@@ -29,6 +29,7 @@ export function CardPercentile50({ serviceId, clusterId }: { serviceId: string; 
 
   `,
     queryRange: 'query',
+    timeRange,
   })
 
   const value = Math.round(Number(metrics?.data?.result[0]?.value[1]) * 1000) || 0
