@@ -2,7 +2,6 @@ import { type GitProviderEnum, type GitTokenResponse, type TerraformRequest } fr
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { type TerraformValuesArgumentsData } from '@qovery/domains/service-terraform/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_NEW_URL,
@@ -68,6 +67,15 @@ export interface TerraformGeneralData
     read_from_terraform_block: boolean
     explicit_version: string
   }
+}
+
+export interface TerraformValuesArgumentsData {
+  tf_vars: {
+    key: string
+    value: string
+    secret: boolean
+  }[]
+  tf_var_file_paths: string[]
 }
 
 interface TerraformCreateContextInterface {
