@@ -106,6 +106,7 @@ function ChartContent({
     handleMouseUp,
     handleMouseLeave,
     getXDomain: getZoomXDomain,
+    getXAxisTicks,
   } = useZoomableChart()
 
   function getXDomain(): [number | string, number | string] {
@@ -116,6 +117,9 @@ function ChartContent({
     return getZoomXDomain(defaultDomain)
   }
 
+  // Get current domain and calculate appropriate ticks
+  const currentDomain = getXDomain()
+  const currentTicks = getXAxisTicks(currentDomain, 6)
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
@@ -148,7 +152,8 @@ function ChartContent({
           <XAxis
             {...xAxisConfig}
             allowDataOverflow
-            domain={getXDomain()}
+            domain={currentDomain}
+            ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
             type="number"
             dataKey="timestamp"
             tickFormatter={(timestamp) => {

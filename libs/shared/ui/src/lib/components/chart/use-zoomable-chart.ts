@@ -37,6 +37,7 @@ interface UseZoomableChartReturn {
 
   // Utilities
   getXDomain: (defaultDomain?: [number | string, number | string]) => [number | string, number | string]
+  getXAxisTicks: (defaultDomain?: [number | string, number | string], tickCount?: number) => number[]
   isZoomed: boolean
 }
 
@@ -177,6 +178,30 @@ export function useZoomableChart(): UseZoomableChartReturn {
     return defaultDomain
   }
 
+  const getXAxisTicks = (
+    defaultDomain: [number | string, number | string] = ['dataMin', 'dataMax'],
+    tickCount = 6
+  ): number[] => {
+    // Get the current domain (zoomed or default)
+    const currentDomain = getXDomain(defaultDomain)
+
+    // If we have specific numeric values (zoomed state), calculate ticks for that range
+    if (typeof currentDomain[0] === 'number' && typeof currentDomain[1] === 'number') {
+      const startTime = currentDomain[0]
+      const endTime = currentDomain[1]
+      const ticks: number[] = []
+      const interval = (endTime - startTime) / (tickCount - 1)
+
+      for (let i = 0; i < tickCount; i++) {
+        ticks.push(startTime + interval * i)
+      }
+      return ticks
+    }
+
+    // For default domain or string values, return empty array (let Recharts handle it)
+    return []
+  }
+
   const isZoomed = zoomState.left !== 'dataMin' || zoomState.right !== 'dataMax'
 
   return {
@@ -200,6 +225,7 @@ export function useZoomableChart(): UseZoomableChartReturn {
 
     // Utilities
     getXDomain,
+    getXAxisTicks,
     isZoomed,
   }
 }

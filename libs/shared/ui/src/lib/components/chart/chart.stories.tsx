@@ -287,10 +287,14 @@ export const ZoomableChart = {
       handleMouseUp,
       handleMouseLeave,
       getXDomain,
+      getXAxisTicks,
     } = useZoomableChart()
 
+    const defaultDomain: [number | string, number | string] = [1704067200000, 1704088800000]
+    const domain = getXDomain(defaultDomain)
+    const ticks = getXAxisTicks(defaultDomain, 7)
+
     const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
-    const domain = getXDomain(['dataMin', 'dataMax'])
 
     return (
       <div style={{ userSelect: 'none', width: '100%', position: 'relative' }}>
@@ -325,6 +329,7 @@ export const ZoomableChart = {
               {...xAxisConfig}
               allowDataOverflow
               domain={domain}
+              ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
               type="number"
               dataKey="timestamp"
               tickFormatter={(timestamp) => {
