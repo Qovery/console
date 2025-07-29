@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect, useState } from 'react'
+import { type PropsWithChildren, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -124,7 +124,7 @@ function ChartContent({
 
   return (
     <div className="relative flex h-full">
-      <Chart.Container className="h-full w-full p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
+      <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={data}
           syncId="syncId"
@@ -156,7 +156,7 @@ function ChartContent({
             ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
             type="number"
             dataKey="timestamp"
-            tick={{ ...xAxisConfig.tick, style: { userSelect: 'none' } }}
+            tick={{ ...xAxisConfig.tick }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
               const isLongRange = () => {
@@ -192,7 +192,7 @@ function ChartContent({
           />
           {children}
           <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)', style: { userSelect: 'none' } }}
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
             orientation="right"

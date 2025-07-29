@@ -297,7 +297,7 @@ export const ZoomableChart = {
     const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
 
     return (
-      <div style={{ userSelect: 'none', width: '100%', position: 'relative' }}>
+      <>
         <div
           style={{
             background: 'var(--color-neutral-100)',
@@ -313,7 +313,7 @@ export const ZoomableChart = {
           Drag to zoom in • Hold Ctrl/Cmd + Click to zoom out one step • Double-click to reset zoom
         </div>
 
-        <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
+        <Chart.Container className="h-[400px] w-full select-none p-5 py-2 pr-0">
           <ComposedChart
             data={sampleData}
             margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
@@ -332,7 +332,7 @@ export const ZoomableChart = {
               ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
               type="number"
               dataKey="timestamp"
-              tick={{ ...xAxisConfig.tick, style: { userSelect: 'none' } }}
+              tick={{ ...xAxisConfig.tick }}
               tickFormatter={(timestamp) => {
                 const date = new Date(timestamp)
                 const hours = date.getHours().toString().padStart(2, '0')
@@ -341,7 +341,7 @@ export const ZoomableChart = {
               }}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)', style: { userSelect: 'none' } }}
+              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
               tickLine={{ stroke: 'transparent' }}
               axisLine={{ stroke: 'transparent' }}
               orientation="right"
@@ -387,7 +387,7 @@ export const ZoomableChart = {
             ) : null}
           </ComposedChart>
         </Chart.Container>
-      </div>
+      </>
     )
   },
 }
