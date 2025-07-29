@@ -3,7 +3,7 @@ import { Controller, FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import {
   SERVICES_TERRAFORM_CREATION_GENERAL_URL,
-  SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
+  SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import {
   Button,
@@ -33,7 +33,7 @@ export function StepConfigurationFeature() {
   }, [setCurrentStep])
 
   const onSubmit = () => {
-    navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL)
+    navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL)
   }
 
   return (
@@ -57,7 +57,7 @@ export function StepConfigurationFeature() {
               defaultValue={generalData.provider_version.explicit_version}
               render={({ field }) => (
                 <InputSelect
-                  label="State configuration"
+                  label="Terraform version"
                   value={field.value}
                   onChange={field.onChange}
                   options={TERRAFORM_VERSIONS.map((v) => ({ label: v, value: v }))}

@@ -9,8 +9,8 @@ import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
-  SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
-  SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
+  SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
+  SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
@@ -161,7 +161,7 @@ export function StepSummaryFeature() {
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)}
+                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL)}
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
@@ -203,7 +203,7 @@ export function StepSummaryFeature() {
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL)}
+                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL)}
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
@@ -233,7 +233,7 @@ export function StepSummaryFeature() {
               type="button"
               size="lg"
               variant="plain"
-              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL)}
+              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL)}
             >
               Back
             </Button>

@@ -4,8 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useParseTerraformVariablesFromGitRepo } from '@qovery/domains/organizations/feature'
 import { FieldVariableSuggestion } from '@qovery/domains/variables/feature'
 import {
+  SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
-  SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
 } from '@qovery/shared/routes'
 import {
   Button,
@@ -123,7 +123,7 @@ const TerraformVariables = () => {
           secret: variable.sensitive,
         })) || []
 
-      valuesOverrideArgumentsForm.setValue('tf_vars', payload)
+      valuesOverrideArgumentsForm.setValue('tf_vars', payload, { shouldDirty: false })
     }
   }, [variablesResponse, valuesOverrideArgumentsForm])
 
@@ -250,7 +250,7 @@ export function StepVariablesFeature() {
                 size="lg"
                 variant="plain"
                 color="neutral"
-                onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL)}
+                onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL)}
               >
                 Back
               </Button>

@@ -29,9 +29,9 @@ import {
   SERVICES_SETTINGS_PREVIEW_ENV_URL,
   SERVICES_SETTINGS_RULES_URL,
   SERVICES_SETTINGS_URL,
+  SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
   SERVICES_TERRAFORM_CREATION_GENERAL_URL,
-  SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
-  SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
+  SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
   SERVICES_VARIABLES_URL,
 } from '@qovery/shared/routes'
 import { StepGeneralFeature as ApplicationStepGeneralFeature } from '../feature/page-application-create-feature/step-general-feature/step-general-feature'
@@ -231,11 +231,11 @@ export const ROUTER_SERVICE_TERRAFORM_CREATION: Route[] = [
     component: <TerraformStepGeneralFeature />,
   },
   {
-    path: SERVICES_TERRAFORM_CREATION_VALUES_STEP_1_URL,
+    path: SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
     component: <TerraformStepConfigurationFeature />,
   },
   {
-    path: SERVICES_TERRAFORM_CREATION_VALUES_STEP_2_URL,
+    path: SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
     component: <TerraformStepVariablesFeature />,
   },
   {
