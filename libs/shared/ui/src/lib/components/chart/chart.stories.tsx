@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { Callout } from '../callout/callout'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig } from './chart-utils'
 
@@ -298,20 +299,11 @@ export const ZoomableChart = {
 
     return (
       <>
-        <div
-          style={{
-            background: 'var(--color-neutral-100)',
-            border: '1px solid var(--color-neutral-400)',
-            borderRadius: '8px',
-            padding: '10px 16px',
-            marginBottom: '16px',
-            fontSize: '14px',
-            color: 'var(--color-neutral-900)',
-            fontWeight: 500,
-          }}
-        >
-          Drag to zoom in • Hold Ctrl/Cmd + Click to zoom out one step • Double-click to reset zoom
-        </div>
+        <Callout.Root color="neutral" className="mb-4">
+          <Callout.Text className="font-medium">
+            Drag to zoom in • Hold Ctrl/Cmd + Click to zoom out one step • Double-click to reset zoom
+          </Callout.Text>
+        </Callout.Root>
 
         <Chart.Container className="h-[400px] w-full select-none p-5 py-2 pr-0">
           <ComposedChart
