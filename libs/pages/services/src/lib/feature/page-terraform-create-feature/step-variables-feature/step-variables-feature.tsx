@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import { type Control, Controller, FormProvider, type UseFieldArrayRemove, useFieldArray } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useParseTerraformVariablesFromGitRepo } from '@qovery/domains/organizations/feature'
@@ -104,7 +104,7 @@ const TerraformVariables = () => {
 
   const generalData = generalForm.getValues()
 
-  const { data: variablesResponse } = useParseTerraformVariablesFromGitRepo({
+  const { data: variablesResponse, isLoading } = useParseTerraformVariablesFromGitRepo({
     organizationId,
     repository: {
       url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
@@ -112,7 +112,6 @@ const TerraformVariables = () => {
       root_path: generalData.root_path,
       git_token_id: generalData.git_token_id,
     },
-    suspense: true,
   })
 
   useEffect(() => {
@@ -128,7 +127,9 @@ const TerraformVariables = () => {
     }
   }, [variablesResponse, valuesOverrideArgumentsForm])
 
-  return (
+  return isLoading ? (
+    <TerraformVariablesSkeleton />
+  ) : (
     <>
       {tfVars && tfVars.length > 0 && (
         <ul>
@@ -238,9 +239,7 @@ export function StepVariablesFeature() {
                 </div>
 
                 <div className="flex flex-col gap-4">
-                  <Suspense fallback={<TerraformVariablesSkeleton />}>
-                    <TerraformVariables />
-                  </Suspense>
+                  <TerraformVariables />
                 </div>
               </Section>
             </div>

@@ -6,14 +6,12 @@ export interface UseParseTerraformVariablesFromGitRepoProps {
   organizationId: string
   repository: ApplicationGitRepositoryRequest
   enabled?: boolean
-  suspense?: boolean
 }
 
 export function useParseTerraformVariablesFromGitRepo({
   organizationId,
   repository,
   enabled = true,
-  suspense = false,
 }: UseParseTerraformVariablesFromGitRepoProps) {
   return useQuery({
     ...queries.organizations.parseTerraformVariablesFromGitRepo({ organizationId, repository }),
@@ -22,7 +20,6 @@ export function useParseTerraformVariablesFromGitRepo({
       notifyOnError: true,
     },
     refetchOnWindowFocus: false,
-    suspense,
     staleTime: 0,
   })
 }
