@@ -6,7 +6,18 @@ import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Badge, Button, Chart, Heading, Icon, Section, Tooltip, useZoomableChart, createXAxisConfig, getTimeGranularity  } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Chart,
+  Heading,
+  Icon,
+  Section,
+  Tooltip,
+  createXAxisConfig,
+  getTimeGranularity,
+  useZoomableChart,
+} from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
