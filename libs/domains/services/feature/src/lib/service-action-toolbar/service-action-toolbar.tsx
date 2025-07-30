@@ -588,7 +588,7 @@ function MenuManageDeployment({
             }
           )
           .with({ service: { serviceType: 'DATABASE' } }, () => null)
-          .with({ service: { serviceType: 'TERRAFORM' } }, () => null) // TODO [QOV-821] double check that
+          .with({ service: { serviceType: 'TERRAFORM' } }, () => null)
           .exhaustive()}
         {match(service)
           .with({ serviceType: 'HELM', values_override: P.when(isHelmGitValuesOverride) }, (service) => {
