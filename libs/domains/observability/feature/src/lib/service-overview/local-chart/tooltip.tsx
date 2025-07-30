@@ -1,13 +1,13 @@
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
-type TooltipEntry = {
+export type TooltipEntry = {
   dataKey: string
   value: number
   color: string
   payload: { timestamp: number; fullTime: string; [key: string]: string | number | null }
 }
 
-type GroupedEntry = {
+export type GroupedEntry = {
   request?: TooltipEntry
   limit?: TooltipEntry
   others: TooltipEntry[]

@@ -77,7 +77,7 @@ interface ChartContentProps extends PropsWithChildren {
   isFullscreen?: boolean
 }
 
-function ChartContent({
+export function ChartContent({
   data,
   unit,
   label,
@@ -239,7 +239,7 @@ function ChartContent({
   )
 }
 
-interface LocalChartProps extends PropsWithChildren {
+export interface LocalChartProps extends PropsWithChildren {
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
   unit: UnitType
   isEmpty: boolean
