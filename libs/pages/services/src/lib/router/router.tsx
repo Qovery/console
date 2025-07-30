@@ -65,8 +65,8 @@ import PageSettingsGeneralFeature from '../feature/page-settings-general-feature
 import PageSettingsPreviewEnvironmentsFeature from '../feature/page-settings-preview-environments-feature/page-settings-preview-environments-feature'
 import { StepConfigurationFeature as TerraformStepConfigurationFeature } from '../feature/page-terraform-create-feature/step-configuration-feature/step-configuration-feature'
 import { StepGeneralFeature as TerraformStepGeneralFeature } from '../feature/page-terraform-create-feature/step-general-feature/step-general-feature'
+import { StepInputVariablesFeature as TerraformStepInputVariablesFeature } from '../feature/page-terraform-create-feature/step-input-variables-feature/step-input-variables-feature'
 import { StepSummaryFeature as TerraformStepSummaryFeature } from '../feature/page-terraform-create-feature/step-summary-feature/step-summary-feature'
-import { StepVariablesFeature as TerraformStepVariablesFeature } from '../feature/page-terraform-create-feature/step-variables-feature/step-variables-feature'
 import { PageVariablesFeature } from '../feature/page-variables-feature/page-variables-feature'
 import { Container } from '../ui/container/container'
 
@@ -236,7 +236,7 @@ export const ROUTER_SERVICE_TERRAFORM_CREATION: Route[] = [
   },
   {
     path: SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
-    component: <TerraformStepVariablesFeature />,
+    component: <TerraformStepInputVariablesFeature />,
   },
   {
     path: SERVICES_HELM_CREATION_SUMMARY_URL,

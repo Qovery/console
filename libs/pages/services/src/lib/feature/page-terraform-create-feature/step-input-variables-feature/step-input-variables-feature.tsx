@@ -22,7 +22,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { type TerraformValuesArgumentsData, useTerraformCreateContext } from '../page-terraform-create-feature'
 
-function VarRow({
+const VarRow = ({
   index,
   control,
   remove,
@@ -30,7 +30,7 @@ function VarRow({
   index: number
   control: Control<TerraformValuesArgumentsData>
   remove: UseFieldArrayRemove
-}) {
+}) => {
   const { environmentId = '' } = useParams()
 
   return (
@@ -164,7 +164,7 @@ const TerraformVariables = () => {
   )
 }
 
-export function TerraformVariablesSkeleton() {
+const TerraformVariablesSkeleton = () => {
   return (
     <Section className="gap-4">
       <div className="flex flex-col gap-3">
@@ -181,7 +181,7 @@ export function TerraformVariablesSkeleton() {
   )
 }
 
-export function StepVariablesFeature() {
+export const StepInputVariablesFeature = () => {
   useDocumentTitle('General - Terraform configuration')
 
   const navigate = useNavigate()
@@ -271,5 +271,3 @@ export function StepVariablesFeature() {
     </FunnelFlowBody>
   )
 }
-
-export default StepVariablesFeature
