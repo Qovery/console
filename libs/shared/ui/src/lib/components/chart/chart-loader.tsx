@@ -1,5 +1,5 @@
 export const ChartLoader = () => (
-  <div className="rounded border border-neutral-300 bg-white p-2">
+  <div className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral-200 bg-white p-2 text-base text-neutral-350">
     <svg
       className="animate-spin"
       xmlns="http://www.w3.org/2000/svg"

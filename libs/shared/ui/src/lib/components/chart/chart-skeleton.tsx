@@ -10,8 +10,8 @@ export const ChartSkeleton = ({ className }: ChartSkeletonProps) => {
   return (
     <div className={twMerge('h-full w-full', className)}>
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+        <AreaChart margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" strokeDasharray="2 4" />
           <XAxis type="number" dataKey="x" domain={[0, 100]} hide={true} />
           <YAxis type="number" domain={[0, 100]} hide={true} />
         </AreaChart>
