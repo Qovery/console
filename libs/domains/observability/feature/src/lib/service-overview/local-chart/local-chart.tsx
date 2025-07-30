@@ -6,8 +6,7 @@ import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Badge, Button, Chart, Heading, Icon, Section, Tooltip, useZoomableChart } from '@qovery/shared/ui'
-import { createXAxisConfig } from '@qovery/shared/ui'
+import { Badge, Button, Chart, Heading, Icon, Section, Tooltip, useZoomableChart, createXAxisConfig, getTimeGranularity  } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
@@ -159,30 +158,34 @@ function ChartContent({
             tick={{ ...xAxisConfig.tick }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
-              const isLongRange = () => {
-                const durationInHours = (Number(endTimestamp) - Number(startTimestamp)) / (60 * 60)
-                return durationInHours > 24
+
+              // Get current zoom domain for dynamic time granularity
+              const [startMs, endMs] = currentDomain.map((d) =>
+                typeof d === 'number'
+                  ? d
+                  : d === 'dataMin'
+                    ? Number(startTimestamp) * 1000
+                    : Number(endTimestamp) * 1000
+              )
+              const granularity = getTimeGranularity(startMs, endMs)
+
+              // Helper functions for local vs UTC time
+              const getDatePart = (fn: (d: Date) => number) =>
+                useLocalTime ? fn(date) : fn(new Date(date.getTime() + date.getTimezoneOffset() * 60000))
+
+              const pad = (num: number) => num.toString().padStart(2, '0')
+
+              switch (granularity) {
+                case 'seconds':
+                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}:${pad(getDatePart((d) => d.getSeconds()))}`
+
+                case 'minutes':
+                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
+
+                case 'days':
+                default:
+                  return `${pad(getDatePart((d) => d.getDate()))}/${pad(getDatePart((d) => d.getMonth() + 1))} ${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
               }
-              if (isLongRange()) {
-                const day = useLocalTime
-                  ? date.getDate().toString().padStart(2, '0')
-                  : date.getUTCDate().toString().padStart(2, '0')
-                const month = useLocalTime ? (date.getMonth() + 1).toString().padStart(2, '0') : date.getUTCMonth() + 1
-                const hours = useLocalTime
-                  ? date.getHours().toString().padStart(2, '0')
-                  : date.getUTCHours().toString().padStart(2, '0')
-                const minutes = useLocalTime
-                  ? date.getMinutes().toString().padStart(2, '0')
-                  : date.getUTCMinutes().toString().padStart(2, '0')
-                return `${day}/${month} ${hours}:${minutes}`
-              }
-              const hours = useLocalTime
-                ? date.getHours().toString().padStart(2, '0')
-                : date.getUTCHours().toString().padStart(2, '0')
-              const minutes = useLocalTime
-                ? date.getMinutes().toString().padStart(2, '0')
-                : date.getUTCMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
             }}
             interval="preserveStartEnd"
           />

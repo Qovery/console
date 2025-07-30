@@ -13,7 +13,7 @@ import {
   YAxis,
 } from 'recharts'
 import { Chart, useZoomableChart } from './chart'
-import { createXAxisConfig } from './chart-utils'
+import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
 const CHART_COLORS = [
   'var(--color-r-ams)',
@@ -218,9 +218,28 @@ The chart supports mixed visualization types including area charts, bar charts, 
             tick={{ ...xAxisConfig.tick }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
-              const hours = date.getHours().toString().padStart(2, '0')
-              const minutes = date.getMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
+
+              // Get current zoom domain for dynamic time granularity
+              const [startMs, endMs] = domain.map((d) =>
+                typeof d === 'number'
+                  ? d
+                  : d === 'dataMin'
+                    ? (defaultDomain[0] as number)
+                    : (defaultDomain[1] as number)
+              )
+              const granularity = getTimeGranularity(startMs, endMs)
+
+              const pad = (num: number) => num.toString().padStart(2, '0')
+
+              switch (granularity) {
+                case 'seconds':
+                  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+                case 'minutes':
+                  return `${pad(date.getHours())}:${pad(date.getMinutes())}`
+                case 'days':
+                default:
+                  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+              }
             }}
           />
           <YAxis

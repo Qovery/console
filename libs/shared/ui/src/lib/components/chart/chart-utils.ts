@@ -29,6 +29,27 @@ export interface XAxisConfig {
   interval: 'preserveStartEnd'
 }
 
+export type TimeGranularity = 'seconds' | 'minutes' | 'days'
+
+export function getTimeGranularity(startTime: number, endTime: number): TimeGranularity {
+  const durationMs = endTime - startTime
+  const durationMinutes = durationMs / (1000 * 60)
+  const durationHours = durationMinutes / 60
+
+  // If duration is less than 10 minutes, show seconds
+  if (durationMinutes < 10) {
+    return 'seconds'
+  }
+  // If duration is less than 1 day, show minutes (HH:MM)
+  else if (durationHours < 24) {
+    return 'minutes'
+  }
+  // For 1+ days, show days (DD/MM HH:MM)
+  else {
+    return 'days'
+  }
+}
+
 export function createXAxisConfig(
   startTimestamp: number,
   endTimestamp: number,
