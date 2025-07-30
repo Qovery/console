@@ -1,3 +1,4 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { ServiceOverview } from '@qovery/domains/observability/feature'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
@@ -42,11 +43,13 @@ export function InstanceContent({
 }
 
 export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob, hasMetrics }: PageGeneralProps) {
+  const isServiceObsEnabled = useFeatureFlagVariantKey('service-obs')
+
   return (
     <div className="flex grow flex-row">
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
         <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
-        {hasMetrics ? (
+        {hasMetrics && isServiceObsEnabled ? (
           <ServiceOverview>
             <InstanceContent environmentId={environmentId} serviceId={serviceId} isCronJob={isCronJob} />
           </ServiceOverview>
