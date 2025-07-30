@@ -84,10 +84,6 @@ export function convertDatetoTimestamp(strDate: string) {
   return Math.round(datum / 1000)
 }
 
-export function convertTimestampToDate(timestamp: number) {
-  return new Date(timestamp * 1000)
-}
-
 // Mon, 16 Oct 2023 13:27:34 GMT
 // Standard full format used in HTML tooltip and title attribute
 export function dateUTCString(date: string | number) {
