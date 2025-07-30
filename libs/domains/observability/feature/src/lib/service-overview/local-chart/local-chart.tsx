@@ -307,7 +307,7 @@ export function LocalChart({
         event.target_id === serviceId
     )
     .map((event) => {
-      const eventTimestamp = new Date(event.timestamp!).getTime()
+      const eventTimestamp = new Date(event.timestamp || 0).getTime()
       const key = `event-${event.id || eventTimestamp}`
       const change = JSON.parse(event.change || '')
       // TODO: Add support for other service types and clean-up api endpoint

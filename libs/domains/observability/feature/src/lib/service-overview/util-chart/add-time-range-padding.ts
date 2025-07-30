@@ -114,14 +114,11 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
     return point as T
   }
 
-  let paddingPointsAdded = 0
-
   // Add padding points before first data point
   let current = startMs
   while (current < firstDataMs) {
     if (!existingData.has(current)) {
       result.push(createPaddingPoint(current))
-      paddingPointsAdded++
     }
     current += dataInterval
   }
@@ -138,7 +135,6 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
       while (fillTimestamp < nextTimestamp) {
         if (!existingData.has(fillTimestamp)) {
           result.push(createPaddingPoint(fillTimestamp))
-          paddingPointsAdded++
         }
         fillTimestamp += dataInterval
       }
@@ -150,7 +146,6 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
   while (current <= endMs) {
     if (!existingData.has(current)) {
       result.push(createPaddingPoint(current))
-      paddingPointsAdded++
     }
     current += dataInterval
   }

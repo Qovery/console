@@ -69,19 +69,28 @@ function groupEntriesByType(payload: TooltipEntry[]): Map<string, GroupedEntry> 
       if (!groupedEntries.has(baseName)) {
         groupedEntries.set(baseName, { request: undefined, limit: undefined, others: [] })
       }
-      groupedEntries.get(baseName)!.request = entry
+      const groupEntry = groupedEntries.get(baseName)
+      if (groupEntry) {
+        groupEntry.request = entry
+      }
     } else if (seriesKey.endsWith('-limit')) {
       const baseName = getBaseNameFromLimitKey(seriesKey)
       if (!groupedEntries.has(baseName)) {
         groupedEntries.set(baseName, { request: undefined, limit: undefined, others: [] })
       }
-      groupedEntries.get(baseName)!.limit = entry
+      const groupEntry = groupedEntries.get(baseName)
+      if (groupEntry) {
+        groupEntry.limit = entry
+      }
     } else {
       // Other entries that don't follow request/limit pattern
       if (!groupedEntries.has('others')) {
         groupedEntries.set('others', { request: undefined, limit: undefined, others: [] })
       }
-      groupedEntries.get('others')!.others.push(entry)
+      const othersEntry = groupedEntries.get('others')
+      if (othersEntry) {
+        othersEntry.others.push(entry)
+      }
     }
   })
   return groupedEntries

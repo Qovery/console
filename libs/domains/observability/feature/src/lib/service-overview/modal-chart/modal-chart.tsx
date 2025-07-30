@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type PropsWithChildren } from 'react'
-import { Button, Checkbox, Heading, Icon, InputSelectSmall, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSelectSmall, Section } from '@qovery/shared/ui'
 import { SelectTimeRange } from '../select-time-range/select-time-range'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
