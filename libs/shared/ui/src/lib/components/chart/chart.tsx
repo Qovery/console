@@ -121,3 +121,5 @@ export const Chart = {
   Skeleton: ChartSkeleton,
   Loader: ChartLoader,
 }
+
+export { useZoomableChart } from './use-zoomable-chart'

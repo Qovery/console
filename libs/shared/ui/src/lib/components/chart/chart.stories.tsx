@@ -1,7 +1,19 @@
 import type { Meta } from '@storybook/react'
-import { Area, Bar, CartesianGrid, ComposedChart, Legend, Line, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts'
-import { Chart } from './chart'
-import { createXAxisConfig } from './chart-utils'
+import {
+  Area,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  ReferenceArea,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
+import { Chart, useZoomableChart } from './chart'
+import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
 const CHART_COLORS = [
   'var(--color-r-ams)',
@@ -133,8 +145,8 @@ const generateTimeSeriesData = (metrics: ReturnType<typeof generateMetrics>) => 
 }
 
 // Generate all data
-const gaffotronMetrics = generateMetrics()
-const maximalEdgeCaseData = generateTimeSeriesData(gaffotronMetrics)
+const maximalMetrics = generateMetrics()
+const maximalEdgeCaseData = generateTimeSeriesData(maximalMetrics)
 
 const Story: Meta<typeof Chart.Container> = {
   component: Chart.Container,
@@ -148,27 +160,86 @@ const Story: Meta<typeof Chart.Container> = {
   ],
 }
 
-export const Composed = {
-  render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 }) // Show all 7 items
+export const ComposableChart = {
+  parameters: {
+    docs: {
+      description: {
+        story: `
+The chart supports mixed visualization types including area charts, bar charts, and line charts with customizable tooltip, legend, and zoom functionality.
 
-    // Create modified data where first and last bars are hidden
-    const modifiedData = sampleData.map((item, index) => ({
-      ...item,
-      memory: index === 0 || index === sampleData.length - 1 ? undefined : item.memory,
-    }))
+#### Zoom Controls:
+- **Drag** to select an area and zoom in
+- **Ctrl/Cmd + Click** to zoom out one step
+- **Double-click** to reset zoom to original view
+- **Mouse cursor** changes based on interaction mode
+        `,
+      },
+    },
+  },
+  render: () => {
+    const {
+      zoomState,
+      isCtrlPressed,
+      handleChartDoubleClick,
+      handleMouseDown,
+      handleMouseMove,
+      handleMouseUp,
+      handleMouseLeave,
+      getXDomain,
+      getXAxisTicks,
+    } = useZoomableChart()
+
+    const defaultDomain: [number | string, number | string] = [1704067200000, 1704088800000]
+    const domain = getXDomain(defaultDomain)
+    const ticks = getXAxisTicks(defaultDomain, 7)
+
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
 
     return (
-      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-        <ComposedChart data={modifiedData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+      <Chart.Container className="h-[400px] w-full select-none p-5 py-2 pr-0">
+        <ComposedChart
+          data={sampleData}
+          margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onDoubleClick={handleChartDoubleClick}
+          style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
+        >
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
           <XAxis
             {...xAxisConfig}
+            allowDataOverflow
+            domain={domain}
+            ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
+            type="number"
+            dataKey="timestamp"
+            tick={{ ...xAxisConfig.tick }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
-              const hours = date.getHours().toString().padStart(2, '0')
-              const minutes = date.getMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
+
+              // Get current zoom domain for dynamic time granularity
+              const [startMs, endMs] = domain.map((d) =>
+                typeof d === 'number'
+                  ? d
+                  : d === 'dataMin'
+                    ? (defaultDomain[0] as number)
+                    : (defaultDomain[1] as number)
+              )
+              const granularity = getTimeGranularity(startMs, endMs)
+
+              const pad = (num: number) => num.toString().padStart(2, '0')
+
+              switch (granularity) {
+                case 'seconds':
+                  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+                case 'minutes':
+                  return `${pad(date.getHours())}:${pad(date.getMinutes())}`
+                case 'days':
+                default:
+                  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+              }
             }}
           />
           <YAxis
@@ -213,6 +284,9 @@ export const Composed = {
             isAnimationActive={false}
             name="Disk"
           />
+          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+          ) : null}
         </ComposedChart>
       </Chart.Container>
     )
@@ -225,7 +299,7 @@ export const MaximalEdgeCase = {
     return (
       <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
         <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -245,7 +319,7 @@ export const MaximalEdgeCase = {
           />
           <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
           <Legend />
-          {gaffotronMetrics.map((metric, index) => (
+          {maximalMetrics.map((metric, index) => (
             <Line
               key={metric.key}
               type="linear"

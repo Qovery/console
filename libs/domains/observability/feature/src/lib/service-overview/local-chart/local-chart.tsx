@@ -3,11 +3,10 @@ import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CartesianGrid, ComposedChart, ReferenceLine, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Badge, Button, Chart, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
-import { createXAxisConfig } from '@qovery/shared/ui'
+import { Badge, Button, Chart, Heading, Icon, Section, Tooltip, useZoomableChart, createXAxisConfig, getTimeGranularity  } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
@@ -96,55 +95,98 @@ export function ChartContent({
     useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
-  function getXDomain() {
-    return xDomain ?? [Number(startTimestamp) * 1000, Number(endTimestamp) * 1000]
+  // Use the zoomable chart hook
+  const {
+    zoomState,
+    isCtrlPressed,
+    handleChartDoubleClick,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleMouseLeave,
+    getXDomain: getZoomXDomain,
+    getXAxisTicks,
+  } = useZoomableChart()
+
+  function getXDomain(): [number | string, number | string] {
+    const defaultDomain: [number | string, number | string] = xDomain ?? [
+      Number(startTimestamp) * 1000,
+      Number(endTimestamp) * 1000,
+    ]
+    return getZoomXDomain(defaultDomain)
   }
 
+  // Get current domain and calculate appropriate ticks
+  const currentDomain = getXDomain()
+  const currentTicks = getXAxisTicks(currentDomain, 6)
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div className="flex h-full">
-      <Chart.Container className="h-full w-full p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
+    <div className="relative flex h-full">
+      <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={data}
           syncId="syncId"
           margin={margin}
-          onMouseMove={() => setOnHoverHideTooltip(true)}
-          onMouseLeave={() => setOnHoverHideTooltip(false)}
-          onMouseUp={() => setOnHoverHideTooltip(false)}
+          onMouseDown={(e) => {
+            handleMouseDown(e)
+            setOnHoverHideTooltip(true)
+          }}
+          onMouseMove={(e) => {
+            handleMouseMove(e)
+            setOnHoverHideTooltip(true)
+          }}
+          onMouseLeave={() => {
+            handleMouseLeave()
+            setOnHoverHideTooltip(false)
+          }}
+          onMouseUp={() => {
+            handleMouseUp()
+            setOnHoverHideTooltip(false)
+          }}
+          onDoubleClick={handleChartDoubleClick}
+          style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
         >
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
-            domain={getXDomain()}
+            allowDataOverflow
+            domain={currentDomain}
+            ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
+            type="number"
+            dataKey="timestamp"
+            tick={{ ...xAxisConfig.tick }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
-              const isLongRange = () => {
-                const durationInHours = (Number(endTimestamp) - Number(startTimestamp)) / (60 * 60)
-                return durationInHours > 24
+
+              // Get current zoom domain for dynamic time granularity
+              const [startMs, endMs] = currentDomain.map((d) =>
+                typeof d === 'number'
+                  ? d
+                  : d === 'dataMin'
+                    ? Number(startTimestamp) * 1000
+                    : Number(endTimestamp) * 1000
+              )
+              const granularity = getTimeGranularity(startMs, endMs)
+
+              // Helper functions for local vs UTC time
+              const getDatePart = (fn: (d: Date) => number) =>
+                useLocalTime ? fn(date) : fn(new Date(date.getTime() + date.getTimezoneOffset() * 60000))
+
+              const pad = (num: number) => num.toString().padStart(2, '0')
+
+              switch (granularity) {
+                case 'seconds':
+                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}:${pad(getDatePart((d) => d.getSeconds()))}`
+
+                case 'minutes':
+                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
+
+                case 'days':
+                default:
+                  return `${pad(getDatePart((d) => d.getDate()))}/${pad(getDatePart((d) => d.getMonth() + 1))} ${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
               }
-              if (isLongRange()) {
-                const day = useLocalTime
-                  ? date.getDate().toString().padStart(2, '0')
-                  : date.getUTCDate().toString().padStart(2, '0')
-                const month = useLocalTime ? (date.getMonth() + 1).toString().padStart(2, '0') : date.getUTCMonth() + 1
-                const hours = useLocalTime
-                  ? date.getHours().toString().padStart(2, '0')
-                  : date.getUTCHours().toString().padStart(2, '0')
-                const minutes = useLocalTime
-                  ? date.getMinutes().toString().padStart(2, '0')
-                  : date.getUTCMinutes().toString().padStart(2, '0')
-                return `${day}/${month} ${hours}:${minutes}`
-              }
-              const hours = useLocalTime
-                ? date.getHours().toString().padStart(2, '0')
-                : date.getUTCHours().toString().padStart(2, '0')
-              const minutes = useLocalTime
-                ? date.getMinutes().toString().padStart(2, '0')
-                : date.getUTCMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
             }}
-            allowDataOverflow={true}
             interval="preserveStartEnd"
           />
           <Chart.Tooltip
@@ -161,6 +203,9 @@ export function ChartContent({
             domain={yDomain}
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
+          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+          ) : null}
         </ComposedChart>
       </Chart.Container>
       {isFullscreen && referenceLineData && referenceLineData.length > 0 && !hideEvents && (

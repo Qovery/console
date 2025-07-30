@@ -1,4 +1,4 @@
-import { createXAxisConfig, getLogicalTicks } from './chart-utils'
+import { createXAxisConfig, getLogicalTicks, getTimeGranularity } from './chart-utils'
 
 describe('getLogicalTicks', () => {
   it('generates correct number of ticks for default count', () => {
@@ -224,6 +224,174 @@ describe('createXAxisConfig', () => {
       expect(config.domain).toEqual([largeStart * 1000, largeEnd * 1000])
       expect(config.ticks[0]).toBe(largeStart * 1000)
       expect(config.ticks[config.ticks.length - 1]).toBe(largeEnd * 1000)
+    })
+  })
+})
+
+describe('getTimeGranularity', () => {
+  describe('seconds granularity (< 10 minutes)', () => {
+    it('returns "seconds" for 1 minute duration', () => {
+      const startTime = 1704067200000 // Jan 1, 2024 00:00:00 UTC
+      const endTime = startTime + 60 * 1000 // 1 minute later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('seconds')
+    })
+
+    it('returns "seconds" for 5 minutes duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 5 * 60 * 1000 // 5 minutes later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('seconds')
+    })
+
+    it('returns "seconds" for exactly 9.5 minutes duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 9.5 * 60 * 1000 // 9.5 minutes later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('seconds')
+    })
+  })
+
+  describe('minutes granularity (< 24 hours)', () => {
+    it('returns "minutes" for exactly 10 minutes duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 10 * 60 * 1000 // 10 minutes later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('minutes')
+    })
+
+    it('returns "minutes" for 1 hour duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 60 * 60 * 1000 // 1 hour later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('minutes')
+    })
+
+    it('returns "minutes" for 12 hours duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 12 * 60 * 60 * 1000 // 12 hours later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('minutes')
+    })
+
+    it('returns "minutes" for exactly 23.9 hours duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 23.9 * 60 * 60 * 1000 // 23.9 hours later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('minutes')
+    })
+  })
+
+  describe('days granularity (≥ 24 hours)', () => {
+    it('returns "days" for exactly 24 hours duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 24 * 60 * 60 * 1000 // 24 hours later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
+    })
+
+    it('returns "days" for 2 days duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 2 * 24 * 60 * 60 * 1000 // 2 days later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
+    })
+
+    it('returns "days" for 1 week duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 7 * 24 * 60 * 60 * 1000 // 1 week later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
+    })
+
+    it('returns "days" for 1 month duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 30 * 24 * 60 * 60 * 1000 // 30 days later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
+    })
+
+    it('returns "days" for 1 year duration', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 365 * 24 * 60 * 60 * 1000 // 1 year later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
+    })
+  })
+
+  describe('boundary conditions', () => {
+    it('handles zero duration', () => {
+      const timestamp = 1704067200000
+
+      expect(getTimeGranularity(timestamp, timestamp)).toBe('seconds')
+    })
+
+    it('handles very small duration (1 second)', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 1000 // 1 second later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('seconds')
+    })
+
+    it('handles exact 10-minute boundary', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 10 * 60 * 1000 // exactly 10 minutes
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('minutes')
+    })
+
+    it('handles exact 24-hour boundary', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 24 * 60 * 60 * 1000 // exactly 24 hours
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
+    })
+  })
+
+  describe('realistic use cases', () => {
+    it('handles "last 2 days" selection (48 hours)', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 48 * 60 * 60 * 1000 // 48 hours later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
+    })
+
+    it('handles "last 6 hours" selection', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 6 * 60 * 60 * 1000 // 6 hours later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('minutes')
+    })
+
+    it('handles zoomed-in 5-minute window', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 5 * 60 * 1000 // 5 minutes later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('seconds')
+    })
+
+    it('handles zoomed-in 30-second window', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 30 * 1000 // 30 seconds later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('seconds')
+    })
+  })
+
+  describe('edge cases', () => {
+    it('handles reversed time range', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 60 * 60 * 1000 // 1 hour later
+
+      // Test with reversed parameters (negative duration)
+      expect(getTimeGranularity(endTime, startTime)).toBe('minutes')
+    })
+
+    it('handles very large time ranges', () => {
+      const startTime = 1704067200000
+      const endTime = startTime + 10 * 365 * 24 * 60 * 60 * 1000 // 10 years later
+
+      expect(getTimeGranularity(startTime, endTime)).toBe('days')
     })
   })
 })
