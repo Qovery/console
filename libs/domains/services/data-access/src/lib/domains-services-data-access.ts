@@ -546,7 +546,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM' | 'TERRAFORM'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -563,10 +563,6 @@ export const services = createQueryKeys('services', {
           query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
           serviceType,
         }))
-        .with('TERRAFORM', (serviceType) => ({
-          query: customDomainHelmApi.listHelmCustomDomain.bind(customDomainHelmApi),
-          serviceType,
-        })) // TODO [QOV-821] replace with customDomainTerraformApi when it will be available
         .exhaustive()
       const response = await query(serviceId)
       return response.data.results
@@ -577,7 +573,7 @@ export const services = createQueryKeys('services', {
     serviceType,
   }: {
     serviceId: string
-    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM' | 'TERRAFORM'>
+    serviceType: Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
   }) => ({
     queryKey: [serviceId],
     async queryFn() {
@@ -592,10 +588,6 @@ export const services = createQueryKeys('services', {
         }))
         .with('HELM', (serviceType) => ({
           query: customDomainHelmApi.checkHelmCustomDomain.bind(customDomainHelmApi),
-          serviceType,
-        }))
-        .with('TERRAFORM', (serviceType) => ({
-          query: async () => ({ data: { results: [] as CheckedCustomDomainResponse[] } }), // TODO [QOV-821] to be implemented
           serviceType,
         }))
         .exhaustive()
