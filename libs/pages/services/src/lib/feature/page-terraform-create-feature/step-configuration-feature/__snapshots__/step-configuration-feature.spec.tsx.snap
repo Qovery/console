@@ -58,9 +58,9 @@ exports[`StepConfigurationFeature should submit a form with a git repository 1`]
                 >
                   <label
                     class="top-1.5 translate-y-2 text-sm"
-                    for="State configuration"
+                    for="Terraform version"
                   >
-                    State configuration
+                    Terraform version
                   </label>
                   <div
                     class=" css-b62m3t-container"
@@ -94,7 +94,7 @@ exports[`StepConfigurationFeature should submit a form with a git repository 1`]
                           aria-haspopup="true"
                           aria-readonly="true"
                           class="css-mohuvp-dummyInput-DummyInput"
-                          id="State configuration"
+                          id="Terraform version"
                           inputmode="none"
                           role="combobox"
                           tabindex="0"
@@ -127,13 +127,13 @@ exports[`StepConfigurationFeature should submit a form with a git repository 1`]
                       </div>
                     </div>
                     <input
-                      name="State configuration"
+                      name="Terraform version"
                       type="hidden"
                       value=""
                     />
                   </div>
                   <input
-                    name="State configuration"
+                    name="Terraform version"
                     type="hidden"
                     value=""
                   />
@@ -607,9 +607,9 @@ exports[`StepConfigurationFeature should submit a form with a yaml 1`] = `
                 >
                   <label
                     class="top-1.5 translate-y-2 text-sm"
-                    for="State configuration"
+                    for="Terraform version"
                   >
-                    State configuration
+                    Terraform version
                   </label>
                   <div
                     class=" css-b62m3t-container"
@@ -643,7 +643,7 @@ exports[`StepConfigurationFeature should submit a form with a yaml 1`] = `
                           aria-haspopup="true"
                           aria-readonly="true"
                           class="css-mohuvp-dummyInput-DummyInput"
-                          id="State configuration"
+                          id="Terraform version"
                           inputmode="none"
                           role="combobox"
                           tabindex="0"
@@ -676,13 +676,13 @@ exports[`StepConfigurationFeature should submit a form with a yaml 1`] = `
                       </div>
                     </div>
                     <input
-                      name="State configuration"
+                      name="Terraform version"
                       type="hidden"
                       value=""
                     />
                   </div>
                   <input
-                    name="State configuration"
+                    name="Terraform version"
                     type="hidden"
                     value=""
                   />
