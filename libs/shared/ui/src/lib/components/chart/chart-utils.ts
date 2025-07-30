@@ -27,7 +27,6 @@ export interface XAxisConfig {
   axisLine: { stroke: string }
   allowDataOverflow: boolean
   interval: 'preserveStartEnd'
-  strokeDasharray: string
 }
 
 export function createXAxisConfig(
@@ -39,7 +38,7 @@ export function createXAxisConfig(
     tickCount?: number
   } = {}
 ): Omit<XAxisConfig, 'tickFormatter'> {
-  const { axisLineColor = 'var(--color-neutral-250)', tickColor = 'var(--color-neutral-350)', tickCount = 6 } = options
+  const { axisLineColor = 'var(--color-neutral-200)', tickColor = 'var(--color-neutral-350)', tickCount = 6 } = options
 
   return {
     dataKey: 'timestamp',
@@ -52,6 +51,5 @@ export function createXAxisConfig(
     axisLine: { stroke: axisLineColor },
     allowDataOverflow: true,
     interval: 'preserveStartEnd',
-    strokeDasharray: '3 3',
   }
 }

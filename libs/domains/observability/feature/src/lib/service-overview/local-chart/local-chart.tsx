@@ -113,7 +113,7 @@ function ChartContent({
           onMouseLeave={() => setOnHoverHideTooltip(false)}
           onMouseUp={() => setOnHoverHideTooltip(false)}
         >
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
             {...xAxisConfig}
             domain={getXDomain()}
