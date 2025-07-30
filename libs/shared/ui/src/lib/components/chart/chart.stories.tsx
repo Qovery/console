@@ -12,7 +12,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Callout } from '../callout/callout'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig } from './chart-utils'
 
@@ -146,8 +145,8 @@ const generateTimeSeriesData = (metrics: ReturnType<typeof generateMetrics>) => 
 }
 
 // Generate all data
-const gaffotronMetrics = generateMetrics()
-const maximalEdgeCaseData = generateTimeSeriesData(gaffotronMetrics)
+const maximalMetrics = generateMetrics()
+const maximalEdgeCaseData = generateTimeSeriesData(maximalMetrics)
 
 const Story: Meta<typeof Chart.Container> = {
   component: Chart.Container,
@@ -161,22 +160,62 @@ const Story: Meta<typeof Chart.Container> = {
   ],
 }
 
-export const Composed = {
-  render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 }) // Show all 7 items
+export const ComposableChart = {
+  parameters: {
+    docs: {
+      description: {
+        story: `
+The chart supports mixed visualization types including area charts, bar charts, and line charts with customizable tooltip, legend, and zoom functionality.
 
-    // Create modified data where first and last bars are hidden
-    const modifiedData = sampleData.map((item, index) => ({
-      ...item,
-      memory: index === 0 || index === sampleData.length - 1 ? undefined : item.memory,
-    }))
+#### Zoom Controls:
+- **Drag** to select an area and zoom in
+- **Ctrl/Cmd + Click** to zoom out one step
+- **Double-click** to reset zoom to original view
+- **Mouse cursor** changes based on interaction mode
+        `,
+      },
+    },
+  },
+  render: () => {
+    const {
+      zoomState,
+      isCtrlPressed,
+      handleChartDoubleClick,
+      handleMouseDown,
+      handleMouseMove,
+      handleMouseUp,
+      handleMouseLeave,
+      getXDomain,
+      getXAxisTicks,
+    } = useZoomableChart()
+
+    const defaultDomain: [number | string, number | string] = [1704067200000, 1704088800000]
+    const domain = getXDomain(defaultDomain)
+    const ticks = getXAxisTicks(defaultDomain, 7)
+
+    const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
 
     return (
-      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-        <ComposedChart data={modifiedData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+      <Chart.Container className="h-[400px] w-full select-none p-5 py-2 pr-0">
+        <ComposedChart
+          data={sampleData}
+          margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onDoubleClick={handleChartDoubleClick}
+          style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
+        >
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
           <XAxis
             {...xAxisConfig}
+            allowDataOverflow
+            domain={domain}
+            ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
+            type="number"
+            dataKey="timestamp"
+            tick={{ ...xAxisConfig.tick }}
             tickFormatter={(timestamp) => {
               const date = new Date(timestamp)
               const hours = date.getHours().toString().padStart(2, '0')
@@ -226,160 +265,11 @@ export const Composed = {
             isAnimationActive={false}
             name="Disk"
           />
+          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+          ) : null}
         </ComposedChart>
       </Chart.Container>
-    )
-  },
-}
-
-export const MaximalEdgeCase = {
-  render: () => {
-    const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
-    return (
-      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-        <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
-          <XAxis
-            {...xAxisConfig}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
-              const hours = date.getHours().toString().padStart(2, '0')
-              const minutes = date.getMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
-            }}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-          <Legend />
-          {gaffotronMetrics.map((metric, index) => (
-            <Line
-              key={metric.key}
-              type="linear"
-              dataKey={metric.key}
-              name={metric.key}
-              stroke={CHART_COLORS[index]}
-              strokeWidth={2}
-              dot={false}
-              connectNulls={false}
-              isAnimationActive={false}
-            />
-          ))}
-        </ComposedChart>
-      </Chart.Container>
-    )
-  },
-}
-
-export const ZoomableChart = {
-  render: () => {
-    const {
-      zoomState,
-      isCtrlPressed,
-      handleChartDoubleClick,
-      handleMouseDown,
-      handleMouseMove,
-      handleMouseUp,
-      handleMouseLeave,
-      getXDomain,
-      getXAxisTicks,
-    } = useZoomableChart()
-
-    const defaultDomain: [number | string, number | string] = [1704067200000, 1704088800000]
-    const domain = getXDomain(defaultDomain)
-    const ticks = getXAxisTicks(defaultDomain, 7)
-
-    const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
-
-    return (
-      <>
-        <Callout.Root color="neutral" className="mb-4">
-          <Callout.Text className="font-medium">
-            Drag to zoom in • Hold Ctrl/Cmd + Click to zoom out one step • Double-click to reset zoom
-          </Callout.Text>
-        </Callout.Root>
-
-        <Chart.Container className="h-[400px] w-full select-none p-5 py-2 pr-0">
-          <ComposedChart
-            data={sampleData}
-            margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-            onDoubleClick={handleChartDoubleClick}
-            style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
-          >
-            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-            <XAxis
-              {...xAxisConfig}
-              allowDataOverflow
-              domain={domain}
-              ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
-              type="number"
-              dataKey="timestamp"
-              tick={{ ...xAxisConfig.tick }}
-              tickFormatter={(timestamp) => {
-                const date = new Date(timestamp)
-                const hours = date.getHours().toString().padStart(2, '0')
-                const minutes = date.getMinutes().toString().padStart(2, '0')
-                return `${hours}:${minutes}`
-              }}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-              tickLine={{ stroke: 'transparent' }}
-              axisLine={{ stroke: 'transparent' }}
-              orientation="right"
-              tickCount={5}
-              tickFormatter={(value) => (value === 0 ? '' : value)}
-            />
-            <Tooltip
-              content={
-                <Chart.TooltipContent
-                  title="System Usage"
-                  formatLabel={(key) => {
-                    const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
-                    return labelMap[key] || key
-                  }}
-                  formatValue={(value) => `${value}%`}
-                />
-              }
-            />
-            <Legend />
-            <Area
-              type="linear"
-              dataKey="cpu"
-              stroke="var(--color-yellow-500)"
-              fill="var(--color-yellow-500)"
-              fillOpacity={0.15}
-              strokeWidth={2}
-              isAnimationActive={false}
-              name="CPU"
-            />
-            <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
-            <Line
-              type="linear"
-              dataKey="disk"
-              stroke="var(--color-green-500)"
-              strokeWidth={2}
-              dot={false}
-              connectNulls={false}
-              isAnimationActive={false}
-              name="Disk"
-            />
-            {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
-              <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
-            ) : null}
-          </ComposedChart>
-        </Chart.Container>
-      </>
     )
   },
 }
@@ -410,7 +300,7 @@ export const MaximalEdgeCase = {
           />
           <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
           <Legend />
-          {gaffotronMetrics.map((metric, index) => (
+          {maximalMetrics.map((metric, index) => (
             <Line
               key={metric.key}
               type="linear"
