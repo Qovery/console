@@ -136,8 +136,11 @@ function MenuManageDeployment({
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
   const mutationDryRun = () => {
-    if (service.serviceType !== 'TERRAFORM') return
-    deployService({ serviceId: service.id, serviceType: service.serviceType, request: { dry_run: true } })
+    match(service)
+      .with({ serviceType: 'TERRAFORM' }, (service) => {
+        deployService({ serviceId: service.id, serviceType: service.serviceType, request: { dry_run: true } })
+      })
+      .otherwise(() => null)
   }
 
   const mutationRedeploy = () => {
