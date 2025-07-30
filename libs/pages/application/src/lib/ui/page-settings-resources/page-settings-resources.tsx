@@ -22,7 +22,7 @@ export function PageSettingsResources(props: PageSettingsResourcesProps) {
         <form className="space-y-10" onSubmit={onSubmit}>
           <ApplicationSettingsResources displayWarningCpu={displayWarningCpu} service={service} />
           <div className="flex justify-end">
-            <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid || !formState.isDirty}>
+            <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid}>
               Save
             </Button>
           </div>
