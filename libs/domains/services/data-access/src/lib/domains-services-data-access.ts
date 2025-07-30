@@ -973,7 +973,7 @@ export const mutations = {
         serviceType,
       }))
       .with('TERRAFORM', (serviceType) => ({
-        mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }), // TODO [QOV-821] to be implemented
+        mutation: terraformActionsApi.redeployTerraform.bind(terraformActionsApi),
         serviceType,
       }))
       .exhaustive()
