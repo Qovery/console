@@ -32,7 +32,7 @@ export interface XAxisConfig {
 export type TimeGranularity = 'seconds' | 'minutes' | 'days'
 
 export function getTimeGranularity(startTime: number, endTime: number): TimeGranularity {
-  const durationMs = endTime - startTime
+  const durationMs = Math.abs(endTime - startTime)
   const durationMinutes = durationMs / (1000 * 60)
   const durationHours = durationMinutes / 60
 
