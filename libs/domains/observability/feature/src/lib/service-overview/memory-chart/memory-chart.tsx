@@ -8,7 +8,7 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function MemoryChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
@@ -16,6 +16,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
     startTimestamp,
     endTimestamp,
     query: `sum by (pod, label_qovery_com_service_id) (container_memory_working_set_bytes{container!="", pod=~".+"} * on(namespace, pod) group_left() group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"} ))`,
+    timeRange,
   })
 
   const { data: metricsLimit, isLoading: isLoadingMetricsLimit } = useMetrics({
@@ -23,6 +24,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
     startTimestamp,
     endTimestamp,
     query: `sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_limits{resource="memory", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"} )))`,
+    timeRange,
   })
 
   const { data: metricsRequest, isLoading: isLoadingMetricsRequest } = useMetrics({
@@ -30,6 +32,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
     startTimestamp,
     endTimestamp,
     query: `sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_requests{resource="memory", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"} )))`,
+    timeRange,
   })
 
   const chartData = useMemo(() => {

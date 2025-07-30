@@ -15,12 +15,13 @@ export function NetworkRequestDurationChart({
   serviceId: string
   isFullscreen?: boolean
 }) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `histogram_quantile(0.5,(
     sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
     * on(ingress) group_left(label_qovery_com_associated_service_id)
@@ -37,6 +38,7 @@ export function NetworkRequestDurationChart({
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `histogram_quantile(0.99,(
     sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
     * on(ingress) group_left(label_qovery_com_associated_service_id)
@@ -53,6 +55,7 @@ export function NetworkRequestDurationChart({
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query: `histogram_quantile(0.95,(
     sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
     * on(ingress) group_left(label_qovery_com_associated_service_id)

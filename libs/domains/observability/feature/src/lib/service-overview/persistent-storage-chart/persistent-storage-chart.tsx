@@ -12,7 +12,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { data: service } = useService({ serviceId })
   const getColorByVolume = usePodColor()
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const buildVolumeQuery = (serviceId: string, storage: { id: string; mount_point: string }[]) => {
     // Base PromQL ratio expression
@@ -53,6 +53,7 @@ export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: st
     clusterId,
     startTimestamp,
     endTimestamp,
+    timeRange,
     query,
   })
 

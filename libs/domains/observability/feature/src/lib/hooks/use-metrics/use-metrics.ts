@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
+import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
 
 export interface MetricData {
   metric: {
@@ -28,6 +30,7 @@ interface UseMetricsProps {
   startTimestamp?: string
   endTimestamp?: string
   queryRange?: 'query' | 'query_range'
+  timeRange?: TimeRangeOption
 }
 
 export function useMetrics({
@@ -36,24 +39,58 @@ export function useMetrics({
   startTimestamp,
   endTimestamp,
   queryRange = 'query_range',
+  timeRange,
 }: UseMetricsProps) {
-  let step = '15000ms'
+  const step = useMemo(() => {
+    // TODO: Verify these step intervals match actual Prometheus scrape_interval configuration
+    // Actual scrape_interval = 15s
+    // https://prometheus.io/docs/prometheus/latest/configuration/configuration/#duration
+    // https://qovery.slack.com/archives/C02NQ0LC8M9/p1753804730631609?thread_ts=1753803872.246399&cid=C02NQ0LC8M9
+    if (timeRange === '5m') return '15000ms' // 15 seconds (match actual scrape_interval)
+    if (timeRange === '15m') return '30000ms' // 30 seconds for longer ranges (2x scrape_interval)
+    if (timeRange === '30m') return '60000ms' // 1 minute for longer ranges (4x scrape_interval)
+    if (startTimestamp && endTimestamp) {
+      return calculateDynamicRange(startTimestamp, endTimestamp)
+    }
+    return '15000ms' // Default: 15 seconds (match actual scrape_interval)
+  }, [timeRange, startTimestamp, endTimestamp])
 
-  if (startTimestamp && endTimestamp) {
-    step = calculateDynamicRange(startTimestamp, endTimestamp)
-  }
-
-  return useQuery({
+  const queryResult = useQuery({
     ...observability.observability({
       clusterId,
       query,
       queryRange,
       startTimestamp,
       endTimestamp,
+      timeRange,
       step,
     }),
-    refetchInterval: 5_000,
+    keepPreviousData: true,
+    refetchInterval: 15_000, // Refetch every 15 seconds to match actual scrape_interval
+    refetchIntervalInBackground: true,
   })
+
+  // Custom isLoading: true on first load and when timeRange changes, false on live refetch
+  const lastTimeRange = useRef<TimeRangeOption | undefined>(timeRange)
+  const [isLoadingCustom, setIsLoadingCustom] = useState(queryResult.isLoading)
+
+  useEffect(() => {
+    if (timeRange !== lastTimeRange.current) {
+      setIsLoadingCustom(true)
+      lastTimeRange.current = timeRange
+    }
+  }, [timeRange])
+
+  useEffect(() => {
+    if (!queryResult.isFetching) {
+      setIsLoadingCustom(false)
+    }
+  }, [queryResult.isFetching])
+
+  return {
+    ...queryResult,
+    isLoading: isLoadingCustom,
+  }
 }
 
 export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, offsetMultiplier = 0): string {

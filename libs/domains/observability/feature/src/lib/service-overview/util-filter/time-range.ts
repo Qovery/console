@@ -1,9 +1,8 @@
 import { subDays, subHours, subMinutes } from 'date-fns'
 
-export type TimeRangeOption = 'live' | '5m' | '15m' | '30m' | '1h' | '3h' | '6h' | '12h' | '24h' | '2d'
+export type TimeRangeOption = '5m' | '15m' | '30m' | '1h' | '3h' | '6h' | '12h' | '24h' | '2d'
 
 export const timeRangeOptions = [
-  { label: '📊 Live tailing', value: 'live' },
   { label: 'Last 5 minutes', value: '5m' },
   { label: 'Last 15 minutes', value: '15m' },
   { label: 'Last 30 minutes', value: '30m' },
@@ -25,10 +24,6 @@ export const createTimeRangeHandler = (
     const now = new Date()
 
     switch (value) {
-      case 'live':
-        setStartDate(subMinutes(now, 5).toISOString())
-        setEndDate(now.toISOString())
-        break
       case '5m':
         setStartDate(subMinutes(now, 5).toISOString())
         setEndDate(now.toISOString())

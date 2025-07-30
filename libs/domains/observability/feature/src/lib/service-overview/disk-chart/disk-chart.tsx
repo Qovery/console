@@ -7,13 +7,14 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 export function DiskChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const { data: metricsReadEphemeralStorage, isLoading: isLoadingMetricsReadEphemeralStorage } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     query: `sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    timeRange,
   })
 
   const { data: metricsReadPersistentStorage, isLoading: isLoadingMetricsReadPersistentStorage } = useMetrics({
@@ -21,6 +22,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     startTimestamp,
     endTimestamp,
     query: `sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    timeRange,
   })
 
   const { data: metricsWriteEphemeralStorage, isLoading: isLoadingMetricsWriteEphemeralStorage } = useMetrics({
@@ -28,6 +30,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     startTimestamp,
     endTimestamp,
     query: `sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    timeRange,
   })
 
   const { data: metricsWritePersistentStorage, isLoading: isLoadingMetricsWritePersistentStorage } = useMetrics({
@@ -35,6 +38,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     startTimestamp,
     endTimestamp,
     query: `sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    timeRange,
   })
 
   const chartData = useMemo(() => {

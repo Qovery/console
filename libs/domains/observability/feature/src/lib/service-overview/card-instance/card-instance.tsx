@@ -44,6 +44,7 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
 
     `,
     queryRange: 'query',
+    timeRange,
   })
 
   const { data: metricsMaxInstances, isLoading: isLoadingMetricsMaxInstances } = useMetrics({

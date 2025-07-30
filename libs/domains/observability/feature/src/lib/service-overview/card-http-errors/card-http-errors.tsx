@@ -31,6 +31,7 @@ export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; cl
         1
       ) or vector(0)`,
     queryRange: 'query',
+    timeRange,
   })
 
   const value = Math.round(metrics?.data?.result[0]?.value[1]) || 0
