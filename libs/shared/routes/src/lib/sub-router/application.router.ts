@@ -8,6 +8,7 @@ export const APPLICATION_GENERAL_URL = '/general'
 export const APPLICATION_DEPLOYMENTS_URL = '/deployments'
 export const APPLICATION_VARIABLES_URL = '/variables'
 export const APPLICATION_SETTINGS_URL = '/settings'
+export const APPLICATION_MONITORING_URL = '/monitoring'
 
 export const APPLICATION_SETTINGS_GENERAL_URL = '/general'
 export const APPLICATION_SETTINGS_RESOURCES_URL = '/resources'

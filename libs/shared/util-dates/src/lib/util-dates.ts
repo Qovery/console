@@ -81,7 +81,7 @@ export const dateToFormat = (date: string, format: string) => {
 
 export function convertDatetoTimestamp(strDate: string) {
   const datum = Date.parse(strDate)
-  return datum / 1000
+  return Math.round(datum / 1000)
 }
 
 // Mon, 16 Oct 2023 13:27:34 GMT

@@ -1,25 +1,24 @@
 import { useCallback, useMemo } from 'react'
 
-export const COLORS = [
-  '#B160F0',
-  '#D940FF',
-  '#009EDD',
-  '#F4C004',
-  '#00FF66',
-  '#FF5733',
-  '#33CCCC',
-  '#FF3399',
-  '#FFCC00',
-  '#66FF33',
-  '#FF66CC',
-  '#FF9900',
-  '#00FFFF',
-  '#FF00FF',
-  '#8B4513',
-  '#1E90FF',
-  '#32CD32',
-  '#FF1493',
-  '#00CED1',
+export const RANDOM_COLORS = [
+  'var(--color-r-ams)',
+  'var(--color-r-arn)',
+  'var(--color-r-atl)',
+  'var(--color-r-bog)',
+  'var(--color-r-bom)',
+  'var(--color-r-bos)',
+  'var(--color-r-gig)',
+  'var(--color-r-gru)',
+  'var(--color-r-hkg)',
+  'var(--color-r-lhr)',
+  'var(--color-r-mad)',
+  'var(--color-r-mia)',
+  'var(--color-r-nrt)',
+  'var(--color-r-ord)',
+  'var(--color-r-otp)',
+  'var(--color-r-phx)',
+  'var(--color-r-qro)',
+  'var(--color-r-scl)',
 ]
 
 const hashString = (string: string): number => {
@@ -46,24 +45,27 @@ const hashString = (string: string): number => {
 }
 
 export const getColorByPod = (pod: string): string => {
-  if (!pod) return COLORS[0]
-  return COLORS[hashString(pod) % COLORS.length]
+  if (!pod) return RANDOM_COLORS[0]
+  return RANDOM_COLORS[hashString(pod) % RANDOM_COLORS.length]
 }
 
 export const usePodColor = () => {
   const colorMap = useMemo(() => new Map<string, string>(), [])
 
-  const getPodColor = useCallback((podName: string) => {
-    if (!podName) return COLORS[0]
+  const getPodColor = useCallback(
+    (podName: string) => {
+      if (!podName) return RANDOM_COLORS[0]
 
-    if (colorMap.has(podName)) {
-      return colorMap.get(podName)!
-    }
+      if (colorMap.has(podName)) {
+        return colorMap.get(podName)!
+      }
 
-    const color = getColorByPod(podName)
-    colorMap.set(podName, color)
-    return color
-  }, [])
+      const color = getColorByPod(podName)
+      colorMap.set(podName, color)
+      return color
+    },
+    [colorMap]
+  )
 
   return getPodColor
 }

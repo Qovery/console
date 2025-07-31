@@ -88,7 +88,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 class=" relative flex items-center gap-4"
               >
                 <select
-                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-4 py-2 pb-2 pl-2 pr-6 pt-2 text-sm text-neutral-400 bg-neutral-50"
+                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-3 pr-6 text-sm font-medium text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:outline-brand-500 active:shadow-none disabled:shadow-none hover:[&:not(:active)]:border-neutral-300 bg-neutral-50"
                   data-testid="input-select-small"
                   name="arguments.0.type"
                 >
@@ -191,7 +191,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 class=" relative flex items-center gap-4"
               >
                 <select
-                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-4 py-2 pb-2 pl-2 pr-6 pt-2 text-sm text-neutral-400 bg-neutral-50"
+                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-3 pr-6 text-sm font-medium text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:outline-brand-500 active:shadow-none disabled:shadow-none hover:[&:not(:active)]:border-neutral-300 bg-neutral-50"
                   data-testid="input-select-small"
                   name="arguments.1.type"
                 >
@@ -299,7 +299,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 class=" relative flex items-center gap-4"
               >
                 <select
-                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-4 py-2 pb-2 pl-2 pr-6 pt-2 text-sm text-neutral-400 bg-neutral-50"
+                  class="h-9 w-full cursor-pointer appearance-none rounded border border-neutral-250 px-3 pr-6 text-sm font-medium text-neutral-400 shadow-sm transition-colors hover:bg-neutral-50 hover:outline-brand-500 active:shadow-none disabled:shadow-none hover:[&:not(:active)]:border-neutral-300 bg-neutral-50"
                   data-testid="input-select-small"
                   name="arguments.2.type"
                 >

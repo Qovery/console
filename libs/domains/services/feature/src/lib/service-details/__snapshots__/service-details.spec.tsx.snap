@@ -65,7 +65,9 @@ exports[`ServiceDetails should match application snapshot 1`] = `
           </dd>
         </dl>
       </section>
-      <hr />
+      <hr
+        class="border-neutral-200"
+      />
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
@@ -158,7 +160,9 @@ exports[`ServiceDetails should match database snapshot 1`] = `
           </dd>
         </dl>
       </section>
-      <hr />
+      <hr
+        class="border-neutral-200"
+      />
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >
@@ -251,7 +255,9 @@ exports[`ServiceDetails should match job snapshot 1`] = `
           </dd>
         </dl>
       </section>
-      <hr />
+      <hr
+        class="border-neutral-200"
+      />
       <section
         class="flex flex-col text-neutral-350 gap-4 pl-8 pr-5"
       >

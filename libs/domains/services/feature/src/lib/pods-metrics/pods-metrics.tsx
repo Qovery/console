@@ -24,7 +24,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
-import { formatMetric, twMerge } from '@qovery/shared/util-js'
+import { formatMetric, pluralize, twMerge } from '@qovery/shared/util-js'
 import { useMetrics } from '../hooks/use-metrics/use-metrics'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
@@ -76,7 +76,7 @@ function PodsMetricsTable({
 
   const columns = useMemo(() => {
     const podsColumn = columnHelper.accessor('podName', {
-      header: () => `Pods (${pods.length})`,
+      header: () => `${pluralize(pods.length, 'Instance', 'Instances')} (${pods.length})`,
       cell: (info) => {
         const podName = info.getValue()
         return podName.length > 23 ? (
@@ -284,8 +284,8 @@ function PodsMetricsTable({
     return (
       <div className="flex flex-col items-center gap-1 border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
         <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
-        <span className="font-medium">Metrics for pods are not available, try again</span>
-        <span>There is a technical issue on retrieving the pod metrics.</span>
+        <span className="font-medium">Metrics for instances are not available, try again</span>
+        <span>There is a technical issue on retrieving the instance metrics.</span>
       </div>
     )
   } else if (isServiceLoading || pods.length === 0) {
@@ -294,7 +294,7 @@ function PodsMetricsTable({
 
   return (
     <>
-      <div className="overflow-x-scroll rounded border xl:overflow-hidden">
+      <div className="overflow-x-scroll rounded border border-neutral-200 xl:overflow-hidden">
         <Table.Root className="w-full overflow-y-scroll text-xs xl:overflow-auto">
           <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
