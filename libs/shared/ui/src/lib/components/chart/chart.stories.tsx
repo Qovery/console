@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { Button } from '../button/button'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
@@ -297,6 +298,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
 export const MaximalEdgeCase = {
   render: () => {
     const [hoveringDataKey, setHoveringDataKey] = useState<string | null>(null)
+    const [stickyDataKeys, setStickyDataKeys] = useState<Set<string>>(new Set())
 
     const handleMouseEnter = (data: { dataKey: string; color: string; value: string }) => {
       if (data?.dataKey) {
@@ -308,26 +310,73 @@ export const MaximalEdgeCase = {
       setHoveringDataKey(null)
     }
 
+    const handleLabelClick = (data: { dataKey: string; color: string; value: string }) => {
+      if (data?.dataKey) {
+        const dataKey = String(data.dataKey)
+        setStickyDataKeys((prev) => {
+          const newSet = new Set(prev)
+          if (newSet.has(dataKey)) {
+            newSet.delete(dataKey)
+          } else {
+            newSet.add(dataKey)
+          }
+          return newSet
+        })
+        setHoveringDataKey(null)
+      }
+    }
+
+    const handleResetHighlighting = () => {
+      setStickyDataKeys(new Set())
+      setHoveringDataKey(null)
+    }
+
     const CustomLegendContent = (props: { payload?: Array<{ dataKey: string; color: string; value: string }> }) => {
       const { payload } = props
       if (!payload) return null
 
+      const getOpacity = (dataKey: string) => {
+        const isSticky = stickyDataKeys.has(dataKey)
+        const isHovered = hoveringDataKey === dataKey
+
+        if (stickyDataKeys.size > 0) {
+          // If this item is sticky or hovered, show it fully
+          if (isSticky || isHovered) return 1
+          // Otherwise dim it
+          return 0.2
+        }
+
+        // No sticky items: use normal hover behavior
+        return hoveringDataKey && hoveringDataKey !== dataKey ? 0.2 : 1
+      }
+
       return (
-        <div className="flex flex-wrap justify-center gap-2 px-5 pb-2">
+        <div className="relative flex flex-wrap justify-center gap-2 px-5 pb-2" onMouseLeave={handleMouseLeave}>
           {payload.map((entry) => (
             <div
               key={entry.dataKey}
               className="flex cursor-pointer items-center gap-2 text-xs transition-opacity duration-200"
               style={{
-                opacity: hoveringDataKey && hoveringDataKey !== entry.dataKey ? 0.2 : 1,
+                opacity: getOpacity(entry.dataKey),
               }}
               onMouseOver={() => handleMouseEnter(entry)}
               onMouseOut={handleMouseLeave}
+              onClick={() => handleLabelClick(entry)}
             >
               <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
               <span className="text-neutral-600">{entry.value}</span>
             </div>
           ))}
+          {stickyDataKeys.size > 0 && (
+            <Button
+              onClick={handleResetHighlighting}
+              size="xs"
+              variant="outline"
+              className="absolute -bottom-8 left-1/2 -translate-x-1/2 transform text-xs"
+            >
+              Reset highlighting
+            </Button>
+          )}
         </div>
       )
     }
@@ -356,20 +405,37 @@ export const MaximalEdgeCase = {
           />
           <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
           <Legend content={<CustomLegendContent />} />
-          {maximalMetrics.map((metric, index) => (
-            <Line
-              key={metric.key}
-              type="linear"
-              dataKey={metric.key}
-              name={metric.key}
-              stroke={CHART_COLORS[index]}
-              strokeOpacity={hoveringDataKey && hoveringDataKey !== metric.key ? 0.2 : 1}
-              strokeWidth={2}
-              dot={false}
-              connectNulls={false}
-              isAnimationActive={false}
-            />
-          ))}
+          {maximalMetrics.map((metric, index) => {
+            const getStrokeOpacity = () => {
+              const isSticky = stickyDataKeys.has(metric.key)
+              const isHovered = hoveringDataKey === metric.key
+
+              if (stickyDataKeys.size > 0) {
+                // If this item is sticky or hovered, show it fully
+                if (isSticky || isHovered) return 1
+                // Otherwise dim it
+                return 0.2
+              }
+
+              // No sticky items: use normal hover behavior
+              return hoveringDataKey && hoveringDataKey !== metric.key ? 0.2 : 1
+            }
+
+            return (
+              <Line
+                key={metric.key}
+                type="linear"
+                dataKey={metric.key}
+                name={metric.key}
+                stroke={CHART_COLORS[index]}
+                strokeOpacity={getStrokeOpacity()}
+                strokeWidth={2}
+                dot={false}
+                connectNulls={false}
+                isAnimationActive={false}
+              />
+            )
+          })}
         </ComposedChart>
       </Chart.Container>
     )
