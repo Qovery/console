@@ -1,4 +1,5 @@
 import type { Meta } from '@storybook/react'
+import { useState } from 'react'
 import {
   Area,
   Bar,
@@ -295,6 +296,42 @@ The chart supports mixed visualization types including area charts, bar charts, 
 
 export const MaximalEdgeCase = {
   render: () => {
+    const [hoveringDataKey, setHoveringDataKey] = useState<string | null>(null)
+
+    const handleMouseEnter = (data: { dataKey: string; color: string; value: string }) => {
+      if (data?.dataKey) {
+        setHoveringDataKey(String(data.dataKey))
+      }
+    }
+
+    const handleMouseLeave = () => {
+      setHoveringDataKey(null)
+    }
+
+    const CustomLegendContent = (props: { payload?: Array<{ dataKey: string; color: string; value: string }> }) => {
+      const { payload } = props
+      if (!payload) return null
+
+      return (
+        <div className="flex flex-wrap justify-center gap-2 px-5 pb-2">
+          {payload.map((entry) => (
+            <div
+              key={entry.dataKey}
+              className="flex cursor-pointer items-center gap-2 text-xs transition-opacity duration-200"
+              style={{
+                opacity: hoveringDataKey && hoveringDataKey !== entry.dataKey ? 0.2 : 1,
+              }}
+              onMouseEnter={() => handleMouseEnter(entry)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="text-neutral-600">{entry.value}</span>
+            </div>
+          ))}
+        </div>
+      )
+    }
+
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
     return (
       <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
@@ -318,7 +355,7 @@ export const MaximalEdgeCase = {
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
           <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-          <Legend />
+          <Legend content={<CustomLegendContent />} />
           {maximalMetrics.map((metric, index) => (
             <Line
               key={metric.key}
@@ -326,6 +363,7 @@ export const MaximalEdgeCase = {
               dataKey={metric.key}
               name={metric.key}
               stroke={CHART_COLORS[index]}
+              strokeOpacity={hoveringDataKey && hoveringDataKey !== metric.key ? 0.2 : 1}
               strokeWidth={2}
               dot={false}
               connectNulls={false}
