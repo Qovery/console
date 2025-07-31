@@ -43,7 +43,7 @@ function ServiceOverviewContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex w-full justify-end gap-3">
+      <div className="flex w-full gap-3">
         <div className="flex gap-3">
           <SelectTimeRange />
           <InputSelectSmall
