@@ -1,24 +1,19 @@
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { Button, Callout, Icon, InputTextSmall, RadioGroup, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import Button from '../../button/button'
-import { Callout } from '../../callout/callout'
-import { Icon } from '../../icon/icon'
-import InputTextSmall from '../../inputs/input-text-small/input-text-small'
-import useModal from '../../modal/use-modal/use-modal'
-import { RadioGroup } from '../../radio-group/radio-group'
-import { type ActionSelectItem } from './use-modal-action-select/use-modal-action-select'
+import { type ActionItem } from './use-service-remove-modal/use-service-remove-modal'
 
-export interface ModalActionSelectProps extends PropsWithChildren {
+export interface ServiceRemoveModalProps extends PropsWithChildren {
   title: string
   description?: ReactNode
-  actions: ActionSelectItem[]
+  actions: ActionItem[]
   name?: string
   warning?: ReactNode
   entities?: ReactNode[]
 }
 
-export function ModalActionSelect({
+export function ServiceRemoveModal({
   title,
   description,
   actions,
@@ -26,7 +21,7 @@ export function ModalActionSelect({
   warning,
   children,
   entities,
-}: ModalActionSelectProps) {
+}: ServiceRemoveModalProps) {
   const {
     handleSubmit,
     control,
@@ -161,4 +156,4 @@ export function ModalActionSelect({
   )
 }
 
-export default ModalActionSelect
+export default ServiceRemoveModal

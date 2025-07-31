@@ -1,5 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { Badge, Button, Callout, DropdownMenu, Icon, Tooltip, useModal, useModalActionSelect } from '@qovery/shared/ui'
+import { Badge, Button, Callout, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
   isDeployAvailable,
@@ -16,6 +16,7 @@ import { useRestartAllServices } from '../hooks/use-restart-all-services/use-res
 import { type useServices } from '../hooks/use-services/use-services'
 import { useStopAllServices } from '../hooks/use-stop-all-services/use-stop-all-services'
 import useUninstallAllServices from '../hooks/use-uninstall-all-services/use-uninstall-all-services'
+import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 function ConfirmationModal({
   verb,
@@ -86,7 +87,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
   const { mutateAsync: stopAllServices } = useStopAllServices()
 
   const { openModal, closeModal } = useModal()
-  const { openModalActionSelect } = useModalActionSelect()
+  const { openServiceRemoveModal } = useServiceRemoveModal()
 
   const restartableServices = selectedRows.filter(
     ({ deploymentStatus, runningStatus }) =>
@@ -216,7 +217,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
     })
 
   const handleDeleteAllServices = () => {
-    openModalActionSelect({
+    openServiceRemoveModal({
       title: `Remove ${deletableServices.length} ${pluralize(deletableServices.length, 'service')}`,
       description: 'Choose how to remove these services',
       entities: deletableServices.map((service) => (

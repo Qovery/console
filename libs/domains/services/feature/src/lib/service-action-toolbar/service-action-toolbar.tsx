@@ -46,7 +46,6 @@ import {
   Skeleton,
   Tooltip,
   useModal,
-  useModalActionSelect,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -74,6 +73,7 @@ import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
+import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
 
@@ -589,7 +589,7 @@ function MenuOtherActions({
     organization: { id: organizationId },
   } = environment
   const { openModal, closeModal } = useModal()
-  const { openModalActionSelect } = useModalActionSelect()
+  const { openServiceRemoveModal } = useServiceRemoveModal()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
   const { mutateAsync: uninstallService } = useUninstallService({
@@ -602,7 +602,7 @@ function MenuOtherActions({
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
 
   const mutationRemove = async () => {
-    openModalActionSelect({
+    openServiceRemoveModal({
       title: 'Remove service',
       name: service.name,
       description: 'Choose how to remove this service',
