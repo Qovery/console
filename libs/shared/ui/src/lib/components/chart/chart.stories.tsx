@@ -14,6 +14,7 @@ import {
   YAxis,
 } from 'recharts'
 import { Button } from '../button/button'
+import { Icon } from '../icon/icon'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
@@ -299,6 +300,7 @@ export const MaximalEdgeCase = {
   render: () => {
     const [hoveringDataKey, setHoveringDataKey] = useState<string | null>(null)
     const [stickyDataKeys, setStickyDataKeys] = useState<Set<string>>(new Set())
+    const [scrollPosition, setScrollPosition] = useState(0)
 
     const handleMouseEnter = (data: { dataKey: string; color: string; value: string }) => {
       if (data?.dataKey) {
@@ -350,23 +352,71 @@ export const MaximalEdgeCase = {
         return hoveringDataKey && hoveringDataKey !== dataKey ? 0.2 : 1
       }
 
+      // Fixed number of items to ensure exactly 3 rows
+      const maxVisibleItems = 18 // 6 items per row * 3 rows
+
+      const startIndex = scrollPosition
+      const endIndex = Math.min(startIndex + maxVisibleItems, payload.length)
+      const visibleItems = payload.slice(startIndex, endIndex)
+
+      const canScrollLeft = scrollPosition > 0
+      const canScrollRight = endIndex < payload.length
+
+      const handleScrollLeft = () => {
+        setScrollPosition(Math.max(0, scrollPosition - maxVisibleItems))
+      }
+
+      const handleScrollRight = () => {
+        setScrollPosition(Math.min(payload.length - maxVisibleItems, scrollPosition + maxVisibleItems))
+      }
+
       return (
-        <div className="relative flex flex-wrap justify-center gap-2 px-5 pb-2" onMouseLeave={handleMouseLeave}>
-          {payload.map((entry) => (
-            <div
-              key={entry.dataKey}
-              className="flex cursor-pointer items-center gap-2 text-xs transition-opacity duration-200"
-              style={{
-                opacity: getOpacity(entry.dataKey),
-              }}
-              onMouseOver={() => handleMouseEnter(entry)}
-              onMouseOut={handleMouseLeave}
-              onClick={() => handleLabelClick(entry)}
+        <div className="relative w-full">
+          <div className="flex items-center gap-2 pr-5">
+            <Button
+              onClick={handleScrollLeft}
+              disabled={!canScrollLeft}
+              size="xs"
+              variant="outline"
+              className="flex h-6 w-6 items-center justify-center p-0"
             >
-              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-              <span className="text-neutral-600">{entry.value}</span>
+              <Icon iconName="chevron-left" iconStyle="regular" className="h-3 w-3" />
+            </Button>
+
+            <div className="flex-1 overflow-hidden">
+              <div
+                className="flex h-16 flex-wrap justify-start gap-x-4 gap-y-1 overflow-hidden"
+                onMouseLeave={handleMouseLeave}
+              >
+                {visibleItems.map((entry) => (
+                  <div
+                    key={entry.dataKey}
+                    className="flex cursor-pointer items-center gap-2 text-xs transition-opacity duration-200"
+                    style={{
+                      opacity: getOpacity(entry.dataKey),
+                    }}
+                    onMouseOver={() => handleMouseEnter(entry)}
+                    onMouseOut={handleMouseLeave}
+                    onClick={() => handleLabelClick(entry)}
+                  >
+                    <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: entry.color }} />
+                    <span className="text-neutral-600">{entry.value}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+
+            <Button
+              onClick={handleScrollRight}
+              disabled={!canScrollRight}
+              size="xs"
+              variant="outline"
+              className="flex h-6 w-6 items-center justify-center p-0"
+            >
+              <Icon iconName="chevron-right" iconStyle="regular" className="h-3 w-3" />
+            </Button>
+          </div>
+
           {stickyDataKeys.size > 0 && (
             <Button
               onClick={handleResetHighlighting}
