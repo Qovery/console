@@ -3,9 +3,7 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useHelmRepositories } from '@qovery/domains/organizations/feature'
 import { useCreateTerraformService } from '@qovery/domains/service-terraform/feature'
-import { useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
@@ -24,19 +22,15 @@ export function StepSummaryFeature() {
   const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
   const navigate = useNavigate()
 
-  const { generalForm, valuesOverrideArgumentsForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
+  const { generalForm, inputVariablesForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
-  console.log('generalData', generalData)
-  const valuesOverrideArgumentData = valuesOverrideArgumentsForm.getValues()
-  console.log('valuesOverrideArgumentData', valuesOverrideArgumentData)
+  const inputVariablesData = inputVariablesForm.getValues()
 
   useEffect(() => {
     setCurrentStep(4)
   }, [setCurrentStep])
 
   const { mutateAsync: createTerraformService } = useCreateTerraformService()
-  const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
-  const { data: helmRepositories = [] } = useHelmRepositories({ organizationId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndDeploy, setIsLoadingCreateAndDeploy] = useState(false)
 
@@ -64,8 +58,8 @@ export function StepSummaryFeature() {
         },
       },
       terraform_variables_source: {
-        tf_var_file_paths: valuesOverrideArgumentData.tf_var_file_paths,
-        tf_vars: valuesOverrideArgumentData.tf_vars,
+        tf_var_file_paths: inputVariablesData.tf_var_file_paths,
+        tf_vars: inputVariablesData.tf_vars,
       },
       provider_version: {
         read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
@@ -79,10 +73,8 @@ export function StepSummaryFeature() {
       use_cluster_credentials: generalData.use_cluster_credentials,
     }
 
-    console.log('payload', payload)
-
     try {
-      const response = await createTerraformService({
+      await createTerraformService({
         environmentId,
         terraformRequest: payload,
       })
@@ -213,7 +205,7 @@ export function StepSummaryFeature() {
                 <li>
                   <span className="font-medium">Variables:</span>
                   <ul>
-                    {valuesOverrideArgumentData.tf_vars.map((variable) => (
+                    {inputVariablesData.tf_vars.map((variable) => (
                       <li key={variable.key}>
                         {variable.key}: {variable.value}
                       </li>
@@ -221,8 +213,7 @@ export function StepSummaryFeature() {
                   </ul>
                 </li>
                 <li>
-                  <span className="font-medium">File paths:</span>{' '}
-                  {valuesOverrideArgumentData.tf_var_file_paths.join(', ')}
+                  <span className="font-medium">File paths:</span> {inputVariablesData.tf_var_file_paths.join(', ')}
                 </li>
               </ul>
             </Section>

@@ -20,7 +20,7 @@ import {
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { type TerraformValuesArgumentsData, useTerraformCreateContext } from '../page-terraform-create-feature'
+import { type TerraformInputVariablesData, useTerraformCreateContext } from '../page-terraform-create-feature'
 
 const VarRow = ({
   index,
@@ -28,7 +28,7 @@ const VarRow = ({
   remove,
 }: {
   index: number
-  control: Control<TerraformValuesArgumentsData>
+  control: Control<TerraformInputVariablesData>
   remove: UseFieldArrayRemove
 }) => {
   const { environmentId = '' } = useParams()
@@ -91,14 +91,14 @@ const VarRow = ({
 
 const TerraformVariables = () => {
   const { organizationId = '' } = useParams()
-  const { generalForm, valuesOverrideArgumentsForm } = useTerraformCreateContext()
+  const { generalForm, inputVariablesForm } = useTerraformCreateContext()
 
   const {
     fields: tfVars,
     append: tfVarsAppend,
     remove: tfVarsRemove,
   } = useFieldArray({
-    control: valuesOverrideArgumentsForm.control,
+    control: inputVariablesForm.control,
     name: 'tf_vars',
   })
 
@@ -115,7 +115,7 @@ const TerraformVariables = () => {
   })
 
   useEffect(() => {
-    if (variablesResponse && !valuesOverrideArgumentsForm.formState.isDirty) {
+    if (variablesResponse && !inputVariablesForm.formState.isDirty) {
       const payload =
         variablesResponse?.results?.map((variable) => ({
           key: variable.key,
@@ -123,9 +123,9 @@ const TerraformVariables = () => {
           secret: variable.sensitive,
         })) || []
 
-      valuesOverrideArgumentsForm.setValue('tf_vars', payload, { shouldDirty: false })
+      inputVariablesForm.setValue('tf_vars', payload, { shouldDirty: false })
     }
-  }, [variablesResponse, valuesOverrideArgumentsForm])
+  }, [variablesResponse, inputVariablesForm])
 
   return isLoading ? (
     <TerraformVariablesSkeleton />
@@ -139,7 +139,7 @@ const TerraformVariables = () => {
             <span className="text-sm font-medium text-neutral-350">Secret</span>
           </li>
           {tfVars.map((_, index) => (
-            <VarRow key={index} index={index} control={valuesOverrideArgumentsForm.control} remove={tfVarsRemove} />
+            <VarRow key={index} index={index} control={inputVariablesForm.control} remove={tfVarsRemove} />
           ))}
         </ul>
       )}
@@ -185,19 +185,19 @@ export const StepInputVariablesFeature = () => {
   useDocumentTitle('General - Terraform configuration')
 
   const navigate = useNavigate()
-  const { generalForm, setCurrentStep, valuesOverrideArgumentsForm, creationFlowUrl } = useTerraformCreateContext()
+  const { generalForm, setCurrentStep, inputVariablesForm, creationFlowUrl } = useTerraformCreateContext()
 
   useEffect(() => {
     setCurrentStep(3)
   }, [setCurrentStep])
 
-  const onSubmit = valuesOverrideArgumentsForm.handleSubmit(() => {
+  const onSubmit = inputVariablesForm.handleSubmit(() => {
     navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_SUMMARY_URL)
   })
 
   return (
     <FunnelFlowBody>
-      <FormProvider {...valuesOverrideArgumentsForm} {...generalForm}>
+      <FormProvider {...inputVariablesForm} {...generalForm}>
         <Section>
           <form onSubmit={onSubmit} className="w-full">
             <div className="space-y-10">
@@ -214,8 +214,8 @@ export const StepInputVariablesFeature = () => {
 
                 <Controller
                   name="tf_var_file_paths"
-                  control={valuesOverrideArgumentsForm.control}
-                  defaultValue={valuesOverrideArgumentsForm.getValues('tf_var_file_paths')}
+                  control={inputVariablesForm.control}
+                  defaultValue={inputVariablesForm.getValues('tf_var_file_paths')}
                   render={({ field, fieldState: { error } }) => (
                     <InputText
                       name={field.name}
@@ -255,12 +255,7 @@ export const StepInputVariablesFeature = () => {
                 Back
               </Button>
               <div className="flex gap-3">
-                <Button
-                  type="submit"
-                  size="lg"
-                  onClick={onSubmit}
-                  disabled={!valuesOverrideArgumentsForm.formState.isValid}
-                >
+                <Button type="submit" size="lg" onClick={onSubmit} disabled={!inputVariablesForm.formState.isValid}>
                   Continue
                 </Button>
               </div>

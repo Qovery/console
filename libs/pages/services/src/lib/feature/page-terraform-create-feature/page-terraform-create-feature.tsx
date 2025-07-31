@@ -69,7 +69,7 @@ export interface TerraformGeneralData
   }
 }
 
-export interface TerraformValuesArgumentsData {
+export interface TerraformInputVariablesData {
   tf_vars: {
     key: string
     value: string
@@ -82,7 +82,7 @@ interface TerraformCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<TerraformGeneralData>
-  valuesOverrideArgumentsForm: UseFormReturn<TerraformValuesArgumentsData>
+  inputVariablesForm: UseFormReturn<TerraformInputVariablesData>
   creationFlowUrl?: string
 }
 
@@ -127,7 +127,7 @@ export function PageTerraformCreateFeature() {
     },
   })
 
-  const valuesOverrideArgumentsForm = useForm<TerraformValuesArgumentsData>({
+  const inputVariablesForm = useForm<TerraformInputVariablesData>({
     mode: 'onChange',
     defaultValues: {
       tf_vars: [],
@@ -143,7 +143,7 @@ export function PageTerraformCreateFeature() {
         currentStep,
         setCurrentStep,
         generalForm,
-        valuesOverrideArgumentsForm,
+        inputVariablesForm,
         creationFlowUrl,
       }}
     >
