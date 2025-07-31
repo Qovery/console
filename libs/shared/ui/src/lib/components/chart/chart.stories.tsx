@@ -321,8 +321,8 @@ export const MaximalEdgeCase = {
               style={{
                 opacity: hoveringDataKey && hoveringDataKey !== entry.dataKey ? 0.2 : 1,
               }}
-              onMouseEnter={() => handleMouseEnter(entry)}
-              onMouseLeave={handleMouseLeave}
+              onMouseOver={() => handleMouseEnter(entry)}
+              onMouseOut={handleMouseLeave}
             >
               <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
               <span className="text-neutral-600">{entry.value}</span>
