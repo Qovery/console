@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Area,
   Bar,
@@ -353,18 +353,53 @@ export const MaximalEdgeCase = {
     const [hoveringDataKey, setHoveringDataKey] = useState<string | null>(null)
     const [stickyDataKeys, setStickyDataKeys] = useState<Set<string>>(new Set())
     const [scrollPosition, setScrollPosition] = useState(0)
+    const legendContainerRef = useRef<HTMLDivElement>(null)
+    const checkTimerRef = useRef<NodeJS.Timeout | null>(null)
+    const lastMouseMoveTime = useRef<number>(0)
 
     // Generate extended colors for all 50 metrics
     const extendedColors = generateExtendedColors(maximalMetrics.length)
 
+    // Hybrid solution for the highlighting not properly resetting when mouse leaves the legend:
+    // timer as failsafe, but also immediate clear for container leave
+    useEffect(() => {
+      if (hoveringDataKey) {
+        // Clear any existing timer
+        if (checkTimerRef.current) {
+          clearTimeout(checkTimerRef.current)
+        }
+
+        // Only use timer as failsafe after longer inactivity (100ms)
+        checkTimerRef.current = setTimeout(() => {
+          const timeSinceLastMove = Date.now() - lastMouseMoveTime.current
+          // Only clear if we haven't had mouse movement recently
+          if (timeSinceLastMove > 80) {
+            setHoveringDataKey(null)
+          }
+        }, 100)
+      }
+
+      return () => {
+        if (checkTimerRef.current) {
+          clearTimeout(checkTimerRef.current)
+        }
+      }
+    }, [hoveringDataKey])
+
     const handleMouseEnter = (data: { dataKey: string; color: string; value: string }) => {
+      lastMouseMoveTime.current = Date.now()
       if (data?.dataKey) {
         setHoveringDataKey(String(data.dataKey))
       }
     }
 
     const handleMouseLeave = () => {
+      // Immediate clear for container leave - this should be reliable
       setHoveringDataKey(null)
+      if (checkTimerRef.current) {
+        clearTimeout(checkTimerRef.current)
+        checkTimerRef.current = null
+      }
     }
 
     const handleLabelClick = (data: { dataKey: string; color: string; value: string }) => {
@@ -424,21 +459,42 @@ export const MaximalEdgeCase = {
         setScrollPosition(Math.min(payload.length - maxVisibleItems, scrollPosition + maxVisibleItems))
       }
 
+      const handleContainerMouseMove = (e: React.MouseEvent) => {
+        lastMouseMoveTime.current = Date.now()
+        const target = e.target as HTMLElement
+        const legendItem = target.closest('[data-legend-key]') as HTMLElement
+        if (legendItem) {
+          const dataKey = legendItem.getAttribute('data-legend-key')
+          if (dataKey) {
+            const entry = visibleItems.find((item) => item.dataKey === dataKey)
+            if (entry) {
+              handleMouseEnter(entry)
+            }
+          }
+        }
+        // Don't clear immediately when in gaps - let the timer handle it
+        // This prevents flashing when moving between legend items
+      }
+
       return (
         <div className="relative w-full">
           <div className="flex items-start gap-2">
             <div className="flex-1">
-              <div className="h-14 overflow-hidden" onMouseLeave={handleMouseLeave}>
+              <div
+                ref={legendContainerRef}
+                className="h-14 overflow-hidden"
+                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleContainerMouseMove}
+              >
                 <div className="flex flex-wrap justify-start gap-x-4 gap-y-1">
                   {visibleItems.map((entry) => (
                     <div
                       key={entry.dataKey}
+                      data-legend-key={entry.dataKey}
                       className="flex cursor-pointer items-center gap-2 text-xs transition-opacity duration-200"
                       style={{
                         opacity: getOpacity(entry.dataKey),
                       }}
-                      onMouseOver={() => handleMouseEnter(entry)}
-                      onMouseOut={handleMouseLeave}
                       onClick={() => handleLabelClick(entry)}
                     >
                       <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: entry.color }} />
