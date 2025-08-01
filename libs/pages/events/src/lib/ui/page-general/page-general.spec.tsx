@@ -79,7 +79,7 @@ describe('PageGeneral', () => {
     // format uppercase and replace _ by space (auto format by menu component)
     expect(screen.getAllByTestId('menuItem').map((item) => item.textContent?.toUpperCase())).toEqual(
       expect.arrayContaining(
-        ['ALL', ...Object.keys(OrganizationEventType)].map((item) => item.toUpperCase().replace('_', ' '))
+        ['ALL', ...Object.keys(OrganizationEventType)].map((item) => item.toUpperCase().replace(/_/g, ' '))
       )
     )
   })

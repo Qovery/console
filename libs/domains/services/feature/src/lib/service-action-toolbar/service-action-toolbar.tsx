@@ -4,7 +4,6 @@ import {
   type Environment,
   type HelmSourceRepositoryResponse,
   ServiceDeploymentStatusEnum,
-  ServiceTypeEnum,
   StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
@@ -57,7 +56,6 @@ import {
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
-  isUninstallAvailable,
   urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
@@ -69,11 +67,13 @@ import { useRestartService } from '../hooks/use-restart-service/use-restart-serv
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
-import useUninstallService from '../hooks/use-uninstall-service/use-uninstall-service'
+import { useUninstallService } from '../hooks/use-uninstall-service/use-uninstall-service'
 import { RedeployModal } from '../redeploy-modal/redeploy-modal'
 import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
+import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
+import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
 
@@ -104,11 +104,6 @@ function MenuManageDeployment({
     environmentId: environment.id,
   })
   const { mutate: stopService } = useStopService({
-    organizationId: environment.organization.id,
-    projectId: environment.project.id,
-    environmentId: environment.id,
-  })
-  const { mutate: uninstallService } = useUninstallService({
     organizationId: environment.organization.id,
     projectId: environment.project.id,
     environmentId: environment.id,
@@ -159,17 +154,6 @@ function MenuManageDeployment({
       warning: warningMessage,
       name: service.name,
       action: () => stopService({ serviceId: service.id, serviceType: service.serviceType }),
-    })
-  }
-
-  const mutationUninstall = () => {
-    openModalConfirmation({
-      mode: 'PRODUCTION',
-      title: 'Confirm Uninstall',
-      description: 'To confirm the uninstall of your service, please type the name:',
-      warning: 'Uninstall delete all compute and data of your service',
-      name: service.name,
-      action: () => uninstallService({ serviceId: service.id, serviceType: service.serviceType }),
     })
   }
 
@@ -449,12 +433,6 @@ function MenuManageDeployment({
             {tooltipService('Stop compute resources *but* keep the data')}
           </DropdownMenu.Item>
         )}
-        {isUninstallAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="inbox-out" />} color="red" onSelect={mutationUninstall}>
-            {service.service_type === ServiceTypeEnum.TERRAFORM ? 'Destroy' : 'Uninstall'}
-            {tooltipService("Delete all compute and associated data *but* keep the Qovery's service configuration")}
-          </DropdownMenu.Item>
-        )}
         {match({ service })
           .with(
             { service: { serviceType: 'APPLICATION' } },
@@ -611,26 +589,103 @@ function MenuOtherActions({
     organization: { id: organizationId },
   } = environment
   const { openModal, closeModal } = useModal()
-  const { openModalConfirmation } = useModalConfirmation()
+  const { openServiceRemoveModal } = useServiceRemoveModal()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
+  const { mutateAsync: uninstallService } = useUninstallService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
 
   const [, copyToClipboard] = useCopyToClipboard()
   const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
 
-  const mutationDelete = async () => {
-    openModalConfirmation({
-      title: 'Delete service',
+  const mutationRemove = async () => {
+    openServiceRemoveModal({
+      title: 'Remove service',
       name: service.name,
+      description: 'Choose how to remove this service',
+      entities: [
+        <div className="flex items-center gap-2" key={`service-avatar-${service.id}`}>
+          <div className="flex h-5 w-5 items-center justify-center rounded-full border border-neutral-200">
+            <ServiceAvatar service={service} size="xs" />
+          </div>
+          <span className="text-sm font-medium text-neutral-400">{service.name}</span>
+        </div>,
+      ],
+      actions: [
+        {
+          id: 'uninstall',
+          title: 'Uninstall',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <span>
+                Stop and remove the service but keep all Qovery configuration, data and settings.
+                <br />
+                You can easily reinstall or redeploy later with the same configuration.
+              </span>
+              <div>
+                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <ul className="list-disc pl-4">
+                  <li>All service data</li>
+                </ul>
+              </div>
+              <div>
+                <span className="font-medium text-neutral-400">What's kept:</span>
+                <ul className="list-disc pl-4">
+                  <li>Qovery configuration</li>
+                  <li>Environment variables</li>
+                  <li>Network settings</li>
+                </ul>
+              </div>
+            </div>
+          ),
+          icon: 'box-taped',
+          color: 'brand',
+          callback: async () => {
+            try {
+              await uninstallService({ serviceId: service.id, serviceType: service.serviceType })
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+        {
+          id: 'delete',
+          title: 'Delete permanently',
+          description: (
+            <div className="flex flex-col gap-2 text-neutral-350">
+              <span>
+                Permanently remove the service and all associated data.
+                <br />
+                This action cannot be undone.
+              </span>
+              <div>
+                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <ul className="list-disc pl-4">
+                  <li>All service data</li>
+                  <li>Qovery configuration</li>
+                  <li>Logs and history</li>
+                  <li>Environment variables</li>
+                  <li>Network settings</li>
+                </ul>
+              </div>
+            </div>
+          ),
+          icon: 'trash-can',
+          color: 'red',
+          callback: async () => {
+            try {
+              await deleteService({ serviceId: service.id, serviceType: service.serviceType })
+              navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+            } catch (error) {
+              console.error(error)
+            }
+          },
+        },
+      ],
       isDelete: true,
-      action: async () => {
-        try {
-          await deleteService({ serviceId: service.id, serviceType: service.serviceType })
-          navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
-        } catch (error) {
-          console.error(error)
-        }
-      },
     })
   }
 
@@ -739,8 +794,8 @@ function MenuOtherActions({
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationDelete}>
-              Delete service
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationRemove}>
+              Remove service
             </DropdownMenu.Item>
           </>
         )}

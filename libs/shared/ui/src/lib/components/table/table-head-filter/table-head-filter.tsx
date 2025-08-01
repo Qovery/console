@@ -77,8 +77,7 @@ export function groupBy<T>(
   if (dataHeadFilter?.itemsCustom) {
     // custom list without datas from array of string
     const result: MenuItemProps[] = [defaultValue, ...(dataHeadFilter?.itemsCustom ?? {})].map((item: string) => ({
-      name: upperCaseFirstLetter(item.toLowerCase())?.replace('_', ' '),
-      truncateLimit: 20,
+      name: upperCaseFirstLetter(item.toLowerCase())?.replace(/_/g, ' '),
       contentLeft: (
         <Icon
           name={IconAwesomeEnum.CHECK}

@@ -36,6 +36,10 @@ export interface RowEventProps {
   isPlaceholder?: boolean
 }
 
+const formatEventName = (eventName: string) => {
+  return eventName.split('_').map(upperCaseFirstLetter).join(' ')
+}
+
 export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
   switch (origin) {
     case OrganizationEventOrigin.GIT:
@@ -115,7 +119,7 @@ export function RowEvent(props: RowEventProps) {
     ))
     .with(OrganizationEventType.DEPLOYED, OrganizationEventType.STOPPED, OrganizationEventType.RESTARTED, (v) => (
       <Badge color="green">
-        {upperCaseFirstLetter(v)}
+        {formatEventName(v)}
         <Icon iconName="check" className="ml-1" />
       </Badge>
     ))
@@ -132,7 +136,7 @@ export function RowEvent(props: RowEventProps) {
       OrganizationEventType.RESTART_FAILED,
       (v) => (
         <Badge color="neutral">
-          {upperCaseFirstLetter(v)}
+          {formatEventName(v)}
           <Icon iconName="inbox-out" className="ml-1" />
         </Badge>
       )
@@ -174,7 +178,7 @@ export function RowEvent(props: RowEventProps) {
     ))
     .otherwise((v) => (
       <Badge color="neutral">
-        {upperCaseFirstLetter(v)}
+        {formatEventName(v ?? '')}
         <Icon iconName="rotate" className="ml-1" />
       </Badge>
     ))
