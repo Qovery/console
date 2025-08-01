@@ -1,4 +1,5 @@
 import type { Meta } from '@storybook/react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Area,
   Bar,
@@ -12,6 +13,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { Button } from '../button/button'
+import { Icon } from '../icon/icon'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
@@ -36,6 +39,26 @@ const CHART_COLORS = [
   'var(--color-r-scl)',
 ]
 
+// Function to generate extended colors dynamically when we need more than base colors
+const generateExtendedColors = (count: number): string[] => {
+  const colors = [...CHART_COLORS]
+
+  // If we need more colors than the base set, generate additional colors
+  if (count > CHART_COLORS.length) {
+    const additionalColorsNeeded = count - CHART_COLORS.length
+
+    // Generate HSL colors with good distribution
+    for (let i = 0; i < additionalColorsNeeded; i++) {
+      const hue = ((i * 360) / additionalColorsNeeded) % 360
+      const saturation = 65 + (i % 3) * 15 // Vary saturation: 65%, 80%, 95%
+      const lightness = 45 + (i % 4) * 10 // Vary lightness: 45%, 55%, 65%, 75%
+      colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`)
+    }
+  }
+
+  return colors.slice(0, count)
+}
+
 // Sample data with independent system metrics: CPU, Memory, Disk usage (percentages)
 const sampleData = [
   { timestamp: 1704067200000, time: '00:00', fullTime: '2024-01-01 00:00:00', cpu: 25, memory: 68, disk: 45 },
@@ -47,7 +70,7 @@ const sampleData = [
   { timestamp: 1704088800000, time: '06:00', fullTime: '2024-01-01 06:00:00', cpu: 52, memory: 69, disk: 48 },
 ]
 
-// Generate 20 unique instance metrics
+// Generate 50 unique instance metrics
 const generateMetrics = () => {
   const baseUUIDs = [
     'dk2ms',
@@ -70,6 +93,36 @@ const generateMetrics = () => {
     'xh8qr',
     'yv1kc',
     'am5dt',
+    'bc4nw',
+    'ef7mp',
+    'gh9ql',
+    'ij2kz',
+    'kl5mx',
+    'mn8pv',
+    'op1qt',
+    'qr4sw',
+    'st7uy',
+    'uv0xz',
+    'wx3ab',
+    'yz6cd',
+    'ab9ef',
+    'cd2gh',
+    'ef5ij',
+    'gh8kl',
+    'ij1mn',
+    'kl4op',
+    'mn7qr',
+    'op0st',
+    'qr3uv',
+    'st6wx',
+    'uv9yz',
+    'wx2ab',
+    'yz5cd',
+    'ab8ef',
+    'cd1gh',
+    'ef4ij',
+    'gh7kl',
+    'ij0mn',
   ]
 
   return baseUUIDs.map((uuid) => ({
@@ -88,13 +141,15 @@ const generateMetrics = () => {
 }
 
 // Generate time series data with realistic variations
-const generateTimeSeriesData = (metrics: ReturnType<typeof generateMetrics>) => {
+const generateTimeSeriesData = (
+  metrics: ReturnType<typeof generateMetrics>
+): { timestamp: number; time: string; fullTime: string; [key: string]: string | number }[] => {
   const startTime = 1704067200000 // 2024-01-01 00:00:00
   const endTime = 1704081600000 // 2024-01-01 04:00:00
   const pointCount = 100 // Granularity
   const intervalMs = (endTime - startTime) / (pointCount - 1)
 
-  const timePoints: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number }> = []
+  const timePoints: { timestamp: number; time: string; fullTime: string; [key: string]: string | number }[] = []
 
   for (let i = 0; i < pointCount; i++) {
     const timestamp = startTime + i * intervalMs
@@ -189,7 +244,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
       getXAxisTicks,
     } = useZoomableChart()
 
-    const defaultDomain: [number | string, number | string] = [1704067200000, 1704088800000]
+    const defaultDomain: [number, number] = [1704067200000, 1704088800000]
     const domain = getXDomain(defaultDomain)
     const ticks = getXAxisTicks(defaultDomain, 7)
 
@@ -255,7 +310,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
               <Chart.TooltipContent
                 title="System Usage"
                 formatLabel={(key) => {
-                  const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
+                  const labelMap: { [key: string]: string } = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
                   return labelMap[key] || key
                 }}
                 formatValue={(value) => `${value}%`}
@@ -295,6 +350,197 @@ The chart supports mixed visualization types including area charts, bar charts, 
 
 export const MaximalEdgeCase = {
   render: () => {
+    const [hoveringDataKey, setHoveringDataKey] = useState<string | null>(null)
+    const [stickyDataKeys, setStickyDataKeys] = useState<Set<string>>(new Set())
+    const [scrollPosition, setScrollPosition] = useState(0)
+    const legendContainerRef = useRef<HTMLDivElement>(null)
+    const checkTimerRef = useRef<NodeJS.Timeout | null>(null)
+    const lastMouseMoveTime = useRef<number>(0)
+
+    // Generate extended colors for all 50 metrics
+    const extendedColors = generateExtendedColors(maximalMetrics.length)
+
+    // Hybrid solution for the highlighting not properly resetting when mouse leaves the legend:
+    // timer as failsafe, but also immediate clear for container leave
+    useEffect(() => {
+      if (hoveringDataKey) {
+        // Clear any existing timer
+        if (checkTimerRef.current) {
+          clearTimeout(checkTimerRef.current)
+        }
+
+        // Only use timer as failsafe after longer inactivity (100ms)
+        checkTimerRef.current = setTimeout(() => {
+          const timeSinceLastMove = Date.now() - lastMouseMoveTime.current
+          // Only clear if we haven't had mouse movement recently
+          if (timeSinceLastMove > 80) {
+            setHoveringDataKey(null)
+          }
+        }, 100)
+      }
+
+      return () => {
+        if (checkTimerRef.current) {
+          clearTimeout(checkTimerRef.current)
+        }
+      }
+    }, [hoveringDataKey])
+
+    const handleMouseEnter = (data: { dataKey: string; color: string; value: string }) => {
+      lastMouseMoveTime.current = Date.now()
+      if (data?.dataKey) {
+        setHoveringDataKey(String(data.dataKey))
+      }
+    }
+
+    const handleMouseLeave = () => {
+      // Immediate clear for container leave - this should be reliable
+      setHoveringDataKey(null)
+      if (checkTimerRef.current) {
+        clearTimeout(checkTimerRef.current)
+        checkTimerRef.current = null
+      }
+    }
+
+    const handleLabelClick = (data: { dataKey: string; color: string; value: string }) => {
+      if (data?.dataKey) {
+        const dataKey = String(data.dataKey)
+        setStickyDataKeys((prev) => {
+          const newSet = new Set(prev)
+          if (newSet.has(dataKey)) {
+            newSet.delete(dataKey)
+          } else {
+            newSet.add(dataKey)
+          }
+          return newSet
+        })
+        setHoveringDataKey(null)
+      }
+    }
+
+    const handleResetHighlighting = () => {
+      setStickyDataKeys(new Set())
+      setHoveringDataKey(null)
+    }
+
+    const CustomLegendContent = (props: { payload?: { dataKey: string; color: string; value: string }[] }) => {
+      const { payload } = props
+      if (!payload) return null
+
+      const getOpacity = (dataKey: string) => {
+        const isSticky = stickyDataKeys.has(dataKey)
+        const isHovered = hoveringDataKey === dataKey
+
+        if (stickyDataKeys.size > 0) {
+          // If this item is sticky or hovered, show it fully
+          if (isSticky || isHovered) return 1
+          // Otherwise dim it
+          return 0.2
+        }
+
+        // No sticky items: use normal hover behavior
+        return hoveringDataKey && hoveringDataKey !== dataKey ? 0.2 : 1
+      }
+
+      // Fixed number of items to display at once
+      const maxVisibleItems = 18 // 6 items per row * 3 rows
+      const startIndex = scrollPosition
+      const endIndex = Math.min(startIndex + maxVisibleItems, payload.length)
+      const visibleItems = payload.slice(startIndex, endIndex)
+
+      const canScrollLeft = scrollPosition > 0
+      const canScrollRight = endIndex < payload.length
+
+      const handleScrollLeft = () => {
+        setScrollPosition(Math.max(0, scrollPosition - maxVisibleItems))
+      }
+
+      const handleScrollRight = () => {
+        setScrollPosition(Math.min(payload.length - maxVisibleItems, scrollPosition + maxVisibleItems))
+      }
+
+      const handleContainerMouseMove = (e: React.MouseEvent) => {
+        lastMouseMoveTime.current = Date.now()
+        const target = e.target as HTMLElement
+        const legendItem = target.closest('[data-legend-key]') as HTMLElement
+        if (legendItem) {
+          const dataKey = legendItem.getAttribute('data-legend-key')
+          if (dataKey) {
+            const entry = visibleItems.find((item) => item.dataKey === dataKey)
+            if (entry) {
+              handleMouseEnter(entry)
+            }
+          }
+        }
+        // Don't clear immediately when in gaps - let the timer handle it
+        // This prevents flashing when moving between legend items
+      }
+
+      return (
+        <div className="relative w-full">
+          <div className="flex items-start gap-2">
+            <div className="flex-1">
+              <div
+                ref={legendContainerRef}
+                className="h-14 overflow-hidden"
+                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleContainerMouseMove}
+              >
+                <div className="flex flex-wrap justify-start gap-x-4 gap-y-1">
+                  {visibleItems.map((entry) => (
+                    <div
+                      key={entry.dataKey}
+                      data-legend-key={entry.dataKey}
+                      className="flex cursor-pointer items-center gap-2 text-xs transition-opacity duration-200"
+                      style={{
+                        opacity: getOpacity(entry.dataKey),
+                      }}
+                      onClick={() => handleLabelClick(entry)}
+                    >
+                      <div className="h-3 w-3 rounded-sm" style={{ backgroundColor: entry.color }} />
+                      <span className="text-neutral-600">{entry.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Button
+                onClick={handleScrollLeft}
+                disabled={!canScrollLeft}
+                size="xs"
+                variant="outline"
+                className="flex h-6 w-6 items-center justify-center p-0"
+              >
+                <Icon iconName="chevron-up" iconStyle="regular" className="h-3 w-3" />
+              </Button>
+              <Button
+                onClick={handleScrollRight}
+                disabled={!canScrollRight}
+                size="xs"
+                variant="outline"
+                className="flex h-6 w-6 items-center justify-center p-0"
+              >
+                <Icon iconName="chevron-down" iconStyle="regular" className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+
+          {stickyDataKeys.size > 0 && (
+            <Button
+              onClick={handleResetHighlighting}
+              size="xs"
+              variant="outline"
+              className="absolute -bottom-8 left-1/2 -translate-x-1/2 transform text-xs"
+            >
+              Reset highlighting
+            </Button>
+          )}
+        </div>
+      )
+    }
+
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
     return (
       <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
@@ -318,20 +564,38 @@ export const MaximalEdgeCase = {
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
           <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-          <Legend />
-          {maximalMetrics.map((metric, index) => (
-            <Line
-              key={metric.key}
-              type="linear"
-              dataKey={metric.key}
-              name={metric.key}
-              stroke={CHART_COLORS[index]}
-              strokeWidth={2}
-              dot={false}
-              connectNulls={false}
-              isAnimationActive={false}
-            />
-          ))}
+          <Legend content={<CustomLegendContent />} />
+          {maximalMetrics.map((metric, index) => {
+            const getStrokeOpacity = () => {
+              const isSticky = stickyDataKeys.has(metric.key)
+              const isHovered = hoveringDataKey === metric.key
+
+              if (stickyDataKeys.size > 0) {
+                // If this item is sticky or hovered, show it fully
+                if (isSticky || isHovered) return 1
+                // Otherwise dim it
+                return 0.2
+              }
+
+              // No sticky items: use normal hover behavior
+              return hoveringDataKey && hoveringDataKey !== metric.key ? 0.2 : 1
+            }
+
+            return (
+              <Line
+                key={metric.key}
+                type="linear"
+                dataKey={metric.key}
+                name={metric.key}
+                stroke={extendedColors[index]}
+                strokeOpacity={getStrokeOpacity()}
+                strokeWidth={2}
+                dot={false}
+                connectNulls={false}
+                isAnimationActive={false}
+              />
+            )
+          })}
         </ComposedChart>
       </Chart.Container>
     )
