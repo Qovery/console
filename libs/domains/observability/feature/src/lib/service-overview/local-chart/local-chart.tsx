@@ -1,9 +1,9 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useState } from 'react'
+import { type PropsWithChildren, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
+import { Bar, CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import {
@@ -15,6 +15,8 @@ import {
   Section,
   Tooltip,
   createXAxisConfig,
+  detectDataBreaks,
+  formatDuration,
   getTimeGranularity,
   useZoomableChart,
 } from '@qovery/shared/ui'
@@ -105,6 +107,34 @@ export function ChartContent({
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
+  const [currentDataBreak, setCurrentDataBreak] = useState<{ start: number; end: number; duration: number } | null>(
+    null
+  )
+
+  // Detect data breaks in the chart data
+  const dataBreaks = useMemo(() => {
+    // Filter out data points that have all null values (these are padding points)
+    const validDataPoints = data.filter((point) => {
+      const keys = Object.keys(point).filter((key) => !['timestamp', 'time', 'fullTime'].includes(key))
+      return keys.some((key) => point[key] !== null && point[key] !== undefined)
+    })
+
+    const breaks = detectDataBreaks(validDataPoints, 10 * 60 * 1000) // 10 minutes threshold
+
+    return breaks
+  }, [data])
+
+  // Process data to include data break information for Bar chart
+  const processedData = useMemo(() => {
+    return data.map((point) => {
+      const dataBreak = dataBreaks.find((brk) => point.timestamp >= brk.start && point.timestamp <= brk.end)
+      return {
+        ...point,
+        _dataBreak: dataBreak ? 1 : null, // Use 1 as a placeholder value for the bar height
+        _dataBreakInfo: dataBreak,
+      }
+    })
+  }, [data, dataBreaks])
 
   // Use the zoomable chart hook
   const {
@@ -136,7 +166,7 @@ export function ChartContent({
     <div className="relative flex h-full">
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
-          data={data}
+          data={processedData}
           syncId="syncId"
           margin={margin}
           onMouseDown={(e) => {
@@ -146,10 +176,18 @@ export function ChartContent({
           onMouseMove={(e) => {
             handleMouseMove(e)
             setOnHoverHideTooltip(true)
+
+            // Check if mouse is over a data break area using active payload
+            if (e?.activePayload?.[0]?.payload?._dataBreakInfo) {
+              setCurrentDataBreak(e.activePayload[0].payload._dataBreakInfo)
+            } else {
+              setCurrentDataBreak(null)
+            }
           }}
           onMouseLeave={() => {
             handleMouseLeave()
             setOnHoverHideTooltip(false)
+            setCurrentDataBreak(null)
           }}
           onMouseUp={() => {
             handleMouseUp()
@@ -202,9 +240,64 @@ export function ChartContent({
           />
           <Chart.Tooltip
             isAnimationActive={false}
-            content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
+            content={
+              !onHoverHideTooltip ? (
+                <div />
+              ) : currentDataBreak ? (
+                <div className="rounded-md bg-orange-600 shadow-lg">
+                  <div className="mb-2 flex items-center justify-between gap-4 border-b border-orange-400 p-3 pb-2">
+                    <span className="text-xs font-medium text-white">Data Break</span>
+                    <span className="text-xs text-orange-100">
+                      {useLocalTime
+                        ? `${new Date(currentDataBreak.start).toLocaleTimeString()} - ${new Date(currentDataBreak.end).toLocaleTimeString()}`
+                        : `${new Date(currentDataBreak.start).toUTCString().split(' ')[4]} - ${new Date(currentDataBreak.end).toUTCString().split(' ')[4]}`}
+                    </span>
+                  </div>
+                  <div className="space-y-1 p-3 pt-0">
+                    <div className="flex items-center justify-between gap-4 text-xs">
+                      <span className="text-orange-100">Duration:</span>
+                      <span className="font-medium text-white">{formatDuration(currentDataBreak.duration)}</span>
+                    </div>
+                    <div className="mt-2 text-xs text-orange-200">No data available during this period</div>
+                  </div>
+                </div>
+              ) : (
+                <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
+              )
+            }
           />
+          {/* Invisible bar chart for data break tooltips */}
+          <Bar dataKey="_dataBreak" fill="transparent" fillOpacity={0} stroke="none" yAxisId="dataBreak" />
           {children}
+
+          {/* Visual ReferenceArea for data breaks */}
+          {dataBreaks.length > 0 &&
+            dataBreaks.map((dataBreak: { start: number; end: number; duration: number }, index: number) => {
+              // Get current zoom domain to check if data break overlaps with visible area
+              const currentDomain = getXDomain()
+              const domainStart =
+                typeof currentDomain[0] === 'number' ? currentDomain[0] : Number(startTimestamp) * 1000
+              const domainEnd = typeof currentDomain[1] === 'number' ? currentDomain[1] : Number(endTimestamp) * 1000
+
+              // Only render if the data break overlaps with the visible domain
+              const breakOverlaps = dataBreak.end > domainStart && dataBreak.start < domainEnd
+              if (!breakOverlaps) return null
+
+              // Clamp the break boundaries to the visible domain
+              const x1 = Math.max(dataBreak.start, domainStart)
+              const x2 = Math.min(dataBreak.end, domainEnd)
+
+              return (
+                <ReferenceArea
+                  key={`data-break-${index}`}
+                  x1={x1}
+                  x2={x2}
+                  fill="var(--color-neutral-200)"
+                  fillOpacity={0.4}
+                />
+              )
+            })}
+
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
@@ -214,6 +307,8 @@ export function ChartContent({
             domain={yDomain}
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
+          {/* Hidden YAxis for data break bars */}
+          <YAxis yAxisId="dataBreak" hide={true} domain={[0, 1]} />
           {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
             <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
           ) : null}

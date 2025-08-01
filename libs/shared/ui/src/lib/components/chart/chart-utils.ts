@@ -74,3 +74,43 @@ export function createXAxisConfig(
     interval: 'preserveStartEnd',
   }
 }
+
+export function detectDataBreaks(
+  data: Array<{ timestamp: number; [key: string]: any }>,
+  maxGapMs = 5 * 60 * 1000
+): Array<{ start: number; end: number; duration: number }> {
+  if (data.length < 2) return []
+
+  const breaks = []
+  const sortedData = [...data].sort((a, b) => a.timestamp - b.timestamp)
+
+  // Find gaps where there's a significant time jump between consecutive data points
+  for (let i = 1; i < sortedData.length; i++) {
+    const prevPoint = sortedData[i - 1]
+    const currentPoint = sortedData[i]
+    const gap = currentPoint.timestamp - prevPoint.timestamp
+
+    // Only consider it a break if the gap is significant AND there's actually missing data
+    if (gap > maxGapMs) {
+      breaks.push({
+        start: prevPoint.timestamp,
+        end: currentPoint.timestamp,
+        duration: gap,
+      })
+    }
+  }
+
+  return breaks
+}
+
+export function formatDuration(ms: number): string {
+  const minutes = Math.floor(ms / 60000)
+  const hours = Math.floor(minutes / 60)
+
+  if (hours > 0) {
+    const remainingMinutes = minutes % 60
+    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`
+  }
+
+  return minutes > 0 ? `${minutes}m` : `${Math.floor(ms / 1000)}s`
+}
