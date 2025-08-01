@@ -320,21 +320,24 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                 if (parsed.content.includes('__plan__:')) {
                   try {
                     const planArray = JSON.parse(parsed.content.replace('__plan__:', ''))
-                    setPlan((prev) => [
-                      ...prev,
-                      ...planArray.map((step: { description: string; tool_name: string }) => ({
+                    setPlan(
+                      planArray.map((step: { description: string; tool_name: string }) => ({
                         messageId: 'temp',
                         description: step.description,
                         toolName: step.tool_name,
                         status: 'not_started',
-                      })),
-                    ])
+                      }))
+                    )
                   } catch (e) {
                     console.error(e)
                   }
                 } else if (parsed.content.includes('__step__:')) {
                   const stepDescription = parsed.content.replace('__step__:', '').replaceAll('_', ' ')
                   setLoadingText(stepDescription.charAt(0).toUpperCase() + stepDescription.slice(1))
+                }
+                else if (parsed.content.includes('__stepPlan__:generating_a_new_plan')) {
+                  setPlan([])
+                  setLoadingText('Generating a new plan...')
                 } else if (parsed.content.includes('__stepPlan__:')) {
                   try {
                     const stepObj = JSON.parse(parsed.content.replace('__stepPlan__:', ''))
