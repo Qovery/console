@@ -1,4 +1,4 @@
-import { createXAxisConfig, getLogicalTicks, getTimeGranularity } from './chart-utils'
+import { createXAxisConfig, detectDataBreaks, formatDuration, getLogicalTicks, getTimeGranularity } from './chart-utils'
 
 describe('getLogicalTicks', () => {
   it('generates correct number of ticks for default count', () => {
@@ -393,5 +393,79 @@ describe('getTimeGranularity', () => {
 
       expect(getTimeGranularity(startTime, endTime)).toBe('days')
     })
+  })
+})
+
+describe('detectDataBreaks', () => {
+  it('returns empty array for no data', () => {
+    expect(detectDataBreaks([])).toEqual([])
+  })
+
+  it('returns empty array for single data point', () => {
+    expect(detectDataBreaks([{ timestamp: 1000 }])).toEqual([])
+  })
+
+  it('detects no breaks in continuous data', () => {
+    const data = [{ timestamp: 1000 }, { timestamp: 2000 }, { timestamp: 3000 }]
+    expect(detectDataBreaks(data)).toEqual([])
+  })
+
+  it('detects break when gap exceeds threshold', () => {
+    const data = [
+      { timestamp: 1000 },
+      { timestamp: 2000 },
+      { timestamp: 10000 }, // 8 second gap
+    ]
+
+    const breaks = detectDataBreaks(data, 5000) // 5 second threshold
+
+    expect(breaks).toHaveLength(1)
+    expect(breaks[0]).toEqual({
+      start: 2000,
+      end: 10000,
+      duration: 8000,
+    })
+  })
+
+  it('detects multiple breaks', () => {
+    const data = [
+      { timestamp: 1000 },
+      { timestamp: 2000 },
+      { timestamp: 10000 }, // Break 1
+      { timestamp: 11000 },
+      { timestamp: 20000 }, // Break 2
+    ]
+
+    const breaks = detectDataBreaks(data, 5000)
+
+    expect(breaks).toHaveLength(2)
+    expect(breaks[0].duration).toBe(8000)
+    expect(breaks[1].duration).toBe(9000)
+  })
+
+  it('sorts data by timestamp', () => {
+    const data = [{ timestamp: 3000 }, { timestamp: 1000 }, { timestamp: 2000 }]
+
+    const breaks = detectDataBreaks(data, 500)
+    expect(breaks).toHaveLength(0) // Should be continuous after sorting
+  })
+})
+
+describe('formatDuration', () => {
+  it('formats seconds', () => {
+    expect(formatDuration(5000)).toBe('5s')
+    expect(formatDuration(30000)).toBe('30s')
+  })
+
+  it('formats minutes', () => {
+    expect(formatDuration(60000)).toBe('1m')
+    expect(formatDuration(90000)).toBe('1m')
+    expect(formatDuration(150000)).toBe('2m')
+  })
+
+  it('formats hours', () => {
+    expect(formatDuration(3600000)).toBe('1h')
+    expect(formatDuration(5400000)).toBe('1h 30m')
+    expect(formatDuration(7200000)).toBe('2h')
   })
 })

@@ -107,7 +107,13 @@ export * from './lib/components/board/board'
 export * from './lib/components/animated-gradient-text/animated-gradient-text'
 export * from './lib/components/progress-bar/progress-bar'
 export * from './lib/components/chart/chart'
-export * from './lib/components/chart/chart-utils'
+export {
+  detectDataBreaks,
+  formatDuration,
+  createXAxisConfig,
+  getTimeGranularity,
+} from './lib/components/chart/chart-utils'
+export type { DataBreak, ChartDataPoint } from './lib/components/chart/chart-types'
 export * from './lib/utils/toast'
 export * from './lib/utils/toast-error'
 export * from './lib/utils/ansi'
