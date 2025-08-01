@@ -1,5 +1,6 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type ApplicationGitRepositoryRequest,
   BillingApi,
   type BillingInfoRequest,
   ContainerRegistriesApi,
@@ -385,6 +386,21 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn() {
       const response = await organizationApi.listServicesByOrganizationId(organizationId)
       return response.data.results
+    },
+  }),
+  parseTerraformVariablesFromGitRepo: ({
+    organizationId,
+    repository,
+  }: {
+    organizationId: string
+    repository: ApplicationGitRepositoryRequest
+  }) => ({
+    queryKey: [organizationId, repository],
+    async queryFn() {
+      const response = await organizationApi.parseTerraformVariablesFromGitRepo(organizationId, {
+        git_repository: repository,
+      })
+      return response.data
     },
   }),
 })

@@ -81,43 +81,45 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         </div>
       </div>
     </div>
-    <div
-      class=""
-      data-testid="input-text-wrapper"
-    >
+    <div>
       <div
-        class="relative"
+        class=""
+        data-testid="input-text-wrapper"
       >
         <div
-          aria-label="input-container"
-          class="input    input--label-up "
+          class="relative"
         >
           <div
-            class=""
+            aria-label="input-container"
+            class="input    input--label-up "
           >
-            <label
-              class="translate-y-2 text-sm"
-              for="Root service path"
+            <div
+              class=""
             >
-              Root service path
-            </label>
-            <input
-              class="input__value "
-              data-testid="input-text"
-              id="Root service path"
-              name="root_path"
-              type="text"
-              value="/"
-            />
+              <label
+                class="translate-y-2 text-sm"
+                for="Root service path"
+              >
+                Root service path
+              </label>
+              <input
+                class="input__value "
+                data-testid="input-text"
+                id="Root service path"
+                name="root_path"
+                type="text"
+                value="/"
+              />
+            </div>
           </div>
         </div>
       </div>
+      <p
+        class="ml-4 mt-1 text-xs text-neutral-350"
+      >
+        Provide the path in the repository where the service is located
+      </p>
     </div>
-    <p
-      class="ml-4 mt-1 text-xs text-neutral-350"
-    >
-      Provide the path in the repository where the service is located
-    </p>
   </div>
 </body>
 `;

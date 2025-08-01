@@ -161,6 +161,13 @@ export function PageSettingsFeature() {
       advancedSettings,
       dangerzoneSettings,
     ])
+    .with({ serviceType: 'TERRAFORM' }, () => [
+      generalSettings,
+      resourcesSettings,
+      deploymentRestrictionsSettings,
+      advancedSettings,
+      dangerzoneSettings,
+    ])
     .with({ serviceType: 'JOB' }, (s) => [
       generalSettings,
       ...(s.job_type === 'LIFECYCLE' && isJobGitSource(s.source) ? [dockerfileSetting] : []),

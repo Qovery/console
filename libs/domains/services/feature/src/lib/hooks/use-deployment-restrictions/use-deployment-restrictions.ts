@@ -1,10 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { type ApplicationType, type HelmType, type JobType } from '@qovery/domains/services/data-access'
+import {
+  type ApplicationType,
+  type HelmType,
+  type JobType,
+  type TerraformType,
+} from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentRestrictionsProps {
   serviceId: string
-  serviceType: ApplicationType | JobType | HelmType
+  serviceType: ApplicationType | JobType | HelmType | TerraformType
 }
 
 export function useDeploymentRestrictions({ serviceId, serviceType }: UseDeploymentRestrictionsProps) {
