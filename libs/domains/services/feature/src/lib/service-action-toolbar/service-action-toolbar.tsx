@@ -373,7 +373,7 @@ function MenuManageDeployment({
         )}
         {isDryRunAvailable(service.serviceType) && (
           <DropdownMenu.Item icon={<Icon iconName="play" iconStyle="regular" />} onSelect={mutationDryRun}>
-            Dry run
+            Run plan
           </DropdownMenu.Item>
         )}
         {isDeployAvailable(state) && (
