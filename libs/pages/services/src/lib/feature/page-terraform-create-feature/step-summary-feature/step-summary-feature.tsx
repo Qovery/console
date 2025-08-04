@@ -3,7 +3,7 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useCreateTerraformService } from '@qovery/domains/service-terraform/feature'
+import { useCreateService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
@@ -30,7 +30,7 @@ export function StepSummaryFeature() {
     setCurrentStep(4)
   }, [setCurrentStep])
 
-  const { mutateAsync: createTerraformService } = useCreateTerraformService()
+  const { mutateAsync: createTerraformService } = useCreateService({ organizationId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndDeploy, setIsLoadingCreateAndDeploy] = useState(false)
 
@@ -76,7 +76,10 @@ export function StepSummaryFeature() {
     try {
       await createTerraformService({
         environmentId,
-        terraformRequest: payload,
+        payload: {
+          serviceType: 'TERRAFORM',
+          ...payload,
+        },
       })
 
       if (slug && option) {
