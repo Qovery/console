@@ -76,6 +76,11 @@ describe('PageGeneral', () => {
 
     await userEvent.click(screen.getByText('Event'))
 
-    expect(screen.getAllByTestId('menuItem').length).toEqual(Object.keys(OrganizationEventType).length + 1)
+    // format uppercase and replace _ by space (auto format by menu component)
+    expect(screen.getAllByTestId('menuItem').map((item) => item.textContent?.toUpperCase())).toEqual(
+      expect.arrayContaining(
+        ['ALL', ...Object.keys(OrganizationEventType)].map((item) => item.toUpperCase().replace(/_/g, ' '))
+      )
+    )
   })
 })
