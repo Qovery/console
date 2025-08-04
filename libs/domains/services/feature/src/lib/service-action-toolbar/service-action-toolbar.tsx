@@ -53,6 +53,7 @@ import {
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
+  isDryRunAvailable,
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
@@ -129,6 +130,13 @@ function MenuManageDeployment({
     displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
+  const mutationDryRun = () => {
+    match(service)
+      .with({ serviceType: 'TERRAFORM' }, (service) => {
+        deployService({ serviceId: service.id, serviceType: service.serviceType, request: { dry_run: true } })
+      })
+      .otherwise(() => null)
+  }
 
   const mutationRedeploy = () => {
     openModalConfirmation({
@@ -347,6 +355,11 @@ function MenuManageDeployment({
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
+        {isDryRunAvailable(service.serviceType) && (
+          <DropdownMenu.Item icon={<Icon iconName="play" iconStyle="regular" />} onSelect={mutationDryRun}>
+            Run plan
+          </DropdownMenu.Item>
+        )}
         {isDeployAvailable(state) && (
           <DropdownMenu.Item
             icon={<Icon iconName="play" />}
@@ -553,6 +566,7 @@ function MenuManageDeployment({
             }
           )
           .with({ service: { serviceType: 'DATABASE' } }, () => null)
+          .with({ service: { serviceType: 'TERRAFORM' } }, () => null)
           .exhaustive()}
         {match(service)
           .with({ serviceType: 'HELM', values_override: P.when(isHelmGitValuesOverride) }, (service) => {

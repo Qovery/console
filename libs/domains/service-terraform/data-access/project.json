@@ -1,0 +1,9 @@
+{
+  "name": "domains-service-terraform-data-access",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/service-terraform/data-access/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:data-access", "slice:services"],
+  "// targets": "to see all targets run: nx show project domains-service-terraform-data-access --web",
+  "targets": {}
+}

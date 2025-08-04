@@ -7,6 +7,7 @@ import {
   type HelmRequest,
   type JobRequest,
   type ServiceStorageStorageInner,
+  type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
 import {
@@ -20,6 +21,8 @@ import {
   type HelmType,
   type Job,
   type JobType,
+  type Terraform,
+  type TerraformType,
 } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobGitSource } from '@qovery/shared/enums'
 
@@ -48,7 +51,18 @@ type helmProps = {
   request?: Partial<HelmRequest>
 }
 
-export type responseToRequestProps = applicationProps | containerProps | databaseProps | jobProps | helmProps
+type terraformProps = {
+  service: Terraform
+  request?: Partial<TerraformRequest>
+}
+
+export type responseToRequestProps =
+  | applicationProps
+  | containerProps
+  | databaseProps
+  | jobProps
+  | helmProps
+  | terraformProps
 
 export function buildEditServicePayload(
   props: applicationProps
@@ -57,6 +71,7 @@ export function buildEditServicePayload(props: containerProps): ContainerRequest
 export function buildEditServicePayload(props: databaseProps): DatabaseEditRequest & { serviceType: DatabaseType }
 export function buildEditServicePayload(props: jobProps): JobRequest & { serviceType: JobType }
 export function buildEditServicePayload(props: helmProps): HelmRequest & { serviceType: HelmType }
+export function buildEditServicePayload(props: terraformProps): TerraformRequest & { serviceType: TerraformType }
 
 export function buildEditServicePayload(props: responseToRequestProps) {
   return {
@@ -67,6 +82,7 @@ export function buildEditServicePayload(props: responseToRequestProps) {
       .with({ service: { serviceType: 'DATABASE' } }, (props) => refactoDatabase(props))
       .with({ service: { serviceType: 'JOB' } }, (props) => refactoJob(props))
       .with({ service: { serviceType: 'HELM' } }, (props) => refactoHelm(props))
+      .with({ service: { serviceType: 'TERRAFORM' } }, (props) => refactoTerraform(props))
       .exhaustive(),
   }
 }
@@ -75,6 +91,9 @@ export function buildEditServicePayload(props: responseToRequestProps) {
 TODO: all this following functions should be removed after the API refactoring and we need to clean it after the Services migration to React Query
 https://www.notion.so/qovery/API-improvements-b54ba305c2ee4e549eb002278c532c7f?pvs=4#7d71ea23b5fa44ca80c15a0c32ebd8da
 */
+function refactoTerraform({ service, request = {} }: terraformProps) {
+  return { ...service, ...request }
+}
 
 function refactoApplication({ service: application, request = {} }: applicationProps): ApplicationEditRequest {
   // refacto because we can't send all git data

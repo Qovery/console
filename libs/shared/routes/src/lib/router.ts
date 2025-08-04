@@ -14,6 +14,7 @@ export * from './sub-router/job.router'
 export * from './sub-router/helm.router'
 export * from './sub-router/audit-logs.router'
 export * from './sub-router/user.router'
+export * from './sub-router/terraform.router'
 
 export const INDEX_URL = '/'
 export const PREVIEW_CODE = '/preview-code'

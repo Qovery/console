@@ -2,7 +2,7 @@ import { type ApplicationGitRepository, type Credentials } from 'qovery-typescri
 import { type ComponentPropsWithoutRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
+import { type Application, type Helm, type Job, type Terraform } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -46,7 +46,7 @@ function GitRepository({
   service,
   gitRepository,
 }: {
-  service: Application | Job | Helm
+  service: Application | Job | Helm | Terraform
   gitRepository: ApplicationGitRepository
 }) {
   const { organizationId = '', projectId = '' } = useParams()
@@ -328,6 +328,9 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
               source: P.when(isJobGitSource),
             },
             {
+              serviceType: 'TERRAFORM',
+            },
+            {
               serviceType: 'HELM',
               source: P.when(isHelmGitSource),
             },
@@ -336,6 +339,10 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
                 .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
                 .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
                 .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
+                .with(
+                  { serviceType: 'TERRAFORM' },
+                  ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
+                )
                 .exhaustive()
 
               if (!gitRepository) {

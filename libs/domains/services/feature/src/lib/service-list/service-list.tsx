@@ -21,7 +21,13 @@ import type {
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
-import { type AnyService, type Application, type Helm, type Job } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  type Application,
+  type Helm,
+  type Job,
+  type Terraform,
+} from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -476,7 +482,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         cell: (info) => {
           const service = info.row.original
 
-          const gitInfo = (service: Application | Job | Helm, gitRepository?: ApplicationGitRepository) =>
+          const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
             gitRepository && (
               <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-44 flex-col gap-1.5">
@@ -663,6 +669,9 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
                 },
               }) => helmInfo(repository)
             )
+            .with({ service: { serviceType: 'TERRAFORM' } }, ({ service }) => {
+              return gitInfo(service, service?.terraform_files_source?.git?.git_repository)
+            })
             .exhaustive()
           return cell
         },
