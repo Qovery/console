@@ -7,12 +7,12 @@ import {
   GitPublicRepositorySettings,
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
-import { SourceSetting } from '@qovery/domains/service-terraform/feature'
+import { SourceSetting, TERRAFORM_VERSIONS } from '@qovery/domains/service-terraform/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { TERRAFORM_VERSIONS, useTerraformCreateContext } from '../page-terraform-create-feature'
+import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Terraform')
