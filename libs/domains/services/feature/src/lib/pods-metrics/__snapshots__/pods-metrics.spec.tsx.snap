@@ -3,7 +3,7 @@
 exports[`PodsMetrics should match snapshot with data 1`] = `
 <div>
   <div
-    class="overflow-x-scroll rounded border xl:overflow-hidden"
+    class="overflow-x-scroll rounded border border-neutral-200 xl:overflow-hidden"
   >
     <table
       class="min-w-full divide-y divide-neutral-200 text-neutral-400 w-full overflow-y-scroll text-xs xl:overflow-auto"
@@ -17,7 +17,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               class="flex items-center gap-1 cursor-pointer select-none"
               type="button"
             >
-              Pods (1)
+              Instance (1)
               <i
                 aria-hidden="true"
                 class="fa-solid fa-arrow-down text-xs"

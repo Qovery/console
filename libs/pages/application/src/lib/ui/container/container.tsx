@@ -1,6 +1,8 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useContext } from 'react'
+import { type PropsWithChildren, useContext, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database } from '@qovery/domains/services/data-access'
@@ -18,6 +20,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
+  APPLICATION_MONITORING_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
   APPLICATION_VARIABLES_URL,
@@ -33,12 +36,25 @@ export interface ContainerProps extends PropsWithChildren {
 
 export function Container({ children }: ContainerProps) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+
+  const isServiceObsEnabled = useFeatureFlagVariantKey('service-obs')
+
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
 
   const { setOpen } = useContext(ServiceTerminalContext)
 
-  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
+  const hasMetrics = useMemo(
+    () =>
+      (isServiceObsEnabled &&
+        cluster?.metrics_parameters?.enabled &&
+        match(service?.serviceType)
+          .with('APPLICATION', 'CONTAINER', () => true)
+          .otherwise(() => false)) ||
+      false,
+    [isServiceObsEnabled, cluster?.metrics_parameters?.enabled, service?.serviceType]
+  )
 
   const location = useLocation()
 
@@ -59,6 +75,18 @@ export function Container({ children }: ContainerProps) {
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
     },
+    ...(hasMetrics
+      ? [
+          {
+            icon: <Icon iconName="chart-line" iconStyle="regular" />,
+            name: 'Monitoring',
+            active:
+              location.pathname ===
+              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_MONITORING_URL,
+            link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_MONITORING_URL,
+          },
+        ]
+      : []),
     {
       icon: <Icon iconName="key" iconStyle="regular" />,
       name: 'Variables',
