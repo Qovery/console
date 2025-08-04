@@ -38,6 +38,9 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                     {description}
                   </Dialog.Description>
                 )}
+                <span className="text-xs text-neutral-400">
+                  Drag to zoom in - ctrl/cmd+click to zoom out - double click to reset
+                </span>
               </div>
               <div className="flex items-center gap-10">
                 <div className="flex items-center gap-5">
