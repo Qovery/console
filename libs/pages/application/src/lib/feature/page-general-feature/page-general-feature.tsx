@@ -10,9 +10,9 @@ const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 export function PageGeneralFeature() {
   const { applicationId = '', organizationId = '', projectId = '', environmentId = '' } = useParams()
-  const { data: service } = useService({ environmentId, serviceId: applicationId })
 
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
 
   return (
     <>

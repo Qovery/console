@@ -13,10 +13,10 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { usePodColor } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { type LogType } from '../../hooks/use-service-logs/use-service-logs'
 import { UpdateTimeContext } from '../../update-time-context/update-time-context'
-import { usePodColor } from '../use-pod-color'
 import './style.scss'
 
 const { Table } = TablePrimitives

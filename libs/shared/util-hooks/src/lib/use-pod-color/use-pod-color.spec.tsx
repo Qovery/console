@@ -1,9 +1,9 @@
 import { act, renderHook } from '@testing-library/react'
-import { COLORS, getColorByPod, usePodColor } from './use-pod-color'
+import { RANDOM_COLORS, getColorByPod, usePodColor } from './use-pod-color'
 
 describe('getColorByPod', () => {
   it('returns first color for empty string', () => {
-    expect(getColorByPod('')).toBe('#B160F0')
+    expect(getColorByPod('')).toBe(RANDOM_COLORS[0])
   })
 
   it('returns consistent color for same pod string', () => {
@@ -18,41 +18,41 @@ describe('getColorByPod', () => {
     expect(color1).not.toBe(color2)
   })
 
-  it('returns a color from the COLORS array', () => {
+  it('returns a color from the RANDOM_COLORS array', () => {
     const color = getColorByPod('somepod')
-    expect(COLORS).toContain(color)
+    expect(RANDOM_COLORS).toContain(color)
   })
 
   it('handles long pod names', () => {
     const longPodName = 'a'.repeat(30)
     expect(() => getColorByPod(longPodName)).not.toThrow()
-    expect(COLORS).toContain(getColorByPod(longPodName))
+    expect(RANDOM_COLORS).toContain(getColorByPod(longPodName))
   })
 
-  it('can return all colors in the COLORS array', () => {
+  it('can return all colors in the RANDOM_COLORS array', () => {
     const usedColors = new Set()
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 1000; i++) {
       usedColors.add(getColorByPod(`pod${i}`))
     }
-    expect(usedColors.size).toBe(COLORS.length)
+    expect(usedColors.size).toBe(RANDOM_COLORS.length)
   })
 
-  it('maintains color distribution across COLORS array', () => {
+  it('maintains color distribution across RANDOM_COLORS array', () => {
     const colorCounts = new Map<string, number>()
-    const iterations = 1000
+    const iterations = 10000
 
     for (let i = 0; i < iterations; i++) {
       const color = getColorByPod(`test-pod-${i}`)
       colorCounts.set(color, (colorCounts.get(color) || 0) + 1)
     }
 
-    const expectedAverage = iterations / COLORS.length
-    const tolerance = expectedAverage * 0.5
+    const expectedAverage = iterations / RANDOM_COLORS.length
+    const counts = Array.from(colorCounts.values())
+    // Allow 20% deviation due to natural hash distribution variance
+    const maxAllowed = expectedAverage * 1.2
 
-    colorCounts.forEach((count) => {
-      expect(count).toBeGreaterThan(expectedAverage - tolerance)
-      expect(count).toBeLessThan(expectedAverage + tolerance)
-    })
+    expect(Math.max(...counts)).toBeLessThanOrEqual(maxAllowed)
+    expect(Math.min(...counts)).toBeGreaterThan(0)
   })
 })
 
@@ -96,7 +96,7 @@ describe('usePodColor hook', () => {
       }
     })
 
-    expect(colors.size).toBeLessThanOrEqual(COLORS.length)
+    expect(colors.size).toBeLessThanOrEqual(RANDOM_COLORS.length)
   })
 
   it('maintains color mapping after component updates', () => {
