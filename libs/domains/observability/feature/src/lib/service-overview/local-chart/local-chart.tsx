@@ -456,16 +456,21 @@ export function LocalChart({
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
         {label && (
           <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
-            <Heading className="flex items-center gap-1">
-              {label}
-              {description && (
-                <Tooltip content={description}>
-                  <span>
-                    <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-350" />
-                  </span>
-                </Tooltip>
-              )}
-            </Heading>
+            <div className="flex items-center gap-2">
+              <Heading className="flex items-center gap-1">
+                {label}
+                {description && (
+                  <Tooltip content={description}>
+                    <span>
+                      <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-350" />
+                    </span>
+                  </Tooltip>
+                )}
+              </Heading>
+              <span className="text-xs text-neutral-400">
+                Drag to zoom in - ctrl/cmd+click to zoom out - double click to reset
+              </span>
+            </div>
             <Tooltip content="View events details">
               <Button
                 variant="surface"
