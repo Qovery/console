@@ -6,6 +6,22 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+const queryDiskReadNvme = (serviceId: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})
+`
+
+const queryDiskReadNonNvme = (serviceId: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})
+`
+
+const queryDiskWriteNvme = (serviceId: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})
+`
+
+const queryDiskWriteNonNvme = (serviceId: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})
+`
+
 export function DiskChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
@@ -13,7 +29,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    query: queryDiskReadNvme(serviceId),
     timeRange,
   })
 
@@ -21,7 +37,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    query: queryDiskReadNonNvme(serviceId),
     timeRange,
   })
 
@@ -29,7 +45,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container!="", pod=~".+", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    query: queryDiskWriteNvme(serviceId),
     timeRange,
   })
 
@@ -37,7 +53,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: `sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container="", pod=~".+", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by (namespace, pod) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"})`,
+    query: queryDiskWriteNonNvme(serviceId),
     timeRange,
   })
 

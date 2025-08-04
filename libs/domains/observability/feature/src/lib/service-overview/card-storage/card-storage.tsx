@@ -5,13 +5,7 @@ import { ModalChart } from '../modal-chart/modal-chart'
 import { PersistentStorageChart } from '../persistent-storage-chart/persistent-storage-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function CardStorage({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
-  const { timeRange } = useServiceOverviewContext()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
-    clusterId,
-    query: `
+const query = (serviceId: string, timeRange: string) => `
   max (max_over_time(
   (
     (
@@ -28,7 +22,16 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
           max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
     ) * 100
   )[${timeRange}:1m]
-))`,
+))
+`
+
+export function CardStorage({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+  const { timeRange } = useServiceOverviewContext()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+    clusterId,
+    query: query(serviceId, timeRange),
     queryRange: 'query',
     timeRange,
   })

@@ -6,39 +6,20 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey, timeRange } =
-    useServiceOverviewContext()
+const queryInstanceStatus = (serviceId: string) => `
+  sum(kube_pod_status_ready{condition="true"} * on(namespace,pod) group_left(label_qovery_com_service_id) max by(namespace,pod,label_qovery_com_service_id)(kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))
+`
 
-  const { data: metricsNumberOfInstances, isLoading: isLoadingNumberOfInstances } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum(kube_pod_status_ready{condition="true"} * on(namespace,pod) group_left(label_qovery_com_service_id) max by(namespace,pod,label_qovery_com_service_id)(kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
-    timeRange,
-  })
+const queryMinReplicas = (serviceId: string) => `
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))
+`
 
-  const { data: metricsHpaMinReplicas, isLoading: isLoadingHpaMinReplicas } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
-    timeRange,
-  })
+const queryMaxReplicas = (serviceId: string) => `
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))
+`
 
-  const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))`,
-    timeRange,
-  })
-
-  const { data: metricsHpaMaxLimitReached, isLoading: isHpaMaxLimitReached } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    query: `sum by (label_qovery_com_service_id) (
+const queryMaxLimitReached = (serviceId: string) => `
+  sum by (label_qovery_com_service_id) (
   increase(
     kube_horizontalpodautoscaler_status_condition{
       condition = "ScalingLimited",
@@ -63,7 +44,42 @@ export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: 
       label_qovery_com_service_id =~ "${serviceId}"
     }
   ) > 0
-)`,
+)
+`
+
+export function InstanceAutoscalingChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey, timeRange } =
+    useServiceOverviewContext()
+
+  const { data: metricsNumberOfInstances, isLoading: isLoadingNumberOfInstances } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: queryInstanceStatus(serviceId),
+    timeRange,
+  })
+
+  const { data: metricsHpaMinReplicas, isLoading: isLoadingHpaMinReplicas } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: queryMinReplicas(serviceId),
+    timeRange,
+  })
+
+  const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: queryMaxReplicas(serviceId),
+    timeRange,
+  })
+
+  const { data: metricsHpaMaxLimitReached, isLoading: isHpaMaxLimitReached } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    query: queryMaxLimitReached(serviceId),
     timeRange,
   })
 

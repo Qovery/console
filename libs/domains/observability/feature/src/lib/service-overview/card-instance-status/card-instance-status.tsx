@@ -5,43 +5,45 @@ import { InstanceStatusChart } from '../instance-status-chart/instance-status-ch
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+const query = (serviceId: string, timeRange: string) => `
+  (
+    round(
+      sum(
+        increase(
+          kube_pod_container_status_restarts_total{container!="POD"}[${timeRange}]
+        )
+        * on(namespace, pod) group_left(label_qovery_com_service_id)
+          max by(namespace, pod, label_qovery_com_service_id)(
+            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+          )
+      )
+    )
+    or vector(0)
+  )
+  +
+  sum_over_time(
+    (
+      sum(
+        (
+          kube_pod_container_status_waiting_reason{
+            container!="POD",
+            reason!~"ContainerCreating|PodInitializing|Completed"
+          }
+          * on(namespace, pod) group_left(label_qovery_com_service_id)
+            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+        )
+        or vector(0)
+      )
+    )[${timeRange}:]
+  )
+`
+
 export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: `
-    (
-      round(
-        sum(
-          increase(
-            kube_pod_container_status_restarts_total{container!="POD"}[${timeRange}]
-          )
-          * on(namespace, pod) group_left(label_qovery_com_service_id)
-            max by(namespace, pod, label_qovery_com_service_id)(
-              kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-            )
-        )
-      )
-      or vector(0)
-    )
-    +
-    sum_over_time(
-      (
-        sum(
-          (
-            kube_pod_container_status_waiting_reason{
-              container!="POD",
-              reason!~"ContainerCreating|PodInitializing|Completed"
-            }
-            * on(namespace, pod) group_left(label_qovery_com_service_id)
-              kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-          )
-          or vector(0)
-        )
-      )[${timeRange}:]
-    )
-  `,
+    query: query(serviceId, timeRange),
     queryRange: 'query',
     timeRange,
   })

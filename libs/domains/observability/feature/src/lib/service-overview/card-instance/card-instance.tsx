@@ -6,13 +6,8 @@ import { InstanceAutoscalingChart } from '../instance-autoscaling-chart/instance
 import ModalChart from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-export function CardInstance({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
-  const { timeRange } = useServiceOverviewContext()
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useMetrics({
-    clusterId,
-    query: `max_over_time(
+const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
+  max_over_time(
     (
     sum by (label_qovery_com_service_id) (
 
@@ -41,25 +36,34 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
       )
     ) > bool 0
   )[${timeRange}:])
+`
 
-    `,
+const queryMaxInstances = (serviceId: string, timeRange: string) => `
+  max_over_time(
+    count(
+      kube_pod_status_ready{condition="true"}
+        * on(namespace, pod) group_left(label_qovery_com_service_id)
+          max by(namespace, pod, label_qovery_com_service_id)(
+            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+          )
+    )[${timeRange}:]
+  )
+`
+
+export function CardInstance({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+  const { timeRange } = useServiceOverviewContext()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useMetrics({
+    clusterId,
+    query: queryAutoscalingReached(serviceId, timeRange),
     queryRange: 'query',
     timeRange,
   })
 
   const { data: metricsMaxInstances, isLoading: isLoadingMetricsMaxInstances } = useMetrics({
     clusterId,
-    query: `
-    max_over_time(
-      count(
-        kube_pod_status_ready{condition="true"}
-          * on(namespace, pod) group_left(label_qovery_com_service_id)
-            max by(namespace, pod, label_qovery_com_service_id)(
-              kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-            )
-      )[${timeRange}:]
-    )
-  `,
+    query: queryMaxInstances(serviceId, timeRange),
     queryRange: 'query',
   })
 

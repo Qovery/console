@@ -6,6 +6,87 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+const queryUnhealthyPods = (serviceId: string) => `
+  sum by (condition)(kube_pod_status_ready{condition=~"false"}
+  * on(namespace,pod) group_left(label_qovery_com_service_id)
+    max by(namespace,pod,label_qovery_com_service_id)(
+      kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+    )) > 0
+`
+
+const queryHealthyPods = (serviceId: string) => `
+  sum by (condition)(kube_pod_status_ready{condition=~"true"}
+  * on(namespace,pod) group_left(label_qovery_com_service_id)
+    max by(namespace,pod,label_qovery_com_service_id)(
+      kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+    )) > 0
+`
+
+const queryPodReason = (serviceId: string, dynamicRange: string) => `
+  sum by (pod, reason) (
+    (
+      kube_pod_container_status_last_terminated_reason{} == 1
+    )
+    * on(namespace, pod) group_left(label_qovery_com_service_id)
+      max by(namespace, pod, label_qovery_com_service_id) (
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )
+    unless on(namespace, pod, reason)
+    (
+      (
+        kube_pod_container_status_last_terminated_reason{} offset ${dynamicRange} == 1
+      )
+      * on(namespace, pod) group_left(label_qovery_com_service_id)
+        max by(namespace, pod, label_qovery_com_service_id) (
+          kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+        )
+    )
+  )
+`
+
+const queryExitCode = (serviceId: string, dynamicRange: string) => `
+  (
+    kube_pod_container_status_last_terminated_exitcode
+    * on(namespace, pod) group_left(label_qovery_com_service_id)
+      max by(namespace, pod, label_qovery_com_service_id) (
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )
+  )
+  and on(namespace, pod, container)
+  (
+    kube_pod_container_status_restarts_total
+    >
+    kube_pod_container_status_restarts_total offset ${dynamicRange}
+  )
+`
+
+const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
+  sum by (pod,reason)(
+  (
+    k8s_event_logger_q_k8s_events_total{
+      qovery_com_service_id=~"${serviceId}",
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+    }
+    -
+    k8s_event_logger_q_k8s_events_total{
+      qovery_com_service_id=~"${serviceId}",
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+    } offset ${dynamicRange}
+  ) > 0
+)
+`
+
+const queryProbe = (serviceId: string) => `
+ sum by (probe_type) (   increase(
+      prober_probe_total{result!="successful", probe_type="Readiness"}[1m]
+    )
+    * on(namespace,pod) group_left(label_qovery_com_service_id)
+      max by(namespace,pod,label_qovery_com_service_id)(
+        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      )
+      )
+`
+
 const getDescriptionFromReason = (reason: string): string => {
   switch (reason) {
     case 'OOMKilled':
@@ -143,11 +224,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: `sum by (condition)(kube_pod_status_ready{condition=~"false"}
-    * on(namespace,pod) group_left(label_qovery_com_service_id)
-      max by(namespace,pod,label_qovery_com_service_id)(
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      )) > 0`,
+    query: queryUnhealthyPods(serviceId),
   })
 
   const { data: metricsHealthy, isLoading: isLoadingHealthy } = useMetrics({
@@ -155,11 +232,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: `sum by (condition)(kube_pod_status_ready{condition=~"true"}
-    * on(namespace,pod) group_left(label_qovery_com_service_id)
-      max by(namespace,pod,label_qovery_com_service_id)(
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      )) > 0`,
+    query: queryHealthyPods(serviceId),
   })
 
   const { data: metricsReason, isLoading: isLoadingMetricsReason } = useMetrics({
@@ -167,26 +240,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: `
-  sum by (pod, reason) (
-    (
-      kube_pod_container_status_last_terminated_reason{} == 1
-    )
-    * on(namespace, pod) group_left(label_qovery_com_service_id)
-      max by(namespace, pod, label_qovery_com_service_id) (
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      )
-    unless on(namespace, pod, reason)
-    (
-      (
-        kube_pod_container_status_last_terminated_reason{} offset ${dynamicRange} == 1
-      )
-      * on(namespace, pod) group_left(label_qovery_com_service_id)
-        max by(namespace, pod, label_qovery_com_service_id) (
-          kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-        )
-    )
-  )`,
+    query: queryPodReason(serviceId, dynamicRange),
   })
 
   const { data: metricsExitCode, isLoading: isLoadingMetricsExitCode } = useMetrics({
@@ -194,21 +248,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: `
-  (
-    kube_pod_container_status_last_terminated_exitcode
-    * on(namespace, pod) group_left(label_qovery_com_service_id)
-      max by(namespace, pod, label_qovery_com_service_id) (
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      )
-  )
-  and on(namespace, pod, container)
-  (
-    kube_pod_container_status_restarts_total
-    >
-    kube_pod_container_status_restarts_total offset ${dynamicRange}
-  )
-`,
+    query: queryExitCode(serviceId, dynamicRange),
   })
 
   const { data: metricsK8sEvent, isLoading: isLoadingMetricsK8sEvent } = useMetrics({
@@ -216,21 +256,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: `
-  sum by (pod,reason)(
-  (
-    k8s_event_logger_q_k8s_events_total{
-      qovery_com_service_id=~"${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
-    }
-    -
-    k8s_event_logger_q_k8s_events_total{
-      qovery_com_service_id=~"${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
-    } offset ${dynamicRange}
-  ) > 0
-)
-`,
+    query: queryK8sEvent(serviceId, dynamicRange),
   })
 
   const { data: metricsProbe, isLoading: isLoadingMetricsProbe } = useMetrics({
@@ -238,16 +264,7 @@ export function InstanceStatusChart({ clusterId, serviceId }: { clusterId: strin
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: `
- sum by (probe_type) (   increase(
-      prober_probe_total{result!="successful", probe_type="Readiness"}[1m]
-    )
-    * on(namespace,pod) group_left(label_qovery_com_service_id)
-      max by(namespace,pod,label_qovery_com_service_id)(
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-      )
-      )
-`,
+    query: queryProbe(serviceId),
   })
 
   const chartData = useMemo(() => {

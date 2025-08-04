@@ -5,31 +5,35 @@ import { InstanceHTTPErrorsChart } from '../instance-http-errors-chart/instance-
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+const query = (serviceId: string, timeRange: string) => `
+  100 *
+  sum(
+    rate(nginx_ingress_controller_requests{status!~"2.."}[${timeRange}])
+      * on(ingress) group_left(label_qovery_com_associated_service_id)
+        max by(ingress, label_qovery_com_associated_service_id)(
+          kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
+        )
+  )
+  /
+  clamp_min(
+    sum(
+      rate(nginx_ingress_controller_requests[${timeRange}])
+        * on(ingress) group_left(label_qovery_com_associated_service_id)
+          max by(ingress, label_qovery_com_associated_service_id)(
+            kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
+          )
+    ),
+    1
+  ) or vector(0)
+`
+
 export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: `100 *
-      sum(
-        rate(nginx_ingress_controller_requests{status!~"2.."}[${timeRange}])
-          * on(ingress) group_left(label_qovery_com_associated_service_id)
-            max by(ingress, label_qovery_com_associated_service_id)(
-              kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
-            )
-      )
-      /
-      clamp_min(
-        sum(
-          rate(nginx_ingress_controller_requests[${timeRange}])
-            * on(ingress) group_left(label_qovery_com_associated_service_id)
-              max by(ingress, label_qovery_com_associated_service_id)(
-                kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
-              )
-        ),
-        1
-      ) or vector(0)`,
+    query: query(serviceId, timeRange),
     queryRange: 'query',
     timeRange,
   })

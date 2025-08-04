@@ -5,29 +5,31 @@ import ModalChart from '../modal-chart/modal-chart'
 import NetworkRequestDurationChart from '../network-request-duration-chart/network-request-duration-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+const query = (serviceId: string, timeRange: string) => `
+  max_over_time(
+    histogram_quantile(
+      0.50,
+      (
+        sum by(le, ingress) (
+          rate(nginx_ingress_controller_request_duration_seconds_bucket[1m])
+        )
+        * on(ingress) group_left(label_qovery_com_associated_service_id)
+          max by(ingress, label_qovery_com_associated_service_id)(
+            kube_ingress_labels{
+              label_qovery_com_associated_service_id =~ "${serviceId}"
+            }
+          )
+      )
+    )[${timeRange}:]
+  )
+`
+
 export function CardPercentile50({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: `max_over_time(
-  histogram_quantile(
-    0.5,
-    (
-      sum by(le, ingress) (
-        rate(nginx_ingress_controller_request_duration_seconds_bucket[1m])
-      )
-      * on(ingress) group_left(label_qovery_com_associated_service_id)
-        max by(ingress, label_qovery_com_associated_service_id)(
-          kube_ingress_labels{
-            label_qovery_com_associated_service_id =~ "${serviceId}"
-          }
-        )
-    )
-  )[${timeRange}:]
-)
-
-  `,
+    query: query(serviceId, timeRange),
     queryRange: 'query',
     timeRange,
   })

@@ -9,28 +9,32 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+const queryVolumeUsage = (serviceId: string): string => `
+  sum by (persistentvolumeclaim) (
+  (
+    kubelet_volume_stats_used_bytes
+    * on(namespace, persistentvolumeclaim)
+      group_left(label_qovery_com_service_id)
+        max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
+  )
+  /
+  (
+    kubelet_volume_stats_capacity_bytes
+    * on(namespace, persistentvolumeclaim)
+      group_left(label_qovery_com_service_id)
+        max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
+  ) * 100
+)
+`
+
 export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { data: service } = useService({ serviceId })
   const getColorByVolume = usePodColor()
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const buildVolumeQuery = (serviceId: string, storage: { id: string; mount_point: string }[]) => {
+  const buildVolumeQuery = (serviceId: string, storage: { id: string; mount_point: string }[]): string => {
     // Base PromQL ratio expression
-    let promQL = `sum by (persistentvolumeclaim) (
-    (
-      kubelet_volume_stats_used_bytes
-      * on(namespace, persistentvolumeclaim)
-        group_left(label_qovery_com_service_id)
-          max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
-    )
-    /
-    (
-      kubelet_volume_stats_capacity_bytes
-      * on(namespace, persistentvolumeclaim)
-        group_left(label_qovery_com_service_id)
-          max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
-    ) * 100
-  )`
+    let promQL: string = queryVolumeUsage(serviceId)
 
     // Inject label_replace for each known volume id
     for (const { id, mount_point } of storage) {
@@ -47,14 +51,14 @@ export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: st
     .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (service) => service.storage ?? [])
     .otherwise(() => [])
 
-  const query = buildVolumeQuery(serviceId, storage)
+  const finalQuery = buildVolumeQuery(serviceId, storage)
 
   const { data: metricsVolumeUsed, isLoading: isLoadingVolumeUsed } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query,
+    query: finalQuery,
   })
 
   const chartData = useMemo(() => {

@@ -4,6 +4,10 @@ import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+const query = (serviceId: string, timeRange: string) => `
+  sum (increase(promtail_custom_q_log_errors_total{qovery_com_service_id=~"${serviceId}"}[${timeRange}]))
+`
+
 export function CardLogErrors({
   organizationId,
   projectId,
@@ -22,7 +26,7 @@ export function CardLogErrors({
   const { timeRange } = useServiceOverviewContext()
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: `sum (increase(promtail_custom_q_log_errors_total{qovery_com_service_id=~"${serviceId}"}[${timeRange}]))`,
+    query: query(serviceId, timeRange),
     queryRange: 'query',
     timeRange,
   })
