@@ -3,7 +3,6 @@ import {
   EnvironmentDeploymentStatusEnum,
   type EnvironmentStatus,
   OrganizationEventTargetType,
-  ServiceTypeEnum,
   StateEnum,
 } from 'qovery-typescript-axios'
 import { useLocation } from 'react-router-dom'
@@ -27,7 +26,6 @@ import {
   isDeployAvailable,
   isRedeployAvailable,
   isStopAvailable,
-  isUninstallAvailable,
 } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
@@ -213,7 +211,7 @@ function MenuManageDeployment({
             {tooltipService('Stop compute resources *but* keep the data')}
           </DropdownMenu.Item>
         )}
-        {isUninstallAvailable(state) && (
+        {isDeleteAvailable(state) && (
           <DropdownMenu.Item icon={<Icon iconName="inbox-out" />} color="red" onSelect={mutationUninstall}>
             Uninstall
             {tooltipService('Delete all resources and associated data *but* keep the services configuration')}
