@@ -151,7 +151,7 @@ describe('CardHTTPErrors', () => {
     await userEvent.click(cardButton)
 
     await waitFor(() => {
-      expect(screen.getByText('The number of HTTP errors over time.')).toBeInTheDocument()
+      expect(screen.getByText('Number of HTTP errors over time.')).toBeInTheDocument()
       expect(screen.getByTestId('instance-http-errors-chart')).toBeInTheDocument()
       expect(screen.getByRole('dialog')).toBeInTheDocument()
     })

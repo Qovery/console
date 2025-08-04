@@ -1,6 +1,6 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useContext } from 'react'
+import { type PropsWithChildren, useContext, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -45,13 +45,16 @@ export function Container({ children }: ContainerProps) {
 
   const { setOpen } = useContext(ServiceTerminalContext)
 
-  const hasMetrics =
-    (isServiceObsEnabled &&
-      cluster?.metrics_parameters?.enabled &&
-      match(service?.serviceType)
-        .with('APPLICATION', 'CONTAINER', () => true)
-        .otherwise(() => false)) ||
-    false
+  const hasMetrics = useMemo(
+    () =>
+      (isServiceObsEnabled &&
+        cluster?.metrics_parameters?.enabled &&
+        match(service?.serviceType)
+          .with('APPLICATION', 'CONTAINER', () => true)
+          .otherwise(() => false)) ||
+      false,
+    [isServiceObsEnabled, cluster?.metrics_parameters?.enabled, service?.serviceType]
+  )
 
   const location = useLocation()
 

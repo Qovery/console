@@ -1,4 +1,5 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -18,13 +19,16 @@ export function PageMonitoringFeature() {
     clusterId: environment?.cluster_id ?? '',
   })
 
-  const hasMetrics =
-    (isServiceObsEnabled &&
-      cluster?.metrics_parameters?.enabled &&
-      match(service?.serviceType)
-        .with('APPLICATION', 'CONTAINER', () => true)
-        .otherwise(() => false)) ||
-    false
+  const hasMetrics = useMemo(
+    () =>
+      (isServiceObsEnabled &&
+        cluster?.metrics_parameters?.enabled &&
+        match(service?.serviceType)
+          .with('APPLICATION', 'CONTAINER', () => true)
+          .otherwise(() => false)) ||
+      false,
+    [isServiceObsEnabled, cluster?.metrics_parameters?.enabled, service?.serviceType]
+  )
 
   if (!hasMetrics) return null
 

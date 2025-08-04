@@ -67,7 +67,7 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
       {isModalOpen && (
         <ModalChart
           title={title}
-          description="The number of healthy and unhealthy instances over time."
+          description="Number of healthy and unhealthy instances over time."
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
         >

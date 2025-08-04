@@ -117,16 +117,19 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
   ])
 
   // Calculate symmetric yDomain
-  const maxAbs = chartData.length
-    ? Math.max(
-        ...chartData.flatMap((d) => [
-          Math.abs(Number(d['read-ephemeral-storage'] ?? 0)),
-          Math.abs(Number(d['read-persistent-storage'] ?? 0)),
-          Math.abs(Number(d['write-ephemeral-storage'] ?? 0)),
-          Math.abs(Number(d['write-persistent-storage'] ?? 0)),
-        ])
-      )
-    : 1
+  const maxAbs = useMemo(() => {
+    return chartData.length
+      ? Math.max(
+          ...chartData.flatMap((d) => [
+            Math.abs(Number(d['read-ephemeral-storage'] ?? 0)),
+            Math.abs(Number(d['read-persistent-storage'] ?? 0)),
+            Math.abs(Number(d['write-ephemeral-storage'] ?? 0)),
+            Math.abs(Number(d['write-persistent-storage'] ?? 0)),
+          ])
+        )
+      : 1
+  }, [chartData])
+
   const yDomain: [number, number] = [-Math.round(maxAbs), Math.round(maxAbs)]
 
   return (

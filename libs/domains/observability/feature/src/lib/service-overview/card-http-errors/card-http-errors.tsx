@@ -57,7 +57,7 @@ export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; cl
       {isModalOpen && (
         <ModalChart
           title={title}
-          description="The number of HTTP errors over time."
+          description="Number of HTTP errors over time."
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
         >

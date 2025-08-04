@@ -55,7 +55,7 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
       {isModalOpen && (
         <ModalChart
           title={title}
-          description="The storage usage over time."
+          description="Storage usage over time."
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
         >

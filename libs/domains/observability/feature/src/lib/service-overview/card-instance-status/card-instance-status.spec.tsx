@@ -153,7 +153,7 @@ describe('CardInstanceStatus', () => {
     await userEvent.click(cardButton)
 
     await waitFor(() => {
-      expect(screen.getByText('The number of healthy and unhealthy instances over time.')).toBeInTheDocument()
+      expect(screen.getByText('Number of healthy and unhealthy instances over time.')).toBeInTheDocument()
       expect(screen.getByTestId('instance-status-chart')).toBeInTheDocument()
       expect(screen.getByRole('dialog')).toBeInTheDocument()
     })

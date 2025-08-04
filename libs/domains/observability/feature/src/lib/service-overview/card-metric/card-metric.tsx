@@ -1,6 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { type ComponentProps, type ReactNode } from 'react'
+import { type ComponentProps, type ReactNode, useMemo } from 'react'
 import { Button, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -28,7 +28,7 @@ export function CardMetric({
   onClick,
   ...props
 }: CardMetricProps) {
-  const getStatusColor = () => {
+  const statusColor = useMemo(() => {
     switch (status) {
       case 'GREEN':
         return 'green'
@@ -39,18 +39,21 @@ export function CardMetric({
       default:
         return 'neutral'
     }
-  }
+  }, [status])
 
-  const getStatusDot = () => {
-    const color = getStatusColor()
+  const statusDot = useMemo(() => {
     const dotClasses = {
       green: 'bg-green-500',
       yellow: 'bg-yellow-500',
       red: 'bg-red-500',
     }
 
-    return <div className={`relative top-[1px] h-2 w-2 rounded-full ${dotClasses[color as keyof typeof dotClasses]}`} />
-  }
+    return (
+      <div
+        className={`relative top-[1px] h-2 w-2 rounded-full ${dotClasses[statusColor as keyof typeof dotClasses]}`}
+      />
+    )
+  }, [statusColor])
 
   return (
     <button
@@ -71,7 +74,7 @@ export function CardMetric({
           <div className="flex items-center gap-2.5">
             <p className="text-sm text-neutral-400">{title}</p>
             <Skeleton show={isLoading} width={8} height={8} rounded>
-              {getStatusDot()}
+              {statusDot}
             </Skeleton>
           </div>
           {(hasModalLink || onClick) && (

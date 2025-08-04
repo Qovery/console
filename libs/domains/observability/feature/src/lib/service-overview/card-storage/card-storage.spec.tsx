@@ -152,7 +152,7 @@ describe('CardStorage', () => {
     await userEvent.click(mainButton)
 
     await waitFor(() => {
-      expect(screen.getByText('The storage usage over time.')).toBeInTheDocument()
+      expect(screen.getByText('Storage usage over time.')).toBeInTheDocument()
       expect(screen.getByTestId('persistent-storage-chart')).toBeInTheDocument()
       expect(screen.getByRole('dialog')).toBeInTheDocument()
     })

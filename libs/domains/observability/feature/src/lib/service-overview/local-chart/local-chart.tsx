@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useState } from 'react'
+import { type PropsWithChildren, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -354,77 +354,81 @@ export function LocalChart({
 
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
-  const eventReferenceLines: ReferenceLineEvent[] = (eventsFiltered || [])
-    .filter(
-      (event) =>
-        (event.event_type === 'TRIGGER_DEPLOY' ||
-          event.event_type === 'DEPLOY_FAILED' ||
-          event.event_type === 'DEPLOYED') &&
-        event.target_id === serviceId
-    )
-    .map((event) => {
-      const eventTimestamp = new Date(event.timestamp || 0).getTime()
-      const key = `event-${event.id || eventTimestamp}`
-      const change = JSON.parse(event.change || '')
-      // TODO: Add support for other service types and clean-up api endpoint
-      const version =
-        change?.service_source?.image?.tag ??
-        change?.service_source?.docker?.git_repository?.deployed_commit_id ??
-        'Unknown'
+  const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
+    return (eventsFiltered || [])
+      .filter(
+        (event) =>
+          (event.event_type === 'TRIGGER_DEPLOY' ||
+            event.event_type === 'DEPLOY_FAILED' ||
+            event.event_type === 'DEPLOYED') &&
+          event.target_id === serviceId
+      )
+      .map((event) => {
+        const eventTimestamp = new Date(event.timestamp || 0).getTime()
+        const key = `event-${event.id || eventTimestamp}`
+        const change = JSON.parse(event.change || '')
+        // TODO: Add support for other service types and clean-up api endpoint
+        const version =
+          change?.service_source?.image?.tag ??
+          change?.service_source?.docker?.git_repository?.deployed_commit_id ??
+          'Unknown'
 
-      const repository =
-        change?.service_source?.image?.image_name ?? change?.service_source?.docker?.git_repository?.url ?? 'Unknown'
+        const repository =
+          change?.service_source?.image?.image_name ?? change?.service_source?.docker?.git_repository?.url ?? 'Unknown'
 
-      if (event.event_type === 'DEPLOY_FAILED') {
+        if (event.event_type === 'DEPLOY_FAILED') {
+          return {
+            type: 'event',
+            timestamp: eventTimestamp,
+            reason: 'Deploy failed',
+            icon: 'xmark',
+            color: 'var(--color-red-500)',
+            key,
+            version,
+            repository,
+          }
+        } else if (event.event_type === 'DEPLOYED') {
+          return {
+            type: 'event',
+            timestamp: eventTimestamp,
+            reason: 'Deployed',
+            icon: 'check',
+            color: 'var(--color-green-500)',
+            key,
+            version,
+            repository,
+          }
+        } else if (event.event_type === 'TRIGGER_DEPLOY') {
+          return {
+            type: 'event',
+            timestamp: eventTimestamp,
+            reason: 'Trigger deploy',
+            icon: 'play',
+            iconStyle: 'solid',
+            color: 'var(--color-brand-500)',
+            key,
+            version,
+            repository,
+          }
+        }
+
         return {
           type: 'event',
           timestamp: eventTimestamp,
-          reason: 'Deploy failed',
-          icon: 'xmark',
-          color: 'var(--color-red-500)',
+          reason: 'Unknown',
+          icon: 'question',
+          color: 'var(--color-neutral-350)',
           key,
           version,
           repository,
         }
-      } else if (event.event_type === 'DEPLOYED') {
-        return {
-          type: 'event',
-          timestamp: eventTimestamp,
-          reason: 'Deployed',
-          icon: 'check',
-          color: 'var(--color-green-500)',
-          key,
-          version,
-          repository,
-        }
-      } else if (event.event_type === 'TRIGGER_DEPLOY') {
-        return {
-          type: 'event',
-          timestamp: eventTimestamp,
-          reason: 'Trigger deploy',
-          icon: 'play',
-          iconStyle: 'solid',
-          color: 'var(--color-brand-500)',
-          key,
-          version,
-          repository,
-        }
-      }
-
-      return {
-        type: 'event',
-        timestamp: eventTimestamp,
-        reason: 'Unknown',
-        icon: 'question',
-        color: 'var(--color-neutral-350)',
-        key,
-        version,
-        repository,
-      }
-    })
+      })
+  }, [eventsFiltered, serviceId])
 
   // Merge with any referenceLineData passed as prop
-  const mergedReferenceLineData = [...(referenceLineData || []), ...eventReferenceLines]
+  const mergedReferenceLineData = useMemo(() => {
+    return [...(referenceLineData || []), ...eventReferenceLines]
+  }, [referenceLineData, eventReferenceLines])
 
   return (
     <>

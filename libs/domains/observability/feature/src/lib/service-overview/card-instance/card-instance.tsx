@@ -71,8 +71,8 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
   const maxInstances = metricsMaxInstances?.data?.result[0]?.value[1] ?? 0
 
   const isError = autoscalingReached > 0
-
   const title = 'Autoscaling limit reached'
+  const pluralizeMaxInstances = pluralize(maxInstances, 'instance', 'instances')
 
   return (
     <>
@@ -83,8 +83,8 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
         isLoading={isLoadingMetricsAutoscalingReached || isLoadingMetricsMaxInstances}
         description={
           isError
-            ? `Blocked max ${maxInstances} ${pluralize(maxInstances, 'instance', 'instances')}`
-            : `Max ${pluralize(maxInstances, 'instance', 'instances')}: ${maxInstances}`
+            ? `Blocked max ${maxInstances} ${pluralizeMaxInstances}`
+            : `Max ${pluralizeMaxInstances}: ${maxInstances}`
         }
         onClick={() => setIsModalOpen(true)}
         hasModalLink
