@@ -59,7 +59,11 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
   )
 })
 
-const ChartTooltip = RechartsPrimitive.Tooltip
+function ChartTooltip(props: ComponentProps<typeof RechartsPrimitive.Tooltip>) {
+  // Filter out non-DOM props that cause React warnings when passed to div elements
+  const { reverseDirection, useTranslate3d, ...validProps } = props
+  return <RechartsPrimitive.Tooltip {...validProps} />
+}
 
 const ChartTooltipContent = forwardRef<
   HTMLDivElement,
