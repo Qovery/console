@@ -12,14 +12,22 @@ interface ModalChartProps extends PropsWithChildren {
 }
 
 export function ModalChart({ children, open, onOpenChange, title, description }: ModalChartProps) {
-  const { useLocalTime, setUseLocalTime, hideEvents, setHideEvents } = useServiceOverviewContext()
+  const { useLocalTime, setUseLocalTime, hideEvents, setHideEvents, resetChartZoom } = useServiceOverviewContext()
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      // Reset zoom when modal closes
+      resetChartZoom()
+    }
+    onOpenChange(newOpen)
+  }
 
   return (
-    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay
           className="modal__overlay fixed left-0 top-0 flex h-full w-full bg-neutral-700/20"
-          onClick={() => onOpenChange(false)}
+          onClick={() => handleOpenChange(false)}
         />
         <Dialog.Content
           className="modal__content fixed left-1/2 top-6 h-[calc(100vh-48px)] w-[calc(100vw-48px)] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]"

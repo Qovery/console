@@ -21,6 +21,10 @@ interface ServiceOverviewContextType {
   handleTimeRangeChange: (range: TimeRangeOption) => void
   handleZoomTimeRangeChange: (startTimestamp: number, endTimestamp: number) => void
 
+  // Zoom control
+  resetChartZoom: () => void
+  registerZoomReset: (resetFn: () => void) => void
+
   // Events
   setHideEvents: (value: boolean) => void
   hideEvents: boolean
@@ -50,7 +54,27 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [startDate, setStartDate] = useState(thirtyMinutesAgo.toISOString())
   const [endDate, setEndDate] = useState(now.toISOString())
 
-  const handleTimeRangeChange = createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)
+  // Zoom reset functionality
+  const [zoomResetFunctions, setZoomResetFunctions] = useState<(() => void)[]>([])
+
+  const registerZoomReset = (resetFn: () => void) => {
+    setZoomResetFunctions((prev) => [...prev, resetFn])
+    // Return cleanup function
+    return () => {
+      setZoomResetFunctions((prev) => prev.filter((fn) => fn !== resetFn))
+    }
+  }
+
+  const resetChartZoom = () => {
+    zoomResetFunctions.forEach((resetFn) => resetFn())
+  }
+
+  const handleTimeRangeChange = (range: TimeRangeOption) => {
+    // Reset zoom first, then change time range
+    resetChartZoom()
+    // Create a new time range handler that doesn't cause circular dependencies
+    createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)(range)
+  }
 
   const handleZoomTimeRangeChange = (startTimestamp: number, endTimestamp: number) => {
     // Convert timestamps to ISO strings and update dates
@@ -141,6 +165,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     endTimestamp,
     handleTimeRangeChange,
     handleZoomTimeRangeChange,
+    resetChartZoom,
+    registerZoomReset,
     setHideEvents,
     hideEvents,
     expandCharts,

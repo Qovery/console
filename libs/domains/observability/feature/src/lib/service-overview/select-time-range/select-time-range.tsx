@@ -18,6 +18,7 @@ export function SelectTimeRange() {
     setHasCalendarValue,
     hasCalendarValue,
     useLocalTime,
+    resetChartZoom,
   } = useServiceOverviewContext()
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
@@ -29,6 +30,7 @@ export function SelectTimeRange() {
       <DatePicker
         key={startDate + endDate}
         onChange={(startDate, endDate) => {
+          resetChartZoom()
           setStartDate(startDate.toISOString())
           setEndDate(endDate.toISOString())
           setIsOpenTimestamp(false)

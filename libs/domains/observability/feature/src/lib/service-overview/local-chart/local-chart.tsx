@@ -110,6 +110,7 @@ export function ChartContent({
     hoveredEventKey,
     setHoveredEventKey,
     handleZoomTimeRangeChange,
+    registerZoomReset,
   } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
@@ -126,6 +127,7 @@ export function ChartContent({
     getXAxisTicks,
   } = useZoomableChart({
     onZoomChange: handleZoomTimeRangeChange,
+    onResetRegister: registerZoomReset,
   })
 
   function getXDomain(): [number | string, number | string] {
