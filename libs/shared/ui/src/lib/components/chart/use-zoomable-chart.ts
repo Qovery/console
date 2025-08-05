@@ -18,6 +18,7 @@ interface ZoomLevel {
 
 interface UseZoomableChartProps {
   onZoomChange?: (startTime: number, endTime: number) => void
+  onResetRegister?: (resetFn: () => void) => (() => void) | void
 }
 
 interface UseZoomableChartReturn {
@@ -46,7 +47,7 @@ interface UseZoomableChartReturn {
 }
 
 export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomableChartReturn {
-  const { onZoomChange } = props
+  const { onZoomChange, onResetRegister } = props
   // Zoom state
   const [zoomState, setZoomState] = useState<ZoomState>({
     left: 'dataMin',
@@ -57,6 +58,24 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
 
   const [zoomHistory, setZoomHistory] = useState<ZoomLevel[]>([])
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
+
+  // Register reset function with parent component (if provided)
+  useEffect(() => {
+    if (onResetRegister) {
+      const cleanup = onResetRegister(() => {
+        setZoomHistory([])
+        setZoomState((prevState) => ({
+          ...prevState,
+          refAreaLeft: '',
+          refAreaRight: '',
+          left: 'dataMin',
+          right: 'dataMax',
+        }))
+      })
+      return cleanup || undefined
+    }
+    return undefined
+  }, [onResetRegister])
 
   // Keyboard event handlers for zoom
   useEffect(() => {
