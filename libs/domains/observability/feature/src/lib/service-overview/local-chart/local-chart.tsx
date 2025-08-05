@@ -102,8 +102,15 @@ export function ChartContent({
   service,
   isFullscreen = true,
 }: ChartContentProps) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
-    useServiceOverviewContext()
+  const {
+    startTimestamp,
+    endTimestamp,
+    useLocalTime,
+    hideEvents,
+    hoveredEventKey,
+    setHoveredEventKey,
+    handleZoomTimeRangeChange,
+  } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
   // Use the zoomable chart hook
@@ -117,7 +124,9 @@ export function ChartContent({
     handleMouseLeave,
     getXDomain: getZoomXDomain,
     getXAxisTicks,
-  } = useZoomableChart()
+  } = useZoomableChart({
+    onZoomChange: handleZoomTimeRangeChange,
+  })
 
   function getXDomain(): [number | string, number | string] {
     const defaultDomain: [number | string, number | string] = xDomain ?? [

@@ -19,6 +19,7 @@ interface ServiceOverviewContextType {
 
   // Handlers
   handleTimeRangeChange: (range: TimeRangeOption) => void
+  handleZoomTimeRangeChange: (startTimestamp: number, endTimestamp: number) => void
 
   // Events
   setHideEvents: (value: boolean) => void
@@ -50,6 +51,16 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [endDate, setEndDate] = useState(now.toISOString())
 
   const handleTimeRangeChange = createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)
+
+  const handleZoomTimeRangeChange = (startTimestamp: number, endTimestamp: number) => {
+    // Convert timestamps to ISO strings and update dates
+    const startDateISO = new Date(startTimestamp * 1000).toISOString()
+    const endDateISO = new Date(endTimestamp * 1000).toISOString()
+
+    setStartDate(startDateISO)
+    setEndDate(endDateISO)
+    setHasCalendarValue(true) // Show custom date range in the UI
+  }
 
   // Update every 15 seconds to match actual scrape_interval
   // use-metrics.tsx: refetchInterval: 15_000ms
@@ -129,6 +140,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     startTimestamp,
     endTimestamp,
     handleTimeRangeChange,
+    handleZoomTimeRangeChange,
     setHideEvents,
     hideEvents,
     expandCharts,
