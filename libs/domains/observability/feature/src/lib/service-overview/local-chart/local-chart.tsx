@@ -363,6 +363,9 @@ export function LocalChart({
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
   const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
+    // Get chart data timestamps for alignment
+    const chartTimestamps = data.map((d) => d.timestamp).sort((a, b) => a - b)
+
     return (eventsFiltered || [])
       .filter(
         (event) =>
@@ -372,8 +375,18 @@ export function LocalChart({
           event.target_id === serviceId
       )
       .map((event) => {
-        const eventTimestamp = new Date(event.timestamp || 0).getTime()
-        const key = `event-${event.id || eventTimestamp}`
+        const eventTimestamp = new Date(event.timestamp || '').getTime()
+
+        // Find the closest chart data point timestamp
+        let alignedTimestamp = eventTimestamp
+        if (chartTimestamps.length > 0) {
+          const closestTimestamp = chartTimestamps.reduce((prev, curr) => {
+            return Math.abs(curr - eventTimestamp) < Math.abs(prev - eventTimestamp) ? curr : prev
+          })
+          alignedTimestamp = closestTimestamp
+        }
+
+        const key = `event-${event.id || alignedTimestamp}`
         const change = JSON.parse(event.change || '')
         // TODO: Add support for other service types and clean-up api endpoint
         const version =
@@ -387,7 +400,7 @@ export function LocalChart({
         if (event.event_type === 'DEPLOY_FAILED') {
           return {
             type: 'event',
-            timestamp: eventTimestamp,
+            timestamp: alignedTimestamp,
             reason: 'Deploy failed',
             icon: 'xmark',
             color: 'var(--color-red-500)',
@@ -398,7 +411,7 @@ export function LocalChart({
         } else if (event.event_type === 'DEPLOYED') {
           return {
             type: 'event',
-            timestamp: eventTimestamp,
+            timestamp: alignedTimestamp,
             reason: 'Deployed',
             icon: 'check',
             color: 'var(--color-green-500)',
@@ -409,7 +422,7 @@ export function LocalChart({
         } else if (event.event_type === 'TRIGGER_DEPLOY') {
           return {
             type: 'event',
-            timestamp: eventTimestamp,
+            timestamp: alignedTimestamp,
             reason: 'Trigger deploy',
             icon: 'play',
             iconStyle: 'solid',
@@ -422,7 +435,7 @@ export function LocalChart({
 
         return {
           type: 'event',
-          timestamp: eventTimestamp,
+          timestamp: alignedTimestamp,
           reason: 'Unknown',
           icon: 'question',
           color: 'var(--color-neutral-350)',
@@ -431,7 +444,7 @@ export function LocalChart({
           repository,
         }
       })
-  }, [eventsFiltered, serviceId])
+  }, [eventsFiltered, serviceId, data])
 
   // Merge with any referenceLineData passed as prop
   const mergedReferenceLineData = useMemo(() => {
@@ -494,25 +507,7 @@ export function LocalChart({
           {!hideEvents &&
             mergedReferenceLineData
               .filter((event) => event.type === 'event')
-              .map((event) => (
-                <ReferenceLine
-                  key={event.key}
-                  x={event.timestamp}
-                  stroke="var(--color-brand-500)"
-                  strokeDasharray="3 3"
-                  opacity={hoveredEventKey === event.key ? 1 : 0.3}
-                  strokeWidth={1}
-                  onMouseEnter={() => setHoveredEventKey(event.key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
-                  label={{
-                    value: hoveredEventKey === event.key ? event.reason : undefined,
-                    position: 'top',
-                    fill: 'var(--color-brand-500)',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                  }}
-                />
-              ))}
+              .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, false))}
           {children}
         </ChartContent>
       </Section>
@@ -530,31 +525,13 @@ export function LocalChart({
             margin={margin}
             referenceLineData={mergedReferenceLineData}
             service={service}
-            isFullscreen={true}
+            isFullscreen
           >
             {/* Render reference lines for events of type 'event' in modal as well */}
             {!hideEvents &&
               mergedReferenceLineData
                 .filter((event) => event.type === 'event')
-                .map((event) => (
-                  <ReferenceLine
-                    key={event.key}
-                    x={event.timestamp}
-                    stroke="var(--color-brand-500)"
-                    strokeDasharray="3 3"
-                    opacity={hoveredEventKey === event.key ? 1 : 0.6}
-                    strokeWidth={3}
-                    onMouseEnter={() => setHoveredEventKey(event.key)}
-                    onMouseLeave={() => setHoveredEventKey(null)}
-                    label={{
-                      value: hoveredEventKey === event.key ? event.reason : undefined,
-                      position: 'top',
-                      fill: 'var(--color-brand-500)',
-                      fontSize: 12,
-                      fontWeight: 'bold',
-                    }}
-                  />
-                ))}
+                .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, true))}
             {children}
           </ChartContent>
         </ModalChart>
@@ -564,3 +541,39 @@ export function LocalChart({
 }
 
 export default LocalChart
+
+// Utility function to create reference lines with better clickable areas
+function createAlignedReferenceLine(
+  event: ReferenceLineEvent,
+  hoveredEventKey: string | null,
+  setHoveredEventKey: (key: string | null) => void,
+  isModal = false
+) {
+  const strokeWidth = isModal ? 4 : 3
+  const opacity = hoveredEventKey === event.key ? 1 : isModal ? 0.6 : 0.4
+
+  return (
+    <ReferenceLine
+      key={event.key}
+      x={event.timestamp}
+      stroke={event.color || 'var(--color-brand-500)'}
+      strokeDasharray="3 3"
+      opacity={opacity}
+      strokeWidth={strokeWidth}
+      onMouseEnter={() => {
+        setHoveredEventKey(event.key)
+      }}
+      onMouseLeave={() => {
+        setHoveredEventKey(null)
+      }}
+      style={{ cursor: 'pointer' }}
+      label={{
+        value: hoveredEventKey === event.key ? event.reason : undefined,
+        position: 'top',
+        fill: event.color || 'var(--color-brand-500)',
+        fontSize: 12,
+        fontWeight: 'bold',
+      }}
+    />
+  )
+}
