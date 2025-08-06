@@ -1,4 +1,5 @@
-import { type GitProviderEnum } from 'qovery-typescript-axios'
+import { type GitProviderEnum, GitRepository } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { ExternalLink, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
@@ -17,6 +18,11 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
   const { organizationId = '' } = useParams()
 
   const watchFieldRepository = watch('repository')
+
+  useEffect(() => {
+    console.log('🚀 ~ watchFieldRepository:', watchFieldRepository)
+    console.log('disabled?', disabled)
+  }, [watchFieldRepository, disabled])
 
   const {
     data: repositories = [],
@@ -64,14 +70,15 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
                   ]
                 : repositories.map((repository) => ({
                     label: upperCaseFirstLetter(repository.name),
-                    value: repository.name,
+                    value: repository,
                   }))
             }
             onChange={(event) => {
+              console.log('🚀 ~ onChange ~ event:', event)
               field.onChange(event)
-              const currentRepository = repositories.find((repository) => repository.name === event)
               // Set default branch
-              setValue('branch', currentRepository?.default_branch)
+              // @ts-ignore
+              setValue('branch', event.default_branch)
             }}
             value={field.value}
             error={error?.message}

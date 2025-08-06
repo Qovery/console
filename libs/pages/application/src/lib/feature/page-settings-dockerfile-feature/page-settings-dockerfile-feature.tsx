@@ -15,6 +15,7 @@ import { isJobGitSource } from '@qovery/shared/enums'
 import { Button } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
+import useRepositories from '../../../../../../domains/organizations/feature/src/lib/hooks/use-repositories/use-repositories'
 
 function DockerfileSettingsFromTemplate({
   children,
