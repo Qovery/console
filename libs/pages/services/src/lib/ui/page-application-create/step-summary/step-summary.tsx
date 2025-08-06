@@ -87,7 +87,7 @@ export function StepSummary({
               {generalData.serviceType === 'APPLICATION' && (
                 <>
                   <li>
-                    <strong className="font-medium">Repository:</strong> {generalData.repository}
+                    <strong className="font-medium">Repository:</strong> {generalData.repository?.name}
                   </li>
                   <li>
                     <strong className="font-medium">Branch:</strong> {generalData.branch}
