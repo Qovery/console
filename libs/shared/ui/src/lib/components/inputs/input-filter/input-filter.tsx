@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { type Value } from '@qovery/shared/interfaces'
+import { type SelectOption, type SelectOptionValue } from '@qovery/shared/interfaces'
 import Button from '../../button/button'
 import Icon from '../../icon/icon'
 import LoaderSpinner from '../../loader-spinner/loader-spinner'
@@ -8,15 +8,15 @@ import InputSelect from '../input-select/input-select'
 export interface InputFilterProps {
   name: string
   nameKey: string
-  options: Value[]
-  onChange: (type: string, value?: string | string[]) => void
+  options: SelectOption[]
+  onChange: (type: string, value?: SelectOptionValue | SelectOptionValue[]) => void
   defaultValue?: string | string[]
   isLoading?: boolean
 }
 
 export function InputFilter({ name, nameKey, options, onChange, defaultValue, isLoading }: InputFilterProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [currentValue, setCurrentValue] = useState<string | string[] | undefined>(defaultValue)
+  const [currentValue, setCurrentValue] = useState<SelectOptionValue | SelectOptionValue[] | undefined>(defaultValue)
 
   useEffect(() => {
     if (defaultValue) {
@@ -58,7 +58,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
                 </div>
               ) : (
                 <>
-                  {options.find((option: Value) => option.value === currentValue)?.label}
+                  {options.find((option: SelectOption) => option.value === currentValue)?.label}
                   <span
                     data-testid="clear-btn"
                     className="relative left-1 px-1 py-1"
