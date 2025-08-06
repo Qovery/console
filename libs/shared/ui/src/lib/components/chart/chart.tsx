@@ -5,6 +5,17 @@ import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
 
+// Define the payload item type for the chart tooltip
+interface TooltipPayloadItem {
+  dataKey: string | number
+  value: number | string | null | undefined
+  color: string
+  payload?: {
+    fullTime?: string
+    [key: string]: unknown
+  }
+}
+
 interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
   isLoading?: boolean
@@ -72,17 +83,25 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 //   return <RechartsPrimitive.Tooltip {...validProps} />
 // }
 
-const ChartTooltipContent = forwardRef<
-  HTMLDivElement,
-  RechartsPrimitive.TooltipProps<number, string> & {
-    title: string
-    formatValue?: (value: string, dataKey: string) => string
-    formatLabel?: (dataKey: string) => string
-    maxItems?: number
-  }
->(function ChartTooltipContent({ active, payload, title, formatValue, formatLabel, maxItems = 15 }, ref) {
+interface ChartTooltipContentProps {
+  active?: boolean
+  payload?: TooltipPayloadItem[]
+  title: string
+  formatValue?: (value: string, dataKey: string) => string
+  formatLabel?: (dataKey: string) => string
+  maxItems?: number
+}
+
+const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>(function ChartTooltipContent(
+  { active, payload, title, formatValue, formatLabel, maxItems = 15 },
+  ref
+) {
   const filteredPayload = useMemo(
-    () => payload?.filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index) || [],
+    () =>
+      payload?.filter(
+        (entry: TooltipPayloadItem, index: number, arr: TooltipPayloadItem[]) =>
+          arr.findIndex((e: TooltipPayloadItem) => e.dataKey === entry.dataKey) === index
+      ) || [],
     [payload]
   )
 
@@ -97,7 +116,7 @@ const ChartTooltipContent = forwardRef<
         <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
       </div>
       <div className="space-y-1 p-3 pt-0">
-        {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry) => {
+        {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry: TooltipPayloadItem) => {
           const seriesKey = typeof entry.dataKey === 'string' ? entry.dataKey : String(entry.dataKey)
           const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey
           const formattedValue = formatValue
