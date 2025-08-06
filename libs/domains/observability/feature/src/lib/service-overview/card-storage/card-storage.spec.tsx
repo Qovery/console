@@ -111,7 +111,7 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('NaN%')).toBeInTheDocument()
+    expect(screen.getByText('0%')).toBeInTheDocument()
     expect(screen.getByText('in the last 30m')).toBeInTheDocument()
   })
 
@@ -124,7 +124,7 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('NaN%')).toBeInTheDocument()
+    expect(screen.getByText('0%')).toBeInTheDocument()
     expect(screen.getByText('in the last 30m')).toBeInTheDocument()
   })
 
