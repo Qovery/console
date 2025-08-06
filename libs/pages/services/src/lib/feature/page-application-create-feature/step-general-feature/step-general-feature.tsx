@@ -1,15 +1,14 @@
-import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useCheckDockerfile } from '@qovery/domains/environments/feature'
-import { useOrganization, useRepositories } from '@qovery/domains/organizations/feature'
+import { useOrganization } from '@qovery/domains/organizations/feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_CREATION_RESOURCES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl, buildGitRepoUrlFromGitRepository, parseCmd } from '@qovery/shared/util-js'
+import { parseCmd } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -72,7 +71,7 @@ export function StepGeneralFeature() {
           environmentId,
           dockerfileCheckRequest: {
             git_repository: {
-              url: buildGitRepoUrlFromGitRepository(data.repository),
+              url: data.repository?.url ?? '',
               root_path: data.root_path,
               branch: data.branch,
               git_token_id: data.git_token_id,
