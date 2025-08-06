@@ -36,10 +36,11 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
     timeRange,
   })
 
-  const value = Math.round(metrics?.data?.result[0]?.value[1]) ?? 0
+  const rawValue = Number(metrics?.data?.result[0]?.value[1])
+  const value = Number.isFinite(rawValue) ? Math.round(rawValue) : 0
   const isError = value > 80
 
-  const title = `Storage Usage`
+  const title = 'Storage Usage'
 
   return (
     <>
