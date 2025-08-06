@@ -59,11 +59,18 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
   )
 })
 
-function ChartTooltip(props: ComponentProps<typeof RechartsPrimitive.Tooltip>) {
-  // Filter out non-DOM props that cause React warnings when passed to div elements
-  const { reverseDirection, useTranslate3d, ...validProps } = props
-  return <RechartsPrimitive.Tooltip {...validProps} />
-}
+const ChartTooltip = RechartsPrimitive.Tooltip
+
+// The following code is a wrapper to filter out all non-DOM props that cause React warnings when passed to div elements
+// made possible with Recharts v3 (https://github.com/recharts/recharts/issues/2788)
+// the problem with this approach is that it breaks the tooltip UI
+// still no workaround as of 2025-08-06
+// see also: https://github.com/recharts/recharts/issues/3177
+
+// function ChartTooltip(props: ComponentProps<typeof RechartsPrimitive.Tooltip>) {
+//   const { content, ...validProps } = props
+//   return <RechartsPrimitive.Tooltip {...validProps} />
+// }
 
 const ChartTooltipContent = forwardRef<
   HTMLDivElement,
