@@ -1,6 +1,6 @@
 import { type Control, Controller } from 'react-hook-form'
 import { useContainerVersions } from '@qovery/domains/organizations/feature'
-import { type Value } from '@qovery/shared/interfaces'
+import { type SelectOption } from '@qovery/shared/interfaces'
 import { Icon, InputSelect, InputText, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { type ContainerFormProps } from './general-container-settings'
 
@@ -26,7 +26,7 @@ export function ImageTag({
   const options =
     containerVersions
       .find(({ image_name }) => image_name === imageName)
-      ?.versions?.map<Value>((version) => ({
+      ?.versions?.map<SelectOption>((version) => ({
         value: version,
         label:
           version === 'latest' ? (

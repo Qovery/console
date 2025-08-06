@@ -74,10 +74,9 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
                   }))
             }
             onChange={(event) => {
-              console.log('🚀 ~ onChange ~ event:', event)
               field.onChange(event)
               // Set default branch
-              // @ts-ignore
+              // @ts-expect-error TODO [QOV-1072]
               setValue('branch', event.default_branch)
             }}
             value={field.value}
