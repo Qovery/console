@@ -19,7 +19,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { buildGitRepoUrl, buildGitRepoUrlFromGitRepository, joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
@@ -52,7 +52,7 @@ export const handleGitApplicationSubmit = (
     }
 
     const git_repository = {
-      url: buildGitRepoUrlFromGitRepository(data.repository),
+      url: data.repository?.url ?? '',
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,

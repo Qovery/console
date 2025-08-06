@@ -22,7 +22,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl, buildGitRepoUrlFromGitRepository } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-application-create/step-summary/step-summary'
 import { steps, useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -123,7 +122,7 @@ export function StepSummaryFeature() {
           max_running_instances: resourcesData.max_running_instances,
           build_mode: BuildModeEnum.DOCKER,
           git_repository: {
-            url: buildGitRepoUrlFromGitRepository(generalData.repository),
+            url: generalData.repository?.url ?? '',
             root_path: generalData.root_path,
             branch: generalData.branch,
             git_token_id: generalData.git_token_id,
