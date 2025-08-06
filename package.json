@@ -86,7 +86,7 @@
     "react-syntax-highlighter": "^15.6.1",
     "react-use-intercom": "^5.3.0",
     "react-xtermjs": "^1.0.10",
-    "recharts": "^2.15.3",
+    "recharts": "^3.1.2",
     "remark-gfm": "^4.0.1",
     "shell-quote": "^1.8.1",
     "styled-components": "^5.3.8",

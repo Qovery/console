@@ -5,6 +5,17 @@ import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
 
+// Define the payload item type for the chart tooltip
+interface TooltipPayloadItem {
+  dataKey: string | number
+  value: number | string | null | undefined
+  color: string
+  payload?: {
+    fullTime?: string
+    [key: string]: unknown
+  }
+}
+
 interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
   isLoading?: boolean
@@ -20,7 +31,7 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
       ref={ref}
       role="region"
       aria-label="Interactive chart"
-      className={twMerge('relative flex h-[300px] justify-center text-xs', className)}
+      className={twMerge('relative flex h-[300px] justify-center text-xs focus:outline-none', className)}
       {...htmlProps}
     >
       <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
@@ -61,17 +72,36 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
 
 const ChartTooltip = RechartsPrimitive.Tooltip
 
-const ChartTooltipContent = forwardRef<
-  HTMLDivElement,
-  RechartsPrimitive.TooltipProps<number, string> & {
-    title: string
-    formatValue?: (value: string, dataKey: string) => string
-    formatLabel?: (dataKey: string) => string
-    maxItems?: number
-  }
->(function ChartTooltipContent({ active, payload, title, formatValue, formatLabel, maxItems = 15 }, ref) {
+// The following code is a wrapper to filter out all non-DOM props that cause React warnings when passed to div elements
+// made possible with Recharts v3 (https://github.com/recharts/recharts/issues/2788)
+// the problem with this approach is that it breaks the tooltip UI
+// still no workaround as of 2025-08-06
+// see also: https://github.com/recharts/recharts/issues/3177
+
+// function ChartTooltip(props: ComponentProps<typeof RechartsPrimitive.Tooltip>) {
+//   const { content, ...validProps } = props
+//   return <RechartsPrimitive.Tooltip {...validProps} />
+// }
+
+interface ChartTooltipContentProps {
+  active?: boolean
+  payload?: TooltipPayloadItem[]
+  title: string
+  formatValue?: (value: string, dataKey: string) => string
+  formatLabel?: (dataKey: string) => string
+  maxItems?: number
+}
+
+const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>(function ChartTooltipContent(
+  { active, payload, title, formatValue, formatLabel, maxItems = 15 },
+  ref
+) {
   const filteredPayload = useMemo(
-    () => payload?.filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index) || [],
+    () =>
+      payload?.filter(
+        (entry: TooltipPayloadItem, index: number, arr: TooltipPayloadItem[]) =>
+          arr.findIndex((e: TooltipPayloadItem) => e.dataKey === entry.dataKey) === index
+      ) || [],
     [payload]
   )
 
@@ -86,7 +116,7 @@ const ChartTooltipContent = forwardRef<
         <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
       </div>
       <div className="space-y-1 p-3 pt-0">
-        {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry) => {
+        {(maxItems ? filteredPayload.slice(0, maxItems) : filteredPayload).map((entry: TooltipPayloadItem) => {
           const seriesKey = typeof entry.dataKey === 'string' ? entry.dataKey : String(entry.dataKey)
           const displayName = formatLabel ? formatLabel(seriesKey) : seriesKey
           const formattedValue = formatValue

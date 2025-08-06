@@ -139,3 +139,10 @@ body {
 * {
   scrollbar-width: thin;
 }
+
+svg:focus,
+.recharts-wrapper:focus,
+.recharts-wrapper svg:focus,
+.recharts-surface:focus {
+  outline: none;
+}
