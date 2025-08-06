@@ -219,75 +219,83 @@ export function ChartContent({
           ) : null}
         </ComposedChart>
       </Chart.Container>
-      {isFullscreen && referenceLineData && referenceLineData.length > 0 && !hideEvents && (
+      {isFullscreen && referenceLineData && !hideEvents && (
         <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-250">
           <p className="border-b border-neutral-250 bg-neutral-100 px-4 py-2 text-xs font-medium text-neutral-500">
             {pluralize(referenceLineData.length, 'Event', 'Events')} associated
           </p>
           <div className="h-full overflow-y-auto">
-            {referenceLineData.map((event) => {
-              const timestamp = formatTimestamp(event.timestamp, useLocalTime)
-              return (
-                <div
-                  key={event.key}
-                  className={clsx(
-                    'flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150',
-                    {
-                      'bg-neutral-150': hoveredEventKey === event.key,
-                    }
-                  )}
-                  onMouseEnter={() => setHoveredEventKey(event.key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
-                >
-                  <span
-                    className="flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full"
-                    style={{ backgroundColor: event.color ?? 'var(--color-red-500)' }}
-                  >
-                    <Icon
-                      iconName={event.icon}
-                      iconStyle={event.iconStyle ?? 'regular'}
-                      className="text-xs text-white"
-                    />
-                  </span>
-                  <div className="flex w-full flex-col gap-1 text-xs">
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <span className="font-medium">{event.reason}</span>
-                      <span className="text-neutral-350">{timestamp.fullTimeString}</span>
-                    </div>
-                    {event.type === 'event' && (
-                      <>
-                        <span className="text-neutral-350">
-                          {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
-                        </span>
-                        <span className="text-neutral-350">
-                          {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
-                        </span>
-                      </>
-                    )}
-                    {event.description && <span className="text-neutral-350">{event.description}</span>}
-                    {event.type === 'exit-code' && (
-                      <div className="flex items-center gap-1">
-                        <span className="text-neutral-350">Instance name:</span>
-                        <Tooltip content={event.key}>
-                          <Badge
-                            variant="surface"
-                            color="neutral"
-                            size="sm"
-                            className="max-w-max gap-1 font-code text-2xs"
-                          >
-                            <span
-                              className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                              style={{ backgroundColor: getColorByPod(event.key) }}
-                            />
-                            {event.key.substring(event.key.length - 5)}
-                          </Badge>
-                        </Tooltip>
+            {referenceLineData.length > 0 ? (
+              <>
+                {referenceLineData.map((event) => {
+                  const timestamp = formatTimestamp(event.timestamp, useLocalTime)
+                  return (
+                    <div
+                      key={event.key}
+                      className={clsx(
+                        'flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150',
+                        {
+                          'bg-neutral-150': hoveredEventKey === event.key,
+                        }
+                      )}
+                      onMouseEnter={() => setHoveredEventKey(event.key)}
+                      onMouseLeave={() => setHoveredEventKey(null)}
+                    >
+                      <span
+                        className="flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full"
+                        style={{ backgroundColor: event.color ?? 'var(--color-red-500)' }}
+                      >
+                        <Icon
+                          iconName={event.icon}
+                          iconStyle={event.iconStyle ?? 'regular'}
+                          className="text-xs text-white"
+                        />
+                      </span>
+                      <div className="flex w-full flex-col gap-1 text-xs">
+                        <div className="flex w-full items-center justify-between gap-2">
+                          <span className="font-medium">{event.reason}</span>
+                          <span className="text-neutral-350">{timestamp.fullTimeString}</span>
+                        </div>
+                        {event.type === 'event' && (
+                          <>
+                            <span className="text-neutral-350">
+                              {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
+                            </span>
+                            <span className="text-neutral-350">
+                              {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
+                            </span>
+                          </>
+                        )}
+                        {event.description && <span className="text-neutral-350">{event.description}</span>}
+                        {event.type === 'exit-code' && (
+                          <div className="flex items-center gap-1">
+                            <span className="text-neutral-350">Instance name:</span>
+                            <Tooltip content={event.key}>
+                              <Badge
+                                variant="surface"
+                                color="neutral"
+                                size="sm"
+                                className="max-w-max gap-1 font-code text-2xs"
+                              >
+                                <span
+                                  className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
+                                  style={{ backgroundColor: getColorByPod(event.key) }}
+                                />
+                                {event.key.substring(event.key.length - 5)}
+                              </Badge>
+                            </Tooltip>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+                    </div>
+                  )
+                })}
+              </>
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm">
+                <p className="text-neutral-350">No events associated</p>
+              </div>
+            )}
           </div>
         </div>
       )}
