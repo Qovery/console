@@ -25,6 +25,10 @@ interface ServiceOverviewContextType {
   resetChartZoom: () => void
   registerZoomReset: (resetFn: () => void) => void
 
+  // Zoom state tracking
+  isAnyChartZoomed: boolean
+  setIsAnyChartZoomed: (isZoomed: boolean) => void
+
   // Events
   setHideEvents: (value: boolean) => void
   hideEvents: boolean
@@ -74,7 +78,11 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   const resetChartZoom = () => {
     zoomResetFunctions.forEach((resetFn) => resetFn())
+    setIsAnyChartZoomed(false) // Reset zoom state when resetting charts
   }
+
+  // Zoom state tracking - simplified to just track boolean state
+  const [isAnyChartZoomed, setIsAnyChartZoomed] = useState(false)
 
   const handleTimeRangeChange = (range: TimeRangeOption) => {
     // Reset zoom first, then change time range
@@ -98,7 +106,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const isLiveRange = ['5m', '15m', '30m'].includes(timeRange)
 
-    if (!isLiveRange || !isLiveUpdateEnabled) return
+    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed) return
 
     const roundDateToStep = (date: Date, stepSeconds: number): Date => {
       const timestamp = Math.floor(date.getTime() / 1000)
@@ -147,7 +155,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
     return () => clearInterval(interval)
-  }, [timeRange, isLiveUpdateEnabled])
+  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed])
 
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
@@ -174,6 +182,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     handleZoomTimeRangeChange,
     resetChartZoom,
     registerZoomReset,
+    isAnyChartZoomed,
+    setIsAnyChartZoomed,
     setHideEvents,
     hideEvents,
     expandCharts,
