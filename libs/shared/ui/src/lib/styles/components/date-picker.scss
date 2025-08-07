@@ -13,6 +13,12 @@
     background-color: transparent;
   }
 
+  // Remove border around the datepicker
+  .react-datepicker {
+    border: none;
+    box-shadow: none;
+  }
+
   .react-datepicker__month,
   .react-datepicker__day-name {
     margin: 0;
@@ -63,7 +69,7 @@
     border-radius: 0 theme('spacing.1') theme('spacing.1') 0;
   }
 
-  .react-datepicker__day--selected,
+  .react-datepicker__day--selected:not(.react-datepicker__day--range-start):not(.react-datepicker__day--range-end),
   .react-datepicker__day--in-range:not(.react-datepicker__day--range-start),
   .react-datepicker__day--in-selecting-range:not(
       .react-datepicker__day--in-range,
@@ -73,6 +79,19 @@
     ) {
     background-color: theme('colors.brand.50');
     color: theme('colors.brand.500');
+  }
+
+  // Ensure range start is always highlighted like hover
+  .react-datepicker__day--selected.react-datepicker__day--range-start,
+  .react-datepicker__day--selected:not(.react-datepicker__day--in-range) {
+    background-color: theme('colors.brand.500') !important;
+    color: theme('colors.neutral.100') !important;
+    border-radius: theme('spacing.1');
+  }
+
+  // Adjust border radius when it's part of a range
+  .react-datepicker__day--selected.react-datepicker__day--range-start.react-datepicker__day--in-range {
+    border-radius: theme('spacing.1') 0 0 theme('spacing.1');
   }
 
   .react-datepicker__day--range-end.react-datepicker__day--range-start {

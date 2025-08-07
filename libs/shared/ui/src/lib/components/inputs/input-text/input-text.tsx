@@ -51,7 +51,14 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
 
   const displayPicker = () => {
     const input = inputRef.current?.querySelector('input')
-    if (!disabled && input) input.showPicker()
+    if (!disabled && input) {
+      try {
+        input.showPicker()
+      } catch (error) {
+        // Ignore showPicker errors (e.g., when called without user gesture)
+        console.debug('showPicker failed:', error)
+      }
+    }
   }
 
   const isInputDate = type === 'time' || type === 'date' || type === 'datetime'
