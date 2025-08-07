@@ -19,6 +19,7 @@ interface ZoomLevel {
 interface UseZoomableChartProps {
   onZoomChange?: (startTime: number, endTime: number) => void
   onResetRegister?: (resetFn: () => void) => (() => void) | void
+  onZoomStateChange?: (isZoomed: boolean) => void
 }
 
 interface UseZoomableChartReturn {
@@ -47,7 +48,7 @@ interface UseZoomableChartReturn {
 }
 
 export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomableChartReturn {
-  const { onZoomChange, onResetRegister } = props
+  const { onZoomChange, onResetRegister, onZoomStateChange } = props
   // Zoom state
   const [zoomState, setZoomState] = useState<ZoomState>({
     left: 'dataMin',
@@ -58,6 +59,15 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
 
   const [zoomHistory, setZoomHistory] = useState<ZoomLevel[]>([])
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
+
+  const isZoomed = zoomState.left !== 'dataMin' || zoomState.right !== 'dataMax'
+
+  // Notify when zoom state changes
+  useEffect(() => {
+    if (onZoomStateChange) {
+      onZoomStateChange(isZoomed)
+    }
+  }, [isZoomed, onZoomStateChange])
 
   // Register reset function with parent component (if provided)
   useEffect(() => {
@@ -242,8 +252,6 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
     // For default domain or string values, return empty array (let Recharts handle it)
     return []
   }
-
-  const isZoomed = zoomState.left !== 'dataMin' || zoomState.right !== 'dataMax'
 
   return {
     // State

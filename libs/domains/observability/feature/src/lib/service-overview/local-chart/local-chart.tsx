@@ -111,10 +111,11 @@ export function ChartContent({
     setHoveredEventKey,
     handleZoomTimeRangeChange,
     registerZoomReset,
+    setIsAnyChartZoomed,
   } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
-  // Use the zoomable chart hook
+  // Use the zoomable chart hook - automatically handle zoom state changes
   const {
     zoomState,
     isCtrlPressed,
@@ -128,6 +129,7 @@ export function ChartContent({
   } = useZoomableChart({
     onZoomChange: handleZoomTimeRangeChange,
     onResetRegister: registerZoomReset,
+    onZoomStateChange: setIsAnyChartZoomed,
   })
 
   function getXDomain(): [number | string, number | string] {
