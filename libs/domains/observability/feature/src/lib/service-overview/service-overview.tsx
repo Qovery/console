@@ -30,8 +30,16 @@ function ServiceOverviewContent() {
 
   const { data: service } = useService({ serviceId: applicationId })
   const { data: environment } = useEnvironment({ environmentId })
-  const { expandCharts, useLocalTime, setUseLocalTime, hideEvents, setHideEvents, setExpandCharts } =
-    useServiceOverviewContext()
+  const {
+    expandCharts,
+    useLocalTime,
+    setUseLocalTime,
+    hideEvents,
+    setHideEvents,
+    setExpandCharts,
+    isLiveUpdateEnabled,
+    setIsLiveUpdateEnabled,
+  } = useServiceOverviewContext()
 
   if (!environment || !service) return null
 
@@ -56,6 +64,15 @@ function ServiceOverviewContent() {
             defaultValue={useLocalTime ? 'local' : 'utc'}
             onChange={(e) => setUseLocalTime(e === 'local')}
           />
+          <Button
+            variant="plain"
+            size="xs"
+            className="flex items-center gap-1"
+            onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
+          >
+            {isLiveUpdateEnabled ? 'Disable live updates' : 'Enable live updates'}
+            <Icon iconName={isLiveUpdateEnabled ? 'pause' : 'play'} iconStyle="regular" />
+          </Button>
         </div>
       </div>
       <Section
