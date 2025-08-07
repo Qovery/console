@@ -25,7 +25,6 @@ export function GitBranchSettings({
   const { organizationId = '' } = useParams()
 
   const watchFieldRepository = watch('repository')
-  console.log('🚀 ~ watchFieldRepositoryssss:', watchFieldRepository)
   const watchFieldBranch = watch('branch')
 
   const {

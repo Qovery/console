@@ -90,10 +90,6 @@ export function StepSummaryFeature() {
     !generalData?.name && gotoGlobalInformations()
   }, [generalData, navigate, environmentId, organizationId, projectId])
 
-  useEffect(() => {
-    console.log('🚀 ~ generalData:', generalData)
-  }, [generalData])
-
   const onSubmit = async (withDeploy: boolean) => {
     if (generalData && portData && resourcesData) {
       if (withDeploy) setLoadingCreateAndDeploy(true)
