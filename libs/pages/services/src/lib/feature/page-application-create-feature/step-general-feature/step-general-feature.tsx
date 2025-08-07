@@ -21,14 +21,6 @@ export function StepGeneralFeature() {
   const { data: organization } = useOrganization({ organizationId })
   const { environmentId = '' } = useParams()
 
-  // const { data: repositories = [], refetch: refetchRepositories } = useRepositories({
-  //   organizationId,
-  //   gitProvider: generalData?.provider as GitProviderEnum,
-  //   gitToken: generalData?.git_token_id,
-  //   // enabled: !!generalData?.provider && !!generalData?.git_token_id,
-  // })
-  // console.log('🚀 ~ StepGeneralFeature ~ repositories:', repositories, generalData)
-
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
@@ -41,7 +33,7 @@ export function StepGeneralFeature() {
     mode: 'onChange',
   })
 
-  const handleSubmit = async (data: ApplicationGeneralData) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data.is_public_repository) {
       data.auto_deploy = false
     }
@@ -61,12 +53,6 @@ export function StepGeneralFeature() {
 
     if (data.serviceType !== ServiceTypeEnum.CONTAINER) {
       try {
-        // const selectedRepository = repositories.find((repository) => repository.name === 'qovery/test_http_server')
-        // const selectedRepository = repositories.find((repository) => repository.name === data.repository)
-        // console.log('🚀 ~ StepGeneralFeature ~ SelectedRepository:', repositories, selectedRepository, data.repository)
-
-        console.log('🚀 ~ dataaaa:', data)
-
         await mutateCheckDockerfile({
           environmentId,
           dockerfileCheckRequest: {
@@ -89,9 +75,7 @@ export function StepGeneralFeature() {
     } else {
       onSubmitForm()
     }
-  }
-
-  const onSubmit = methods.handleSubmit(handleSubmit)
+  })
 
   return (
     <FunnelFlowBody>

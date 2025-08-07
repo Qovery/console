@@ -1,7 +1,7 @@
-import { type GitProviderEnum, GitRepository } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
+import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { type SelectOptionValue } from '@qovery/shared/interfaces'
 import { ExternalLink, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useRepositories } from '../hooks/use-repositories/use-repositories'
@@ -18,11 +18,6 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
   const { organizationId = '' } = useParams()
 
   const watchFieldRepository = watch('repository')
-
-  useEffect(() => {
-    console.log('🚀 ~ watchFieldRepository:', watchFieldRepository)
-    console.log('disabled?', disabled)
-  }, [watchFieldRepository, disabled])
 
   const {
     data: repositories = [],
@@ -73,11 +68,12 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
                     value: repository,
                   }))
             }
-            onChange={(event) => {
-              field.onChange(event)
+            onChange={(option: SelectOptionValue | SelectOptionValue[]) => {
+              field.onChange(option)
               // Set default branch
-              // @ts-expect-error TODO [QOV-1072]
-              setValue('branch', event.default_branch)
+              if (typeof option === 'object' && 'default_branch' in option) {
+                setValue('branch', option.default_branch)
+              }
             }}
             value={field.value}
             error={error?.message}
