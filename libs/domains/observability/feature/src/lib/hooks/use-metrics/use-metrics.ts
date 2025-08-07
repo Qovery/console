@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
+import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
 
 export interface MetricData {
@@ -31,8 +32,21 @@ interface UseMetricsProps {
   endTimestamp?: string
   queryRange?: 'query' | 'query_range'
   timeRange?: TimeRangeOption
+  isLiveUpdateEnabled?: boolean
 }
 
+// Helper hook to safely get live update setting from context
+function useLiveUpdateSetting(): boolean {
+  try {
+    const context = useServiceOverviewContext()
+    return context.isLiveUpdateEnabled
+  } catch {
+    // Context not available, default to true
+    return true
+  }
+}
+
+// Simple wrapper that automatically applies live update toggle from context
 export function useMetrics({
   clusterId,
   query,
@@ -40,7 +54,12 @@ export function useMetrics({
   endTimestamp,
   queryRange = 'query_range',
   timeRange,
-}: UseMetricsProps) {
+  isLiveUpdateEnabled: overrideLiveUpdate,
+}: UseMetricsProps & { isLiveUpdateEnabled?: boolean }) {
+  // Get live update setting from context, but allow override
+  const contextLiveUpdate = useLiveUpdateSetting()
+  const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
+
   const step = useMemo(() => {
     // TODO: Verify these step intervals match actual Prometheus scrape_interval configuration
     // Actual scrape_interval = 15s
@@ -66,8 +85,8 @@ export function useMetrics({
       step,
     }),
     keepPreviousData: true,
-    refetchInterval: 15_000, // Refetch every 15 seconds to match actual scrape_interval
-    refetchIntervalInBackground: true,
+    refetchInterval: finalLiveUpdateEnabled ? 15_000 : false, // Refetch every 15 seconds only if live update is enabled
+    refetchIntervalInBackground: finalLiveUpdateEnabled,
   })
 
   // Custom isLoading: true on first load and when timeRange changes, false on live refetch
