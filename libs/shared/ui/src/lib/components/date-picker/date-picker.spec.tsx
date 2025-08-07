@@ -10,7 +10,11 @@ describe('DatePicker', () => {
 
   it('calls onChange with selected dates when Apply button is clicked', () => {
     const mockOnChange = jest.fn()
-    const { getByText } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen />)
+    const startDate = new Date('2023-12-01')
+    const endDate = new Date('2023-12-02')
+    const { getByText } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />
+    )
 
     const applyButton = getByText('Apply')
     applyButton.click()
@@ -22,11 +26,18 @@ describe('DatePicker', () => {
     const mockOnChange = jest.fn()
     renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
 
+    const startDate = '2023-12-01'
     const startTime = '09:00'
+    const endDate = '2023-12-02'
     const endTime = '18:30'
 
-    fireEvent.change(screen.getAllByTestId('input-text')[0], { target: { value: startTime } })
-    fireEvent.change(screen.getAllByTestId('input-text')[1], { target: { value: endTime } })
+    // Update the 4 input fields: start date, start time, end date, end time
+    const inputs = screen.getAllByTestId('input-text')
+    fireEvent.change(inputs[0], { target: { value: startDate } })
+    fireEvent.change(inputs[1], { target: { value: startTime } })
+    fireEvent.change(inputs[2], { target: { value: endDate } })
+    fireEvent.change(inputs[3], { target: { value: endTime } })
+
     fireEvent.click(screen.getByText('Apply'))
 
     expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
