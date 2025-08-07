@@ -3,6 +3,7 @@ import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, DropdownMenu, Icon } from '@qovery/shared/ui'
+import useAuth0Error from '../../hooks/auth0-error/use-auth0-error'
 
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
@@ -14,36 +15,24 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
   const [ssoFormVisible, setSsoFormVisible] = useState(false)
   const [ssoDomain, setSsoDomain] = useState('')
   const [domainError, setDomainError] = useState('')
+  const { auth0Error } = useAuth0Error()
 
   useEffect(() => {
     checkTokenInStorage()
   }, [checkTokenInStorage])
 
   const validateAndConnect = () => {
-    // Clear previous error
+    // Clear previous error if any
     setDomainError('')
 
-    if (!ssoDomain.trim()) {
-      setDomainError('Domain is required')
-      return
-    }
-
     // Split domain by dots and validate each part
-    const domainParts = ssoDomain.split('.')
+    const domainWithoutDots = ssoDomain.trim().replace(/\./g, '')
 
-    // Check if each part of the domain matches the required pattern
-    const isValid = domainParts.every((part) => {
-      // Use the exact regex pattern specified: ^[a-zA-Z0-9](-[a-zA-Z0-9]|[a-zA-Z0-9])*$
-      return /^[a-zA-Z0-9](-[a-zA-Z0-9]|[a-zA-Z0-9])*$/.test(part)
-    })
-
-    if (!isValid) {
+    // Check if domain is coherent
+    if (!/^[a-zA-Z0-9](-[a-zA-Z0-9]|[a-zA-Z0-9])*$/.test(domainWithoutDots)) {
       setDomainError('Invalid domain format')
       return
     }
-
-    // If validation passes, remove dots and print to console
-    const domainWithoutDots = ssoDomain.replace(/\./g, '')
 
     // Then trigger the auth login with OIDC
     onClickAuthLogin(domainWithoutDots)
@@ -62,6 +51,16 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                 <InviteDetailsFeature />
               </div>
             )}
+
+            {auth0Error && (
+              <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
+                <p className="text-sm font-medium text-red-800">SSO Connection Error</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {auth0Error.error_description || 'The SSO connection failed. Please check your domain and try again.'}
+                </p>
+              </div>
+            )}
+
             <p className="mb-10 text-sm text-neutral-400">
               By registering and using Qovery, you agree to the processing of your personal data by Qovery as described
               in the
@@ -138,7 +137,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                       onClick={() => setSsoFormVisible(true)}
                       className="text-base font-medium text-sky-500 hover:underline"
                     >
-                      Connect using Enterprise Single Sign-On
+                      Use Enterprise Single Sign-On
                     </button>
                   </div>
                 </>
@@ -176,7 +175,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                     }}
                     className="mt-4 self-start text-sm text-sky-500 hover:underline"
                   >
-                    ← Go back to classic connections
+                    ← Go back
                   </button>
                 </div>
               )}
