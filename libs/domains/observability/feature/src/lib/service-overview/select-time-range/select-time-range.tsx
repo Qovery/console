@@ -28,7 +28,6 @@ export function SelectTimeRange() {
   return (
     <div className="flex">
       <DatePicker
-        key={startDate + endDate}
         onChange={(startDate, endDate) => {
           resetChartZoom()
           setStartDate(startDate.toISOString())
