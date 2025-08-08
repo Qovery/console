@@ -57,7 +57,7 @@ export function StepGeneralFeature() {
           environmentId,
           dockerfileCheckRequest: {
             git_repository: {
-              url: data.repository?.url ?? '',
+              url: data.git_repository?.url ?? '',
               root_path: data.root_path,
               branch: data.branch,
               git_token_id: data.git_token_id,

@@ -1,7 +1,7 @@
 import {
+  type ApplicationGitRepositoryRequest,
   type BuildModeEnum,
   type GitProviderEnum,
-  type GitRepository,
   type GitTokenResponse,
 } from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -29,7 +29,8 @@ export interface ApplicationGeneralData {
 
   // application
   branch?: string
-  repository?: GitRepository
+  repository?: string
+  git_repository?: ApplicationGitRepositoryRequest
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']

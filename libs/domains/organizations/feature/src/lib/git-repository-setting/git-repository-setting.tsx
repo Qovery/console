@@ -65,7 +65,7 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
                   ]
                 : repositories.map((repository) => ({
                     label: upperCaseFirstLetter(repository.name),
-                    value: repository,
+                    value: repository.name,
                   }))
             }
             onChange={(option: SelectOptionValue | SelectOptionValue[]) => {
@@ -74,6 +74,9 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
               if (typeof option === 'object' && 'default_branch' in option) {
                 setValue('branch', option.default_branch)
               }
+
+              const gitRepository = repositories.find((repo) => repo.name === option)
+              setValue('git_repository', gitRepository)
             }}
             value={field.value}
             error={error?.message}
