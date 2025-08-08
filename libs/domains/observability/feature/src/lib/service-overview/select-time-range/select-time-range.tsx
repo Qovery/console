@@ -19,6 +19,7 @@ export function SelectTimeRange() {
     hasCalendarValue,
     useLocalTime,
     resetChartZoom,
+    setIsDatePickerOpen,
   } = useServiceOverviewContext()
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
@@ -33,6 +34,7 @@ export function SelectTimeRange() {
           setStartDate(startDate.toISOString())
           setEndDate(endDate.toISOString())
           setIsOpenTimestamp(false)
+          setIsDatePickerOpen(false)
           setHasCalendarValue(true)
         }}
         isOpen={isOpenTimestamp}
@@ -40,7 +42,10 @@ export function SelectTimeRange() {
         minDate={subDays(new Date(), 30)}
         defaultDates={startDateValid && endDateValid ? [new Date(startTimestamp), new Date(endTimestamp)] : undefined}
         showTimeInput
-        onClickOutside={() => setIsOpenTimestamp(!isOpenTimestamp)}
+        onClickOutside={() => {
+          setIsOpenTimestamp(!isOpenTimestamp)
+          setIsDatePickerOpen(!isOpenTimestamp)
+        }}
       >
         {!hasCalendarValue ? (
           <Button
@@ -49,7 +54,10 @@ export function SelectTimeRange() {
             color="neutral"
             className="rounded-r-none border-r-0"
             size="md"
-            onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+            onClick={() => {
+              setIsOpenTimestamp(!isOpenTimestamp)
+              setIsDatePickerOpen(!isOpenTimestamp)
+            }}
           >
             <Icon iconName="calendar" iconStyle="regular" />
           </Button>
@@ -59,7 +67,10 @@ export function SelectTimeRange() {
             variant="surface"
             color="neutral"
             size="md"
-            onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+            onClick={() => {
+              setIsOpenTimestamp(!isOpenTimestamp)
+              setIsDatePickerOpen(!isOpenTimestamp)
+            }}
           >
             from: {dateFullFormat(startDate, useLocalTime ? undefined : 'UTC', 'dd MMM, HH:mm:ss')} - to:{' '}
             {dateFullFormat(endDate, useLocalTime ? undefined : 'UTC', 'dd MMM, HH:mm:ss')}
