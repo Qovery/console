@@ -25,14 +25,14 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
     // Clear previous error if any
     setDomainError('')
 
-    // Split domain by dots and validate each part
-    const domainWithoutDots = ssoDomain.trim().replace(/\./g, '')
-
-    // Check if domain is coherent
-    if (!/^[a-zA-Z0-9](-[a-zA-Z0-9]|[a-zA-Z0-9])*$/.test(domainWithoutDots)) {
+    // Check that domain is valid
+    if (!/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/.test(ssoDomain)) {
       setDomainError('Invalid domain format')
       return
     }
+
+    // Split domain by dots and validate each part
+    const domainWithoutDots = ssoDomain.trim().replace(/\./g, '')
 
     // Then trigger the auth login with OIDC
     onClickAuthLogin(domainWithoutDots)
