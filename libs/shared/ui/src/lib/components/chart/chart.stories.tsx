@@ -36,6 +36,29 @@ const CHART_COLORS = [
   'var(--color-r-scl)',
 ]
 
+// Build a larger palette from base colors by generating lighter tints using CSS color-mix.
+// This yields up to base.length * 3 distinct shades.
+function createExpandedPalette(baseColors: string[], desiredCount: number): string[] {
+  const variants: number[] = [100, 75, 55] // 100% base, then lighter tints
+  const expanded: string[] = []
+  outer: for (const weight of variants) {
+    for (const base of baseColors) {
+      if (expanded.length >= desiredCount) break outer
+      if (weight === 100) {
+        expanded.push(base)
+      } else {
+        // Use color-mix to generate a lighter tint of the base color
+        expanded.push(`color-mix(in srgb, ${base} ${weight}%, white)`) // e.g., 75% base + 25% white
+      }
+    }
+  }
+  // If still not enough, cycle base colors
+  while (expanded.length < desiredCount) {
+    expanded.push(baseColors[expanded.length % baseColors.length])
+  }
+  return expanded
+}
+
 // Sample data with independent system metrics: CPU, Memory, Disk usage (percentages)
 const sampleData = [
   { timestamp: 1704067200000, time: '00:00', fullTime: '2024-01-01 00:00:00', cpu: 25, memory: 68, disk: 45 },
@@ -47,8 +70,8 @@ const sampleData = [
   { timestamp: 1704088800000, time: '06:00', fullTime: '2024-01-01 06:00:00', cpu: 52, memory: 69, disk: 48 },
 ]
 
-// Generate 20 unique instance metrics
-const generateMetrics = () => {
+// Generate N unique instance metrics (default 50)
+const generateMetrics = (count = 50) => {
   const baseUUIDs = [
     'dk2ms',
     'zwdnt',
@@ -72,7 +95,14 @@ const generateMetrics = () => {
     'am5dt',
   ]
 
-  return baseUUIDs.map((uuid) => ({
+  const uuids: string[] = []
+  for (let i = 0; i < count; i++) {
+    const base = baseUUIDs[i % baseUUIDs.length]
+    const suffix = Math.floor(i / baseUUIDs.length) // 0,1,2...
+    uuids.push(suffix === 0 ? base : `${base}${suffix}`)
+  }
+
+  return uuids.map((uuid) => ({
     key: `pod-889b7db58-${uuid}`,
     baseValue: 400 + Math.floor(Math.random() * 2000), // Random base between 400-2400
     variance: 50 + Math.floor(Math.random() * 200), // Random variance between 50-250
@@ -145,8 +175,9 @@ const generateTimeSeriesData = (metrics: ReturnType<typeof generateMetrics>) => 
 }
 
 // Generate all data
-const maximalMetrics = generateMetrics()
+const maximalMetrics = generateMetrics(50)
 const maximalEdgeCaseData = generateTimeSeriesData(maximalMetrics)
+const EXPANDED_COLORS_50 = createExpandedPalette(CHART_COLORS, 50)
 
 const Story: Meta<typeof Chart.Container> = {
   component: Chart.Container,
@@ -161,7 +192,13 @@ const Story: Meta<typeof Chart.Container> = {
 }
 
 // Inline legend under the chart: one-line, horizontally scrollable, hidden scrollbar
-function LegendInline({ items }: { items: Array<{ label: string; color: string }> }) {
+function LegendInline({
+  items,
+  rightGutterWidth = 48,
+}: {
+  items: Array<{ label: string; color: string }>
+  rightGutterWidth?: number
+}) {
   const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     if (!event.currentTarget) return
     if (event.deltaY === 0) return
@@ -177,17 +214,23 @@ function LegendInline({ items }: { items: Array<{ label: string; color: string }
         .legend-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .legend-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
       `}</style>
-      <div
-        onWheel={handleWheel}
-        className="legend-scrollbar m-0 mt-2 box-border flex w-full flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap p-0"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-      >
-        {items.map((entry) => (
-          <Badge key={entry.label} radius="full" className="gap-2">
-            <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="truncate">{entry.label}</span>
-          </Badge>
-        ))}
+      <div className="relative mt-2" style={{ width: `calc(100% - ${rightGutterWidth}px)` }}>
+        <div
+          onWheel={handleWheel}
+          className="legend-scrollbar m-0 box-border flex w-full flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap p-0"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {items.map((entry) => (
+            <Badge key={entry.label} radius="full" className="gap-2">
+              <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="truncate">{entry.label}</span>
+            </Badge>
+          ))}
+        </div>
+        <div
+          className="pointer-events-none absolute right-0 top-0 h-full"
+          style={{ width: '2.5rem', background: 'linear-gradient(to left, white, rgba(255,255,255,0))' }}
+        />
       </div>
     </>
   )
@@ -366,7 +409,7 @@ export const MaximalEdgeCase = {
                 type="linear"
                 dataKey={metric.key}
                 name={metric.key}
-                stroke={CHART_COLORS[index]}
+                stroke={EXPANDED_COLORS_50[index]}
                 strokeWidth={2}
                 dot={false}
                 connectNulls={false}
@@ -375,7 +418,7 @@ export const MaximalEdgeCase = {
             ))}
           </ComposedChart>
         </Chart.Container>
-        <LegendInline items={maximalMetrics.map((m, i) => ({ label: m.key, color: CHART_COLORS[i] }))} />
+        <LegendInline items={maximalMetrics.map((m, i) => ({ label: m.key, color: EXPANDED_COLORS_50[i] }))} />
       </div>
     )
   },
