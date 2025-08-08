@@ -200,10 +200,13 @@ function LegendInline({
   rightGutterWidth?: number
 }) {
   const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
-    if (!event.currentTarget) return
-    if (event.deltaY === 0) return
+    const target = event.currentTarget
+    if (!target) return
+    const scrollDelta = event.deltaY !== 0 ? event.deltaY : event.deltaX
+    if (scrollDelta === 0) return
     event.preventDefault()
-    event.currentTarget.scrollLeft += event.deltaY
+    event.stopPropagation()
+    target.scrollLeft += scrollDelta
   }
 
   if (!items || items.length === 0) return null
@@ -217,7 +220,7 @@ function LegendInline({
       <div className="relative mt-2" style={{ width: `calc(100% - ${rightGutterWidth}px)` }}>
         <div
           onWheel={handleWheel}
-          className="legend-scrollbar m-0 box-border flex w-full flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap p-0"
+          className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap p-0"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {items.map((entry) => (
