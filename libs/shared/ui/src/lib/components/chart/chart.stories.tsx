@@ -4,7 +4,6 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
-  Legend,
   Line,
   ReferenceArea,
   ReferenceLine,
@@ -12,7 +11,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { LegendProps } from 'recharts'
 import { Badge } from '../badge/badge'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
@@ -162,10 +160,8 @@ const Story: Meta<typeof Chart.Container> = {
   ],
 }
 
-// Custom legend content: one-line, scrollable badges with colored dots
-function LegendContent(props: LegendProps) {
-  const { payload } = props
-
+// Inline legend under the chart: one-line, horizontally scrollable, hidden scrollbar
+function LegendInline({ items }: { items: Array<{ label: string; color: string }> }) {
   const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     if (!event.currentTarget) return
     if (event.deltaY === 0) return
@@ -173,21 +169,27 @@ function LegendContent(props: LegendProps) {
     event.currentTarget.scrollLeft += event.deltaY
   }
 
-  if (!payload || payload.length === 0) return null
+  if (!items || items.length === 0) return null
 
   return (
-    <div
-      onWheel={handleWheel}
-      className="m-0 box-border flex w-full flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap p-0"
-      style={{ WebkitOverflowScrolling: 'touch' }}
-    >
-      {payload.map((entry) => (
-        <Badge key={String(entry.value)} radius="full" className="gap-2">
-          <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
-          <span className="truncate">{entry.value as string}</span>
-        </Badge>
-      ))}
-    </div>
+    <>
+      <style>{`
+        .legend-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .legend-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+      `}</style>
+      <div
+        onWheel={handleWheel}
+        className="legend-scrollbar m-0 mt-2 box-border flex w-full flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap p-0"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
+        {items.map((entry) => (
+          <Badge key={entry.label} radius="full" className="gap-2">
+            <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="truncate">{entry.label}</span>
+          </Badge>
+        ))}
+      </div>
+    </>
   )
 }
 
@@ -227,104 +229,107 @@ The chart supports mixed visualization types including area charts, bar charts, 
     const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
 
     return (
-      <Chart.Container className="h-[400px] w-full select-none p-5 py-2 pr-0">
-        <ComposedChart
-          data={sampleData}
-          margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
-          onDoubleClick={handleChartDoubleClick}
-          style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
-        >
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-          <XAxis
-            {...xAxisConfig}
-            allowDataOverflow
-            domain={domain}
-            ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
-            type="number"
-            dataKey="timestamp"
-            tick={{ ...xAxisConfig.tick }}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
+      <div className="w-full p-5 py-2 pr-0">
+        <Chart.Container className="h-[400px] w-full select-none">
+          <ComposedChart
+            data={sampleData}
+            margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onDoubleClick={handleChartDoubleClick}
+            style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
+          >
+            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+            <XAxis
+              {...xAxisConfig}
+              allowDataOverflow
+              domain={domain}
+              ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
+              type="number"
+              dataKey="timestamp"
+              tick={{ ...xAxisConfig.tick }}
+              tickFormatter={(timestamp) => {
+                const date = new Date(timestamp)
 
-              // Get current zoom domain for dynamic time granularity
-              const [startMs, endMs] = domain.map((d) =>
-                typeof d === 'number'
-                  ? d
-                  : d === 'dataMin'
-                    ? (defaultDomain[0] as number)
-                    : (defaultDomain[1] as number)
-              )
-              const granularity = getTimeGranularity(startMs, endMs)
+                // Get current zoom domain for dynamic time granularity
+                const [startMs, endMs] = domain.map((d) =>
+                  typeof d === 'number'
+                    ? d
+                    : d === 'dataMin'
+                      ? (defaultDomain[0] as number)
+                      : (defaultDomain[1] as number)
+                )
+                const granularity = getTimeGranularity(startMs, endMs)
 
-              const pad = (num: number) => num.toString().padStart(2, '0')
+                const pad = (num: number) => num.toString().padStart(2, '0')
 
-              switch (granularity) {
-                case 'seconds':
-                  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
-                case 'minutes':
-                  return `${pad(date.getHours())}:${pad(date.getMinutes())}`
-                case 'days':
-                default:
-                  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+                switch (granularity) {
+                  case 'seconds':
+                    return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+                  case 'minutes':
+                    return `${pad(date.getHours())}:${pad(date.getMinutes())}`
+                  case 'days':
+                  default:
+                    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+                }
+              }}
+            />
+            <YAxis
+              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+              tickLine={{ stroke: 'transparent' }}
+              axisLine={{ stroke: 'transparent' }}
+              orientation="right"
+              tickCount={5}
+              tickFormatter={(value) => (value === 0 ? '' : value)}
+            />
+            <Tooltip
+              content={
+                <Chart.TooltipContent
+                  title="System Usage"
+                  formatLabel={(key) => {
+                    const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
+                    return labelMap[key] || key
+                  }}
+                  formatValue={(value) => `${value}%`}
+                />
               }
-            }}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          <Tooltip
-            content={
-              <Chart.TooltipContent
-                title="System Usage"
-                formatLabel={(key) => {
-                  const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
-                  return labelMap[key] || key
-                }}
-                formatValue={(value) => `${value}%`}
-              />
-            }
-          />
-          <Legend
-            align="left"
-            verticalAlign="top"
-            content={<LegendContent />}
-            wrapperStyle={{ padding: 0, margin: 0 }}
-          />
-          <Area
-            type="linear"
-            dataKey="cpu"
-            stroke="var(--color-yellow-500)"
-            fill="var(--color-yellow-500)"
-            fillOpacity={0.15}
-            strokeWidth={2}
-            isAnimationActive={false}
-            name="CPU"
-          />
-          <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
-          <Line
-            type="linear"
-            dataKey="disk"
-            stroke="var(--color-green-500)"
-            strokeWidth={2}
-            dot={false}
-            connectNulls={false}
-            isAnimationActive={false}
-            name="Disk"
-          />
-          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
-            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
-          ) : null}
-        </ComposedChart>
-      </Chart.Container>
+            />
+            <Area
+              type="linear"
+              dataKey="cpu"
+              stroke="var(--color-yellow-500)"
+              fill="var(--color-yellow-500)"
+              fillOpacity={0.15}
+              strokeWidth={2}
+              isAnimationActive={false}
+              name="CPU"
+            />
+            <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
+            <Line
+              type="linear"
+              dataKey="disk"
+              stroke="var(--color-green-500)"
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+              isAnimationActive={false}
+              name="Disk"
+            />
+            {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+              <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+            ) : null}
+          </ComposedChart>
+        </Chart.Container>
+        <LegendInline
+          items={[
+            { label: 'CPU', color: 'var(--color-yellow-500)' },
+            { label: 'Memory', color: 'var(--color-brand-500)' },
+            { label: 'Disk', color: 'var(--color-green-500)' },
+          ]}
+        />
+      </div>
     )
   },
 }
@@ -333,48 +338,45 @@ export const MaximalEdgeCase = {
   render: () => {
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
     return (
-      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-        <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-          <XAxis
-            {...xAxisConfig}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
-              const hours = date.getHours().toString().padStart(2, '0')
-              const minutes = date.getMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
-            }}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-          <Legend
-            align="left"
-            verticalAlign="top"
-            content={<LegendContent />}
-            wrapperStyle={{ padding: 0, margin: 0 }}
-          />
-          {maximalMetrics.map((metric, index) => (
-            <Line
-              key={metric.key}
-              type="linear"
-              dataKey={metric.key}
-              name={metric.key}
-              stroke={CHART_COLORS[index]}
-              strokeWidth={2}
-              dot={false}
-              connectNulls={false}
-              isAnimationActive={false}
+      <div className="w-full p-5 py-2 pr-0">
+        <Chart.Container className="h-[400px] w-full">
+          <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+            <XAxis
+              {...xAxisConfig}
+              tickFormatter={(timestamp) => {
+                const date = new Date(timestamp)
+                const hours = date.getHours().toString().padStart(2, '0')
+                const minutes = date.getMinutes().toString().padStart(2, '0')
+                return `${hours}:${minutes}`
+              }}
             />
-          ))}
-        </ComposedChart>
-      </Chart.Container>
+            <YAxis
+              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+              tickLine={{ stroke: 'transparent' }}
+              axisLine={{ stroke: 'transparent' }}
+              orientation="right"
+              tickCount={5}
+              tickFormatter={(value) => (value === 0 ? '' : value)}
+            />
+            <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
+            {maximalMetrics.map((metric, index) => (
+              <Line
+                key={metric.key}
+                type="linear"
+                dataKey={metric.key}
+                name={metric.key}
+                stroke={CHART_COLORS[index]}
+                strokeWidth={2}
+                dot={false}
+                connectNulls={false}
+                isAnimationActive={false}
+              />
+            ))}
+          </ComposedChart>
+        </Chart.Container>
+        <LegendInline items={maximalMetrics.map((m, i) => ({ label: m.key, color: CHART_COLORS[i] }))} />
+      </div>
     )
   },
 }
