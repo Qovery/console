@@ -52,7 +52,7 @@ export const handleGitApplicationSubmit = (
     }
 
     const git_repository = {
-      url: data.repository?.url ?? '',
+      url: data.git_repository?.url || application.git_repository?.url || '',
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,

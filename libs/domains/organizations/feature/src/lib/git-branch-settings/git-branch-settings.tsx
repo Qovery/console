@@ -35,7 +35,7 @@ export function GitBranchSettings({
   } = useBranches({
     organizationId,
     gitProvider,
-    name: watchFieldRepository?.name,
+    name: watchFieldRepository,
     gitToken: gitTokenId,
     enabled: !disabled,
   })
