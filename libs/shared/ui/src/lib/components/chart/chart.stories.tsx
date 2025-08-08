@@ -1,10 +1,10 @@
 import type { Meta } from '@storybook/react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Area,
   Bar,
   CartesianGrid,
   ComposedChart,
-  Legend,
   Line,
   ReferenceArea,
   ReferenceLine,
@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { Badge } from '../badge/badge'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
@@ -36,6 +37,29 @@ const CHART_COLORS = [
   'var(--color-r-scl)',
 ]
 
+// Build a larger palette from base colors by generating lighter tints using CSS color-mix.
+// This yields up to base.length * 3 distinct shades.
+function createExpandedPalette(baseColors: string[], desiredCount: number): string[] {
+  const variants: number[] = [100, 75, 55] // 100% base, then lighter tints
+  const expanded: string[] = []
+  outer: for (const weight of variants) {
+    for (const base of baseColors) {
+      if (expanded.length >= desiredCount) break outer
+      if (weight === 100) {
+        expanded.push(base)
+      } else {
+        // Use color-mix to generate a lighter tint of the base color
+        expanded.push(`color-mix(in srgb, ${base} ${weight}%, white)`) // e.g., 75% base + 25% white
+      }
+    }
+  }
+  // If still not enough, cycle base colors
+  while (expanded.length < desiredCount) {
+    expanded.push(baseColors[expanded.length % baseColors.length])
+  }
+  return expanded
+}
+
 // Sample data with independent system metrics: CPU, Memory, Disk usage (percentages)
 const sampleData = [
   { timestamp: 1704067200000, time: '00:00', fullTime: '2024-01-01 00:00:00', cpu: 25, memory: 68, disk: 45 },
@@ -47,8 +71,8 @@ const sampleData = [
   { timestamp: 1704088800000, time: '06:00', fullTime: '2024-01-01 06:00:00', cpu: 52, memory: 69, disk: 48 },
 ]
 
-// Generate 20 unique instance metrics
-const generateMetrics = () => {
+// Generate N unique instance metrics (default 50)
+const generateMetrics = (count = 50) => {
   const baseUUIDs = [
     'dk2ms',
     'zwdnt',
@@ -72,7 +96,14 @@ const generateMetrics = () => {
     'am5dt',
   ]
 
-  return baseUUIDs.map((uuid) => ({
+  const uuids: string[] = []
+  for (let i = 0; i < count; i++) {
+    const base = baseUUIDs[i % baseUUIDs.length]
+    const suffix = Math.floor(i / baseUUIDs.length) // 0,1,2...
+    uuids.push(suffix === 0 ? base : `${base}${suffix}`)
+  }
+
+  return uuids.map((uuid) => ({
     key: `pod-889b7db58-${uuid}`,
     baseValue: 400 + Math.floor(Math.random() * 2000), // Random base between 400-2400
     variance: 50 + Math.floor(Math.random() * 200), // Random variance between 50-250
@@ -145,8 +176,9 @@ const generateTimeSeriesData = (metrics: ReturnType<typeof generateMetrics>) => 
 }
 
 // Generate all data
-const maximalMetrics = generateMetrics()
+const maximalMetrics = generateMetrics(50)
 const maximalEdgeCaseData = generateTimeSeriesData(maximalMetrics)
+const EXPANDED_COLORS_50 = createExpandedPalette(CHART_COLORS, 50)
 
 const Story: Meta<typeof Chart.Container> = {
   component: Chart.Container,
@@ -158,6 +190,75 @@ const Story: Meta<typeof Chart.Container> = {
       </div>
     ),
   ],
+}
+
+// Inline legend under the chart: one-line, horizontally scrollable, hidden scrollbar
+function LegendInline({
+  items,
+  rightGutterWidth = 48,
+  selectedKeys = new Set<string>(),
+  onToggle,
+}: {
+  items: Array<{ key: string; label: string; color: string }>
+  rightGutterWidth?: number
+  selectedKeys?: Set<string>
+  onToggle?: (key: string) => void
+}) {
+  const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
+    const target = event.currentTarget
+    if (!target) return
+    const scrollDelta = event.deltaY !== 0 ? event.deltaY : event.deltaX
+    if (scrollDelta === 0) return
+    event.preventDefault()
+    event.stopPropagation()
+    target.scrollLeft += scrollDelta
+  }
+
+  if (!items || items.length === 0) return null
+
+  return (
+    <>
+      <style>{`
+        .legend-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .legend-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+      `}</style>
+      <div className="relative mt-2" style={{ width: `calc(100% - ${rightGutterWidth}px)` }}>
+        <div
+          onWheel={handleWheel}
+          className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap p-0"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          {items.map((entry) => {
+            const isActive = selectedKeys.has(entry.key)
+            return (
+              <Badge
+                key={entry.key}
+                role="button"
+                tabIndex={0}
+                radius="full"
+                className="cursor-pointer gap-2"
+                onClick={() => onToggle?.(entry.key)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onToggle?.(entry.key)
+                  }
+                }}
+                style={isActive ? { borderColor: entry.color, borderWidth: 1 } : undefined}
+              >
+                <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span className="truncate">{entry.label}</span>
+              </Badge>
+            )
+          })}
+        </div>
+        <div
+          className="pointer-events-none absolute right-0 top-0 h-full"
+          style={{ width: '2.5rem', background: 'linear-gradient(to left, white, rgba(255,255,255,0))' }}
+        />
+      </div>
+    </>
+  )
 }
 
 export const ComposableChart = {
@@ -196,144 +297,202 @@ The chart supports mixed visualization types including area charts, bar charts, 
     const xAxisConfig = createXAxisConfig(1704067200, 1704088800, { tickCount: 7 })
 
     return (
-      <Chart.Container className="h-[400px] w-full select-none p-5 py-2 pr-0">
-        <ComposedChart
-          data={sampleData}
-          margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseLeave}
-          onDoubleClick={handleChartDoubleClick}
-          style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
-        >
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-          <XAxis
-            {...xAxisConfig}
-            allowDataOverflow
-            domain={domain}
-            ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
-            type="number"
-            dataKey="timestamp"
-            tick={{ ...xAxisConfig.tick }}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
+      <div className="w-full p-5 py-2 pr-0">
+        <Chart.Container className="h-[400px] w-full select-none">
+          <ComposedChart
+            data={sampleData}
+            margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onDoubleClick={handleChartDoubleClick}
+            style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
+          >
+            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+            <XAxis
+              {...xAxisConfig}
+              allowDataOverflow
+              domain={domain}
+              ticks={ticks.length > 0 ? ticks : xAxisConfig.ticks}
+              type="number"
+              dataKey="timestamp"
+              tick={{ ...xAxisConfig.tick }}
+              tickFormatter={(timestamp) => {
+                const date = new Date(timestamp)
 
-              // Get current zoom domain for dynamic time granularity
-              const [startMs, endMs] = domain.map((d) =>
-                typeof d === 'number'
-                  ? d
-                  : d === 'dataMin'
-                    ? (defaultDomain[0] as number)
-                    : (defaultDomain[1] as number)
-              )
-              const granularity = getTimeGranularity(startMs, endMs)
+                // Get current zoom domain for dynamic time granularity
+                const [startMs, endMs] = domain.map((d) =>
+                  typeof d === 'number'
+                    ? d
+                    : d === 'dataMin'
+                      ? (defaultDomain[0] as number)
+                      : (defaultDomain[1] as number)
+                )
+                const granularity = getTimeGranularity(startMs, endMs)
 
-              const pad = (num: number) => num.toString().padStart(2, '0')
+                const pad = (num: number) => num.toString().padStart(2, '0')
 
-              switch (granularity) {
-                case 'seconds':
-                  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
-                case 'minutes':
-                  return `${pad(date.getHours())}:${pad(date.getMinutes())}`
-                case 'days':
-                default:
-                  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+                switch (granularity) {
+                  case 'seconds':
+                    return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`
+                  case 'minutes':
+                    return `${pad(date.getHours())}:${pad(date.getMinutes())}`
+                  case 'days':
+                  default:
+                    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)} ${pad(date.getHours())}:${pad(date.getMinutes())}`
+                }
+              }}
+            />
+            <YAxis
+              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+              tickLine={{ stroke: 'transparent' }}
+              axisLine={{ stroke: 'transparent' }}
+              orientation="right"
+              tickCount={5}
+              tickFormatter={(value) => (value === 0 ? '' : value)}
+            />
+            <Tooltip
+              content={
+                <Chart.TooltipContent
+                  title="System Usage"
+                  formatLabel={(key) => {
+                    const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
+                    return labelMap[key] || key
+                  }}
+                  formatValue={(value) => `${value}%`}
+                />
               }
-            }}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          <Tooltip
-            content={
-              <Chart.TooltipContent
-                title="System Usage"
-                formatLabel={(key) => {
-                  const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
-                  return labelMap[key] || key
-                }}
-                formatValue={(value) => `${value}%`}
-              />
-            }
-          />
-          <Legend />
-          <Area
-            type="linear"
-            dataKey="cpu"
-            stroke="var(--color-yellow-500)"
-            fill="var(--color-yellow-500)"
-            fillOpacity={0.15}
-            strokeWidth={2}
-            isAnimationActive={false}
-            name="CPU"
-          />
-          <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
-          <Line
-            type="linear"
-            dataKey="disk"
-            stroke="var(--color-green-500)"
-            strokeWidth={2}
-            dot={false}
-            connectNulls={false}
-            isAnimationActive={false}
-            name="Disk"
-          />
-          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
-            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
-          ) : null}
-        </ComposedChart>
-      </Chart.Container>
+            />
+            <Area
+              type="linear"
+              dataKey="cpu"
+              stroke="var(--color-yellow-500)"
+              fill="var(--color-yellow-500)"
+              fillOpacity={0.15}
+              strokeWidth={2}
+              isAnimationActive={false}
+              name="CPU"
+            />
+            <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
+            <Line
+              type="linear"
+              dataKey="disk"
+              stroke="var(--color-green-500)"
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+              isAnimationActive={false}
+              name="Disk"
+            />
+            {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+              <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+            ) : null}
+          </ComposedChart>
+        </Chart.Container>
+        <LegendInline
+          items={[
+            { key: 'cpu', label: 'CPU', color: 'var(--color-yellow-500)' },
+            { key: 'memory', label: 'Memory', color: 'var(--color-brand-500)' },
+            { key: 'disk', label: 'Disk', color: 'var(--color-green-500)' },
+          ]}
+        />
+      </div>
     )
   },
 }
 
 export const MaximalEdgeCase = {
   render: () => {
+    const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
+    const containerRef = useRef<HTMLDivElement>(null)
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
+
+    const sanitizeKey = (key: string) => key.replace(/[^a-zA-Z0-9_-]+/g, '-')
+
+    // CSS-driven highlighting: toggle container class and mark only selected series as active
+    useEffect(() => {
+      const root = containerRef.current
+      if (!root) return
+      const hasSelection = selectedKeys.size > 0
+      // Toggle selection scope on container (scoped by .highlight-scope)
+      root.classList.toggle('has-selection', hasSelection)
+
+      // Clear previous active flags (only touch elements that were active)
+      root.querySelectorAll('g.series.is-active').forEach((el) => el.classList.remove('is-active'))
+
+      if (!hasSelection) return
+
+      // Mark selected series as active; CSS will dim all others
+      selectedKeys.forEach((key) => {
+        const group = root.querySelector<SVGGElement>(`g.series.series--${sanitizeKey(key)}`)
+        if (group) group.classList.add('is-active')
+      })
+    }, [selectedKeys])
     return (
-      <Chart.Container className="h-[400px] w-full p-5 py-2 pr-0">
-        <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-          <XAxis
-            {...xAxisConfig}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
-              const hours = date.getHours().toString().padStart(2, '0')
-              const minutes = date.getMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
-            }}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-          <Legend />
-          {maximalMetrics.map((metric, index) => (
-            <Line
-              key={metric.key}
-              type="linear"
-              dataKey={metric.key}
-              name={metric.key}
-              stroke={CHART_COLORS[index]}
-              strokeWidth={2}
-              dot={false}
-              connectNulls={false}
-              isAnimationActive={false}
+      <div ref={containerRef} className="highlight-scope w-full p-5 py-2 pr-0">
+        <style>{`
+          /* When there is a selection, dim all series that are not active */
+          .highlight-scope.has-selection g.series:not(.is-active) path,
+          .highlight-scope.has-selection g.series:not(.is-active) rect,
+          .highlight-scope.has-selection g.series:not(.is-active) circle,
+          .highlight-scope.has-selection g.series:not(.is-active) polygon {
+            opacity: 0.2;
+          }
+        `}</style>
+        <Chart.Container className="h-[400px] w-full">
+          <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+            <XAxis
+              {...xAxisConfig}
+              tickFormatter={(timestamp) => {
+                const date = new Date(timestamp)
+                const hours = date.getHours().toString().padStart(2, '0')
+                const minutes = date.getMinutes().toString().padStart(2, '0')
+                return `${hours}:${minutes}`
+              }}
             />
-          ))}
-        </ComposedChart>
-      </Chart.Container>
+            <YAxis
+              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+              tickLine={{ stroke: 'transparent' }}
+              axisLine={{ stroke: 'transparent' }}
+              orientation="right"
+              tickCount={5}
+              tickFormatter={(value) => (value === 0 ? '' : value)}
+            />
+            <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
+            {maximalMetrics.map((metric, index) => {
+              const seriesClass = `series series--${sanitizeKey(metric.key)}`
+              return (
+                <Line
+                  key={metric.key}
+                  type="linear"
+                  dataKey={metric.key}
+                  name={metric.key}
+                  stroke={EXPANDED_COLORS_50[index]}
+                  strokeWidth={2}
+                  className={seriesClass}
+                  dot={false}
+                  connectNulls={false}
+                  isAnimationActive={false}
+                />
+              )
+            })}
+          </ComposedChart>
+        </Chart.Container>
+        <LegendInline
+          items={maximalMetrics.map((m, i) => ({ key: m.key, label: m.key, color: EXPANDED_COLORS_50[i] }))}
+          selectedKeys={selectedKeys}
+          onToggle={(key) => {
+            setSelectedKeys((prev) => {
+              const next = new Set(prev)
+              if (next.has(key)) next.delete(key)
+              else next.add(key)
+              return next
+            })
+          }}
+        />
+      </div>
     )
   },
 }
