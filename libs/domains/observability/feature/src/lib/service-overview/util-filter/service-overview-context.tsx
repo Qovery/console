@@ -48,6 +48,10 @@ interface ServiceOverviewContextType {
   // Live update toggle
   isLiveUpdateEnabled: boolean
   setIsLiveUpdateEnabled: (value: boolean) => void
+
+  // Date picker state
+  isDatePickerOpen: boolean
+  setIsDatePickerOpen: (value: boolean) => void
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
@@ -64,6 +68,9 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   // Live update toggle - enabled by default
   const [isLiveUpdateEnabled, setIsLiveUpdateEnabled] = useState(true)
+
+  // Date picker state - used to pause live updates while open
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
 
   // Zoom reset functionality
   const [zoomResetFunctions, setZoomResetFunctions] = useState<(() => void)[]>([])
@@ -106,7 +113,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const isLiveRange = ['5m', '15m', '30m'].includes(timeRange)
 
-    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed) return
+    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed || isDatePickerOpen) return
 
     const roundDateToStep = (date: Date, stepSeconds: number): Date => {
       const timestamp = Math.floor(date.getTime() / 1000)
@@ -155,7 +162,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
     return () => clearInterval(interval)
-  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed])
+  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen])
 
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
@@ -194,6 +201,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setHoveredEventKey,
     isLiveUpdateEnabled,
     setIsLiveUpdateEnabled,
+    isDatePickerOpen,
+    setIsDatePickerOpen,
   }
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>

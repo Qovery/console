@@ -39,7 +39,8 @@ interface UseMetricsProps {
 function useLiveUpdateSetting(): boolean {
   try {
     const context = useServiceOverviewContext()
-    return context.isLiveUpdateEnabled
+    // Pause live updates when charts are zoomed or when the date picker is open
+    return context.isLiveUpdateEnabled && !context.isAnyChartZoomed && !context.isDatePickerOpen
   } catch {
     // Context not available, default to true
     return true
