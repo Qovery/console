@@ -15,10 +15,7 @@ export function PageRedirectLogin() {
     // Handle specific OIDC / SAML issue: the domain provided by the user doesn't exist on Auth0 side
     if (error === 'invalid_request' && errorDescription.includes('')) {
       sessionStorage.setItem('auth0_error', 'Invalid Enterprise SSO Domain Name')
-      sessionStorage.setItem(
-        'auth0_error_description',
-        "The domain name provided doesn't exist on our side. Please contact your Qovery administrator."
-      )
+      sessionStorage.setItem('auth0_error_description', 'The domain name provided is not authorized')
     }
 
     return <Navigate to={LOGIN_URL} />

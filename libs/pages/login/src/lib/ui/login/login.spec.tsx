@@ -1,8 +1,7 @@
+import { AuthEnum } from '@qovery/shared/auth'
 import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import useAuth0Error from '../../hooks/auth0-error/use-auth0-error'
 import Login, { type ILoginProps } from './login'
-
-import mock = jest.mock
 
 // Mock the useAuth0Error hook
 jest.mock('../../hooks/auth0-error/use-auth0-error', () => ({
@@ -56,6 +55,104 @@ describe('Login', () => {
     // Check that the error message is displayed
     expect(screen.getByText('SSO Connection Error')).toBeInTheDocument()
     expect(screen.getByText('The SSO connection failed. Please check your domain and try again.')).toBeInTheDocument()
+  })
+
+  describe('Authentication provider buttons', () => {
+    beforeEach(() => {
+      mockUseAuth0Error.mockReturnValue({
+        auth0Error: null,
+        clearError: jest.fn(),
+      })
+    })
+
+    it('should call onClickAuthLogin with GITHUB when GitHub button is clicked', () => {
+      renderWithProviders(<Login {...props} />)
+
+      fireEvent.click(screen.getByText('Continue with Github'))
+
+      expect(mockOnClickAuthLogin).toHaveBeenCalledTimes(1)
+      expect(mockOnClickAuthLogin).toHaveBeenCalledWith(AuthEnum.GITHUB)
+    })
+
+    it('should call onClickAuthLogin with GOOGLE_SSO when Google button is clicked', () => {
+      renderWithProviders(<Login {...props} />)
+
+      fireEvent.click(screen.getByText('Continue with Google'))
+
+      expect(mockOnClickAuthLogin).toHaveBeenCalledTimes(1)
+      expect(mockOnClickAuthLogin).toHaveBeenCalledWith(AuthEnum.GOOGLE_SSO)
+    })
+
+    // TODO (mzo) to fix
+    // it('should call onClickAuthLogin with provider when dropdown items are selected', () => {
+    //   renderWithProviders(<Login {...props} />)
+    //
+    //   // Open dropdown menu
+    //   fireEvent.click(screen.getByText('See 3 others options'))
+    //
+    //   // Click Microsoft option
+    //   fireEvent.click(screen.getByText('Continue with Microsoft'))
+    //   expect(mockOnClickAuthLogin).toHaveBeenCalledWith(AuthEnum.MICROSOFT)
+    //
+    //   // Reset and reopen for next test
+    //   jest.clearAllMocks()
+    //   renderWithProviders(<Login {...props} />)
+    //   fireEvent.click(screen.getByText('See 3 others options'))
+    //
+    //   // Click Gitlab option
+    //   fireEvent.click(screen.getByText('Continue with Gitlab'))
+    //   expect(mockOnClickAuthLogin).toHaveBeenCalledWith(AuthEnum.GITLAB)
+    //
+    //   // Reset and reopen for next test
+    //   jest.clearAllMocks()
+    //   renderWithProviders(<Login {...props} />)
+    //   fireEvent.click(screen.getByText('See 3 others options'))
+    //
+    //   // Click Bitbucket option
+    //   fireEvent.click(screen.getByText('Continue with Bitbucket'))
+    //   expect(mockOnClickAuthLogin).toHaveBeenCalledWith(AuthEnum.BITBUCKET)
+    // })
+  })
+
+  describe('SSO Form', () => {
+    beforeEach(() => {
+      mockUseAuth0Error.mockReturnValue({
+        auth0Error: null,
+        clearError: jest.fn(),
+      })
+    })
+
+    it('should go back from SSO form and reset form state', () => {
+      renderWithProviders(<Login {...props} />)
+
+      // First show the SSO form
+      fireEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
+
+      // Enter something in the domain field
+      const inputField = screen.getByPlaceholderText('Enter your domain (e.g., company.com)')
+      fireEvent.change(inputField, { target: { value: 'test_1.domain' } })
+
+      // Add an error message
+      fireEvent.click(screen.getByText('Connect'))
+      expect(screen.getByText('Invalid domain format')).toBeInTheDocument()
+
+      // Click go back button
+      fireEvent.click(screen.getByText('← Go back'))
+
+      // Verify we're back to the main login view (SSO form is hidden)
+      expect(screen.getByText('Use Enterprise Single Sign-On')).toBeInTheDocument()
+      expect(screen.queryByText('Enterprise Single Sign-On')).not.toBeInTheDocument()
+
+      // If we show the SSO form again, it should be reset
+      fireEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
+
+      // Domain field should be empty
+      const resetInputField = screen.getByPlaceholderText('Enter your domain (e.g., company.com)')
+      expect(resetInputField).toHaveValue('')
+
+      // Error message should be gone
+      expect(screen.queryByText('Invalid domain format')).not.toBeInTheDocument()
+    })
   })
 
   describe('validateAndConnect method', () => {

@@ -9,9 +9,10 @@ export interface Auth0Error {
 export function useAuth0Error() {
   const [auth0Error, setAuth0Error] = useState<Auth0Error | null>(null)
 
+  const error = sessionStorage.getItem('auth0_error')
+
   useEffect(() => {
     // Check sessionStorage for Auth0 errors
-    const error = sessionStorage.getItem('auth0_error')
     const errorDescription = sessionStorage.getItem('auth0_error_description')
     const state = sessionStorage.getItem('auth0_state')
 
@@ -27,11 +28,7 @@ export function useAuth0Error() {
     }
   }, [])
 
-  const clearError = () => {
-    setAuth0Error(null)
-  }
-
-  return { auth0Error, clearError }
+  return { auth0Error, setAuth0Error }
 }
 
 export default useAuth0Error

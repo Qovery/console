@@ -15,7 +15,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
   const [ssoFormVisible, setSsoFormVisible] = useState(false)
   const [ssoDomain, setSsoDomain] = useState('')
   const [domainError, setDomainError] = useState('')
-  const { auth0Error } = useAuth0Error()
+  const { auth0Error, setAuth0Error } = useAuth0Error()
 
   useEffect(() => {
     checkTokenInStorage()
@@ -49,15 +49,6 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
             ) : (
               <div className="mb-2">
                 <InviteDetailsFeature />
-              </div>
-            )}
-
-            {auth0Error && (
-              <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
-                <p className="text-sm font-medium text-red-800">SSO Connection Error</p>
-                <p className="mt-1 text-sm text-red-600">
-                  {auth0Error.error_description || 'The SSO connection failed. Please check your domain and try again.'}
-                </p>
               </div>
             )}
 
@@ -132,19 +123,32 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                     </DropdownMenu.Content>
                   </DropdownMenu.Root>
 
-                  <div className="mt-6">
+                  <div className="mt-1 flex justify-center">
                     <button
-                      onClick={() => setSsoFormVisible(true)}
+                      onClick={() => {
+                        setSsoFormVisible(true)
+                        setAuth0Error(null)
+                      }}
                       className="text-base font-medium text-sky-500 hover:underline"
                     >
                       Use Enterprise Single Sign-On
                     </button>
                   </div>
+
+                  {auth0Error && (
+                    <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
+                      <p className="text-sm font-medium text-red-800">SSO Connection Error</p>
+                      <p className="mt-1 text-sm text-red-600">
+                        {auth0Error.error_description ||
+                          'The SSO connection failed. Please check your domain and try again.'}
+                      </p>
+                    </div>
+                  )}
                 </>
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col">
                   <h2 className="text-xl font-medium text-neutral-400">Enterprise Single Sign-On</h2>
-                  <p className="text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
+                  <p className="mb-5 mt-1 text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
                   <div className="flex items-center gap-2">
                     <div className="relative flex-1">
                       <input
@@ -173,7 +177,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                       setSsoDomain('')
                       setDomainError('')
                     }}
-                    className="mt-4 self-start text-sm text-sky-500 hover:underline"
+                    className="mt-6 self-start text-sm text-sky-500 hover:underline"
                   >
                     ← Go back
                   </button>
