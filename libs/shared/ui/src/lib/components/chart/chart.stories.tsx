@@ -12,6 +12,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import type { LegendProps } from 'recharts'
+import { Badge } from '../badge/badge'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
@@ -160,6 +162,35 @@ const Story: Meta<typeof Chart.Container> = {
   ],
 }
 
+// Custom legend content: one-line, scrollable badges with colored dots
+function LegendContent(props: LegendProps) {
+  const { payload } = props
+
+  const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
+    if (!event.currentTarget) return
+    if (event.deltaY === 0) return
+    event.preventDefault()
+    event.currentTarget.scrollLeft += event.deltaY
+  }
+
+  if (!payload || payload.length === 0) return null
+
+  return (
+    <div
+      onWheel={handleWheel}
+      className="m-0 box-border flex w-full flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap p-0"
+      style={{ WebkitOverflowScrolling: 'touch' }}
+    >
+      {payload.map((entry) => (
+        <Badge key={String(entry.value)} radius="full" className="gap-2">
+          <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
+          <span className="truncate">{entry.value as string}</span>
+        </Badge>
+      ))}
+    </div>
+  )
+}
+
 export const ComposableChart = {
   parameters: {
     docs: {
@@ -262,7 +293,12 @@ The chart supports mixed visualization types including area charts, bar charts, 
               />
             }
           />
-          <Legend />
+          <Legend
+            align="left"
+            verticalAlign="top"
+            content={<LegendContent />}
+            wrapperStyle={{ padding: 0, margin: 0 }}
+          />
           <Area
             type="linear"
             dataKey="cpu"
@@ -318,7 +354,12 @@ export const MaximalEdgeCase = {
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
           <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-          <Legend />
+          <Legend
+            align="left"
+            verticalAlign="top"
+            content={<LegendContent />}
+            wrapperStyle={{ padding: 0, margin: 0 }}
+          />
           {maximalMetrics.map((metric, index) => (
             <Line
               key={metric.key}
