@@ -51,7 +51,7 @@ function ServiceOverviewContent() {
 
   return (
     <div className="space-y-6">
-      <div className="flex w-full gap-3">
+      <div className="flex w-full justify-between gap-3">
         <div className="flex gap-3">
           <SelectTimeRange />
           <InputSelectSmall
@@ -64,16 +64,17 @@ function ServiceOverviewContent() {
             defaultValue={useLocalTime ? 'local' : 'utc'}
             onChange={(e) => setUseLocalTime(e === 'local')}
           />
-          <Button
-            variant="plain"
-            size="xs"
-            className="flex items-center gap-1"
-            onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
-          >
-            {isLiveUpdateEnabled ? 'Disable live updates' : 'Enable live updates'}
-            <Icon iconName={isLiveUpdateEnabled ? 'pause' : 'play'} iconStyle="regular" />
-          </Button>
         </div>
+        <Button
+          variant="surface"
+          color="neutral"
+          size="md"
+          className="flex items-center gap-2"
+          onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
+        >
+          Live Trailing
+          <Icon iconName={isLiveUpdateEnabled ? 'pause' : 'play'} iconStyle="regular" />
+        </Button>
       </div>
       <Section
         className={clsx(
