@@ -1,4 +1,5 @@
 import type { Meta } from '@storybook/react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Area,
   Bar,
@@ -195,9 +196,13 @@ const Story: Meta<typeof Chart.Container> = {
 function LegendInline({
   items,
   rightGutterWidth = 48,
+  selectedKeys = new Set<string>(),
+  onToggle,
 }: {
-  items: Array<{ label: string; color: string }>
+  items: Array<{ key: string; label: string; color: string }>
   rightGutterWidth?: number
+  selectedKeys?: Set<string>
+  onToggle?: (key: string) => void
 }) {
   const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     const target = event.currentTarget
@@ -223,12 +228,29 @@ function LegendInline({
           className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap p-0"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          {items.map((entry) => (
-            <Badge key={entry.label} radius="full" className="gap-2">
-              <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
-              <span className="truncate">{entry.label}</span>
-            </Badge>
-          ))}
+          {items.map((entry) => {
+            const isActive = selectedKeys.has(entry.key)
+            return (
+              <Badge
+                key={entry.key}
+                role="button"
+                tabIndex={0}
+                radius="full"
+                className="cursor-pointer gap-2"
+                onClick={() => onToggle?.(entry.key)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    onToggle?.(entry.key)
+                  }
+                }}
+                style={isActive ? { borderColor: entry.color, borderWidth: 1 } : undefined}
+              >
+                <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span className="truncate">{entry.label}</span>
+              </Badge>
+            )
+          })}
         </div>
         <div
           className="pointer-events-none absolute right-0 top-0 h-full"
@@ -370,9 +392,9 @@ The chart supports mixed visualization types including area charts, bar charts, 
         </Chart.Container>
         <LegendInline
           items={[
-            { label: 'CPU', color: 'var(--color-yellow-500)' },
-            { label: 'Memory', color: 'var(--color-brand-500)' },
-            { label: 'Disk', color: 'var(--color-green-500)' },
+            { key: 'cpu', label: 'CPU', color: 'var(--color-yellow-500)' },
+            { key: 'memory', label: 'Memory', color: 'var(--color-brand-500)' },
+            { key: 'disk', label: 'Disk', color: 'var(--color-green-500)' },
           ]}
         />
       </div>
@@ -382,9 +404,42 @@ The chart supports mixed visualization types including area charts, bar charts, 
 
 export const MaximalEdgeCase = {
   render: () => {
+    const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
+    const containerRef = useRef<HTMLDivElement>(null)
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
+
+    const sanitizeKey = (key: string) => key.replace(/[^a-zA-Z0-9_-]+/g, '-')
+
+    // CSS-driven highlighting: toggle container class and mark only selected series as active
+    useEffect(() => {
+      const root = containerRef.current
+      if (!root) return
+      const hasSelection = selectedKeys.size > 0
+      // Toggle selection scope on container (scoped by .highlight-scope)
+      root.classList.toggle('has-selection', hasSelection)
+
+      // Clear previous active flags (only touch elements that were active)
+      root.querySelectorAll('g.series.is-active').forEach((el) => el.classList.remove('is-active'))
+
+      if (!hasSelection) return
+
+      // Mark selected series as active; CSS will dim all others
+      selectedKeys.forEach((key) => {
+        const group = root.querySelector<SVGGElement>(`g.series.series--${sanitizeKey(key)}`)
+        if (group) group.classList.add('is-active')
+      })
+    }, [selectedKeys])
     return (
-      <div className="w-full p-5 py-2 pr-0">
+      <div ref={containerRef} className="highlight-scope w-full p-5 py-2 pr-0">
+        <style>{`
+          /* When there is a selection, dim all series that are not active */
+          .highlight-scope.has-selection g.series:not(.is-active) path,
+          .highlight-scope.has-selection g.series:not(.is-active) rect,
+          .highlight-scope.has-selection g.series:not(.is-active) circle,
+          .highlight-scope.has-selection g.series:not(.is-active) polygon {
+            opacity: 0.2;
+          }
+        `}</style>
         <Chart.Container className="h-[400px] w-full">
           <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
             <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
@@ -406,22 +461,37 @@ export const MaximalEdgeCase = {
               tickFormatter={(value) => (value === 0 ? '' : value)}
             />
             <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-            {maximalMetrics.map((metric, index) => (
-              <Line
-                key={metric.key}
-                type="linear"
-                dataKey={metric.key}
-                name={metric.key}
-                stroke={EXPANDED_COLORS_50[index]}
-                strokeWidth={2}
-                dot={false}
-                connectNulls={false}
-                isAnimationActive={false}
-              />
-            ))}
+            {maximalMetrics.map((metric, index) => {
+              const seriesClass = `series series--${sanitizeKey(metric.key)}`
+              return (
+                <Line
+                  key={metric.key}
+                  type="linear"
+                  dataKey={metric.key}
+                  name={metric.key}
+                  stroke={EXPANDED_COLORS_50[index]}
+                  strokeWidth={2}
+                  className={seriesClass}
+                  dot={false}
+                  connectNulls={false}
+                  isAnimationActive={false}
+                />
+              )
+            })}
           </ComposedChart>
         </Chart.Container>
-        <LegendInline items={maximalMetrics.map((m, i) => ({ label: m.key, color: EXPANDED_COLORS_50[i] }))} />
+        <LegendInline
+          items={maximalMetrics.map((m, i) => ({ key: m.key, label: m.key, color: EXPANDED_COLORS_50[i] }))}
+          selectedKeys={selectedKeys}
+          onToggle={(key) => {
+            setSelectedKeys((prev) => {
+              const next = new Set(prev)
+              if (next.has(key)) next.delete(key)
+              else next.add(key)
+              return next
+            })
+          }}
+        />
       </div>
     )
   },
