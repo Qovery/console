@@ -52,14 +52,26 @@ export function DatePicker({
     return timeRegex.test(timeStr)
   }
 
+  // Helper function to format date as YYYY-MM-DD using local date (not UTC)
+  const formatLocalDate = (date: Date): string => {
+    return (
+      date.getFullYear() +
+      '-' +
+      String(date.getMonth() + 1).padStart(2, '0') +
+      '-' +
+      String(date.getDate()).padStart(2, '0')
+    )
+  }
+
   // Initialize text inputs when defaultDates change
   useEffect(() => {
     if (defaultDates && defaultDates[0] && defaultDates[1]) {
       const startDate = defaultDates[0]
       const endDate = defaultDates[1]
-      setStartDateText(startDate.toISOString().split('T')[0])
+      // Use local date format to avoid timezone shift issues
+      setStartDateText(formatLocalDate(startDate))
       setStartTimeText(startDate.toTimeString().substring(0, 5))
-      setEndDateText(endDate.toISOString().split('T')[0])
+      setEndDateText(formatLocalDate(endDate))
       setEndTimeText(endDate.toTimeString().substring(0, 5))
     }
   }, [defaultDates])
@@ -74,6 +86,18 @@ export function DatePicker({
     const [start, end] = dates
     setStartDate(start)
     setEndDate(end)
+
+    // Update DATE text inputs based on calendar selection
+    if (start) {
+      // Use local date format to avoid timezone shift issues
+      setStartDateText(formatLocalDate(start))
+      setStartDateError('')
+    }
+    if (end) {
+      // Use local date format to avoid timezone shift issues
+      setEndDateText(formatLocalDate(end))
+      setEndDateError('')
+    }
   }
 
   // Sync internal state with prop changes
@@ -101,9 +125,8 @@ export function DatePicker({
       throw new Error('Invalid date or time format')
     }
     const [hours, minutes] = timeStr.split(':')
-    const combinedDateTime = new Date(dateStr)
-    combinedDateTime.setHours(parseInt(hours, 10))
-    combinedDateTime.setMinutes(parseInt(minutes, 10))
+    // Create date in UTC to avoid timezone shifts when converting to ISO string
+    const combinedDateTime = new Date(dateStr + 'T' + timeStr + ':00.000Z')
     return combinedDateTime
   }
 
