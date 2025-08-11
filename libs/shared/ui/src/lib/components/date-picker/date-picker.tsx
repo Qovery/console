@@ -2,7 +2,7 @@ import { type PropsWithChildren, useEffect, useState } from 'react'
 import DatePickerLib, { type ReactDatePickerCustomHeaderProps } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../button/button'
-import InputText from '../inputs/input-text/input-text'
+import InputTextSmall from '../inputs/input-text-small/input-text-small'
 import DatePickerHeader from './date-picker-header/date-picker-header'
 
 export interface DatePickerProps {
@@ -208,7 +208,7 @@ export function DatePicker({
                       )}
                     </div>
                     <div className="flex gap-2">
-                      <InputText
+                      <InputTextSmall
                         label="Date"
                         name="start-date"
                         type="text"
@@ -216,7 +216,7 @@ export function DatePicker({
                         value={startDateText}
                         onChange={(e) => handleInputChange('startDate', e.target.value)}
                       />
-                      <InputText
+                      <InputTextSmall
                         label="Time"
                         name="start-time"
                         type="text"
@@ -234,7 +234,7 @@ export function DatePicker({
                       )}
                     </div>
                     <div className="flex gap-2">
-                      <InputText
+                      <InputTextSmall
                         label="Date"
                         name="end-date"
                         type="text"
@@ -242,7 +242,7 @@ export function DatePicker({
                         value={endDateText}
                         onChange={(e) => handleInputChange('endDate', e.target.value)}
                       />
-                      <InputText
+                      <InputTextSmall
                         label="Time"
                         name="end-time"
                         type="text"
