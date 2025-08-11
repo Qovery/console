@@ -480,9 +480,6 @@ export function LocalChart({
                   </Tooltip>
                 )}
               </Heading>
-              <span className="text-xs text-neutral-400">
-                Drag to zoom in - ctrl/cmd+click to zoom out - double click to reset
-              </span>
             </div>
             <Tooltip content="View events details">
               <Button
