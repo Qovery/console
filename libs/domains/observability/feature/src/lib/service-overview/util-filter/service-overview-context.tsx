@@ -113,7 +113,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     const isLiveRange = ['5m', '15m', '30m'].includes(timeRange)
 
-    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed || isDatePickerOpen) return
+    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed || isDatePickerOpen || hasCalendarValue) return
 
     const roundDateToStep = (date: Date, stepSeconds: number): Date => {
       const timestamp = Math.floor(date.getTime() / 1000)
