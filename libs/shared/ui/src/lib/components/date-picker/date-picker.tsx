@@ -13,6 +13,7 @@ export interface DatePickerProps {
   showTimeInput?: boolean
   defaultDates?: [Date, Date]
   onClickOutside?: () => void
+  useLocalTime?: boolean
 }
 
 export function DatePicker({
@@ -23,6 +24,7 @@ export function DatePicker({
   showTimeInput,
   defaultDates,
   onClickOutside,
+  useLocalTime = false,
   children,
 }: PropsWithChildren<DatePickerProps>) {
   const [startDate, setStartDate] = useState<Date | null>(defaultDates ? defaultDates[0] : null)
@@ -70,11 +72,19 @@ export function DatePicker({
       const endDate = defaultDates[1]
       // Use local date format to avoid timezone shift issues
       setStartDateText(formatLocalDate(startDate))
-      setStartTimeText(startDate.toTimeString().substring(0, 5))
       setEndDateText(formatLocalDate(endDate))
-      setEndTimeText(endDate.toTimeString().substring(0, 5))
+
+      if (useLocalTime) {
+        // Use local time
+        setStartTimeText(startDate.toTimeString().substring(0, 5))
+        setEndTimeText(endDate.toTimeString().substring(0, 5))
+      } else {
+        // Use UTC time
+        setStartTimeText(startDate.toISOString().substring(11, 16))
+        setEndTimeText(endDate.toISOString().substring(11, 16))
+      }
     }
-  }, [defaultDates])
+  }, [defaultDates, useLocalTime])
 
   const handleChange = (dates: [Date | null, Date | null] | null) => {
     if (!dates) {
@@ -124,10 +134,16 @@ export function DatePicker({
     if (!validateDate(dateStr) || !validateTime(timeStr)) {
       throw new Error('Invalid date or time format')
     }
-    const [hours, minutes] = timeStr.split(':')
-    // Create date in UTC to avoid timezone shifts when converting to ISO string
-    const combinedDateTime = new Date(dateStr + 'T' + timeStr + ':00.000Z')
-    return combinedDateTime
+
+    if (useLocalTime) {
+      // Create date in local timezone
+      const combinedDateTime = new Date(dateStr + 'T' + timeStr + ':00.000')
+      return combinedDateTime
+    } else {
+      // Create date in UTC to avoid timezone shifts when converting to ISO string
+      const combinedDateTime = new Date(dateStr + 'T' + timeStr + ':00.000Z')
+      return combinedDateTime
+    }
   }
 
   const handleInputChange = (type: 'startDate' | 'startTime' | 'endDate' | 'endTime', value: string) => {
