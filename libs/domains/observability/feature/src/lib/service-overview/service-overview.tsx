@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Icon, InputSelectSmall, Section } from '@qovery/shared/ui'
+import { Button, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
@@ -53,6 +53,17 @@ function ServiceOverviewContent() {
     <div className="space-y-6">
       <div className="flex w-full justify-between gap-3">
         <div className="flex gap-3">
+          <Tooltip content="Live refresh (15s)">
+            <Button
+              variant="surface"
+              color="neutral"
+              size="md"
+              className={clsx('flex items-center', isLiveUpdateEnabled && 'ring-2 ring-brand-500')}
+              onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
+            >
+              <Icon iconName="rotate" iconStyle="regular" className={isLiveUpdateEnabled ? 'text-brand-500' : ''} />
+            </Button>
+          </Tooltip>
           <SelectTimeRange />
           <InputSelectSmall
             name="timezone"
@@ -65,16 +76,7 @@ function ServiceOverviewContent() {
             onChange={(e) => setUseLocalTime(e === 'local')}
           />
         </div>
-        <Button
-          variant="surface"
-          color="neutral"
-          size="md"
-          className="flex items-center gap-2"
-          onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
-        >
-          Live Trailing
-          <Icon iconName={isLiveUpdateEnabled ? 'pause' : 'play'} iconStyle="regular" />
-        </Button>
+        <div />
       </div>
       <Section
         className={clsx(
