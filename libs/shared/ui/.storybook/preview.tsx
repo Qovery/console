@@ -11,13 +11,6 @@ const preview: Preview = {
     },
   },
   decorators: [
-    withThemeByClassName({
-      themes: {
-        light: 'light',
-        dark: 'dark',
-      },
-      defaultTheme: 'light',
-    }),
     (Story) => (
       <MemoryRouter initialEntries={['/']}>
         <TooltipProvider>
@@ -25,6 +18,13 @@ const preview: Preview = {
         </TooltipProvider>
       </MemoryRouter>
     ),
+    withThemeByClassName({
+      themes: {
+        light: 'light',
+        dark: 'dark',
+      },
+      defaultTheme: 'light',
+    }),
   ],
 }
 
