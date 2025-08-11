@@ -3,7 +3,7 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useCreateService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
   SERVICES_GENERAL_URL,
@@ -31,12 +31,13 @@ export function StepSummaryFeature() {
   }, [setCurrentStep])
 
   const { mutateAsync: createTerraformService } = useCreateService({ organizationId })
+  const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
-  const [isLoadingCreateAndDeploy, setIsLoadingCreateAndDeploy] = useState(false)
+  const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
 
-  const onSubmit = async (withDeploy: boolean) => {
-    if (withDeploy) {
-      setIsLoadingCreateAndDeploy(true)
+  const onSubmit = async (withPlan: boolean) => {
+    if (withPlan) {
+      setIsLoadingCreateAndPlan(true)
     } else {
       setIsLoadingCreate(true)
     }
@@ -74,13 +75,18 @@ export function StepSummaryFeature() {
     }
 
     try {
-      await createTerraformService({
+      const response = await createTerraformService({
         environmentId,
         payload: {
           serviceType: 'TERRAFORM',
           ...payload,
         },
       })
+
+      if (withPlan) {
+        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { dry_run: true } })
+        setIsLoadingCreateAndPlan(false)
+      }
 
       if (slug && option) {
         posthog.capture('create-service', {
@@ -92,7 +98,7 @@ export function StepSummaryFeature() {
       setIsLoadingCreate(false)
       navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
     } catch (error) {
-      setIsLoadingCreateAndDeploy(false)
+      setIsLoadingCreateAndPlan(false)
       setIsLoadingCreate(false)
     }
   }
@@ -237,19 +243,12 @@ export function StepSummaryFeature() {
                 size="lg"
                 variant="surface"
                 color="neutral"
-                disabled={isLoadingCreateAndDeploy}
                 onClick={() => onSubmit(false)}
                 loading={isLoadingCreate}
               >
                 Create
               </Button>
-              <Button
-                type="button"
-                size="lg"
-                disabled={true} // TODO [QOV-821] Running plan is not supported yet
-                onClick={() => onSubmit(true)}
-                loading={isLoadingCreateAndDeploy}
-              >
+              <Button type="button" size="lg" onClick={() => onSubmit(true)} loading={isLoadingCreateAndPlan}>
                 Create and run plan
               </Button>
             </div>
