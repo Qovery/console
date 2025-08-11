@@ -4177,7 +4177,7 @@ __metadata:
     algoliasearch: ^4.23.3
     ansi-to-react: ^6.1.6
     autoprefixer: 10.4.13
-    axios: ^1.7.2
+    axios: ^1.11.0
     babel-jest: 29.7.0
     babel-loader: ^8.1.0
     chance: ^1.1.8
