@@ -174,11 +174,7 @@ export function DatePicker({
       {isOpen && (
         <div className={`date-picker absolute z-10 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
           <div className="relative -ml-2 mt-2 inline-flex rounded bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]">
-            <Icon
-              iconName="caret-up"
-              iconStyle="solid"
-              className="absolute -top-[6px] left-3 text-white shadow-lg"
-            />
+            <Icon iconName="caret-up" iconStyle="solid" className="absolute -top-[6px] left-3 text-white shadow-lg" />
             <div className="relative flex flex-col p-5">
               <DatePickerLib
                 selected={startDate}

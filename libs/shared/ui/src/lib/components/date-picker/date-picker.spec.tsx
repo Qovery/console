@@ -247,10 +247,10 @@ describe('formatLocalDate', () => {
   it('should format dates correctly', () => {
     const date1 = new Date(2023, 0, 1) // January 1, 2023
     expect(formatLocalDate(date1)).toBe('2023-01-01')
-    
+
     const date2 = new Date(2023, 11, 31) // December 31, 2023
     expect(formatLocalDate(date2)).toBe('2023-12-31')
-    
+
     const date3 = new Date(2023, 5, 15) // June 15, 2023
     expect(formatLocalDate(date3)).toBe('2023-06-15')
   })
@@ -258,7 +258,7 @@ describe('formatLocalDate', () => {
   it('should pad single digit months and days with zeros', () => {
     const date1 = new Date(2023, 0, 5) // January 5, 2023
     expect(formatLocalDate(date1)).toBe('2023-01-05')
-    
+
     const date2 = new Date(2023, 8, 9) // September 9, 2023
     expect(formatLocalDate(date2)).toBe('2023-09-09')
   })
@@ -266,10 +266,10 @@ describe('formatLocalDate', () => {
   it('should handle different years correctly', () => {
     const date1 = new Date(2020, 1, 29) // February 29, 2020 (leap year)
     expect(formatLocalDate(date1)).toBe('2020-02-29')
-    
+
     const date2 = new Date(1999, 11, 31) // December 31, 1999
     expect(formatLocalDate(date2)).toBe('1999-12-31')
-    
+
     const date3 = new Date(2030, 6, 4) // July 4, 2030
     expect(formatLocalDate(date3)).toBe('2030-07-04')
   })
@@ -277,10 +277,10 @@ describe('formatLocalDate', () => {
   it('should handle edge cases for months and days', () => {
     const firstDayOfYear = new Date(2023, 0, 1) // January 1
     expect(formatLocalDate(firstDayOfYear)).toBe('2023-01-01')
-    
+
     const lastDayOfYear = new Date(2023, 11, 31) // December 31
     expect(formatLocalDate(lastDayOfYear)).toBe('2023-12-31')
-    
+
     const leapYearDate = new Date(2024, 1, 29) // February 29, 2024
     expect(formatLocalDate(leapYearDate)).toBe('2024-02-29')
   })
@@ -289,7 +289,7 @@ describe('formatLocalDate', () => {
     // Test with a date that might cause timezone issues
     const date = new Date('2023-06-15T23:30:00.000Z')
     const formatted = formatLocalDate(date)
-    
+
     // Should format based on local date components, not UTC
     expect(formatted).toMatch(/^\d{4}-\d{2}-\d{2}$/)
     expect(formatted.split('-')[0]).toBe('2023')
