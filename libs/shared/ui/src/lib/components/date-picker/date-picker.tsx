@@ -2,6 +2,7 @@ import { type PropsWithChildren, useEffect, useState } from 'react'
 import DatePickerLib, { type ReactDatePickerCustomHeaderProps } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../button/button'
+import Icon from '../icon/icon'
 import InputTextSmall from '../inputs/input-text-small/input-text-small'
 import DatePickerHeader from './date-picker-header/date-picker-header'
 
@@ -173,16 +174,11 @@ export function DatePicker({
       {isOpen && (
         <div className={`date-picker absolute z-10 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
           <div className="relative -ml-2 mt-2 inline-flex rounded bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]">
-            <svg
-              className="absolute -top-[6px] left-3 shadow-lg"
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="6"
-              fill="none"
-              viewBox="0 0 18 6"
-            >
-              <path fill="#fff" d="M18 6H0L8.445.37a1 1 0 011.11 0L18 6z"></path>
-            </svg>
+            <Icon
+              iconName="caret-up"
+              iconStyle="solid"
+              className="absolute -top-[6px] left-3 text-white shadow-lg"
+            />
             <div className="relative flex flex-col p-5">
               <DatePickerLib
                 selected={startDate}
