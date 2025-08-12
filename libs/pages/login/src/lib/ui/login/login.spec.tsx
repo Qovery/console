@@ -1,5 +1,5 @@
 import { AuthEnum } from '@qovery/shared/auth'
-import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import useAuth0Error from '../../hooks/auth0-error/use-auth0-error'
 import Login, { type ILoginProps } from './login'
 
@@ -65,19 +65,19 @@ describe('Login', () => {
       })
     })
 
-    it('should call onClickAuthLogin with GITHUB when GitHub button is clicked', () => {
-      renderWithProviders(<Login {...props} />)
+    it('should call onClickAuthLogin with GITHUB when GitHub button is clicked', async () => {
+      const { userEvent } = renderWithProviders(<Login {...props} />)
 
-      fireEvent.click(screen.getByText('Continue with Github'))
+      await userEvent.click(screen.getByText('Continue with Github'))
 
       expect(mockOnClickAuthLogin).toHaveBeenCalledTimes(1)
       expect(mockOnClickAuthLogin).toHaveBeenCalledWith(AuthEnum.GITHUB)
     })
 
-    it('should call onClickAuthLogin with GOOGLE_SSO when Google button is clicked', () => {
-      renderWithProviders(<Login {...props} />)
+    it('should call onClickAuthLogin with GOOGLE_SSO when Google button is clicked', async () => {
+      const { userEvent } = renderWithProviders(<Login {...props} />)
 
-      fireEvent.click(screen.getByText('Continue with Google'))
+      await userEvent.click(screen.getByText('Continue with Google'))
 
       expect(mockOnClickAuthLogin).toHaveBeenCalledTimes(1)
       expect(mockOnClickAuthLogin).toHaveBeenCalledWith(AuthEnum.GOOGLE_SSO)
@@ -92,29 +92,36 @@ describe('Login', () => {
       })
     })
 
-    it('should go back from SSO form and reset form state', () => {
-      renderWithProviders(<Login {...props} />)
+    it('should go back from SSO form and reset form state', async () => {
+      const { userEvent } = renderWithProviders(<Login {...props} />)
 
       // First show the SSO form
-      fireEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
+      await userEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
 
       // Enter something in the domain field
       const inputField = screen.getByPlaceholderText('Enter your domain (e.g., company.com)')
-      fireEvent.change(inputField, { target: { value: 'test_1.domain' } })
+      await userEvent.clear(inputField) // Clear first
+      await userEvent.type(inputField, 'test_1.domain')
 
-      // Add an error message
-      fireEvent.click(screen.getByText('Connect'))
-      expect(screen.getByText('Invalid domain format')).toBeInTheDocument()
+      // verify update
+      expect(inputField).toHaveValue('test_1.domain')
+      // Trigger validation
+      await userEvent.tab() // Move focus away to trigger blur validation
+
+      // Wait for error message
+      await waitFor(() => {
+        expect(screen.getByText('Invalid domain format')).toBeInTheDocument()
+      })
 
       // Click go back button
-      fireEvent.click(screen.getByText('← Go back'))
+      await userEvent.click(screen.getByText('← Go back'))
 
       // Verify we're back to the main login view (SSO form is hidden)
       expect(screen.getByText('Use Enterprise Single Sign-On')).toBeInTheDocument()
       expect(screen.queryByText('Enterprise Single Sign-On')).not.toBeInTheDocument()
 
       // If we show the SSO form again, it should be reset
-      fireEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
+      await userEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
 
       // Domain field should be empty
       const resetInputField = screen.getByPlaceholderText('Enter your domain (e.g., company.com)')
@@ -135,17 +142,18 @@ describe('Login', () => {
     })
 
     it('should display error message for invalid domain format', async () => {
-      renderWithProviders(<Login {...props} />)
+      const { userEvent } = renderWithProviders(<Login {...props} />)
 
       // Click to show SSO form
-      fireEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
+      await userEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
 
       // Enter an invalid domain
       const inputField = screen.getByPlaceholderText('Enter your domain (e.g., company.com)')
-      fireEvent.change(inputField, { target: { value: 'invalid..domain!' } })
+      await userEvent.clear(inputField) // Clear first
+      await userEvent.type(inputField, 'invalid..domain')
 
       // Click connect button
-      fireEvent.click(screen.getByText('Connect'))
+      await userEvent.click(screen.getByText('Connect'))
 
       // Verify error message is displayed
       expect(screen.getByText('Invalid domain format')).toBeInTheDocument()
@@ -155,17 +163,18 @@ describe('Login', () => {
     })
 
     it('should call onClickAuthLogin with processed domain for valid domain', async () => {
-      renderWithProviders(<Login {...props} />)
+      const { userEvent } = renderWithProviders(<Login {...props} />)
 
       // Click to show SSO form
-      fireEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
+      await userEvent.click(screen.getByText('Use Enterprise Single Sign-On'))
 
       // Enter a valid domain
       const inputField = screen.getByPlaceholderText('Enter your domain (e.g., company.com)')
-      fireEvent.change(inputField, { target: { value: 'example.com' } })
+      await userEvent.clear(inputField) // Clear first
+      await userEvent.type(inputField, 'example.com')
 
       // Click connect button
-      fireEvent.click(screen.getByText('Connect'))
+      await userEvent.click(screen.getByText('Connect'))
 
       // Verify onClickAuthLogin was called with the processed domain (dots removed)
       expect(mockOnClickAuthLogin).toHaveBeenCalledWith('examplecom')
