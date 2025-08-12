@@ -1,4 +1,4 @@
-import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import DatePicker from './date-picker'
 
 describe('DatePicker', () => {
@@ -32,28 +32,32 @@ describe('DatePicker', () => {
     expect(inputs[3]).toHaveValue('15:45')
   })
 
-  it('calls onChange with default dates when Apply is clicked', () => {
+  it('calls onChange with default dates when Apply is clicked', async () => {
     const startDate = new Date('2023-12-01')
     const endDate = new Date('2023-12-02')
 
-    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />)
+    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />)
 
-    fireEvent.click(screen.getByText('Apply'))
+    await userEvent.click(screen.getByText('Apply'))
     expect(mockOnChange).toHaveBeenCalledWith(startDate, endDate)
   })
 
-  it('calls onChange when Apply is clicked with time inputs', () => {
-    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
+  it('calls onChange when Apply is clicked with time inputs', async () => {
+    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
 
     const inputs = screen.getAllByTestId('input-value')
 
     // Set date and time values
-    fireEvent.change(inputs[0], { target: { value: '2023-12-01' } })
-    fireEvent.change(inputs[1], { target: { value: '09:00' } })
-    fireEvent.change(inputs[2], { target: { value: '2023-12-02' } })
-    fireEvent.change(inputs[3], { target: { value: '18:30' } })
+    await userEvent.clear(inputs[0])
+    await userEvent.type(inputs[0], '2023-12-01')
+    await userEvent.clear(inputs[1])
+    await userEvent.type(inputs[1], '09:00')
+    await userEvent.clear(inputs[2])
+    await userEvent.type(inputs[2], '2023-12-02')
+    await userEvent.clear(inputs[3])
+    await userEvent.type(inputs[3], '18:30')
 
-    fireEvent.click(screen.getByText('Apply'))
+    await userEvent.click(screen.getByText('Apply'))
 
     expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
   })
