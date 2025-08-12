@@ -211,9 +211,9 @@ describe('ServiceOverviewContext zoom integration', () => {
   it('should reset zoom before updating time range in handleTimeRangeChange', () => {
     const mockResetFn = jest.fn()
     const callOrder: string[] = []
-    
+
     mockResetFn.mockImplementation(() => callOrder.push('resetZoom'))
-    
+
     const { result } = renderHook(() => useServiceOverviewContext(), {
       wrapper: ServiceOverviewProvider,
     })
@@ -224,7 +224,7 @@ describe('ServiceOverviewContext zoom integration', () => {
 
     // Track when time range actually changes by watching the result
     const originalTimeRange = result.current.timeRange
-    
+
     act(() => {
       result.current.handleTimeRangeChange('3h')
       // Time range change happens synchronously after reset
@@ -243,7 +243,7 @@ describe('ServiceOverviewContext zoom integration', () => {
     })
 
     const startTimestamp = 1640995200000 // 2022-01-01 00:00:00 UTC
-    const endTimestamp = 1641081600000   // 2022-01-02 00:00:00 UTC
+    const endTimestamp = 1641081600000 // 2022-01-02 00:00:00 UTC
 
     act(() => {
       result.current.handleZoomTimeRangeChange(startTimestamp, endTimestamp)

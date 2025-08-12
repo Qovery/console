@@ -179,11 +179,11 @@ describe('SelectTimeRange zoom integration', () => {
 
   it('should call resetChartZoom when DatePicker onChange is triggered', async () => {
     renderWithProviders(<SelectTimeRange />)
-    
+
     // Simulate DatePicker onChange being called with new dates
     const startDate = new Date('2023-11-02T10:00:00.000Z')
     const endDate = new Date('2023-11-02T11:00:00.000Z')
-    
+
     // We can't easily test the actual DatePicker interaction in this test
     // since it's a complex component, so we'll test the context methods directly
     act(() => {
@@ -204,7 +204,7 @@ describe('SelectTimeRange zoom integration', () => {
 
   it('should call resetChartZoom before other state changes when dates are selected', () => {
     const callOrder: string[] = []
-    
+
     mockResetChartZoom.mockImplementation(() => callOrder.push('resetChartZoom'))
     mockSetStartDate.mockImplementation(() => callOrder.push('setStartDate'))
     mockSetEndDate.mockImplementation(() => callOrder.push('setEndDate'))
@@ -215,7 +215,7 @@ describe('SelectTimeRange zoom integration', () => {
     // Simulate the DatePicker onChange sequence
     const startDate = new Date('2023-11-02T10:00:00.000Z')
     const endDate = new Date('2023-11-02T11:00:00.000Z')
-    
+
     act(() => {
       mockResetChartZoom()
       mockSetStartDate(startDate.toISOString())

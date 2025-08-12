@@ -206,16 +206,16 @@ describe('ModalChart zoom integration', () => {
 
   it('should have resetChartZoom function available in context', () => {
     renderWithProviders(<ModalChart {...defaultProps} />)
-    
+
     // Verify that the resetChartZoom function is available and can be called
     expect(mockResetChartZoom).toBeDefined()
     expect(typeof mockResetChartZoom).toBe('function')
-    
+
     // Simulate calling resetChartZoom
     act(() => {
       mockResetChartZoom()
     })
-    
+
     expect(mockResetChartZoom).toHaveBeenCalledTimes(1)
   })
 
@@ -226,7 +226,7 @@ describe('ModalChart zoom integration', () => {
     // Verify that the modal content is displayed
     expect(screen.getByTestId('modal-content')).toBeInTheDocument()
     expect(screen.getByText('Test Content')).toBeInTheDocument()
-    
+
     // Verify title is shown
     expect(screen.getByText('Test Chart Modal')).toBeInTheDocument()
   })
