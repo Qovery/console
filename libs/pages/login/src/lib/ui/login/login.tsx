@@ -187,7 +187,8 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                       }}
                       className="mt-6 self-start text-sm text-sky-500 hover:underline"
                     >
-                      ← Go back
+                      <Icon iconName="arrow-left" className="mr-1" />
+                      Go back
                     </button>
                   </div>
                 </FormProvider>

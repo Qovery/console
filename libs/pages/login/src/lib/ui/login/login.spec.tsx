@@ -114,7 +114,7 @@ describe('Login', () => {
       })
 
       // Click go back button
-      await userEvent.click(screen.getByText('← Go back'))
+      await userEvent.click(screen.getByText('Go back'))
 
       // Verify we're back to the main login view (SSO form is hidden)
       expect(screen.getByText('Use Enterprise Single Sign-On')).toBeInTheDocument()
