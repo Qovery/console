@@ -94,14 +94,16 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const handleTimeRangeChange = (range: TimeRangeOption) => {
     // Reset zoom first, then change time range
     resetChartZoom()
+    // Reset calendar value when switching to preset time range
+    setHasCalendarValue(false)
     // Create a new time range handler that doesn't cause circular dependencies
     createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)(range)
   }
 
   const handleZoomTimeRangeChange = (startTimestamp: number, endTimestamp: number) => {
     // Convert timestamps to ISO strings and update dates
-    const startDateISO = new Date(startTimestamp * 1000).toISOString()
-    const endDateISO = new Date(endTimestamp * 1000).toISOString()
+    const startDateISO = new Date(startTimestamp).toISOString()
+    const endDateISO = new Date(endTimestamp).toISOString()
 
     setStartDate(startDateISO)
     setEndDate(endDateISO)
