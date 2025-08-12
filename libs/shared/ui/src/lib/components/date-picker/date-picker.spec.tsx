@@ -36,7 +36,9 @@ describe('DatePicker', () => {
     const startDate = new Date('2023-12-01')
     const endDate = new Date('2023-12-02')
 
-    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />)
+    const { userEvent } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />
+    )
 
     await userEvent.click(screen.getByText('Apply'))
     expect(mockOnChange).toHaveBeenCalledWith(startDate, endDate)
