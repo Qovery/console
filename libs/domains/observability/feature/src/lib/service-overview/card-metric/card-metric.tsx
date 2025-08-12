@@ -1,105 +1,99 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import clsx from 'clsx'
-import { type ComponentProps, type ReactNode, useMemo } from 'react'
-import { Button, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { type ComponentProps } from 'react'
+import { Badge, Button, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
-interface CardMetricProps extends Omit<ComponentProps<'button'>, 'value'> {
+export function CardMetricButton({
+  hasModalLink = false,
+  icon,
+  onClick,
+}: {
+  hasModalLink?: boolean
+  icon?: IconName
+  onClick?: ComponentProps<'button'>['onClick']
+}) {
+  return (
+    <Tooltip content={!hasModalLink ? `Show logs${onClick ? '' : ' disabled'}` : 'Show chart'}>
+      <Button
+        variant="outline"
+        color="neutral"
+        size="xs"
+        className="w-6 items-center justify-center p-0"
+        disabled={!onClick}
+        onClick={onClick}
+      >
+        {icon ? (
+          <Icon iconName={icon} iconStyle="regular" />
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+            <g fill="#383E50" fillRule="evenodd" clipPath="url(#clip0_25356_47547)" clipRule="evenodd">
+              <path d="M4.15 3.6a.55.55 0 0 0-.55.55v1.1a.55.55 0 1 1-1.1 0v-1.1A1.65 1.65 0 0 1 4.15 2.5h1.1a.55.55 0 1 1 0 1.1zM10.2 3.05a.55.55 0 0 1 .55-.55h1.1a1.65 1.65 0 0 1 1.65 1.65v1.1a.55.55 0 1 1-1.1 0v-1.1a.55.55 0 0 0-.55-.55h-1.1a.55.55 0 0 1-.55-.55M12.95 10.2a.55.55 0 0 1 .55.55v1.1a1.65 1.65 0 0 1-1.65 1.65h-1.1a.55.55 0 1 1 0-1.1h1.1a.55.55 0 0 0 .55-.55v-1.1a.55.55 0 0 1 .55-.55M3.05 10.2a.55.55 0 0 1 .55.55v1.1a.55.55 0 0 0 .55.55h1.1a.55.55 0 1 1 0 1.1h-1.1a1.65 1.65 0 0 1-1.65-1.65v-1.1a.55.55 0 0 1 .55-.55M4.7 6.35a1.1 1.1 0 0 1 1.1-1.1h4.4a1.1 1.1 0 0 1 1.1 1.1v3.3a1.1 1.1 0 0 1-1.1 1.1H5.8a1.1 1.1 0 0 1-1.1-1.1zm5.5 0H5.8v3.3h4.4z"></path>
+            </g>
+            <defs>
+              <clipPath id="clip0_25356_47547">
+                <path fill="#fff" d="M2 2h12v12H2z"></path>
+              </clipPath>
+            </defs>
+          </svg>
+        )}
+      </Button>
+    </Tooltip>
+  )
+}
+
+interface CardMetricProps extends Omit<ComponentProps<'div'>, 'value' | 'onClick'> {
   title: string
-  value: number | ReactNode
   unit?: string
-  status: 'GREEN' | 'YELLOW' | 'RED'
+  status?: 'GREEN' | 'YELLOW' | 'RED'
   description?: string
   isLoading?: boolean
   hasModalLink?: boolean
   icon?: IconName
+  onClick?: ComponentProps<'button'>['onClick']
 }
 
 export function CardMetric({
   title,
-  value,
   unit,
   status,
   description,
   isLoading = true,
   className,
   hasModalLink = false,
-  icon = 'chart-line',
+  icon,
   onClick,
   ...props
 }: CardMetricProps) {
-  const statusColor = useMemo(() => {
-    switch (status) {
-      case 'GREEN':
-        return 'green'
-      case 'YELLOW':
-        return 'yellow'
-      case 'RED':
-        return 'red'
-      default:
-        return 'neutral'
-    }
-  }, [status])
-
-  const statusDot = useMemo(() => {
-    const dotClasses = {
-      green: 'bg-green-500',
-      yellow: 'bg-yellow-500',
-      red: 'bg-red-500',
-    }
-
-    return (
-      <div
-        className={`relative top-[1px] h-2 w-2 rounded-full ${dotClasses[statusColor as keyof typeof dotClasses]}`}
-      />
-    )
-  }, [statusColor])
-
   return (
-    <button
-      type="button"
+    <Section
       className={twMerge(
-        clsx(
-          'w-full cursor-default rounded border border-neutral-250 bg-neutral-50 px-5 py-4',
-          !isLoading && onClick && 'cursor-pointer shadow-[0px_1px_2px_0px_rgba(27,36,44,0.12)] hover:shadow-md',
-          className
-        )
+        'h-full w-full cursor-default justify-center rounded border border-neutral-250 bg-neutral-50 p-4',
+        className
       )}
-      disabled={isLoading}
-      onClick={onClick}
       {...props}
     >
-      <div className="flex flex-col justify-between gap-1 text-left">
+      <div className="flex flex-col justify-between gap-0.5">
         <div className="flex items-center justify-between gap-2.5">
           <div className="flex items-center gap-2.5">
-            <p className="text-sm text-neutral-400">{title}</p>
-            <Skeleton show={isLoading} width={8} height={8} rounded>
-              {statusDot}
+            <Skeleton className="items-center gap-1.5" show={isLoading} width={170} height={16}>
+              <Heading weight="medium">{title}</Heading>
+              {status && (
+                <Badge className="ml-1.5 gap-1 font-medium" color={status === 'RED' ? 'red' : 'green'} size="base">
+                  <Icon iconName={status === 'GREEN' ? 'circle-check' : 'circle-exclamation'} iconStyle="regular" />
+                  {status === 'GREEN' ? 'Healthy' : 'Unhealthy'}
+                </Badge>
+              )}
             </Skeleton>
           </div>
-          {(hasModalLink || onClick) && (
-            <Tooltip content={!hasModalLink ? 'Show logs' : 'Show chart'}>
-              <Button
-                variant="plain"
-                color="neutral"
-                size="sm"
-                className="relative left-2 w-7 items-center justify-center p-0"
-              >
-                <Icon iconName={icon} />
-              </Button>
-            </Tooltip>
-          )}
+          <CardMetricButton hasModalLink={hasModalLink} icon={icon} onClick={onClick} />
         </div>
-        <Skeleton show={isLoading} width={32} height={32} rounded>
-          <span className="text-xl font-bold text-neutral-400">{value}</span>
-        </Skeleton>
         {description && (
-          <Skeleton show={isLoading} width={130} height={16}>
-            <p className="text-sm text-neutral-350">{description}</p>
+          <Skeleton show={isLoading} width={100} height={16}>
+            <p className="text-ssm text-neutral-350">{description}</p>
           </Skeleton>
         )}
       </div>
-    </button>
+    </Section>
   )
 }
 

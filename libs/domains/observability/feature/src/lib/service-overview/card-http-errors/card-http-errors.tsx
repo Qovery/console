@@ -41,15 +41,15 @@ export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; cl
   const value = Math.round(metrics?.data?.result[0]?.value[1]) || 0
   const isError = value > 0
 
-  const title = 'HTTP error rate'
+  const title = `${value}% HTTP error rate`
+  //TODO: Pierre add real metrics
+  const description = 'on 100 requests'
 
   return (
     <>
       <CardMetric
         title={title}
-        value={`${value}%`}
-        status={isError ? 'RED' : 'GREEN'}
-        description={`in the last ${timeRange}`}
+        description={description}
         isLoading={isLoadingMetrics}
         onClick={isError ? () => setIsModalOpen(true) : undefined}
         hasModalLink={isError}

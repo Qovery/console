@@ -40,15 +40,16 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
   const value = Number.isFinite(rawValue) ? Math.round(rawValue) : 0
   const isError = value > 80
 
-  const title = 'Storage Usage'
+  //TODO: Pierre add real metrics
+  const title = `6.5 GiB max storage usage`
+  //TODO: Pierre add real metrics
+  const description = `${value}% of your 8 GiB storage allowance`
 
   return (
     <>
       <CardMetric
         title={title}
-        value={`${value}%`}
-        status={isError ? 'RED' : 'GREEN'}
-        description={`in the last ${timeRange}`}
+        description={description}
         isLoading={isLoadingMetrics}
         onClick={() => setIsModalOpen(true)}
         hasModalLink

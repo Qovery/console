@@ -78,7 +78,7 @@ export function CardInstance({ serviceId, clusterId }: { serviceId: string; clus
     <>
       <CardMetric
         title={title}
-        value={autoscalingReached}
+        // value={autoscalingReached}
         status={autoscalingReached > 0 ? 'RED' : 'GREEN'}
         isLoading={isLoadingMetricsAutoscalingReached || isLoadingMetricsMaxInstances}
         description={

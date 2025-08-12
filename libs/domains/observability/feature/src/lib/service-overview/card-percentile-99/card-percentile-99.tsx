@@ -35,17 +35,18 @@ export function CardPercentile99({ serviceId, clusterId }: { serviceId: string; 
   })
 
   const value = Math.round(Number(metrics?.data?.result[0]?.value[1]) * 1000) || 0
-  const isError = value > 150
+  const defaultThreshold = 250
+  const isError = value > defaultThreshold
 
-  const title = '99th percentile'
+  const title = `${defaultThreshold}ms network request duration`
+  const description = 'for p99'
 
   return (
     <>
       <CardMetric
         title={title}
-        value={value}
+        description={description}
         status={isError ? 'RED' : 'GREEN'}
-        description={`in last ${timeRange}`}
         isLoading={isLoadingMetrics}
         onClick={() => setIsModalOpen(true)}
         hasModalLink
