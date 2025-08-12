@@ -56,7 +56,7 @@ export function useMetrics({
   queryRange = 'query_range',
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
-}: UseMetricsProps & { isLiveUpdateEnabled?: boolean }) {
+}: UseMetricsProps) {
   // Get live update setting from context, but allow override
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
