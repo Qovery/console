@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { pluralize } from '@qovery/shared/util-js'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { InstanceHTTPErrorsChart } from '../instance-http-errors-chart/instance-http-errors-chart'
@@ -27,6 +28,17 @@ const query = (serviceId: string, timeRange: string) => `
   ) or vector(0)
 `
 
+const queryTotalRequest = (serviceId: string, timeRange: string) => `
+    sum(
+      rate(nginx_ingress_controller_requests[${timeRange}])
+        * on(ingress) group_left(label_qovery_com_associated_service_id)
+          max by(ingress, label_qovery_com_associated_service_id)(
+            kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
+          )
+          or vector(0)
+    )
+`
+
 export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -38,19 +50,26 @@ export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; cl
     timeRange,
   })
 
+  const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useMetrics({
+    clusterId,
+    query: queryTotalRequest(serviceId, timeRange),
+    queryRange: 'query',
+    timeRange,
+  })
+
   const value = Math.round(metrics?.data?.result[0]?.value[1]) || 0
+  const totalRequest = Math.round(metricsTotalRequest?.data?.result[0]?.value[1]) || 0
   const isError = value > 0
 
   const title = `${value}% HTTP error rate`
-  //TODO: Pierre add real metrics
-  const description = 'on 100 requests'
+  const description = `on ${totalRequest} ${pluralize(totalRequest, 'request', 'requests')}`
 
   return (
     <>
       <CardMetric
         title={title}
         description={description}
-        isLoading={isLoadingMetrics}
+        isLoading={isLoadingMetrics || isLoadingMetricsTotalRequest}
         onClick={isError ? () => setIsModalOpen(true) : undefined}
         hasModalLink={isError}
       />

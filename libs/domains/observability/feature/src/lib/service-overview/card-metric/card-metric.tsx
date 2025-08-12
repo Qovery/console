@@ -67,7 +67,7 @@ export function CardMetric({
   return (
     <Section
       className={twMerge(
-        'h-full w-full cursor-default justify-center rounded border border-neutral-250 bg-neutral-50 p-4',
+        'h-full w-full cursor-default justify-center rounded border border-neutral-250 p-4',
         className
       )}
       {...props}

@@ -143,8 +143,8 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
         isLoadingMetricsWritePersistentStorage
       }
       isEmpty={chartData.length === 0}
-      label="Storage I/O (MiB/sec)"
-      description="Storage I/O: read/write ephemeral storage, read/write persistent storage"
+      label="Storage usage (MiB/sec)"
+      description="Usage per instance in MiB/sec of storage capacity with read and write operations"
       tooltipLabel="Storage I/O"
       serviceId={serviceId}
       yDomain={yDomain}

@@ -101,8 +101,8 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
       data={chartData}
       isLoading={isLoadingMetrics || isLoadingLimit || isLoadingRequest}
       isEmpty={chartData.length === 0}
-      label="CPU (mCPU)"
-      description="The CPU usage per instance in mCPU, along with CPU request and limit thresholds"
+      label="CPU usage (mCPU)"
+      description="Usage per instance in mCPU of CPU limit and request"
       tooltipLabel="CPU"
       unit="mCPU"
       serviceId={serviceId}

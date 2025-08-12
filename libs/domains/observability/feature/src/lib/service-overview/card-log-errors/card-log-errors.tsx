@@ -32,11 +32,9 @@ export function CardLogErrors({
   })
 
   const value = metrics?.data?.result.length || 0
-  // const isError = value > 0
 
   const title = `${value} log ${pluralize(value, 'error', 'errors')}`
-  //TODO: Pierre add real metrics
-  const description = 'on 54 230 generated logs'
+  const description = 'total log errors detected in the selected time range'
 
   return (
     <CardMetric
