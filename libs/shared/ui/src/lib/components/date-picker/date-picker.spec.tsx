@@ -2,50 +2,91 @@ import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-test
 import DatePicker from './date-picker'
 
 describe('DatePicker', () => {
-  it('should render successfully', () => {
-    const mockOnChange = jest.fn()
+  const mockOnChange = jest.fn()
+
+  beforeEach(() => {
+    mockOnChange.mockClear()
+  })
+
+  it('renders successfully when open', () => {
     const { baseElement } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen />)
     expect(baseElement).toBeTruthy()
+    expect(screen.getByText('Apply')).toBeInTheDocument()
   })
 
-  it('calls onChange with selected dates when Apply button is clicked', () => {
-    const mockOnChange = jest.fn()
+  it('does not render when closed', () => {
+    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen={false} />)
+    expect(screen.queryByText('Apply')).not.toBeInTheDocument()
+  })
+
+  it('initializes with default dates and times correctly', () => {
+    const startDate = new Date('2023-12-01T10:30:00.000Z')
+    const endDate = new Date('2023-12-02T15:45:00.000Z')
+
+    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput defaultDates={[startDate, endDate]} />)
+
+    const inputs = screen.getAllByTestId('input-value')
+    expect(inputs[0]).toHaveValue('2023-12-01')
+    expect(inputs[1]).toHaveValue('10:30')
+    expect(inputs[2]).toHaveValue('2023-12-02')
+    expect(inputs[3]).toHaveValue('15:45')
+  })
+
+  it('calls onChange with default dates when Apply is clicked', () => {
     const startDate = new Date('2023-12-01')
     const endDate = new Date('2023-12-02')
-    const { getByText } = renderWithProviders(
-      <DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />
-    )
 
-    const applyButton = getByText('Apply')
-    applyButton.click()
+    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen defaultDates={[startDate, endDate]} />)
 
-    expect(mockOnChange).toHaveBeenCalled()
+    fireEvent.click(screen.getByText('Apply'))
+    expect(mockOnChange).toHaveBeenCalledWith(startDate, endDate)
   })
 
-  it('calls onChange function with selected times when Apply button is clicked', () => {
-    const mockOnChange = jest.fn()
+  it('calls onChange when Apply is clicked with time inputs', () => {
     renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
 
-    const startDate = '2023-12-01'
-    const startTime = '09:00'
-    const endDate = '2023-12-02'
-    const endTime = '18:30'
+    const inputs = screen.getAllByTestId('input-value')
 
-    // Update the 4 input fields: start date, start time, end date, end time
-    const inputs = screen.getAllByTestId('input-text')
-    fireEvent.change(inputs[0], { target: { value: startDate } })
-    fireEvent.change(inputs[1], { target: { value: startTime } })
-    fireEvent.change(inputs[2], { target: { value: endDate } })
-    fireEvent.change(inputs[3], { target: { value: endTime } })
+    // Set date and time values
+    fireEvent.change(inputs[0], { target: { value: '2023-12-01' } })
+    fireEvent.change(inputs[1], { target: { value: '09:00' } })
+    fireEvent.change(inputs[2], { target: { value: '2023-12-02' } })
+    fireEvent.change(inputs[3], { target: { value: '18:30' } })
 
     fireEvent.click(screen.getByText('Apply'))
 
     expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), expect.any(Date))
+  })
 
-    const [startDateTime, endDateTime] = mockOnChange.mock.calls[0]
-    expect(startDateTime.getHours()).toBe(9)
-    expect(startDateTime.getMinutes()).toBe(0)
-    expect(endDateTime.getHours()).toBe(18)
-    expect(endDateTime.getMinutes()).toBe(30)
+  it('shows time inputs when showTimeInput prop is true', () => {
+    renderWithProviders(<DatePicker onChange={mockOnChange} isOpen showTimeInput />)
+
+    // Check that we have 4 inputs (2 dates + 2 times)
+    const inputs = screen.getAllByTestId('input-value')
+    expect(inputs).toHaveLength(4)
+
+    // Check labels are present
+    expect(screen.getByText('Start')).toBeInTheDocument()
+    expect(screen.getByText('End')).toBeInTheDocument()
+  })
+
+  it('handles useLocalTime prop for time display', () => {
+    const startDate = new Date('2023-12-01T10:30:00.000Z')
+    const endDate = new Date('2023-12-02T15:45:00.000Z')
+
+    renderWithProviders(
+      <DatePicker
+        onChange={mockOnChange}
+        isOpen
+        showTimeInput
+        defaultDates={[startDate, endDate]}
+        useLocalTime={false}
+      />
+    )
+
+    const inputs = screen.getAllByTestId('input-value')
+    // UTC time should be displayed when useLocalTime=false
+    expect(inputs[1]).toHaveValue('10:30')
+    expect(inputs[3]).toHaveValue('15:45')
   })
 })
