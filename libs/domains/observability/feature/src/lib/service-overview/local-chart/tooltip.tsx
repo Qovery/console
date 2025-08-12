@@ -1,3 +1,5 @@
+import { Kbd } from '@qovery/shared/ui'
+import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export type TooltipEntry = {
@@ -136,6 +138,8 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
 
 // Tooltip component for displaying metric and events details
 export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
+  const metaKey = useFormatHotkeys('meta')
+
   if (!active || !payload || payload.length === 0) return null
 
   const dataPoint = payload[0]?.payload
@@ -171,6 +175,25 @@ export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
             </div>
           ))}
       </div>
+      {metaKey && (
+        <div className="border-t border-neutral-400 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-250">
+            <div className="flex items-center gap-1">
+              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">DRAG</Kbd>
+              <span>Zoom In</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">{metaKey}</Kbd>
+              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">CLICK</Kbd>
+              <span>Zoom Out</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">DBL-CLICK</Kbd>
+              <span>Reset</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

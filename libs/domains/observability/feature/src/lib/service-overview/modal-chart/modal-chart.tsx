@@ -1,7 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type PropsWithChildren } from 'react'
-import { Button, Heading, Icon, InputSelectSmall, Kbd, Section } from '@qovery/shared/ui'
-import { useFormatHotkeys } from '@qovery/shared/util-hooks'
+import { Button, Heading, Icon, InputSelectSmall, Section } from '@qovery/shared/ui'
 import { SelectTimeRange } from '../select-time-range/select-time-range'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
@@ -14,7 +13,6 @@ interface ModalChartProps extends PropsWithChildren {
 
 export function ModalChart({ children, open, onOpenChange, title, description }: ModalChartProps) {
   const { useLocalTime, setUseLocalTime, hideEvents, setHideEvents, resetChartZoom } = useServiceOverviewContext()
-  const metaKey = useFormatHotkeys('meta')
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
@@ -47,26 +45,6 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                   <Dialog.Description id="modal-description" className="text-xs text-neutral-350">
                     {description}
                   </Dialog.Description>
-                )}
-                {metaKey && (
-                  <div className="flex items-center gap-2 text-xs text-neutral-400">
-                    <div className="flex items-center gap-1">
-                      <Kbd>drag</Kbd>
-                      <span>to zoom in</span>
-                    </div>
-                    <span>-</span>
-                    <div className="flex items-center gap-1">
-                      <Kbd>{metaKey}</Kbd>
-                      <span>+</span>
-                      <Kbd>click</Kbd>
-                      <span>to zoom out</span>
-                    </div>
-                    <span>-</span>
-                    <div className="flex items-center gap-1">
-                      <Kbd>double click</Kbd>
-                      <span>to reset</span>
-                    </div>
-                  </div>
                 )}
               </div>
               <div className="flex items-center gap-10">
