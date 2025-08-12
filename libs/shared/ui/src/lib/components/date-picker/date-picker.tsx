@@ -198,7 +198,7 @@ export function DatePicker({
                 <div className="mt-3 space-y-4">
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-neutral-400">Start</h4>
+                      <p className="text-sm font-medium text-neutral-400">Start</p>
                       {(startDateError || startTimeError) && (
                         <span className="text-xs text-red-500">{startDateError || startTimeError}</span>
                       )}
@@ -224,7 +224,7 @@ export function DatePicker({
                   </div>
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-neutral-400">End</h4>
+                      <p className="text-sm font-medium text-neutral-400">End</p>
                       {(endDateError || endTimeError) && (
                         <span className="text-xs text-red-500">{endDateError || endTimeError}</span>
                       )}
