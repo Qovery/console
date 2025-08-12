@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, DropdownMenu, Icon } from '@qovery/shared/ui'
+import useAuth0Error from '../../hooks/auth0-error/use-auth0-error'
 
 export interface ILoginProps {
   onClickAuthLogin: (provider: string) => void
@@ -11,10 +12,31 @@ export interface ILoginProps {
 
 export function Login({ onClickAuthLogin, loading }: ILoginProps) {
   const { displayInvitation, checkTokenInStorage } = useInviteMember()
+  const [ssoFormVisible, setSsoFormVisible] = useState(false)
+  const [ssoDomain, setSsoDomain] = useState('')
+  const [domainError, setDomainError] = useState('')
+  const { auth0Error, setAuth0Error } = useAuth0Error()
 
   useEffect(() => {
     checkTokenInStorage()
   }, [checkTokenInStorage])
+
+  const validateAndConnect = () => {
+    // Clear previous error if any
+    setDomainError('')
+
+    // Check that domain is valid
+    if (!/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/.test(ssoDomain)) {
+      setDomainError('Invalid domain format')
+      return
+    }
+
+    // Split domain by dots and validate each part
+    const domainWithoutDots = ssoDomain.trim().replace(/\./g, '')
+
+    // Then trigger the auth login with OIDC
+    onClickAuthLogin(domainWithoutDots)
+  }
 
   return (
     <div className="relative bg-white">
@@ -29,6 +51,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                 <InviteDetailsFeature />
               </div>
             )}
+
             <p className="mb-10 text-sm text-neutral-400">
               By registering and using Qovery, you agree to the processing of your personal data by Qovery as described
               in the
@@ -38,65 +61,125 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
               .
             </p>
             <div className="flex flex-col gap-3">
-              <Button
-                variant="surface"
-                color="neutral"
-                size="lg"
-                className="w-full justify-center"
-                onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
-                loading={loading?.provider === AuthEnum.GITHUB ? loading.active : false}
-              >
-                <Icon
-                  width="20"
-                  className={`mr-3 ${loading?.provider === AuthEnum.GITHUB ? 'opacity-0' : ''}`}
-                  name={IconEnum.GITHUB}
-                />
-                Continue with Github
-              </Button>
-              <Button
-                variant="surface"
-                color="neutral"
-                size="lg"
-                className="w-full justify-center"
-                onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
-                loading={loading?.provider === AuthEnum.GOOGLE_SSO ? loading.active : false}
-              >
-                <Icon
-                  width="20"
-                  className={`mr-3 ${loading?.provider === AuthEnum.GOOGLE_SSO ? 'opacity-0' : ''}`}
-                  name={IconEnum.GOOGLE}
-                />
-                Continue with Google
-              </Button>
-
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button variant="surface" color="neutral" size="lg" className="w-full justify-center">
-                    See 3 others options
-                    <Icon className="ml-2" iconName="chevron-down" />
+              {!ssoFormVisible ? (
+                <>
+                  <Button
+                    variant="surface"
+                    color="neutral"
+                    size="lg"
+                    className="w-full justify-center"
+                    onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
+                    loading={loading?.provider === AuthEnum.GITHUB ? loading.active : false}
+                  >
+                    <Icon
+                      width="20"
+                      className={`mr-3 ${loading?.provider === AuthEnum.GITHUB ? 'opacity-0' : ''}`}
+                      name={IconEnum.GITHUB}
+                    />
+                    Continue with Github
                   </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content className="w-[512px]">
-                  <DropdownMenu.Item
-                    onSelect={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
-                    icon={<Icon width="20" name={IconEnum.MICROSOFT} />}
+                  <Button
+                    variant="surface"
+                    color="neutral"
+                    size="lg"
+                    className="w-full justify-center"
+                    onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
+                    loading={loading?.provider === AuthEnum.GOOGLE_SSO ? loading.active : false}
                   >
-                    Continue with Microsoft
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    onSelect={() => onClickAuthLogin(AuthEnum.GITLAB)}
-                    icon={<Icon width="20" name={IconEnum.GITLAB} />}
+                    <Icon
+                      width="20"
+                      className={`mr-3 ${loading?.provider === AuthEnum.GOOGLE_SSO ? 'opacity-0' : ''}`}
+                      name={IconEnum.GOOGLE}
+                    />
+                    Continue with Google
+                  </Button>
+
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <Button variant="surface" color="neutral" size="lg" className="w-full justify-center">
+                        See 3 others options
+                        <Icon className="ml-2" iconName="chevron-down" />
+                      </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content className="w-[512px]">
+                      <DropdownMenu.Item
+                        onSelect={() => onClickAuthLogin(AuthEnum.MICROSOFT)}
+                        icon={<Icon width="20" name={IconEnum.MICROSOFT} />}
+                      >
+                        Continue with Microsoft
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        onSelect={() => onClickAuthLogin(AuthEnum.GITLAB)}
+                        icon={<Icon width="20" name={IconEnum.GITLAB} />}
+                      >
+                        Continue with Gitlab
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item
+                        onSelect={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
+                        icon={<Icon width="20" name={IconEnum.BITBUCKET} />}
+                      >
+                        Continue with Bitbucket
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+
+                  <div className="mt-1 flex justify-center">
+                    <button
+                      onClick={() => {
+                        setSsoFormVisible(true)
+                        setAuth0Error(null)
+                      }}
+                      className="text-base font-medium text-sky-500 hover:underline"
+                    >
+                      Use Enterprise Single Sign-On
+                    </button>
+                  </div>
+
+                  {auth0Error && (
+                    <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3">
+                      <p className="text-sm font-medium text-red-800">{auth0Error.error}</p>
+                      <p className="mt-1 text-sm text-red-600">{auth0Error.error_description}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="flex flex-col">
+                  <h2 className="text-xl font-medium text-neutral-400">Enterprise Single Sign-On</h2>
+                  <p className="mb-5 mt-1 text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        type="text"
+                        value={ssoDomain}
+                        onChange={(e) => setSsoDomain(e.target.value)}
+                        placeholder="Enter your domain (e.g., company.com)"
+                        className={`w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${domainError ? 'border-red-500 focus:ring-red-200' : 'border-neutral-250 focus:ring-sky-200'}`}
+                      />
+                      {domainError && <p className="absolute mt-1 text-xs text-red-500">{domainError}</p>}
+                    </div>
+                    <Button
+                      variant="solid"
+                      color="brand"
+                      size="md"
+                      onClick={validateAndConnect}
+                      disabled={!ssoDomain.trim()}
+                    >
+                      Connect
+                    </Button>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setSsoFormVisible(false)
+                      setSsoDomain('')
+                      setDomainError('')
+                    }}
+                    className="mt-6 self-start text-sm text-sky-500 hover:underline"
                   >
-                    Continue with Gitlab
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    onSelect={() => onClickAuthLogin(AuthEnum.BITBUCKET)}
-                    icon={<Icon width="20" name={IconEnum.BITBUCKET} />}
-                  >
-                    Continue with Bitbucket
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+                    ← Go back
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
