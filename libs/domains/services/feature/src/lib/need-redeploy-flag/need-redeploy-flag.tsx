@@ -36,7 +36,7 @@ export function NeedRedeployFlag() {
       deployService({ serviceId: service.id, serviceType: service.serviceType })
       navigate(
         ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-          DEPLOYMENT_LOGS_VERSION_URL(service.id, serviceDeploymentStatus?.execution_id)
+          DEPLOYMENT_LOGS_VERSION_URL(service.id, 'latest')
       )
     }
   }
