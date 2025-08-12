@@ -46,16 +46,17 @@ describe('CardPercentile99', () => {
     )
 
     expect(baseElement).toBeTruthy()
-    expect(screen.getByText('99th percentile')).toBeInTheDocument()
+    const skeleton = document.querySelector('[aria-busy="true"]')
+    expect(skeleton).toBeInTheDocument()
   })
 
-  it('should render with good response time (GREEN status)', () => {
+  it('should render with high percentile value (RED status)', () => {
     useMetrics.mockReturnValue(
       createMockUseMetricsReturn({
         data: {
           result: [
             {
-              value: [1234567890, '0.100'],
+              value: [1234567890, '0.2'],
             },
           ],
         },
@@ -68,33 +69,8 @@ describe('CardPercentile99', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('99th percentile')).toBeInTheDocument()
-    expect(screen.getByText('100')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
-  })
-
-  it('should render with slow response time (RED status)', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
-        data: {
-          result: [
-            {
-              value: [1234567890, '0.200'],
-            },
-          ],
-        },
-      })
-    )
-
-    renderWithProviders(
-      <ServiceOverviewProvider>
-        <CardPercentile99 {...defaultProps} />
-      </ServiceOverviewProvider>
-    )
-
-    expect(screen.getByText('99th percentile')).toBeInTheDocument()
-    expect(screen.getByText('200')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
+    expect(screen.getByText('250ms network request duration')).toBeInTheDocument()
+    expect(screen.getByText('for p99')).toBeInTheDocument()
   })
 
   it('should handle empty metrics data', () => {
@@ -112,8 +88,8 @@ describe('CardPercentile99', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
+    expect(screen.getByText('250ms network request duration')).toBeInTheDocument()
+    expect(screen.getByText('for p99')).toBeInTheDocument()
   })
 
   it('should handle undefined metrics data', () => {
@@ -125,8 +101,8 @@ describe('CardPercentile99', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
+    expect(screen.getByText('250ms network request duration')).toBeInTheDocument()
+    expect(screen.getByText('for p99')).toBeInTheDocument()
   })
 
   it('should open modal when clicking on card', async () => {

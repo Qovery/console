@@ -67,9 +67,11 @@ export function CardMetric({
   return (
     <Section
       className={twMerge(
-        'h-full w-full cursor-default justify-center rounded border border-neutral-250 p-4',
+        'h-full w-full justify-center rounded border border-neutral-250 p-4',
+        onClick && !isLoading ? 'cursor-pointer' : 'cursor-default',
         className
       )}
+      role="region"
       {...props}
     >
       <div className="flex flex-col justify-between gap-0.5">

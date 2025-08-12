@@ -67,9 +67,8 @@ describe('CardLogErrors', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('Log error rate')).toBeInTheDocument()
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
   it('should render with log errors (RED status)', () => {
@@ -87,9 +86,8 @@ describe('CardLogErrors', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('Log error rate')).toBeInTheDocument()
-    expect(screen.getByText('2')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText('2 log errors')).toBeInTheDocument()
+    expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
   it('should handle empty metrics data', () => {
@@ -107,8 +105,8 @@ describe('CardLogErrors', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
   it('should handle undefined metrics data', () => {
@@ -120,8 +118,8 @@ describe('CardLogErrors', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
   it('should navigate to logs when clicked', async () => {
@@ -139,7 +137,7 @@ describe('CardLogErrors', () => {
       </ServiceOverviewProvider>
     )
 
-    const button = screen.getByRole('button', { name: /log error rate/i })
+    const button = screen.getByRole('button')
     await userEvent.click(button)
 
     expect(mockedNavigate).toHaveBeenCalledWith(

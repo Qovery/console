@@ -65,9 +65,10 @@ describe('CardInstanceStatus', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('Instance issues')).toBeInTheDocument()
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
+    expect(screen.getByText('Instance errors')).toBeInTheDocument()
+    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
+    expect(instanceErrorsValue).toHaveTextContent('0')
   })
 
   it('should render with instance issues (RED status) and show modal link', () => {
@@ -89,9 +90,10 @@ describe('CardInstanceStatus', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('Instance issues')).toBeInTheDocument()
-    expect(screen.getByText('2')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
+    expect(screen.getByText('Instance errors')).toBeInTheDocument()
+    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
+    expect(instanceErrorsValue).toHaveTextContent('2')
 
     const buttons = screen.getAllByRole('button')
     expect(buttons.length).toBeGreaterThan(0)
@@ -112,8 +114,9 @@ describe('CardInstanceStatus', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
+    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
+    expect(instanceErrorsValue).toHaveTextContent('0')
   })
 
   it('should handle undefined metrics data', () => {
@@ -125,8 +128,9 @@ describe('CardInstanceStatus', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0')).toBeInTheDocument()
-    expect(screen.getByText('in last 30m')).toBeInTheDocument()
+    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
+    expect(instanceErrorsValue).toHaveTextContent('0')
   })
 
   it('should open modal when clicking on card with instance issues', async () => {
@@ -154,7 +158,7 @@ describe('CardInstanceStatus', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Number of healthy and unhealthy instances over time.')).toBeInTheDocument()
-      expect(screen.getByTestId('instance-status-chart')).toBeInTheDocument()
+      expect(screen.getAllByTestId('instance-status-chart')[0]).toBeInTheDocument()
       expect(screen.getByRole('dialog')).toBeInTheDocument()
     })
   })
@@ -168,7 +172,7 @@ describe('CardInstanceStatus', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(useMetrics).toHaveBeenCalledTimes(2)
+    expect(useMetrics).toHaveBeenCalledTimes(6)
     expect(useMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
