@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { AuthEnum, useInviteMember } from '@qovery/shared/auth'
 import { InviteDetailsFeature } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, DropdownMenu, Icon } from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, InputTextSmall } from '@qovery/shared/ui'
 import useAuth0Error from '../../hooks/auth0-error/use-auth0-error'
 
 export interface ILoginProps {
@@ -13,26 +14,22 @@ export interface ILoginProps {
 export function Login({ onClickAuthLogin, loading }: ILoginProps) {
   const { displayInvitation, checkTokenInStorage } = useInviteMember()
   const [ssoFormVisible, setSsoFormVisible] = useState(false)
-  const [ssoDomain, setSsoDomain] = useState('')
-  const [domainError, setDomainError] = useState('')
   const { auth0Error, setAuth0Error } = useAuth0Error()
+
+  const methods = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      ssoDomain: '',
+    },
+  })
 
   useEffect(() => {
     checkTokenInStorage()
   }, [checkTokenInStorage])
 
   const validateAndConnect = () => {
-    // Clear previous error if any
-    setDomainError('')
-
-    // Check that domain is valid
-    if (!/^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/.test(ssoDomain)) {
-      setDomainError('Invalid domain format')
-      return
-    }
-
     // Split domain by dots and validate each part
-    const domainWithoutDots = ssoDomain.trim().replace(/\./g, '')
+    const domainWithoutDots = methods.getValues('ssoDomain').trim().replace(/\./g, '')
 
     // Then trigger the auth login with OIDC
     onClickAuthLogin(domainWithoutDots)
@@ -143,42 +140,57 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                   )}
                 </>
               ) : (
-                <div className="flex flex-col">
-                  <h2 className="text-xl font-medium text-neutral-400">Enterprise Single Sign-On</h2>
-                  <p className="mb-5 mt-1 text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <input
-                        type="text"
-                        value={ssoDomain}
-                        onChange={(e) => setSsoDomain(e.target.value)}
-                        placeholder="Enter your domain (e.g., company.com)"
-                        className={`w-full rounded border px-3 py-2 text-sm focus:outline-none focus:ring-2 ${domainError ? 'border-red-500 focus:ring-red-200' : 'border-neutral-250 focus:ring-sky-200'}`}
-                      />
-                      {domainError && <p className="absolute mt-1 text-xs text-red-500">{domainError}</p>}
+                <FormProvider {...methods}>
+                  <div className="flex flex-col">
+                    <h2 className="text-xl font-medium text-neutral-400">Enterprise Single Sign-On</h2>
+                    <p className="mb-5 mt-1 text-sm text-neutral-350">Enter your company domain to connect with SSO</p>
+                    <div className="flex items-start gap-2">
+                      <div className="relative flex-1">
+                        <Controller
+                          name="ssoDomain"
+                          control={methods.control}
+                          rules={{
+                            required: 'Please enter a domain.',
+                            pattern: {
+                              value:
+                                /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$/,
+                              message: 'Invalid domain format',
+                            },
+                          }}
+                          render={({ field, fieldState: { error } }) => (
+                            <InputTextSmall
+                              placeholder="Enter your domain (e.g., company.com)"
+                              name={field.name}
+                              value={field.value}
+                              onChange={field.onChange}
+                              error={error?.message}
+                            />
+                          )}
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        variant="solid"
+                        color="brand"
+                        size="md"
+                        onClick={methods.handleSubmit(validateAndConnect)}
+                        disabled={!methods.formState.isValid}
+                      >
+                        Connect
+                      </Button>
                     </div>
-                    <Button
-                      variant="solid"
-                      color="brand"
-                      size="md"
-                      onClick={validateAndConnect}
-                      disabled={!ssoDomain.trim()}
-                    >
-                      Connect
-                    </Button>
-                  </div>
 
-                  <button
-                    onClick={() => {
-                      setSsoFormVisible(false)
-                      setSsoDomain('')
-                      setDomainError('')
-                    }}
-                    className="mt-6 self-start text-sm text-sky-500 hover:underline"
-                  >
-                    ← Go back
-                  </button>
-                </div>
+                    <button
+                      onClick={() => {
+                        setSsoFormVisible(false)
+                        methods.reset()
+                      }}
+                      className="mt-6 self-start text-sm text-sky-500 hover:underline"
+                    >
+                      ← Go back
+                    </button>
+                  </div>
+                </FormProvider>
               )}
             </div>
           </div>
