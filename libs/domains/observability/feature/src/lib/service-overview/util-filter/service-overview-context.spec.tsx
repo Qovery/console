@@ -242,8 +242,8 @@ describe('ServiceOverviewContext zoom integration', () => {
       wrapper: ServiceOverviewProvider,
     })
 
-    const startTimestamp = 1640995200000 // 2022-01-01 00:00:00 UTC
-    const endTimestamp = 1641081600000 // 2022-01-02 00:00:00 UTC
+    const startTimestamp = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTimestamp = 1641081600 // 2022-01-02 00:00:00 UTC
 
     act(() => {
       result.current.handleZoomTimeRangeChange(startTimestamp, endTimestamp)

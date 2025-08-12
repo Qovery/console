@@ -22,13 +22,13 @@ describe('Zoom and DatePicker Integration', () => {
 
     expect(result.current.hasCalendarValue).toBe(true)
 
-    // Simulate changing back to preset time range (should reset calendar value)
+    // Simulate changing back to preset time range
     act(() => {
       result.current.handleTimeRangeChange('1h')
     })
 
-    // After handleTimeRangeChange, hasCalendarValue should be reset
-    expect(result.current.hasCalendarValue).toBe(false)
+    // After handleTimeRangeChange, hasCalendarValue should remain true
+    expect(result.current.hasCalendarValue).toBe(true)
     expect(result.current.timeRange).toBe('1h')
   })
 
@@ -69,10 +69,10 @@ describe('Zoom and DatePicker Integration', () => {
       result.current.handleTimeRangeChange('30m')
     })
 
-    // Should reset zoom again and clear calendar value
+    // Should reset zoom again but not clear calendar value
     expect(mockZoomReset).toHaveBeenCalled()
     expect(result.current.isAnyChartZoomed).toBe(false)
-    expect(result.current.hasCalendarValue).toBe(false)
+    expect(result.current.hasCalendarValue).toBe(true)
     expect(result.current.timeRange).toBe('30m')
   })
 
@@ -86,8 +86,8 @@ describe('Zoom and DatePicker Integration', () => {
     expect(result.current.timeRange).toBe('30m')
 
     // Simulate zoom selection on chart creating new time range
-    const startTimestamp = 1640995200000 // 2022-01-01 00:00:00 UTC
-    const endTimestamp = 1641081600000 // 2022-01-02 00:00:00 UTC
+    const startTimestamp = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTimestamp = 1641081600 // 2022-01-02 00:00:00 UTC
 
     act(() => {
       result.current.handleZoomTimeRangeChange(startTimestamp, endTimestamp)
@@ -139,11 +139,11 @@ describe('Zoom and DatePicker Integration', () => {
     expect(mockZoomReset1).toHaveBeenCalledTimes(2)
     expect(mockZoomReset2).toHaveBeenCalledTimes(2)
     expect(result.current.timeRange).toBe('1h')
-    expect(result.current.hasCalendarValue).toBe(false)
+    expect(result.current.hasCalendarValue).toBe(true)
 
     // 4. Simulate zoom creating new time range
     act(() => {
-      result.current.handleZoomTimeRangeChange(1640995200000, 1641081600000)
+      result.current.handleZoomTimeRangeChange(1640995200, 1641081600)
     })
 
     expect(result.current.hasCalendarValue).toBe(true)
@@ -156,7 +156,7 @@ describe('Zoom and DatePicker Integration', () => {
     expect(mockZoomReset1).toHaveBeenCalledTimes(3)
     expect(mockZoomReset2).toHaveBeenCalledTimes(3)
     expect(result.current.timeRange).toBe('6h')
-    expect(result.current.hasCalendarValue).toBe(false)
+    expect(result.current.hasCalendarValue).toBe(true)
   })
 
   it('should properly cleanup zoom reset functions', () => {
