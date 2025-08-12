@@ -17,6 +17,7 @@ describe('ModalChart', () => {
     setUseLocalTime: jest.fn(),
     hideEvents: false,
     setHideEvents: jest.fn(),
+    resetChartZoom: jest.fn(),
   }
 
   const defaultProps = {
@@ -111,6 +112,7 @@ describe('ModalChart interactions', () => {
       setUseLocalTime: mockSetUseLocalTime,
       hideEvents: false,
       setHideEvents: mockSetHideEvents,
+      resetChartZoom: jest.fn(),
     })
   })
 
