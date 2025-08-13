@@ -4,8 +4,8 @@ import {
   type EnvironmentStatus,
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useState } from 'react'
-import { Navigate, Route, Routes, matchPath, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Link, Navigate, Route, Routes, matchPath, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useDeploymentHistory, useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceStageIdsProvider } from '@qovery/domains/service-logs/feature'
 import {
@@ -15,8 +15,10 @@ import {
   ENVIRONMENT_STAGES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
-import { LoaderDots } from '@qovery/shared/ui'
+import { LoaderDots, StatusChip } from '@qovery/shared/ui'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { trimId } from '@qovery/shared/util-js'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import DeploymentLogsFeature from './feature/deployment-logs-feature/deployment-logs-feature'
@@ -66,16 +68,31 @@ export function PageEnvironmentLogs() {
   const versionIdUrl = deploymentVersionId || preCheckVersionId || stageVersionId
   const isLatestVersion = environmentDeploymentHistory[0]?.identifier.execution_id === versionIdUrl
 
+  const deploymentsCurrentlyDeploying = useMemo(
+    () =>
+      environmentDeploymentHistory.filter(
+        (deployment) =>
+          ['DEPLOYING', 'DEPLOYMENT_QUEUED'].includes(deployment.status) &&
+          deployment.identifier.execution_id !== versionIdUrl
+      ),
+    [environmentDeploymentHistory, versionIdUrl]
+  )
+
   // If the URL contains `/latest` and the deployment is deploying, redirect to the logs page with the correct execution ID
   useEffect(() => {
-    const latestDeployment = environmentDeploymentHistory[0]
+    const latestDeployment = deploymentsCurrentlyDeploying[0]
+    const hasMatchingService =
+      latestDeployment?.stages &&
+      latestDeployment.stages.some((stage) =>
+        stage.services.some((service) => service.identifier.service_id === stageId)
+      )
 
     if (
       deploymentVersionId === 'latest' &&
       isFetchedDeploymentHistory &&
-      latestDeployment?.status === 'DEPLOYING' &&
+      ['DEPLOYING', 'DEPLOYMENT_QUEUED'].includes(latestDeployment?.status) &&
       latestDeployment.identifier.execution_id &&
-      stageId
+      hasMatchingService
     ) {
       navigate(
         ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
@@ -87,7 +104,7 @@ export function PageEnvironmentLogs() {
     deploymentVersionId,
     navigate,
     stageId,
-    environmentDeploymentHistory,
+    deploymentsCurrentlyDeploying,
     organizationId,
     projectId,
     environmentId,
@@ -137,12 +154,44 @@ export function PageEnvironmentLogs() {
       <div className="h-[calc(100vh-64px)] w-full p-1">
         <div className="flex h-full w-full items-center justify-center border border-neutral-500 bg-neutral-600">
           {deploymentVersionId === 'latest' ? (
-            <div className="flex flex-col items-center justify-center gap-4 text-center">
-              <LoaderDots />
-              <div className="flex flex-col gap-3">
-                <p className="text-neutral-300">Please wait while we deploy your application.</p>
-                <span className="text-sm text-neutral-350">You will be redirected to the logs shortly.</span>
+            <div className="flex flex-col items-center justify-center gap-10">
+              <div className="flex flex-col items-center justify-center gap-4 text-center">
+                <LoaderDots />
+                <div className="flex flex-col gap-3">
+                  <p className="text-neutral-300">Please wait while we deploy your application.</p>
+                  <span className="text-sm text-neutral-350">You will be redirected to the logs shortly.</span>
+                </div>
               </div>
+              {deploymentsCurrentlyDeploying.length > 0 && (
+                <div className="w-[484px] overflow-hidden rounded-lg border border-neutral-500 bg-neutral-700">
+                  <div className="border-b border-neutral-500 bg-neutral-600 py-3 text-center font-medium text-neutral-50">
+                    Other ongoing deployments
+                  </div>
+                  <div className="max-h-96 overflow-y-auto p-2">
+                    {deploymentsCurrentlyDeploying.map((deploymentHistory) => (
+                      <div key={deploymentHistory.identifier.execution_id} className="flex items-center pb-2 last:pb-0">
+                        <Link
+                          className={`flex w-full justify-between rounded bg-neutral-550 p-3 transition hover:bg-neutral-600 `}
+                          to={
+                            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+                            ENVIRONMENT_STAGES_URL(deploymentHistory.identifier.execution_id)
+                          }
+                        >
+                          <span className="flex">
+                            <StatusChip className="relative top-[2px] mr-3" status={deploymentHistory.status} />
+                            <span className="text-ssm text-brand-300">
+                              {trimId(deploymentHistory.identifier.execution_id || '')}
+                            </span>
+                          </span>
+                          <span className="text-ssm text-neutral-300">
+                            {dateFullFormat(deploymentHistory.auditing_data.created_at)}
+                          </span>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-4 text-center">
