@@ -126,7 +126,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                         setSsoFormVisible(true)
                         setAuth0Error(null)
                       }}
-                      className="text-base font-medium text-sky-500 hover:underline"
+                      className="text-sm font-medium text-sky-500 hover:underline"
                     >
                       Use Enterprise Single Sign-On
                     </button>
@@ -185,7 +185,7 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
                         setSsoFormVisible(false)
                         methods.reset()
                       }}
-                      className="mt-6 self-start text-sm text-sky-500 hover:underline"
+                      className="mt-6 self-start text-sm font-medium text-sky-500 hover:underline"
                     >
                       <Icon iconName="arrow-left" className="mr-1" />
                       Go back
