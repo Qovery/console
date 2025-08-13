@@ -168,7 +168,7 @@ describe('CardHTTPErrors', () => {
 
     expect(mockUseMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
-      query: expect.stringContaining('nginx_ingress_controller_requests{status!~"2.."}'),
+      query: expect.stringContaining('nginx_ingress_controller_requests{status=~"499|5.."}'),
       queryRange: 'query',
       timeRange: '30m',
     })

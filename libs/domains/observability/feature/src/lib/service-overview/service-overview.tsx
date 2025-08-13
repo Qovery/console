@@ -50,10 +50,15 @@ function ServiceOverviewContent() {
               variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
               color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
               size="md"
-              className="w-9 justify-center p-0"
+              className={clsx('gap-1.5', isLiveUpdateEnabled && 'border border-transparent')}
               onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
             >
-              <Icon iconName="rotate" iconStyle="regular" />
+              <Icon
+                iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-check'}
+                iconStyle="regular"
+                className="relative top-[1px]"
+              />
+              Live
             </Button>
           </Tooltip>
           <SelectTimeRange />
