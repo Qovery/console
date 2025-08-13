@@ -153,6 +153,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       tooltipLabel="Storage I/O"
       serviceId={serviceId}
       yDomain={yDomain}
+      showLegend={true}
     >
       <Line
         dataKey="read-ephemeral-storage"
