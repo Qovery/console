@@ -198,12 +198,18 @@ function LegendInline({
   rightGutterWidth = 48,
   selectedKeys = new Set<string>(),
   onToggle,
+  onHighlight,
 }: {
   items: Array<{ key: string; label: string; color: string }>
   rightGutterWidth?: number
   selectedKeys?: Set<string>
   onToggle?: (key: string) => void
+  onHighlight?: (key: string | null) => void
 }) {
+  const [highlightedKey, setHighlightedKey] = useState<string | null>(null)
+  const [isScrolling, setIsScrolling] = useState(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>()
+
   const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     const target = event.currentTarget
     if (!target) return
@@ -212,7 +218,50 @@ function LegendInline({
     event.preventDefault()
     event.stopPropagation()
     target.scrollLeft += scrollDelta
+
+    // Set scrolling state to prevent highlighting
+    setIsScrolling(true)
+    setHighlightedKey(null)
+    onHighlight?.(null)
+    
+    // Clear existing timeout
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+    
+    // Reset scrolling state after scroll ends
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false)
+    }, 150)
   }
+
+  const handleMouseEnter = (key: string) => {
+    if (!isScrolling) {
+      setHighlightedKey(key)
+      onHighlight?.(key)
+    }
+  }
+
+  const handleItemMouseLeave = () => {
+    // Don't clear highlight when leaving individual items
+    // Only clear when leaving the entire container
+  }
+
+  const handleContainerMouseLeave = () => {
+    if (!isScrolling) {
+      setHighlightedKey(null)
+      onHighlight?.(null)
+    }
+  }
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [])
 
   if (!items || items.length === 0) return null
 
@@ -225,28 +274,42 @@ function LegendInline({
       <div className="relative mt-2" style={{ width: `calc(100% - ${rightGutterWidth}px)` }}>
         <div
           onWheel={handleWheel}
+          onMouseLeave={handleContainerMouseLeave}
           className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap p-0"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {items.map((entry) => {
             const isActive = selectedKeys.has(entry.key)
+            const isHighlighted = highlightedKey === entry.key
             return (
               <Badge
                 key={entry.key}
                 role="button"
                 tabIndex={0}
                 radius="full"
-                className="cursor-pointer gap-2"
+                className="cursor-pointer gap-2 transition-all duration-150"
                 onClick={() => onToggle?.(entry.key)}
+                onMouseEnter={() => handleMouseEnter(entry.key)}
+                onMouseLeave={handleItemMouseLeave}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
                     onToggle?.(entry.key)
                   }
                 }}
-                style={isActive ? { borderColor: entry.color, borderWidth: 1 } : undefined}
+                style={{
+                  ...(isActive ? { borderColor: entry.color, borderWidth: 1 } : {}),
+                  ...(isHighlighted ? { 
+                    backgroundColor: `${entry.color}15`,
+                    borderColor: entry.color,
+                    borderWidth: 1
+                  } : {})
+                }}
               >
-                <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span 
+                  className="inline-block h-2 w-2 shrink-0 rounded-full transition-all duration-150" 
+                  style={{ backgroundColor: entry.color }} 
+                />
                 <span className="truncate">{entry.label}</span>
               </Badge>
             )
@@ -410,35 +473,86 @@ export const MaximalEdgeCase = {
 
     const sanitizeKey = (key: string) => key.replace(/[^a-zA-Z0-9_-]+/g, '-')
 
-    // CSS-driven highlighting: toggle container class and mark only selected series as active
+    // Unified CSS-only highlighting for both selection and hover
     useEffect(() => {
       const root = containerRef.current
       if (!root) return
-      const hasSelection = selectedKeys.size > 0
-      // Toggle selection scope on container (scoped by .highlight-scope)
-      root.classList.toggle('has-selection', hasSelection)
-
-      // Clear previous active flags (only touch elements that were active)
-      root.querySelectorAll('g.series.is-active').forEach((el) => el.classList.remove('is-active'))
-
-      if (!hasSelection) return
-
-      // Mark selected series as active; CSS will dim all others
-      selectedKeys.forEach((key) => {
-        const group = root.querySelector<SVGGElement>(`g.series.series--${sanitizeKey(key)}`)
-        if (group) group.classList.add('is-active')
+      
+      // Clear all existing selection classes
+      root.classList.forEach(className => {
+        if (className.startsWith('selected-series--')) {
+          root.classList.remove(className)
+        }
       })
+      
+      // Add selection classes for each selected key
+      selectedKeys.forEach((key) => {
+        root.classList.add(`selected-series--${sanitizeKey(key)}`)
+      })
+      
+      // Toggle has-selection class
+      root.classList.toggle('has-selection', selectedKeys.size > 0)
     }, [selectedKeys])
+
+    // Fast hover highlighting - only toggle class, let CSS handle the rest
+    const handleHighlight = (key: string | null) => {
+      const root = containerRef.current
+      if (!root) return
+      
+      // Remove existing hover classes
+      root.classList.forEach(className => {
+        if (className.startsWith('hover-series--')) {
+          root.classList.remove(className)
+        }
+      })
+      
+      if (key) {
+        root.classList.add(`hover-series--${sanitizeKey(key)}`)
+        root.classList.add('has-hover')
+      } else {
+        root.classList.remove('has-hover')
+      }
+    }
     return (
       <div ref={containerRef} className="highlight-scope w-full p-5 py-2 pr-0">
         <style>{`
-          /* When there is a selection, dim all series that are not active */
-          .highlight-scope.has-selection g.series:not(.is-active) path,
-          .highlight-scope.has-selection g.series:not(.is-active) rect,
-          .highlight-scope.has-selection g.series:not(.is-active) circle,
-          .highlight-scope.has-selection g.series:not(.is-active) polygon {
+          /* Base state: when there are selections, dim all series */
+          .highlight-scope.has-selection g.series path,
+          .highlight-scope.has-selection g.series rect,
+          .highlight-scope.has-selection g.series circle,
+          .highlight-scope.has-selection g.series polygon {
             opacity: 0.2;
           }
+          
+          /* Base state: when hovering, dim all series */
+          .highlight-scope.has-hover g.series path,
+          .highlight-scope.has-hover g.series rect,
+          .highlight-scope.has-hover g.series circle,
+          .highlight-scope.has-hover g.series polygon {
+            opacity: 0.2;
+          }
+          
+          /* Generate CSS for each metric - both selection and hover states */
+          ${maximalMetrics.map((metric) => {
+            const seriesClass = sanitizeKey(metric.key)
+            return `
+              /* Selected series: always visible */
+              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} path,
+              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} rect,
+              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} circle,
+              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} polygon {
+                opacity: 1 !important;
+              }
+              
+              /* Hovered series: always visible when hovering */
+              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} path,
+              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} rect,
+              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} circle,
+              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} polygon {
+                opacity: 1 !important;
+              }
+            `
+          }).join('')}
         `}</style>
         <Chart.Container className="h-[400px] w-full">
           <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
@@ -491,6 +605,7 @@ export const MaximalEdgeCase = {
               return next
             })
           }}
+          onHighlight={handleHighlight}
         />
       </div>
     )
