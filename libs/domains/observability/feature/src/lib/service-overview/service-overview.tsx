@@ -54,7 +54,7 @@ function ServiceOverviewContent() {
               onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
             >
               <Icon
-                iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-check'}
+                iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'}
                 iconStyle="regular"
                 className="relative top-[1px]"
               />
