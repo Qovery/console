@@ -2,6 +2,7 @@ import { type ComponentProps, forwardRef, useMemo } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
+import { ChartLegend } from './chart-legend'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
 
@@ -134,10 +135,9 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
           )
         })}
         {maxItems && filteredPayload.length > maxItems && (
-          <>
-            <div className="-mx-3 mt-2 border-t border-neutral-400" />
-            <div className="text-left text-xs text-neutral-250">+{filteredPayload.length - maxItems} more</div>
-          </>
+          <div className="flex items-center text-xs">
+            <span className="text-neutral-250">+{filteredPayload.length - maxItems} more</span>
+          </div>
         )}
       </div>
     </div>
@@ -148,8 +148,10 @@ export const Chart = {
   Container: ChartContainer,
   Tooltip: ChartTooltip,
   TooltipContent: ChartTooltipContent,
+  Legend: ChartLegend,
   Skeleton: ChartSkeleton,
   Loader: ChartLoader,
 }
 
 export { useZoomableChart } from './use-zoomable-chart'
+export { useChartHighlighting } from './use-chart-highlighting'
