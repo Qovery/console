@@ -468,7 +468,7 @@ export function LocalChart({
     <>
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
         {label && (
-          <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
+          <div className="flex w-full justify-between gap-1 p-4 pb-0">
             <div>
               <Heading className="flex items-center">{label}</Heading>
               <p className="text-ssm text-neutral-350">{description}</p>

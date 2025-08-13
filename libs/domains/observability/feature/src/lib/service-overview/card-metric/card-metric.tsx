@@ -1,4 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import clsx from 'clsx'
 import { type ComponentProps } from 'react'
 import { Badge, Button, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -66,12 +67,7 @@ export function CardMetric({
 }: CardMetricProps) {
   return (
     <Section
-      className={twMerge(
-        'h-full w-full justify-center rounded border border-neutral-250 p-4',
-        onClick && !isLoading ? 'cursor-pointer' : 'cursor-default',
-        className
-      )}
-      role="region"
+      className={twMerge('h-full w-full justify-center rounded border border-neutral-250 p-4', className)}
       {...props}
     >
       <div className="flex flex-col justify-between gap-0.5">
@@ -80,7 +76,14 @@ export function CardMetric({
             <Skeleton className="items-center gap-1.5" show={isLoading} width={170} height={16}>
               <Heading weight="medium">{title}</Heading>
               {status && (
-                <Badge className="ml-1.5 gap-1 font-medium" color={status === 'RED' ? 'red' : 'green'} size="base">
+                <Badge
+                  className={clsx('ml-1.5 gap-1 font-medium', {
+                    'bg-green-50': status === 'GREEN',
+                    'bg-red-50': status === 'RED',
+                  })}
+                  color={status === 'RED' ? 'red' : 'green'}
+                  size="base"
+                >
                   <Icon iconName={status === 'GREEN' ? 'circle-check' : 'circle-exclamation'} iconStyle="regular" />
                   {status === 'GREEN' ? 'Healthy' : 'Unhealthy'}
                 </Badge>

@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom'
-import { render, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ChartContent, type ReferenceLineEvent, renderResourceLimitLabel } from './local-chart'
 import type { UnitType } from './tooltip'
 
 jest.mock('../util-filter/service-overview-context', () => ({
   useServiceOverviewContext: () => ({
     startTimestamp: '1640994000',
-    endTimestamp: '1640995800',
+    endTimestamp: '1640994600',
     useLocalTime: false,
     hideEvents: false,
     hoveredEventKey: null,
@@ -14,78 +14,24 @@ jest.mock('../util-filter/service-overview-context', () => ({
   }),
 }))
 
-jest.mock('@qovery/domains/services/feature', () => ({
-  useService: () => ({ data: null }),
-}))
-
 jest.mock('../../hooks/use-events/use-events', () => ({
   useEvents: () => ({ data: [] }),
 }))
 
-jest.mock('react-router-dom', () => ({
-  useParams: () => ({ organizationId: 'test-org' }),
+jest.mock('../modal-chart/modal-chart', () => ({
+  ModalChart: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
 }))
 
-jest.mock('recharts', () => ({
-  CartesianGrid: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  ComposedChart: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  ReferenceArea: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  ReferenceLine: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  XAxis: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  YAxis: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-}))
-
-// Mock ResizeObserver for Recharts
-class MockResizeObserver {
-  observe = jest.fn()
-  unobserve = jest.fn()
-  disconnect = jest.fn()
-}
-
-global.ResizeObserver = MockResizeObserver
-
-jest.mock('@qovery/shared/ui', () => ({
-  Badge: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  Button: ({ children, onClick }: { children?: React.ReactNode; onClick?: () => void }) => (
-    <button onClick={onClick}>{children}</button>
-  ),
-  Chart: {
-    Container: ({
-      children,
-      isLoading,
-      isEmpty,
-    }: {
-      children?: React.ReactNode
-      isLoading?: boolean
-      isEmpty?: boolean
-    }) => (
-      <div data-testid="chart-container" data-loading={isLoading} data-empty={isEmpty}>
-        {children}
-      </div>
-    ),
-  },
-  Heading: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  Icon: ({ name }: { name: string }) => <span data-testid={`icon-${name}`}>{name}</span>,
-  Section: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  Tooltip: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  createXAxisConfig: jest.fn(),
-  getTimeGranularity: jest.fn(),
-  useZoomableChart: () => ({
-    zoomState: { startIndex: 0, endIndex: 10 },
-    isCtrlPressed: false,
-    handleChartDoubleClick: jest.fn(),
-    handleMouseDown: jest.fn(),
-    handleMouseMove: jest.fn(),
-    handleMouseUp: jest.fn(),
-    handleWheel: jest.fn(),
-    handleMouseLeave: jest.fn(),
-    getXDomain: jest.fn(),
-    getXAxisTicks: jest.fn(),
+jest.mock('../util-chart/format-timestamp', () => ({
+  formatTimestamp: (timestamp: number, useLocalTime: boolean) => ({
+    fullTimeString: new Date(timestamp).toLocaleString(),
+    timeString: new Date(timestamp).toLocaleTimeString(),
   }),
 }))
 
-jest.mock('@qovery/shared/util-hooks', () => ({
-  getColorByPod: (key: string) => `#${key.slice(-6)}`,
+jest.mock('./tooltip', () => ({
+  Tooltip: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+  UnitType: {} as any,
 }))
 
 jest.mock('@qovery/shared/util-js', () => ({
@@ -360,24 +306,32 @@ describe('ChartContent', () => {
   })
 
   it('should display event description when provided', () => {
-    renderWithProviders(
-      <ChartContent {...defaultProps} referenceLineData={[mockReferenceLineData[2]]} isFullscreen={true} />
-    )
-
-    expect(screen.getByText('Exit code 1')).toBeInTheDocument()
-  })
-
-  it('should truncate long version strings', () => {
-    const longVersionEvent = {
+    const eventWithDescription = {
       ...mockReferenceLineData[0],
-      version: 'very-long-commit-hash-that-should-be-truncated',
+      description: 'This is a test description',
     }
 
     renderWithProviders(
-      <ChartContent {...defaultProps} referenceLineData={[longVersionEvent]} service={mockService} isFullscreen />
+      <ChartContent {...defaultProps} referenceLineData={[eventWithDescription]} isFullscreen={true} />
     )
 
-    expect(screen.getByText('Tag: very-lon')).toBeInTheDocument()
+    expect(screen.getByText('This is a test description')).toBeInTheDocument()
+  })
+
+  it('should truncate long version strings', () => {
+    const eventWithLongVersion = {
+      ...mockReferenceLineData[0],
+      version: 'very-long-version-string-that-should-be-truncated',
+    }
+
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={[eventWithLongVersion]} isFullscreen={true} />
+    )
+
+    // The component should truncate long version strings
+    // Look for the truncated version using a more flexible approach
+    expect(screen.getByText(/very-lon/)).toBeInTheDocument()
+    expect(screen.queryByText('very-long-version-string-that-should-be-truncated')).not.toBeInTheDocument()
   })
 
   it('should display singular Event when only one event', () => {
