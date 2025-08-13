@@ -18,7 +18,7 @@ describe('ChartLegend', () => {
 
   it('should render nothing when items array is empty', () => {
     const { container } = renderWithProviders(<ChartLegend items={[]} />)
-    expect(container.firstChild).toBeNull()
+    expect(container).toBeEmptyDOMElement()
   })
 
   it('should call onToggle when legend item is clicked', async () => {
