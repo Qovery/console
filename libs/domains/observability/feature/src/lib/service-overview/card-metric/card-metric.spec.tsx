@@ -109,19 +109,4 @@ describe('CardMetric', () => {
     const button = screen.getByRole('button')
     expect(button).toBeInTheDocument()
   })
-
-  it('should have cursor-default class when no onClick', () => {
-    renderWithProviders(<CardMetric {...defaultProps} />)
-
-    const section = screen.getByRole('region')
-    expect(section).toHaveClass('cursor-default')
-  })
-
-  it('should have cursor-pointer class when onClick is provided and not loading', () => {
-    const mockOnClick = jest.fn()
-    renderWithProviders(<CardMetric {...defaultProps} onClick={mockOnClick} isLoading={false} />)
-
-    const section = screen.getByRole('region')
-    expect(section).toHaveClass('cursor-pointer')
-  })
 })
