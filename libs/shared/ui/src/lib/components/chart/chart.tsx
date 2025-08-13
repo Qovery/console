@@ -133,12 +133,12 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
             </div>
           )
         })}
+        {maxItems && filteredPayload.length > maxItems && (
+          <div className="flex items-center text-xs">
+            <span className="text-neutral-250">+{filteredPayload.length - maxItems} more</span>
+          </div>
+        )}
       </div>
-      {maxItems && filteredPayload.length > maxItems && (
-        <div className="flex items-center border-t border-neutral-400 p-3 pt-2">
-          <span className="text-xs text-neutral-250">+{filteredPayload.length - maxItems} more</span>
-        </div>
-      )}
     </div>
   )
 })
