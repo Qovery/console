@@ -66,8 +66,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [startDate, setStartDate] = useState(thirtyMinutesAgo.toISOString())
   const [endDate, setEndDate] = useState(now.toISOString())
 
-  // Live update toggle - enabled by default
-  const [isLiveUpdateEnabled, setIsLiveUpdateEnabled] = useState(true)
+  // Live update toggle - disabled by default
+  const [isLiveUpdateEnabled, setIsLiveUpdateEnabled] = useState(false)
 
   // Date picker state - used to pause live updates while open
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)

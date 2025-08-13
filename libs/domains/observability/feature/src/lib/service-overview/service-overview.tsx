@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Heading, Icon, InputSelectSmall, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
@@ -47,13 +47,13 @@ function ServiceOverviewContent() {
         <div className="flex gap-3">
           <Tooltip content="Live refresh (15s)">
             <Button
-              variant="surface"
-              color="neutral"
+              variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
+              color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
               size="md"
-              className={clsx('flex items-center', isLiveUpdateEnabled && 'ring-2 ring-brand-500')}
+              className="w-9 justify-center p-0"
               onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
             >
-              <Icon iconName="rotate" iconStyle="regular" className={isLiveUpdateEnabled ? 'text-brand-500' : ''} />
+              <Icon iconName="rotate" iconStyle="regular" />
             </Button>
           </Tooltip>
           <SelectTimeRange />
