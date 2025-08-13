@@ -2,6 +2,7 @@ import { type ComponentProps, forwardRef, useMemo } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
+import { ChartLegend } from './chart-legend'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
 
@@ -147,8 +148,10 @@ export const Chart = {
   Container: ChartContainer,
   Tooltip: ChartTooltip,
   TooltipContent: ChartTooltipContent,
+  Legend: ChartLegend,
   Skeleton: ChartSkeleton,
   Loader: ChartLoader,
 }
 
 export { useZoomableChart } from './use-zoomable-chart'
+export { useChartHighlighting } from './use-chart-highlighting'

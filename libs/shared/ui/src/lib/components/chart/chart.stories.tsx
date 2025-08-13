@@ -12,9 +12,9 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Badge } from '../badge/badge'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
+import { useChartHighlighting } from './use-chart-highlighting'
 
 const CHART_COLORS = [
   'var(--color-r-ams)',
@@ -37,22 +37,31 @@ const CHART_COLORS = [
   'var(--color-r-scl)',
 ]
 
-// Build a larger palette from base colors by generating lighter tints using CSS color-mix.
+// Build a larger palette from base colors by generating lighter variants using existing CSS variables.
 // This yields up to base.length * 3 distinct shades.
 function createExpandedPalette(baseColors: string[], desiredCount: number): string[] {
-  const variants: number[] = [100, 75, 55] // 100% base, then lighter tints
+  const variants = [
+    { suffix: '', weight: 100 }, // Original color
+    { suffix: '-300', weight: 75 }, // Lighter variant
+    { suffix: '-200', weight: 55 }, // Even lighter variant
+  ]
   const expanded: string[] = []
-  outer: for (const weight of variants) {
+
+  outer: for (const variant of variants) {
     for (const base of baseColors) {
       if (expanded.length >= desiredCount) break outer
-      if (weight === 100) {
+
+      if (variant.weight === 100) {
+        // Use original color
         expanded.push(base)
       } else {
-        // Use color-mix to generate a lighter tint of the base color
-        expanded.push(`color-mix(in srgb, ${base} ${weight}%, white)`) // e.g., 75% base + 25% white
+        // Convert var(--color-name-500) to var(--color-name-300) or var(--color-name-200)
+        const lightVariant = base.replace(/-500\)$/, `${variant.suffix})`)
+        expanded.push(lightVariant)
       }
     }
   }
+
   // If still not enough, cycle base colors
   while (expanded.length < desiredCount) {
     expanded.push(baseColors[expanded.length % baseColors.length])
@@ -192,138 +201,6 @@ const Story: Meta<typeof Chart.Container> = {
   ],
 }
 
-// Inline legend under the chart: one-line, horizontally scrollable, hidden scrollbar
-function LegendInline({
-  items,
-  rightGutterWidth = 48,
-  selectedKeys = new Set<string>(),
-  onToggle,
-  onHighlight,
-}: {
-  items: Array<{ key: string; label: string; color: string }>
-  rightGutterWidth?: number
-  selectedKeys?: Set<string>
-  onToggle?: (key: string) => void
-  onHighlight?: (key: string | null) => void
-}) {
-  const [highlightedKey, setHighlightedKey] = useState<string | null>(null)
-  const [isScrolling, setIsScrolling] = useState(false)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>()
-
-  const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
-    const target = event.currentTarget
-    if (!target) return
-    const scrollDelta = event.deltaY !== 0 ? event.deltaY : event.deltaX
-    if (scrollDelta === 0) return
-    event.preventDefault()
-    event.stopPropagation()
-    target.scrollLeft += scrollDelta
-
-    // Set scrolling state to prevent highlighting
-    setIsScrolling(true)
-    setHighlightedKey(null)
-    onHighlight?.(null)
-    
-    // Clear existing timeout
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current)
-    }
-    
-    // Reset scrolling state after scroll ends
-    scrollTimeoutRef.current = setTimeout(() => {
-      setIsScrolling(false)
-    }, 150)
-  }
-
-  const handleMouseEnter = (key: string) => {
-    if (!isScrolling) {
-      setHighlightedKey(key)
-      onHighlight?.(key)
-    }
-  }
-
-  const handleItemMouseLeave = () => {
-    // Don't clear highlight when leaving individual items
-    // Only clear when leaving the entire container
-  }
-
-  const handleContainerMouseLeave = () => {
-    if (!isScrolling) {
-      setHighlightedKey(null)
-      onHighlight?.(null)
-    }
-  }
-
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
-    }
-  }, [])
-
-  if (!items || items.length === 0) return null
-
-  return (
-    <>
-      <style>{`
-        .legend-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .legend-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
-      `}</style>
-      <div className="relative mt-2" style={{ width: `calc(100% - ${rightGutterWidth}px)` }}>
-        <div
-          onWheel={handleWheel}
-          onMouseLeave={handleContainerMouseLeave}
-          className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap p-0"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {items.map((entry) => {
-            const isActive = selectedKeys.has(entry.key)
-            const isHighlighted = highlightedKey === entry.key
-            return (
-              <Badge
-                key={entry.key}
-                role="button"
-                tabIndex={0}
-                radius="full"
-                className="cursor-pointer gap-2 transition-all duration-150"
-                onClick={() => onToggle?.(entry.key)}
-                onMouseEnter={() => handleMouseEnter(entry.key)}
-                onMouseLeave={handleItemMouseLeave}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onToggle?.(entry.key)
-                  }
-                }}
-                style={{
-                  ...(isActive ? { borderColor: entry.color, borderWidth: 1 } : {}),
-                  ...(isHighlighted ? { 
-                    backgroundColor: `${entry.color}15`,
-                    borderColor: entry.color,
-                    borderWidth: 1
-                  } : {})
-                }}
-              >
-                <span 
-                  className="inline-block h-2 w-2 shrink-0 rounded-full transition-all duration-150" 
-                  style={{ backgroundColor: entry.color }} 
-                />
-                <span className="truncate">{entry.label}</span>
-              </Badge>
-            )
-          })}
-        </div>
-        <div
-          className="pointer-events-none absolute right-0 top-0 h-full"
-          style={{ width: '2.5rem', background: 'linear-gradient(to left, white, rgba(255,255,255,0))' }}
-        />
-      </div>
-    </>
-  )
-}
-
 export const ComposableChart = {
   parameters: {
     docs: {
@@ -453,7 +330,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
             ) : null}
           </ComposedChart>
         </Chart.Container>
-        <LegendInline
+        <Chart.Legend
           items={[
             { key: 'cpu', label: 'CPU', color: 'var(--color-yellow-500)' },
             { key: 'memory', label: 'Memory', color: 'var(--color-brand-500)' },
@@ -468,92 +345,16 @@ The chart supports mixed visualization types including area charts, bar charts, 
 export const MaximalEdgeCase = {
   render: () => {
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
-    const containerRef = useRef<HTMLDivElement>(null)
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
 
-    const sanitizeKey = (key: string) => key.replace(/[^a-zA-Z0-9_-]+/g, '-')
+    const { containerRef, handleHighlight, highlightingStyles, sanitizeKey } = useChartHighlighting({
+      metricKeys: maximalMetrics.map((m) => m.key),
+      selectedKeys,
+    })
 
-    // Unified CSS-only highlighting for both selection and hover
-    useEffect(() => {
-      const root = containerRef.current
-      if (!root) return
-      
-      // Clear all existing selection classes
-      root.classList.forEach(className => {
-        if (className.startsWith('selected-series--')) {
-          root.classList.remove(className)
-        }
-      })
-      
-      // Add selection classes for each selected key
-      selectedKeys.forEach((key) => {
-        root.classList.add(`selected-series--${sanitizeKey(key)}`)
-      })
-      
-      // Toggle has-selection class
-      root.classList.toggle('has-selection', selectedKeys.size > 0)
-    }, [selectedKeys])
-
-    // Fast hover highlighting - only toggle class, let CSS handle the rest
-    const handleHighlight = (key: string | null) => {
-      const root = containerRef.current
-      if (!root) return
-      
-      // Remove existing hover classes
-      root.classList.forEach(className => {
-        if (className.startsWith('hover-series--')) {
-          root.classList.remove(className)
-        }
-      })
-      
-      if (key) {
-        root.classList.add(`hover-series--${sanitizeKey(key)}`)
-        root.classList.add('has-hover')
-      } else {
-        root.classList.remove('has-hover')
-      }
-    }
     return (
       <div ref={containerRef} className="highlight-scope w-full p-5 py-2 pr-0">
-        <style>{`
-          /* Base state: when there are selections, dim all series */
-          .highlight-scope.has-selection g.series path,
-          .highlight-scope.has-selection g.series rect,
-          .highlight-scope.has-selection g.series circle,
-          .highlight-scope.has-selection g.series polygon {
-            opacity: 0.2;
-          }
-          
-          /* Base state: when hovering, dim all series */
-          .highlight-scope.has-hover g.series path,
-          .highlight-scope.has-hover g.series rect,
-          .highlight-scope.has-hover g.series circle,
-          .highlight-scope.has-hover g.series polygon {
-            opacity: 0.2;
-          }
-          
-          /* Generate CSS for each metric - both selection and hover states */
-          ${maximalMetrics.map((metric) => {
-            const seriesClass = sanitizeKey(metric.key)
-            return `
-              /* Selected series: always visible */
-              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} path,
-              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} rect,
-              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} circle,
-              .highlight-scope.selected-series--${seriesClass} g.series.series--${seriesClass} polygon {
-                opacity: 1 !important;
-              }
-              
-              /* Hovered series: always visible when hovering */
-              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} path,
-              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} rect,
-              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} circle,
-              .highlight-scope.hover-series--${seriesClass} g.series.series--${seriesClass} polygon {
-                opacity: 1 !important;
-              }
-            `
-          }).join('')}
-        `}</style>
+        <style>{highlightingStyles}</style>
         <Chart.Container className="h-[400px] w-full">
           <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
             <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
@@ -594,7 +395,7 @@ export const MaximalEdgeCase = {
             })}
           </ComposedChart>
         </Chart.Container>
-        <LegendInline
+        <Chart.Legend
           items={maximalMetrics.map((m, i) => ({ key: m.key, label: m.key, color: EXPANDED_COLORS_50[i] }))}
           selectedKeys={selectedKeys}
           onToggle={(key) => {
