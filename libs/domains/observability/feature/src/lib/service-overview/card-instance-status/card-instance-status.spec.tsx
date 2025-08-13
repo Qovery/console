@@ -172,7 +172,7 @@ describe('CardInstanceStatus', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(useMetrics).toHaveBeenCalledTimes(4)
+    expect(useMetrics).toHaveBeenCalledTimes(2)
     expect(useMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
