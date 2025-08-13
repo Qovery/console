@@ -533,16 +533,29 @@ export function InstanceStatusChart({
     return referenceLines
   }, [metricsReason, metricsExitCode, metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached])
 
-  const isLoading =
-    isLoadingUnhealthy ||
-    isLoadingHealthy ||
-    isLoadingMetricsReason ||
-    isLoadingMetricsExitCode ||
-    isLoadingMetricsK8sEvent ||
-    isLoadingMetricsProbe ||
-    isLoadingHpaMinReplicas ||
-    isLoadingHpaMaxReplicas ||
-    isLoadingHpaMaxLimitReached
+  const isLoading = useMemo(
+    () =>
+      isLoadingUnhealthy ||
+      isLoadingHealthy ||
+      isLoadingMetricsReason ||
+      isLoadingMetricsExitCode ||
+      isLoadingMetricsK8sEvent ||
+      isLoadingMetricsProbe ||
+      isLoadingHpaMinReplicas ||
+      isLoadingHpaMaxReplicas ||
+      isLoadingHpaMaxLimitReached,
+    [
+      isLoadingUnhealthy,
+      isLoadingHealthy,
+      isLoadingMetricsReason,
+      isLoadingMetricsExitCode,
+      isLoadingMetricsK8sEvent,
+      isLoadingMetricsProbe,
+      isLoadingHpaMinReplicas,
+      isLoadingHpaMaxReplicas,
+      isLoadingHpaMaxLimitReached,
+    ]
+  )
 
   return (
     <LocalChart

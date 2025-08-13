@@ -14,7 +14,7 @@ export function CardMetricButton({
   onClick?: ComponentProps<'button'>['onClick']
 }) {
   return (
-    <Tooltip content={!hasModalLink ? `Show logs${onClick ? '' : ' disabled'}` : 'Show chart'}>
+    <Tooltip content={!hasModalLink ? 'Show logs' : 'Show chart'} disabled={!onClick}>
       <Button
         variant="outline"
         color="neutral"
