@@ -5,7 +5,7 @@ import { ModalChart } from '../modal-chart/modal-chart'
 import { PersistentStorageChart } from '../persistent-storage-chart/persistent-storage-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string, timeRange: string) => `
+const queryPercentage = (serviceId: string, timeRange: string) => `
   max (max_over_time(
   (
     (
@@ -25,31 +25,75 @@ const query = (serviceId: string, timeRange: string) => `
 ))
 `
 
+const queryMaxStorage = (serviceId: string, timeRange: string) => `
+  max (max_over_time(
+  (
+    (
+      kubelet_volume_stats_used_bytes
+      * on(namespace, persistentvolumeclaim)
+        group_left(label_qovery_com_service_id)
+          max by (namespace, persistentvolumeclaim)(kube_persistentvolumeclaim_labels{label_qovery_com_service_id="${serviceId}"})
+    )
+  )[${timeRange}:1m]
+))
+
+`
+
 export function CardStorage({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+  const { data: metricsPercentage, isLoading: isLoadingMetricsPercentage } = useMetrics({
     clusterId,
-    query: query(serviceId, timeRange),
+    query: queryPercentage(serviceId, timeRange),
     queryRange: 'query',
     timeRange,
   })
 
-  const rawValue = Number(metrics?.data?.result[0]?.value[1])
-  const value = Number.isFinite(rawValue) ? Math.round(rawValue) : 0
-  const isError = value > 80
+  const { data: metricsMaxStorage, isLoading: isLoadingMetricsMaxStorage } = useMetrics({
+    clusterId,
+    query: queryMaxStorage(serviceId, timeRange),
+    queryRange: 'query',
+    timeRange,
+  })
 
-  const title = 'Storage Usage'
+  const rawValue = Number(metricsPercentage?.data?.result[0]?.value[1])
+  const value = Number.isFinite(rawValue) ? Math.round(rawValue) : 0
+
+  const maxUsageBytes = Number(metricsMaxStorage?.data?.result[0]?.value[1])
+
+  const maxUsageGiB = maxUsageBytes / (1024 * 1024 * 1024)
+  const maxUsageMiB = maxUsageBytes / (1024 * 1024)
+  const maxUsageKiB = maxUsageBytes / 1024
+
+  let maxUsageDisplay
+  let maxUsageUnit
+  if (maxUsageGiB >= 1) {
+    maxUsageDisplay = maxUsageGiB.toFixed(1)
+    maxUsageUnit = 'GiB'
+  } else if (maxUsageMiB >= 1) {
+    maxUsageDisplay = maxUsageMiB.toFixed(0)
+    maxUsageUnit = 'MiB'
+  } else if (maxUsageKiB >= 1) {
+    maxUsageDisplay = maxUsageKiB.toFixed(1)
+    maxUsageUnit = 'KiB'
+  } else {
+    maxUsageDisplay = maxUsageBytes.toFixed(0)
+    maxUsageUnit = 'B'
+  }
+
+  const totalStorageGiB = value > 0 ? maxUsageGiB / (value / 100) : 0
+
+  const title = `${maxUsageDisplay} ${maxUsageUnit} max storage usage`
+  const description =
+    value > 0 ? `${value}% of your ${totalStorageGiB.toFixed(1)} GiB storage allowance` : `No storage usage data`
 
   return (
     <>
       <CardMetric
         title={title}
-        value={`${value}%`}
-        status={isError ? 'RED' : 'GREEN'}
-        description={`in the last ${timeRange}`}
-        isLoading={isLoadingMetrics}
+        description={description}
+        isLoading={isLoadingMetricsPercentage || isLoadingMetricsMaxStorage}
         onClick={() => setIsModalOpen(true)}
         hasModalLink
       />

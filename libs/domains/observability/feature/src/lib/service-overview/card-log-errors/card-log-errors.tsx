@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
+import { pluralize } from '@qovery/shared/util-js'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -31,14 +32,14 @@ export function CardLogErrors({
   })
 
   const value = metrics?.data?.result.length || 0
-  const isError = value > 0
+
+  const title = `${value} log ${pluralize(value, 'error', 'errors')}`
+  const description = 'total log errors detected in the selected time range'
 
   return (
     <CardMetric
-      title="Log error rate"
-      value={value}
-      status={isError ? 'RED' : 'GREEN'}
-      description={`in the last ${timeRange}`}
+      title={title}
+      description={description}
       isLoading={isLoadingMetrics}
       icon="scroll"
       onClick={() =>

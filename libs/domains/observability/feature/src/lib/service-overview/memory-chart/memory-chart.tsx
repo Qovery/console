@@ -102,8 +102,8 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       unit="MiB"
       isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}
       isEmpty={chartData.length === 0}
-      label="Memory (MiB)"
-      description="The memory usage per instance in MiB, along with memory request and limit thresholds"
+      label="Memory usage (MiB)"
+      description="Usage per instance in MiB of memory limit and request"
       tooltipLabel="Memory"
       serviceId={serviceId}
     >

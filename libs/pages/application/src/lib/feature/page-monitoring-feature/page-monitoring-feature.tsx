@@ -42,18 +42,16 @@ export function PageMonitoringFeature() {
 
   if (!hasMetrics) return null
 
-  return (
+  return noMetricsAvailable ? (
     <div className="px-10 py-7">
-      {noMetricsAvailable ? (
-        <div className="flex flex-col items-center gap-1 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
-          <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
-          <span className="font-medium">Monitoring is not available</span>
-          <span>Deploy this service to view monitoring data</span>
-        </div>
-      ) : (
-        <ServiceOverview />
-      )}
+      <div className="flex flex-col items-center gap-1 rounded border border-neutral-200 bg-neutral-100 py-10 text-sm text-neutral-350">
+        <Icon className="text-md text-neutral-300" iconStyle="regular" iconName="circle-question" />
+        <span className="font-medium">Monitoring is not available</span>
+        <span>Deploy this service to view monitoring data</span>
+      </div>
     </div>
+  ) : (
+    <ServiceOverview />
   )
 }
 

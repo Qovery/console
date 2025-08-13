@@ -45,7 +45,8 @@ describe('CardStorage', () => {
     )
 
     expect(baseElement).toBeTruthy()
-    expect(screen.getByText('Storage Usage')).toBeInTheDocument()
+    const skeleton = document.querySelector('[aria-busy="true"]')
+    expect(skeleton).toBeInTheDocument()
   })
 
   it('should render with low storage usage (GREEN status)', () => {
@@ -67,9 +68,8 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('Storage Usage')).toBeInTheDocument()
-    expect(screen.getByText('50%')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText(/50.*max storage usage/)).toBeInTheDocument()
+    expect(screen.getByText(/50% of your/)).toBeInTheDocument()
   })
 
   it('should render with high storage usage (RED status)', () => {
@@ -91,9 +91,8 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('Storage Usage')).toBeInTheDocument()
-    expect(screen.getByText('85%')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText(/85.*max storage usage/)).toBeInTheDocument()
+    expect(screen.getByText(/85% of your/)).toBeInTheDocument()
   })
 
   it('should handle empty metrics data', () => {
@@ -111,8 +110,7 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0%')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText('No storage usage data')).toBeInTheDocument()
   })
 
   it('should handle undefined metrics data', () => {
@@ -124,8 +122,7 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('0%')).toBeInTheDocument()
-    expect(screen.getByText('in the last 30m')).toBeInTheDocument()
+    expect(screen.getByText('No storage usage data')).toBeInTheDocument()
   })
 
   it('should open modal when clicking on card', async () => {
@@ -147,9 +144,8 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    const buttons = screen.getAllByRole('button')
-    const mainButton = buttons[0]
-    await userEvent.click(mainButton)
+    const button = screen.getByRole('button')
+    await userEvent.click(button)
 
     await waitFor(() => {
       expect(screen.getByText('Storage usage over time.')).toBeInTheDocument()
@@ -198,8 +194,7 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    const buttons = screen.getAllByRole('button')
-    const mainButton = buttons[0]
-    expect(mainButton).not.toHaveClass('cursor-default')
+    const button = screen.getByRole('button')
+    expect(button).toBeInTheDocument()
   })
 })

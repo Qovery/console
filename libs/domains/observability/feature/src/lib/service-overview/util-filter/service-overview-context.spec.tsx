@@ -1,4 +1,4 @@
-import { act, renderHook, renderWithProviders } from '@qovery/shared/util-tests'
+import { act, render, renderHook, renderWithProviders } from '@qovery/shared/util-tests'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './service-overview-context'
 
 describe('ServiceOverviewContext', () => {
@@ -8,7 +8,7 @@ describe('ServiceOverviewContext', () => {
       return <div>Test</div>
     }
 
-    expect(() => renderWithProviders(<TestComponent />)).toThrow(
+    expect(() => render(<TestComponent />)).toThrow(
       'useServiceOverviewContext must be used within an ServiceOverviewProvider'
     )
   })

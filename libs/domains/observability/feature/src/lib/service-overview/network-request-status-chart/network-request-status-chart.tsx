@@ -44,7 +44,7 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
       metrics,
       timeSeriesMap,
       (_, index) => JSON.stringify(metrics.data.result[index].metric),
-      (value) => parseFloat(value) * 1000, // Convert to req/s
+      (value) => parseFloat(value),
       useLocalTime
     )
 
@@ -66,7 +66,7 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
       isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
       label="Network request status (req/s)"
-      description="Network request status: 2xx, 3xx, 4xx, 5xx"
+      description="Sudden drops or spikes may signal service instability"
       unit="req/s"
       serviceId={serviceId}
     >

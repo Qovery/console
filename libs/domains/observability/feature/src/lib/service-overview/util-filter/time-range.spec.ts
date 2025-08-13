@@ -3,7 +3,7 @@ import { type TimeRangeOption, createTimeRangeHandler, timeRangeOptions } from '
 describe('time-range', () => {
   describe('timeRangeOptions', () => {
     it('should contain all expected time range options', () => {
-      expect(timeRangeOptions).toHaveLength(9)
+      expect(timeRangeOptions).toHaveLength(11)
 
       const expectedOptions = [
         { label: 'Last 5 minutes', value: '5m' },
@@ -15,13 +15,15 @@ describe('time-range', () => {
         { label: 'Last 12 hours', value: '12h' },
         { label: 'Last 24 hours', value: '24h' },
         { label: 'Last 2 days', value: '2d' },
+        { label: 'Last 7 days', value: '7d' },
+        { label: 'Last 30 days', value: '30d' },
       ]
 
       expect(timeRangeOptions).toEqual(expectedOptions)
     })
 
     it('should have valid value types', () => {
-      const validValues: TimeRangeOption[] = ['5m', '15m', '30m', '1h', '3h', '6h', '12h', '24h', '2d']
+      const validValues: TimeRangeOption[] = ['5m', '15m', '30m', '1h', '3h', '6h', '12h', '24h', '2d', '7d', '30d']
 
       timeRangeOptions.forEach((option) => {
         expect(validValues).toContain(option.value)

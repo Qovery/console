@@ -1,12 +1,12 @@
 import '@testing-library/jest-dom'
-import { render, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ChartContent, type ReferenceLineEvent, renderResourceLimitLabel } from './local-chart'
 import type { UnitType } from './tooltip'
 
 jest.mock('../util-filter/service-overview-context', () => ({
   useServiceOverviewContext: () => ({
     startTimestamp: '1640994000',
-    endTimestamp: '1640995800',
+    endTimestamp: '1640994600',
     useLocalTime: false,
     hideEvents: false,
     hoveredEventKey: null,
@@ -14,34 +14,24 @@ jest.mock('../util-filter/service-overview-context', () => ({
   }),
 }))
 
-jest.mock('@qovery/domains/services/feature', () => ({
-  useService: () => ({ data: null }),
-}))
-
 jest.mock('../../hooks/use-events/use-events', () => ({
   useEvents: () => ({ data: [] }),
 }))
 
-jest.mock('react-router-dom', () => ({
-  useParams: () => ({ organizationId: 'test-org' }),
+jest.mock('../modal-chart/modal-chart', () => ({
+  ModalChart: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
 }))
 
-// Mock ResizeObserver for Recharts
-class MockResizeObserver {
-  observe = jest.fn()
-  unobserve = jest.fn()
-  disconnect = jest.fn()
-}
+jest.mock('../util-chart/format-timestamp', () => ({
+  formatTimestamp: (timestamp: number, useLocalTime: boolean) => ({
+    fullTimeString: new Date(timestamp).toLocaleString(),
+    timeString: new Date(timestamp).toLocaleTimeString(),
+  }),
+}))
 
-global.ResizeObserver = MockResizeObserver
-
-jest.mock('@qovery/shared/ui', () => ({
-  ...jest.requireActual('@qovery/shared/ui'),
+jest.mock('./tooltip', () => ({
   Tooltip: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-}))
-
-jest.mock('@qovery/shared/util-hooks', () => ({
-  getColorByPod: (key: string) => `#${key.slice(-6)}`,
+  UnitType: {} as any,
 }))
 
 jest.mock('@qovery/shared/util-js', () => ({
@@ -202,6 +192,7 @@ describe('ChartContent', () => {
       key: 'container-abc123',
       color: 'var(--color-yellow-500)',
       description: 'Exit code 1',
+      pod: 'bc123',
     },
   ]
 
@@ -239,17 +230,24 @@ describe('ChartContent', () => {
     registry: {
       id: 'registry-123',
       name: 'test-registry',
+      url: 'https://registry.example.com',
+      kind: 'DOCKER_HUB' as const,
     },
+    maximum_cpu: 1000,
+    maximum_memory: 2048,
+    icon_uri: 'https://example.com/icon.png',
   }
 
   it('should render chart without events when referenceLineData is empty', () => {
-    render(<ChartContent {...defaultProps} />)
+    renderWithProviders(<ChartContent {...defaultProps} />)
 
     expect(screen.queryByText(/Events associated/)).not.toBeInTheDocument()
   })
 
   it('should render events list when referenceLineData is provided and isFullscreen is true', () => {
-    render(<ChartContent {...defaultProps} referenceLineData={mockReferenceLineData} isFullscreen={true} />)
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={mockReferenceLineData} isFullscreen={true} />
+    )
 
     expect(screen.getByText('3 Events associated')).toBeInTheDocument()
     expect(screen.getByText('Deployed')).toBeInTheDocument()
@@ -258,13 +256,15 @@ describe('ChartContent', () => {
   })
 
   it('should not render events list when isFullscreen is false', () => {
-    render(<ChartContent {...defaultProps} referenceLineData={mockReferenceLineData} isFullscreen={false} />)
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={mockReferenceLineData} isFullscreen={false} />
+    )
 
     expect(screen.queryByText(/Events associated/)).not.toBeInTheDocument()
   })
 
   it('should display correct event details for container service', () => {
-    render(
+    renderWithProviders(
       <ChartContent
         {...defaultProps}
         referenceLineData={[mockReferenceLineData[0]]}
@@ -284,7 +284,7 @@ describe('ChartContent', () => {
       serviceType: 'APPLICATION' as const,
     }
 
-    render(
+    renderWithProviders(
       <ChartContent
         {...defaultProps}
         referenceLineData={[mockReferenceLineData[0]]}
@@ -298,37 +298,55 @@ describe('ChartContent', () => {
   })
 
   it('should display instance name for exit-code events', () => {
-    render(<ChartContent {...defaultProps} referenceLineData={[mockReferenceLineData[2]]} isFullscreen={true} />)
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={[mockReferenceLineData[2]]} isFullscreen={true} />
+    )
 
     expect(screen.getByText('Instance name:')).toBeInTheDocument()
     expect(screen.getByText('bc123')).toBeInTheDocument()
   })
 
   it('should display event description when provided', () => {
-    render(<ChartContent {...defaultProps} referenceLineData={[mockReferenceLineData[2]]} isFullscreen={true} />)
+    const eventWithDescription = {
+      ...mockReferenceLineData[0],
+      description: 'This is a test description',
+    }
 
-    expect(screen.getByText('Exit code 1')).toBeInTheDocument()
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={[eventWithDescription]} isFullscreen={true} />
+    )
+
+    expect(screen.getByText('This is a test description')).toBeInTheDocument()
   })
 
   it('should truncate long version strings', () => {
-    const longVersionEvent = {
+    const eventWithLongVersion = {
       ...mockReferenceLineData[0],
-      version: 'very-long-commit-hash-that-should-be-truncated',
+      version: 'very-long-version-string-that-should-be-truncated',
     }
 
-    render(<ChartContent {...defaultProps} referenceLineData={[longVersionEvent]} service={mockService} isFullscreen />)
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={[eventWithLongVersion]} isFullscreen={true} />
+    )
 
-    expect(screen.getByText('Tag: very-lon')).toBeInTheDocument()
+    // The component should truncate long version strings
+    // Look for the truncated version using a more flexible approach
+    expect(screen.getByText(/very-lon/)).toBeInTheDocument()
+    expect(screen.queryByText('very-long-version-string-that-should-be-truncated')).not.toBeInTheDocument()
   })
 
   it('should display singular Event when only one event', () => {
-    render(<ChartContent {...defaultProps} referenceLineData={[mockReferenceLineData[0]]} isFullscreen={true} />)
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={[mockReferenceLineData[0]]} isFullscreen={true} />
+    )
 
     expect(screen.getByText('1 Event associated')).toBeInTheDocument()
   })
 
   it('should display plural Events when multiple events', () => {
-    render(<ChartContent {...defaultProps} referenceLineData={mockReferenceLineData} isFullscreen={true} />)
+    renderWithProviders(
+      <ChartContent {...defaultProps} referenceLineData={mockReferenceLineData} isFullscreen={true} />
+    )
 
     expect(screen.getByText('3 Events associated')).toBeInTheDocument()
   })

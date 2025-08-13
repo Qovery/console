@@ -127,7 +127,7 @@ export function NetworkRequestDurationChart({
       isLoading={isLoadingMetrics || isLoadingMetrics99 || isLoadingMetrics50}
       isEmpty={chartData.length === 0}
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
-      description="Network request duration: 95th percentile, 99th percentile, 50th percentile"
+      description="How long requests take to complete. Lower values mean faster responses"
       unit="ms"
       serviceId={serviceId}
     >
