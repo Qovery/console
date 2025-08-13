@@ -3,7 +3,6 @@ import { useChartHighlighting } from './use-chart-highlighting'
 
 describe('useChartHighlighting', () => {
   const mockMetricKeys = ['cpu', 'memory', 'disk', 'pod-889b7db58-yv1kc']
-  const mockSelectedKeys = new Set(['cpu', 'memory'])
 
   beforeEach(() => {
     // Clear any existing DOM elements
@@ -93,9 +92,9 @@ describe('useChartHighlighting', () => {
         rerender({ selectedKeys: new Set(['cpu', 'memory']) })
       })
 
-      expect(container.classList.contains('has-selection')).toBe(true)
-      expect(container.classList.contains('selected-series--cpu')).toBe(true)
-      expect(container.classList.contains('selected-series--memory')).toBe(true)
+      expect(container).toHaveClass('has-selection')
+      expect(container).toHaveClass('selected-series--cpu')
+      expect(container).toHaveClass('selected-series--memory')
     })
 
     it('should remove has-selection class when no items selected', () => {
@@ -126,8 +125,8 @@ describe('useChartHighlighting', () => {
         container.classList.toggle('has-selection', false)
       })
 
-      expect(container.classList.contains('has-selection')).toBe(false)
-      expect(container.classList.contains('selected-series--cpu')).toBe(false)
+      expect(container).not.toHaveClass('has-selection')
+      expect(container).not.toHaveClass('selected-series--cpu')
     })
   })
 
@@ -153,8 +152,8 @@ describe('useChartHighlighting', () => {
         result.current.handleHighlight('cpu')
       })
 
-      expect(container.classList.contains('has-hover')).toBe(true)
-      expect(container.classList.contains('hover-series--cpu')).toBe(true)
+      expect(container).toHaveClass('has-hover')
+      expect(container).toHaveClass('hover-series--cpu')
     })
 
     it('should remove hover classes when highlighting null', () => {
@@ -179,8 +178,8 @@ describe('useChartHighlighting', () => {
         result.current.handleHighlight(null)
       })
 
-      expect(container.classList.contains('has-hover')).toBe(false)
-      expect(container.classList.contains('hover-series--cpu')).toBe(false)
+      expect(container).not.toHaveClass('has-hover')
+      expect(container).not.toHaveClass('hover-series--cpu')
     })
 
     it('should handle keys with special characters', () => {
@@ -204,7 +203,7 @@ describe('useChartHighlighting', () => {
         result.current.handleHighlight('pod-889b7db58-yv1kc')
       })
 
-      expect(container.classList.contains('hover-series--pod-889b7db58-yv1kc')).toBe(true)
+      expect(container).toHaveClass('hover-series--pod-889b7db58-yv1kc')
     })
 
     it('should replace existing hover classes when switching highlights', () => {
@@ -229,15 +228,15 @@ describe('useChartHighlighting', () => {
         result.current.handleHighlight('cpu')
       })
 
-      expect(container.classList.contains('hover-series--cpu')).toBe(true)
+      expect(container).toHaveClass('hover-series--cpu')
 
       // Highlight second key
       act(() => {
         result.current.handleHighlight('memory')
       })
 
-      expect(container.classList.contains('hover-series--cpu')).toBe(false)
-      expect(container.classList.contains('hover-series--memory')).toBe(true)
+      expect(container).not.toHaveClass('hover-series--cpu')
+      expect(container).toHaveClass('hover-series--memory')
     })
 
     it('should handle null container ref gracefully', () => {
