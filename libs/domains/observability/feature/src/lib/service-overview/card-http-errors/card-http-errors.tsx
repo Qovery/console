@@ -9,7 +9,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 const query = (serviceId: string, timeRange: string) => `
   100 *
   sum(
-    rate(nginx_ingress_controller_requests{status!~"2.."}[${timeRange}])
+    increase(nginx_ingress_controller_requests{status!~"2.."}[${timeRange}])
       * on(ingress) group_left(label_qovery_com_associated_service_id)
         max by(ingress, label_qovery_com_associated_service_id)(
           kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
@@ -18,7 +18,7 @@ const query = (serviceId: string, timeRange: string) => `
   /
   clamp_min(
     sum(
-      rate(nginx_ingress_controller_requests[${timeRange}])
+      increase(nginx_ingress_controller_requests[${timeRange}])
         * on(ingress) group_left(label_qovery_com_associated_service_id)
           max by(ingress, label_qovery_com_associated_service_id)(
             kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
@@ -30,7 +30,7 @@ const query = (serviceId: string, timeRange: string) => `
 
 const queryTotalRequest = (serviceId: string, timeRange: string) => `
     sum(
-      rate(nginx_ingress_controller_requests[${timeRange}])
+      increase(nginx_ingress_controller_requests[${timeRange}])
         * on(ingress) group_left(label_qovery_com_associated_service_id)
           max by(ingress, label_qovery_com_associated_service_id)(
             kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
