@@ -192,6 +192,7 @@ describe('ChartContent', () => {
       key: 'container-abc123',
       color: 'var(--color-yellow-500)',
       description: 'Exit code 1',
+      pod: 'bc123',
     },
   ]
 

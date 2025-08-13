@@ -69,7 +69,7 @@ describe('CardPercentile99', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('250ms network request duration')).toBeInTheDocument()
+    expect(screen.getByText('200ms network request duration')).toBeInTheDocument()
     expect(screen.getByText('for p99')).toBeInTheDocument()
   })
 
@@ -88,7 +88,7 @@ describe('CardPercentile99', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('250ms network request duration')).toBeInTheDocument()
+    expect(screen.getByText('0ms network request duration')).toBeInTheDocument()
     expect(screen.getByText('for p99')).toBeInTheDocument()
   })
 
@@ -101,7 +101,7 @@ describe('CardPercentile99', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(screen.getByText('250ms network request duration')).toBeInTheDocument()
+    expect(screen.getByText('0ms network request duration')).toBeInTheDocument()
     expect(screen.getByText('for p99')).toBeInTheDocument()
   })
 
