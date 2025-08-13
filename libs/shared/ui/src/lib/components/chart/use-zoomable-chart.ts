@@ -16,6 +16,12 @@ interface ZoomLevel {
   right: string | number
 }
 
+interface UseZoomableChartProps {
+  onZoomChange?: (startTime: number, endTime: number) => void
+  onResetRegister?: (resetFn: () => void) => (() => void) | void
+  onZoomStateChange?: (isZoomed: boolean) => void
+}
+
 interface UseZoomableChartReturn {
   // State
   zoomState: ZoomState
@@ -41,7 +47,8 @@ interface UseZoomableChartReturn {
   isZoomed: boolean
 }
 
-export function useZoomableChart(): UseZoomableChartReturn {
+export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomableChartReturn {
+  const { onZoomChange, onResetRegister, onZoomStateChange } = props
   // Zoom state
   const [zoomState, setZoomState] = useState<ZoomState>({
     left: 'dataMin',
@@ -52,6 +59,33 @@ export function useZoomableChart(): UseZoomableChartReturn {
 
   const [zoomHistory, setZoomHistory] = useState<ZoomLevel[]>([])
   const [isCtrlPressed, setIsCtrlPressed] = useState(false)
+
+  const isZoomed = zoomState.left !== 'dataMin' || zoomState.right !== 'dataMax'
+
+  // Notify when zoom state changes
+  useEffect(() => {
+    if (onZoomStateChange) {
+      onZoomStateChange(isZoomed)
+    }
+  }, [isZoomed, onZoomStateChange])
+
+  // Register reset function with parent component (if provided)
+  useEffect(() => {
+    if (onResetRegister) {
+      const cleanup = onResetRegister(() => {
+        setZoomHistory([])
+        setZoomState((prevState) => ({
+          ...prevState,
+          refAreaLeft: '',
+          refAreaRight: '',
+          left: 'dataMin',
+          right: 'dataMax',
+        }))
+      })
+      return cleanup || undefined
+    }
+    return undefined
+  }, [onResetRegister])
 
   // Keyboard event handlers for zoom
   useEffect(() => {
@@ -102,6 +136,11 @@ export function useZoomableChart(): UseZoomableChartReturn {
       left: refAreaLeft,
       right: refAreaRight,
     }))
+
+    // Fire the callback when zoom changes
+    if (onZoomChange && typeof refAreaLeft === 'number' && typeof refAreaRight === 'number') {
+      onZoomChange(Math.floor(refAreaLeft / 1000), Math.floor(refAreaRight / 1000))
+    }
   }
 
   const zoomOut = () => {
@@ -116,6 +155,11 @@ export function useZoomableChart(): UseZoomableChartReturn {
         left: previousZoom.left,
         right: previousZoom.right,
       }))
+
+      // Fire the callback when zoom out
+      if (onZoomChange && typeof previousZoom.left === 'number' && typeof previousZoom.right === 'number') {
+        onZoomChange(Math.floor(previousZoom.left / 1000), Math.floor(previousZoom.right / 1000))
+      }
     }
   }
 
@@ -128,6 +172,13 @@ export function useZoomableChart(): UseZoomableChartReturn {
       left: 'dataMin',
       right: 'dataMax',
     }))
+
+    // Fire the callback when zoom is reset
+    if (onZoomChange) {
+      const now = Date.now()
+      const thirtyMinutesAgo = now - 30 * 60 * 1000
+      onZoomChange(Math.floor(thirtyMinutesAgo / 1000), Math.floor(now / 1000))
+    }
   }
 
   // Event handlers
@@ -201,8 +252,6 @@ export function useZoomableChart(): UseZoomableChartReturn {
     // For default domain or string values, return empty array (let Recharts handle it)
     return []
   }
-
-  const isZoomed = zoomState.left !== 'dataMin' || zoomState.right !== 'dataMax'
 
   return {
     // State

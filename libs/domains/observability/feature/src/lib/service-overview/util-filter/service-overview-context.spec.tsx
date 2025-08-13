@@ -130,3 +130,127 @@ describe('ServiceOverviewContext', () => {
     expect(result.current.endDate).toBe('2024-01-01T11:00:00.000Z')
   })
 })
+
+describe('ServiceOverviewContext zoom integration', () => {
+  it('should call resetChartZoom when handleTimeRangeChange is called', () => {
+    const mockResetFn = jest.fn()
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    act(() => {
+      result.current.registerZoomReset(mockResetFn)
+    })
+
+    act(() => {
+      result.current.handleTimeRangeChange('1h')
+    })
+
+    expect(mockResetFn).toHaveBeenCalledTimes(1)
+    expect(result.current.timeRange).toBe('1h')
+  })
+
+  it('should reset isAnyChartZoomed when resetChartZoom is called', () => {
+    const mockResetFn = jest.fn()
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    act(() => {
+      result.current.registerZoomReset(mockResetFn)
+      result.current.setIsAnyChartZoomed(true)
+    })
+
+    expect(result.current.isAnyChartZoomed).toBe(true)
+
+    act(() => {
+      result.current.resetChartZoom()
+    })
+
+    expect(mockResetFn).toHaveBeenCalledTimes(1)
+    expect(result.current.isAnyChartZoomed).toBe(false)
+  })
+
+  it('should call all registered zoom reset functions', () => {
+    const mockResetFn1 = jest.fn()
+    const mockResetFn2 = jest.fn()
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    act(() => {
+      result.current.registerZoomReset(mockResetFn1)
+      result.current.registerZoomReset(mockResetFn2)
+    })
+
+    act(() => {
+      result.current.resetChartZoom()
+    })
+
+    expect(mockResetFn1).toHaveBeenCalledTimes(1)
+    expect(mockResetFn2).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call registered zoom reset functions', () => {
+    const mockResetFn = jest.fn()
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    act(() => {
+      result.current.registerZoomReset(mockResetFn)
+    })
+
+    act(() => {
+      result.current.resetChartZoom()
+    })
+
+    expect(mockResetFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should reset zoom before updating time range in handleTimeRangeChange', () => {
+    const mockResetFn = jest.fn()
+    const callOrder: string[] = []
+
+    mockResetFn.mockImplementation(() => callOrder.push('resetZoom'))
+
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    act(() => {
+      result.current.registerZoomReset(mockResetFn)
+    })
+
+    // Track when time range actually changes by watching the result
+    const originalTimeRange = result.current.timeRange
+
+    act(() => {
+      result.current.handleTimeRangeChange('3h')
+      // Time range change happens synchronously after reset
+      if (result.current.timeRange !== originalTimeRange) {
+        callOrder.push('timeRangeChanged')
+      }
+    })
+
+    expect(callOrder[0]).toBe('resetZoom')
+    expect(result.current.timeRange).toBe('3h')
+  })
+
+  it('should handle zoom time range changes via handleZoomTimeRangeChange', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    const startTimestamp = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTimestamp = 1641081600 // 2022-01-02 00:00:00 UTC
+
+    act(() => {
+      result.current.handleZoomTimeRangeChange(startTimestamp, endTimestamp)
+    })
+
+    expect(result.current.startDate).toBe('2022-01-01T00:00:00.000Z')
+    expect(result.current.endDate).toBe('2022-01-02T00:00:00.000Z')
+    expect(result.current.hasCalendarValue).toBe(true)
+  })
+})

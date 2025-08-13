@@ -19,6 +19,15 @@ interface ServiceOverviewContextType {
 
   // Handlers
   handleTimeRangeChange: (range: TimeRangeOption) => void
+  handleZoomTimeRangeChange: (startTimestamp: number, endTimestamp: number) => void
+
+  // Zoom control
+  resetChartZoom: () => void
+  registerZoomReset: (resetFn: () => void) => void
+
+  // Zoom state tracking
+  isAnyChartZoomed: boolean
+  setIsAnyChartZoomed: (isZoomed: boolean) => void
 
   // Events
   setHideEvents: (value: boolean) => void
@@ -35,6 +44,14 @@ interface ServiceOverviewContextType {
   // Hovered event
   hoveredEventKey: string | null
   setHoveredEventKey: (value: string | null) => void
+
+  // Live update toggle
+  isLiveUpdateEnabled: boolean
+  setIsLiveUpdateEnabled: (value: boolean) => void
+
+  // Date picker state
+  isDatePickerOpen: boolean
+  setIsDatePickerOpen: (value: boolean) => void
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
@@ -49,14 +66,54 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [startDate, setStartDate] = useState(thirtyMinutesAgo.toISOString())
   const [endDate, setEndDate] = useState(now.toISOString())
 
-  const handleTimeRangeChange = createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)
+  // Live update toggle - enabled by default
+  const [isLiveUpdateEnabled, setIsLiveUpdateEnabled] = useState(true)
+
+  // Date picker state - used to pause live updates while open
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
+
+  // Zoom reset functionality
+  const [zoomResetFunctions, setZoomResetFunctions] = useState<(() => void)[]>([])
+
+  const registerZoomReset = (resetFn: () => void) => {
+    setZoomResetFunctions((prev) => [...prev, resetFn])
+    // Return cleanup function
+    return () => {
+      setZoomResetFunctions((prev) => prev.filter((fn) => fn !== resetFn))
+    }
+  }
+
+  const resetChartZoom = () => {
+    zoomResetFunctions.forEach((resetFn) => resetFn())
+    setIsAnyChartZoomed(false) // Reset zoom state when resetting charts
+  }
+
+  // Zoom state tracking - simplified to just track boolean state
+  const [isAnyChartZoomed, setIsAnyChartZoomed] = useState(false)
+
+  const handleTimeRangeChange = (range: TimeRangeOption) => {
+    // Reset zoom first, then change time range
+    resetChartZoom()
+    // Create a new time range handler that doesn't cause circular dependencies
+    createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)(range)
+  }
+
+  const handleZoomTimeRangeChange = (startTimestamp: number, endTimestamp: number) => {
+    // Convert timestamps to ISO strings and update dates
+    const startDateISO = new Date(startTimestamp * 1000).toISOString()
+    const endDateISO = new Date(endTimestamp * 1000).toISOString()
+
+    setStartDate(startDateISO)
+    setEndDate(endDateISO)
+    setHasCalendarValue(true) // Show custom date range in the UI
+  }
 
   // Update every 15 seconds to match actual scrape_interval
   // use-metrics.tsx: refetchInterval: 15_000ms
   useEffect(() => {
     const isLiveRange = ['5m', '15m', '30m'].includes(timeRange)
 
-    if (!isLiveRange) return
+    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed || isDatePickerOpen || hasCalendarValue) return
 
     const roundDateToStep = (date: Date, stepSeconds: number): Date => {
       const timestamp = Math.floor(date.getTime() / 1000)
@@ -105,7 +162,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
     return () => clearInterval(interval)
-  }, [timeRange])
+  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen])
 
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
@@ -129,6 +186,11 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     startTimestamp,
     endTimestamp,
     handleTimeRangeChange,
+    handleZoomTimeRangeChange,
+    resetChartZoom,
+    registerZoomReset,
+    isAnyChartZoomed,
+    setIsAnyChartZoomed,
     setHideEvents,
     hideEvents,
     expandCharts,
@@ -137,6 +199,10 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setHasCalendarValue,
     hoveredEventKey,
     setHoveredEventKey,
+    isLiveUpdateEnabled,
+    setIsLiveUpdateEnabled,
+    isDatePickerOpen,
+    setIsDatePickerOpen,
   }
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>

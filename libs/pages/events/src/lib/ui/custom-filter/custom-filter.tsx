@@ -65,6 +65,7 @@ export function CustomFilter({
           minDate={subDays(new Date(), organization?.organization_plan?.audit_logs_retention_in_days ?? 30)}
           defaultDates={timestamps}
           showTimeInput
+          useLocalTime
           onClickOutside={() => setIsOpenTimestamp(!isOpenTimestamp)}
         >
           {!timestamps ? (

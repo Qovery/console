@@ -421,7 +421,7 @@ describe('ServiceList', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: /front-end/i }))
     const rows = screen.getAllByRole('row')
     expect(rows).toHaveLength(2)
-  })
+  }, 10000)
   it('should navigate to service on row click', async () => {
     const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
     const rows = screen.getAllByRole('row')

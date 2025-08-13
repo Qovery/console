@@ -102,11 +102,20 @@ export function ChartContent({
   service,
   isFullscreen = true,
 }: ChartContentProps) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
-    useServiceOverviewContext()
+  const {
+    startTimestamp,
+    endTimestamp,
+    useLocalTime,
+    hideEvents,
+    hoveredEventKey,
+    setHoveredEventKey,
+    handleZoomTimeRangeChange,
+    registerZoomReset,
+    setIsAnyChartZoomed,
+  } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
-  // Use the zoomable chart hook
+  // Use the zoomable chart hook - automatically handle zoom state changes
   const {
     zoomState,
     isCtrlPressed,
@@ -117,7 +126,11 @@ export function ChartContent({
     handleMouseLeave,
     getXDomain: getZoomXDomain,
     getXAxisTicks,
-  } = useZoomableChart()
+  } = useZoomableChart({
+    onZoomChange: handleZoomTimeRangeChange,
+    onResetRegister: registerZoomReset,
+    onZoomStateChange: setIsAnyChartZoomed,
+  })
 
   function getXDomain(): [number | string, number | string] {
     const defaultDomain: [number | string, number | string] = xDomain ?? [
@@ -456,16 +469,18 @@ export function LocalChart({
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
         {label && (
           <div className="flex w-full items-center justify-between gap-1 p-5 pb-0">
-            <Heading className="flex items-center gap-1">
-              {label}
-              {description && (
-                <Tooltip content={description}>
-                  <span>
-                    <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-350" />
-                  </span>
-                </Tooltip>
-              )}
-            </Heading>
+            <div className="flex items-center gap-2">
+              <Heading className="flex items-center gap-1">
+                {label}
+                {description && (
+                  <Tooltip content={description}>
+                    <span>
+                      <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-350" />
+                    </span>
+                  </Tooltip>
+                )}
+              </Heading>
+            </div>
             <Tooltip content="View events details">
               <Button
                 variant="surface"
