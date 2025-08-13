@@ -425,6 +425,7 @@ export function InstanceStatusChart({
                 description: getDescriptionFromReason(series.metric.reason),
                 icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
                 color: series.metric.reason === 'Completed' ? 'var(--color-yellow-500)' : 'var(--color-red-500)',
+                pod: series.metric.pod,
                 key,
               })
             }
@@ -439,6 +440,7 @@ export function InstanceStatusChart({
         series.values.forEach(([timestamp, value]: [number, string]) => {
           const numValue = parseFloat(value)
           if (numValue >= 0) {
+            console.log(series.metric)
             const key = `${series.metric.pod}-${timestamp}`
             const exitCodeInfo = getExitCodeInfo(series.values[0][1])
             referenceLines.push({
@@ -447,6 +449,7 @@ export function InstanceStatusChart({
               reason: exitCodeInfo.name,
               description: exitCodeInfo.description,
               icon: 'exclamation',
+              pod: series.metric.pod,
               key,
             })
           }
@@ -469,6 +472,7 @@ export function InstanceStatusChart({
                 description: getDescriptionFromK8sEvent(series.metric.reason),
                 icon: 'xmark',
                 color: 'var(--color-red-500)',
+                pod: series.metric.pod,
                 key,
               })
             }
@@ -491,6 +495,7 @@ export function InstanceStatusChart({
                 reason: series.metric.probe_type,
                 description: getDescriptionFromProbeType(series.metric.probe_type),
                 icon: 'exclamation',
+                pod: series.metric.pod,
                 key,
               })
             }
@@ -514,6 +519,7 @@ export function InstanceStatusChart({
                 description:
                   'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
                 icon: 'exclamation',
+                pod: series.metric.pod,
                 key,
               })
             }

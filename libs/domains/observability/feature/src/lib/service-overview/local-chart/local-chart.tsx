@@ -65,6 +65,7 @@ export interface ReferenceLineEvent {
   version?: string
   repository?: string
   color?: string
+  pod?: string
 }
 
 interface ChartContentProps extends PropsWithChildren {
@@ -283,7 +284,7 @@ export function ChartContent({
                         {event.type === 'exit-code' && (
                           <div className="flex items-center gap-1">
                             <span className="text-neutral-350">Instance name:</span>
-                            <Tooltip content={event.key}>
+                            <Tooltip content={event.pod ?? ''}>
                               <Badge
                                 variant="surface"
                                 color="neutral"
@@ -292,9 +293,9 @@ export function ChartContent({
                               >
                                 <span
                                   className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                                  style={{ backgroundColor: getColorByPod(event.key) }}
+                                  style={{ backgroundColor: getColorByPod(event.pod ?? '') }}
                                 />
-                                {event.key.substring(event.key.length - 5)}
+                                {event.pod?.substring(event.pod?.length - 5)}
                               </Badge>
                             </Tooltip>
                           </div>

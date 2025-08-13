@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { match } from 'ts-pattern'
+import { useService } from '@qovery/domains/services/feature'
 import { Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
@@ -72,21 +74,11 @@ const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
   )[${timeRange}:])
 `
 
-const queryMaxInstances = (serviceId: string, timeRange: string) => `
-  max_over_time(
-    count(
-      kube_pod_status_ready{condition="true"}
-        * on(namespace, pod) group_left(label_qovery_com_service_id)
-          max by(namespace, pod, label_qovery_com_service_id)(
-            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
-          )
-    )[${timeRange}:]
-  )
-`
-
 export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { timeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const { data: service } = useService({ serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useMetrics({
     clusterId,
     query: query(serviceId, timeRange),
@@ -100,19 +92,17 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
     timeRange,
   })
 
-  const { data: metricsMaxInstances, isLoading: isLoadingMetricsMaxInstances } = useMetrics({
-    clusterId,
-    query: queryMaxInstances(serviceId, timeRange),
-    queryRange: 'query',
-  })
-
   const instanceErrors = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0
   const autoscalingReached = metricsAutoscalingReached?.data?.result[0]?.value[1] || 0
-  const maxInstances = metricsMaxInstances?.data?.result[0]?.value[1] || 0
 
   const title = 'Instance number'
   const description = 'Number of healthy and unhealthy instances over time.'
-  const isLoading = isLoadingMetricsInstanceErrors || isLoadingMetricsAutoscalingReached || isLoadingMetricsMaxInstances
+  const isLoading = isLoadingMetricsInstanceErrors || isLoadingMetricsAutoscalingReached
+
+  const isAutoscalingEnabled = match(service)
+    .with({ serviceType: 'APPLICATION' }, (s) => s.max_running_instances !== s.min_running_instances)
+    .with({ serviceType: 'CONTAINER' }, (s) => s.max_running_instances !== s.min_running_instances)
+    .otherwise(() => false)
 
   return (
     <>
@@ -127,11 +117,13 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
             </Tooltip>
           </div>
           <div className="flex items-center gap-5">
-            <Skeleton show={isLoading} width={174} height={16}>
-              <span className="text-ssm text-neutral-400">
-                Auto-scaling limit reached <span className="font-medium">{autoscalingReached}</span>
-              </span>
-            </Skeleton>
+            {isAutoscalingEnabled && (
+              <Skeleton show={isLoading} width={174} height={16}>
+                <span className="text-ssm text-neutral-400">
+                  Auto-scaling limit reached <span className="font-medium">{autoscalingReached}</span>
+                </span>
+              </Skeleton>
+            )}
             <Skeleton show={isLoading} width={106} height={16}>
               <span className="text-ssm text-neutral-400">
                 Instance {pluralize(instanceErrors, 'error', 'errors')}{' '}

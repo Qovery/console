@@ -38,7 +38,7 @@ export function CardPercentile99({ serviceId, clusterId }: { serviceId: string; 
   const defaultThreshold = 250
   const isError = value > defaultThreshold
 
-  const title = `${defaultThreshold}ms network request duration`
+  const title = `${value}ms network request duration`
   const description = 'for p99'
 
   return (

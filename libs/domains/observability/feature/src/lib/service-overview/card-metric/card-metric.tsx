@@ -76,17 +76,19 @@ export function CardMetric({
             <Skeleton className="items-center gap-1.5" show={isLoading} width={170} height={16}>
               <Heading weight="medium">{title}</Heading>
               {status && (
-                <Badge
-                  className={clsx('ml-1.5 gap-1 font-medium', {
-                    'bg-green-50': status === 'GREEN',
-                    'bg-red-50': status === 'RED',
-                  })}
-                  color={status === 'RED' ? 'red' : 'green'}
-                  size="base"
-                >
-                  <Icon iconName={status === 'GREEN' ? 'circle-check' : 'circle-exclamation'} iconStyle="regular" />
-                  {status === 'GREEN' ? 'Healthy' : 'Unhealthy'}
-                </Badge>
+                <Tooltip content="Default threshold is 250ms for percentiles">
+                  <Badge
+                    className={clsx('ml-1.5 gap-1 font-medium', {
+                      'bg-green-50': status === 'GREEN',
+                      'bg-red-50': status === 'RED',
+                    })}
+                    color={status === 'RED' ? 'red' : 'green'}
+                    size="base"
+                  >
+                    <Icon iconName={status === 'GREEN' ? 'circle-check' : 'circle-exclamation'} iconStyle="regular" />
+                    {status === 'GREEN' ? 'Healthy' : 'Unhealthy'}
+                  </Badge>
+                </Tooltip>
               )}
             </Skeleton>
           </div>

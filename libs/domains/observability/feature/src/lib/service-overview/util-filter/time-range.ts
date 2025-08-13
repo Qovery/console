@@ -1,6 +1,6 @@
 import { subDays, subHours, subMinutes } from 'date-fns'
 
-export type TimeRangeOption = '5m' | '15m' | '30m' | '1h' | '3h' | '6h' | '12h' | '24h' | '2d'
+export type TimeRangeOption = '5m' | '15m' | '30m' | '1h' | '3h' | '6h' | '12h' | '24h' | '2d' | '7d' | '30d'
 
 export const timeRangeOptions = [
   { label: 'Last 5 minutes', value: '5m' },
@@ -12,6 +12,8 @@ export const timeRangeOptions = [
   { label: 'Last 12 hours', value: '12h' },
   { label: 'Last 24 hours', value: '24h' },
   { label: 'Last 2 days', value: '2d' },
+  { label: 'Last 7 days', value: '7d' },
+  { label: 'Last 30 days', value: '30d' },
 ]
 
 export const createTimeRangeHandler = (
@@ -58,6 +60,14 @@ export const createTimeRangeHandler = (
         break
       case '2d':
         setStartDate(subDays(now, 2).toISOString())
+        setEndDate(now.toISOString())
+        break
+      case '7d':
+        setStartDate(subDays(now, 7).toISOString())
+        setEndDate(now.toISOString())
+        break
+      case '30d':
+        setStartDate(subDays(now, 30).toISOString())
         setEndDate(now.toISOString())
         break
       default:
