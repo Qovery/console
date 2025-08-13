@@ -44,7 +44,7 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
       metrics,
       timeSeriesMap,
       (_, index) => JSON.stringify(metrics.data.result[index].metric),
-      (value) => parseFloat(value) * 1000, // Convert to req/s
+      (value) => parseFloat(value),
       useLocalTime
     )
 
