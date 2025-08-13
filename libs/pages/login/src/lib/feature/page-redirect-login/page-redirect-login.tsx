@@ -8,7 +8,16 @@ export function PageRedirectLogin() {
 
   useRedirectIfLogged()
 
-  if (searchParams.get('error')) {
+  const error = searchParams.get('error')
+  if (error != null) {
+    const errorDescription = searchParams.get('error_description') || 'No description available'
+
+    // Handle specific OIDC / SAML issue: the domain provided by the user doesn't exist on Auth0 side
+    if (error === 'invalid_request' && errorDescription.includes('')) {
+      sessionStorage.setItem('auth0_error', 'Invalid Enterprise SSO Domain Name')
+      sessionStorage.setItem('auth0_error_description', 'The domain name provided is not authorized')
+    }
+
     return <Navigate to={LOGIN_URL} />
   }
 
