@@ -106,6 +106,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       description="The memory usage per instance in MiB, along with memory request and limit thresholds"
       tooltipLabel="Memory"
       serviceId={serviceId}
+      showLegend={true}
     >
       {seriesNames.map((name) => (
         <Line
