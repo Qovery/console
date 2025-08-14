@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo, useState } from 'react'
+import { type PropsWithChildren, memo, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -22,6 +22,7 @@ import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
+import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
@@ -88,7 +89,7 @@ interface ChartContentProps extends PropsWithChildren {
   isFullscreen?: boolean
 }
 
-export function ChartContent({
+export const ChartContent = memo(function ChartContent({
   data,
   unit,
   label,
@@ -151,7 +152,6 @@ export function ChartContent({
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={data}
-          syncId="syncId"
           margin={margin}
           onMouseDown={(e) => {
             handleMouseDown(e)
@@ -218,6 +218,10 @@ export function ChartContent({
             isAnimationActive={false}
             content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
           />
+          {!hideEvents &&
+            (referenceLineData ?? [])
+              .filter((event) => event.type === 'event')
+              .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, isFullscreen))}
           {children}
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
@@ -315,7 +319,7 @@ export function ChartContent({
       )}
     </div>
   )
-}
+})
 
 export interface LocalChartProps extends PropsWithChildren {
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
@@ -357,7 +361,7 @@ export function LocalChart({
   isFullscreen = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey, hideEvents } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Alpha: Workaround to get the events
@@ -377,9 +381,6 @@ export function LocalChart({
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
   const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
-    // Get chart data timestamps for alignment
-    const chartTimestamps = data.map((d) => d.timestamp).sort((a, b) => a - b)
-
     return (eventsFiltered || [])
       .filter(
         (event) =>
@@ -389,16 +390,7 @@ export function LocalChart({
           event.target_id === serviceId
       )
       .map((event) => {
-        const eventTimestamp = new Date(event.timestamp || '').getTime()
-
-        // Find the closest chart data point timestamp
-        let alignedTimestamp = eventTimestamp
-        if (chartTimestamps.length > 0) {
-          const closestTimestamp = chartTimestamps.reduce((prev, curr) => {
-            return Math.abs(curr - eventTimestamp) < Math.abs(prev - eventTimestamp) ? curr : prev
-          })
-          alignedTimestamp = closestTimestamp
-        }
+        const alignedTimestamp = new Date(event.timestamp || '').getTime()
 
         const key = `event-${event.id || alignedTimestamp}`
         const change = JSON.parse(event.change || '')
@@ -458,12 +450,18 @@ export function LocalChart({
           repository,
         }
       })
-  }, [eventsFiltered, serviceId, data])
+  }, [eventsFiltered, serviceId])
 
   // Merge with any referenceLineData passed as prop
   const mergedReferenceLineData = useMemo(() => {
     return [...(referenceLineData || []), ...eventReferenceLines]
   }, [referenceLineData, eventReferenceLines])
+
+  // Ensure data includes points at reference timestamps so vertical lines always align to an existing x in data
+  const paddedData = useMemo(() => {
+    const extraTimestamps = mergedReferenceLineData.map((e) => e.timestamp)
+    return addTimeRangePadding(data, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
+  }, [data, startTimestamp, endTimestamp, useLocalTime, mergedReferenceLineData])
 
   return (
     <>
@@ -497,7 +495,7 @@ export function LocalChart({
           </div>
         )}
         <ChartContent
-          data={data}
+          data={paddedData}
           unit={unit}
           label={label ?? ''}
           tooltipLabel={tooltipLabel}
@@ -510,18 +508,13 @@ export function LocalChart({
           service={service}
           isFullscreen={isFullscreen}
         >
-          {/* Render reference lines for events of type 'event' */}
-          {!hideEvents &&
-            mergedReferenceLineData
-              .filter((event) => event.type === 'event')
-              .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, false))}
           {children}
         </ChartContent>
       </Section>
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <ChartContent
-            data={data}
+            data={paddedData}
             unit={unit}
             label={label ?? ''}
             tooltipLabel={tooltipLabel}
@@ -534,11 +527,6 @@ export function LocalChart({
             service={service}
             isFullscreen
           >
-            {/* Render reference lines for events of type 'event' in modal as well */}
-            {!hideEvents &&
-              mergedReferenceLineData
-                .filter((event) => event.type === 'event')
-                .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, true))}
             {children}
           </ChartContent>
         </ModalChart>

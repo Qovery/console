@@ -50,7 +50,8 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
   startTimestamp: string,
   endTimestamp: string,
   useLocalTime: boolean,
-  excludeKeys?: string[]
+  excludeKeys?: string[],
+  extraTimestamps?: number[]
 ): T[] {
   if (!chartData.length) return []
 
@@ -148,6 +149,15 @@ export function addTimeRangePadding<T extends { timestamp: number; time: string;
       result.push(createPaddingPoint(current))
     }
     current += dataInterval
+  }
+
+  // Ensure reference/event timestamps are present as data points to keep reference lines aligned and visible
+  if (Array.isArray(extraTimestamps) && extraTimestamps.length > 0) {
+    extraTimestamps.forEach((ts) => {
+      if (ts >= startMs && ts <= endMs && !existingData.has(ts)) {
+        result.push(createPaddingPoint(ts))
+      }
+    })
   }
 
   return result.sort((a, b) => a.timestamp - b.timestamp)

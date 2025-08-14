@@ -12,7 +12,7 @@ const query = (serviceId: string, timeRange: string) => `
     increase(nginx_ingress_controller_requests{status=~"499|5.."}[${timeRange}])
       * on(ingress) group_left(label_qovery_com_associated_service_id)
         max by(ingress, label_qovery_com_associated_service_id)(
-          kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
+          kube_ingress_labels{label_qovery_com_associated_service_id = "${serviceId}"}
         )
   )
   /
@@ -21,7 +21,7 @@ const query = (serviceId: string, timeRange: string) => `
       increase(nginx_ingress_controller_requests[${timeRange}])
         * on(ingress) group_left(label_qovery_com_associated_service_id)
           max by(ingress, label_qovery_com_associated_service_id)(
-            kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
+            kube_ingress_labels{label_qovery_com_associated_service_id = "${serviceId}"}
           )
     ),
     1
@@ -33,7 +33,7 @@ const queryTotalRequest = (serviceId: string, timeRange: string) => `
       increase(nginx_ingress_controller_requests[${timeRange}])
         * on(ingress) group_left(label_qovery_com_associated_service_id)
           max by(ingress, label_qovery_com_associated_service_id)(
-            kube_ingress_labels{label_qovery_com_associated_service_id =~ "${serviceId}"}
+            kube_ingress_labels{label_qovery_com_associated_service_id = "${serviceId}"}
           )
           or vector(0)
     )
