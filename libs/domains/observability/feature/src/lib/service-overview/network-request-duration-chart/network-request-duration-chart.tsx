@@ -20,15 +20,20 @@ const queryDuration50 = (serviceId: string) => `
 `
 
 const queryDuration99 = (serviceId: string) => `
-  histogram_quantile(0.99,(
-  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
-  * on(ingress) group_left(label_qovery_com_associated_service_id)
-    max by(ingress, label_qovery_com_associated_service_id)(
-      kube_ingress_labels{
-        label_qovery_com_associated_service_id =~ "${serviceId}"
-      }
+  histogram_quantile(
+    0.99,
+    (
+      sum by(le, ingress) (
+        rate(nginx_ingress_controller_request_duration_seconds_bucket[1m])
+      )
+      * on(ingress) group_left(label_qovery_com_associated_service_id)
+        max by(ingress, label_qovery_com_associated_service_id)(
+          kube_ingress_labels{
+            label_qovery_com_associated_service_id = "${serviceId}"
+          }
+        )
+    )
   )
-)
 `
 
 const queryDuration95 = (serviceId: string) => `
