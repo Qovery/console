@@ -7,15 +7,15 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryInstanceStatus = (serviceId: string) => `
-  sum(kube_pod_status_ready{condition="true"} * on(namespace,pod) group_left(label_qovery_com_service_id) max by(namespace,pod,label_qovery_com_service_id)(kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))
+  sum(kube_pod_status_ready{condition="true"} * on(namespace,pod) group_left(label_qovery_com_service_id) max by(namespace,pod,label_qovery_com_service_id)(kube_pod_labels{label_qovery_com_service_id="${serviceId}"}))
 `
 
 const queryMinReplicas = (serviceId: string) => `
-  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}))
 `
 
 const queryMaxReplicas = (serviceId: string) => `
-  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}))
 `
 
 const queryMaxLimitReached = (serviceId: string) => `
@@ -41,7 +41,7 @@ const queryMaxLimitReached = (serviceId: string) => `
   on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
   max by (namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
     kube_horizontalpodautoscaler_labels{
-      label_qovery_com_service_id =~ "${serviceId}"
+      label_qovery_com_service_id = "${serviceId}"
     }
   ) > 0
 )
