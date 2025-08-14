@@ -161,7 +161,6 @@ describe('CardLogErrors', () => {
       clusterId: 'test-cluster-id',
       query: 'sum (increase(promtail_custom_q_log_errors_total{qovery_com_service_id=~"test-service-id"}[30m]))',
       queryRange: 'query',
-      timeRange: '30m',
     })
   })
 })

@@ -40,21 +40,19 @@ const queryTotalRequest = (serviceId: string, timeRange: string) => `
 `
 
 export function CardHTTPErrors({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
-  const { timeRange } = useServiceOverviewContext()
+  const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: query(serviceId, timeRange),
+    query: query(serviceId, queryTimeRange),
     queryRange: 'query',
-    timeRange,
   })
 
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useMetrics({
     clusterId,
-    query: queryTotalRequest(serviceId, timeRange),
+    query: queryTotalRequest(serviceId, queryTimeRange),
     queryRange: 'query',
-    timeRange,
   })
 
   const value = Math.round(metrics?.data?.result[0]?.value[1]) || 0

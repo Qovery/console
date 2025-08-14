@@ -16,6 +16,7 @@ interface ServiceOverviewContextType {
   // Computed values
   startTimestamp: string
   endTimestamp: string
+  queryTimeRange: string
 
   // Handlers
   handleTimeRangeChange: (range: TimeRangeOption) => void
@@ -167,6 +168,12 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
 
+  // Calculate the effective duration for Prometheus queries (accounts for zoom)
+  const queryTimeRange =
+    isAnyChartZoomed && startTimestamp && endTimestamp
+      ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
+      : timeRange
+
   const [hideEvents, setHideEvents] = useState(false)
   const [expandCharts, setExpandCharts] = useState(false)
 
@@ -185,6 +192,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setEndDate,
     startTimestamp,
     endTimestamp,
+    queryTimeRange,
     handleTimeRangeChange,
     handleZoomTimeRangeChange,
     resetChartZoom,

@@ -23,12 +23,11 @@ export function CardLogErrors({
 }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { timeRange } = useServiceOverviewContext()
+  const { queryTimeRange } = useServiceOverviewContext()
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: query(serviceId, timeRange),
+    query: query(serviceId, queryTimeRange),
     queryRange: 'query',
-    timeRange,
   })
 
   const value = metrics?.data?.result.length || 0
