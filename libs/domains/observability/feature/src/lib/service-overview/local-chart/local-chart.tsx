@@ -448,7 +448,27 @@ export function LocalChart({
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
 
   // Extract series information from children for legend
-  const chartSeries = useMemo(() => extractChartSeriesFromChildren(children), [children])
+  const chartSeries = useMemo(() => {
+    const series = extractChartSeriesFromChildren(children)
+    
+    // Sort series to show limit/request metrics first and add line indicator for them
+    return series
+      .map((item) => {
+        const isLimitRequest = item.label.toLowerCase().includes('limit') || item.label.toLowerCase().includes('request')
+        return {
+          ...item,
+          useLineIndicator: isLimitRequest
+        }
+      })
+      .sort((a, b) => {
+        const aIsLimitRequest = a.useLineIndicator
+        const bIsLimitRequest = b.useLineIndicator
+        
+        if (aIsLimitRequest && !bIsLimitRequest) return -1
+        if (!aIsLimitRequest && bIsLimitRequest) return 1
+        return 0
+      })
+  }, [children])
 
   // Set up chart highlighting if legend is enabled
   const highlightingResult = useChartHighlighting({

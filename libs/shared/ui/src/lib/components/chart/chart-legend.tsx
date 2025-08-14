@@ -6,6 +6,7 @@ export interface ChartLegendItem {
   key: string
   label: string
   color: string
+  useLineIndicator?: boolean
 }
 
 export interface ChartLegendProps {
@@ -145,10 +146,17 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
                     : {}),
                 }}
               >
-                <span
-                  className="inline-block h-2 w-2 shrink-0 rounded-full transition-all duration-150"
-                  style={{ backgroundColor: entry.color }}
-                />
+                {entry.useLineIndicator ? (
+                  <span
+                    className="inline-block h-0.5 w-3 shrink-0 transition-all duration-150"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                ) : (
+                  <span
+                    className="inline-block h-2 w-2 shrink-0 rounded-full transition-all duration-150"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                )}
                 <span className="truncate">{entry.label}</span>
               </Badge>
             )
