@@ -11,6 +11,13 @@ export function useUserRole() {
 
   const isQoveryAdminUser = roles.some((r) => r === 'admin')
 
+  const isAdminOrOwnerOfCompany = (companyId: string) => {
+    return (
+      roles.some((role) => role.includes(`organization:${companyId}:admin`)) ||
+      roles.some((role) => role.includes(`organization:${companyId}:owner`))
+    )
+  }
+
   useEffect(() => {
     const fetchRoles = async () => {
       try {
@@ -31,6 +38,7 @@ export function useUserRole() {
     roles,
     loading,
     isQoveryAdminUser,
+    isAdminOrOwnerOfCompany,
   }
 }
 
