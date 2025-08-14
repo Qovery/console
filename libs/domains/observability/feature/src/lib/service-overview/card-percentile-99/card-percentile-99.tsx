@@ -27,7 +27,7 @@ const query = (serviceId: string, timeRange: string) => `
 export function CardPercentile99({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
   const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
-    
+
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     query: query(serviceId, queryTimeRange),

@@ -169,9 +169,10 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
 
   // Calculate the effective duration for Prometheus queries (accounts for zoom)
-  const queryTimeRange = isAnyChartZoomed && startTimestamp && endTimestamp
-    ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
-    : timeRange
+  const queryTimeRange =
+    isAnyChartZoomed && startTimestamp && endTimestamp
+      ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
+      : timeRange
 
   const [hideEvents, setHideEvents] = useState(false)
   const [expandCharts, setExpandCharts] = useState(false)

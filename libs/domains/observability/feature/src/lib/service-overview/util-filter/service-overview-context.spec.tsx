@@ -131,6 +131,135 @@ describe('ServiceOverviewContext', () => {
   })
 })
 
+describe('ServiceOverviewContext queryTimeRange', () => {
+  it('should return original timeRange when not zoomed', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    expect(result.current.queryTimeRange).toBe('30m') // default timeRange
+    expect(result.current.isAnyChartZoomed).toBe(false)
+  })
+
+  it('should return original timeRange when timeRange is changed but not zoomed', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    act(() => {
+      result.current.setTimeRange('1h')
+    })
+
+    expect(result.current.queryTimeRange).toBe('1h')
+    expect(result.current.isAnyChartZoomed).toBe(false)
+  })
+
+  it('should calculate dynamic timeRange when chart is zoomed', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    // Set up zoom state: 5-minute range (300 seconds)
+    const startTime = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTime = 1640995500 // 2022-01-01 00:05:00 UTC (5 minutes later)
+
+    act(() => {
+      result.current.handleZoomTimeRangeChange(startTime, endTime)
+      result.current.setIsAnyChartZoomed(true)
+    })
+
+    expect(result.current.queryTimeRange).toBe('5m') // 5 minutes calculated from timestamps
+    expect(result.current.timeRange).toBe('30m') // Original timeRange unchanged
+    expect(result.current.isAnyChartZoomed).toBe(true)
+  })
+
+  it('should calculate correct timeRange for different zoom durations', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    // Test 10-minute zoom
+    const startTime1 = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTime1 = 1640995800 // 2022-01-01 00:10:00 UTC (10 minutes later)
+
+    act(() => {
+      result.current.handleZoomTimeRangeChange(startTime1, endTime1)
+      result.current.setIsAnyChartZoomed(true)
+    })
+
+    expect(result.current.queryTimeRange).toBe('10m')
+
+    // Test 2-hour zoom
+    const startTime2 = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTime2 = 1641002400 // 2022-01-01 02:00:00 UTC (2 hours later)
+
+    act(() => {
+      result.current.handleZoomTimeRangeChange(startTime2, endTime2)
+    })
+
+    expect(result.current.queryTimeRange).toBe('120m') // 2 hours = 120 minutes
+  })
+
+  it('should return original timeRange when zoom is reset', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    // Set up initial timeRange
+    act(() => {
+      result.current.setTimeRange('1h')
+    })
+
+    // Zoom in
+    const startTime = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTime = 1640995800 // 2022-01-01 00:10:00 UTC (10 minutes later)
+
+    act(() => {
+      result.current.handleZoomTimeRangeChange(startTime, endTime)
+      result.current.setIsAnyChartZoomed(true)
+    })
+
+    expect(result.current.queryTimeRange).toBe('10m') // Zoomed duration
+
+    // Reset zoom
+    act(() => {
+      result.current.resetChartZoom()
+    })
+
+    expect(result.current.queryTimeRange).toBe('1h') // Back to original timeRange
+    expect(result.current.isAnyChartZoomed).toBe(false)
+  })
+
+  it('should handle edge case of very short zoom duration', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    // 30-second zoom (less than 1 minute)
+    const startTime = 1640995200 // 2022-01-01 00:00:00 UTC
+    const endTime = 1640995230 // 2022-01-01 00:00:30 UTC (30 seconds later)
+
+    act(() => {
+      result.current.handleZoomTimeRangeChange(startTime, endTime)
+      result.current.setIsAnyChartZoomed(true)
+    })
+
+    expect(result.current.queryTimeRange).toBe('0m') // Math.floor(30/60) = 0 minutes
+  })
+
+  it('should not calculate dynamic timeRange when timestamps are missing', () => {
+    const { result } = renderHook(() => useServiceOverviewContext(), {
+      wrapper: ServiceOverviewProvider,
+    })
+
+    act(() => {
+      result.current.setIsAnyChartZoomed(true) // Zoomed but no timestamps set
+    })
+
+    expect(result.current.queryTimeRange).toBe('30m') // Falls back to original timeRange
+  })
+})
+
 describe('ServiceOverviewContext zoom integration', () => {
   it('should call resetChartZoom when handleTimeRangeChange is called', () => {
     const mockResetFn = jest.fn()
