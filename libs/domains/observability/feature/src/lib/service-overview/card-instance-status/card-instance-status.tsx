@@ -18,7 +18,7 @@ const query = (serviceId: string, timeRange: string) => `
         )
         * on(namespace, pod) group_left(label_qovery_com_service_id)
           max by(namespace, pod, label_qovery_com_service_id)(
-            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+            kube_pod_labels{label_qovery_com_service_id= "${serviceId}"}
           )
       )
     )
@@ -34,7 +34,7 @@ const query = (serviceId: string, timeRange: string) => `
             reason!~"ContainerCreating|PodInitializing|Completed"
           }
           * on(namespace, pod) group_left(label_qovery_com_service_id)
-            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+            kube_pod_labels{label_qovery_com_service_id= "${serviceId}"}
         )
         or vector(0)
       )
@@ -67,7 +67,7 @@ const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
       on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
       max by(namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
         kube_horizontalpodautoscaler_labels{
-          label_qovery_com_service_id =~ "${serviceId}"
+          label_qovery_com_service_id = "${serviceId}"
         }
       )
     ) > bool 0

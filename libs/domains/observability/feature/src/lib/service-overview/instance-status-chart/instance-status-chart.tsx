@@ -10,7 +10,7 @@ const queryUnhealthyPods = (serviceId: string) => `
   sum by (condition)(kube_pod_status_ready{condition=~"false"}
   * on(namespace,pod) group_left(label_qovery_com_service_id)
     max by(namespace,pod,label_qovery_com_service_id)(
-      kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
     )) > 0
 `
 
@@ -18,7 +18,7 @@ const queryHealthyPods = (serviceId: string) => `
   sum by (condition)(kube_pod_status_ready{condition=~"true"}
   * on(namespace,pod) group_left(label_qovery_com_service_id)
     max by(namespace,pod,label_qovery_com_service_id)(
-      kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
     )) > 0
 `
 
@@ -29,7 +29,7 @@ const queryPodReason = (serviceId: string, dynamicRange: string) => `
     )
     * on(namespace, pod) group_left(label_qovery_com_service_id)
       max by(namespace, pod, label_qovery_com_service_id) (
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+        kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
       )
     unless on(namespace, pod, reason)
     (
@@ -38,7 +38,7 @@ const queryPodReason = (serviceId: string, dynamicRange: string) => `
       )
       * on(namespace, pod) group_left(label_qovery_com_service_id)
         max by(namespace, pod, label_qovery_com_service_id) (
-          kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+          kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
         )
     )
   )
@@ -49,7 +49,7 @@ const queryExitCode = (serviceId: string, dynamicRange: string) => `
     kube_pod_container_status_last_terminated_exitcode
     * on(namespace, pod) group_left(label_qovery_com_service_id)
       max by(namespace, pod, label_qovery_com_service_id) (
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+        kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
       )
   )
   and on(namespace, pod, container)
@@ -64,12 +64,12 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   sum by (pod,reason)(
   (
     k8s_event_logger_q_k8s_events_total{
-      qovery_com_service_id=~"${serviceId}",
+      qovery_com_service_id="${serviceId}",
       reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     }
     -
     k8s_event_logger_q_k8s_events_total{
-      qovery_com_service_id=~"${serviceId}",
+      qovery_com_service_id="${serviceId}",
       reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     } offset ${dynamicRange}
   ) > 0
@@ -82,17 +82,17 @@ const queryProbe = (serviceId: string) => `
     )
     * on(namespace,pod) group_left(label_qovery_com_service_id)
       max by(namespace,pod,label_qovery_com_service_id)(
-        kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+        kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
       )
       )
 `
 
 const queryMinReplicas = (serviceId: string) => `
-  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}))
 `
 
 const queryMaxReplicas = (serviceId: string) => `
-  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}))
 `
 
 const queryMaxLimitReached = (serviceId: string) => `
@@ -118,7 +118,7 @@ const queryMaxLimitReached = (serviceId: string) => `
   on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
   max by (namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
     kube_horizontalpodautoscaler_labels{
-      label_qovery_com_service_id =~ "${serviceId}"
+      label_qovery_com_service_id = "${serviceId}"
     }
   ) > 0
 )
