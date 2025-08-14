@@ -22,6 +22,7 @@ describe('SelectTimeRange', () => {
     useLocalTime: false,
     resetChartZoom: jest.fn(),
     setIsDatePickerOpen: jest.fn(),
+    lastDropdownTimeRange: '30m' as const,
   }
 
   beforeEach(() => {
@@ -72,6 +73,7 @@ describe('SelectTimeRange with calendar value', () => {
       useLocalTime: false,
       resetChartZoom: jest.fn(),
       setIsDatePickerOpen: jest.fn(),
+      lastDropdownTimeRange: '30m' as const,
     })
   })
 
@@ -97,6 +99,34 @@ describe('SelectTimeRange with calendar value', () => {
     expect(mockSetHasCalendarValue).toHaveBeenCalledWith(false)
     expect(mockHandleTimeRangeChange).toHaveBeenCalledWith('30m')
   })
+
+  it('should use lastDropdownTimeRange when clear button is clicked', async () => {
+    // Mock with a different lastDropdownTimeRange value
+    mockUseServiceOverviewContext.mockReturnValue({
+      setStartDate: jest.fn(),
+      setEndDate: jest.fn(),
+      startDate: '2023-11-01T10:00:00.000Z',
+      endDate: '2023-11-01T10:30:00.000Z',
+      endTimestamp: '1698836200000',
+      startTimestamp: '1698834400000',
+      handleTimeRangeChange: mockHandleTimeRangeChange,
+      timeRange: '30m' as const,
+      setHasCalendarValue: mockSetHasCalendarValue,
+      hasCalendarValue: true,
+      useLocalTime: false,
+      resetChartZoom: jest.fn(),
+      setIsDatePickerOpen: jest.fn(),
+      lastDropdownTimeRange: '15m' as const, // Different from default
+    })
+
+    const { userEvent } = renderWithProviders(<SelectTimeRange />)
+
+    const clearButton = screen.getAllByRole('button')[1]
+    await userEvent.click(clearButton)
+
+    expect(mockSetHasCalendarValue).toHaveBeenCalledWith(false)
+    expect(mockHandleTimeRangeChange).toHaveBeenCalledWith('15m') // Should use lastDropdownTimeRange
+  })
 })
 
 describe('SelectTimeRange date validation', () => {
@@ -115,6 +145,7 @@ describe('SelectTimeRange date validation', () => {
       useLocalTime: false,
       resetChartZoom: jest.fn(),
       setIsDatePickerOpen: jest.fn(),
+      lastDropdownTimeRange: '30m' as const,
     })
 
     const { baseElement } = renderWithProviders(<SelectTimeRange />)
@@ -138,6 +169,7 @@ describe('SelectTimeRange date validation', () => {
       useLocalTime: false,
       resetChartZoom: jest.fn(),
       setIsDatePickerOpen: jest.fn(),
+      lastDropdownTimeRange: '30m' as const,
     })
 
     const { baseElement } = renderWithProviders(<SelectTimeRange />)
@@ -174,6 +206,7 @@ describe('SelectTimeRange zoom integration', () => {
       useLocalTime: false,
       resetChartZoom: mockResetChartZoom,
       setIsDatePickerOpen: mockSetIsDatePickerOpen,
+      lastDropdownTimeRange: '30m' as const,
     })
   })
 
