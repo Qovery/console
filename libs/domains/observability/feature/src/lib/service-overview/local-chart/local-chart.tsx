@@ -22,6 +22,7 @@ import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
+import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
@@ -357,7 +358,8 @@ export function LocalChart({
   isFullscreen = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey, hideEvents } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, hoveredEventKey, setHoveredEventKey, hideEvents } =
+    useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Alpha: Workaround to get the events
@@ -377,9 +379,6 @@ export function LocalChart({
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
   const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
-    // Get chart data timestamps for alignment
-    const chartTimestamps = data.map((d) => d.timestamp).sort((a, b) => a - b)
-
     return (eventsFiltered || [])
       .filter(
         (event) =>
@@ -389,16 +388,7 @@ export function LocalChart({
           event.target_id === serviceId
       )
       .map((event) => {
-        const eventTimestamp = new Date(event.timestamp || '').getTime()
-
-        // Find the closest chart data point timestamp
-        let alignedTimestamp = eventTimestamp
-        if (chartTimestamps.length > 0) {
-          const closestTimestamp = chartTimestamps.reduce((prev, curr) => {
-            return Math.abs(curr - eventTimestamp) < Math.abs(prev - eventTimestamp) ? curr : prev
-          })
-          alignedTimestamp = closestTimestamp
-        }
+        const alignedTimestamp = new Date(event.timestamp || '').getTime()
 
         const key = `event-${event.id || alignedTimestamp}`
         const change = JSON.parse(event.change || '')
@@ -458,12 +448,18 @@ export function LocalChart({
           repository,
         }
       })
-  }, [eventsFiltered, serviceId, data])
+  }, [eventsFiltered, serviceId])
 
   // Merge with any referenceLineData passed as prop
   const mergedReferenceLineData = useMemo(() => {
     return [...(referenceLineData || []), ...eventReferenceLines]
   }, [referenceLineData, eventReferenceLines])
+
+  // Ensure data includes points at reference timestamps so vertical lines always align to an existing x in data
+  const paddedData = useMemo(() => {
+    const extraTimestamps = mergedReferenceLineData.map((e) => e.timestamp)
+    return addTimeRangePadding(data, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
+  }, [data, startTimestamp, endTimestamp, useLocalTime, mergedReferenceLineData])
 
   return (
     <>
@@ -497,7 +493,7 @@ export function LocalChart({
           </div>
         )}
         <ChartContent
-          data={data}
+          data={paddedData}
           unit={unit}
           label={label ?? ''}
           tooltipLabel={tooltipLabel}
@@ -521,7 +517,7 @@ export function LocalChart({
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <ChartContent
-            data={data}
+            data={paddedData}
             unit={unit}
             label={label ?? ''}
             tooltipLabel={tooltipLabel}

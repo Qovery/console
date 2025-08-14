@@ -336,68 +336,6 @@ export function InstanceStatusChart({
     timeRange,
   })
 
-  const chartData = useMemo(() => {
-    // Merge healthy and unhealthy metrics into a single timeSeriesMap
-    const timeSeriesMap = new Map<
-      number,
-      { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
-    >()
-
-    // Process unhealthy
-    if (metricsUnhealthy?.data?.result) {
-      processMetricsData(
-        metricsUnhealthy,
-        timeSeriesMap,
-        () => 'Instance unhealthy',
-        (value) => parseFloat(value),
-        useLocalTime
-      )
-    }
-    // Process healthy
-    if (metricsHealthy?.data?.result) {
-      processMetricsData(
-        metricsHealthy,
-        timeSeriesMap,
-        () => 'Instance healthy',
-        (value) => parseFloat(value),
-        useLocalTime
-      )
-    }
-
-    // Process HPA min replicas
-    if (metricsHpaMinReplicas?.data?.result) {
-      processMetricsData(
-        metricsHpaMinReplicas,
-        timeSeriesMap,
-        () => 'Autoscaling min replicas',
-        (value) => parseFloat(value),
-        useLocalTime
-      )
-    }
-    // Process HPA max replicas
-    if (metricsHpaMaxReplicas?.data?.result) {
-      processMetricsData(
-        metricsHpaMaxReplicas,
-        timeSeriesMap,
-        () => 'Autoscaling max replicas',
-        (value) => parseFloat(value),
-        useLocalTime
-      )
-    }
-
-    // Convert map to sorted array and add time range padding
-    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [
-    metricsUnhealthy,
-    metricsHealthy,
-    useLocalTime,
-    startTimestamp,
-    endTimestamp,
-    metricsHpaMinReplicas,
-    metricsHpaMaxReplicas,
-  ])
-
   const referenceLineData = useMemo(() => {
     if (
       !metricsReason?.data?.result &&
@@ -532,6 +470,71 @@ export function InstanceStatusChart({
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
     return referenceLines
   }, [metricsReason, metricsExitCode, metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached])
+
+  const chartData = useMemo(() => {
+    // Merge healthy and unhealthy metrics into a single timeSeriesMap
+    const timeSeriesMap = new Map<
+      number,
+      { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
+    >()
+
+    // Process unhealthy
+    if (metricsUnhealthy?.data?.result) {
+      processMetricsData(
+        metricsUnhealthy,
+        timeSeriesMap,
+        () => 'Instance unhealthy',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+    // Process healthy
+    if (metricsHealthy?.data?.result) {
+      processMetricsData(
+        metricsHealthy,
+        timeSeriesMap,
+        () => 'Instance healthy',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+
+    // Process HPA min replicas
+    if (metricsHpaMinReplicas?.data?.result) {
+      processMetricsData(
+        metricsHpaMinReplicas,
+        timeSeriesMap,
+        () => 'Autoscaling min replicas',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+    // Process HPA max replicas
+    if (metricsHpaMaxReplicas?.data?.result) {
+      processMetricsData(
+        metricsHpaMaxReplicas,
+        timeSeriesMap,
+        () => 'Autoscaling max replicas',
+        (value) => parseFloat(value),
+        useLocalTime
+      )
+    }
+
+    // Convert map to sorted array and add time range padding
+    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
+    // Collect extra timestamps from events that we want to ensure are represented in the data
+    const extraTimestamps: number[] = (referenceLineData || []).map((e) => e.timestamp)
+    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
+  }, [
+    metricsUnhealthy,
+    metricsHealthy,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+    metricsHpaMinReplicas,
+    metricsHpaMaxReplicas,
+    referenceLineData,
+  ])
 
   const isLoading = useMemo(
     () =>
