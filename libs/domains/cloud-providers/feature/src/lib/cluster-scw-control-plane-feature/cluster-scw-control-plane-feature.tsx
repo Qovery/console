@@ -1,6 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
-import { type Value } from '@qovery/shared/interfaces'
+import { type SCWControlPlaneFeatureType, type SelectOption } from '@qovery/shared/interfaces'
 import { Callout, ExternalLink, Heading, Icon, InputSelect, Tooltip } from '@qovery/shared/ui'
 import { useCloudProviderFeatures } from '../hooks/use-cloud-provider-features/use-cloud-provider-features'
 
@@ -30,7 +29,7 @@ export function ClusterSCWControlPlaneFeature({ production }: ClusterSCWControlP
   })
   const controlPlane = features?.find((feature) => feature.id === SCW_CONTROL_PLANE_FEATURE_ID)
 
-  const options: Value[] =
+  const options: SelectOption[] =
     controlPlane?.accepted_values?.map((value) => ({
       label: CONTROL_PLANE_LABELS[value as keyof typeof CONTROL_PLANE_LABELS],
       value: value as string,

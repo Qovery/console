@@ -7,6 +7,7 @@ import {
   type Project,
 } from 'qovery-typescript-axios'
 import { useSearchParams } from 'react-router-dom'
+import { type SelectOptionValue } from '@qovery/shared/interfaces'
 import { Button, DatePicker, Icon, InputFilter } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -17,7 +18,7 @@ export interface CustomFilterProps {
   onChangeClearTimestamp: () => void
   isOpenTimestamp: boolean
   setIsOpenTimestamp: (isOpen: boolean) => void
-  onChangeType: (type: string, value?: string | string[]) => void
+  onChangeType: (type: string, value?: SelectOptionValue | SelectOptionValue[]) => void
   clearFilter: () => void
   timestamps?: [Date, Date]
   projects?: Project[]

@@ -8,7 +8,7 @@ import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_CREATION_RESOURCES_URL } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
+import { parseCmd } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-application-create/step-general/step-general'
 import { useApplicationContainerCreateContext } from '../page-application-create-feature'
 
@@ -57,7 +57,8 @@ export function StepGeneralFeature() {
           environmentId,
           dockerfileCheckRequest: {
             git_repository: {
-              url: buildGitRepoUrl(data.provider ?? '', data.repository || ''),
+              provider: data.provider ?? 'GITHUB',
+              url: data.git_repository?.url ?? '',
               root_path: data.root_path,
               branch: data.branch,
               git_token_id: data.git_token_id,

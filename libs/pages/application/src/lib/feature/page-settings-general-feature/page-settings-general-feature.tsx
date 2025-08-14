@@ -52,7 +52,8 @@ export const handleGitApplicationSubmit = (
     }
 
     const git_repository = {
-      url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
+      provider: data.provider ?? 'GITHUB',
+      url: data.git_repository?.url || application.git_repository?.url || '',
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,
@@ -116,6 +117,7 @@ export const handleJobSubmit = (
 
   if (isJobGitSource(job.source)) {
     const git_repository = {
+      provider: data.provider ?? 'GITHUB',
       url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
       branch: data.branch,
       root_path: data.root_path,
