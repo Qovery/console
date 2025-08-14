@@ -167,7 +167,6 @@ describe('CardStorage', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kubelet_volume_stats_used_bytes'),
       queryRange: 'query',
-      timeRange: '30m',
     })
 
     const call = useMetrics.mock.calls[0][0].query

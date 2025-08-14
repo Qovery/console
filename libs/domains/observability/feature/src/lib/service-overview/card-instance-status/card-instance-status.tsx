@@ -75,21 +75,19 @@ const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
 `
 
 export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
-  const { timeRange } = useServiceOverviewContext()
+  const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: service } = useService({ serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useMetrics({
     clusterId,
-    query: query(serviceId, timeRange),
+    query: query(serviceId, queryTimeRange),
     queryRange: 'query',
-    timeRange,
   })
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useMetrics({
     clusterId,
-    query: queryAutoscalingReached(serviceId, timeRange),
+    query: queryAutoscalingReached(serviceId, queryTimeRange),
     queryRange: 'query',
-    timeRange,
   })
 
   const instanceErrors = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0
