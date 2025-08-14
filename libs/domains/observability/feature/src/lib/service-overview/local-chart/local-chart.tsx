@@ -28,38 +28,40 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
 
 // Utility function to extract chart series information from React children
-function extractChartSeriesFromChildren(children: React.ReactNode): Array<{ key: string; label: string; color: string }> {
+function extractChartSeriesFromChildren(
+  children: React.ReactNode
+): Array<{ key: string; label: string; color: string }> {
   const series: Array<{ key: string; label: string; color: string }> = []
-  
+
   const processChild = (child: React.ReactNode): void => {
     if (!child) return
-    
+
     if (Array.isArray(child)) {
       child.forEach(processChild)
       return
     }
-    
+
     if (typeof child === 'object' && 'props' in child) {
       const element = child as React.ReactElement
-      
+
       // Check if this is a chart series component (Line, Area, Bar, etc.)
       if (element.props?.dataKey && (element.props?.stroke || element.props?.fill)) {
         const dataKey = String(element.props.dataKey)
         const color = element.props.stroke || element.props.fill || 'var(--color-brand-500)'
         const label = element.props.name || dataKey
-        
-        if (!series.some(s => s.key === dataKey)) {
+
+        if (!series.some((s) => s.key === dataKey)) {
           series.push({ key: dataKey, label, color })
         }
       }
-      
+
       // Recursively process children
       if (element.props?.children) {
         processChild(element.props.children)
       }
     }
   }
-  
+
   processChild(children)
   return series
 }
@@ -152,7 +154,9 @@ export function ChartContent({
 
   // Use passed highlighting result or create our own if needed
   const fallbackHighlightingResult = useChartHighlighting({
-    metricKeys: selectedKeys ? Object.keys(data[0] || {}).filter(key => !['timestamp', 'time', 'fullTime'].includes(key)) : [],
+    metricKeys: selectedKeys
+      ? Object.keys(data[0] || {}).filter((key) => !['timestamp', 'time', 'fullTime'].includes(key))
+      : [],
     selectedKeys: selectedKeys || new Set(),
   })
   const highlightingResult = passedHighlightingResult || fallbackHighlightingResult
@@ -163,34 +167,34 @@ export function ChartContent({
 
     const processChild = (child: React.ReactNode): React.ReactNode => {
       if (!child) return child
-      
+
       if (Array.isArray(child)) {
         return child.map(processChild)
       }
-      
+
       if (typeof child === 'object' && 'props' in child) {
         const element = child as React.ReactElement
-        
+
         // Check if this is a chart series component
         if (element.props?.dataKey && (element.props?.stroke || element.props?.fill)) {
           const dataKey = String(element.props.dataKey)
           const seriesClass = `series series--${highlightingResult.sanitizeKey(dataKey)}`
           const existingClassName = element.props.className || ''
           const newClassName = existingClassName ? `${existingClassName} ${seriesClass}` : seriesClass
-          
+
           return {
             ...element,
             props: {
               ...element.props,
               className: newClassName,
-            }
+            },
           }
         }
       }
-      
+
       return child
     }
-    
+
     return processChild(children)
   }, [children, selectedKeys, highlightingResult])
 
@@ -221,7 +225,10 @@ export function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div ref={selectedKeys ? highlightingResult.containerRef : undefined} className={`relative flex h-full ${selectedKeys ? 'highlight-scope' : ''}`}>
+    <div
+      ref={selectedKeys ? highlightingResult.containerRef : undefined}
+      className={`relative flex h-full ${selectedKeys ? 'highlight-scope' : ''}`}
+    >
       {selectedKeys && <style>{highlightingResult.highlightingStyles}</style>}
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
@@ -439,13 +446,13 @@ export function LocalChart({
 
   // Legend state management
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
-  
+
   // Extract series information from children for legend
   const chartSeries = useMemo(() => extractChartSeriesFromChildren(children), [children])
-  
+
   // Set up chart highlighting if legend is enabled
   const highlightingResult = useChartHighlighting({
-    metricKeys: chartSeries.map(s => s.key),
+    metricKeys: chartSeries.map((s) => s.key),
     selectedKeys: showLegend ? selectedKeys : new Set(),
   })
 
@@ -618,7 +625,7 @@ export function LocalChart({
         </ChartContent>
         {/* Render legend if enabled */}
         {showLegend && chartSeries.length > 0 && (
-          <div className="px-5 pb-2">
+          <div className="px-5 pb-5">
             <Chart.Legend
               items={chartSeries}
               selectedKeys={selectedKeys}
@@ -635,60 +642,62 @@ export function LocalChart({
               }}
               onHighlight={highlightingResult.handleHighlight}
               rightGutterWidth={0}
-              className="mt-3"
             />
           </div>
         )}
       </Section>
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <ChartContent
-            data={data}
-            unit={unit}
-            label={label ?? ''}
-            tooltipLabel={tooltipLabel}
-            isEmpty={isEmpty}
-            isLoading={isLoading}
-            xDomain={xDomain}
-            yDomain={yDomain}
-            margin={margin}
-            referenceLineData={mergedReferenceLineData}
-            service={service}
-            isFullscreen
-            selectedKeys={showLegend ? selectedKeys : undefined}
-            onHighlight={showLegend ? highlightingResult.handleHighlight : undefined}
-            highlightingResult={showLegend ? highlightingResult : undefined}
-          >
-            {/* Render reference lines for events of type 'event' in modal as well */}
-            {!hideEvents &&
-              mergedReferenceLineData
-                .filter((event) => event.type === 'event')
-                .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, true))}
-            {children}
-          </ChartContent>
-          {/* Render legend in modal if enabled */}
-          {showLegend && chartSeries.length > 0 && (
-            <div className="px-5 pb-2">
-              <Chart.Legend
-                items={chartSeries}
-                selectedKeys={selectedKeys}
-                onToggle={(key) => {
-                  setSelectedKeys((prev) => {
-                    const next = new Set(prev)
-                    if (next.has(key)) {
-                      next.delete(key)
-                    } else {
-                      next.add(key)
-                    }
-                    return next
-                  })
-                }}
-                onHighlight={highlightingResult.handleHighlight}
-                rightGutterWidth={0}
-                className="mt-3"
-              />
+          <div className="flex h-full flex-col">
+            <div className="flex-1 overflow-hidden">
+              <ChartContent
+                data={data}
+                unit={unit}
+                label={label ?? ''}
+                tooltipLabel={tooltipLabel}
+                isEmpty={isEmpty}
+                isLoading={isLoading}
+                xDomain={xDomain}
+                yDomain={yDomain}
+                margin={margin}
+                referenceLineData={mergedReferenceLineData}
+                service={service}
+                isFullscreen
+                selectedKeys={showLegend ? selectedKeys : undefined}
+                onHighlight={showLegend ? highlightingResult.handleHighlight : undefined}
+                highlightingResult={showLegend ? highlightingResult : undefined}
+              >
+                {/* Render reference lines for events of type 'event' in modal as well */}
+                {!hideEvents &&
+                  mergedReferenceLineData
+                    .filter((event) => event.type === 'event')
+                    .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, true))}
+                {children}
+              </ChartContent>
             </div>
-          )}
+            {/* Render legend in modal if enabled */}
+            {showLegend && chartSeries.length > 0 && (
+              <div className="flex-shrink-0 px-5 pb-5">
+                <Chart.Legend
+                  items={chartSeries}
+                  selectedKeys={selectedKeys}
+                  onToggle={(key) => {
+                    setSelectedKeys((prev) => {
+                      const next = new Set(prev)
+                      if (next.has(key)) {
+                        next.delete(key)
+                      } else {
+                        next.add(key)
+                      }
+                      return next
+                    })
+                  }}
+                  onHighlight={highlightingResult.handleHighlight}
+                  rightGutterWidth={0}
+                />
+              </div>
+            )}
+          </div>
         </ModalChart>
       )}
     </>
