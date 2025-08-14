@@ -507,7 +507,7 @@ export function LocalChart({
   showLegend = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, hideEvents, hoveredEventKey, setHoveredEventKey } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Legend state management
@@ -686,7 +686,7 @@ export function LocalChart({
         </ChartContent>
         {/* Render legend if enabled */}
         {showLegend && chartSeries.length > 0 && (
-          <div className="px-5 pb-2">
+          <div className="px-5 pb-5">
             <Chart.Legend
               items={chartSeries}
               selectedKeys={selectedKeys}
@@ -703,55 +703,57 @@ export function LocalChart({
               }}
               onHighlight={highlightingResult.handleHighlight}
               rightGutterWidth={0}
-              className="mt-3"
             />
           </div>
         )}
       </Section>
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <ChartContent
-            data={data}
-            unit={unit}
-            label={label ?? ''}
-            tooltipLabel={tooltipLabel}
-            isEmpty={isEmpty}
-            isLoading={isLoading}
-            xDomain={xDomain}
-            yDomain={yDomain}
-            margin={margin}
-            referenceLineData={mergedReferenceLineData}
-            service={service}
-            isFullscreen
-            selectedKeys={showLegend ? selectedKeys : undefined}
-            onHighlight={showLegend ? highlightingResult.handleHighlight : undefined}
-            highlightingResult={showLegend ? highlightingResult : undefined}
-          >
-            {children}
-          </ChartContent>
-          {/* Render legend in modal if enabled */}
-          {showLegend && chartSeries.length > 0 && (
-            <div className="px-5 pb-2">
-              <Chart.Legend
-                items={chartSeries}
-                selectedKeys={selectedKeys}
-                onToggle={(key) => {
-                  setSelectedKeys((prev) => {
-                    const next = new Set(prev)
-                    if (next.has(key)) {
-                      next.delete(key)
-                    } else {
-                      next.add(key)
-                    }
-                    return next
-                  })
-                }}
-                onHighlight={highlightingResult.handleHighlight}
-                rightGutterWidth={0}
-                className="mt-3"
-              />
+          <div className="flex h-full flex-col">
+            <div className="flex-1 overflow-hidden">
+              <ChartContent
+                data={data}
+                unit={unit}
+                label={label ?? ''}
+                tooltipLabel={tooltipLabel}
+                isEmpty={isEmpty}
+                isLoading={isLoading}
+                xDomain={xDomain}
+                yDomain={yDomain}
+                margin={margin}
+                referenceLineData={mergedReferenceLineData}
+                service={service}
+                isFullscreen
+                selectedKeys={showLegend ? selectedKeys : undefined}
+                onHighlight={showLegend ? highlightingResult.handleHighlight : undefined}
+                highlightingResult={showLegend ? highlightingResult : undefined}
+              >
+                {children}
+              </ChartContent>
             </div>
-          )}
+            {/* Render legend in modal if enabled */}
+            {showLegend && chartSeries.length > 0 && (
+              <div className="flex-shrink-0 px-5 pb-5">
+                <Chart.Legend
+                  items={chartSeries}
+                  selectedKeys={selectedKeys}
+                  onToggle={(key) => {
+                    setSelectedKeys((prev) => {
+                      const next = new Set(prev)
+                      if (next.has(key)) {
+                        next.delete(key)
+                      } else {
+                        next.add(key)
+                      }
+                      return next
+                    })
+                  }}
+                  onHighlight={highlightingResult.handleHighlight}
+                  rightGutterWidth={0}
+                />
+              </div>
+            )}
+          </div>
         </ModalChart>
       )}
     </>
