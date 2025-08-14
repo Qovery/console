@@ -71,6 +71,7 @@ export function StepSummaryFeature() {
         return {
           git: {
             git_repository: {
+              provider: valuesOverrideFileData.provider ?? 'GITHUB',
               url: buildGitRepoUrl(valuesOverrideFileData.provider ?? '', valuesOverrideFileData.repository!),
               branch: valuesOverrideFileData.branch!,
               git_token_id: valuesOverrideFileData.git_token_id,

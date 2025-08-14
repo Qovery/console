@@ -107,6 +107,7 @@ const TerraformVariables = () => {
   const { data: variablesResponse, isLoading } = useParseTerraformVariablesFromGitRepo({
     organizationId,
     repository: {
+      provider: generalData.provider ?? 'GITHUB',
       url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
       branch: generalData.branch,
       root_path: generalData.root_path,

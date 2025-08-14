@@ -100,6 +100,7 @@ export function PageSettingsValuesOverrideFileFeature() {
         return {
           git: {
             git_repository: {
+              provider: data['provider'] ?? 'GITHUB',
               url: buildGitRepoUrl(data['provider']!, data['repository']!),
               branch: data['branch'] ?? '',
               git_token_id: data['git_token_id'],

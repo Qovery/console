@@ -118,6 +118,7 @@ export function StepSummaryFeature() {
           max_running_instances: resourcesData.max_running_instances,
           build_mode: BuildModeEnum.DOCKER,
           git_repository: {
+            provider: generalData.provider ?? 'GITHUB',
             url: generalData.git_repository?.url ?? '',
             root_path: generalData.root_path,
             branch: generalData.branch,

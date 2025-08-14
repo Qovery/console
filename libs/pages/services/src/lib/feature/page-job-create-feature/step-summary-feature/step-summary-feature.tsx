@@ -127,6 +127,7 @@ function prepareJobRequest({
         dockerfile_path: generalData.dockerfile_path ?? dockerfileData?.dockerfile_path,
         docker_target_build_stage: generalData.docker_target_build_stage ?? dockerfileData?.docker_target_build_stage,
         git_repository: {
+          provider: generalData.provider ?? 'GITHUB',
           url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository || ''),
           root_path: generalData.root_path,
           branch: generalData.branch,

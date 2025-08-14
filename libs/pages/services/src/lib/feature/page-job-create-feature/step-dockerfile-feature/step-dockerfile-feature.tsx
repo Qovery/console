@@ -43,6 +43,7 @@ export function StepDockerfileFeature() {
           environmentId,
           dockerfileCheckRequest: {
             git_repository: {
+              provider: generalData?.provider ?? 'GITHUB',
               url: buildGitRepoUrl(generalData?.provider ?? '', generalData?.repository || ''),
               root_path: generalData?.root_path,
               branch: generalData?.branch,
