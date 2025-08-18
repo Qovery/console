@@ -450,28 +450,34 @@ export function LocalChart({
   // Extract series information from children for legend
   const chartSeries = useMemo(() => {
     const series = extractChartSeriesFromChildren(children)
-    
+
     // Sort series to show limit/request metrics first and add line indicator for them
     return series
       .map((item) => {
-        const isLimitRequest = item.label.toLowerCase().includes('limit') || item.label.toLowerCase().includes('request')
+        const isLimitRequest =
+          item.label.toLowerCase().includes('limit') || item.label.toLowerCase().includes('request')
         return {
           ...item,
-          useLineIndicator: isLimitRequest
+          useLineIndicator: isLimitRequest,
         }
       })
       .sort((a, b) => {
         const aIsLimitRequest = a.useLineIndicator
         const bIsLimitRequest = b.useLineIndicator
-        
+
         if (aIsLimitRequest && !bIsLimitRequest) return -1
         if (!aIsLimitRequest && bIsLimitRequest) return 1
         return 0
       })
   }, [children])
 
-  // Set up chart highlighting if legend is enabled
-  const highlightingResult = useChartHighlighting({
+  // Set up chart highlighting if legend is enabled - separate instances for local and modal
+  const localHighlightingResult = useChartHighlighting({
+    metricKeys: chartSeries.map((s) => s.key),
+    selectedKeys: showLegend ? selectedKeys : new Set(),
+  })
+
+  const modalHighlightingResult = useChartHighlighting({
     metricKeys: chartSeries.map((s) => s.key),
     selectedKeys: showLegend ? selectedKeys : new Set(),
   })
@@ -633,8 +639,8 @@ export function LocalChart({
           service={service}
           isFullscreen={isFullscreen}
           selectedKeys={showLegend ? selectedKeys : undefined}
-          onHighlight={showLegend ? highlightingResult.handleHighlight : undefined}
-          highlightingResult={showLegend ? highlightingResult : undefined}
+          onHighlight={showLegend ? localHighlightingResult.handleHighlight : undefined}
+          highlightingResult={showLegend ? localHighlightingResult : undefined}
         >
           {/* Render reference lines for events of type 'event' */}
           {!hideEvents &&
@@ -660,7 +666,7 @@ export function LocalChart({
                   return next
                 })
               }}
-              onHighlight={highlightingResult.handleHighlight}
+              onHighlight={localHighlightingResult.handleHighlight}
               rightGutterWidth={0}
             />
           </div>
@@ -684,8 +690,8 @@ export function LocalChart({
                 service={service}
                 isFullscreen
                 selectedKeys={showLegend ? selectedKeys : undefined}
-                onHighlight={showLegend ? highlightingResult.handleHighlight : undefined}
-                highlightingResult={showLegend ? highlightingResult : undefined}
+                onHighlight={showLegend ? modalHighlightingResult.handleHighlight : undefined}
+                highlightingResult={showLegend ? modalHighlightingResult : undefined}
               >
                 {/* Render reference lines for events of type 'event' in modal as well */}
                 {!hideEvents &&
@@ -712,7 +718,7 @@ export function LocalChart({
                       return next
                     })
                   }}
-                  onHighlight={highlightingResult.handleHighlight}
+                  onHighlight={modalHighlightingResult.handleHighlight}
                   rightGutterWidth={0}
                 />
               </div>
