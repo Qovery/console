@@ -74,3 +74,54 @@ export function createXAxisConfig(
     interval: 'preserveStartEnd',
   }
 }
+
+export interface DecimationOptions {
+  isZoomed?: boolean
+  startTimestamp?: number
+  endTimestamp?: number
+}
+
+export function decimateChartData<T extends Record<string, unknown>>(
+  inputData: T[],
+  options: DecimationOptions = {}
+): T[] {
+  if (!inputData.length) return inputData
+
+  const { isZoomed = false } = options
+
+  // Dynamic max points based on data size and zoom context
+  const getMaxPoints = (dataLength: number, zoomed: boolean): number => {
+    // More aggressive decimation for very large datasets
+    if (dataLength > 50000) return zoomed ? 3000 : 1500
+    if (dataLength > 20000) return zoomed ? 4000 : 2000
+    if (dataLength > 10000) return zoomed ? 5000 : 2500
+    if (dataLength > 5000) return zoomed ? 6000 : 3000
+    return Math.min(dataLength, 4000) // No decimation for smaller datasets
+  }
+
+  const maxPoints = getMaxPoints(inputData.length, isZoomed)
+  
+  if (inputData.length <= maxPoints) return inputData
+
+  const totalPoints = inputData.length
+  const targetPoints = Math.min(maxPoints, totalPoints)
+  const step = totalPoints / targetPoints
+  
+  // Always preserve first and last points for chart continuity
+  const decimated = [inputData[0]]
+  
+  // Use floating point steps for more uniform distribution
+  for (let i = step; i < totalPoints - 1; i += step) {
+    const index = Math.round(i)
+    if (index !== 0 && index !== totalPoints - 1 && index < totalPoints) {
+      decimated.push(inputData[index])
+    }
+  }
+  
+  // Always include the last point if we have more than one point
+  if (totalPoints > 1) {
+    decimated.push(inputData[totalPoints - 1])
+  }
+  
+  return decimated
+}

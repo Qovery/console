@@ -15,6 +15,7 @@ import {
   Section,
   Tooltip,
   createXAxisConfig,
+  decimateChartData,
   getTimeGranularity,
   useZoomableChart,
 } from '@qovery/shared/ui'
@@ -117,6 +118,11 @@ export const ChartContent = memo(function ChartContent({
   } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
+  // Apply data decimation for performance optimization
+  const decimatedData = useMemo(() => {
+    return decimateChartData(data)
+  }, [data])
+
   // Use the zoomable chart hook - automatically handle zoom state changes
   const {
     zoomState,
@@ -151,7 +157,7 @@ export const ChartContent = memo(function ChartContent({
     <div className="relative flex h-full">
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
-          data={data}
+          data={decimatedData}
           margin={margin}
           onMouseDown={(e) => {
             handleMouseDown(e)
@@ -457,10 +463,22 @@ export function LocalChart({
     return [...(referenceLineData || []), ...eventReferenceLines]
   }, [referenceLineData, eventReferenceLines])
 
+
   // Ensure data includes points at reference timestamps so vertical lines always align to an existing x in data
   const paddedData = useMemo(() => {
     const extraTimestamps = mergedReferenceLineData.map((e) => e.timestamp)
-    return addTimeRangePadding(data, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
+    const basePaddedData = addTimeRangePadding(data, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
+    
+    // Apply decimation for performance optimization with current time range context
+    const currentTimeRange = Number(endTimestamp) - Number(startTimestamp)
+    const originalTimeRange = currentTimeRange * 1000 // Convert to milliseconds for comparison
+    const isZoomed = originalTimeRange < currentTimeRange * 0.8 // Simplified zoom detection
+    
+    return decimateChartData(basePaddedData, {
+      isZoomed,
+      startTimestamp: Number(startTimestamp),
+      endTimestamp: Number(endTimestamp)
+    })
   }, [data, startTimestamp, endTimestamp, useLocalTime, mergedReferenceLineData])
 
   return (
