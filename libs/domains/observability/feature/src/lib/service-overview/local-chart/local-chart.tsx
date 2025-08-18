@@ -88,6 +88,7 @@ interface ChartContentProps extends PropsWithChildren {
   referenceLineData?: ReferenceLineEvent[]
   service?: AnyService
   isFullscreen?: boolean
+  syncId?: string
 }
 
 export const ChartContent = memo(function ChartContent({
@@ -104,6 +105,7 @@ export const ChartContent = memo(function ChartContent({
   referenceLineData,
   service,
   isFullscreen = true,
+  syncId,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -116,7 +118,6 @@ export const ChartContent = memo(function ChartContent({
     registerZoomReset,
     setIsAnyChartZoomed,
   } = useServiceOverviewContext()
-  const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
   // Apply data decimation for performance optimization
   const decimatedData = useMemo(() => {
@@ -158,23 +159,12 @@ export const ChartContent = memo(function ChartContent({
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={decimatedData}
+          syncId={syncId}
           margin={margin}
-          onMouseDown={(e) => {
-            handleMouseDown(e)
-            setOnHoverHideTooltip(true)
-          }}
-          onMouseMove={(e) => {
-            handleMouseMove(e)
-            setOnHoverHideTooltip(true)
-          }}
-          onMouseLeave={() => {
-            handleMouseLeave()
-            setOnHoverHideTooltip(false)
-          }}
-          onMouseUp={() => {
-            handleMouseUp()
-            setOnHoverHideTooltip(false)
-          }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
           onDoubleClick={handleChartDoubleClick}
           style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
         >
@@ -221,8 +211,7 @@ export const ChartContent = memo(function ChartContent({
             interval="preserveStartEnd"
           />
           <Chart.Tooltip
-            isAnimationActive={false}
-            content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
+            content={<TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
           />
           {!hideEvents &&
             (referenceLineData ?? [])
@@ -347,6 +336,7 @@ export interface LocalChartProps extends PropsWithChildren {
   }
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
+  syncId?: string
 }
 
 export function LocalChart({
@@ -365,6 +355,7 @@ export function LocalChart({
   margin,
   referenceLineData,
   isFullscreen = false,
+  syncId,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
   const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
@@ -525,6 +516,7 @@ export function LocalChart({
           referenceLineData={mergedReferenceLineData}
           service={service}
           isFullscreen={isFullscreen}
+          syncId={syncId}
         >
           {children}
         </ChartContent>
@@ -544,6 +536,7 @@ export function LocalChart({
             referenceLineData={mergedReferenceLineData}
             service={service}
             isFullscreen
+            syncId={syncId}
           >
             {children}
           </ChartContent>

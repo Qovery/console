@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Kbd } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -140,12 +141,31 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
 export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
   const metaKey = useFormatHotkeys('meta')
 
+  // Memoize expensive data processing operations
+  const processedEntries = useMemo(() => {
+    if (!payload || payload.length === 0) return []
+    const groupedEntries = groupEntriesByType(payload)
+    return processGroupedEntries(groupedEntries)
+  }, [payload])
+
+  // Memoize the sorting and filtering operations
+  const sortedAndFilteredEntries = useMemo(() => {
+    return processedEntries
+      .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
+      .sort((a, b) => {
+        const isARequestOrLimit =
+          a.dataKey.endsWith('-limit') || a.dataKey.endsWith('-request') || a.dataKey.endsWith('-request-limit')
+        const isBRequestOrLimit =
+          b.dataKey.endsWith('-limit') || b.dataKey.endsWith('-request') || b.dataKey.endsWith('-request-limit')
+        if (isARequestOrLimit && !isBRequestOrLimit) return -1
+        if (!isARequestOrLimit && isBRequestOrLimit) return 1
+        return 0
+      })
+  }, [processedEntries])
+
   if (!active || !payload || payload.length === 0) return null
 
   const dataPoint = payload[0]?.payload
-
-  const groupedEntries = groupEntriesByType(payload)
-  const processedEntries = processGroupedEntries(groupedEntries)
 
   return (
     <div className="rounded-md bg-neutral-600 shadow-lg">
@@ -154,18 +174,7 @@ export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
         <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
       </div>
       <div className="space-y-1 p-3 pt-0">
-        {processedEntries
-          .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
-          .sort((a, b) => {
-            const isARequestOrLimit =
-              a.dataKey.endsWith('-limit') || a.dataKey.endsWith('-request') || a.dataKey.endsWith('-request-limit')
-            const isBRequestOrLimit =
-              b.dataKey.endsWith('-limit') || b.dataKey.endsWith('-request') || b.dataKey.endsWith('-request-limit')
-            if (isARequestOrLimit && !isBRequestOrLimit) return -1
-            if (!isARequestOrLimit && isBRequestOrLimit) return 1
-            return 0
-          })
-          .map((entry, index) => (
+        {sortedAndFilteredEntries.map((entry, index) => (
             <div key={index} className="flex items-center justify-between gap-4 text-xs">
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
