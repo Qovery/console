@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react'
+import { act, renderHook } from '@qovery/shared/util-tests'
 import { useChartHighlightingSync } from './use-chart-highlighting-sync'
 
 describe('useChartHighlightingSync', () => {
