@@ -212,6 +212,8 @@ export const ChartContent = memo(function ChartContent({
           />
           <Chart.Tooltip
             content={<TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
+            animationDuration={200}
+            isAnimationActive={true}
           />
           {!hideEvents &&
             (referenceLineData ?? [])
@@ -454,21 +456,27 @@ export function LocalChart({
     return [...(referenceLineData || []), ...eventReferenceLines]
   }, [referenceLineData, eventReferenceLines])
 
-
   // Ensure data includes points at reference timestamps so vertical lines always align to an existing x in data
   const paddedData = useMemo(() => {
     const extraTimestamps = mergedReferenceLineData.map((e) => e.timestamp)
-    const basePaddedData = addTimeRangePadding(data, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
-    
+    const basePaddedData = addTimeRangePadding(
+      data,
+      startTimestamp,
+      endTimestamp,
+      useLocalTime,
+      undefined,
+      extraTimestamps
+    )
+
     // Apply decimation for performance optimization with current time range context
     const currentTimeRange = Number(endTimestamp) - Number(startTimestamp)
     const originalTimeRange = currentTimeRange * 1000 // Convert to milliseconds for comparison
     const isZoomed = originalTimeRange < currentTimeRange * 0.8 // Simplified zoom detection
-    
+
     return decimateChartData(basePaddedData, {
       isZoomed,
       startTimestamp: Number(startTimestamp),
-      endTimestamp: Number(endTimestamp)
+      endTimestamp: Number(endTimestamp),
     })
   }, [data, startTimestamp, endTimestamp, useLocalTime, mergedReferenceLineData])
 
