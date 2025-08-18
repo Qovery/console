@@ -12,17 +12,21 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 const query = (serviceId: string, timeRange: string) => `
   (
     round(
-      sum(
-        increase(
-          kube_pod_container_status_restarts_total{container!="POD"}[${timeRange}]
-        )
-        * on(namespace, pod) group_left(label_qovery_com_service_id)
-          max by(namespace, pod, label_qovery_com_service_id)(
-            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+      max_over_time(
+        (
+          sum(
+            increase(
+              kube_pod_container_status_restarts_total{container!="POD"}[${timeRange}:]
+            )
+            * on(namespace, pod) group_left(label_qovery_com_service_id)
+              max by(namespace, pod, label_qovery_com_service_id)(
+                kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+              )
           )
+          or vector(0)
+        )[${timeRange}:]
       )
     )
-    or vector(0)
   )
   +
   sum_over_time(

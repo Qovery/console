@@ -31,7 +31,7 @@ export function CardLogErrors({
     timeRange,
   })
 
-  const value = metrics?.data?.result.length || 0
+  const value = Math.round(metrics?.data?.result?.[0]?.value?.[1]) || 0
 
   const title = `${value} log ${pluralize(value, 'error', 'errors')}`
   const description = 'total log errors detected in the selected time range'
