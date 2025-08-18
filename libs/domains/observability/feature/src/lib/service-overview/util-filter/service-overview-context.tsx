@@ -35,6 +35,12 @@ interface ServiceOverviewContextType {
   // Hovered event
   hoveredEventKey: string | null
   setHoveredEventKey: (value: string | null) => void
+
+  // Chart highlighting
+  chartSelectedKeys: Set<string>
+  setChartSelectedKeys: (keys: Set<string>) => void
+  chartHighlightedKey: string | null
+  setChartHighlightedKey: (key: string | null) => void
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
@@ -117,6 +123,10 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
 
+  // Chart highlighting state
+  const [chartSelectedKeys, setChartSelectedKeys] = useState<Set<string>>(new Set())
+  const [chartHighlightedKey, setChartHighlightedKey] = useState<string | null>(null)
+
   const value: ServiceOverviewContextType = {
     useLocalTime,
     setUseLocalTime,
@@ -137,6 +147,10 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setHasCalendarValue,
     hoveredEventKey,
     setHoveredEventKey,
+    chartSelectedKeys,
+    setChartSelectedKeys,
+    chartHighlightedKey,
+    setChartHighlightedKey,
   }
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>

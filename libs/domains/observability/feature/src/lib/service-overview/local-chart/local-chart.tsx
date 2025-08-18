@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo, useState } from 'react'
+import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -17,6 +17,7 @@ import {
   createXAxisConfig,
   getTimeGranularity,
   useChartHighlighting,
+  useChartHighlightingSync,
   useZoomableChart,
 } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
@@ -126,8 +127,7 @@ interface ChartContentProps extends PropsWithChildren {
   service?: AnyService
   isFullscreen?: boolean
   selectedKeys?: Set<string>
-  onHighlight?: (key: string | null) => void
-  highlightingResult?: ReturnType<typeof useChartHighlighting>
+  highlightedKey?: string | null
 }
 
 export function ChartContent({
@@ -145,21 +145,26 @@ export function ChartContent({
   service,
   isFullscreen = true,
   selectedKeys,
-  onHighlight,
-  highlightingResult: passedHighlightingResult,
+  highlightedKey,
 }: ChartContentProps) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
-  // Use passed highlighting result or create our own if needed
-  const fallbackHighlightingResult = useChartHighlighting({
+  // Use highlighting only if selectedKeys are provided
+  const highlightingResult = useChartHighlighting({
     metricKeys: selectedKeys
       ? Object.keys(data[0] || {}).filter((key) => !['timestamp', 'time', 'fullTime'].includes(key))
       : [],
     selectedKeys: selectedKeys || new Set(),
   })
-  const highlightingResult = passedHighlightingResult || fallbackHighlightingResult
+
+  // Update local highlighting when global highlighted key changes
+  useEffect(() => {
+    if (selectedKeys && highlightedKey !== undefined) {
+      highlightingResult.handleHighlight(highlightedKey)
+    }
+  }, [highlightedKey, selectedKeys, highlightingResult])
 
   // Add CSS classes to chart series children
   const processedChildren = useMemo(() => {
@@ -441,11 +446,18 @@ export function LocalChart({
   showLegend = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey, hideEvents } = useServiceOverviewContext()
+  const {
+    startTimestamp,
+    endTimestamp,
+    hoveredEventKey,
+    setHoveredEventKey,
+    hideEvents,
+    chartSelectedKeys,
+    setChartSelectedKeys,
+    chartHighlightedKey,
+    setChartHighlightedKey,
+  } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  // Legend state management
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
 
   // Extract series information from children for legend
   const chartSeries = useMemo(() => {
@@ -471,15 +483,12 @@ export function LocalChart({
       })
   }, [children])
 
-  // Set up chart highlighting if legend is enabled - separate instances for local and modal
-  const localHighlightingResult = useChartHighlighting({
-    metricKeys: chartSeries.map((s) => s.key),
-    selectedKeys: showLegend ? selectedKeys : new Set(),
-  })
-
-  const modalHighlightingResult = useChartHighlighting({
-    metricKeys: chartSeries.map((s) => s.key),
-    selectedKeys: showLegend ? selectedKeys : new Set(),
+  // Use chart highlighting sync
+  const chartSync = useChartHighlightingSync({
+    selectedKeys: showLegend ? chartSelectedKeys : undefined,
+    onSelectionChange: showLegend ? setChartSelectedKeys : undefined,
+    highlightedKey: showLegend ? chartHighlightedKey : undefined,
+    onHighlightChange: showLegend ? setChartHighlightedKey : undefined,
   })
 
   // Alpha: Workaround to get the events
@@ -638,9 +647,8 @@ export function LocalChart({
           referenceLineData={mergedReferenceLineData}
           service={service}
           isFullscreen={isFullscreen}
-          selectedKeys={showLegend ? selectedKeys : undefined}
-          onHighlight={showLegend ? localHighlightingResult.handleHighlight : undefined}
-          highlightingResult={showLegend ? localHighlightingResult : undefined}
+          selectedKeys={showLegend ? chartSync.selectedKeys : undefined}
+          highlightedKey={showLegend ? chartSync.highlightedKey : undefined}
         >
           {/* Render reference lines for events of type 'event' */}
           {!hideEvents &&
@@ -654,19 +662,9 @@ export function LocalChart({
           <div className="px-5 pb-5">
             <Chart.Legend
               items={chartSeries}
-              selectedKeys={selectedKeys}
-              onToggle={(key) => {
-                setSelectedKeys((prev) => {
-                  const next = new Set(prev)
-                  if (next.has(key)) {
-                    next.delete(key)
-                  } else {
-                    next.add(key)
-                  }
-                  return next
-                })
-              }}
-              onHighlight={localHighlightingResult.handleHighlight}
+              selectedKeys={chartSync.selectedKeys}
+              onToggle={chartSync.onSelectionToggle}
+              onHighlight={chartSync.onHighlight}
               rightGutterWidth={0}
             />
           </div>
@@ -689,9 +687,8 @@ export function LocalChart({
                 referenceLineData={mergedReferenceLineData}
                 service={service}
                 isFullscreen
-                selectedKeys={showLegend ? selectedKeys : undefined}
-                onHighlight={showLegend ? modalHighlightingResult.handleHighlight : undefined}
-                highlightingResult={showLegend ? modalHighlightingResult : undefined}
+                selectedKeys={showLegend ? chartSync.selectedKeys : undefined}
+                highlightedKey={showLegend ? chartSync.highlightedKey : undefined}
               >
                 {/* Render reference lines for events of type 'event' in modal as well */}
                 {!hideEvents &&
@@ -706,19 +703,9 @@ export function LocalChart({
               <div className="flex-shrink-0 px-5 pb-5">
                 <Chart.Legend
                   items={chartSeries}
-                  selectedKeys={selectedKeys}
-                  onToggle={(key) => {
-                    setSelectedKeys((prev) => {
-                      const next = new Set(prev)
-                      if (next.has(key)) {
-                        next.delete(key)
-                      } else {
-                        next.add(key)
-                      }
-                      return next
-                    })
-                  }}
-                  onHighlight={modalHighlightingResult.handleHighlight}
+                  selectedKeys={chartSync.selectedKeys}
+                  onToggle={chartSync.onSelectionToggle}
+                  onHighlight={chartSync.onHighlight}
                   rightGutterWidth={0}
                 />
               </div>
