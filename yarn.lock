@@ -4220,7 +4220,7 @@ __metadata:
     msw: ^1.3.0
     nx: 19.6.4
     postcss: 8.4.38
-    posthog-js: ^1.131.4
+    posthog-js: ^1.260.1
     prettier: ^3.2.5
     prettier-plugin-tailwindcss: ^0.5.14
     pretty-quick: ^4.0.0
@@ -10729,6 +10729,13 @@ __metadata:
   version: 3.36.1
   resolution: "core-js@npm:3.36.1"
   checksum: 6f6c152179bd0673da34e67a82c6a5c37f31f9fbe908e9caf93749dc62a25b6e07fbff2411de3b74bb2d0661b7f9fb247115ba8efabf9904f5fef26edead515e
+  languageName: node
+  linkType: hard
+
+"core-js@npm:^3.38.1":
+  version: 3.45.0
+  resolution: "core-js@npm:3.45.0"
+  checksum: 05706def467637c0392cb3d37d9e29714070d53feceea2715b4c805f9d55a62caac5d9f40c679a5f56e7fed4198a0e923392c704140fd617c111b239968d5bf1
   languageName: node
   linkType: hard
 
@@ -21057,13 +21064,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-js@npm:^1.131.4":
-  version: 1.131.4
-  resolution: "posthog-js@npm:1.131.4"
+"posthog-js@npm:^1.260.1":
+  version: 1.260.1
+  resolution: "posthog-js@npm:1.260.1"
   dependencies:
+    core-js: ^3.38.1
     fflate: ^0.4.8
     preact: ^10.19.3
-  checksum: 558e377eff5c0c3fef1708af1f53b113ded9fd85d2827fb8884867276ad05e4693d3256e19f5f3c8017aae0cf2c553ae490054a1e9726d4381e91de3cee7cc7a
+    web-vitals: ^4.2.4
+  peerDependencies:
+    "@rrweb/types": 2.0.0-alpha.17
+    rrweb-snapshot: 2.0.0-alpha.17
+  peerDependenciesMeta:
+    "@rrweb/types":
+      optional: true
+    rrweb-snapshot:
+      optional: true
+  checksum: 81f8af7f58457e555e333e284f0cd3189339ce18081ab295630f5f18aeb4bd2a43a4346a0204462d0cd1bb5df8690f2242476d00669f3d8846125e12cb955f9b
   languageName: node
   linkType: hard
 
@@ -25663,6 +25680,13 @@ __metadata:
     "@zxing/text-encoding":
       optional: true
   checksum: 2234a2b122f41006ce07859b3c0bf2e18f46144fda2907d5db0b571b76aa5c26977c646100ad9c00d2f8a4f6f2b848bc02147845d8c447ab365ec4eff376338d
+  languageName: node
+  linkType: hard
+
+"web-vitals@npm:^4.2.4":
+  version: 4.2.4
+  resolution: "web-vitals@npm:4.2.4"
+  checksum: 5b3ffe1db33f23aebf8cc8560ac574401a95939baafde5841835c1bb1c01f9a2478442f319f77aa0d7914739fc2f6b020c5d5b128c16c5c77ca6be2f9dfbbde6
   languageName: node
   linkType: hard
 
