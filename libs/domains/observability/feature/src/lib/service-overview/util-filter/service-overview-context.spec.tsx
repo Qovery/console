@@ -20,7 +20,7 @@ describe('ServiceOverviewContext', () => {
 
     expect(result.current).toBeDefined()
     expect(result.current.useLocalTime).toBe(false)
-    expect(result.current.timeRange).toBe('30m')
+    expect(result.current.timeRange).toBe('1h')
     expect(result.current.hideEvents).toBe(false)
     expect(result.current.expandCharts).toBe(false)
     expect(result.current.hasCalendarValue).toBe(false)
