@@ -75,7 +75,7 @@ describe('CardLogErrors', () => {
     useMetrics.mockReturnValue(
       createMockUseMetricsReturn({
         data: {
-          result: [{}, {}],
+          result: [{ value: [null, 2] }],
         },
       })
     )
@@ -126,7 +126,7 @@ describe('CardLogErrors', () => {
     useMetrics.mockReturnValue(
       createMockUseMetricsReturn({
         data: {
-          result: [{}],
+          result: [{ value: [null, 1] }],
         },
       })
     )
