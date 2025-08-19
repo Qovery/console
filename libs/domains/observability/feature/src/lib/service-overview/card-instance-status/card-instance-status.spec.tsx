@@ -177,7 +177,6 @@ describe('CardInstanceStatus', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
       queryRange: 'query',
-      timeRange: '1h',
     })
 
     const call = useMetrics.mock.calls[0][0].query

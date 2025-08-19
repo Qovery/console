@@ -66,7 +66,7 @@ describe('Zoom and DatePicker Integration', () => {
 
     // Switch back to preset time range
     act(() => {
-      result.current.handleTimeRangeChange('30m')
+      result.current.handleTimeRangeChange('1h')
     })
 
     // Should reset zoom again but not clear calendar value
