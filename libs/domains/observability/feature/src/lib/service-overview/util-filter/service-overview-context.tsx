@@ -1,5 +1,9 @@
-import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { OrganizationEventTargetType, type OrganizationEventResponse } from 'qovery-typescript-axios'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
+import { useService } from '@qovery/domains/services/feature'
+import { useEvents } from '../../hooks/use-events/use-events'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
 interface ServiceOverviewContextType {
@@ -44,6 +48,7 @@ interface ServiceOverviewContextType {
   // Hovered event
   hoveredEventKey: string | null
   setHoveredEventKey: (value: string | null) => void
+  hoveredEventKeyDebounced: string | null
 
   // Live update toggle
   isLiveUpdateEnabled: boolean
@@ -52,11 +57,16 @@ interface ServiceOverviewContextType {
   // Date picker state
   isDatePickerOpen: boolean
   setIsDatePickerOpen: (value: boolean) => void
+
+  // Events (centralized)
+  events: OrganizationEventResponse[] | undefined
+  eventsLoading: boolean
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
 
 export function ServiceOverviewProvider({ children }: PropsWithChildren) {
+  const { organizationId = '', applicationId = '' } = useParams()
   const [useLocalTime, setUseLocalTime] = useState(false)
   const [timeRange, setTimeRange] = useState<TimeRangeOption>('30m')
 
@@ -175,12 +185,40 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
 
+  // Centralized events fetch - single API call for all charts
+  const { data: service } = useService({ serviceId: applicationId })
+  const { 
+    data: events, 
+    isLoading: eventsLoading 
+  } = useEvents({
+    organizationId,
+    serviceId: applicationId,
+    targetType:
+      service?.service_type === 'CONTAINER'
+        ? OrganizationEventTargetType.CONTAINER
+        : OrganizationEventTargetType.APPLICATION,
+    toTimestamp: endTimestamp,
+    fromTimestamp: startTimestamp,
+  })
+
   const [hideEvents, setHideEvents] = useState(false)
   const [expandCharts, setExpandCharts] = useState(false)
 
   const [hasCalendarValue, setHasCalendarValue] = useState(false)
 
   const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
+
+  // Debounce hover state changes to prevent excessive re-renders
+  const [hoveredEventKeyDebounced, setHoveredEventKeyDebounced] = useState<string | null>(null)
+  
+  // Use a timeout to debounce hover state changes
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setHoveredEventKeyDebounced(hoveredEventKey)
+    }, 16) // ~1 frame delay for smoother interaction
+
+    return () => clearTimeout(timeoutId)
+  }, [hoveredEventKey])
 
   const value: ServiceOverviewContextType = {
     useLocalTime,
@@ -207,10 +245,13 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setHasCalendarValue,
     hoveredEventKey,
     setHoveredEventKey,
+    hoveredEventKeyDebounced,
     isLiveUpdateEnabled,
     setIsLiveUpdateEnabled,
     isDatePickerOpen,
     setIsDatePickerOpen,
+    events,
+    eventsLoading,
   }
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>

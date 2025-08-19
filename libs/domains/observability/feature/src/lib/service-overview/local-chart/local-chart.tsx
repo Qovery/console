@@ -1,8 +1,6 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type PropsWithChildren, memo, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
@@ -21,7 +19,6 @@ import {
 } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { formatTimestamp } from '../util-chart/format-timestamp'
@@ -112,7 +109,7 @@ export const ChartContent = memo(function ChartContent({
     endTimestamp,
     useLocalTime,
     hideEvents,
-    hoveredEventKey,
+    hoveredEventKeyDebounced,
     setHoveredEventKey,
     handleZoomTimeRangeChange,
     registerZoomReset,
@@ -214,7 +211,15 @@ export const ChartContent = memo(function ChartContent({
           {!hideEvents &&
             (referenceLineData ?? [])
               .filter((event) => event.type === 'event')
-              .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, isFullscreen))}
+              .map((event) => (
+                <CreateAlignedReferenceLine
+                  key={event.key}
+                  event={event}
+                  hoveredEventKey={hoveredEventKeyDebounced}
+                  setHoveredEventKey={setHoveredEventKey}
+                  isModal={isFullscreen}
+                />
+              ))}
           {children}
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
@@ -246,7 +251,7 @@ export const ChartContent = memo(function ChartContent({
                       className={clsx(
                         'flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150',
                         {
-                          'bg-neutral-150': hoveredEventKey === event.key,
+                          'bg-neutral-150': hoveredEventKeyDebounced === event.key,
                         }
                       )}
                       onMouseEnter={() => setHoveredEventKey(event.key)}
@@ -355,25 +360,16 @@ export function LocalChart({
   isFullscreen = false,
   syncId,
 }: LocalChartProps) {
-  const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp, useLocalTime } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, events } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Alpha: Workaround to get the events
+  // Get service data for event processing
   const { data: service } = useService({ serviceId })
 
-  const { data: events } = useEvents({
-    organizationId,
-    serviceId,
-    targetType:
-      service?.service_type === 'CONTAINER'
-        ? OrganizationEventTargetType.CONTAINER
-        : OrganizationEventTargetType.APPLICATION,
-    toTimestamp: endTimestamp,
-    fromTimestamp: startTimestamp,
-  })
-
-  const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
+  // Filter events for this specific service - memoized for performance
+  const eventsFiltered = useMemo(() => {
+    return events?.filter((event) => event.target_id === serviceId) ?? []
+  }, [events, serviceId])
 
   const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
     return (eventsFiltered || [])
@@ -552,15 +548,29 @@ export function LocalChart({
 
 export default LocalChart
 
-// Utility function to create reference lines with better clickable areas
-function createAlignedReferenceLine(
-  event: ReferenceLineEvent,
-  hoveredEventKey: string | null,
-  setHoveredEventKey: (key: string | null) => void,
+// Optimized utility function to create reference lines
+const CreateAlignedReferenceLine = memo(function CreateAlignedReferenceLine({
+  event,
+  hoveredEventKey,
+  setHoveredEventKey,
   isModal = false
-) {
+}: {
+  event: ReferenceLineEvent
+  hoveredEventKey: string | null
+  setHoveredEventKey: (key: string | null) => void
+  isModal?: boolean
+}) {
   const strokeWidth = isModal ? 4 : 3
   const opacity = hoveredEventKey === event.key ? 1 : isModal ? 0.6 : 0.4
+
+  // Memoize event handlers to prevent recreation
+  const handleMouseEnter = useMemo(() => () => {
+    setHoveredEventKey(event.key)
+  }, [setHoveredEventKey, event.key])
+
+  const handleMouseLeave = useMemo(() => () => {
+    setHoveredEventKey(null)
+  }, [setHoveredEventKey])
 
   return (
     <ReferenceLine
@@ -570,12 +580,8 @@ function createAlignedReferenceLine(
       strokeDasharray="3 3"
       opacity={opacity}
       strokeWidth={strokeWidth}
-      onMouseEnter={() => {
-        setHoveredEventKey(event.key)
-      }}
-      onMouseLeave={() => {
-        setHoveredEventKey(null)
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       style={{ cursor: 'pointer' }}
       label={{
         value: hoveredEventKey === event.key ? event.reason : undefined,
@@ -586,4 +592,4 @@ function createAlignedReferenceLine(
       }}
     />
   )
-}
+})
