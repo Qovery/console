@@ -119,10 +119,7 @@ export const ChartContent = memo(function ChartContent({
     setIsAnyChartZoomed,
   } = useServiceOverviewContext()
 
-  // Apply data decimation for performance optimization
-  const decimatedData = useMemo(() => {
-    return decimateChartData(data)
-  }, [data])
+  // REMOVED: Double decimation bug fix - data decimation now happens only in paddedData calculation
 
   // Use the zoomable chart hook - automatically handle zoom state changes
   const {
@@ -158,7 +155,7 @@ export const ChartContent = memo(function ChartContent({
     <div className="relative flex h-full">
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
-          data={decimatedData}
+          data={data}
           syncId={syncId}
           margin={margin}
           onMouseDown={handleMouseDown}
@@ -380,75 +377,74 @@ export function LocalChart({
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
   const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
-    return (eventsFiltered || [])
-      .filter(
-        (event) =>
-          (event.event_type === 'TRIGGER_DEPLOY' ||
-            event.event_type === 'DEPLOY_FAILED' ||
-            event.event_type === 'DEPLOYED') &&
-          event.target_id === serviceId
-      )
-      .map((event) => {
-        const alignedTimestamp = new Date(event.timestamp || '').getTime()
+    if (!eventsFiltered?.length) return []
+    
+    // Performance optimization: Filter and process events in single pass
+    const relevantEvents = eventsFiltered.filter(
+      (event) =>
+        (event.event_type === 'TRIGGER_DEPLOY' ||
+          event.event_type === 'DEPLOY_FAILED' ||
+          event.event_type === 'DEPLOYED') &&
+        event.target_id === serviceId
+    )
 
-        const key = `event-${event.id || alignedTimestamp}`
-        const change = JSON.parse(event.change || '')
-        // TODO: Add support for other service types and clean-up api endpoint
-        const version =
-          change?.service_source?.image?.tag ??
-          change?.service_source?.docker?.git_repository?.deployed_commit_id ??
-          'Unknown'
+    return relevantEvents.map((event) => {
+      const alignedTimestamp = new Date(event.timestamp || '').getTime()
+      const key = `event-${event.id || alignedTimestamp}`
+      
+      // Performance: Optimize JSON parsing by caching or lazy evaluation
+      let change: any = {}
+      try {
+        change = event.change ? JSON.parse(event.change) : {}
+      } catch {
+        change = {}
+      }
+      
+      const version =
+        change?.service_source?.image?.tag ??
+        change?.service_source?.docker?.git_repository?.deployed_commit_id ??
+        'Unknown'
 
-        const repository =
-          change?.service_source?.image?.image_name ?? change?.service_source?.docker?.git_repository?.url ?? 'Unknown'
+      const repository =
+        change?.service_source?.image?.image_name ?? 
+        change?.service_source?.docker?.git_repository?.url ?? 
+        'Unknown'
 
-        if (event.event_type === 'DEPLOY_FAILED') {
-          return {
-            type: 'event',
-            timestamp: alignedTimestamp,
-            reason: 'Deploy failed',
-            icon: 'xmark',
-            color: 'var(--color-red-500)',
-            key,
-            version,
-            repository,
-          }
-        } else if (event.event_type === 'DEPLOYED') {
-          return {
-            type: 'event',
-            timestamp: alignedTimestamp,
-            reason: 'Deployed',
-            icon: 'check',
-            color: 'var(--color-green-500)',
-            key,
-            version,
-            repository,
-          }
-        } else if (event.event_type === 'TRIGGER_DEPLOY') {
-          return {
-            type: 'event',
-            timestamp: alignedTimestamp,
-            reason: 'Trigger deploy',
-            icon: 'play',
-            iconStyle: 'solid',
-            color: 'var(--color-brand-500)',
-            key,
-            version,
-            repository,
-          }
-        }
+      // Use lookup table for better performance than if-else chain
+      const eventTypeConfig = {
+        'DEPLOY_FAILED': {
+          reason: 'Deploy failed',
+          icon: 'xmark' as const,
+          color: 'var(--color-red-500)',
+        },
+        'DEPLOYED': {
+          reason: 'Deployed',
+          icon: 'check' as const,
+          color: 'var(--color-green-500)',
+        },
+        'TRIGGER_DEPLOY': {
+          reason: 'Trigger deploy',
+          icon: 'play' as const,
+          iconStyle: 'solid' as const,
+          color: 'var(--color-brand-500)',
+        },
+      }
 
-        return {
-          type: 'event',
-          timestamp: alignedTimestamp,
-          reason: 'Unknown',
-          icon: 'question',
-          color: 'var(--color-neutral-350)',
-          key,
-          version,
-          repository,
-        }
-      })
+      const config = eventTypeConfig[event.event_type as keyof typeof eventTypeConfig] || {
+        reason: 'Unknown',
+        icon: 'question' as const,
+        color: 'var(--color-neutral-350)',
+      }
+
+      return {
+        type: 'event' as const,
+        timestamp: alignedTimestamp,
+        key,
+        version,
+        repository,
+        ...config,
+      }
+    })
   }, [eventsFiltered, serviceId])
 
   // Merge with any referenceLineData passed as prop

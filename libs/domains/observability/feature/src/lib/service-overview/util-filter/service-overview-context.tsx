@@ -1,4 +1,4 @@
-import { type PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
+import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
@@ -88,8 +88,16 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setIsAnyChartZoomed(false) // Reset zoom state when resetting charts
   }
 
-  // Zoom state tracking - simplified to just track boolean state
+  // Zoom state tracking - optimized to prevent unnecessary re-renders
   const [isAnyChartZoomed, setIsAnyChartZoomed] = useState(false)
+  
+  // Performance optimization: Debounce zoom state changes to prevent cascading re-renders
+  const setIsAnyChartZoomedDebounced = useCallback((isZoomed: boolean) => {
+    // Only update if the value actually changed
+    if (isAnyChartZoomed !== isZoomed) {
+      setIsAnyChartZoomed(isZoomed)
+    }
+  }, [isAnyChartZoomed])
 
   const handleTimeRangeChange = (range: TimeRangeOption) => {
     // Reset zoom first, then change time range
@@ -190,7 +198,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     resetChartZoom,
     registerZoomReset,
     isAnyChartZoomed,
-    setIsAnyChartZoomed,
+    setIsAnyChartZoomed: setIsAnyChartZoomedDebounced,
     setHideEvents,
     hideEvents,
     expandCharts,

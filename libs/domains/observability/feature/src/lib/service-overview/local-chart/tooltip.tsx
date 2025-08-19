@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { Kbd } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -138,18 +138,17 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
 }
 
 // Tooltip component for displaying metric and events details
-export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
+export const Tooltip = memo(function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
   const metaKey = useFormatHotkeys('meta')
 
-  // Memoize expensive data processing operations
-  const processedEntries = useMemo(() => {
-    if (!payload || payload.length === 0) return []
-    const groupedEntries = groupEntriesByType(payload)
-    return processGroupedEntries(groupedEntries)
-  }, [payload])
-
-  // Memoize the sorting and filtering operations
+  // Optimize: Single memoization combining all tooltip processing operations
   const sortedAndFilteredEntries = useMemo(() => {
+    if (!payload || payload.length === 0) return []
+    
+    // Process and sort in single operation for better performance
+    const groupedEntries = groupEntriesByType(payload)
+    const processedEntries = processGroupedEntries(groupedEntries)
+    
     return processedEntries
       .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
       .sort((a, b) => {
@@ -161,7 +160,7 @@ export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
         if (!isARequestOrLimit && isBRequestOrLimit) return 1
         return 0
       })
-  }, [processedEntries])
+  }, [payload])
 
   if (!active || !payload || payload.length === 0) return null
 
@@ -205,6 +204,6 @@ export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
       )}
     </div>
   )
-}
+})
 
 export default Tooltip

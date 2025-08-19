@@ -89,14 +89,14 @@ export function decimateChartData<T extends Record<string, unknown>>(
 
   const { isZoomed = false } = options
 
-  // Dynamic max points based on data size and zoom context
+  // Optimized max points thresholds - more aggressive decimation for better performance
   const getMaxPoints = (dataLength: number, zoomed: boolean): number => {
-    // More aggressive decimation for very large datasets
-    if (dataLength > 50000) return zoomed ? 3000 : 1500
-    if (dataLength > 20000) return zoomed ? 4000 : 2000
-    if (dataLength > 10000) return zoomed ? 5000 : 2500
-    if (dataLength > 5000) return zoomed ? 6000 : 3000
-    return Math.min(dataLength, 4000) // No decimation for smaller datasets
+    // Reduced thresholds for better performance - abnormally low lag threshold fix
+    if (dataLength > 10000) return zoomed ? 2000 : 800   // Reduced from 50k->1.5k to 10k->800
+    if (dataLength > 5000) return zoomed ? 1500 : 600    // Reduced from 20k->2k to 5k->600
+    if (dataLength > 2000) return zoomed ? 1000 : 400    // Reduced from 10k->2.5k to 2k->400
+    if (dataLength > 1000) return zoomed ? 800 : 300     // Reduced from 5k->3k to 1k->300
+    return Math.min(dataLength, 500) // Reduced from 4k to 500 for smaller datasets
   }
 
   const maxPoints = getMaxPoints(inputData.length, isZoomed)
@@ -105,17 +105,16 @@ export function decimateChartData<T extends Record<string, unknown>>(
 
   const totalPoints = inputData.length
   const targetPoints = Math.min(maxPoints, totalPoints)
-  const step = totalPoints / targetPoints
+  
+  // Performance optimization: Use integer steps for faster iteration
+  const step = Math.max(1, Math.floor(totalPoints / targetPoints))
   
   // Always preserve first and last points for chart continuity
   const decimated = [inputData[0]]
   
-  // Use floating point steps for more uniform distribution
-  for (let i = step; i < totalPoints - 1; i += step) {
-    const index = Math.round(i)
-    if (index !== 0 && index !== totalPoints - 1 && index < totalPoints) {
-      decimated.push(inputData[index])
-    }
+  // Optimized sampling using integer steps
+  for (let i = step; i < totalPoints - step; i += step) {
+    decimated.push(inputData[i])
   }
   
   // Always include the last point if we have more than one point
