@@ -147,7 +147,6 @@ describe('CardPercentile99', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('histogram_quantile'),
       queryRange: 'query',
-      timeRange: '30m',
     })
 
     const call = useMetrics.mock.calls[0][0].query
