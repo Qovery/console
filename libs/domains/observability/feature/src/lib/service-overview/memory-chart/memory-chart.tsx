@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics, type MetricData } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { useResourceChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -48,7 +48,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
 
   // Memoize transform and series name functions to prevent recreation
   const transformValue = useCallback((value: string) => parseFloat(value) / 1024 / 1024, []) // Convert to MiB
-  const getSeriesName = useCallback((series: any, index: number) => 
+  const getSeriesName = useCallback((series: MetricData, index: number) => 
     series.metric.pod, []
   )
 

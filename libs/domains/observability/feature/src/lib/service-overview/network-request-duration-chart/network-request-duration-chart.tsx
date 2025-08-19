@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { Line } from 'recharts'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics, type MetricData } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { useOptimizedChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -85,7 +85,7 @@ export function NetworkRequestDurationChart({
 
   // Memoize transform function to prevent recreation
   const transformValue = useCallback((value: string) => parseFloat(value) * 1000, []) // Convert to ms
-  const getSeriesName = useCallback(() => '95th percentile', []) // Primary series
+  const getSeriesName = useCallback((series: MetricData, index: number) => '95th percentile', []) // Primary series
 
   // Use optimized chart data processing with additional processors
   const { chartData } = useOptimizedChartData({

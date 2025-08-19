@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { Line } from 'recharts'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics, type MetricData } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { useOptimizedChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -59,7 +59,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
   // Memoize transform functions to prevent recreation
   const readTransformValue = useCallback((value: string) => parseFloat(value) / 1024 / 1024, []) // Convert to MiB
   const writeTransformValue = useCallback((value: string) => -parseFloat(value) / 1024 / 1024, []) // Mirror writes
-  const getSeriesName = useCallback(() => 'read-ephemeral-storage', []) // Primary series
+  const getSeriesName = useCallback((series: MetricData, index: number) => 'read-ephemeral-storage', []) // Primary series
 
   // Use optimized chart data processing with additional processors
   const { chartData } = useOptimizedChartData({

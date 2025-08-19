@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { Line } from 'recharts'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics, type MetricData } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { useSimpleChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -30,7 +30,7 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
 
   // Memoize transform and series name functions to prevent recreation
   const transformValue = useCallback((value: string) => parseFloat(value), [])
-  const getSeriesName = useCallback((series: any, index: number) => 
+  const getSeriesName = useCallback((series: MetricData, index: number) => 
     JSON.stringify(series.metric), []
   )
 
