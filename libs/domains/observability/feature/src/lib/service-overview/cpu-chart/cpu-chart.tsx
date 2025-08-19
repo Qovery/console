@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
@@ -19,7 +19,7 @@ const queryCpuRequest = (serviceId: string) => `
   sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_requests{resource="cpu", container!="", pod=~".+"} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})))
 `
 
-export const CpuChart = memo(function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 
@@ -142,6 +142,6 @@ export const CpuChart = memo(function CpuChart({ clusterId, serviceId }: { clust
       />
     </LocalChart>
   )
-})
+}
 
 export default CpuChart
