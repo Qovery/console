@@ -378,7 +378,7 @@ export function LocalChart({
 
   const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
     // Get chart data timestamps for alignment
-    const chartTimestamps = data.map((d) => d.timestamp).sort((a, b) => a - b)
+    const chartTimestamps = data.map((d) => d.timestamp)
 
     return (eventsFiltered || [])
       .filter(
@@ -462,7 +462,9 @@ export function LocalChart({
 
   // Merge with any referenceLineData passed as prop
   const mergedReferenceLineData = useMemo(() => {
-    return [...(referenceLineData || []), ...eventReferenceLines]
+    return [...(referenceLineData || []), ...eventReferenceLines].sort(
+      (a, b) => Number(b.timestamp) - Number(a.timestamp)
+    )
   }, [referenceLineData, eventReferenceLines])
 
   return (
