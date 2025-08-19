@@ -20,7 +20,7 @@ describe('ServiceOverviewContext', () => {
 
     expect(result.current).toBeDefined()
     expect(result.current.useLocalTime).toBe(false)
-    expect(result.current.timeRange).toBe('30m')
+    expect(result.current.timeRange).toBe('1h')
     expect(result.current.hideEvents).toBe(false)
     expect(result.current.expandCharts).toBe(false)
     expect(result.current.hasCalendarValue).toBe(false)
@@ -137,7 +137,7 @@ describe('ServiceOverviewContext queryTimeRange', () => {
       wrapper: ServiceOverviewProvider,
     })
 
-    expect(result.current.queryTimeRange).toBe('30m') // default timeRange
+    expect(result.current.queryTimeRange).toBe('1h') // default timeRange
     expect(result.current.isAnyChartZoomed).toBe(false)
   })
 
@@ -169,7 +169,7 @@ describe('ServiceOverviewContext queryTimeRange', () => {
     })
 
     expect(result.current.queryTimeRange).toBe('5m') // 5 minutes calculated from timestamps
-    expect(result.current.timeRange).toBe('30m') // Original timeRange unchanged
+    expect(result.current.timeRange).toBe('1h') // Original timeRange unchanged
     expect(result.current.isAnyChartZoomed).toBe(true)
   })
 
@@ -256,7 +256,7 @@ describe('ServiceOverviewContext queryTimeRange', () => {
       result.current.setIsAnyChartZoomed(true) // Zoomed but no timestamps set
     })
 
-    expect(result.current.queryTimeRange).toBe('30m') // Falls back to original timeRange
+    expect(result.current.queryTimeRange).toBe('60m') // Calculates from default timestamps (1h = 60m)
   })
 })
 

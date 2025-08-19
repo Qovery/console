@@ -53,18 +53,24 @@ interface ServiceOverviewContextType {
   // Date picker state
   isDatePickerOpen: boolean
   setIsDatePickerOpen: (value: boolean) => void
+
+  // Last dropdown selection
+  lastDropdownTimeRange: TimeRangeOption
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
 
 export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [useLocalTime, setUseLocalTime] = useState(false)
-  const [timeRange, setTimeRange] = useState<TimeRangeOption>('30m')
+  const [timeRange, setTimeRange] = useState<TimeRangeOption>('1h')
+
+  // Track the last time range selected from dropdown (not from zoom)
+  const [lastDropdownTimeRange, setLastDropdownTimeRange] = useState<TimeRangeOption>('1h')
 
   const now = new Date()
-  const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000)
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
 
-  const [startDate, setStartDate] = useState(thirtyMinutesAgo.toISOString())
+  const [startDate, setStartDate] = useState(oneHourAgo.toISOString())
   const [endDate, setEndDate] = useState(now.toISOString())
 
   // Live update toggle - disabled by default
@@ -95,6 +101,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const handleTimeRangeChange = (range: TimeRangeOption) => {
     // Reset zoom first, then change time range
     resetChartZoom()
+    // Track this as the last dropdown selection
+    setLastDropdownTimeRange(range)
     // Create a new time range handler that doesn't cause circular dependencies
     createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)(range)
   }
@@ -211,6 +219,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setIsLiveUpdateEnabled,
     isDatePickerOpen,
     setIsDatePickerOpen,
+    lastDropdownTimeRange,
   }
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>

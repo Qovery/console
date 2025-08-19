@@ -66,14 +66,14 @@ describe('Zoom and DatePicker Integration', () => {
 
     // Switch back to preset time range
     act(() => {
-      result.current.handleTimeRangeChange('30m')
+      result.current.handleTimeRangeChange('1h')
     })
 
     // Should reset zoom again but not clear calendar value
     expect(mockZoomReset).toHaveBeenCalled()
     expect(result.current.isAnyChartZoomed).toBe(false)
     expect(result.current.hasCalendarValue).toBe(true)
-    expect(result.current.timeRange).toBe('30m')
+    expect(result.current.timeRange).toBe('1h')
   })
 
   it('should handle zoom time range changes from chart interactions', () => {
@@ -83,7 +83,7 @@ describe('Zoom and DatePicker Integration', () => {
 
     // Start with preset time range
     expect(result.current.hasCalendarValue).toBe(false)
-    expect(result.current.timeRange).toBe('30m')
+    expect(result.current.timeRange).toBe('1h')
 
     // Simulate zoom selection on chart creating new time range
     const startTimestamp = 1640995200 // 2022-01-01 00:00:00 UTC
@@ -116,7 +116,7 @@ describe('Zoom and DatePicker Integration', () => {
     // Test sequence: preset → custom dates → preset → zoom → preset
 
     // 1. Start with preset (30m default)
-    expect(result.current.timeRange).toBe('30m')
+    expect(result.current.timeRange).toBe('1h')
     expect(result.current.hasCalendarValue).toBe(false)
 
     // 2. Switch to custom dates

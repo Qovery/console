@@ -20,6 +20,7 @@ export function SelectTimeRange() {
     useLocalTime,
     resetChartZoom,
     setIsDatePickerOpen,
+    lastDropdownTimeRange,
   } = useServiceOverviewContext()
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
@@ -81,7 +82,7 @@ export function SelectTimeRange() {
               onClick={(event) => {
                 event.stopPropagation()
                 setHasCalendarValue(false)
-                handleTimeRangeChange('30m')
+                handleTimeRangeChange(lastDropdownTimeRange)
               }}
             >
               <Icon iconName="xmark" />
