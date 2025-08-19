@@ -209,8 +209,7 @@ export const ChartContent = memo(function ChartContent({
           />
           <Chart.Tooltip
             content={<TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
-            animationDuration={200}
-            isAnimationActive={true}
+            isAnimationActive={false}
           />
           {!hideEvents &&
             (referenceLineData ?? [])
