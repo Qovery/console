@@ -1,3 +1,4 @@
+import type { IconName } from '@fortawesome/fontawesome-common-types'
 import { useMemo } from 'react'
 import { Area, Line, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
@@ -5,7 +6,6 @@ import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-import type { IconName } from '@fortawesome/fontawesome-common-types'
 
 const queryUnhealthyPods = (serviceId: string) => `
   sum by (condition)(kube_pod_status_ready{condition=~"false"}
@@ -643,7 +643,7 @@ export function InstanceStatusChart({
               <ReferenceLine
                 key={event.key}
                 x={event.timestamp}
-                stroke="var(--color-brand-500)"
+                stroke={event.color}
                 strokeDasharray="3 3"
                 opacity={hoveredEventKey === event.key ? 1 : 0.3}
                 strokeWidth={2}
@@ -652,7 +652,7 @@ export function InstanceStatusChart({
                 label={{
                   value: hoveredEventKey === event.key ? event.reason : undefined,
                   position: 'top',
-                  fill: 'var(--color-brand-500)',
+                  fill: event.color,
                   fontSize: 12,
                   fontWeight: 'bold',
                 }}
@@ -670,7 +670,7 @@ export function InstanceStatusChart({
               <ReferenceLine
                 key={event.key}
                 x={event.timestamp}
-                stroke="var(--color-red-500)"
+                stroke={event.color}
                 strokeDasharray="3 3"
                 opacity={hoveredEventKey === event.key ? 1 : 0.3}
                 strokeWidth={2}
@@ -679,7 +679,7 @@ export function InstanceStatusChart({
                 label={{
                   value: hoveredEventKey === event.key ? event.reason : undefined,
                   position: 'top',
-                  fill: 'var(--color-red-500)',
+                  fill: event.color,
                   fontSize: 12,
                   fontWeight: 'bold',
                 }}
