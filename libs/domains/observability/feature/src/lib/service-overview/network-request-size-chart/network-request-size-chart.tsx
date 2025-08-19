@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
+import { useCallback } from 'react'
 import { Line } from 'recharts'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
-import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
-import { processMetricsData } from '../util-chart/process-metrics-data'
+import { useOptimizedChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryResponseSize = (serviceId: string) => `
@@ -49,38 +48,27 @@ export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: s
     query: queryRequestSize(serviceId),
   })
 
-  const chartData = useMemo(() => {
-    if (!metricsResponseSize?.data?.result) {
-      return []
-    }
+  // Memoize transform function to prevent recreation
+  const transformValue = useCallback((value: string) => parseFloat(value), []) // Convert to bytes
+  const getSeriesName = useCallback(() => 'Response size', []) // Primary series
 
-    const timeSeriesMap = new Map<
-      number,
-      { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
-    >()
-
-    // Process network response size metrics
-    processMetricsData(
-      metricsResponseSize,
-      timeSeriesMap,
-      () => 'Response size',
-      (value) => parseFloat(value), // Convert to bytes
-      useLocalTime
-    )
-
-    // Process network request size metrics
-    processMetricsData(
-      metricsRequestSize,
-      timeSeriesMap,
-      () => 'Request size',
-      (value) => parseFloat(value), // Convert to bytes
-      useLocalTime
-    )
-
-    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metricsResponseSize, metricsRequestSize, useLocalTime, startTimestamp, endTimestamp])
+  // Use optimized chart data processing with additional processors
+  const { chartData } = useOptimizedChartData({
+    metrics: metricsResponseSize, // Use response size as primary
+    serviceId,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+    transformValue,
+    getSeriesName,
+    additionalProcessors: [
+      {
+        metrics: metricsRequestSize,
+        getSeriesName: () => 'Request size',
+        transformValue,
+      },
+    ],
+  })
 
   return (
     <LocalChart

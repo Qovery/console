@@ -1,10 +1,9 @@
-import { useMemo } from 'react'
+import { useCallback } from 'react'
 import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
-import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
-import { processMetricsData } from '../util-chart/process-metrics-data'
+import { useResourceChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryMemoryUsage = (serviceId: string) => `
@@ -47,52 +46,26 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
     timeRange,
   })
 
-  const chartData = useMemo(() => {
-    if (!metrics?.data?.result) {
-      return []
-    }
+  // Memoize transform and series name functions to prevent recreation
+  const transformValue = useCallback((value: string) => parseFloat(value) / 1024 / 1024, []) // Convert to MiB
+  const getSeriesName = useCallback((series: any, index: number) => 
+    series.metric.pod, []
+  )
 
-    const timeSeriesMap = new Map<
-      number,
-      { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
-    >()
-
-    // Process regular CPU metrics (pods)
-    processMetricsData(
-      metrics,
-      timeSeriesMap,
-      (_, index) => metrics.data.result[index].metric.pod,
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
-    )
-
-    // Process memory limit metrics
-    processMetricsData(
-      metricsLimit,
-      timeSeriesMap,
-      () => 'memory-limit',
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
-    )
-
-    // Process memory request metrics
-    processMetricsData(
-      metricsRequest,
-      timeSeriesMap,
-      () => 'memory-request',
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
-    )
-
-    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics, metricsLimit, metricsRequest, useLocalTime, startTimestamp, endTimestamp])
-
-  const seriesNames = useMemo(() => {
-    if (!metrics?.data?.result) return []
-    return metrics.data.result.map((_: unknown, index: number) => metrics.data.result[index].metric.pod) as string[]
-  }, [metrics])
+  // Use optimized chart data processing
+  const { chartData, seriesNames } = useResourceChartData({
+    usageMetrics: metrics,
+    limitMetrics: metricsLimit,
+    requestMetrics: metricsRequest,
+    serviceId,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+    transformValue,
+    getSeriesName,
+    limitSeriesName: 'memory-limit',
+    requestSeriesName: 'memory-request',
+  })
 
   // const renderMemoryLimitLabel = renderResourceLimitLabel('Memory limit', chartData)
 

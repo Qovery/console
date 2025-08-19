@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Line } from 'recharts'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
-import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
-import { processMetricsData } from '../util-chart/process-metrics-data'
+import { useOptimizedChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryDiskReadNvme = (serviceId: string) => `
@@ -57,64 +56,38 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     timeRange,
   })
 
-  const chartData = useMemo(() => {
-    if (!metricsReadEphemeralStorage?.data?.result) {
-      return []
-    }
+  // Memoize transform functions to prevent recreation
+  const readTransformValue = useCallback((value: string) => parseFloat(value) / 1024 / 1024, []) // Convert to MiB
+  const writeTransformValue = useCallback((value: string) => -parseFloat(value) / 1024 / 1024, []) // Mirror writes
+  const getSeriesName = useCallback(() => 'read-ephemeral-storage', []) // Primary series
 
-    const timeSeriesMap = new Map<
-      number,
-      { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
-    >()
-
-    // Process read ephemeral storage metrics
-    processMetricsData(
-      metricsReadEphemeralStorage,
-      timeSeriesMap,
-      () => 'read-ephemeral-storage',
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
-    )
-
-    // Process read persistent storage metrics
-    processMetricsData(
-      metricsReadPersistentStorage,
-      timeSeriesMap,
-      () => 'read-persistent-storage',
-      (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
-      useLocalTime
-    )
-
-    // Process write ephemeral storage metrics
-    processMetricsData(
-      metricsWriteEphemeralStorage,
-      timeSeriesMap,
-      () => 'write-ephemeral-storage',
-      (value) => -parseFloat(value) / 1024 / 1024, // Mirror by multiplying by -1 (MiB)
-      useLocalTime
-    )
-
-    // Process write persistent storage metrics
-    processMetricsData(
-      metricsWritePersistentStorage,
-      timeSeriesMap,
-      () => 'write-persistent-storage',
-      (value) => -parseFloat(value) / 1024 / 1024, // Mirror by multiplying by -1 (MiB)
-      useLocalTime
-    )
-
-    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [
-    metricsReadEphemeralStorage,
-    metricsReadPersistentStorage,
-    metricsWriteEphemeralStorage,
-    metricsWritePersistentStorage,
+  // Use optimized chart data processing with additional processors
+  const { chartData } = useOptimizedChartData({
+    metrics: metricsReadEphemeralStorage, // Use read ephemeral as primary
+    serviceId,
     useLocalTime,
     startTimestamp,
     endTimestamp,
-  ])
+    transformValue: readTransformValue,
+    getSeriesName,
+    additionalProcessors: [
+      {
+        metrics: metricsReadPersistentStorage,
+        getSeriesName: () => 'read-persistent-storage',
+        transformValue: readTransformValue,
+      },
+      {
+        metrics: metricsWriteEphemeralStorage,
+        getSeriesName: () => 'write-ephemeral-storage',
+        transformValue: writeTransformValue,
+      },
+      {
+        metrics: metricsWritePersistentStorage,
+        getSeriesName: () => 'write-persistent-storage',
+        transformValue: writeTransformValue,
+      },
+    ],
+  })
 
   // Calculate symmetric yDomain
   const maxAbs = useMemo(() => {

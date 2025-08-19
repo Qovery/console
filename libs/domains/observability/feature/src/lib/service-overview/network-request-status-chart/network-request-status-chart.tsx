@@ -1,10 +1,9 @@
-import { useMemo } from 'react'
+import { useCallback } from 'react'
 import { Line } from 'recharts'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
-import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
-import { processMetricsData } from '../util-chart/process-metrics-data'
+import { useSimpleChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (serviceId: string) => `
@@ -29,36 +28,22 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
     query: query(serviceId),
   })
 
-  const chartData = useMemo(() => {
-    if (!metrics?.data?.result) {
-      return []
-    }
+  // Memoize transform and series name functions to prevent recreation
+  const transformValue = useCallback((value: string) => parseFloat(value), [])
+  const getSeriesName = useCallback((series: any, index: number) => 
+    JSON.stringify(series.metric), []
+  )
 
-    const timeSeriesMap = new Map<
-      number,
-      { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
-    >()
-
-    // Process network request metrics
-    processMetricsData(
-      metrics,
-      timeSeriesMap,
-      (_, index) => JSON.stringify(metrics.data.result[index].metric),
-      (value) => parseFloat(value),
-      useLocalTime
-    )
-
-    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics, useLocalTime, startTimestamp, endTimestamp])
-
-  const seriesNames = useMemo(() => {
-    if (!metrics?.data?.result) return []
-    return metrics.data.result.map((_: unknown, index: number) =>
-      JSON.stringify(metrics.data.result[index].metric)
-    ) as string[]
-  }, [metrics])
+  // Use optimized chart data processing
+  const { chartData, seriesNames } = useSimpleChartData({
+    metrics,
+    serviceId,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+    transformValue,
+    getSeriesName,
+  })
 
   return (
     <LocalChart

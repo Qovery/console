@@ -1,9 +1,8 @@
-import { useMemo } from 'react'
+import { useCallback } from 'react'
 import { Line } from 'recharts'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
-import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
-import { processMetricsData } from '../util-chart/process-metrics-data'
+import { useOptimizedChartData } from '../util-chart/optimized-chart-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryDuration50 = (serviceId: string) => `
@@ -84,47 +83,32 @@ export function NetworkRequestDurationChart({
     query: queryDuration95(serviceId),
   })
 
-  const chartData = useMemo(() => {
-    if (!metrics95?.data?.result) {
-      return []
-    }
+  // Memoize transform function to prevent recreation
+  const transformValue = useCallback((value: string) => parseFloat(value) * 1000, []) // Convert to ms
+  const getSeriesName = useCallback(() => '95th percentile', []) // Primary series
 
-    const timeSeriesMap = new Map<
-      number,
-      { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
-    >()
-
-    // Process network duration 95th percentile metrics
-    processMetricsData(
-      metrics95,
-      timeSeriesMap,
-      () => '95th percentile',
-      (value) => parseFloat(value) * 1000, // Convert to ms
-      useLocalTime
-    )
-
-    // Process network duration 99th percentile metrics
-    processMetricsData(
-      metrics99,
-      timeSeriesMap,
-      () => '99th percentile',
-      (value) => parseFloat(value) * 1000, // Convert to ms
-      useLocalTime
-    )
-
-    // Process network duration 0.5th percentile metrics
-    processMetricsData(
-      metrics50,
-      timeSeriesMap,
-      () => '50th percentile',
-      (value) => parseFloat(value) * 1000, // Convert to ms
-      useLocalTime
-    )
-
-    const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
-
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics95, metrics99, metrics50, useLocalTime, startTimestamp, endTimestamp])
+  // Use optimized chart data processing with additional processors
+  const { chartData } = useOptimizedChartData({
+    metrics: metrics95, // Use 95th percentile as primary
+    serviceId,
+    useLocalTime,
+    startTimestamp,
+    endTimestamp,
+    transformValue,
+    getSeriesName,
+    additionalProcessors: [
+      {
+        metrics: metrics99,
+        getSeriesName: () => '99th percentile',
+        transformValue,
+      },
+      {
+        metrics: metrics50,
+        getSeriesName: () => '50th percentile',
+        transformValue,
+      },
+    ],
+  })
 
   return (
     <LocalChart
