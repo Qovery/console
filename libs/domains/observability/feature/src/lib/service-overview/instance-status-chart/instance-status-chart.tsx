@@ -1,3 +1,4 @@
+import type { IconName } from '@fortawesome/fontawesome-common-types'
 import { useMemo } from 'react'
 import { Area, Line, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
@@ -65,12 +66,12 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id=~"${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|ScalingReplicaSet"
     }
     -
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id=~"${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|ScalingReplicaSet"
     } offset ${dynamicRange}
   ) > 0
 )
@@ -172,8 +173,28 @@ export const getDescriptionFromK8sEvent = (reason: string): string => {
       return 'Pod was pre-empted by another higher-priority pod.'
     case 'NodeNotReady':
       return 'The node hosting the pod became NotReady.'
+    case 'ScalingReplicaSet':
+      return 'The autoscaler changes the number of pods based on CPU usage; new instances may be unready at first.'
     default:
       return 'Unknown'
+  }
+}
+
+export const getIconFromK8sEvent = (reason: string): IconName => {
+  switch (reason) {
+    case 'ScalingReplicaSet':
+      return 'up-right-and-down-left-from-center'
+    default:
+      return 'xmark'
+  }
+}
+
+export const getColorFromK8sEvent = (reason: string): string => {
+  switch (reason) {
+    case 'ScalingReplicaSet':
+      return 'var(--color-green-500)'
+    default:
+      return 'var(--color-red-500)'
   }
 }
 
@@ -470,8 +491,8 @@ export function InstanceStatusChart({
                 timestamp: timestamp * 1000,
                 reason: series.metric.reason,
                 description: getDescriptionFromK8sEvent(series.metric.reason),
-                icon: 'xmark',
-                color: 'var(--color-red-500)',
+                icon: getIconFromK8sEvent(series.metric.reason),
+                color: getColorFromK8sEvent(series.metric.reason),
                 pod: series.metric.pod,
                 key,
               })
@@ -622,7 +643,7 @@ export function InstanceStatusChart({
               <ReferenceLine
                 key={event.key}
                 x={event.timestamp}
-                stroke="var(--color-brand-500)"
+                stroke={event.color}
                 strokeDasharray="3 3"
                 opacity={hoveredEventKey === event.key ? 1 : 0.3}
                 strokeWidth={2}
@@ -631,7 +652,7 @@ export function InstanceStatusChart({
                 label={{
                   value: hoveredEventKey === event.key ? event.reason : undefined,
                   position: 'top',
-                  fill: 'var(--color-brand-500)',
+                  fill: event.color,
                   fontSize: 12,
                   fontWeight: 'bold',
                 }}
@@ -649,7 +670,7 @@ export function InstanceStatusChart({
               <ReferenceLine
                 key={event.key}
                 x={event.timestamp}
-                stroke="var(--color-red-500)"
+                stroke={event.color}
                 strokeDasharray="3 3"
                 opacity={hoveredEventKey === event.key ? 1 : 0.3}
                 strokeWidth={2}
@@ -658,7 +679,7 @@ export function InstanceStatusChart({
                 label={{
                   value: hoveredEventKey === event.key ? event.reason : undefined,
                   position: 'top',
-                  fill: 'var(--color-red-500)',
+                  fill: event.color,
                   fontSize: 12,
                   fontWeight: 'bold',
                 }}
