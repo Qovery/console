@@ -66,13 +66,20 @@ export function useMetrics({
     // Actual scrape_interval = 15s
     // https://prometheus.io/docs/prometheus/latest/configuration/configuration/#duration
     // https://qovery.slack.com/archives/C02NQ0LC8M9/p1753804730631609?thread_ts=1753803872.246399&cid=C02NQ0LC8M9
-    if (timeRange === '5m') return '15000ms' // 15 seconds (match actual scrape_interval)
-    if (timeRange === '15m') return '30000ms' // 30 seconds for longer ranges (2x scrape_interval)
-    if (timeRange === '30m') return '60000ms' // 1 minute for longer ranges (4x scrape_interval)
-    if (startTimestamp && endTimestamp) {
-      return calculateDynamicRange(startTimestamp, endTimestamp)
+    let calculatedStep: string
+    if (timeRange === '5m') {
+      calculatedStep = '15000ms' // 15 seconds (match actual scrape_interval)
+    } else if (timeRange === '15m') {
+      calculatedStep = '30000ms' // 30 seconds for longer ranges (2x scrape_interval)
+    } else if (timeRange === '30m') {
+      calculatedStep = '60000ms' // 1 minute for longer ranges (4x scrape_interval)
+    } else if (startTimestamp && endTimestamp) {
+      calculatedStep = calculateDynamicRange(startTimestamp, endTimestamp)
+    } else {
+      calculatedStep = '15000ms' // Default: 15 seconds (match actual scrape_interval)
     }
-    return '15000ms' // Default: 15 seconds (match actual scrape_interval)
+
+    return calculatedStep
   }, [timeRange, startTimestamp, endTimestamp])
 
   const queryResult = useQuery({
@@ -118,7 +125,7 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
 
-  // Allowed, quantized step values (in ms)
+  // Allowed, quantized step values (in ms) - expanded for longer time ranges
   const allowedStepsMs = [
     15000, // 15s
     30000, // 30s
@@ -130,10 +137,14 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
     1800000, // 30m
     3600000, // 1h
     7200000, // 2h
+    10800000, // 3h - added for better 12h+ range optimization
+    21600000, // 6h - added for better 24h+ range optimization
   ] as const
 
   // Cap points by escalating to the next quantized step until under target
-  const MAX_POINTS_TARGET = 1200
+  // Further reduced from 400 to 150 based on 24h testing showing 196 points still causes severe lag
+  // Target: 12 charts × 150 points = 1800 total vs 12 × 208 = 2496 that caused lag
+  const MAX_POINTS_TARGET = 150
 
   // Minimal step to respect the max points target
   const minimalStepForCapMs = Math.ceil(durationMs / MAX_POINTS_TARGET)

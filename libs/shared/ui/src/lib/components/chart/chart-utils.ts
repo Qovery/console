@@ -85,42 +85,46 @@ export function decimateChartData<T extends Record<string, unknown>>(
   inputData: T[],
   options: DecimationOptions = {}
 ): T[] {
+  // Early returns for performance - avoid any processing if possible
   if (!inputData.length) return inputData
+  if (inputData.length <= 3) return inputData // Always preserve very small datasets
 
   const { isZoomed = false } = options
 
-  // Optimized max points thresholds - more aggressive decimation for better performance
+  // Highly aggressive decimation for multi-chart dashboards - prioritize performance over granularity
   const getMaxPoints = (dataLength: number, zoomed: boolean): number => {
-    // Reduced thresholds for better performance - abnormally low lag threshold fix
-    if (dataLength > 10000) return zoomed ? 2000 : 800   // Reduced from 50k->1.5k to 10k->800
-    if (dataLength > 5000) return zoomed ? 1500 : 600    // Reduced from 20k->2k to 5k->600
-    if (dataLength > 2000) return zoomed ? 1000 : 400    // Reduced from 10k->2.5k to 2k->400
-    if (dataLength > 1000) return zoomed ? 800 : 300     // Reduced from 5k->3k to 1k->300
-    return Math.min(dataLength, 500) // Reduced from 4k to 500 for smaller datasets
+    // Even more aggressive thresholds based on 208-point lag with 12 charts (2496 total points)
+    // Target: max 50-100 points per chart = 600-1200 total points across all charts
+    if (dataLength > 500) return zoomed ? 200 : 80 // 196 → 80 points for 24h range
+    if (dataLength > 200) return zoomed ? 150 : 60 // Medium datasets
+    if (dataLength > 100) return zoomed ? 100 : 50 // Small datasets
+    return Math.min(dataLength, 40) // Very small datasets
   }
 
   const maxPoints = getMaxPoints(inputData.length, isZoomed)
-  
+
+  // Early return if no decimation needed - avoids array allocation
   if (inputData.length <= maxPoints) return inputData
 
-  const totalPoints = inputData.length
-  const targetPoints = Math.min(maxPoints, totalPoints)
-  
-  // Performance optimization: Use integer steps for faster iteration
-  const step = Math.max(1, Math.floor(totalPoints / targetPoints))
-  
-  // Always preserve first and last points for chart continuity
-  const decimated = [inputData[0]]
-  
-  // Optimized sampling using integer steps
-  for (let i = step; i < totalPoints - step; i += step) {
+  // Performance optimization: Pre-calculate step and use more efficient sampling
+  const step = Math.max(1, Math.floor(inputData.length / maxPoints))
+
+  // Optimized approach: Use step-based sampling with minimal array operations
+  const decimated: T[] = []
+  const lastIndex = inputData.length - 1
+
+  // Always include first point
+  decimated.push(inputData[0])
+
+  // Sample points using calculated step, avoiding the last point
+  for (let i = step; i < lastIndex; i += step) {
     decimated.push(inputData[i])
   }
-  
-  // Always include the last point if we have more than one point
-  if (totalPoints > 1) {
-    decimated.push(inputData[totalPoints - 1])
+
+  // Always include last point if it's different from first
+  if (lastIndex > 0) {
+    decimated.push(inputData[lastIndex])
   }
-  
+
   return decimated
 }

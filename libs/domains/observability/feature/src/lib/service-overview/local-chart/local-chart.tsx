@@ -448,28 +448,26 @@ export function LocalChart({
     return [...(referenceLineData || []), ...eventReferenceLines]
   }, [referenceLineData, eventReferenceLines])
 
-  // Ensure data includes points at reference timestamps so vertical lines always align to an existing x in data
+  // Optimized data processing: decimate real data first, then add padding
   const paddedData = useMemo(() => {
-    const extraTimestamps = mergedReferenceLineData.map((e) => e.timestamp)
-    const basePaddedData = addTimeRangePadding(
-      data,
-      startTimestamp,
-      endTimestamp,
-      useLocalTime,
-      undefined,
-      extraTimestamps
-    )
+    // Early return for empty data
+    if (!data.length) return []
 
-    // Apply decimation for performance optimization with current time range context
+    // Detect zoom state for appropriate decimation strategy
     const currentTimeRange = Number(endTimestamp) - Number(startTimestamp)
     const originalTimeRange = currentTimeRange * 1000 // Convert to milliseconds for comparison
     const isZoomed = originalTimeRange < currentTimeRange * 0.8 // Simplified zoom detection
 
-    return decimateChartData(basePaddedData, {
+    // Decimate the real metric data first for optimal performance
+    const decimatedData = decimateChartData(data, {
       isZoomed,
       startTimestamp: Number(startTimestamp),
       endTimestamp: Number(endTimestamp),
     })
+
+    // Add minimal padding only around decimated data
+    const extraTimestamps = mergedReferenceLineData.map((e) => e.timestamp)
+    return addTimeRangePadding(decimatedData, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
   }, [data, startTimestamp, endTimestamp, useLocalTime, mergedReferenceLineData])
 
   return (
@@ -553,7 +551,7 @@ const CreateAlignedReferenceLine = memo(function CreateAlignedReferenceLine({
   event,
   hoveredEventKey,
   setHoveredEventKey,
-  isModal = false
+  isModal = false,
 }: {
   event: ReferenceLineEvent
   hoveredEventKey: string | null
@@ -564,13 +562,19 @@ const CreateAlignedReferenceLine = memo(function CreateAlignedReferenceLine({
   const opacity = hoveredEventKey === event.key ? 1 : isModal ? 0.6 : 0.4
 
   // Memoize event handlers to prevent recreation
-  const handleMouseEnter = useMemo(() => () => {
-    setHoveredEventKey(event.key)
-  }, [setHoveredEventKey, event.key])
+  const handleMouseEnter = useMemo(
+    () => () => {
+      setHoveredEventKey(event.key)
+    },
+    [setHoveredEventKey, event.key]
+  )
 
-  const handleMouseLeave = useMemo(() => () => {
-    setHoveredEventKey(null)
-  }, [setHoveredEventKey])
+  const handleMouseLeave = useMemo(
+    () => () => {
+      setHoveredEventKey(null)
+    },
+    [setHoveredEventKey]
+  )
 
   return (
     <ReferenceLine
