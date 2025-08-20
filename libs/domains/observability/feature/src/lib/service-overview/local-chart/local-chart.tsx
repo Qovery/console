@@ -488,8 +488,6 @@ export function LocalChart({
     return uniqueEvents.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
   }, [referenceLineData, eventReferenceLines])
 
-  console.log('chart re-render', label)
-
   return (
     <>
       <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
