@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -7,12 +6,13 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { ServiceOverview } from '@qovery/domains/observability/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { Icon } from '@qovery/shared/ui'
+import { useFlags } from '@qovery/shared/util-admin'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export function PageMonitoringFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
 
-  const isServiceObsEnabled = useFeatureFlagVariantKey('service-obs')
+  const isServiceObsEnabled = useFlags('serviceObs')
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })

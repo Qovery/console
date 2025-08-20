@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 
 interface Metrics {
-  jank: number // Frame drops percentage
+  dropRate: number // Frame drops percentage
   delay: number // Network + processing delays in ms
   net: number // Active network requests
   mem: number // Memory usage in GB
 }
 
 interface History {
-  jank: number[]
+  dropRate: number[]
   delay: number[]
   net: number[]
   mem: number[]
@@ -37,14 +37,14 @@ interface NavigatorWithConnection extends Navigator {
 
 export function useApplicationMetrics(): UseApplicationMetricsReturn {
   const [metrics, setMetrics] = useState<Metrics>({
-    jank: 0,
+    dropRate: 0,
     delay: 0,
     net: 0,
     mem: 0,
   })
 
   const [history, setHistory] = useState<History>({
-    jank: [],
+    dropRate: [],
     delay: [],
     net: [],
     mem: [],
@@ -54,7 +54,7 @@ export function useApplicationMetrics(): UseApplicationMetricsReturn {
   const observersRef = useRef<PerformanceObservers>({})
 
   useEffect(() => {
-    // 1. JANK - Measure frame drops
+    // 1. dropRate - Measure frame drops
     let lastFrameTime = performance.now()
     let frameCount = 0
     let droppedFrames = 0
@@ -70,12 +70,12 @@ export function useApplicationMetrics(): UseApplicationMetricsReturn {
 
       // Calculate percentage every 60 frames
       if (frameCount >= 60) {
-        // Ensure jank stays within 0-100% range
-        const jankPercentage = Math.min((droppedFrames / frameCount) * 100, 100)
-        setMetrics((prev) => ({ ...prev, jank: Math.round(jankPercentage) }))
+        // Ensure dropRate stays within 0-100% range
+        const dropRatePercentage = Math.min((droppedFrames / frameCount) * 100, 100)
+        setMetrics((prev) => ({ ...prev, dropRate: Math.round(dropRatePercentage) }))
         setHistory((prev) => ({
           ...prev,
-          jank: [...prev.jank.slice(-29), Math.round(jankPercentage)],
+          dropRate: [...prev.dropRate.slice(-29), Math.round(dropRatePercentage)],
         }))
         frameCount = 0
         droppedFrames = 0
@@ -188,11 +188,11 @@ export function useApplicationMetrics(): UseApplicationMetricsReturn {
     // Performance metrics observer
     if ('PerformanceObserver' in window) {
       try {
-        // Observer for long tasks (causing jank)
+        // Observer for long tasks (causing dropRate)
         const longTaskObserver = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
             if (entry.duration > 50) {
-              // Long task detected, increase jank counter but limit the impact
+              // Long task detected, increase dropRate counter but limit the impact
               const additionalDroppedFrames = Math.min(Math.floor(entry.duration / 16.67), 10)
               droppedFrames += additionalDroppedFrames
             }

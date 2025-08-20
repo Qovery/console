@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -15,7 +14,8 @@ import {
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
-import { PanelAdmin, hasPanelAdmin } from '@qovery/shared/util-admin'
+import { useFlags } from '@qovery/shared/util-admin'
+import { PanelAdmin } from '@qovery/shared/util-admin'
 import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
@@ -56,8 +56,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
-  const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
-  const isAdminPanelHidden = hasPanelAdmin()
+  const isFeatureFlag = useFlags('devopsCopilot')
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
 

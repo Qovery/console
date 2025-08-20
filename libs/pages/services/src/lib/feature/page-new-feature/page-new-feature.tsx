@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import TerraformIcon from 'devicon/icons/terraform/terraform-original.svg'
 import posthog from 'posthog-js'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
@@ -23,6 +22,7 @@ import {
   SERVICES_URL,
 } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
+import { useFlags } from '@qovery/shared/util-admin'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import {
   type ServiceTemplateOptionType,
@@ -262,7 +262,7 @@ export function PageNewFeature() {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
 
-  const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
+  const isTerraformFeatureFlag = Boolean(useFlags('terraform'))
 
   const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
 

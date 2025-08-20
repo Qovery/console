@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProvider, CloudProviderEnum, type ClusterRegion } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -8,6 +7,7 @@ import { ClusterCredentialsSettingsFeature, ClusterGeneralSettings } from '@qove
 import { type ClusterGeneralData, type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import { CLUSTERS_NEW_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, Callout, Heading, Icon, IconFlag, InputSelect, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { useFlags } from '@qovery/shared/util-admin'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { defaultResourcesData } from '../../../feature/page-clusters-create-feature/page-clusters-create-feature'
 
@@ -24,7 +24,7 @@ export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '' } = useParams()
   const navigate = useNavigate()
 
-  const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
+  const isAzureFeatureFlag = useFlags('clusterAzure')
 
   const [currentProvider, setCurrentProvider] = useState<CloudProvider | undefined>(
     cloudProviders.filter((cloudProvider: CloudProvider) => cloudProvider.short_name === currentCloudProvider)[0]

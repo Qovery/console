@@ -6,7 +6,6 @@ import GCP from 'devicon/icons/googlecloud/googlecloud-original.svg'
 import Kubernetes from 'devicon/icons/kubernetes/kubernetes-original.svg'
 import { AnimatePresence, motion } from 'framer-motion'
 import posthog from 'posthog-js'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type MutableRefObject, type ReactElement, cloneElement, useState } from 'react'
 import { NavLink, useParams } from 'react-router-dom'
@@ -14,6 +13,7 @@ import { match } from 'ts-pattern'
 import { ClusterInstallationGuideModal } from '@qovery/domains/clusters/feature'
 import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, Link, Section, Tooltip, useModal } from '@qovery/shared/ui'
+import { Flag, useFlags } from '@qovery/shared/util-admin'
 import { useClickAway, useDocumentTitle } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -42,7 +42,7 @@ type CardOptionProps = {
 function CardOption({ icon, title, description, selectedCloudProvider, recommended, ...props }: CardOptionProps) {
   const { organizationId = '' } = useParams()
 
-  const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
+  const isAzureFeatureFlag = useFlags('clusterAzure')
 
   const renderIcon = () => {
     return typeof icon === 'string' ? (

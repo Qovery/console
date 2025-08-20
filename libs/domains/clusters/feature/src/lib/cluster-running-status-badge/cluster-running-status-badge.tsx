@@ -1,9 +1,9 @@
 import clsx from 'clsx'
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, type ClusterStateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { useFlags } from '@qovery/shared/util-admin'
 import { twMerge } from '@qovery/shared/util-js'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
@@ -13,7 +13,7 @@ export interface ClusterRunningStatusBadgeProps {
 }
 
 export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: ClusterRunningStatusBadgeProps) {
-  const isFeatureFlag = useFeatureFlagVariantKey('cluster-running-status')
+  const isFeatureFlag = useFlags('clusterRunningStatus')
 
   const [isTimeout, setIsTimeout] = useState(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)

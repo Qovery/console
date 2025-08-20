@@ -7,15 +7,15 @@ import { ListFeatureFlag } from '../list-feature-flag/list-feature-flag'
 const MetricItem = ({
   label,
   value,
-  unit,
   status,
   description,
+  unit = '',
 }: {
   label: string
   value: string
-  unit: string
   status: string
   description: string
+  unit?: string
 }) => {
   const getStatusColor = () => {
     switch (status) {
@@ -89,15 +89,15 @@ export function PanelAdmin() {
   return !hidePanel ? (
     <div className="sticky bottom-0 flex h-8 w-full items-center justify-between gap-3 border-t border-neutral-200 bg-white px-4 font-code">
       <div className="flex items-center gap-10">
-        <Button variant="outline" size="xs" onClick={togglePanel} className="w-6 max-w-6 justify-center p-0">
+        <Button variant="plain" size="xs" onClick={togglePanel} className="w-6 max-w-6 justify-center p-0">
           <Icon iconName="xmark" iconStyle="regular" />
         </Button>
         <MetricItem
-          label="Jank"
+          label="Drop rate"
           description="Percentage of frames dropped"
-          value={metrics.jank.toString()}
+          value={metrics.dropRate.toString()}
           unit="%"
-          status={metrics.jank > 10 ? 'error' : 'good'}
+          status={metrics.dropRate > 10 ? 'error' : 'good'}
         />
         <MetricItem
           label="Delay"
@@ -110,7 +110,6 @@ export function PanelAdmin() {
           label="Req"
           description="Number of active network requests"
           value={metrics.net.toString()}
-          unit="req"
           status={metrics.net > 10 ? 'error' : 'good'}
         />
         <MetricItem

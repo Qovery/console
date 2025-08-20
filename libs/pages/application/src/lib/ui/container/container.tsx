@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useContext, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
@@ -27,6 +26,7 @@ import {
   CLUSTER_URL,
 } from '@qovery/shared/routes'
 import { Badge, ErrorBoundary, Header, Icon, Link, Section, Skeleton, type TabsItem, Tooltip } from '@qovery/shared/ui'
+import { useFlags } from '@qovery/shared/util-admin'
 import TabsFeature from '../../feature/tabs-feature/tabs-feature'
 
 export interface ContainerProps extends PropsWithChildren {
@@ -37,7 +37,7 @@ export interface ContainerProps extends PropsWithChildren {
 export function Container({ children }: ContainerProps) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
-  const isServiceObsEnabled = useFeatureFlagVariantKey('service-obs')
+  const isServiceObsEnabled = useFlags('serviceObs')
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
