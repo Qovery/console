@@ -150,12 +150,12 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
             name="hosting"
             control={methods.control}
             rules={{
-              required: 'Please select the hosting provider.',
+              required: 'Please select the Gitlab hosting strategy.',
             }}
             render={({ field, fieldState: { error } }) => (
               <div className="mb-5">
                 <InputSelect
-                  label="Hosting type"
+                  label="Gitlab hosting strategy"
                   onChange={(event) => {
                     field.onChange(event)
                   }}

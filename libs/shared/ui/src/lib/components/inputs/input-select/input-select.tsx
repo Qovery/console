@@ -121,7 +121,6 @@ export function InputSelect({
   }
 
   useEffect(() => {
-    // TODO [QOV-1072] double check if this is correct / needed
     const items = options.filter((option) => {
       if (isMulti) {
         return (value as SelectOptionValue[])?.some((val) => isEqualValue(val, option.value))
@@ -242,7 +241,6 @@ export function InputSelect({
     )
   }
 
-  // TODO [QOV-1072] double check if this is correct
   const selectedOption = options.find((option) => {
     if (isMulti) {
       return Array.isArray(selectedValue) && selectedValue.some((val) => isEqualValue(option.value, val))
