@@ -15,7 +15,7 @@ import {
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
-import { QoveryAdmin } from '@qovery/shared/util-admin'
+import { PanelAdmin, hasPanelAdmin } from '@qovery/shared/util-admin'
 import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
@@ -57,6 +57,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
   const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
+  const isAdminPanelHidden = hasPanelAdmin()
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
 
@@ -133,9 +134,9 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 }`}
               >
                 <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">
-                  <QoveryAdmin />
-                  {children}
+                  {children} <PanelAdmin />
                 </div>
+
                 <AssistantTrigger />
                 {isFeatureFlag && <DevopsCopilotTrigger />}
               </div>
