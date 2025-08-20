@@ -15,6 +15,7 @@ import {
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
+import { QoveryAdmin } from '@qovery/shared/util-admin'
 import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
@@ -131,7 +132,10 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                   clusterCredentialError || clusterBanner ? 'min-h-page-container-wbanner' : 'min-h-page-container'
                 }`}
               >
-                <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
+                <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">
+                  <QoveryAdmin />
+                  {children}
+                </div>
                 <AssistantTrigger />
                 {isFeatureFlag && <DevopsCopilotTrigger />}
               </div>
