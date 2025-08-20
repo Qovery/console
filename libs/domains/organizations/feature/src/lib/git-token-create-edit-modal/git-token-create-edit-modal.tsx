@@ -1,3 +1,4 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { GitProviderEnum, type GitTokenRequest, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
@@ -13,6 +14,7 @@ export interface GitTokenCreateEditModalProps {
 }
 
 export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onClose }: GitTokenCreateEditModalProps) {
+  const isGitlabSelfHostedFFEnabled = useFeatureFlagVariantKey('gitlab-self-hosted')
   const { enableAlertClickOutside } = useModal()
   const methods = useForm({
     mode: 'onChange',
@@ -28,7 +30,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           ? 'GITLAB'
           : 'SELF_HOSTED'
         : 'GITLAB',
-      api_url: gitToken?.git_api_url ?? '',
+      git_api_url: gitToken?.git_api_url ?? '',
     },
   })
 
@@ -44,7 +46,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       const { hosting, ...data } = values
       const gitTokenRequest: GitTokenRequest = {
         ...data,
-        git_api_url: hosting === 'SELF_HOSTED' ? data.api_url : undefined,
+        git_api_url: hosting === 'SELF_HOSTED' ? data.git_api_url : undefined,
       }
 
       if (isEdit) {
@@ -143,7 +145,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
             </div>
           )}
         />
-        {gitType === GitProviderEnum.GITLAB && (
+        {gitType === GitProviderEnum.GITLAB && isGitlabSelfHostedFFEnabled && (
           <Controller
             name="hosting"
             control={methods.control}
@@ -179,7 +181,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
         )}
         {gitType === GitProviderEnum.GITLAB && hosting === 'SELF_HOSTED' && (
           <Controller
-            name="api_url"
+            name="git_api_url"
             control={methods.control}
             rules={{
               required: 'Please enter a correct URL.',

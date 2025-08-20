@@ -74,6 +74,12 @@ describe('PageSettingsGeneralFeature', () => {
         repository: 'qovery/console',
         branch: 'main',
         root_path: '/',
+        git_repository: {
+          provider: GitProviderEnum.GITHUB,
+          url: 'https://github.com/qovery/console.git',
+          branch: 'main',
+          root_path: '/',
+        },
       },
       application,
       [],
@@ -83,6 +89,25 @@ describe('PageSettingsGeneralFeature', () => {
     expect(app.git_repository?.branch).toBe('main')
     expect(app.git_repository?.root_path).toBe('/')
     expect(app.git_repository?.url).toBe('https://github.com/qovery/console.git')
+
+    const updatedApp = handleGitApplicationSubmit(
+      {
+        name: 'hello',
+        build_mode: BuildModeEnum.DOCKER,
+        dockerfile_path: '/',
+        provider: GitProviderEnum.GITHUB,
+        repository: 'qovery/console',
+        branch: 'main',
+        root_path: '/',
+      },
+      application,
+      [],
+      []
+    )
+
+    expect(updatedApp.git_repository?.branch).toBe('main')
+    expect(updatedApp.git_repository?.root_path).toBe('/')
+    expect(updatedApp.git_repository?.url).toBe(application.git_repository?.url) // Since the git repository is not updated, the url should be the same
   })
 
   it('should update the job with git repository', () => {

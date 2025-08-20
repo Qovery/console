@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useId, useState } from 'react'
+import { type ReactNode, useEffect, useId, useMemo, useState } from 'react'
 import Select, {
   type GroupBase,
   type MenuListProps,
@@ -261,11 +261,9 @@ export function InputSelect({
           ? 'input--error'
           : ''
 
-  const [hasLabelUp, setHasLabelUp] = useState(value ? 'input--label-up' : '')
-
-  useEffect(() => {
-    setHasLabelUp(hasFocus || selectedValue ? 'input--label-up' : '')
-  }, [hasFocus, selectedValue, setHasLabelUp])
+  const hasLabelUp = useMemo(() => {
+    return hasFocus || selectedOption ? 'input--label-up' : ''
+  }, [hasFocus, selectedOption])
 
   const selectProps: SelectProps<SelectOption, true, GroupBase<SelectOption>> = {
     autoFocus,
@@ -351,8 +349,7 @@ export function InputSelect({
           formatCreateLabel={formatCreateLabel ?? ((value) => `Select "${value}"`)}
         />
 
-        {/* TODO [QOV-1072] double check if this can be removed */}
-        {/* <input type="hidden" name={label} value={selectedValue} /> */}
+        <input type="hidden" name={label} value={selectedValue.toString()} />
 
         {!isFilter && (
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
