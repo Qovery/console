@@ -380,7 +380,7 @@ export function InstanceStatusChart({
           if (numValue >= 0) {
             console.log(series.metric)
             const key = `${series.metric.pod}-${timestamp}`
-            const exitCodeInfo = getExitCodeInfo(series.values[0][1])
+            const exitCodeInfo = getExitCodeInfo(value)
             referenceLines.push({
               type: 'exit-code',
               timestamp: timestamp * 1000,
@@ -582,7 +582,7 @@ export function InstanceStatusChart({
         isAnimationActive={false}
         dot={false}
         strokeWidth={2}
-        stackId="status"
+        // stackId="status" // REMOVED: Causes Recharts AreaImpl errors
       />
       <Area
         key="false"
@@ -593,7 +593,7 @@ export function InstanceStatusChart({
         isAnimationActive={false}
         dot={false}
         strokeWidth={2}
-        stackId="status"
+        // stackId="status" // REMOVED: Causes Recharts AreaImpl errors
       />
       <Line
         key="min"
