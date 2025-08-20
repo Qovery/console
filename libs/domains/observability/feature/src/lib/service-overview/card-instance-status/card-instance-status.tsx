@@ -71,7 +71,7 @@ const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
       on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
       max by(namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
         kube_horizontalpodautoscaler_labels{
-          label_qovery_com_service_id =~ "${serviceId}"
+          label_qovery_com_service_id =  "${serviceId}"
         }
       )
     ) > bool 0

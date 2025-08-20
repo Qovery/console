@@ -119,7 +119,7 @@ const queryMaxLimitReached = (serviceId: string) => `
   on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
   max by (namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
     kube_horizontalpodautoscaler_labels{
-      label_qovery_com_service_id =~ "${serviceId}"
+      label_qovery_com_service_id =  "${serviceId}"
     }
   ) > 0
 )
@@ -461,14 +461,14 @@ export function InstanceStatusChart({
         series.values.forEach(([timestamp, value]: [number, string]) => {
           const numValue = parseFloat(value)
           if (numValue >= 0) {
-            console.log(series.metric)
             const key = `${series.metric.pod}-${timestamp}`
-            const exitCodeInfo = getExitCodeInfo(series.values[0][1])
+            const exitCodeInfo = getExitCodeInfo(series.values?.[0]?.[1])
             referenceLines.push({
               type: 'exit-code',
               timestamp: timestamp * 1000,
               reason: exitCodeInfo.name,
               description: exitCodeInfo.description,
+              color: 'var(--color-red-500)',
               icon: 'exclamation',
               pod: series.metric.pod,
               key,
