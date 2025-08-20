@@ -142,8 +142,6 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   ] as const
 
   // Cap points by escalating to the next quantized step until under target
-  // Further reduced from 400 to 150 based on 24h testing showing 196 points still causes severe lag
-  // Target: 12 charts × 150 points = 1800 total vs 12 × 208 = 2496 that caused lag
   const MAX_POINTS_TARGET = 150
 
   // Minimal step to respect the max points target
