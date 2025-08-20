@@ -75,6 +75,7 @@
       "@qovery/shared/spotlight/feature": ["libs/shared/spotlight/feature/src/index.ts"],
       "@qovery/shared/toast": ["libs/shared/toast/src/index.ts"],
       "@qovery/shared/ui": ["libs/shared/ui/src/index.ts"],
+      "@qovery/shared/util-admin": ["libs/shared/util-admin/src/index.ts"],
       "@qovery/shared/util-const": ["libs/shared/util-const/src/index.ts"],
       "@qovery/shared/util-dates": ["libs/shared/util-dates/src/index.ts"],
       "@qovery/shared/util-git": ["libs/shared/util-git/src/index.ts"],

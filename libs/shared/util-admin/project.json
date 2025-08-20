@@ -1,0 +1,9 @@
+{
+  "name": "util-admin",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/util-admin/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project util-admin --web",
+  "targets": {}
+}
