@@ -1,8 +1,8 @@
+import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { OrganizationEventTargetType, type OrganizationEventResponse } from 'qovery-typescript-axios'
-import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { useService } from '@qovery/domains/services/feature'
+import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
@@ -100,14 +100,17 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   // Zoom state tracking - optimized to prevent unnecessary re-renders
   const [isAnyChartZoomed, setIsAnyChartZoomed] = useState(false)
-  
+
   // Performance optimization: Debounce zoom state changes to prevent cascading re-renders
-  const setIsAnyChartZoomedDebounced = useCallback((isZoomed: boolean) => {
-    // Only update if the value actually changed
-    if (isAnyChartZoomed !== isZoomed) {
-      setIsAnyChartZoomed(isZoomed)
-    }
-  }, [isAnyChartZoomed])
+  const setIsAnyChartZoomedDebounced = useCallback(
+    (isZoomed: boolean) => {
+      // Only update if the value actually changed
+      if (isAnyChartZoomed !== isZoomed) {
+        setIsAnyChartZoomed(isZoomed)
+      }
+    },
+    [isAnyChartZoomed]
+  )
 
   const handleTimeRangeChange = (range: TimeRangeOption) => {
     // Reset zoom first, then change time range
@@ -178,8 +181,9 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     updateDates()
 
-    const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
-    return () => clearInterval(interval)
+    // PERF: Disable live date updates temporarily to stop infinite renders
+    // const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
+    // return () => clearInterval(interval)
   }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen])
 
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
@@ -187,10 +191,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   // Centralized events fetch - single API call for all charts
   const { data: service } = useService({ serviceId: applicationId })
-  const { 
-    data: events, 
-    isLoading: eventsLoading 
-  } = useEvents({
+  const { data: events, isLoading: eventsLoading } = useEvents({
     organizationId,
     serviceId: applicationId,
     targetType:
@@ -210,49 +211,70 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   // Debounce hover state changes to prevent excessive re-renders
   const [hoveredEventKeyDebounced, setHoveredEventKeyDebounced] = useState<string | null>(null)
-  
+
   // Use a timeout to debounce hover state changes
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setHoveredEventKeyDebounced(hoveredEventKey)
-    }, 16) // ~1 frame delay for smoother interaction
+    }, 200) // PERF: Increased from 16ms to 200ms to reduce render frequency
 
     return () => clearTimeout(timeoutId)
   }, [hoveredEventKey])
 
-  const value: ServiceOverviewContextType = {
-    useLocalTime,
-    setUseLocalTime,
-    timeRange,
-    setTimeRange,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
-    startTimestamp,
-    endTimestamp,
-    handleTimeRangeChange,
-    handleZoomTimeRangeChange,
-    resetChartZoom,
-    registerZoomReset,
-    isAnyChartZoomed,
-    setIsAnyChartZoomed: setIsAnyChartZoomedDebounced,
-    setHideEvents,
-    hideEvents,
-    expandCharts,
-    setExpandCharts,
-    hasCalendarValue,
-    setHasCalendarValue,
-    hoveredEventKey,
-    setHoveredEventKey,
-    hoveredEventKeyDebounced,
-    isLiveUpdateEnabled,
-    setIsLiveUpdateEnabled,
-    isDatePickerOpen,
-    setIsDatePickerOpen,
-    events,
-    eventsLoading,
-  }
+  const value: ServiceOverviewContextType = useMemo(
+    () => ({
+      useLocalTime,
+      setUseLocalTime,
+      timeRange,
+      setTimeRange,
+      startDate,
+      setStartDate,
+      endDate,
+      setEndDate,
+      startTimestamp,
+      endTimestamp,
+      handleTimeRangeChange,
+      handleZoomTimeRangeChange,
+      resetChartZoom,
+      registerZoomReset,
+      isAnyChartZoomed,
+      setIsAnyChartZoomed: setIsAnyChartZoomedDebounced,
+      setHideEvents,
+      hideEvents,
+      expandCharts,
+      setExpandCharts,
+      hasCalendarValue,
+      setHasCalendarValue,
+      hoveredEventKey,
+      setHoveredEventKey,
+      hoveredEventKeyDebounced,
+      isLiveUpdateEnabled,
+      setIsLiveUpdateEnabled,
+      isDatePickerOpen,
+      setIsDatePickerOpen,
+      events,
+      eventsLoading,
+    }),
+    [
+      // PERF: Only include stable primitive values, exclude all functions
+      useLocalTime,
+      timeRange,
+      startDate,
+      endDate,
+      startTimestamp,
+      endTimestamp,
+      isAnyChartZoomed,
+      hideEvents,
+      expandCharts,
+      hasCalendarValue,
+      hoveredEventKey,
+      hoveredEventKeyDebounced,
+      isLiveUpdateEnabled,
+      isDatePickerOpen,
+      events,
+      eventsLoading,
+    ]
+  )
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>
 }

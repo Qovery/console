@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { type MetricData } from '../../hooks/use-metrics/use-metrics'
 import { addTimeRangePadding } from './add-time-range-padding'
 import { processMetricsData } from './process-metrics-data'
@@ -33,7 +33,7 @@ export function useOptimizedChartData({
   const stableMetrics = useMemo(() => {
     return {
       main: metrics?.data?.result ? JSON.stringify(metrics.data.result) : null,
-      additional: additionalMetrics.map(m => m?.data?.result ? JSON.stringify(m.data.result) : null),
+      additional: additionalMetrics.map((m) => (m?.data?.result ? JSON.stringify(m.data.result) : null)),
     }
   }, [metrics?.data?.result, additionalMetrics])
 
@@ -41,9 +41,7 @@ export function useOptimizedChartData({
   const seriesNames = useMemo(() => {
     if (!metrics?.data?.result) return []
     const result = metrics.data.result
-    return result.map((_: unknown, index: number) => 
-      getSeriesName(result[index], index)
-    )
+    return result.map((_: unknown, index: number) => getSeriesName(result[index], index))
   }, [stableMetrics.main, getSeriesName])
 
   // Main chart data processing - only re-runs when actual data changes
@@ -58,13 +56,7 @@ export function useOptimizedChartData({
     >()
 
     // Process main metrics
-    processMetricsData(
-      metrics,
-      timeSeriesMap,
-      getSeriesName,
-      transformValue,
-      useLocalTime
-    )
+    processMetricsData(metrics, timeSeriesMap, getSeriesName, transformValue, useLocalTime)
 
     // Process additional metrics (limits, requests, etc.)
     additionalProcessors.forEach((processor, index) => {
@@ -125,28 +117,43 @@ export function useResourceChartData({
   limitSeriesName?: string
   requestSeriesName?: string
 }) {
-  return useOptimizedChartData({
+  // Memoize the series name functions to prevent recreation
+  const limitGetSeriesName = useCallback(() => limitSeriesName, [limitSeriesName])
+  const requestGetSeriesName = useCallback(() => requestSeriesName, [requestSeriesName])
+
+  // Memoize the additionalMetrics array to prevent recreation
+  const additionalMetrics = useMemo(() => [limitMetrics, requestMetrics], [limitMetrics, requestMetrics])
+
+  // Memoize the additionalProcessors array to prevent recreation
+  const additionalProcessors = useMemo(
+    () => [
+      {
+        metrics: limitMetrics,
+        getSeriesName: limitGetSeriesName,
+        transformValue,
+      },
+      {
+        metrics: requestMetrics,
+        getSeriesName: requestGetSeriesName,
+        transformValue,
+      },
+    ],
+    [limitMetrics, requestMetrics, limitGetSeriesName, requestGetSeriesName, transformValue]
+  )
+
+  const result = useOptimizedChartData({
     metrics: usageMetrics,
-    additionalMetrics: [limitMetrics, requestMetrics],
+    additionalMetrics,
     serviceId,
     useLocalTime,
     startTimestamp,
     endTimestamp,
     transformValue,
     getSeriesName,
-    additionalProcessors: [
-      {
-        metrics: limitMetrics,
-        getSeriesName: () => limitSeriesName,
-        transformValue,
-      },
-      {
-        metrics: requestMetrics,
-        getSeriesName: () => requestSeriesName,
-        transformValue,
-      },
-    ],
+    additionalProcessors,
   })
+
+  return result
 }
 
 // Simple hook for single metric charts (Network charts)

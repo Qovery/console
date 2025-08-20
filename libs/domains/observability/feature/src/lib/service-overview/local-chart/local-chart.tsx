@@ -1,6 +1,6 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { type PropsWithChildren, memo, useMemo, useState } from 'react'
+import { type PropsWithChildren, memo, useMemo, useRef, useState } from 'react'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
@@ -448,6 +448,23 @@ export function LocalChart({
     return [...(referenceLineData || []), ...eventReferenceLines]
   }, [referenceLineData, eventReferenceLines])
 
+  // Re-render tracking with intelligent reset for legitimate changes
+  const renderCountRef = useRef(0)
+  const lastTimestamps = useRef({ start: startTimestamp, end: endTimestamp })
+
+  // Reset render count when timestamps change (legitimate re-renders)
+  if (startTimestamp !== lastTimestamps.current.start || endTimestamp !== lastTimestamps.current.end) {
+    renderCountRef.current = 0
+    lastTimestamps.current = { start: startTimestamp, end: endTimestamp }
+  }
+
+  renderCountRef.current++
+
+  // PERF: Warn about excessive re-renders within the same time range
+  if (renderCountRef.current > 25) {
+    console.warn(`⚠️ [Performance] ${label}: ${renderCountRef.current} renders for same time range`)
+  }
+
   // Optimized data processing: decimate real data first, then add padding
   const paddedData = useMemo(() => {
     // Early return for empty data
@@ -468,7 +485,7 @@ export function LocalChart({
     // Add minimal padding only around decimated data
     const extraTimestamps = mergedReferenceLineData.map((e) => e.timestamp)
     return addTimeRangePadding(decimatedData, startTimestamp, endTimestamp, useLocalTime, undefined, extraTimestamps)
-  }, [data, startTimestamp, endTimestamp, useLocalTime, mergedReferenceLineData])
+  }, [data, startTimestamp, endTimestamp, useLocalTime, mergedReferenceLineData, label])
 
   return (
     <>
