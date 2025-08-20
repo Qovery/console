@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo, useState } from 'react'
+import { type PropsWithChildren, memo, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -13,6 +13,7 @@ import {
   Heading,
   Icon,
   Section,
+  Skeleton,
   Tooltip,
   createXAxisConfig,
   getTimeGranularity,
@@ -88,7 +89,7 @@ interface ChartContentProps extends PropsWithChildren {
   isFullscreen?: boolean
 }
 
-export function ChartContent({
+export const ChartContent = memo(function ChartContent({
   data,
   unit,
   label,
@@ -243,7 +244,21 @@ export function ChartContent({
             {pluralize(referenceLineData.length, 'Event', 'Events')} associated
           </p>
           <div className="h-full overflow-y-auto">
-            {referenceLineData.length > 0 ? (
+            {isLoading ? (
+              <>
+                {Array.from({ length: 8 }).map((_, idx) => (
+                  <div key={idx} className="flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500">
+                    <Skeleton className="h-5 min-h-5 w-5 min-w-5" rounded />
+                    <div className="flex w-full flex-col gap-1 text-xs">
+                      <div className="flex w-full items-center justify-between gap-2">
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : referenceLineData.length > 0 ? (
               <>
                 {referenceLineData.map((event) => {
                   const timestamp = formatTimestamp(event.timestamp, useLocalTime)
@@ -316,7 +331,7 @@ export function ChartContent({
       )}
     </div>
   )
-}
+})
 
 export interface LocalChartProps extends PropsWithChildren {
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
@@ -472,6 +487,8 @@ export function LocalChart({
 
     return uniqueEvents.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
   }, [referenceLineData, eventReferenceLines])
+
+  console.log('chart re-render', label)
 
   return (
     <>
