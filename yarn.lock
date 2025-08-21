@@ -21064,7 +21064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-js@npm:^1.260.1":
+"posthog-js@npm:1.260.1":
   version: 1.260.1
   resolution: "posthog-js@npm:1.260.1"
   dependencies:
@@ -21081,6 +21081,26 @@ __metadata:
     rrweb-snapshot:
       optional: true
   checksum: 81f8af7f58457e555e333e284f0cd3189339ce18081ab295630f5f18aeb4bd2a43a4346a0204462d0cd1bb5df8690f2242476d00669f3d8846125e12cb955f9b
+  languageName: node
+  linkType: hard
+
+"posthog-js@patch:posthog-js@npm%3A1.260.1#./.yarn/patches/posthog-js-npm-1.260.1-ec574bf323.patch::locator=%40qovery%2Fconsole%40workspace%3A.":
+  version: 1.260.1
+  resolution: "posthog-js@patch:posthog-js@npm%3A1.260.1#./.yarn/patches/posthog-js-npm-1.260.1-ec574bf323.patch::version=1.260.1&hash=82e246&locator=%40qovery%2Fconsole%40workspace%3A."
+  dependencies:
+    core-js: ^3.38.1
+    fflate: ^0.4.8
+    preact: ^10.19.3
+    web-vitals: ^4.2.4
+  peerDependencies:
+    "@rrweb/types": 2.0.0-alpha.17
+    rrweb-snapshot: 2.0.0-alpha.17
+  peerDependenciesMeta:
+    "@rrweb/types":
+      optional: true
+    rrweb-snapshot:
+      optional: true
+  checksum: 2d826a7604e45dbdcb4d0e4c1b468914f017eaf56e1e17a48d10e8987f5c11fcf5362b90b64a6c34db17f9eec94aac15979170fb600d0c1d6aec2c6947c6c670
   languageName: node
   linkType: hard
 

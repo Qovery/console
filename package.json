@@ -97,7 +97,8 @@
     "use-query-params": "^2.2.1"
   },
   "resolutions": {
-    "axios": "1.7.2"
+    "axios": "1.7.2",
+    "posthog-js@^1.260.1": "patch:posthog-js@npm%3A1.260.1#./.yarn/patches/posthog-js-npm-1.260.1-ec574bf323.patch"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
