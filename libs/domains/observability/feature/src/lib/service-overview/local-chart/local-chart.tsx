@@ -262,13 +262,14 @@ export const ChartContent = memo(function ChartContent({
               <>
                 {referenceLineData.map((event) => {
                   const timestamp = formatTimestamp(event.timestamp, useLocalTime)
+                  const key = `${label}-${event.key}`
                   return (
                     <div
-                      key={event.key}
+                      key={key}
                       className={clsx('flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500', {
-                        'bg-neutral-150': hoveredEventKey === `${label}-${event.key}`,
+                        'bg-neutral-150': hoveredEventKey === key,
                       })}
-                      onMouseEnter={() => setHoveredEventKey(`${label}-${event.key}`)}
+                      onMouseEnter={() => setHoveredEventKey(key)}
                       onMouseLeave={() => setHoveredEventKey(null)}
                     >
                       <span
