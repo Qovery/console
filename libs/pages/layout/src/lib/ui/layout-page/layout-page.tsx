@@ -4,7 +4,7 @@ import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useClusterStatuses } from '@qovery/domains/clusters/feature'
-import { useOrganization } from '@qovery/domains/organizations/feature'
+import { InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
@@ -162,6 +162,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 ongoing, you can follow it from logs
               </Banner>
             )}
+            <InvoiceBanner />
             {topBar && (
               <TopBar>
                 <div className="flex items-center">
