@@ -278,6 +278,29 @@ describe('useZoomableChart', () => {
       expect(result.current.isZoomed).toBe(true)
       expect(result.current.zoomHistory).toHaveLength(1)
     })
+
+    it('does not reset zoom when double-clicking if not zoomed', () => {
+      const onZoomChange = jest.fn()
+      const { result } = renderHook(() => useZoomableChart({ onZoomChange }))
+
+      // Initially not zoomed
+      expect(result.current.isZoomed).toBe(false)
+
+      // Double-click when not zoomed
+      act(() => {
+        result.current.handleChartDoubleClick()
+      })
+
+      // Should remain not zoomed and not call onZoomChange
+      expect(result.current.isZoomed).toBe(false)
+      expect(result.current.zoomState).toEqual({
+        left: 'dataMin',
+        right: 'dataMax',
+        refAreaLeft: '',
+        refAreaRight: '',
+      })
+      expect(onZoomChange).not.toHaveBeenCalled()
+    })
   })
 
   describe('utilities', () => {

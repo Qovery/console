@@ -202,11 +202,14 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
     if (disabled) {
       return
     }
-    // Double click: call custom handler if provided, otherwise reset zoom
-    if (onDoubleClick) {
-      onDoubleClick()
-    } else {
-      resetZoom()
+
+    if (isZoomed) {
+        // Call custom handler if provided, otherwise reset zoom internally
+        if (onDoubleClick) {
+            onDoubleClick()
+        } else {
+            resetZoom()
+        }
     }
   }
 
