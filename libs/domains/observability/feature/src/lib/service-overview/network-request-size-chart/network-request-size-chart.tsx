@@ -12,7 +12,7 @@ rate(nginx_ingress_controller_response_size_count{}[1m])
  * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
-        label_qovery_com_associated_service_id =~ "${serviceId}"
+        label_qovery_com_associated_service_id =  "${serviceId}"
       }
     )
 )
@@ -24,7 +24,7 @@ rate(nginx_ingress_controller_request_size_count{}[1m])
  * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
-        label_qovery_com_associated_service_id =~ "${serviceId}"
+        label_qovery_com_associated_service_id =  "${serviceId}"
       }
     )
 )

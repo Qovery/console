@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo, useState } from 'react'
+import { type PropsWithChildren, memo, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -13,6 +13,7 @@ import {
   Heading,
   Icon,
   Section,
+  Skeleton,
   Tooltip,
   createXAxisConfig,
   getTimeGranularity,
@@ -88,7 +89,7 @@ interface ChartContentProps extends PropsWithChildren {
   isFullscreen?: boolean
 }
 
-export function ChartContent({
+export const ChartContent = memo(function ChartContent({
   data,
   unit,
   label,
@@ -218,6 +219,10 @@ export function ChartContent({
             isAnimationActive={false}
             content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
           />
+          {!hideEvents &&
+            referenceLineData?.map((event) =>
+              createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey, true)
+            )}
           {children}
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
@@ -239,20 +244,32 @@ export function ChartContent({
             {pluralize(referenceLineData.length, 'Event', 'Events')} associated
           </p>
           <div className="h-full overflow-y-auto">
-            {referenceLineData.length > 0 ? (
+            {isLoading ? (
+              <>
+                {Array.from({ length: 8 }).map((_, idx) => (
+                  <div key={idx} className="flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500">
+                    <Skeleton className="h-5 min-h-5 w-5 min-w-5" rounded />
+                    <div className="flex w-full flex-col gap-1 text-xs">
+                      <div className="flex w-full items-center justify-between gap-2">
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                      <Skeleton className="h-4 w-1/2" />
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : referenceLineData.length > 0 ? (
               <>
                 {referenceLineData.map((event) => {
                   const timestamp = formatTimestamp(event.timestamp, useLocalTime)
+                  const key = `${label}-${event.key}`
                   return (
                     <div
-                      key={event.key}
-                      className={clsx(
-                        'flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150',
-                        {
-                          'bg-neutral-150': hoveredEventKey === event.key,
-                        }
-                      )}
-                      onMouseEnter={() => setHoveredEventKey(event.key)}
+                      key={key}
+                      className={clsx('flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500', {
+                        'bg-neutral-150': hoveredEventKey === key,
+                      })}
+                      onMouseEnter={() => setHoveredEventKey(key)}
                       onMouseLeave={() => setHoveredEventKey(null)}
                     >
                       <span
@@ -315,7 +332,7 @@ export function ChartContent({
       )}
     </div>
   )
-}
+})
 
 export interface LocalChartProps extends PropsWithChildren {
   data: Array<{ timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }>
@@ -357,7 +374,7 @@ export function LocalChart({
   isFullscreen = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey, hideEvents } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Alpha: Workaround to get the events
@@ -462,9 +479,14 @@ export function LocalChart({
 
   // Merge with any referenceLineData passed as prop
   const mergedReferenceLineData = useMemo(() => {
-    return [...(referenceLineData || []), ...eventReferenceLines].sort(
-      (a, b) => Number(b.timestamp) - Number(a.timestamp)
+    const allEvents = [...(referenceLineData || []), ...eventReferenceLines]
+
+    // Remove duplicates based on timestamp and key
+    const uniqueEvents = allEvents.filter(
+      (event, index, array) => array.findIndex((e) => e.timestamp === event.timestamp && e.key === event.key) === index
     )
+
+    return uniqueEvents.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
   }, [referenceLineData, eventReferenceLines])
 
   return (
@@ -512,11 +534,6 @@ export function LocalChart({
           service={service}
           isFullscreen={isFullscreen}
         >
-          {/* Render reference lines for events of type 'event' */}
-          {!hideEvents &&
-            mergedReferenceLineData
-              .filter((event) => event.type === 'event')
-              .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, false))}
           {children}
         </ChartContent>
       </Section>
@@ -536,11 +553,6 @@ export function LocalChart({
             service={service}
             isFullscreen
           >
-            {/* Render reference lines for events of type 'event' in modal as well */}
-            {!hideEvents &&
-              mergedReferenceLineData
-                .filter((event) => event.type === 'event')
-                .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, true))}
             {children}
           </ChartContent>
         </ModalChart>
@@ -553,13 +565,15 @@ export default LocalChart
 
 // Utility function to create reference lines with better clickable areas
 function createAlignedReferenceLine(
+  label: string,
   event: ReferenceLineEvent,
   hoveredEventKey: string | null,
   setHoveredEventKey: (key: string | null) => void,
   isModal = false
 ) {
-  const strokeWidth = isModal ? 4 : 3
-  const opacity = hoveredEventKey === event.key ? 1 : isModal ? 0.6 : 0.4
+  const key = `${label}-${event.key}`
+  const strokeWidth = isModal ? 4 : 2
+  const opacity = hoveredEventKey === key ? 1 : isModal ? 0.6 : 0.4
 
   return (
     <ReferenceLine
@@ -570,14 +584,14 @@ function createAlignedReferenceLine(
       opacity={opacity}
       strokeWidth={strokeWidth}
       onMouseEnter={() => {
-        setHoveredEventKey(event.key)
+        setHoveredEventKey(key)
       }}
       onMouseLeave={() => {
         setHoveredEventKey(null)
       }}
       style={{ cursor: 'pointer' }}
       label={{
-        value: hoveredEventKey === event.key ? event.reason : undefined,
+        value: hoveredEventKey === key ? event.reason : undefined,
         position: 'top',
         fill: event.color || 'var(--color-brand-500)',
         fontSize: 12,

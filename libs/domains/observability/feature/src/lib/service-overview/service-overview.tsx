@@ -109,7 +109,7 @@ function ServiceOverviewContent() {
               />
               {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
               {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
-              <CardPercentile99 clusterId={environment.cluster_id} serviceId={applicationId} />
+              {hasPublicPort && <CardPercentile99 clusterId={environment.cluster_id} serviceId={applicationId} />}
             </div>
           </div>
         </Section>
@@ -129,20 +129,22 @@ function ServiceOverviewContent() {
             )}
           </div>
         </Section>
-        <Section className="gap-4">
-          <Heading weight="medium">Network</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <NetworkRequestStatusChart clusterId={environment.cluster_id} serviceId={applicationId} />
+        {hasPublicPort && (
+          <Section className="gap-4">
+            <Heading weight="medium">Network</Heading>
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'grid-cols-2')}>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <NetworkRequestStatusChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              </div>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <NetworkRequestDurationChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              </div>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <NetworkRequestSizeChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              </div>
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <NetworkRequestDurationChart clusterId={environment.cluster_id} serviceId={applicationId} />
-            </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <NetworkRequestSizeChart clusterId={environment.cluster_id} serviceId={applicationId} />
-            </div>
-          </div>
-        </Section>
+          </Section>
+        )}
       </div>
     </div>
   )

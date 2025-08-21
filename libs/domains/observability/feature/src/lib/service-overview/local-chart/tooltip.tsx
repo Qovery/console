@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Kbd } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -137,7 +138,7 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
 }
 
 // Tooltip component for displaying metric and events details
-export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
+export const Tooltip = memo(({ active, unit, payload, customLabel }: TooltipProps) => {
   const metaKey = useFormatHotkeys('meta')
 
   if (!active || !payload || payload.length === 0) return null
@@ -196,6 +197,6 @@ export function Tooltip({ active, unit, payload, customLabel }: TooltipProps) {
       )}
     </div>
   )
-}
+})
 
 export default Tooltip

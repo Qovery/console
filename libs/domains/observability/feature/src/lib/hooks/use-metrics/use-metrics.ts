@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
@@ -35,6 +35,12 @@ interface UseMetricsProps {
   isLiveUpdateEnabled?: boolean
 }
 
+// Helpers for alignment (timestamps in seconds)
+// Needed to avoid issues with Prometheus when the time range is not aligned with the step interval
+const ALIGN_SEC = 15
+const alignStartSec = (ts?: string) => (ts == null ? undefined : Math.floor(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
+const alignEndSec = (ts?: string) => (ts == null ? undefined : Math.ceil(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
+
 // Helper hook to safely get live update setting from context
 function useLiveUpdateSetting(): boolean {
   try {
@@ -61,6 +67,9 @@ export function useMetrics({
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
 
+  const alignedStart = alignStartSec(startTimestamp)
+  const alignedEnd = alignEndSec(endTimestamp)
+
   const step = useMemo(() => {
     // TODO: Verify these step intervals match actual Prometheus scrape_interval configuration
     // Actual scrape_interval = 15s
@@ -69,19 +78,19 @@ export function useMetrics({
     if (timeRange === '5m') return '15000ms' // 15 seconds (match actual scrape_interval)
     if (timeRange === '15m') return '30000ms' // 30 seconds for longer ranges (2x scrape_interval)
     if (timeRange === '30m') return '60000ms' // 1 minute for longer ranges (4x scrape_interval)
-    if (startTimestamp && endTimestamp) {
-      return calculateDynamicRange(startTimestamp, endTimestamp)
+    if (alignedStart && alignedEnd) {
+      return calculateDynamicRange(alignedStart, alignedEnd)
     }
     return '15000ms' // Default: 15 seconds (match actual scrape_interval)
-  }, [timeRange, startTimestamp, endTimestamp])
+  }, [timeRange, alignedStart, alignedEnd])
 
   const queryResult = useQuery({
     ...observability.observability({
       clusterId,
       query,
       queryRange,
-      startTimestamp,
-      endTimestamp,
+      startTimestamp: alignedStart,
+      endTimestamp: alignedEnd,
       timeRange,
       step,
     }),
@@ -117,31 +126,34 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
-  let stepMs: number
 
-  if (durationMs <= 12 * 60 * 60 * 1000) {
-    // < 12h
-    stepMs = 15000
-  } else if (durationMs < 24 * 60 * 60 * 1000) {
-    // < 24h
-    stepMs = 30000
-  } else if (durationMs < 48 * 60 * 60 * 1000) {
-    // < 48h
-    stepMs = 60000
-  } else if (durationMs < 7 * 24 * 60 * 60 * 1000) {
-    // < 7d
-    stepMs = 120000
-  } else if (durationMs < 30 * 24 * 60 * 60 * 1000) {
-    // < 30d
-    stepMs = 300000
-  } else if (durationMs < 60 * 24 * 60 * 60 * 1000) {
-    // < 60d
-    stepMs = 1800000
-  } else {
-    stepMs = 7200000 // > 60d
-  }
+  // Allowed, quantized step values (in ms) - expanded for longer time ranges
+  const allowedStepsMs = [
+    15000, // 15s
+    30000, // 30s
+    60000, // 1m
+    120000, // 2m
+    300000, // 5m
+    600000, // 10m
+    900000, // 15m
+    1800000, // 30m
+    3600000, // 1h
+    7200000, // 2h
+    10800000, // 3h - added for better 12h+ range optimization
+    21600000, // 6h - added for better 24h+ range optimization
+  ] as const
 
-  stepMs = stepMs + offsetMultiplier * 100
+  // Cap points by escalating to the next quantized step until under target
+  const MAX_POINTS_TARGET = 150
 
-  return `${stepMs}ms`
+  // Minimal step to respect the max points target
+  const minimalStepForCapMs = Math.ceil(durationMs / MAX_POINTS_TARGET)
+
+  // Round up to the nearest allowed step
+  const roundedStepMs =
+    allowedStepsMs.find((step) => step >= minimalStepForCapMs) ?? allowedStepsMs[allowedStepsMs.length - 1]
+
+  const finalStepMs = roundedStepMs + offsetMultiplier * 100
+
+  return `${finalStepMs}ms`
 }

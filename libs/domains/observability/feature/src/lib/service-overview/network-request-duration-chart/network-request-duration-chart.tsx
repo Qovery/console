@@ -12,7 +12,7 @@ const queryDuration50 = (serviceId: string) => `
   * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
-        label_qovery_com_associated_service_id =~ "${serviceId}"
+        label_qovery_com_associated_service_id =  "${serviceId}"
       }
     )
   )
@@ -25,7 +25,7 @@ const queryDuration99 = (serviceId: string) => `
   * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
-        label_qovery_com_associated_service_id =~ "${serviceId}"
+        label_qovery_com_associated_service_id =  "${serviceId}"
       }
   )
 )
@@ -37,7 +37,7 @@ const queryDuration95 = (serviceId: string) => `
   * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
-        label_qovery_com_associated_service_id =~ "${serviceId}"
+        label_qovery_com_associated_service_id =  "${serviceId}"
       }
     )
   )

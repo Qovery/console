@@ -1,4 +1,4 @@
-import { type PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
+import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
@@ -82,32 +82,42 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   // Zoom reset functionality
   const [zoomResetFunctions, setZoomResetFunctions] = useState<(() => void)[]>([])
 
-  const registerZoomReset = (resetFn: () => void) => {
+  // Actions
+  const [hideEvents, setHideEvents] = useState(false)
+  const [expandCharts, setExpandCharts] = useState(false)
+
+  const [hasCalendarValue, setHasCalendarValue] = useState(false)
+  const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
+
+  const registerZoomReset = useCallback((resetFn: () => void) => {
     setZoomResetFunctions((prev) => [...prev, resetFn])
     // Return cleanup function
     return () => {
       setZoomResetFunctions((prev) => prev.filter((fn) => fn !== resetFn))
     }
-  }
+  }, [])
 
-  const resetChartZoom = () => {
+  const resetChartZoom = useCallback(() => {
     zoomResetFunctions.forEach((resetFn) => resetFn())
     setIsAnyChartZoomed(false) // Reset zoom state when resetting charts
-  }
+  }, [zoomResetFunctions])
 
   // Zoom state tracking - simplified to just track boolean state
   const [isAnyChartZoomed, setIsAnyChartZoomed] = useState(false)
 
-  const handleTimeRangeChange = (range: TimeRangeOption) => {
-    // Reset zoom first, then change time range
-    resetChartZoom()
-    // Track this as the last dropdown selection
-    setLastDropdownTimeRange(range)
-    // Create a new time range handler that doesn't cause circular dependencies
-    createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)(range)
-  }
+  const handleTimeRangeChange = useCallback(
+    (range: TimeRangeOption) => {
+      // Reset zoom first, then change time range
+      resetChartZoom()
+      // Track this as the last dropdown selection
+      setLastDropdownTimeRange(range)
+      // Create a new time range handler that doesn't cause circular dependencies
+      createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)(range)
+    },
+    [resetChartZoom]
+  )
 
-  const handleZoomTimeRangeChange = (startTimestamp: number, endTimestamp: number) => {
+  const handleZoomTimeRangeChange = useCallback((startTimestamp: number, endTimestamp: number) => {
     // Convert timestamps to ISO strings and update dates
     const startDateISO = new Date(startTimestamp * 1000).toISOString()
     const endDateISO = new Date(endTimestamp * 1000).toISOString()
@@ -115,7 +125,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setStartDate(startDateISO)
     setEndDate(endDateISO)
     setHasCalendarValue(true) // Show custom date range in the UI
-  }
+  }, [])
 
   // Update every 15 seconds to match actual scrape_interval
   // use-metrics.tsx: refetchInterval: 15_000ms
@@ -171,7 +181,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
     return () => clearInterval(interval)
-  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen])
+  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen, hasCalendarValue])
 
   const startTimestamp = convertDatetoTimestamp(startDate).toString()
   const endTimestamp = convertDatetoTimestamp(endDate).toString()
@@ -182,45 +192,68 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
       : timeRange
 
-  const [hideEvents, setHideEvents] = useState(false)
-  const [expandCharts, setExpandCharts] = useState(false)
-
-  const [hasCalendarValue, setHasCalendarValue] = useState(false)
-
-  const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
-
-  const value: ServiceOverviewContextType = {
-    useLocalTime,
-    setUseLocalTime,
-    timeRange,
-    setTimeRange,
-    startDate,
-    setStartDate,
-    endDate,
-    setEndDate,
-    startTimestamp,
-    endTimestamp,
-    queryTimeRange,
-    handleTimeRangeChange,
-    handleZoomTimeRangeChange,
-    resetChartZoom,
-    registerZoomReset,
-    isAnyChartZoomed,
-    setIsAnyChartZoomed,
-    setHideEvents,
-    hideEvents,
-    expandCharts,
-    setExpandCharts,
-    hasCalendarValue,
-    setHasCalendarValue,
-    hoveredEventKey,
-    setHoveredEventKey,
-    isLiveUpdateEnabled,
-    setIsLiveUpdateEnabled,
-    isDatePickerOpen,
-    setIsDatePickerOpen,
-    lastDropdownTimeRange,
-  }
+  const value = useMemo<ServiceOverviewContextType>(
+    () => ({
+      useLocalTime,
+      setUseLocalTime,
+      timeRange,
+      setTimeRange,
+      startDate,
+      setStartDate,
+      endDate,
+      setEndDate,
+      startTimestamp,
+      endTimestamp,
+      queryTimeRange,
+      handleTimeRangeChange,
+      handleZoomTimeRangeChange,
+      resetChartZoom,
+      registerZoomReset,
+      isAnyChartZoomed,
+      setIsAnyChartZoomed,
+      setHideEvents,
+      hideEvents,
+      expandCharts,
+      setExpandCharts,
+      hasCalendarValue,
+      setHasCalendarValue,
+      hoveredEventKey,
+      setHoveredEventKey,
+      isLiveUpdateEnabled,
+      setIsLiveUpdateEnabled,
+      isDatePickerOpen,
+      setIsDatePickerOpen,
+      lastDropdownTimeRange,
+    }),
+    [
+      useLocalTime,
+      timeRange,
+      startDate,
+      endDate,
+      startTimestamp,
+      endTimestamp,
+      queryTimeRange,
+      handleTimeRangeChange,
+      handleZoomTimeRangeChange,
+      resetChartZoom,
+      registerZoomReset,
+      isAnyChartZoomed,
+      setIsAnyChartZoomed,
+      setHideEvents,
+      hideEvents,
+      expandCharts,
+      setExpandCharts,
+      hasCalendarValue,
+      setHasCalendarValue,
+      hoveredEventKey,
+      setHoveredEventKey,
+      isLiveUpdateEnabled,
+      setIsLiveUpdateEnabled,
+      isDatePickerOpen,
+      setIsDatePickerOpen,
+      lastDropdownTimeRange,
+    ]
+  )
 
   return <ServiceOverviewContext.Provider value={value}>{children}</ServiceOverviewContext.Provider>
 }
