@@ -29,7 +29,14 @@ export const observability = createQueryKeys('observability', {
         query,
         startTimestamp,
         endTimestamp,
-        step
+        step,
+        undefined,
+        undefined,
+        "True",
+        "True",
+        "auto",
+        undefined,
+        undefined,,
       )
       return response.data.metrics && JSON.parse(response.data.metrics)
     },
