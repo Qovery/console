@@ -34,21 +34,24 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
       className={twMerge('relative flex h-[300px] justify-center text-xs focus:outline-none', className)}
       {...htmlProps}
     >
-      <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
-        {children}
-      </RechartsPrimitive.ResponsiveContainer>
+      {!isLoading && !isEmpty ? (
+        <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
+          {children}
+        </RechartsPrimitive.ResponsiveContainer>
+      ) : (
+        <div className="h-full w-full">
+          <ChartSkeleton />
+        </div>
+      )}
 
       {(isLoading || (isEmpty && !isLoading)) && (
         <div
           className={twMerge(
-            'absolute inset-0 bg-white p-4 transition-all ease-in-out',
+            'absolute inset-0 p-4 transition-all ease-in-out',
             isLoading ? 'visible opacity-100 duration-100' : 'visible opacity-100 duration-150'
           )}
           style={{ pointerEvents: isLoading ? 'auto' : 'none' }}
         >
-          <div className="h-full w-full">
-            <ChartSkeleton />
-          </div>
           <div className="absolute inset-0 mt-6 flex flex-col items-center justify-center gap-2">
             {isLoading ? (
               <>
