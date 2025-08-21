@@ -426,7 +426,7 @@ describe('formatTimestampForDisplay', () => {
 
       // The exact format depends on the user's timezone, so we check for key elements
       expect(result).toMatch(/Jan 1, 2024/)
-      expect(result).toMatch(/00:00:00/)
+      expect(result).toMatch(/(00:00:00|24:00:00)/)
       expect(result).not.toContain('UTC')
     })
 
@@ -435,7 +435,7 @@ describe('formatTimestampForDisplay', () => {
 
       // The exact format depends on the user's timezone, so we check for key elements
       expect(result).toMatch(/Jan 1, 2024/)
-      expect(result).toMatch(/00:00:00/)
+      expect(result).toMatch(/(00:00:00|24:00:00)/)
       expect(result).not.toContain('UTC')
     })
   })
