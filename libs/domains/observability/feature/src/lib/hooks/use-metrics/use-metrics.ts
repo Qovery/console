@@ -35,6 +35,12 @@ interface UseMetricsProps {
   isLiveUpdateEnabled?: boolean
 }
 
+// Helpers for alignment (timestamps in seconds)
+// Needed to avoid issues with Prometheus when the time range is not aligned with the step interval
+const ALIGN_SEC = 15
+const alignStartSec = (ts?: string) => (ts == null ? undefined : Math.floor(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
+const alignEndSec = (ts?: string) => (ts == null ? undefined : Math.ceil(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
+
 // Helper hook to safely get live update setting from context
 function useLiveUpdateSetting(): boolean {
   try {
@@ -61,6 +67,9 @@ export function useMetrics({
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
 
+  const alignedStart = alignStartSec(startTimestamp)
+  const alignedEnd = alignEndSec(endTimestamp)
+
   const step = useMemo(() => {
     // TODO: Verify these step intervals match actual Prometheus scrape_interval configuration
     // Actual scrape_interval = 15s
@@ -69,19 +78,19 @@ export function useMetrics({
     if (timeRange === '5m') return '15000ms' // 15 seconds (match actual scrape_interval)
     if (timeRange === '15m') return '30000ms' // 30 seconds for longer ranges (2x scrape_interval)
     if (timeRange === '30m') return '60000ms' // 1 minute for longer ranges (4x scrape_interval)
-    if (startTimestamp && endTimestamp) {
-      return calculateDynamicRange(startTimestamp, endTimestamp)
+    if (alignedStart && alignedEnd) {
+      return calculateDynamicRange(alignedStart, alignedEnd)
     }
     return '15000ms' // Default: 15 seconds (match actual scrape_interval)
-  }, [timeRange, startTimestamp, endTimestamp])
+  }, [timeRange, alignedStart, alignedEnd])
 
   const queryResult = useQuery({
     ...observability.observability({
       clusterId,
       query,
       queryRange,
-      startTimestamp,
-      endTimestamp,
+      startTimestamp: alignedStart,
+      endTimestamp: alignedEnd,
       timeRange,
       step,
     }),
