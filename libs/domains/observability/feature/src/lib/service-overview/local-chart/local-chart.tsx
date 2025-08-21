@@ -225,7 +225,21 @@ export const ChartContent = memo(function ChartContent({
           />
           <Chart.Tooltip
             isAnimationActive={false}
-            content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
+            content={
+              zoomState.refAreaLeft && zoomState.refAreaRight ? (
+                <Chart.TooltipContent
+                  title={tooltipLabel ?? label}
+                  isDragging={true}
+                  dragStartTime={Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
+                  dragEndTime={Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
+                  useLocalTime={useLocalTime}
+                />
+              ) : !onHoverHideTooltip ? (
+                <div />
+              ) : (
+                <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
+              )
+            }
           />
           {!hideEvents &&
             referenceLineData?.map((event) =>

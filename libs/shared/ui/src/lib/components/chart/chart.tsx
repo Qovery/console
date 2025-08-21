@@ -4,6 +4,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
+import { formatTimestampForDisplay } from './chart-utils'
 
 // Define the payload item type for the chart tooltip
 interface TooltipPayloadItem {
@@ -93,10 +94,25 @@ interface ChartTooltipContentProps {
   formatValue?: (value: string, dataKey: string) => string
   formatLabel?: (dataKey: string) => string
   maxItems?: number
+  isDragging?: boolean
+  dragStartTime?: number | string
+  dragEndTime?: number | string
+  useLocalTime?: boolean
 }
 
 const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>(function ChartTooltipContent(
-  { active, payload, title, formatValue, formatLabel, maxItems = 15 },
+  {
+    active,
+    payload,
+    title,
+    formatValue,
+    formatLabel,
+    maxItems = 15,
+    isDragging,
+    dragStartTime,
+    dragEndTime,
+    useLocalTime = true,
+  },
   ref
 ) {
   const filteredPayload = useMemo(
@@ -108,7 +124,33 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
     [payload]
   )
 
-  if (!active || !payload || payload.length === 0) return null
+  if (!active) return null
+
+  // If dragging, show date range instead of normal tooltip
+  if (isDragging && dragStartTime && dragEndTime) {
+    const startTime = typeof dragStartTime === 'number' ? dragStartTime : parseInt(dragStartTime.toString())
+    const endTime = typeof dragEndTime === 'number' ? dragEndTime : parseInt(dragEndTime.toString())
+
+    return (
+      <div ref={ref} className="rounded-md bg-neutral-600 shadow-lg">
+        <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 p-3 pb-2">
+          <span className="text-xs text-neutral-50">Selected Range</span>
+        </div>
+        <div className="space-y-1 p-3 pt-0">
+          <div className="flex items-center justify-between gap-4 text-xs">
+            <span className="text-neutral-50">Start:</span>
+            <span className="text-neutral-250">{formatTimestampForDisplay(startTime, useLocalTime)}</span>
+          </div>
+          <div className="flex items-center justify-between gap-4 text-xs">
+            <span className="text-neutral-50">End:</span>
+            <span className="text-neutral-250">{formatTimestampForDisplay(endTime, useLocalTime)}</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!payload || payload.length === 0) return null
 
   const dataPoint = payload[0]?.payload
 
