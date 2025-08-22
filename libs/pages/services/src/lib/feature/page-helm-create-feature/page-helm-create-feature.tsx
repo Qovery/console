@@ -1,4 +1,9 @@
-import { type GitProviderEnum, type GitTokenResponse, type HelmRequest } from 'qovery-typescript-axios'
+import {
+  type GitProviderEnum,
+  type GitRepository,
+  type GitTokenResponse,
+  type HelmRequest,
+} from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
@@ -24,7 +29,7 @@ export const steps: { title: string }[] = [
 export interface HelmGeneralData
   extends Omit<HelmRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec'> {
   source_provider: 'HELM_REPOSITORY' | 'GIT'
-  repository: string
+  git_repository: GitRepository
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']

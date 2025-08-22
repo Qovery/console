@@ -51,7 +51,7 @@ export function StepValuesOverrideFilesFeature() {
     .with('GIT', () => {
       return {
         git_repository: {
-          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+          url: generalData.git_repository?.url ?? '',
           branch: generalData.branch,
           root_path: generalData.root_path,
           git_token_id: generalData.git_token_id,
@@ -60,7 +60,7 @@ export function StepValuesOverrideFilesFeature() {
     })
     .with('HELM_REPOSITORY', () => ({
       helm_repository: {
-        repository: generalData.repository,
+        repository: generalData.git_repository?.url,
         chart_name: generalData.chart_name,
         chart_version: generalData.chart_version,
       },
@@ -81,14 +81,14 @@ export function StepValuesOverrideFilesFeature() {
   const watchFieldType = valuesOverrideFileForm.watch('type')
   const watchFieldGitProvider = valuesOverrideFileForm.watch('provider')
   const watchFieldGitTokenId = valuesOverrideFileForm.watch('git_token_id')
-  const watchFieldGitRepository = valuesOverrideFileForm.watch('repository')
+  const watchFieldGitRepository = valuesOverrideFileForm.watch('git_repository')
   const watchFieldGitBranch = valuesOverrideFileForm.watch('branch')
   const watchFieldIsPublicRepository = valuesOverrideFileForm.watch('is_public_repository')
 
   const disabledContinueButton = match(watchFieldType)
     .with('GIT_REPOSITORY', () => {
-      const { provider, repository, branch, paths } = valuesOverrideFileForm.watch()
-      return !provider || !repository || !branch || !paths
+      const { provider, git_repository, branch, paths } = valuesOverrideFileForm.watch()
+      return !provider || !git_repository || !branch || !paths
     })
     .with('YAML', () => {
       const { content } = valuesOverrideFileForm.watch()

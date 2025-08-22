@@ -14,7 +14,7 @@ import {
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl, parseCmd } from '@qovery/shared/util-js'
+import { parseCmd } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepSummaryFeature() {
@@ -50,7 +50,7 @@ export function StepSummaryFeature() {
       .with('GIT', () => {
         return {
           git_repository: {
-            url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+            url: generalData.git_repository?.url ?? '',
             branch: generalData.branch,
             root_path: generalData.root_path,
             git_token_id: generalData.git_token_id,
@@ -59,7 +59,7 @@ export function StepSummaryFeature() {
       })
       .with('HELM_REPOSITORY', () => ({
         helm_repository: {
-          repository: generalData.repository,
+          repository: generalData.git_repository?.url,
           chart_name: generalData.chart_name,
           chart_version: generalData.chart_version,
         },
@@ -72,7 +72,7 @@ export function StepSummaryFeature() {
           git: {
             git_repository: {
               provider: valuesOverrideFileData.provider ?? 'GITHUB',
-              url: buildGitRepoUrl(valuesOverrideFileData.provider ?? '', valuesOverrideFileData.repository!),
+              url: valuesOverrideFileData.git_repository?.url ?? '',
               branch: valuesOverrideFileData.branch!,
               git_token_id: valuesOverrideFileData.git_token_id,
             },
@@ -178,7 +178,7 @@ export function StepSummaryFeature() {
               {generalData.source_provider === 'GIT' && (
                 <ul className="list-none space-y-2 text-sm text-neutral-400">
                   <li>
-                    <strong className="font-medium">Repository:</strong> {generalData.repository}
+                    <strong className="font-medium">Repository:</strong> {generalData.git_repository?.name}
                   </li>
                   <li>
                     <strong className="font-medium">Branch:</strong> {generalData.branch}
@@ -193,7 +193,7 @@ export function StepSummaryFeature() {
                 <ul className="list-none space-y-2 text-sm text-neutral-400">
                   <li>
                     <strong className="font-medium">Repository:</strong>{' '}
-                    {helmRepositories.find(({ id }) => id === generalData.repository)?.name}
+                    {helmRepositories.find(({ id }) => id === generalData.git_repository?.name)?.name}
                   </li>
                   <li>
                     <strong className="font-medium">Chart name:</strong> {generalData.chart_name}
@@ -257,7 +257,7 @@ export function StepSummaryFeature() {
                       <strong className="font-medium">From Git Provider:</strong> {valuesOverrideFileData.provider}
                     </li>
                     <li>
-                      <strong className="font-medium">Repository:</strong> {valuesOverrideFileData.repository}
+                      <strong className="font-medium">Repository:</strong> {valuesOverrideFileData.git_repository?.name}
                     </li>
                     <li>
                       <strong className="font-medium">Branch:</strong> {valuesOverrideFileData.branch}

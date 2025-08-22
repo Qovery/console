@@ -38,7 +38,7 @@ export function StepGeneralFeature() {
   const watchFieldProvider = generalForm.watch('source_provider')
   const watchFieldGitProvider = generalForm.watch('provider')
   const watchFieldGitTokenId = generalForm.watch('git_token_id')
-  const watchFieldGitRepository = generalForm.watch('repository')
+  const watchFieldGitRepository = generalForm.watch('git_repository')
   const watchFieldIsPublicRepository = generalForm.watch('is_public_repository')
 
   // NOTE: Validation corner case where git settings can be in loading state

@@ -19,7 +19,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { buildGitRepoUrl, joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
+import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleGitApplicationSubmit = (
@@ -118,7 +118,7 @@ export const handleJobSubmit = (
   if (isJobGitSource(job.source)) {
     const git_repository = {
       provider: data.provider ?? 'GITHUB',
-      url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
+      url: data.git_repository?.url ?? '',
       branch: data.branch,
       root_path: data.root_path,
       git_token_id: data.git_token_id,
@@ -178,7 +178,7 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
     .with('GIT', (): HelmRequestAllOfSourceOneOf => {
       return {
         git_repository: {
-          url: buildGitRepoUrl(data.provider ?? '', data.repository ?? ''),
+          url: data.git_repository?.url ?? '',
           branch: data.branch,
           root_path: data.root_path,
           git_token_id: data.git_token_id,
@@ -189,7 +189,7 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
       'HELM_REPOSITORY',
       (): HelmRequestAllOfSourceOneOf1 => ({
         helm_repository: {
-          repository: data.repository,
+          repository: data.git_repository?.url,
           chart_name: data.chart_name,
           chart_version: data.chart_version,
         },
