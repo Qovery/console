@@ -29,7 +29,6 @@ export interface ApplicationGeneralData {
 
   // application
   branch?: string
-  repository?: string
   git_repository?: ApplicationGitRepositoryRequest
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
