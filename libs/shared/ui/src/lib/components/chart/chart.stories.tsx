@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { Chart, useZoomableChart } from './chart'
+import { Chart, ZoomRangeTooltip, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 
 const CHART_COLORS = [
@@ -253,12 +253,9 @@ The chart supports mixed visualization types including area charts, bar charts, 
           <Tooltip
             content={
               zoomState.refAreaLeft && zoomState.refAreaRight ? (
-                <Chart.TooltipContent
-                  title="System Usage"
-                  isDragging={true}
-                  dragStartTime={Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
-                  dragEndTime={Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
-                  useLocalTime={true}
+                <ZoomRangeTooltip
+                  startTime={Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
+                  endTime={Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
                 />
               ) : (
                 <Chart.TooltipContent

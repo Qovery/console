@@ -1,6 +1,6 @@
 import { ComposedChart, Line } from 'recharts'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { Chart } from './chart'
+import { Chart, ZoomRangeTooltip } from './chart'
 
 // Mock ResizeObserver
 class MockResizeObserver {
@@ -270,101 +270,41 @@ describe('Chart.TooltipContent', () => {
     })
   })
 
-  describe('drag range functionality', () => {
-    it('shows date range when dragging is active', () => {
+  // ZoomRangeTooltip
+  describe('ZoomRangeTooltip', () => {
+    it('renders zoom range tooltip with start and end times', () => {
       const startTime = 1704067200000 // 2024-01-01 00:00:00
       const endTime = 1704070800000 // 2024-01-01 01:00:00
 
       renderWithProviders(
-        <Chart.TooltipContent
-          active={true}
-          title="Test Chart"
-          isDragging={true}
-          dragStartTime={startTime}
-          dragEndTime={endTime}
-          useLocalTime={true}
-        />
+        <ZoomRangeTooltip active={true} startTime={startTime} endTime={endTime} title="CPU Range" useLocalTime={true} />
       )
 
-      expect(screen.getByText('Selected Range')).toBeInTheDocument()
+      expect(screen.getByText('CPU Range')).toBeInTheDocument()
       expect(screen.getByText('Start:')).toBeInTheDocument()
       expect(screen.getByText('End:')).toBeInTheDocument()
     })
 
-    it('shows normal tooltip when not dragging', () => {
-      renderWithProviders(<Chart.TooltipContent {...mockProps} isDragging={false} />)
-
-      expect(screen.getByText('Test Chart')).toBeInTheDocument()
-      expect(screen.queryByText('Selected Range')).not.toBeInTheDocument()
-    })
-
-    it('returns null when dragging but no drag times provided', () => {
+    it('returns null when not active', () => {
       const { container } = renderWithProviders(
-        <Chart.TooltipContent active={true} title="Test Chart" isDragging={true} />
+        <ZoomRangeTooltip active={false} startTime={1704067200000} endTime={1704070800000} />
       )
 
       expect(container).toBeEmptyDOMElement()
     })
 
-    it('formats time in UTC when useLocalTime is false', () => {
-      const startTime = 1704067200000 // 2024-01-01 00:00:00 UTC
-      const endTime = 1704070800000 // 2024-01-01 01:00:00 UTC
-
-      renderWithProviders(
-        <Chart.TooltipContent
-          active={true}
-          title="Test Chart"
-          isDragging={true}
-          dragStartTime={startTime}
-          dragEndTime={endTime}
-          useLocalTime={false}
-        />
-      )
+    it('uses default title when none provided', () => {
+      renderWithProviders(<ZoomRangeTooltip startTime={1704067200000} endTime={1704070800000} />)
 
       expect(screen.getByText('Selected Range')).toBeInTheDocument()
-      expect(screen.getByText('Jan 1, 2024, 00:00:00 UTC')).toBeInTheDocument()
-      expect(screen.getByText('Jan 1, 2024, 01:00:00 UTC')).toBeInTheDocument()
     })
 
-    it('formats time in local time when useLocalTime is true', () => {
-      const startTime = 1704067200000 // 2024-01-01 00:00:00
-      const endTime = 1704070800000 // 2024-01-01 01:00:00
+    it('handles string timestamps', () => {
+      renderWithProviders(<ZoomRangeTooltip startTime="1704067200000" endTime="1704070800000" title="Memory Range" />)
 
-      renderWithProviders(
-        <Chart.TooltipContent
-          active={true}
-          title="Test Chart"
-          isDragging={true}
-          dragStartTime={startTime}
-          dragEndTime={endTime}
-          useLocalTime={true}
-        />
-      )
-
-      expect(screen.getByText('Selected Range')).toBeInTheDocument()
-      // The exact format will depend on the user's timezone, so we just check that the times are displayed
+      expect(screen.getByText('Memory Range')).toBeInTheDocument()
       expect(screen.getByText('Start:')).toBeInTheDocument()
       expect(screen.getByText('End:')).toBeInTheDocument()
-    })
-
-    it('handles string timestamps correctly', () => {
-      const startTime = '1704067200000' // 2024-01-01 00:00:00 UTC
-      const endTime = '1704070800000' // 2024-01-01 01:00:00 UTC
-
-      renderWithProviders(
-        <Chart.TooltipContent
-          active={true}
-          title="Test Chart"
-          isDragging={true}
-          dragStartTime={startTime}
-          dragEndTime={endTime}
-          useLocalTime={false}
-        />
-      )
-
-      expect(screen.getByText('Selected Range')).toBeInTheDocument()
-      expect(screen.getByText('Jan 1, 2024, 00:00:00 UTC')).toBeInTheDocument()
-      expect(screen.getByText('Jan 1, 2024, 01:00:00 UTC')).toBeInTheDocument()
     })
   })
 })

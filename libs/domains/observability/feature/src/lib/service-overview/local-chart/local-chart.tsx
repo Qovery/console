@@ -15,6 +15,7 @@ import {
   Section,
   Skeleton,
   Tooltip,
+  ZoomRangeTooltip,
   createXAxisConfig,
   getTimeGranularity,
   useZoomableChart,
@@ -231,11 +232,9 @@ export const ChartContent = memo(function ChartContent({
             isAnimationActive={false}
             content={
               zoomState.refAreaLeft && zoomState.refAreaRight ? (
-                <Chart.TooltipContent
-                  title={tooltipLabel ?? label}
-                  isDragging={true}
-                  dragStartTime={Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
-                  dragEndTime={Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
+                <ZoomRangeTooltip
+                  startTime={Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
+                  endTime={Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
                   useLocalTime={useLocalTime}
                 />
               ) : !onHoverHideTooltip ? (
