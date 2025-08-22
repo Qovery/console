@@ -6,6 +6,7 @@ import { useEnvironments } from '@qovery/domains/environments/feature'
 import { useFetchEventTargets } from '@qovery/domains/event'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
+import { type SelectOptionValue } from '@qovery/shared/interfaces'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import CustomFilter from '../../ui/custom-filter/custom-filter'
 import { hasEnvironment, queryParamsValues } from '../page-general-feature/page-general-feature'
@@ -61,7 +62,7 @@ export function CustomFilterFeature({ handleClearFilter }: CustomFilterFeaturePr
     setIsOpenTimestamp(false)
   }
 
-  const onChangeType = (name: string, value?: string | string[]) => {
+  const onChangeType = (name: string, value?: SelectOptionValue | SelectOptionValue[]) => {
     if (name === 'targetType') {
       setQueryParams({
         targetType: value as OrganizationEventTargetType | undefined,

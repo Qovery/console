@@ -1,4 +1,9 @@
-import { type GitProviderEnum, type GitTokenResponse, type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
+import {
+  type GitProviderEnum,
+  type GitRepository,
+  type GitTokenResponse,
+  type JobLifecycleTypeEnum,
+} from 'qovery-typescript-axios'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
@@ -24,7 +29,7 @@ export interface JobGeneralData {
 
   // application - git source
   branch?: string
-  repository?: string
+  git_repository?: GitRepository
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']

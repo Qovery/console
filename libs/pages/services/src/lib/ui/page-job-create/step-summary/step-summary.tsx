@@ -102,7 +102,7 @@ export function StepSummary(props: StepSummaryProps) {
               {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
                 <>
                   <li>
-                    <strong className="font-medium">Repository:</strong> {props.generalData.repository}
+                    <strong className="font-medium">Repository:</strong> {props.generalData.git_repository?.url}
                   </li>
                   <li>
                     <strong className="font-medium">Branch:</strong> {props.generalData.branch}

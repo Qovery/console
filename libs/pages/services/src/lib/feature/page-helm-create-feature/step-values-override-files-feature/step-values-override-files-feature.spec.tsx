@@ -6,14 +6,43 @@ import { type HelmGeneralData } from '../page-helm-create-feature'
 import { HelmCreateContext } from '../page-helm-create-feature'
 import StepValuesOverrideFilesFeature from './step-values-override-files-feature'
 
+const defaultValues: HelmGeneralData = {
+  source_provider: 'GIT',
+  provider: 'GITHUB',
+  git_repository: {
+    id: '1',
+    name: 'Qovery/github',
+    url: 'https://github.com/Qovery/github',
+    default_branch: 'main',
+    is_private: false,
+  },
+  arguments: '',
+  timeout_sec: '300',
+  name: 'nginx',
+  auto_deploy: false,
+}
+
+const defaultValuesValuesOverrideFile: HelmValuesFileData = {
+  type: 'GIT_REPOSITORY',
+  provider: 'GITHUB',
+  git_repository: {
+    id: '1',
+    name: 'Qovery/github',
+    url: 'https://github.com/Qovery/github',
+    default_branch: 'main',
+    is_private: false,
+  },
+  branch: 'main',
+  paths: '/',
+}
+
 describe('StepValuesOverrideFilesFeature', () => {
   it('should render successfully', () => {
     const { result: generalForm } = renderHook(() =>
       useForm<HelmGeneralData>({
         mode: 'onChange',
         defaultValues: {
-          source_provider: 'HELM_REPOSITORY',
-          repository: 'https://charts.bitnami.com/bitnami',
+          ...defaultValues,
           chart_name: 'nginx',
           chart_version: '8.9.0',
           arguments: '',
@@ -49,26 +78,14 @@ describe('StepValuesOverrideFilesFeature', () => {
     const { result: generalForm } = renderHook(() =>
       useForm<HelmGeneralData>({
         mode: 'onChange',
-        defaultValues: {
-          source_provider: 'GIT',
-          provider: 'GITHUB',
-          repository: 'Qovery/github',
-          branch: 'main',
-          root_path: '/',
-        },
+        defaultValues: defaultValues,
       })
     )
 
     const { result: valuesOverrideFileForm } = renderHook(() =>
       useForm<HelmValuesFileData>({
         mode: 'onChange',
-        defaultValues: {
-          type: 'GIT_REPOSITORY',
-          provider: 'GITHUB',
-          repository: 'Qovery/github',
-          branch: 'main',
-          paths: '/',
-        },
+        defaultValues: defaultValuesValuesOverrideFile,
       })
     )
 
@@ -102,13 +119,7 @@ describe('StepValuesOverrideFilesFeature', () => {
     const { result: generalForm } = renderHook(() =>
       useForm<HelmGeneralData>({
         mode: 'onChange',
-        defaultValues: {
-          source_provider: 'GIT',
-          provider: 'GITHUB',
-          repository: 'Qovery/github',
-          branch: 'main',
-          root_path: '/',
-        },
+        defaultValues: defaultValues,
       })
     )
 

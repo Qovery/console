@@ -31,7 +31,6 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
@@ -127,7 +126,8 @@ function prepareJobRequest({
         dockerfile_path: generalData.dockerfile_path ?? dockerfileData?.dockerfile_path,
         docker_target_build_stage: generalData.docker_target_build_stage ?? dockerfileData?.docker_target_build_stage,
         git_repository: {
-          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository || ''),
+          provider: generalData.provider ?? 'GITHUB',
+          url: generalData.git_repository?.url ?? '',
           root_path: generalData.root_path,
           branch: generalData.branch,
           git_token_id: generalData.git_token_id,

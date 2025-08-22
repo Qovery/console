@@ -13,7 +13,6 @@ import { AutoDeploySetting, useEditService, useService } from '@qovery/domains/s
 import { isHelmRepositorySource } from '@qovery/shared/enums'
 import { Button, Callout, Icon, InputText } from '@qovery/shared/ui'
 import { guessGitProvider } from '@qovery/shared/util-git'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileData> }) {
@@ -66,8 +65,7 @@ export function PageSettingsValuesOverrideFileFeature() {
         valuesOverrideFile?.git?.git_repository?.git_token_id === null
           ? undefined
           : valuesOverrideFile?.git?.git_repository?.git_token_id,
-      repository:
-        valuesOverrideFile?.git?.git_repository?.name ?? valuesOverrideFile?.git?.git_repository?.git_token_id,
+      git_repository: valuesOverrideFile?.git?.git_repository,
       branch: valuesOverrideFile?.git?.git_repository?.branch,
       paths: valuesOverrideFile?.git?.paths?.toString(),
     },
@@ -76,14 +74,14 @@ export function PageSettingsValuesOverrideFileFeature() {
   const watchFieldType = methods.watch('type')
   const watchFieldGitProvider = methods.watch('provider')
   const watchFieldGitTokenId = methods.watch('git_token_id')
-  const watchFieldGitRepository = methods.watch('repository')
+  const watchFieldGitRepository = methods.watch('git_repository')
   const watchFieldIsPublicRepository = methods.watch('is_public_repository')
   const watchFieldGitBranch = methods.watch('branch')
 
   const disabledSaveButton = match(watchFieldType)
     .with('GIT_REPOSITORY', () => {
-      const { provider, repository, branch, paths } = methods.watch()
-      return !provider || !repository || !branch || !paths
+      const { provider, git_repository, branch, paths } = methods.watch()
+      return !provider || !git_repository || !branch || !paths
     })
     .with('YAML', () => {
       const { content } = methods.watch()
@@ -100,7 +98,8 @@ export function PageSettingsValuesOverrideFileFeature() {
         return {
           git: {
             git_repository: {
-              url: buildGitRepoUrl(data['provider']!, data['repository']!),
+              provider: data['provider'] ?? 'GITHUB',
+              url: data['git_repository']?.url ?? '',
               branch: data['branch'] ?? '',
               git_token_id: data['git_token_id'],
             },

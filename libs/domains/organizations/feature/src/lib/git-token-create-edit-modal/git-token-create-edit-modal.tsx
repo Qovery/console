@@ -1,4 +1,5 @@
-import { GitProviderEnum, type GitTokenResponse } from 'qovery-typescript-axios'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import { GitProviderEnum, type GitTokenRequest, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -13,6 +14,7 @@ export interface GitTokenCreateEditModalProps {
 }
 
 export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onClose }: GitTokenCreateEditModalProps) {
+  const isGitlabSelfHostedFFEnabled = useFeatureFlagVariantKey('gitlab-self-hosted')
   const { enableAlertClickOutside } = useModal()
   const methods = useForm({
     mode: 'onChange',
@@ -23,6 +25,12 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
       description: gitToken?.description ?? '',
       workspace: gitToken?.workspace ?? undefined,
       token: '',
+      hosting: gitToken?.git_api_url
+        ? gitToken?.git_api_url === 'https://gitlab.com'
+          ? 'GITLAB'
+          : 'SELF_HOSTED'
+        : 'GITLAB',
+      git_api_url: gitToken?.git_api_url ?? '',
     },
   })
 
@@ -31,20 +39,27 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
   const { mutateAsync: editGitToken, isLoading: isLoadingEditGitToken } = useEditGitToken()
   const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken()
   const gitType = methods.watch('type')
+  const hosting = methods.watch('hosting')
 
-  const onSubmit = methods.handleSubmit(async (data) => {
+  const onSubmit = methods.handleSubmit(async (values) => {
     try {
+      const { hosting, ...data } = values
+      const gitTokenRequest: GitTokenRequest = {
+        ...data,
+        git_api_url: hosting === 'SELF_HOSTED' ? data.git_api_url : undefined,
+      }
+
       if (isEdit) {
         const response = await editGitToken({
           organizationId,
           gitTokenId: gitToken?.id ?? '',
-          gitTokenRequest: data,
+          gitTokenRequest,
         })
         onClose(response)
       } else {
         const response = await createGitToken({
           organizationId,
-          gitTokenRequest: data,
+          gitTokenRequest,
         })
         onClose(response)
       }
@@ -130,6 +145,61 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
             </div>
           )}
         />
+        {gitType === GitProviderEnum.GITLAB && isGitlabSelfHostedFFEnabled && (
+          <Controller
+            name="hosting"
+            control={methods.control}
+            rules={{
+              required: 'Please select the Gitlab hosting strategy.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <div className="mb-5">
+                <InputSelect
+                  label="Gitlab hosting strategy"
+                  onChange={(event) => {
+                    field.onChange(event)
+                  }}
+                  value={field.value}
+                  error={error?.message}
+                  options={[
+                    {
+                      label: 'Gitlab.com',
+                      value: 'GITLAB',
+                      icon: <Icon name="GITLAB" width="16px" height="16px" />,
+                    },
+                    {
+                      label: 'Self-hosted',
+                      value: 'SELF_HOSTED',
+                      icon: <Icon name="GITLAB" width="16px" height="16px" />,
+                    },
+                  ]}
+                  portal
+                />
+              </div>
+            )}
+          />
+        )}
+        {gitType === GitProviderEnum.GITLAB && hosting === 'SELF_HOSTED' && (
+          <Controller
+            name="git_api_url"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a correct URL.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-5"
+                label="Gitlab host URL"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                hint="This is the URL of your self-hosted Gitlab instance. It should be in the format https://gitlab.example.com"
+              />
+            )}
+          />
+        )}
+
         <Controller
           name="name"
           control={methods.control}

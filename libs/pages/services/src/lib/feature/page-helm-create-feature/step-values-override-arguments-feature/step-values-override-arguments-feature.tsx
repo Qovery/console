@@ -7,7 +7,6 @@ import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/fea
 import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_VALUES_STEP_1_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 export function StepValuesOverrideArgumentsFeature() {
@@ -21,7 +20,7 @@ export function StepValuesOverrideArgumentsFeature() {
     .with('GIT', (): HelmRequestAllOfSourceOneOf => {
       return {
         git_repository: {
-          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+          url: generalData.git_repository?.url ?? '',
           branch: generalData.branch,
           root_path: generalData.root_path,
           git_token_id: generalData.git_token_id,
@@ -32,7 +31,7 @@ export function StepValuesOverrideArgumentsFeature() {
       'HELM_REPOSITORY',
       (): HelmRequestAllOfSourceOneOf1 => ({
         helm_repository: {
-          repository: generalData.repository,
+          repository: generalData.git_repository?.url,
           chart_name: generalData.chart_name,
           chart_version: generalData.chart_version,
         },

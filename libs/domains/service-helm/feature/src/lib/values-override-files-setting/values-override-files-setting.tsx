@@ -1,4 +1,9 @@
-import { type GitProviderEnum, type GitTokenResponse, type HelmRequestAllOfSource } from 'qovery-typescript-axios'
+import {
+  type GitProviderEnum,
+  type GitRepository,
+  type GitTokenResponse,
+  type HelmRequestAllOfSource,
+} from 'qovery-typescript-axios'
 import { type PropsWithChildren, type ReactNode } from 'react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -9,7 +14,7 @@ export type ValuesOverrideTypes = 'GIT_REPOSITORY' | 'YAML' | 'NONE'
 
 export interface HelmValuesFileData {
   type: ValuesOverrideTypes
-  repository?: string | null
+  git_repository?: GitRepository | null
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
   git_token_name?: GitTokenResponse['name']

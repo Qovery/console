@@ -1,6 +1,7 @@
 import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { type SelectOptionValue } from '@qovery/shared/interfaces'
 import { ExternalLink, InputSelect, LoaderSpinner } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useRepositories } from '../hooks/use-repositories/use-repositories'
@@ -67,11 +68,11 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
                     value: repository.name,
                   }))
             }
-            onChange={(event) => {
-              field.onChange(event)
-              const currentRepository = repositories.find((repository) => repository.name === event)
-              // Set default branch
-              setValue('branch', currentRepository?.default_branch)
+            onChange={(option: SelectOptionValue | SelectOptionValue[]) => {
+              field.onChange(option)
+              const gitRepository = repositories.find((repo) => repo.name === option)
+              setValue('branch', gitRepository?.default_branch)
+              setValue('git_repository', gitRepository)
             }}
             value={field.value}
             error={error?.message}

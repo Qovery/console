@@ -11,7 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepDockerfileFeature() {
@@ -43,7 +43,8 @@ export function StepDockerfileFeature() {
           environmentId,
           dockerfileCheckRequest: {
             git_repository: {
-              url: buildGitRepoUrl(generalData?.provider ?? '', generalData?.repository || ''),
+              provider: generalData?.provider ?? 'GITHUB',
+              url: generalData?.git_repository?.url ?? '',
               root_path: generalData?.root_path,
               branch: generalData?.branch,
               git_token_id: generalData?.git_token_id,

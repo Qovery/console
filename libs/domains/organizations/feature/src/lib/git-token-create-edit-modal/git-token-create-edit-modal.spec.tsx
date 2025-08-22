@@ -57,6 +57,7 @@ describe('GitTokenCreateEditModal', () => {
         token: 'my-token-value',
         description: '',
         workspace: undefined,
+        git_api_url: undefined,
       },
     })
 
@@ -75,6 +76,7 @@ describe('GitTokenCreateEditModal', () => {
             updated_at: '',
             name: 'my-token',
             description: '',
+            git_api_url: 'https://api.github.com',
             type: GitProviderEnum.GITHUB,
             associated_services_count: 0,
           }}
@@ -99,6 +101,7 @@ describe('GitTokenCreateEditModal', () => {
       gitTokenId: '1111-1111-1111',
       gitTokenRequest: {
         id: '1111-1111-1111',
+        git_api_url: 'https://api.github.com',
         type: GitProviderEnum.GITHUB,
         name: 'my-token-name',
         token: 'my-token-value',
