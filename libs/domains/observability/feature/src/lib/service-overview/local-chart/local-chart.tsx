@@ -157,7 +157,11 @@ export const ChartContent = memo(function ChartContent({
 
   return (
     <div className="relative flex h-full">
-      <Chart.Container className="h-full w-full select-none p-5 py-2 pr-5" isLoading={isLoading} isEmpty={isEmpty}>
+      <Chart.Container
+        className={`h-full w-full select-none p-5 py-2 ${!isLoading && !isEmpty ? 'pr-0' : 'pr-5'}`}
+        isLoading={isLoading}
+        isEmpty={isEmpty}
+      >
         <ComposedChart
           data={data}
           syncId="syncId"
