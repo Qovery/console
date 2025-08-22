@@ -70,12 +70,8 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
             }
             onChange={(option: SelectOptionValue | SelectOptionValue[]) => {
               field.onChange(option)
-              // Set default branch
-              if (typeof option === 'object' && 'default_branch' in option) {
-                setValue('branch', option.default_branch)
-              }
-
               const gitRepository = repositories.find((repo) => repo.name === option)
+              setValue('branch', gitRepository?.default_branch)
               setValue('git_repository', gitRepository)
             }}
             value={field.value}
