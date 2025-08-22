@@ -114,6 +114,9 @@ export const ChartContent = memo(function ChartContent({
     handleZoomTimeRangeChange,
     registerZoomReset,
     setIsAnyChartZoomed,
+    setHasCalendarValue,
+    handleTimeRangeChange,
+    lastDropdownTimeRange,
   } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
@@ -132,6 +135,10 @@ export const ChartContent = memo(function ChartContent({
     onZoomChange: handleZoomTimeRangeChange,
     onResetRegister: registerZoomReset,
     onZoomStateChange: setIsAnyChartZoomed,
+    onDoubleClick: () => {
+      setHasCalendarValue(false)
+      handleTimeRangeChange(lastDropdownTimeRange)
+    },
   })
 
   function getXDomain(): [number | string, number | string] {

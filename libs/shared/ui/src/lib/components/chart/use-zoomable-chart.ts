@@ -20,6 +20,7 @@ interface UseZoomableChartProps {
   onZoomChange?: (startTime: number, endTime: number) => void
   onResetRegister?: (resetFn: () => void) => (() => void) | void
   onZoomStateChange?: (isZoomed: boolean) => void
+  onDoubleClick?: () => void
 }
 
 interface UseZoomableChartReturn {
@@ -48,7 +49,7 @@ interface UseZoomableChartReturn {
 }
 
 export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomableChartReturn {
-  const { onZoomChange, onResetRegister, onZoomStateChange } = props
+  const { onZoomChange, onResetRegister, onZoomStateChange, onDoubleClick } = props
   // Zoom state
   const [zoomState, setZoomState] = useState<ZoomState>({
     left: 'dataMin',
@@ -190,8 +191,12 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
   }
 
   const handleChartDoubleClick = () => {
-    // Double click: reset zoom completely
-    resetZoom()
+    // Double click: call custom handler if provided, otherwise reset zoom
+    if (onDoubleClick) {
+      onDoubleClick()
+    } else {
+      resetZoom()
+    }
   }
 
   const handleMouseDown = (e?: ChartMouseEvent) => {
