@@ -273,38 +273,32 @@ describe('Chart.TooltipContent', () => {
   // ZoomRangeTooltip
   describe('ZoomRangeTooltip', () => {
     it('renders zoom range tooltip with start and end times', () => {
-      const startTime = 1704067200000 // 2024-01-01 00:00:00
-      const endTime = 1704070800000 // 2024-01-01 01:00:00
-
       renderWithProviders(
-        <ZoomRangeTooltip active={true} startTime={startTime} endTime={endTime} title="CPU Range" useLocalTime={true} />
+        <ZoomRangeTooltip active={true} startTime="Jan 1, 2024, 00:00:00" endTime="Jan 1, 2024, 01:00:00" />
       )
 
-      expect(screen.getByText('CPU Range')).toBeInTheDocument()
       expect(screen.getByText('Start:')).toBeInTheDocument()
       expect(screen.getByText('End:')).toBeInTheDocument()
     })
 
     it('returns null when not active', () => {
       const { container } = renderWithProviders(
-        <ZoomRangeTooltip active={false} startTime={1704067200000} endTime={1704070800000} />
+        <ZoomRangeTooltip active={false} startTime="Jan 1, 2024, 00:00:00 UTC" endTime="Jan 1, 2024, 01:00:00 UTC" />
       )
 
       expect(container).toBeEmptyDOMElement()
     })
 
-    it('uses default title when none provided', () => {
-      renderWithProviders(<ZoomRangeTooltip startTime={1704067200000} endTime={1704070800000} />)
+    it('displays formatted timestamps correctly', () => {
+      renderWithProviders(
+        <ZoomRangeTooltip startTime="Jan 1, 2024, 00:00:00 UTC" endTime="Jan 1, 2024, 01:00:00 UTC" />
+      )
 
-      expect(screen.getByText('Selected Range')).toBeInTheDocument()
-    })
-
-    it('handles string timestamps', () => {
-      renderWithProviders(<ZoomRangeTooltip startTime="1704067200000" endTime="1704070800000" title="Memory Range" />)
-
-      expect(screen.getByText('Memory Range')).toBeInTheDocument()
       expect(screen.getByText('Start:')).toBeInTheDocument()
       expect(screen.getByText('End:')).toBeInTheDocument()
+      // Check that formatted timestamps are displayed
+      expect(screen.getByText('Jan 1, 2024, 00:00:00 UTC')).toBeInTheDocument()
+      expect(screen.getByText('Jan 1, 2024, 01:00:00 UTC')).toBeInTheDocument()
     })
   })
 })

@@ -1,4 +1,4 @@
-import { createXAxisConfig, formatTimestampForDisplay, getLogicalTicks, getTimeGranularity } from './chart-utils'
+import { createXAxisConfig, getLogicalTicks, getTimeGranularity } from './chart-utils'
 
 describe('getLogicalTicks', () => {
   it('generates correct number of ticks for default count', () => {
@@ -392,101 +392,6 @@ describe('getTimeGranularity', () => {
       const endTime = startTime + 10 * 365 * 24 * 60 * 60 * 1000 // 10 years later
 
       expect(getTimeGranularity(startTime, endTime)).toBe('days')
-    })
-  })
-})
-
-describe('formatTimestampForDisplay', () => {
-  const testTimestamp = 1704067200000 // Jan 1, 2024 00:00:00 UTC
-
-  describe('UTC time formatting', () => {
-    it('formats UTC time correctly when useLocalTime is false', () => {
-      const result = formatTimestampForDisplay(testTimestamp, false)
-
-      expect(result).toBe('Jan 1, 2024, 00:00:00 UTC')
-    })
-
-    it('handles different UTC times correctly', () => {
-      const noonTimestamp = 1704096000000 // Jan 1, 2024 12:00:00 UTC
-      const result = formatTimestampForDisplay(noonTimestamp, false)
-
-      expect(result).toBe('Jan 1, 2024, 08:00:00 UTC')
-    })
-
-    it('handles string timestamps for UTC', () => {
-      const result = formatTimestampForDisplay('1704067200000', false)
-
-      expect(result).toBe('Jan 1, 2024, 00:00:00 UTC')
-    })
-  })
-
-  describe('local time formatting', () => {
-    it('formats local time correctly when useLocalTime is true', () => {
-      const result = formatTimestampForDisplay(testTimestamp, true)
-
-      // The exact format depends on the user's timezone, so we check for key elements
-      expect(result).toMatch(/Jan 1, 2024/)
-      expect(result).toMatch(/(00:00:00|24:00:00)/)
-      expect(result).not.toContain('UTC')
-    })
-
-    it('handles string timestamps for local time', () => {
-      const result = formatTimestampForDisplay('1704067200000', true)
-
-      // The exact format depends on the user's timezone, so we check for key elements
-      expect(result).toMatch(/Jan 1, 2024/)
-      expect(result).toMatch(/(00:00:00|24:00:00)/)
-      expect(result).not.toContain('UTC')
-    })
-  })
-
-  describe('edge cases', () => {
-    it('handles zero timestamp', () => {
-      const result = formatTimestampForDisplay(0, false)
-
-      expect(result).toBe('Jan 1, 1970, 00:00:00 UTC')
-    })
-
-    it('handles negative timestamp', () => {
-      const result = formatTimestampForDisplay(-1000, false)
-
-      expect(result).toBe('Dec 31, 1969, 23:59:59 UTC')
-    })
-
-    it('handles very large timestamp', () => {
-      const largeTimestamp = 9999999999999 // Far future date
-      const result = formatTimestampForDisplay(largeTimestamp, false)
-
-      expect(result).toMatch(/UTC$/)
-      expect(result).toMatch(/^\w{3} \d{1,2}, \d{4}, \d{2}:\d{2}:\d{2} UTC$/)
-    })
-
-    it('handles invalid string timestamp gracefully', () => {
-      const result = formatTimestampForDisplay('invalid', false)
-
-      expect(result).toBe('undefined NaN, NaN, NaN:NaN:NaN UTC')
-    })
-  })
-
-  describe('month abbreviations', () => {
-    it('uses correct month abbreviations for different months', () => {
-      const months = [
-        { timestamp: 1704067200000, expected: 'Jan' }, // January
-        { timestamp: 1711929600000, expected: 'Apr' }, // April 1
-        { timestamp: 1714521600000, expected: 'May' }, // May 1
-        { timestamp: 1717200000000, expected: 'Jun' }, // June 1
-        { timestamp: 1719792000000, expected: 'Jul' }, // July 1
-        { timestamp: 1722470400000, expected: 'Aug' }, // August 1
-        { timestamp: 1725148800000, expected: 'Sep' }, // September 1
-        { timestamp: 1727740800000, expected: 'Oct' }, // October 1
-        { timestamp: 1730419200000, expected: 'Nov' }, // November 1
-        { timestamp: 1733011200000, expected: 'Dec' }, // December 1
-      ]
-
-      months.forEach(({ timestamp, expected }) => {
-        const result = formatTimestampForDisplay(timestamp, false)
-        expect(result).toContain(expected)
-      })
     })
   })
 })

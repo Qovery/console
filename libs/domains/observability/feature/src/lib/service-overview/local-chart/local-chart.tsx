@@ -233,9 +233,18 @@ export const ChartContent = memo(function ChartContent({
             content={
               zoomState.refAreaLeft && zoomState.refAreaRight ? (
                 <ZoomRangeTooltip
-                  startTime={Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
-                  endTime={Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
-                  useLocalTime={useLocalTime}
+                  startTime={
+                    formatTimestamp(
+                      Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
+                      useLocalTime
+                    ).fullTimeString
+                  }
+                  endTime={
+                    formatTimestamp(
+                      Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
+                      useLocalTime
+                    ).fullTimeString
+                  }
                 />
               ) : !onHoverHideTooltip ? (
                 <div />

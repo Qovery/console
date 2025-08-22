@@ -74,29 +74,3 @@ export function createXAxisConfig(
     interval: 'preserveStartEnd',
   }
 }
-
-// Helper function to format timestamp for display
-export function formatTimestampForDisplay(timestamp: number | string, useLocalTime: boolean): string {
-  const date = new Date(typeof timestamp === 'number' ? timestamp : parseInt(timestamp.toString()))
-
-  if (useLocalTime) {
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    })
-  } else {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    const month = months[date.getUTCMonth()]
-    const day = date.getUTCDate()
-    const year = date.getUTCFullYear()
-    const hours = date.getUTCHours().toString().padStart(2, '0')
-    const minutes = date.getUTCMinutes().toString().padStart(2, '0')
-    const seconds = date.getUTCSeconds().toString().padStart(2, '0')
-    return `${month} ${day}, ${year}, ${hours}:${minutes}:${seconds} UTC`
-  }
-}

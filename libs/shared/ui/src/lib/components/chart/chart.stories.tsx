@@ -254,8 +254,12 @@ The chart supports mixed visualization types including area charts, bar charts, 
             content={
               zoomState.refAreaLeft && zoomState.refAreaRight ? (
                 <ZoomRangeTooltip
-                  startTime={Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
-                  endTime={Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))}
+                  startTime={new Date(
+                    Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))
+                  ).toLocaleString()}
+                  endTime={new Date(
+                    Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))
+                  ).toLocaleString()}
                 />
               ) : (
                 <Chart.TooltipContent
