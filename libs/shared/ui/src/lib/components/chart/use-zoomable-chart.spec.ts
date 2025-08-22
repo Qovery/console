@@ -248,6 +248,36 @@ describe('useZoomableChart', () => {
       expect(result.current.zoomHistory).toHaveLength(0)
       expect(result.current.isZoomed).toBe(false)
     })
+
+    it('handles double-click with custom onDoubleClick handler', () => {
+      const mockOnDoubleClick = jest.fn()
+      const { result } = renderHook(() => useZoomableChart({ onDoubleClick: mockOnDoubleClick }))
+
+      // Zoom in first
+      act(() => {
+        result.current.handleMouseDown({ activeLabel: '100' })
+      })
+
+      act(() => {
+        result.current.handleMouseMove({ activeLabel: '200' })
+      })
+
+      act(() => {
+        result.current.handleMouseUp()
+      })
+
+      expect(result.current.isZoomed).toBe(true)
+
+      act(() => {
+        result.current.handleChartDoubleClick()
+      })
+
+      // Custom handler should be called instead of default reset
+      expect(mockOnDoubleClick).toHaveBeenCalledTimes(1)
+      // Zoom state should remain unchanged since custom handler was called
+      expect(result.current.isZoomed).toBe(true)
+      expect(result.current.zoomHistory).toHaveLength(1)
+    })
   })
 
   describe('utilities', () => {
