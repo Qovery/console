@@ -1,15 +1,15 @@
 import { useMemo } from 'react'
 import { Area } from 'recharts'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string) => `
+const query = (serviceId: string, rateInterval: string) => `
   (sum by (status)  (
-rate(nginx_ingress_controller_requests{status!~"2.."}[5m])
+rate(nginx_ingress_controller_requests{status!~"2.."}[${rateInterval}])
 * on (ingress) group_left(label_qovery_com_associated_service_id)
   max by (ingress, label_qovery_com_associated_service_id) (
     kube_ingress_labels{label_qovery_com_associated_service_id =  "${serviceId}"}
@@ -17,7 +17,7 @@ rate(nginx_ingress_controller_requests{status!~"2.."}[5m])
 ) > 0)
 / ignoring(status) group_left
 sum (
-  rate(nginx_ingress_controller_requests[5m])
+  rate(nginx_ingress_controller_requests[${rateInterval}])
   * on (ingress) group_left(label_qovery_com_associated_service_id)
     max by (ingress, label_qovery_com_associated_service_id) (
       kube_ingress_labels{label_qovery_com_associated_service_id =  "${serviceId}"}
@@ -28,11 +28,16 @@ sum (
 export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
+  const rateInterval = useMemo(
+    () => calculateRateInterval(startTimestamp, endTimestamp),
+    [startTimestamp, endTimestamp]
+  )
+
   const { data: metricsHttpStatusErrorRatio, isLoading: isLoadingHttpStatusErrorRatio } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: query(serviceId),
+    query: query(serviceId, rateInterval),
     timeRange,
   })
 
