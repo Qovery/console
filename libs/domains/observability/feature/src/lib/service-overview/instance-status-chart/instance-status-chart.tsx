@@ -1,7 +1,7 @@
 import type { IconName } from '@fortawesome/fontawesome-common-types'
 import { useMemo } from 'react'
 import { Area, Line, ReferenceLine } from 'recharts'
-import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { calculateDynamicRange, calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
@@ -96,13 +96,13 @@ const queryMaxReplicas = (serviceId: string) => `
   max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id=~"${serviceId}"}))
 `
 
-const queryMaxLimitReached = (serviceId: string) => `
+const queryMaxLimitReached = (serviceId: string, rateInterval: string) => `
   sum by (label_qovery_com_service_id) (
   increase(
     kube_horizontalpodautoscaler_status_condition{
       condition = "ScalingLimited",
       status    = "true"
-    }[5m]
+    }[${rateInterval}]
   )
   *
   on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
@@ -285,6 +285,11 @@ export function InstanceStatusChart({
     [startTimestamp, endTimestamp]
   )
 
+  const rateInterval = useMemo(
+    () => calculateRateInterval(startTimestamp, endTimestamp),
+    [startTimestamp, endTimestamp]
+  )
+
   const { data: metricsUnhealthy, isLoading: isLoadingUnhealthy } = useMetrics({
     clusterId,
     startTimestamp,
@@ -353,7 +358,7 @@ export function InstanceStatusChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMaxLimitReached(serviceId),
+    query: queryMaxLimitReached(serviceId, rateInterval),
     timeRange,
   })
 

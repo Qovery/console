@@ -157,3 +157,11 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
 
   return `${finalStepMs}ms`
 }
+
+export function calculateRateInterval(startTimestamp: string, endTimestamp: string): string {
+  const startMs = Number(startTimestamp) * 1000
+  const endMs = Number(endTimestamp) * 1000
+  const durationMs = endMs - startMs
+
+  return `${durationMs}ms`
+}

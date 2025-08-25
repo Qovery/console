@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { usePodColor } from '@qovery/shared/util-hooks'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryCpuUsage = (serviceId: string) => `
-  sum by (pod, label_qovery_com_service_id) (rate(container_cpu_usage_seconds_total{container!="", pod=~".+"}[1m]) * on(namespace, pod) group_left() group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))
+const queryCpuUsage = (serviceId: string, rateInterval: string) => `
+  sum by (pod, label_qovery_com_service_id) (rate(container_cpu_usage_seconds_total{container!="", pod=~".+"}[${rateInterval}]) * on(namespace, pod) group_left() group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}))
 `
 
 const queryCpuLimit = (serviceId: string) => `
@@ -23,9 +23,14 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 
+  const rateInterval = useMemo(
+    () => calculateRateInterval(startTimestamp, endTimestamp),
+    [startTimestamp, endTimestamp]
+  )
+
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: queryCpuUsage(serviceId),
+    query: queryCpuUsage(serviceId, rateInterval),
     startTimestamp,
     endTimestamp,
     timeRange,
