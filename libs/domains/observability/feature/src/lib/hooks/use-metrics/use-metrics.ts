@@ -97,6 +97,7 @@ export function useMetrics({
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 15_000 : false, // Refetch every 15 seconds only if live update is enabled
     refetchIntervalInBackground: finalLiveUpdateEnabled,
+    retry: 3,
   })
 
   // Custom isLoading: true on first load and when timeRange changes, false on live refetch
