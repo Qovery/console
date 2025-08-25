@@ -6,7 +6,7 @@ import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (serviceId: string, timeRange: string) =>
-  `sum (increase(promtail_custom_q_log_errors_total{qovery_com_service_id=~"${serviceId}"}[${timeRange}]))`
+  `sum (increase(promtail_custom_q_log_errors_total{qovery_com_service_id="${serviceId}"}[${timeRange}])) or vector(0)`
 
 export function CardLogErrors({
   organizationId,
