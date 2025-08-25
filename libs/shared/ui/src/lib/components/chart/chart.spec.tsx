@@ -1,6 +1,6 @@
 import { ComposedChart, Line } from 'recharts'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { Chart, ZoomRangeTooltip } from './chart'
+import { Chart } from './chart'
 
 // Mock ResizeObserver
 class MockResizeObserver {
@@ -270,11 +270,10 @@ describe('Chart.TooltipContent', () => {
     })
   })
 
-  // ZoomRangeTooltip
-  describe('ZoomRangeTooltip', () => {
+  describe('TooltipZoomRange', () => {
     it('renders zoom range tooltip with start and end times', () => {
       renderWithProviders(
-        <ZoomRangeTooltip active={true} startTime="Jan 1, 2024, 00:00:00" endTime="Jan 1, 2024, 01:00:00" />
+        <Chart.TooltipZoomRange active={true} startTime="Jan 1, 2024, 00:00:00" endTime="Jan 1, 2024, 01:00:00" />
       )
 
       expect(screen.getByText('Start:')).toBeInTheDocument()
@@ -283,7 +282,11 @@ describe('Chart.TooltipContent', () => {
 
     it('returns null when not active', () => {
       const { container } = renderWithProviders(
-        <ZoomRangeTooltip active={false} startTime="Jan 1, 2024, 00:00:00 UTC" endTime="Jan 1, 2024, 01:00:00 UTC" />
+        <Chart.TooltipZoomRange
+          active={false}
+          startTime="Jan 1, 2024, 00:00:00 UTC"
+          endTime="Jan 1, 2024, 01:00:00 UTC"
+        />
       )
 
       expect(container).toBeEmptyDOMElement()
@@ -291,7 +294,7 @@ describe('Chart.TooltipContent', () => {
 
     it('displays formatted timestamps correctly', () => {
       renderWithProviders(
-        <ZoomRangeTooltip startTime="Jan 1, 2024, 00:00:00 UTC" endTime="Jan 1, 2024, 01:00:00 UTC" />
+        <Chart.TooltipZoomRange startTime="Jan 1, 2024, 00:00:00 UTC" endTime="Jan 1, 2024, 01:00:00 UTC" />
       )
 
       expect(screen.getByText('Start:')).toBeInTheDocument()
