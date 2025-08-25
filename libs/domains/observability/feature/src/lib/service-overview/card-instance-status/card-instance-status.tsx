@@ -9,7 +9,6 @@ import { InstanceStatusChart } from '../instance-status-chart/instance-status-ch
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-// TODO PG may be improved
 const query = (serviceId: string, timeRange: string) => `
   (
     round(
@@ -47,8 +46,6 @@ const query = (serviceId: string, timeRange: string) => `
   )
 `
 
-// TODO PG remove [5m] par $__rate_interval
-// TODO PG may be improved
 const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
   max_over_time(
     (
