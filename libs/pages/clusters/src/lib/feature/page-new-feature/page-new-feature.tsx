@@ -54,13 +54,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
 
   const renderContent = () => (
     <span>
-      <span
-        className={twMerge(
-          clsx('mb-2 inline-flex items-center text-base font-semibold text-neutral-400', {
-            'text-neutral-350': selectedCloudProvider === 'AZURE' && recommended,
-          })
-        )}
-      >
+      <span className="flex flex-col text-base font-semibold text-neutral-400">
         {title}
         {recommended && (
           <span>
