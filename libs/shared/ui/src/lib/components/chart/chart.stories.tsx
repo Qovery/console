@@ -252,14 +252,25 @@ The chart supports mixed visualization types including area charts, bar charts, 
           />
           <Tooltip
             content={
-              <Chart.TooltipContent
-                title="System Usage"
-                formatLabel={(key) => {
-                  const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
-                  return labelMap[key] || key
-                }}
-                formatValue={(value) => `${value}%`}
-              />
+              zoomState.refAreaLeft && zoomState.refAreaRight ? (
+                <Chart.TooltipZoomRange
+                  startTime={new Date(
+                    Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))
+                  ).toLocaleString()}
+                  endTime={new Date(
+                    Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight))
+                  ).toLocaleString()}
+                />
+              ) : (
+                <Chart.TooltipContent
+                  title="System Usage"
+                  formatLabel={(key) => {
+                    const labelMap: Record<string, string> = { cpu: 'CPU', memory: 'Memory', disk: 'Disk' }
+                    return labelMap[key] || key
+                  }}
+                  formatValue={(value) => `${value}%`}
+                />
+              )
             }
           />
           <Legend />

@@ -5,7 +5,6 @@ import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
 
-// Define the payload item type for the chart tooltip
 interface TooltipPayloadItem {
   dataKey: string | number
   value: number | string | null | undefined
@@ -34,22 +33,25 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
       className={twMerge('relative flex h-[300px] justify-center text-xs focus:outline-none', className)}
       {...htmlProps}
     >
-      <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
-        {children}
-      </RechartsPrimitive.ResponsiveContainer>
+      {!isLoading && !isEmpty ? (
+        <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
+          {children}
+        </RechartsPrimitive.ResponsiveContainer>
+      ) : (
+        <div className="h-full w-full">
+          <ChartSkeleton />
+        </div>
+      )}
 
       {(isLoading || (isEmpty && !isLoading)) && (
         <div
           className={twMerge(
-            'absolute inset-0 bg-white p-4 transition-all ease-in-out',
+            'absolute inset-0 p-4 transition-all ease-in-out',
             isLoading ? 'visible opacity-100 duration-100' : 'visible opacity-100 duration-150'
           )}
           style={{ pointerEvents: isLoading ? 'auto' : 'none' }}
         >
-          <div className="h-full w-full">
-            <ChartSkeleton />
-          </div>
-          <div className="absolute inset-0 mt-6 flex flex-col items-center justify-center gap-2">
+          <div className="absolute inset-0 mt-10 flex flex-col items-center justify-center gap-2">
             {isLoading ? (
               <>
                 <ChartLoader />
@@ -144,12 +146,44 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
   )
 })
 
+interface ChartTooltipZoomRangeProps {
+  active?: boolean
+  startTime: string
+  endTime: string
+}
+
+export const ChartTooltipZoomRange = forwardRef<HTMLDivElement, ChartTooltipZoomRangeProps>(
+  function ChartTooltipZoomRange({ active = true, startTime, endTime }, ref) {
+    if (!active) return null
+
+    return (
+      <div ref={ref} className="rounded-md bg-neutral-600 shadow-lg">
+        <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 p-3 pb-2">
+          <span className="text-xs text-neutral-50">Zoom In</span>
+        </div>
+        <div className="space-y-1 p-3 pt-0">
+          <div className="flex items-center justify-between gap-4 text-xs">
+            <span className="text-neutral-50">Start:</span>
+            <span className="text-neutral-250">{startTime}</span>
+          </div>
+          <div className="flex items-center justify-between gap-4 text-xs">
+            <span className="text-neutral-50">End:</span>
+            <span className="text-neutral-250">{endTime}</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+)
+
 export const Chart = {
   Container: ChartContainer,
   Tooltip: ChartTooltip,
   TooltipContent: ChartTooltipContent,
+  TooltipZoomRange: ChartTooltipZoomRange,
   Skeleton: ChartSkeleton,
   Loader: ChartLoader,
 }
 
+// Hooks
 export { useZoomableChart } from './use-zoomable-chart'

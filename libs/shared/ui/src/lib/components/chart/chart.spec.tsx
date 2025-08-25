@@ -269,4 +269,39 @@ describe('Chart.TooltipContent', () => {
       expect(screen.getByText('Test Chart')).toBeInTheDocument()
     })
   })
+
+  describe('TooltipZoomRange', () => {
+    it('renders zoom range tooltip with start and end times', () => {
+      renderWithProviders(
+        <Chart.TooltipZoomRange active={true} startTime="Jan 1, 2024, 00:00:00" endTime="Jan 1, 2024, 01:00:00" />
+      )
+
+      expect(screen.getByText('Start:')).toBeInTheDocument()
+      expect(screen.getByText('End:')).toBeInTheDocument()
+    })
+
+    it('returns null when not active', () => {
+      const { container } = renderWithProviders(
+        <Chart.TooltipZoomRange
+          active={false}
+          startTime="Jan 1, 2024, 00:00:00 UTC"
+          endTime="Jan 1, 2024, 01:00:00 UTC"
+        />
+      )
+
+      expect(container).toBeEmptyDOMElement()
+    })
+
+    it('displays formatted timestamps correctly', () => {
+      renderWithProviders(
+        <Chart.TooltipZoomRange startTime="Jan 1, 2024, 00:00:00 UTC" endTime="Jan 1, 2024, 01:00:00 UTC" />
+      )
+
+      expect(screen.getByText('Start:')).toBeInTheDocument()
+      expect(screen.getByText('End:')).toBeInTheDocument()
+      // Check that formatted timestamps are displayed
+      expect(screen.getByText('Jan 1, 2024, 00:00:00 UTC')).toBeInTheDocument()
+      expect(screen.getByText('Jan 1, 2024, 01:00:00 UTC')).toBeInTheDocument()
+    })
+  })
 })

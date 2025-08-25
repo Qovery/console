@@ -139,6 +139,7 @@ export const ChartContent = memo(function ChartContent({
       setHasCalendarValue(false)
       handleTimeRangeChange(lastDropdownTimeRange)
     },
+    disabled: isLoading || isEmpty,
   })
 
   function getXDomain(): [number | string, number | string] {
@@ -156,7 +157,11 @@ export const ChartContent = memo(function ChartContent({
 
   return (
     <div className="relative flex h-full">
-      <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
+      <Chart.Container
+        className={clsx('h-full w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
+        isLoading={isLoading}
+        isEmpty={isEmpty}
+      >
         <ComposedChart
           data={data}
           syncId="syncId"
@@ -178,7 +183,7 @@ export const ChartContent = memo(function ChartContent({
             setOnHoverHideTooltip(false)
           }}
           onDoubleClick={handleChartDoubleClick}
-          style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
+          style={{ cursor: isLoading || isEmpty ? 'default' : isCtrlPressed ? 'zoom-out' : 'crosshair' }}
         >
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis
@@ -224,7 +229,28 @@ export const ChartContent = memo(function ChartContent({
           />
           <Chart.Tooltip
             isAnimationActive={false}
-            content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
+            content={
+              zoomState.refAreaLeft && zoomState.refAreaRight ? (
+                <Chart.TooltipZoomRange
+                  startTime={
+                    formatTimestamp(
+                      Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
+                      useLocalTime
+                    ).fullTimeString
+                  }
+                  endTime={
+                    formatTimestamp(
+                      Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
+                      useLocalTime
+                    ).fullTimeString
+                  }
+                />
+              ) : !onHoverHideTooltip ? (
+                <div />
+              ) : (
+                <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
+              )
+            }
           />
           {!hideEvents &&
             referenceLineData?.map((event) =>

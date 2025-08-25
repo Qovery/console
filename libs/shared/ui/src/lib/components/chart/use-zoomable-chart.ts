@@ -21,6 +21,7 @@ interface UseZoomableChartProps {
   onResetRegister?: (resetFn: () => void) => (() => void) | void
   onZoomStateChange?: (isZoomed: boolean) => void
   onDoubleClick?: () => void
+  disabled?: boolean
 }
 
 interface UseZoomableChartReturn {
@@ -49,7 +50,7 @@ interface UseZoomableChartReturn {
 }
 
 export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomableChartReturn {
-  const { onZoomChange, onResetRegister, onZoomStateChange, onDoubleClick } = props
+  const { onZoomChange, onResetRegister, onZoomStateChange, onDoubleClick, disabled = false } = props
   // Zoom state
   const [zoomState, setZoomState] = useState<ZoomState>({
     left: 'dataMin',
@@ -90,6 +91,10 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
 
   // Keyboard event handlers for zoom
   useEffect(() => {
+    if (disabled) {
+      return
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Control' || e.key === 'Meta') {
         setIsCtrlPressed(true)
@@ -109,7 +114,7 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [])
+  }, [disabled])
 
   // Zoom functions
   const zoom = () => {
@@ -184,6 +189,9 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
 
   // Event handlers
   const handleChartClick = () => {
+    if (disabled) {
+      return
+    }
     if (isCtrlPressed) {
       // Single click with ctrl/cmd: zoom out one step
       zoomOut()
@@ -191,27 +199,42 @@ export function useZoomableChart(props: UseZoomableChartProps = {}): UseZoomable
   }
 
   const handleChartDoubleClick = () => {
-    // Double click: call custom handler if provided, otherwise reset zoom
-    if (onDoubleClick) {
-      onDoubleClick()
-    } else {
-      resetZoom()
+    if (disabled) {
+      return
+    }
+
+    if (isZoomed) {
+      // Call custom handler if provided, otherwise reset zoom internally
+      if (onDoubleClick) {
+        onDoubleClick()
+      } else {
+        resetZoom()
+      }
     }
   }
 
   const handleMouseDown = (e?: ChartMouseEvent) => {
+    if (disabled) {
+      return
+    }
     if (!isCtrlPressed && e) {
       setZoomState((prevState) => ({ ...prevState, refAreaLeft: e.activeLabel || '' }))
     }
   }
 
   const handleMouseMove = (e?: ChartMouseEvent) => {
+    if (disabled) {
+      return
+    }
     if (!isCtrlPressed && zoomState.refAreaLeft && e) {
       setZoomState((prevState) => ({ ...prevState, refAreaRight: e.activeLabel || '' }))
     }
   }
 
   const handleMouseUp = () => {
+    if (disabled) {
+      return
+    }
     if (isCtrlPressed) {
       handleChartClick()
     } else {
