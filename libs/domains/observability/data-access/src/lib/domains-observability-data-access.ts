@@ -32,11 +32,11 @@ export const observability = createQueryKeys('observability', {
         step,
         undefined,
         undefined,
-        "True",
-        "True",
-        "auto", // TODO PG not set auto but 0, 5m or 1h
-        "thanos",
-        "false",
+        'True',
+        'True',
+        'auto', // TODO PG not set auto but 0, 5m or 1h
+        'thanos',
+        'false'
       )
       return response.data.metrics && JSON.parse(response.data.metrics)
     },
