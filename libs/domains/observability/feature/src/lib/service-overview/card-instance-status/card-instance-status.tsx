@@ -9,6 +9,7 @@ import { InstanceStatusChart } from '../instance-status-chart/instance-status-ch
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
+// TODO PG may be improved
 const query = (serviceId: string, timeRange: string) => `
   (
     round(
@@ -20,7 +21,7 @@ const query = (serviceId: string, timeRange: string) => `
             )
             * on(namespace, pod) group_left(label_qovery_com_service_id)
               max by(namespace, pod, label_qovery_com_service_id)(
-                kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+                kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
               )
           )
           or vector(0)
@@ -38,7 +39,7 @@ const query = (serviceId: string, timeRange: string) => `
             reason!~"ContainerCreating|PodInitializing|Completed"
           }
           * on(namespace, pod) group_left(label_qovery_com_service_id)
-            kube_pod_labels{label_qovery_com_service_id=~"${serviceId}"}
+            kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
         )
         or vector(0)
       )
@@ -46,6 +47,8 @@ const query = (serviceId: string, timeRange: string) => `
   )
 `
 
+// TODO PG remove [5m] par $__rate_interval
+// TODO PG may be improved
 const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
   max_over_time(
     (
@@ -71,7 +74,7 @@ const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
       on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
       max by(namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
         kube_horizontalpodautoscaler_labels{
-          label_qovery_com_service_id =  "${serviceId}"
+          label_qovery_com_service_id="${serviceId}"
         }
       )
     ) > bool 0
