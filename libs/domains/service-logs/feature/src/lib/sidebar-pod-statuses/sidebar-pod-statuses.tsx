@@ -217,9 +217,10 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                             {match([
                               podsFiltered.length,
                               podsFiltered.some((pod) => pod.state === 'ERROR'),
-                              podsFiltered.some((pod) => pod.state === 'STARTING'),
+                              podsFiltered.some((pod) => pod.state === 'STARTING' || pod.state === 'RUNNING'),
                             ])
                               .with([P.number.gt(0), false, false], () => 'Pods are running')
+                              .with([P.number.gt(0), true, false], () => 'Pods are running with errors')
                               .with([P.number.gt(0), false, true], () => 'Pods are starting')
                               .otherwise(() => 'Pods were not successful')}
                           </>
