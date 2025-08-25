@@ -6,7 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
 import { useParams } from 'react-router-dom'
-import { ListServiceLogs, SidebarPodStatuses } from '@qovery/domains/service-logs/feature'
+import { ListServiceLogs } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
@@ -31,18 +31,12 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
 
   return (
     <div className="h-full w-full bg-neutral-900">
-      <SidebarPodStatuses
-        organizationId={environment.organization.id}
-        projectId={environment.project.id}
-        service={service}
-      >
-        <ListServiceLogs
-          environment={environment}
-          clusterId={environment.cluster_id}
-          serviceStatus={serviceStatus}
-          environmentStatus={environmentStatus}
-        />
-      </SidebarPodStatuses>
+      <ListServiceLogs
+        environment={environment}
+        clusterId={environment.cluster_id}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+      />
       {service && environment && (
         <WebSocketListenerMemo
           organizationId={environment.organization.id}
