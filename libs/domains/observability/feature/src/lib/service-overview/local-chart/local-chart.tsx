@@ -15,7 +15,6 @@ import {
   Section,
   Skeleton,
   Tooltip,
-  ZoomRangeTooltip,
   createXAxisConfig,
   getTimeGranularity,
   useZoomableChart,
@@ -159,7 +158,7 @@ export const ChartContent = memo(function ChartContent({
   return (
     <div className="relative flex h-full">
       <Chart.Container
-        className={`h-full w-full select-none p-5 py-2 ${!isLoading && !isEmpty ? 'pr-0' : 'pr-5'}`}
+        className={clsx('h-full w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
         isLoading={isLoading}
         isEmpty={isEmpty}
       >
@@ -232,7 +231,7 @@ export const ChartContent = memo(function ChartContent({
             isAnimationActive={false}
             content={
               zoomState.refAreaLeft && zoomState.refAreaRight ? (
-                <ZoomRangeTooltip
+                <Chart.TooltipZoomRange
                   startTime={
                     formatTimestamp(
                       Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
