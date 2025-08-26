@@ -137,6 +137,49 @@ export function StepSummaryFeature() {
       }
       return
     }
+
+    // EKS
+    if (generalData.installation_type === 'PARTIALLY_MANAGED') {
+      console.warn('EKS submit')
+
+      try {
+        const cluster = await createCluster({
+          organizationId,
+          clusterRequest: {
+            name: generalData.name,
+            description: generalData.description,
+            region: generalData.region,
+            cloud_provider: generalData.cloud_provider,
+            kubernetes: 'PARTIALLY_MANAGED',
+            production: generalData.production,
+            features: [],
+            cloud_provider_credentials,
+            infrastructure_charts_parameters: {
+              nginx_parameters: {
+                replica_count: resourcesData?.replica_count,
+                default_ssl_certificate: resourcesData?.default_ssl_certificate,
+                publish_status_address: resourcesData?.publish_status_address,
+                annotation_metal_lb_load_balancer_ips: resourcesData?.annotation_metal_lb_load_balancer_ips,
+                annotation_external_dns_kubernetes_target: resourcesData?.annotation_external_dns_kubernetes_target,
+              },
+              cert_manager_parameters: {
+                kubernetes_namespace: resourcesData?.kubernetes_namespace,
+              },
+              metalLb_parameters: {
+                ip_address_pools: resourcesData?.ip_address_pools,
+              },
+            },
+          },
+        })
+
+        console.log('🚀 ~ onSubmit ~ cluster:', cluster)
+      } catch (e) {
+        console.error(e)
+      }
+
+      return
+    }
+
     if (resourcesData) {
       let formatFeatures: ClusterRequestFeaturesInner[] = []
 
