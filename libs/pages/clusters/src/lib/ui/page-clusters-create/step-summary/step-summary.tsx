@@ -228,6 +228,66 @@ export function StepSummary(props: StepSummaryProps) {
               </Button>
             </Section>
           ))
+          .with({ installation_type: 'PARTIALLY_MANAGED' }, () => (
+            <>
+              <Section
+                data-testid="summary-kubeconfig"
+                className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
+              >
+                <div className="mr-2 flex-grow">
+                  <Heading className="mb-3">Kubeconfig</Heading>
+                  <ul className="list-none text-sm text-neutral-400">
+                    <li>
+                      <strong className="font-medium">Kubeconfig: </strong>
+                      {props.kubeconfigData?.file_name}
+                    </li>
+                  </ul>
+                </div>
+                <Button type="button" variant="plain" size="md" onClick={props.goToKubeconfig}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </Section>
+              <Section
+                data-testid="summary-kubeconfig"
+                className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
+              >
+                <div className="mr-2 flex-grow">
+                  <Heading className="mb-3">Other</Heading>
+                  <ul className="list-none text-sm text-neutral-400">
+                    <li>
+                      <strong className="font-medium">Kubernetes namespace: </strong>
+                      {props.resourcesData.kubernetes_namespace}
+                    </li>
+
+                    <li>
+                      <strong className="font-medium">IP address pools: </strong>
+                      {props.resourcesData.ip_address_pools}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Number of replicas: </strong>
+                      {props.resourcesData.replica_count}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Default SSL certificate: </strong>
+                      {props.resourcesData.default_ssl_certificate}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Publish status address: </strong>
+                      {props.resourcesData.publish_status_address}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Annotation Metal LB load balancer IPs: </strong>
+                      {props.resourcesData.annotation_metal_lb_load_balancer_ips}
+                    </li>
+                    <li>
+                      <strong className="font-medium">Annotation External DNS Kubernetes target: </strong>
+                      {props.resourcesData.annotation_external_dns_kubernetes_target}
+                    </li>
+                  </ul>
+                </div>
+              </Section>
+            </>
+          ))
           .otherwise(() => null)}
 
         {props.featuresData && showFeaturesSection && (
