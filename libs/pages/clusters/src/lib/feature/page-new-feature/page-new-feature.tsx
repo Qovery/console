@@ -37,6 +37,9 @@ type CardOptionProps = {
       selectedInstallationType: 'self-managed'
       openInstallationGuideModal: () => void
     }
+  | {
+      selectedInstallationType: 'partially-managed'
+    }
 )
 
 function CardOption({ icon, title, description, selectedCloudProvider, recommended, ...props }: CardOptionProps) {
@@ -146,6 +149,16 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         </NavLink>
       )
     )
+    .with({ selectedInstallationType: 'partially-managed' }, ({ selectedInstallationType }) => (
+      <NavLink
+        to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider + '-eks-anywhere')}
+        className={baseClassNames}
+        onClick={() => handleAnalytics(selectedInstallationType)}
+      >
+        {renderIcon()}
+        {renderContent()}
+      </NavLink>
+    ))
     .exhaustive()
 }
 
@@ -160,7 +173,7 @@ type CardClusterProps = {
     }
   | {
       openInstallationGuideModal: () => void
-      selectedInstallationType: 'demo' | 'self-managed'
+      selectedInstallationType: 'demo' | 'self-managed' | 'partially-managed'
       selectedCloudProvider:
         | 'DIGITAL_OCEAN'
         | 'AZURE'
@@ -355,6 +368,14 @@ export function PageNewFeature() {
           selectedCloudProvider: 'AWS',
           selectedInstallationType: 'self-managed',
           openInstallationGuideModal,
+        },
+        {
+          title: 'EKS Anywhere',
+          description:
+            'AWS EKS Anywhere is a fully managed Kubernetes service that allows you to deploy and manage Kubernetes clusters on your own infrastructure.',
+          icon: AWS,
+          selectedCloudProvider: 'AWS',
+          selectedInstallationType: 'partially-managed',
         },
       ],
       icon: AWS,

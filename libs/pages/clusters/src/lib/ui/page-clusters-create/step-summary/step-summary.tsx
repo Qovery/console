@@ -117,6 +117,7 @@ export function StepSummary(props: StepSummaryProps) {
                 {match(props.generalData.installation_type)
                   .with('MANAGED', () => 'Managed')
                   .with('SELF_MANAGED', () => 'Self-Managed')
+                  .with('PARTIALLY_MANAGED', () => 'Partially managed (EKS Anywhere)')
                   .with('LOCAL_DEMO', () => undefined)
                   .exhaustive()}
               </li>

@@ -8,7 +8,7 @@ export interface ClusterGeneralData {
   region: string
   credentials: string
   credentials_name: string
-  installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO'
+  installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO' | 'PARTIALLY_MANAGED'
   metrics_parameters?: {
     enabled?: boolean
   }
@@ -33,6 +33,13 @@ export interface ClusterResourcesData {
   disk_size: number
   karpenter?: KarpenterData
   scw_control_plane?: SCWControlPlaneFeatureType
+  kubernetes_namespace?: string
+  ip_address_pools?: string[]
+  replica_count?: number
+  publish_status_address?: string
+  default_ssl_certificate?: string
+  annotation_metal_lb_load_balancer_ips?: string
+  annotation_external_dns_kubernetes_target?: string
 }
 
 // XXX: Necessary to have `eks_subnets` for Karpenter migration

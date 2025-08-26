@@ -5,6 +5,8 @@ import { match } from 'ts-pattern'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import {
+  CLUSTERS_CREATION_ACCESS_URL,
+  CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
@@ -52,18 +54,30 @@ export function StepGeneralFeature() {
           requirements: [],
         },
       },
+      kubernetes_namespace: d?.kubernetes_namespace,
+      ip_address_pools: d?.ip_address_pools,
+      replica_count: d?.replica_count,
+      publish_status_address: d?.publish_status_address,
+      default_ssl_certificate: d?.default_ssl_certificate,
+      annotation_metal_lb_load_balancer_ips: d?.annotation_metal_lb_load_balancer_ips,
+      annotation_external_dns_kubernetes_target: d?.annotation_external_dns_kubernetes_target,
     }))
 
-    if (credentials.length > 0) {
+    if (credentials.length > 0 || data.installation_type === 'PARTIALLY_MANAGED') {
       // necessary to get the name of credentials
-      const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
-      data['credentials_name'] = currentCredentials.name
+      if (data['credentials']) {
+        const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
+        data['credentials_name'] = currentCredentials.name
+      }
 
       setGeneralData(data)
       match(data)
         .with({ installation_type: 'SELF_MANAGED' }, () => navigate(creationFlowUrl + CLUSTERS_CREATION_KUBECONFIG_URL))
         .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () =>
           navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
+        )
+        .with({ installation_type: 'PARTIALLY_MANAGED' }, () =>
+          navigate(creationFlowUrl + CLUSTERS_CREATION_KUBECONFIG_URL)
         )
         .otherwise(() => navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL))
     }
