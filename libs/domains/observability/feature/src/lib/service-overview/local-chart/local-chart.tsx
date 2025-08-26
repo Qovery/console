@@ -427,9 +427,6 @@ export function LocalChart({
   const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
 
   const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
-    // Get chart data timestamps for alignment
-    const chartTimestamps = data.map((d) => d.timestamp)
-
     return (eventsFiltered || [])
       .filter(
         (event) =>
@@ -441,16 +438,7 @@ export function LocalChart({
       .map((event) => {
         const eventTimestamp = new Date(event.timestamp || '').getTime()
 
-        // Find the closest chart data point timestamp
-        let alignedTimestamp = eventTimestamp
-        if (chartTimestamps.length > 0) {
-          const closestTimestamp = chartTimestamps.reduce((prev, curr) => {
-            return Math.abs(curr - eventTimestamp) < Math.abs(prev - eventTimestamp) ? curr : prev
-          })
-          alignedTimestamp = closestTimestamp
-        }
-
-        const key = `event-${event.id || alignedTimestamp}`
+        const key = `event-${event.id || eventTimestamp}`
         const change = JSON.parse(event.change || '')
         // TODO: Add support for other service types and clean-up api endpoint
         const version =
@@ -464,7 +452,7 @@ export function LocalChart({
         if (event.event_type === 'DEPLOY_FAILED') {
           return {
             type: 'event',
-            timestamp: alignedTimestamp,
+            timestamp: eventTimestamp,
             reason: 'Deploy failed',
             icon: 'xmark',
             color: 'var(--color-red-500)',
@@ -475,7 +463,7 @@ export function LocalChart({
         } else if (event.event_type === 'DEPLOYED') {
           return {
             type: 'event',
-            timestamp: alignedTimestamp,
+            timestamp: eventTimestamp,
             reason: 'Deployed',
             icon: 'check',
             color: 'var(--color-green-500)',
@@ -486,7 +474,7 @@ export function LocalChart({
         } else if (event.event_type === 'TRIGGER_DEPLOY') {
           return {
             type: 'event',
-            timestamp: alignedTimestamp,
+            timestamp: eventTimestamp,
             reason: 'Trigger deploy',
             icon: 'play',
             iconStyle: 'solid',
@@ -499,7 +487,7 @@ export function LocalChart({
 
         return {
           type: 'event',
-          timestamp: alignedTimestamp,
+          timestamp: eventTimestamp,
           reason: 'Unknown',
           icon: 'question',
           color: 'var(--color-neutral-350)',
@@ -508,7 +496,7 @@ export function LocalChart({
           repository,
         }
       })
-  }, [eventsFiltered, serviceId, data])
+  }, [eventsFiltered, serviceId])
 
   // Merge with any referenceLineData passed as prop
   const mergedReferenceLineData = useMemo(() => {
@@ -520,7 +508,7 @@ export function LocalChart({
     )
 
     return uniqueEvents.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
-  }, [referenceLineData, eventReferenceLines])
+  }, [referenceLineData, eventReferenceLines, label])
 
   return (
     <>
