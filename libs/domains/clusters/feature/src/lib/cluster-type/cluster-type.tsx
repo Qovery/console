@@ -15,6 +15,7 @@ export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props 
       instanceType === 'KARPENTER' ? `EKS (${upperCaseFirstLetter(instanceType)})` : 'EKS'
     )
     .with(['AWS', KubernetesEnum.SELF_MANAGED], ['AWS', undefined], () => 'Self-managed')
+    .with(['AWS', KubernetesEnum.PARTIALLY_MANAGED], ['AWS', undefined], () => 'Partially managed (EKS Anywhere)')
     // Scaleway
     .with(['SCW', P._], () => 'Kapsule')
     // Google GCP
@@ -22,6 +23,7 @@ export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props 
     // Microsoft AZURE
     .with(['AZURE', KubernetesEnum.MANAGED], () => 'AKS')
     .with(['AZURE', KubernetesEnum.SELF_MANAGED], ['AZURE', undefined], () => 'Self-managed')
+    .with(['AZURE', KubernetesEnum.PARTIALLY_MANAGED], ['AZURE', undefined], () => 'Partially managed (AKS Anywhere)') // TODO [CQ-1108] double check this. Is this case possible?
     // BYOK
     .with(['ON_PREMISE', P._], () => 'On-premise')
     .with(['DO', P._], () => 'DO')

@@ -90,6 +90,11 @@ export const defaultResourcesData: ClusterResourcesData = {
       requirements: [],
     },
   },
+  replica_count: 1,
+  publish_status_address: '',
+  default_ssl_certificate: '',
+  annotation_metal_lb_load_balancer_ips: '',
+  annotation_external_dns_kubernetes_target: '',
 }
 
 export function PageClusterCreateFeature() {
@@ -99,6 +104,7 @@ export function PageClusterCreateFeature() {
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
+  console.log('🚀 ~ PageClusterCreateFeature ~ resourcesData:', resourcesData)
   const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>({
     vpc_mode: undefined,
     features: {},
@@ -115,6 +121,7 @@ export function PageClusterCreateFeature() {
   useEffect(() => {
     if (slug) {
       const defaultOptions = match(slug)
+        .with('AWS-eks-anywhere', () => ({ installation_type: 'PARTIALLY_MANAGED', cloud_provider: 'AWS' }))
         .with('AWS', () => ({ installation_type: 'MANAGED', cloud_provider: 'AWS' }))
         .with('SCW', () => ({ installation_type: 'MANAGED', cloud_provider: 'SCW' }))
         .with('GCP', () => ({ installation_type: 'MANAGED', cloud_provider: 'GCP' }))
