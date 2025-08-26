@@ -19,6 +19,7 @@ import { Button, DropdownMenu, ExternalLink, Icon, Link, TablePrimitives, Toolti
 import { HeaderLogs } from '../header-logs/header-logs'
 import { type LogType, useServiceLogs } from '../hooks/use-service-logs/use-service-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
+import { SearchServiceLogs } from '../search-service-logs/search-service-logs'
 import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs-placeholder'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
@@ -200,8 +201,8 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
             <Icon iconName="arrow-right" />
           </Link>
         </HeaderLogs>
-        <div className="flex h-12 w-full items-center justify-between border-b border-neutral-500 px-4 py-2.5">
-          <div className="flex items-center gap-3">
+        <div className="flex h-[60px] w-full items-center justify-between gap-3 border-b border-neutral-500 px-4 py-2.5">
+          <div className="flex w-full items-center gap-3">
             <Button
               type="button"
               variant="surface"
@@ -255,6 +256,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
                 </Button>
               </div>
             ))}
+            <SearchServiceLogs />
           </div>
           <div className="flex gap-3">
             <DropdownMenu.Root>
