@@ -1,5 +1,5 @@
 import type { IconName } from '@fortawesome/fontawesome-common-types'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { Area, Line, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
@@ -279,6 +279,9 @@ export function InstanceStatusChart({
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey, timeRange } =
     useServiceOverviewContext()
 
+  // Cache to prevent timestamp drift
+  const eventTimestampCache = useRef(new Map<string, number>())
+
   // Calculate dynamic range based on time range
   const dynamicRange = useMemo(
     () => calculateDynamicRange(startTimestamp, endTimestamp, 1),
@@ -328,6 +331,7 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryK8sEvent(serviceId, dynamicRange),
+    queryRange: 'query', // Use instant query to get stable timestamps
   })
 
   const { data: metricsProbe, isLoading: isLoadingMetricsProbe } = useMetrics({
@@ -443,10 +447,19 @@ export function InstanceStatusChart({
           series.values.forEach(([timestamp, value]: [number, string]) => {
             const numValue = parseFloat(value)
             if (numValue > 0) {
+              const eventId = `metric-${series.metric.reason}-${series.metric.pod}`
               const key = `${series.metric.reason}-${timestamp}`
+
+              // Use cached timestamp if available to prevent drift
+              let stableTimestamp = eventTimestampCache.current.get(eventId)
+              if (!stableTimestamp) {
+                stableTimestamp = timestamp * 1000
+                eventTimestampCache.current.set(eventId, stableTimestamp)
+              }
+
               referenceLines.push({
                 type: 'metric',
-                timestamp: timestamp * 1000,
+                timestamp: stableTimestamp,
                 reason: series.metric.reason,
                 description: getDescriptionFromReason(series.metric.reason),
                 icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
@@ -466,11 +479,20 @@ export function InstanceStatusChart({
         series.values.forEach(([timestamp, value]: [number, string]) => {
           const numValue = parseFloat(value)
           if (numValue >= 0) {
+            const eventId = `exit-${series.metric.pod}-${value}`
             const key = `${series.metric.pod}-${timestamp}`
             const exitCodeInfo = getExitCodeInfo(series.values?.[0]?.[1])
+
+            // Use cached timestamp if available to prevent drift
+            let stableTimestamp = eventTimestampCache.current.get(eventId)
+            if (!stableTimestamp) {
+              stableTimestamp = timestamp * 1000
+              eventTimestampCache.current.set(eventId, stableTimestamp)
+            }
+
             referenceLines.push({
               type: 'exit-code',
-              timestamp: timestamp * 1000,
+              timestamp: stableTimestamp,
               reason: exitCodeInfo.name,
               description: exitCodeInfo.description,
               color: 'var(--color-red-500)',
@@ -490,10 +512,19 @@ export function InstanceStatusChart({
           series.values.forEach(([timestamp, value]: [number, string]) => {
             const numValue = parseFloat(value)
             if (numValue > 0) {
+              const eventId = `k8s-${series.metric.reason}-${series.metric.pod}`
               const key = `${series.metric.reason}-${timestamp}`
+
+              // Use cached timestamp if available to prevent drift
+              let stableTimestamp = eventTimestampCache.current.get(eventId)
+              if (!stableTimestamp) {
+                stableTimestamp = timestamp * 1000
+                eventTimestampCache.current.set(eventId, stableTimestamp)
+              }
+
               referenceLines.push({
                 type: 'k8s-event',
-                timestamp: timestamp * 1000,
+                timestamp: stableTimestamp,
                 reason: series.metric.reason,
                 description: getDescriptionFromK8sEvent(series.metric.reason),
                 icon: getIconFromK8sEvent(series.metric.reason),
@@ -556,8 +587,9 @@ export function InstanceStatusChart({
 
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
+
     return referenceLines
-  }, [metricsReason, metricsExitCode, metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached])
+  }, [metricsReason, metricsExitCode, metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached, timeRange])
 
   const isLoading = useMemo(
     () =>
