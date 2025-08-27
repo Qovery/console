@@ -56,6 +56,10 @@ interface ServiceOverviewContextType {
 
   // Last dropdown selection
   lastDropdownTimeRange: TimeRangeOption
+
+  // Chart refreshing state
+  isAnyChartRefreshing: boolean
+  setIsAnyChartRefreshing: (isRefreshing: boolean) => void
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
@@ -104,6 +108,14 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   // Zoom state tracking - simplified to just track boolean state
   const [isAnyChartZoomed, setIsAnyChartZoomed] = useState(false)
+
+  // Chart refreshing state tracking
+  const [refreshingCount, setRefreshingCount] = useState(0)
+  const isAnyChartRefreshing = refreshingCount > 0
+
+  const setIsAnyChartRefreshing = useCallback((isRefreshing: boolean) => {
+    setRefreshingCount((prev) => (isRefreshing ? prev + 1 : Math.max(0, prev - 1)))
+  }, [])
 
   const handleTimeRangeChange = useCallback(
     (range: TimeRangeOption) => {
@@ -224,6 +236,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       isDatePickerOpen,
       setIsDatePickerOpen,
       lastDropdownTimeRange,
+      isAnyChartRefreshing,
+      setIsAnyChartRefreshing,
     }),
     [
       useLocalTime,
@@ -252,6 +266,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       isDatePickerOpen,
       setIsDatePickerOpen,
       lastDropdownTimeRange,
+      isAnyChartRefreshing,
+      setIsAnyChartRefreshing,
     ]
   )
 

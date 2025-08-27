@@ -4,6 +4,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
+import { Spinner } from './spinner'
 
 interface TooltipPayloadItem {
   dataKey: string | number
@@ -19,10 +20,11 @@ interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
   isLoading?: boolean
   isEmpty?: boolean
+  isRefreshing?: boolean
 }
 
 const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function ChartContainer(
-  { children, className, isLoading, isEmpty, ...htmlProps },
+  { children, className, isLoading, isEmpty, isRefreshing, ...htmlProps },
   ref
 ) {
   return (
@@ -66,6 +68,12 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
               </>
             )}
           </div>
+        </div>
+      )}
+
+      {isRefreshing && !isLoading && !isEmpty && (
+        <div className="absolute left-2 top-2 z-10">
+          <Spinner size="md" variant="default" />
         </div>
       )}
     </div>
