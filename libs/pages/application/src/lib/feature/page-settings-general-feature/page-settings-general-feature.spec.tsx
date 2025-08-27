@@ -249,12 +249,7 @@ describe('PageSettingsGeneralFeature', () => {
         name: 'hello',
         description: 'description',
         provider: GitProviderEnum.GITHUB,
-        git_repository: {
-          url: 'https://github.com/qovery/helm.git',
-          default_branch: 'main',
-          id: '1',
-          name: 'qovery/console',
-        },
+        repository: '000-000',
         source_provider: 'HELM_REPOSITORY',
         allow_cluster_wide_resources: true,
         arguments: '--set image.tag=latest',
@@ -276,7 +271,7 @@ describe('PageSettingsGeneralFeature', () => {
       auto_deploy: false,
       source: {
         helm_repository: {
-          repository: 'https://github.com/qovery/helm.git',
+          repository: '000-000',
           chart_name: 'chart',
           chart_version: '1.0.0',
         },
