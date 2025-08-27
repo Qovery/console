@@ -209,11 +209,7 @@ export function calculateRateInterval(startTimestamp: string, endTimestamp: stri
 
 // Max source resolution is max resolution in seconds we want to use for data we query for.
 // https://thanos.io/v0.6/components/query/#auto-downsampling
-export function calculateMaxSourceResolution(
-  startTimestamp: string,
-  endTimestamp: string,
-  renderedStep: string
-): string {
+function calculateMaxSourceResolution(startTimestamp: string, endTimestamp: string, renderedStep: string): string {
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const rangeMs = Math.max(0, endMs - startMs)
