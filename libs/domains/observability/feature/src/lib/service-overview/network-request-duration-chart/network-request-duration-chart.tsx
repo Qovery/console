@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryDuration50 = (serviceId: string) => `
+const queryDuration50 = (serviceId: string, rateInterval: string) => `
   histogram_quantile(0.5,(
-  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
+  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[${rateInterval}]))
   * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
@@ -19,9 +19,9 @@ const queryDuration50 = (serviceId: string) => `
 )
 `
 
-const queryDuration99 = (serviceId: string) => `
+const queryDuration99 = (serviceId: string, rateInterval: string) => `
   histogram_quantile(0.99,(
-  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
+  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[${rateInterval}]))
   * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
@@ -31,9 +31,9 @@ const queryDuration99 = (serviceId: string) => `
 )
 `
 
-const queryDuration95 = (serviceId: string) => `
+const queryDuration95 = (serviceId: string, rateInterval: string) => `
   histogram_quantile(0.95,(
-  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[1m]))
+  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[${rateInterval}]))
   * on(ingress) group_left(label_qovery_com_associated_service_id)
     max by(ingress, label_qovery_com_associated_service_id)(
       kube_ingress_labels{
@@ -55,12 +55,17 @@ export function NetworkRequestDurationChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
+  const rateInterval = useMemo(
+    () => calculateRateInterval(startTimestamp, endTimestamp),
+    [startTimestamp, endTimestamp]
+  )
+
   const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration50(serviceId),
+    query: queryDuration50(serviceId, rateInterval),
   })
 
   const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
@@ -68,7 +73,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration99(serviceId),
+    query: queryDuration99(serviceId, rateInterval),
   })
 
   const { data: metrics95, isLoading: isLoadingMetrics } = useMetrics({
@@ -76,7 +81,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration95(serviceId),
+    query: queryDuration95(serviceId, rateInterval),
   })
 
   const chartData = useMemo(() => {

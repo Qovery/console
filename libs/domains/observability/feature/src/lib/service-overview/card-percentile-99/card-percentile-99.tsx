@@ -1,18 +1,17 @@
-import { useState } from 'react'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMemo, useState } from 'react'
+import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import ModalChart from '../modal-chart/modal-chart'
 import NetworkRequestDurationChart from '../network-request-duration-chart/network-request-duration-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-// TODO PG remove [1m] par $__rate_interval
-const query = (serviceId: string, timeRange: string) => `
+const query = (serviceId: string, timeRange: string, rateInterval: string) => `
   max_over_time(
     histogram_quantile(
       0.99,
       (
         sum by(le, ingress) (
-          rate(nginx_ingress_controller_request_duration_seconds_bucket[1m])
+          rate(nginx_ingress_controller_request_duration_seconds_bucket[${rateInterval}])
         )
         * on(ingress) group_left(label_qovery_com_associated_service_id)
           max by(ingress, label_qovery_com_associated_service_id)(
@@ -26,12 +25,17 @@ const query = (serviceId: string, timeRange: string) => `
 `
 
 export function CardPercentile99({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
-  const { queryTimeRange } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const rateInterval = useMemo(
+    () => calculateRateInterval(startTimestamp, endTimestamp),
+    [startTimestamp, endTimestamp]
+  )
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: query(serviceId, queryTimeRange),
+    query: query(serviceId, queryTimeRange, rateInterval),
     queryRange: 'query',
   })
 

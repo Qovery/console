@@ -1,39 +1,40 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-// TODO PG remove [5m] par $__rate_interval
-const queryDiskReadNvme = (serviceId: string) => `
-  sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container!="", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
+const queryDiskReadNvme = (serviceId: string, rateInterval: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container!="", device=~"/dev/nvme0.*"}[${rateInterval}])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
 `
 
-// TODO PG remove [5m] par $__rate_interval
-const queryDiskReadNonNvme = (serviceId: string) => `
-  sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container="", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
+const queryDiskReadNonNvme = (serviceId: string, rateInterval: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_reads_bytes_total{container="", device!~"/dev/nvme0.*", device!=""}[${rateInterval}])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
 `
 
-// TODO PG remove [5m] par $__rate_interval
-const queryDiskWriteNvme = (serviceId: string) => `
-  sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container!="", device=~"/dev/nvme0.*"}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
+const queryDiskWriteNvme = (serviceId: string, rateInterval: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container!="", device=~"/dev/nvme0.*"}[${rateInterval}])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
 `
 
-// TODO PG remove [5m] par $__rate_interval
-const queryDiskWriteNonNvme = (serviceId: string) => `
-  sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container="", device!~"/dev/nvme0.*", device!=""}[1m])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
+const queryDiskWriteNonNvme = (serviceId: string, rateInterval: string) => `
+  sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container="", device!~"/dev/nvme0.*", device!=""}[${rateInterval}])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
 `
 
 export function DiskChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
+  const rateInterval = useMemo(
+    () => calculateRateInterval(startTimestamp, endTimestamp),
+    [startTimestamp, endTimestamp]
+  )
+
   const { data: metricsReadEphemeralStorage, isLoading: isLoadingMetricsReadEphemeralStorage } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskReadNvme(serviceId),
+    query: queryDiskReadNvme(serviceId, rateInterval),
     timeRange,
   })
 
@@ -41,7 +42,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskReadNonNvme(serviceId),
+    query: queryDiskReadNonNvme(serviceId, rateInterval),
     timeRange,
   })
 
@@ -49,7 +50,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskWriteNvme(serviceId),
+    query: queryDiskWriteNvme(serviceId, rateInterval),
     timeRange,
   })
 
@@ -57,7 +58,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskWriteNonNvme(serviceId),
+    query: queryDiskWriteNonNvme(serviceId, rateInterval),
     timeRange,
   })
 

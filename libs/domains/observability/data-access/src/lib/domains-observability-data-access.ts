@@ -12,10 +12,12 @@ export const observability = createQueryKeys('observability', {
     endTimestamp,
     step,
     timeRange,
+    maxSourceResolution,
   }: {
     clusterId: string
     query: string
     step: string
+    maxSourceResolution: string
     startTimestamp?: string
     endTimestamp?: string
     queryRange?: 'query' | 'query_range'
@@ -34,10 +36,11 @@ export const observability = createQueryKeys('observability', {
         undefined,
         'True',
         'True',
-        'auto', // TODO PG not set auto but 0, 5m or 1h
+        maxSourceResolution,
         'thanos',
         'false'
       )
+
       return response.data.metrics && JSON.parse(response.data.metrics)
     },
   }),

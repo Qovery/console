@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string) => `
-  sum by(path,status)( rate(nginx_ingress_controller_requests{}[1m])
+const query = (serviceId: string, rateInterval: string) => `
+  sum by(path,status)( rate(nginx_ingress_controller_requests{}[${rateInterval}])
     * on(ingress) group_left(label_qovery_com_associated_service_id)
       max by(ingress, label_qovery_com_associated_service_id)(
         kube_ingress_labels{
@@ -21,12 +21,17 @@ const query = (serviceId: string) => `
 export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
+  const rateInterval = useMemo(
+    () => calculateRateInterval(startTimestamp, endTimestamp),
+    [startTimestamp, endTimestamp]
+  )
+
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: query(serviceId),
+    query: query(serviceId, rateInterval),
   })
 
   const chartData = useMemo(() => {
