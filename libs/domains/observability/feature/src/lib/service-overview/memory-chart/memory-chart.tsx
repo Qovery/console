@@ -123,7 +123,6 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
         dataKey="memory-request"
         type="linear"
         stroke="var(--color-neutral-300)"
-        strokeDasharray="4 4"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -133,7 +132,6 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
         dataKey="memory-limit"
         type="linear"
         stroke="var(--color-red-500)"
-        strokeDasharray="4 4"
         strokeWidth={2}
         // label={renderMemoryLimitLabel}
         connectNulls={false}

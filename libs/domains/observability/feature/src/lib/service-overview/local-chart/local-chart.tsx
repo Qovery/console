@@ -228,7 +228,7 @@ export const ChartContent = memo(function ChartContent({
             interval="preserveStartEnd"
           />
           <Chart.Tooltip
-            position={{ y: isFullscreen ? 40 : 13 }}
+            position={{ y: isFullscreen ? undefined : 13 }}
             content={
               zoomState.refAreaLeft && zoomState.refAreaRight ? (
                 <Chart.TooltipZoomRange
