@@ -623,7 +623,6 @@ export function InstanceStatusChart({
         dataKey="Autoscaling min replicas"
         type="linear"
         stroke="var(--color-neutral-300)"
-        strokeDasharray="4 4"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -634,7 +633,6 @@ export function InstanceStatusChart({
         dataKey="Autoscaling max replicas"
         type="linear"
         stroke="var(--color-red-500)"
-        strokeDasharray="4 4"
         strokeWidth={2}
         connectNulls={false}
         dot={false}

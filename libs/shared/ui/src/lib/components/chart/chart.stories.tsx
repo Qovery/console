@@ -8,7 +8,6 @@ import {
   Line,
   ReferenceArea,
   ReferenceLine,
-  Tooltip,
   XAxis,
   YAxis,
 } from 'recharts'
@@ -250,7 +249,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
             tickCount={5}
             tickFormatter={(value) => (value === 0 ? '' : value)}
           />
-          <Tooltip
+          <Chart.Tooltip
             content={
               zoomState.refAreaLeft && zoomState.refAreaRight ? (
                 <Chart.TooltipZoomRange

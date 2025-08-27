@@ -128,7 +128,6 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         dataKey="cpu-request"
         type="linear"
         stroke="var(--color-neutral-300)"
-        strokeDasharray="4 4"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -138,7 +137,6 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         dataKey="cpu-limit"
         type="linear"
         stroke="var(--color-red-500)"
-        strokeDasharray="4 4"
         strokeWidth={2}
         // label={renderCpuLimitLabel}
         connectNulls={false}
