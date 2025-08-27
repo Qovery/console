@@ -47,6 +47,12 @@ export const useClusterContainerCreateContext = () => {
 
 export const steps = (clusterGeneralData?: ClusterGeneralData) => {
   return match(clusterGeneralData)
+    .with({ installation_type: 'PARTIALLY_MANAGED' }, () => [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Kubeconfig', key: 'kubeconfig' },
+      { title: 'EKS configuration', key: 'eks' },
+      { title: 'Ready to install', key: 'summary' },
+    ])
     .with({ installation_type: 'SELF_MANAGED' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Kubeconfig', key: 'kubeconfig' },
