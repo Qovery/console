@@ -189,7 +189,7 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
       'HELM_REPOSITORY',
       (): HelmRequestAllOfSourceOneOf1 => ({
         helm_repository: {
-          repository: data.git_repository?.url,
+          repository: data.repository,
           chart_name: data.chart_name,
           chart_version: data.chart_version,
         },
