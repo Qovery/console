@@ -1,10 +1,10 @@
+import { type ApplicationGitRepository, type GitProviderEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import GitRepositorySettings from '../../ui/git-repository-settings/git-repository-settings'
 
 interface EditGitRepositorySettingsFeatureProps {
@@ -26,12 +26,13 @@ export function EditGitRepositorySettingsFeature({
     .otherwise(() => undefined)
 
   const { setValue } = useFormContext<{
-    provider: string
+    provider: GitProviderEnum | undefined
     repository?: string
-    branch?: string
-    root_path?: string
-    git_token_name?: string
-    git_token_id?: string | null
+    branch?: ApplicationGitRepository['branch']
+    root_path?: ApplicationGitRepository['root_path']
+    git_token_name?: ApplicationGitRepository['git_token_name']
+    git_token_id?: ApplicationGitRepository['git_token_id']
+    git_repository?: ApplicationGitRepository
   }>()
 
   const [gitDisabled, setGitDisabled] = useState(true)
@@ -39,12 +40,13 @@ export function EditGitRepositorySettingsFeature({
   useEffect(() => {
     // Set default disabled values
     if (gitDisabled) {
-      setValue('provider', upperCaseFirstLetter(gitRepository?.provider))
+      setValue('provider', gitRepository?.provider)
       setValue('repository', gitRepository?.name ?? '')
       setValue('branch', gitRepository?.branch ?? '')
       setValue('root_path', gitRepository?.root_path ?? '/')
       setValue('git_token_name', gitRepository?.git_token_name ?? undefined)
       setValue('git_token_id', gitRepository?.git_token_id)
+      setValue('git_repository', gitRepository)
     }
   }, [gitDisabled, gitRepository, setValue])
 
@@ -52,7 +54,7 @@ export function EditGitRepositorySettingsFeature({
   const editGitSettings = () => {
     setGitDisabled(false)
     // Reset fields except provider
-    setValue('provider', gitRepository?.provider ?? '')
+    setValue('provider', gitRepository?.provider)
     setValue('repository', undefined)
   }
 
