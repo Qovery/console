@@ -110,7 +110,6 @@ export function PageClusterCreateFeature() {
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
   const [resourcesData, setResourcesData] = useState<ClusterResourcesData | undefined>(defaultResourcesData)
-  console.log('🚀 ~ PageClusterCreateFeature ~ resourcesData:', resourcesData)
   const [featuresData, setFeaturesData] = useState<ClusterFeaturesData | undefined>({
     vpc_mode: undefined,
     features: {},
