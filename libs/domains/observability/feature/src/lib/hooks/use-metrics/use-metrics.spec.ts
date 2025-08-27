@@ -5,49 +5,49 @@ describe('calculateDynamicRange', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704070800' // Jan 1, 2024 01:00:00 (1 hour)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('30000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('45000ms')
   })
 
-  it('should return 600000ms for 23 hours duration', () => {
+  it('should return 615000ms for 23 hours duration', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704150000' // Jan 1, 2024 23:00:00 (23 hours)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('600000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('615000ms')
   })
 
-  it('should return 600000ms for 24 hours duration', () => {
+  it('should return 615000ms for 24 hours duration', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704153600' // Jan 2, 2024 00:00:00 (24 hours)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('600000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('615000ms')
   })
 
-  it('should return 1800000ms for 48 hours duration', () => {
+  it('should return 1815000ms for 48 hours duration', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704240000' // Jan 3, 2024 00:00:00 (48 hours)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('1800000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('1815000ms')
   })
 
-  it('should return 7200000ms for 7 days duration', () => {
+  it('should return 7215000ms for 7 days duration', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704672000' // Jan 8, 2024 00:00:00 (7 days)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('7200000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('7215000ms')
   })
 
-  it('should return 21600000ms for 30 days duration', () => {
+  it('should return 21615000ms for 30 days duration', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1706659200' // Jan 31, 2024 00:00:00 (30 days)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('21600000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('21615000ms')
   })
 
-  it('should return 21600000ms for 60 days duration', () => {
+  it('should return 21615000ms for 60 days duration', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1709251200' // Mar 1, 2024 00:00:00 (60 days)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('21600000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('21615000ms')
   })
 
   it('should apply offset multiplier', () => {
@@ -55,21 +55,48 @@ describe('calculateDynamicRange', () => {
     const endTimestamp = '1704070800'
     const offsetMultiplier = 5
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp, offsetMultiplier)).toBe('30500ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp, offsetMultiplier)).toBe('105000ms')
   })
 
   it('should handle edge case: exactly 12 hours', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704110400' // Jan 1, 2024 12:00:00 (exactly 12 hours)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('300000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('315000ms')
   })
 
   it('should handle edge case: exactly 24 hours', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704153600' // Jan 2, 2024 00:00:00 (exactly 24 hours)
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('600000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('615000ms')
+  })
+
+  it('should throw error for offsetMultiplier = 0', () => {
+    const startTimestamp = '1704067200'
+    const endTimestamp = '1704070800'
+
+    expect(() => calculateDynamicRange(startTimestamp, endTimestamp, 0)).toThrow(
+      'offsetMultiplier must be a positive integer'
+    )
+  })
+
+  it('should throw error for negative offsetMultiplier', () => {
+    const startTimestamp = '1704067200'
+    const endTimestamp = '1704070800'
+
+    expect(() => calculateDynamicRange(startTimestamp, endTimestamp, -1)).toThrow(
+      'offsetMultiplier must be a positive integer'
+    )
+  })
+
+  it('should throw error for float offsetMultiplier', () => {
+    const startTimestamp = '1704067200'
+    const endTimestamp = '1704070800'
+
+    expect(() => calculateDynamicRange(startTimestamp, endTimestamp, 1.5)).toThrow(
+      'offsetMultiplier must be a positive integer'
+    )
   })
 })
 
