@@ -87,7 +87,7 @@ export function useMetrics({
   const maxSourceResolution = useMemo(() => {
     if (!alignedStart || !alignedEnd) return '0s' as const
     const safeStep = step ?? '1m'
-    return pickMaxSourceResolution(alignedStart, alignedEnd, safeStep)
+    return calculateMaxSourceResolution(alignedStart, alignedEnd, safeStep)
   }, [alignedStart, alignedEnd, step])
 
   const queryResult = useQuery({
@@ -197,13 +197,46 @@ export function calculateRateInterval(startTimestamp: string, endTimestamp: stri
   // Pick the closest allowed step >= desired
   const pickedMs = allowedStepsMs.find((s) => s >= desiredMs) ?? allowedStepsMs[allowedStepsMs.length - 1]
 
+  function msToPromDuration(ms: number): string {
+    if (ms % (60 * 60 * 1000) === 0) return `${ms / (60 * 60 * 1000)}h`
+    if (ms % (60 * 1000) === 0) return `${ms / (60 * 1000)}m`
+    if (ms % 1000 === 0) return `${ms / 1000}s`
+    return `${ms}ms`
+  }
+
   return msToPromDuration(pickedMs)
 }
 
-export function pickMaxSourceResolution(startTimestamp: string, endTimestamp: string, renderedStep: string): string {
+// Max source resolution is max resolution in seconds we want to use for data we query for.
+// https://thanos.io/v0.6/components/query/#auto-downsampling
+export function calculateMaxSourceResolution(
+  startTimestamp: string,
+  endTimestamp: string,
+  renderedStep: string
+): string {
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const rangeMs = Math.max(0, endMs - startMs)
+
+  function promDurationToMs(d: string): number {
+    const m = d.match(/^(\d+)(ms|s|m|h|d)$/)
+    if (!m) return 60_000 // fallback 1m
+    const n = Number(m[1])
+    switch (m[2]) {
+      case 'ms':
+        return n
+      case 's':
+        return n * 1_000
+      case 'm':
+        return n * 60_000
+      case 'h':
+        return n * 3_600_000
+      case 'd':
+        return n * 86_400_000
+      default:
+        return 60_000
+    }
+  }
 
   const stepMs = promDurationToMs(renderedStep)
 
@@ -219,38 +252,10 @@ export function pickMaxSourceResolution(startTimestamp: string, endTimestamp: st
   else if (rangeMs <= sevenDaysMs) byRange = '5m'
   else byRange = '1h'
 
-  return coarserOf(byStep, byRange)
-}
-
-function promDurationToMs(d: string): number {
-  const m = d.match(/^(\d+)(ms|s|m|h|d)$/)
-  if (!m) return 60_000 // fallback 1m
-  const n = Number(m[1])
-  switch (m[2]) {
-    case 'ms':
-      return n
-    case 's':
-      return n * 1_000
-    case 'm':
-      return n * 60_000
-    case 'h':
-      return n * 3_600_000
-    case 'd':
-      return n * 86_400_000
-    default:
-      return 60_000
+  function coarserOf(a: '0s' | '5m' | '1h', b: '0s' | '5m' | '1h'): '0s' | '5m' | '1h' {
+    const order = ['0s', '5m', '1h'] as const
+    return order[Math.max(order.indexOf(a), order.indexOf(b))]
   }
-}
 
-function coarserOf(a: '0s' | '5m' | '1h', b: '0s' | '5m' | '1h'): '0s' | '5m' | '1h' {
-  const order = ['0s', '5m', '1h'] as const
-  return order[Math.max(order.indexOf(a), order.indexOf(b))]
-}
-
-// -------- helpers --------
-function msToPromDuration(ms: number): string {
-  if (ms % (60 * 60 * 1000) === 0) return `${ms / (60 * 60 * 1000)}h`
-  if (ms % (60 * 1000) === 0) return `${ms / (60 * 1000)}m`
-  if (ms % 1000 === 0) return `${ms / 1000}s`
-  return `${ms}ms`
+  return coarserOf(byStep, byRange)
 }

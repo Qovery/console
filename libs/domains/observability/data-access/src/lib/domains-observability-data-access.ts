@@ -17,11 +17,11 @@ export const observability = createQueryKeys('observability', {
     clusterId: string
     query: string
     step: string
+    maxSourceResolution: string
     startTimestamp?: string
     endTimestamp?: string
     queryRange?: 'query' | 'query_range'
     timeRange?: string
-    maxSourceResolution: string
   }) => ({
     queryKey: [query, timeRange, startTimestamp, endTimestamp, step],
     async queryFn() {
