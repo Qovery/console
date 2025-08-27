@@ -6,6 +6,7 @@ export const CLUSTER_OVERVIEW_URL = '/overview'
 // settings
 export const CLUSTER_SETTINGS_URL = '/settings'
 export const CLUSTER_SETTINGS_GENERAL_URL = '/general'
+export const CLUSTER_SETTINGS_EKS_ANYWHERE_URL = '/eks-anywhere'
 export const CLUSTER_SETTINGS_CREDENTIALS_URL = '/credentials'
 export const CLUSTER_SETTINGS_RESOURCES_URL = '/resources'
 export const CLUSTER_SETTINGS_IMAGE_REGISTRY_URL = '/image-registry'
