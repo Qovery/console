@@ -5,6 +5,7 @@ import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
+  CLUSTER_SETTINGS_EKS_ANYWHERE_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
   CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
@@ -30,6 +31,12 @@ export function PageSettingsFeature() {
     title: 'General',
     icon: IconAwesomeEnum.WHEEL,
     url: pathSettings + CLUSTER_SETTINGS_GENERAL_URL,
+  }
+
+  const eksLink = {
+    title: 'EKS Anywhere configuration',
+    icon: IconAwesomeEnum.CLOUD,
+    url: pathSettings + CLUSTER_SETTINGS_EKS_ANYWHERE_URL,
   }
 
   const credentialsLink = {
@@ -72,6 +79,8 @@ export function PageSettingsFeature() {
     .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, imageRegistryLink, advancedSettingsLink, dangerZoneLink])
     .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => [
       generalLink,
+      ...(cluster?.kubernetes === 'PARTIALLY_MANAGED' ? [eksLink] : []), // TODO [CQ-1108] to uncomment once the API returns the correct value
+      eksLink,
       credentialsLink,
       resourcesLink,
       imageRegistryLink,
