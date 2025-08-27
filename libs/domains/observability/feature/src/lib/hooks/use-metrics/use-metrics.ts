@@ -37,7 +37,7 @@ interface UseMetricsProps {
 
 // Helpers for alignment (timestamps in seconds)
 // Needed to avoid issues with Prometheus when the time range is not aligned with the step interval
-const ALIGN_SEC = 15
+const ALIGN_SEC = 30
 const alignStartSec = (ts?: string) => (ts == null ? undefined : Math.floor(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
 const alignEndSec = (ts?: string) => (ts == null ? undefined : Math.ceil(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
 
@@ -75,13 +75,13 @@ export function useMetrics({
     // Actual scrape_interval = 15s
     // https://prometheus.io/docs/prometheus/latest/configuration/configuration/#duration
     // https://qovery.slack.com/archives/C02NQ0LC8M9/p1753804730631609?thread_ts=1753803872.246399&cid=C02NQ0LC8M9
-    if (timeRange === '5m') return '15000ms' // 15 seconds (match actual scrape_interval)
-    if (timeRange === '15m') return '30000ms' // 30 seconds for longer ranges (2x scrape_interval)
-    if (timeRange === '30m') return '60000ms' // 1 minute for longer ranges (4x scrape_interval)
+    if (timeRange === '5m') return '30000ms' // 30 seconds (match actual scrape_interval)
+    if (timeRange === '15m') return '60000ms' // 1 minute for longer ranges (2x scrape_interval)
+    if (timeRange === '30m') return '120000ms' // 2 minutes for longer ranges (4x scrape_interval)
     if (alignedStart && alignedEnd) {
       return calculateDynamicRange(alignedStart, alignedEnd, 1)
     }
-    return '15000ms' // Default: 15 seconds (match actual scrape_interval)
+    return '30000ms' // Default: 30 seconds (match actual scrape_interval)
   }, [timeRange, alignedStart, alignedEnd])
 
   const maxSourceResolution = useMemo(() => {
@@ -102,7 +102,7 @@ export function useMetrics({
       maxSourceResolution,
     }),
     keepPreviousData: true,
-    refetchInterval: finalLiveUpdateEnabled ? 15_000 : false, // Refetch every 15 seconds only if live update is enabled
+    refetchInterval: finalLiveUpdateEnabled ? 30_000 : false, // Refetch every 30 seconds only if live update is enabled
     refetchIntervalInBackground: finalLiveUpdateEnabled,
     retry: 3,
   })
@@ -142,8 +142,7 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
 
   // Allowed, quantized step values (in ms) - expanded for longer time ranges
   const allowedStepsMs = [
-    15000, // 15s
-    30000, // 30s
+    30000, // 30s - base scrape interval
     60000, // 1m
     120000, // 2m
     300000, // 5m
@@ -166,7 +165,7 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   const roundedStepMs =
     allowedStepsMs.find((step) => step >= minimalStepForCapMs) ?? allowedStepsMs[allowedStepsMs.length - 1]
 
-  const finalStepMs = roundedStepMs + offsetMultiplier * 15000
+  const finalStepMs = roundedStepMs + offsetMultiplier * 30000
 
   return `${finalStepMs}ms`
 }
