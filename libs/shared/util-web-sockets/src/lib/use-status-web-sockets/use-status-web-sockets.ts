@@ -52,6 +52,7 @@ export function useStatusWebSockets({
             ...(stage.databases ?? []),
             ...(stage.jobs ?? []),
             ...(stage.helms ?? []),
+            ...(stage.terraforms ?? []),
           ]
           for (const serviceDeploymentStatus of services) {
             queryClient.setQueryData(
@@ -89,7 +90,14 @@ export function useStatusWebSockets({
         // NOTE: we have to force this reset change because of the way the socket works.
         // You can have information about an service (eg. if it's stopping)
         queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
-        const services = [...env.applications, ...env.containers, ...env.databases, ...env.jobs, ...env.helms]
+        const services = [
+          ...env.applications,
+          ...env.containers,
+          ...env.databases,
+          ...env.jobs,
+          ...env.helms,
+          ...env.terraform,
+        ]
         for (const serviceRunningStatus of services) {
           queryClient.setQueryData(
             queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
