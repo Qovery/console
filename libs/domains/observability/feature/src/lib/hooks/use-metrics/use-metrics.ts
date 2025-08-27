@@ -79,7 +79,7 @@ export function useMetrics({
     if (timeRange === '15m') return '30000ms' // 30 seconds for longer ranges (2x scrape_interval)
     if (timeRange === '30m') return '60000ms' // 1 minute for longer ranges (4x scrape_interval)
     if (alignedStart && alignedEnd) {
-      return calculateDynamicRange(alignedStart, alignedEnd)
+      return calculateDynamicRange(alignedStart, alignedEnd, 1)
     }
     return '15000ms' // Default: 15 seconds (match actual scrape_interval)
   }, [timeRange, alignedStart, alignedEnd])
@@ -130,7 +130,12 @@ export function useMetrics({
   }
 }
 
-export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, offsetMultiplier = 0): string {
+export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, offsetMultiplier = 1): string {
+  // Ensure offsetMultiplier is a positive integer
+  if (!Number.isInteger(offsetMultiplier) || offsetMultiplier <= 0) {
+    throw new Error('offsetMultiplier must be a positive integer')
+  }
+
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
@@ -161,7 +166,7 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   const roundedStepMs =
     allowedStepsMs.find((step) => step >= minimalStepForCapMs) ?? allowedStepsMs[allowedStepsMs.length - 1]
 
-  const finalStepMs = roundedStepMs + offsetMultiplier * 100
+  const finalStepMs = roundedStepMs + offsetMultiplier * 15000
 
   return `${finalStepMs}ms`
 }
