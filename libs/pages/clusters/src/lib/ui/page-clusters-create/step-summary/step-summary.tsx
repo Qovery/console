@@ -21,6 +21,7 @@ export interface StepSummaryProps {
   goToFeatures: () => void
   goToResources: () => void
   goToKubeconfig: () => void
+  goToEksConfig: () => void
   goToGeneral: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
@@ -130,16 +131,20 @@ export function StepSummary(props: StepSummaryProps) {
                   <strong className="font-medium">Production: </strong>true
                 </li>
               )}
-              <li>
-                <strong className="font-medium">Provider: </strong>
-                <span className="inline-flex items-center font-medium">
-                  <Icon className="ml-1 w-4" name={props.generalData.cloud_provider} />
-                </span>
-              </li>
-              <li>
-                <strong className="font-medium">Region: </strong>
-                {props.generalData.region}
-              </li>
+              {props.generalData.installation_type !== 'PARTIALLY_MANAGED' && (
+                <>
+                  <li>
+                    <strong className="font-medium">Provider: </strong>
+                    <span className="inline-flex items-center font-medium">
+                      <Icon className="ml-1 w-4" name={props.generalData.cloud_provider} />
+                    </span>
+                  </li>
+                  <li>
+                    <strong className="font-medium">Region: </strong>
+                    {props.generalData.region}
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -252,39 +257,59 @@ export function StepSummary(props: StepSummaryProps) {
                 className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
               >
                 <div className="mr-2 flex-grow">
-                  <Heading className="mb-3">Other</Heading>
-                  <ul className="list-none text-sm text-neutral-400">
-                    <li>
-                      <strong className="font-medium">Kubernetes namespace: </strong>
-                      {props.resourcesData.kubernetes_namespace}
-                    </li>
+                  <Heading className="mb-3">EKS configuration</Heading>
 
-                    <li>
-                      <strong className="font-medium">IP address pools: </strong>
-                      {props.resourcesData.ip_address_pools}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Number of replicas: </strong>
-                      {props.resourcesData.replica_count}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Default SSL certificate: </strong>
-                      {props.resourcesData.default_ssl_certificate}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Publish status address: </strong>
-                      {props.resourcesData.publish_status_address}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Annotation Metal LB load balancer IPs: </strong>
-                      {props.resourcesData.annotation_metal_lb_load_balancer_ips}
-                    </li>
-                    <li>
-                      <strong className="font-medium">Annotation External DNS Kubernetes target: </strong>
-                      {props.resourcesData.annotation_external_dns_kubernetes_target}
-                    </li>
-                  </ul>
+                  <div className="space-y-4">
+                    <div>
+                      <span className="text-sm font-bold text-neutral-400">Certificate manager</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-400">
+                        <li>
+                          <span className="font-medium">Namespace: </span>
+                          {props.resourcesData.kubernetes_namespace}
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="text-sm font-bold text-neutral-400">MetalLB</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-400">
+                        <li>
+                          <span className="font-medium">IP pool: </span>
+                          {props.resourcesData.ip_address_pools}
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="text-sm font-bold text-neutral-400">Nginx</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-400">
+                        <li>
+                          <span className="font-medium">Number of replicas: </span>
+                          {props.resourcesData.replica_count}
+                        </li>
+                        <li>
+                          <span className="font-medium">Default SSL certificate: </span>
+                          {props.resourcesData.default_ssl_certificate}
+                        </li>
+                        <li>
+                          <span className="font-medium">Publish status address: </span>
+                          {props.resourcesData.publish_status_address}
+                        </li>
+                        <li>
+                          <span className="font-medium">Annotation IPs: </span>
+                          {props.resourcesData.annotation_metal_lb_load_balancer_ips}
+                        </li>
+                        <li>
+                          <span className="font-medium">Annotation external DNS target: </span>
+                          {props.resourcesData.annotation_external_dns_kubernetes_target}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
+                <Button type="button" variant="plain" size="md" onClick={props.goToEksConfig}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
               </Section>
             </>
           ))
