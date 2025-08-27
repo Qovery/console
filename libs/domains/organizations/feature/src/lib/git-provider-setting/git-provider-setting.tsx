@@ -48,7 +48,7 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
     ? [
         watchFieldGitTokenId
           ? {
-              label: `${watchFieldProvider ?? ''}${watchFieldGitTokenName ? ` (${watchFieldGitTokenName})` : ''}`,
+              label: `${upperCaseFirstLetter(watchFieldProvider ?? '')}${watchFieldGitTokenName ? ` (${watchFieldGitTokenName})` : ''}`,
               value: watchFieldGitTokenId ?? '',
               icon: <Icon name={`${watchFieldProvider?.split(' ')[0].toUpperCase()}`} />,
             }
