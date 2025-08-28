@@ -7,6 +7,7 @@ import { observability } from '@qovery/domains/observability/data-access'
 import { organizations } from '@qovery/domains/organizations/data-access'
 import { projects } from '@qovery/domains/projects/data-access'
 import { serviceHelm } from '@qovery/domains/service-helm/data-access'
+import { serviceLogs } from '@qovery/domains/service-logs/data-access'
 import { services } from '@qovery/domains/services/data-access'
 import { usersSignUp } from '@qovery/domains/users-sign-up/data-access'
 import { variables } from '@qovery/domains/variables/data-access'
@@ -26,7 +27,8 @@ export const queries = mergeQueryKeys(
   variables,
   customDomains,
   devopsCopilot,
-  observability
+  observability,
+  serviceLogs
 )
 
 export type QueryKeys = inferQueryKeyStore<typeof queries>
