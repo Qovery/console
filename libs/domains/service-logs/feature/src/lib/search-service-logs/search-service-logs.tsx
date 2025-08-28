@@ -1,5 +1,5 @@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from 'cmdk'
-import { type ComponentPropsWithoutRef, useState } from 'react'
+import { type ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react'
 import { Icon } from '@qovery/shared/ui'
 
 const defaultFilters = [
@@ -22,16 +22,16 @@ const detailFilters = [
     key: 'severity',
     options: [
       {
-        value: 'error',
         label: 'error',
+        value: 'error',
       },
       {
-        value: 'warn',
         label: 'warning',
+        value: 'warning',
       },
       {
-        value: 'info',
         label: 'info',
+        value: 'info',
       },
     ],
   },
@@ -39,16 +39,16 @@ const detailFilters = [
     key: 'service',
     options: [
       {
-        value: 'api',
         label: 'API Service',
+        value: 'api',
       },
       {
-        value: 'database',
         label: 'Database',
+        value: 'database',
       },
       {
-        value: 'cache',
         label: 'Cache',
+        value: 'cache',
       },
     ],
   },
@@ -57,7 +57,7 @@ const highlightFilters = (text: string) => {
   if (!text) return `<span>${text}</span>`
   const filterRegex = /(\w+:[^\s]*)/g
   return text.replace(filterRegex, (match) => {
-    return `<span class="bg-neutral-500 whitespace-nowrap rounded-[4px] -ml-[5px] pl-1.5 pr-1">${match}</span>`
+    return `<span class="bg-neutral-500 whitespace-nowrap rounded -ml-[5px] pl-1.5 pr-1">${match}</span>`
   })
 }
 
@@ -86,6 +86,8 @@ export function SearchServiceLogs() {
   const [value, setValue] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [cursorPosition, setCursorPosition] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(0)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const getContextualSuggestions = () => {
     const beforeCursor = value.substring(0, cursorPosition)
@@ -140,10 +142,13 @@ export function SearchServiceLogs() {
     // If space is pressed, refresh suggestions to exclude existing values
     if (e.key === ' ') {
       // Small delay to ensure the space is added before filtering
-      setTimeout(() => {
-        setIsOpen(true)
-      }, 10)
+      setTimeout(() => setIsOpen(true), 10)
     }
+  }
+
+  const handleScroll = (e: React.UIEvent<HTMLInputElement>) => {
+    const target = e.target as HTMLInputElement
+    setScrollLeft(target.scrollLeft)
   }
 
   const insertFilterValue = (filterValue: string) => {
@@ -166,38 +171,44 @@ export function SearchServiceLogs() {
       className="relative w-full"
       style={
         {
-          '--word-gap': value ? '10px' : '0px',
+          '--word-gap': value ? '8px' : '0px',
         } as React.CSSProperties
       }
     >
       <Command shouldFilter={false}>
         <div className="relative flex h-9 w-full items-center gap-2 text-sm text-white">
-          <Icon iconName="magnifying-glass" iconStyle="regular" className="absolute left-3 text-neutral-250" />
-          <CommandInput
-            placeholder="Search logs..."
-            className="relative -top-[1px] z-10 h-full w-full rounded border border-neutral-400 bg-transparent pl-10 outline-none transition-colors placeholder:text-neutral-250 hover:border-neutral-350 focus:border-neutral-350"
-            value={value}
-            onValueChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            onKeyUp={(e) => {
-              const target = e.target as HTMLInputElement
-              handleInputChange(value, target.selectionStart ?? undefined)
-            }}
-            onFocus={() => setIsOpen(true)}
-            onBlur={() => setTimeout(() => setIsOpen(false), 200)}
-            style={{
-              wordSpacing: 'var(--word-gap)',
-              background: '0 0',
-            }}
-          />
-          <div
-            className="pointer-events-none absolute left-0 top-0 z-0 flex h-9 w-fit items-center border border-transparent px-10 text-sm text-transparent"
-            style={{
-              gap: 'var(--word-gap)',
-              transform: 'translateX(0px)',
-            }}
-            dangerouslySetInnerHTML={{ __html: highlightFilters(value) }}
-          />
+          <div className="relative -left-1 h-full w-full overflow-hidden pr-1">
+            <CommandInput
+              ref={inputRef}
+              placeholder="Search logs..."
+              className="relative left-1 z-10 h-full w-full overflow-x-auto rounded border border-neutral-400 bg-transparent pl-10 outline-none transition-colors placeholder:text-neutral-250 hover:border-neutral-350 focus:border-neutral-350"
+              value={value}
+              onValueChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              onScroll={handleScroll}
+              onKeyUp={(e) => {
+                const target = e.target as HTMLInputElement
+                handleInputChange(value, target.selectionStart ?? undefined)
+              }}
+              onFocus={() => setIsOpen(true)}
+              onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+              style={{
+                wordSpacing: 'var(--word-gap)',
+                background: '0 0',
+              }}
+            />
+            <div
+              className="pointer-events-none absolute left-1 top-0 z-0 flex h-9 w-fit items-center border border-transparent px-10 text-sm text-transparent"
+              style={{
+                gap: '7px',
+                transform: `translateX(-${scrollLeft}px)`,
+              }}
+              dangerouslySetInnerHTML={{ __html: highlightFilters(value) }}
+            />
+          </div>
+          <div className="absolute left-0 flex h-full w-9 items-center justify-center bg-neutral-600">
+            <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
+          </div>
         </div>
         {isOpen && (
           <CommandList className="absolute left-0 right-0 top-full z-10 mt-2 max-h-60 overflow-auto rounded-md border border-neutral-400 bg-neutral-600 p-1.5 text-sm shadow-lg">
