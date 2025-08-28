@@ -14,12 +14,12 @@ import {
   useZoomableChart,
 } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { ChartEventSidebar } from '../components/chart-event-sidebar/chart-event-sidebar'
-import { useChartEvents } from '../hooks/use-chart-events/use-chart-events'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
+import { ChartEventSidebar } from './chart-event-sidebar'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
+import { useChartEvents } from './use-chart-events'
 
 export type LineLabelProps = {
   x?: number

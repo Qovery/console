@@ -3,9 +3,9 @@ import type { AnyService } from '@qovery/domains/services/data-access'
 import { Badge, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize } from '@qovery/shared/util-js'
-import type { ReferenceLineEvent } from '../../local-chart/local-chart'
-import { formatTimestamp } from '../../util-chart/format-timestamp'
-import { useServiceOverviewContext } from '../../util-filter/service-overview-context'
+import { formatTimestamp } from '../util-chart/format-timestamp'
+import { useServiceOverviewContext } from '../util-filter/service-overview-context'
+import type { ReferenceLineEvent } from './local-chart'
 
 export interface ChartEventSidebarProps {
   events: ReferenceLineEvent[]
