@@ -1,4 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 
@@ -9,6 +10,7 @@ export interface ClusterGeneralSettingsProps {
 export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
   const { fromDetail } = props
   const { control, setValue } = useFormContext<ClusterGeneralData>()
+  const { isQoveryAdminUser } = useUserRole()
 
   return (
     <div>
@@ -72,6 +74,24 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           </div>
         )}
       />
+      {fromDetail && isQoveryAdminUser && (
+        <Controller
+          name="metrics_parameters.enabled"
+          control={control}
+          render={({ field }) => (
+            <div className="mt-5">
+              <InputToggle
+                value={field.value}
+                onChange={field.onChange}
+                title="Metrics enabled"
+                description="Enable metrics for the cluster (Qovery admin only)"
+                forceAlignTop
+                small
+              />
+            </div>
+          )}
+        />
+      )}
     </div>
   )
 }
