@@ -72,9 +72,12 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
       )}
 
       {isRefreshing && !isLoading && !isEmpty && (
-        <div className="absolute left-2 top-2 z-10">
-          <Spinner size="md" variant="default" />
-        </div>
+        <>
+          <div className="absolute inset-0 bg-white/50" style={{ pointerEvents: 'none' }} />
+          <div className="absolute left-4 top-2 z-[2]">
+            <Spinner size="md" variant="default" />
+          </div>
+        </>
       )}
     </div>
   )
@@ -87,6 +90,7 @@ const ChartTooltip = (props: ComponentProps<typeof RechartsPrimitive.Tooltip>) =
       animationDuration={100}
       animationEasing="ease-out"
       position={{ y: 13 }}
+      wrapperStyle={{ zIndex: 5 }}
       {...props}
     />
   )
