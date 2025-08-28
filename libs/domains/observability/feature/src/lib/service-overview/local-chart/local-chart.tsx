@@ -115,9 +115,6 @@ export function ChartContent({
 
   // Use highlighting only if selectedKeys are provided
   const highlightingResult = useChartHighlighting({
-    metricKeys: selectedKeys
-      ? Object.keys(data[0] || {}).filter((key) => !['timestamp', 'time', 'fullTime'].includes(key))
-      : [],
     selectedKeys: selectedKeys || new Set(),
   })
 
@@ -192,11 +189,7 @@ export function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div
-      ref={selectedKeys ? highlightingResult.containerRef : undefined}
-      className={`relative flex h-full ${selectedKeys ? 'highlight-scope' : ''}`}
-    >
-      {selectedKeys && <style>{highlightingResult.highlightingStyles}</style>}
+    <div ref={selectedKeys ? highlightingResult.containerRef : undefined} className="relative flex h-full">
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={data}
