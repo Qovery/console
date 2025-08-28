@@ -32,7 +32,19 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
 ) {
   const [highlightedKey, setHighlightedKey] = useState<string | null>(null)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
   const scrollTimeoutRef = useRef<NodeJS.Timeout>()
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const checkScrollState = () => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const { scrollLeft, scrollWidth, clientWidth } = container
+    setCanScrollLeft(scrollLeft > 0)
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth)
+  }
 
   const handleWheel: React.WheelEventHandler<HTMLDivElement> = (event) => {
     const target = event.currentTarget
@@ -56,7 +68,15 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
     // Reset scrolling state after scroll ends
     scrollTimeoutRef.current = setTimeout(() => {
       setIsScrolling(false)
+      checkScrollState()
     }, 150)
+
+    // Check scroll state immediately
+    checkScrollState()
+  }
+
+  const handleScroll = () => {
+    checkScrollState()
   }
 
   const handleMouseEnter = (key: string) => {
@@ -77,6 +97,11 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
       onHighlight?.(null)
     }
   }
+
+  // Check scroll state on mount and when items change
+  useEffect(() => {
+    checkScrollState()
+  }, [items])
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -101,9 +126,11 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
         style={{ width: `calc(100% - ${rightGutterWidth}px)` }}
       >
         <div
+          ref={scrollContainerRef}
           onWheel={handleWheel}
+          onScroll={handleScroll}
           onMouseLeave={handleContainerMouseLeave}
-          className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap p-0"
+          className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {items.map((entry) => {
@@ -162,10 +189,18 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
             )
           })}
         </div>
-        <div
-          className="pointer-events-none absolute right-0 top-0 h-full"
-          style={{ width: '2.5rem', background: 'linear-gradient(to left, white, rgba(255,255,255,0))' }}
-        />
+        {canScrollLeft && (
+          <div
+            className="pointer-events-none absolute left-0 top-0 h-full"
+            style={{ width: '2.5rem', background: 'linear-gradient(to right, white, rgba(255,255,255,0))' }}
+          />
+        )}
+        {canScrollRight && (
+          <div
+            className="pointer-events-none absolute right-0 top-0 h-full"
+            style={{ width: '2.5rem', background: 'linear-gradient(to left, white, rgba(255,255,255,0))' }}
+          />
+        )}
       </div>
     </>
   )
