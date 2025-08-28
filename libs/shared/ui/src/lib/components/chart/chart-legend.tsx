@@ -190,16 +190,10 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
           })}
         </div>
         {canScrollLeft && (
-          <div
-            className="pointer-events-none absolute left-0 top-0 h-full"
-            style={{ width: '2.5rem', background: 'linear-gradient(to right, white, rgba(255,255,255,0))' }}
-          />
+          <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white to-white/0" />
         )}
         {canScrollRight && (
-          <div
-            className="pointer-events-none absolute right-0 top-0 h-full"
-            style={{ width: '2.5rem', background: 'linear-gradient(to left, white, rgba(255,255,255,0))' }}
-          />
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white to-white/0" />
         )}
       </div>
     </>
