@@ -14,7 +14,7 @@ import { match } from 'ts-pattern'
 import { ClusterInstallationGuideModal } from '@qovery/domains/clusters/feature'
 import { CLUSTERS_TEMPLATE_CREATION_URL, CLUSTERS_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, Link, Section, Tooltip, useModal } from '@qovery/shared/ui'
-import { useClickAway, useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useClickAway, useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 
 const Qovery = '/assets/logos/logo-icon.svg'
@@ -44,14 +44,16 @@ type CardOptionProps = {
 
 function CardOption({ icon, title, description, selectedCloudProvider, recommended, ...props }: CardOptionProps) {
   const { organizationId = '' } = useParams()
+  const { showChat } = useSupportChat()
 
   const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
+  const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 
-  const renderIcon = () => {
+  const renderIcon = (className?: string) => {
     return typeof icon === 'string' ? (
-      <img className="mt-1 select-none" width={32} height={32} src={icon} alt={title} />
+      <img className={twMerge('mt-1 select-none', className)} width={32} height={32} src={icon} alt={title} />
     ) : (
-      cloneElement(icon as ReactElement, { className: 'w-[32px] mt-1 select-none' })
+      cloneElement(icon as ReactElement, { className: twMerge('mt-1 w-[32px] select-none', className) })
     )
   }
 
@@ -149,16 +151,41 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         </NavLink>
       )
     )
-    .with({ selectedInstallationType: 'partially-managed' }, ({ selectedInstallationType }) => (
-      <NavLink
-        to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider + '-eks-anywhere')}
-        className={baseClassNames}
-        onClick={() => handleAnalytics(selectedInstallationType)}
-      >
-        {renderIcon()}
-        {renderContent()}
-      </NavLink>
-    ))
+    .with({ selectedInstallationType: 'partially-managed' }, ({ selectedInstallationType }) => {
+      return match({ isEksAnywhereEnabled })
+        .with({ isEksAnywhereEnabled: true }, () => (
+          <NavLink
+            to={CLUSTERS_URL(organizationId) + CLUSTERS_TEMPLATE_CREATION_URL(selectedCloudProvider + '-eks-anywhere')}
+            className={baseClassNames}
+            onClick={() => handleAnalytics(selectedInstallationType)}
+          >
+            {renderIcon()}
+            {renderContent()}
+          </NavLink>
+        ))
+        .otherwise(() => (
+          <div
+            className={twMerge(
+              baseClassNames,
+              'cursor-default shadow-none hover:border-neutral-200 hover:outline-transparent'
+            )}
+          >
+            {renderIcon('opacity-70')}
+            <div className="grid w-full grid-cols-[1fr_auto] gap-2">
+              <div>
+                <span className="flex flex-col text-base font-semibold text-neutral-350">{title}</span>
+                <span className="inline-block text-sm text-neutral-300">
+                  EKS Anywhere is not available for your organization yet. Please contact us to enable it.
+                </span>
+              </div>
+              <Button className="self-start" variant="outline" color="neutral" onClick={() => showChat()}>
+                Contact us
+              </Button>
+            </div>
+          </div>
+        ))
+    })
+
     .exhaustive()
 }
 
