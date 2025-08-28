@@ -253,7 +253,7 @@ export function StepSummary(props: StepSummaryProps) {
                 </Button>
               </Section>
               <Section
-                data-testid="summary-kubeconfig"
+                data-testid="summary-eks-anywhere"
                 className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
               >
                 <div className="mr-2 flex-grow">

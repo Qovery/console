@@ -1,3 +1,4 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -125,12 +126,27 @@ export function PageClusterCreateFeature() {
 
   useEffect(() => {
     if (slug) {
-      const defaultOptions = match(slug)
-        .with('AWS-eks-anywhere', () => ({ installation_type: 'PARTIALLY_MANAGED', cloud_provider: 'AWS' }))
-        .with('AWS', () => ({ installation_type: 'MANAGED', cloud_provider: 'AWS' }))
-        .with('SCW', () => ({ installation_type: 'MANAGED', cloud_provider: 'SCW' }))
-        .with('GCP', () => ({ installation_type: 'MANAGED', cloud_provider: 'GCP' }))
-        .with('AZURE', () => ({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }))
+      const defaultOptions: Partial<ClusterGeneralData> | undefined = match(slug)
+        .with('AWS-eks-anywhere', () => ({
+          installation_type: 'PARTIALLY_MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.AWS,
+        }))
+        .with('AWS', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.AWS,
+        }))
+        .with('SCW', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.SCW,
+        }))
+        .with('GCP', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.GCP,
+        }))
+        .with('AZURE', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.AZURE,
+        }))
         .otherwise(() => undefined)
       if (defaultOptions) {
         setGeneralData({
