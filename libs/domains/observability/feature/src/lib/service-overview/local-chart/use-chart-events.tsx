@@ -2,9 +2,9 @@ import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import { useEvents } from '../../../hooks/use-events/use-events'
-import type { ReferenceLineEvent } from '../../local-chart/local-chart'
-import { useServiceOverviewContext } from '../../util-filter/service-overview-context'
+import { useEvents } from '../../hooks/use-events/use-events'
+import { useServiceOverviewContext } from '../util-filter/service-overview-context'
+import type { ReferenceLineEvent } from './local-chart'
 
 export interface UseChartEventsProps {
   serviceId: string
