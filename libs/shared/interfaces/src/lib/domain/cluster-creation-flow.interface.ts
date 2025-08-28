@@ -9,6 +9,9 @@ export interface ClusterGeneralData {
   credentials: string
   credentials_name: string
   installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO'
+  metrics_parameters?: {
+    enabled?: boolean
+  }
 }
 
 export type SCWControlPlaneFeatureType = 'KAPSULE' | 'KAPSULE_DEDICATED4' | 'KAPSULE_DEDICATED8' | 'KAPSULE_DEDICATED16'

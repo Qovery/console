@@ -27,6 +27,15 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
     if (data && cluster) {
       const cloneCluster = handleSubmit(data, cluster)
 
+      if (data.metrics_parameters?.enabled) {
+        cloneCluster.metrics_parameters = {
+          enabled: data.metrics_parameters?.enabled,
+          configuration: {
+            kind: 'MANAGED_BY_QOVERY',
+          },
+        }
+      }
+
       editCluster({
         organizationId,
         clusterId: cluster.id,
