@@ -1,27 +1,22 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type ElementRef, type PropsWithChildren, forwardRef, memo, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { type ElementRef, type PropsWithChildren, forwardRef, memo, useState } from 'react'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { useService } from '@qovery/domains/services/feature'
 import {
-  Badge,
   Button,
   Chart,
   Heading,
   Icon,
   Section,
-  Skeleton,
   Tooltip,
   createXAxisConfig,
   getTimeGranularity,
   useZoomableChart,
 } from '@qovery/shared/ui'
-import { getColorByPod } from '@qovery/shared/util-hooks'
-import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { useEvents } from '../../hooks/use-events/use-events'
+import { twMerge } from '@qovery/shared/util-js'
+import { ChartEventSidebar } from '../components/chart-event-sidebar/chart-event-sidebar'
+import { useChartEvents } from '../hooks/use-chart-events/use-chart-events'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -33,6 +28,26 @@ export type LineLabelProps = {
   index?: number
   value?: number | string
   [key: string]: unknown
+}
+
+export function renderResourceLimitLabel(
+  labelText: string,
+  chartData: Array<{ [key: string]: string | number | null }>,
+  color = 'var(--color-red-500)'
+) {
+  return (props: LineLabelProps) => {
+    const { x, y, index, value } = props
+    // Only render for the last point with a value
+    if (chartData && index === chartData.length - 1 && value != null) {
+      return (
+        <text x={x} y={(y ?? 0) - 8} fill={color} fontSize={12} fontWeight={500} textAnchor="end">
+          {labelText}
+        </text>
+      )
+    }
+    // Return an empty SVG group instead of null to satisfy type requirements
+    return <g />
+  }
 }
 
 export interface ReferenceLineEvent {
@@ -253,98 +268,6 @@ export const ChartContent = memo(function ChartContent({
           ) : null}
         </ComposedChart>
       </Chart.Container>
-      {isFullscreen && referenceLineData && !hideEvents && (
-        <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-250">
-          <p className="border-b border-neutral-250 bg-neutral-100 px-4 py-2 text-xs font-medium text-neutral-500">
-            {pluralize(referenceLineData.length, 'Event', 'Events')} associated
-          </p>
-          <div className="h-full overflow-y-auto">
-            {isLoading ? (
-              <>
-                {Array.from({ length: 8 }).map((_, idx) => (
-                  <div key={idx} className="flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500">
-                    <Skeleton className="h-5 min-h-5 w-5 min-w-5" rounded />
-                    <div className="flex w-full flex-col gap-1 text-xs">
-                      <div className="flex w-full items-center justify-between gap-2">
-                        <Skeleton className="h-4 w-24" />
-                      </div>
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </>
-            ) : referenceLineData.length > 0 ? (
-              <>
-                {referenceLineData.map((event) => {
-                  const timestamp = formatTimestamp(event.timestamp, useLocalTime)
-                  const key = `${label}-${event.key}`
-                  return (
-                    <div
-                      key={key}
-                      className={clsx('flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500', {
-                        'bg-neutral-150': hoveredEventKey === key,
-                      })}
-                      onMouseEnter={() => setHoveredEventKey(key)}
-                      onMouseLeave={() => setHoveredEventKey(null)}
-                    >
-                      <span
-                        className="flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full"
-                        style={{ backgroundColor: event.color ?? 'var(--color-red-500)' }}
-                      >
-                        <Icon
-                          iconName={event.icon}
-                          iconStyle={event.iconStyle ?? 'regular'}
-                          className="text-xs text-white"
-                        />
-                      </span>
-                      <div className="flex w-full flex-col gap-1 text-xs">
-                        <div className="flex w-full items-center justify-between gap-2">
-                          <span className="font-medium">{event.reason}</span>
-                          <span className="text-neutral-350">{timestamp.fullTimeString}</span>
-                        </div>
-                        {event.type === 'event' && (
-                          <>
-                            <span className="text-neutral-350">
-                              {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
-                            </span>
-                            <span className="text-neutral-350">
-                              {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
-                            </span>
-                          </>
-                        )}
-                        {event.description && <span className="text-neutral-350">{event.description}</span>}
-                        {event.type === 'exit-code' && (
-                          <div className="flex items-center gap-1">
-                            <span className="text-neutral-350">Instance name:</span>
-                            <Tooltip content={event.pod ?? ''}>
-                              <Badge
-                                variant="surface"
-                                color="neutral"
-                                size="sm"
-                                className="max-w-max gap-1 font-code text-2xs"
-                              >
-                                <span
-                                  className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                                  style={{ backgroundColor: getColorByPod(event.pod ?? '') }}
-                                />
-                                {event.pod?.substring(event.pod?.length - 5)}
-                              </Badge>
-                            </Tooltip>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </>
-            ) : (
-              <div className="flex h-full items-center justify-center text-sm">
-                <p className="text-neutral-350">No events associated</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   )
 })
@@ -393,109 +316,17 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
   },
   ref
 ) {
-  const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { hideEvents } = useServiceOverviewContext()
 
-  // Alpha: Workaround to get the events
-  const { data: service } = useService({ serviceId })
-
-  const { data: events } = useEvents({
-    organizationId,
+  const {
+    service,
+    events,
+    isLoading: eventsLoading,
+  } = useChartEvents({
     serviceId,
-    targetType:
-      service?.service_type === 'CONTAINER'
-        ? OrganizationEventTargetType.CONTAINER
-        : OrganizationEventTargetType.APPLICATION,
-    toTimestamp: endTimestamp,
-    fromTimestamp: startTimestamp,
+    additionalEvents: referenceLineData || [],
   })
-
-  const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
-
-  const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
-    return (eventsFiltered || [])
-      .filter(
-        (event) =>
-          (event.event_type === 'TRIGGER_DEPLOY' ||
-            event.event_type === 'DEPLOY_FAILED' ||
-            event.event_type === 'DEPLOYED') &&
-          event.target_id === serviceId
-      )
-      .map((event) => {
-        const eventTimestamp = new Date(event.timestamp || '').getTime()
-
-        const key = `event-${event.id || eventTimestamp}`
-        const change = JSON.parse(event.change || '')
-        // TODO: Add support for other service types and clean-up api endpoint
-        const version =
-          change?.service_source?.image?.tag ??
-          change?.service_source?.docker?.git_repository?.deployed_commit_id ??
-          'Unknown'
-
-        const repository =
-          change?.service_source?.image?.image_name ?? change?.service_source?.docker?.git_repository?.url ?? 'Unknown'
-
-        if (event.event_type === 'DEPLOY_FAILED') {
-          return {
-            type: 'event',
-            timestamp: eventTimestamp,
-            reason: 'Deploy failed',
-            icon: 'xmark',
-            color: 'var(--color-red-500)',
-            key,
-            version,
-            repository,
-          }
-        } else if (event.event_type === 'DEPLOYED') {
-          return {
-            type: 'event',
-            timestamp: eventTimestamp,
-            reason: 'Deployed',
-            icon: 'check',
-            color: 'var(--color-green-500)',
-            key,
-            version,
-            repository,
-          }
-        } else if (event.event_type === 'TRIGGER_DEPLOY') {
-          return {
-            type: 'event',
-            timestamp: eventTimestamp,
-            reason: 'Trigger deploy',
-            icon: 'play',
-            iconStyle: 'solid',
-            color: 'var(--color-brand-500)',
-            key,
-            version,
-            repository,
-          }
-        }
-
-        return {
-          type: 'event',
-          timestamp: eventTimestamp,
-          reason: 'Unknown',
-          icon: 'question',
-          color: 'var(--color-neutral-350)',
-          key,
-          version,
-          repository,
-        }
-      })
-  }, [eventsFiltered, serviceId])
-
-  // Merge with any referenceLineData passed as prop
-  const mergedReferenceLineData = useMemo(() => {
-    const allEvents = [...(referenceLineData || []), ...eventReferenceLines]
-
-    // Remove duplicates based on timestamp and key
-    const uniqueEvents = allEvents.filter(
-      (event, index, array) => array.findIndex((e) => e.timestamp === event.timestamp && e.key === event.key) === index
-    )
-
-    return uniqueEvents.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
-  }, [referenceLineData, eventReferenceLines, label])
 
   return (
     <>
@@ -543,25 +374,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             </div>
           </div>
         )}
-        <ChartContent
-          data={data}
-          unit={unit}
-          label={label ?? ''}
-          tooltipLabel={tooltipLabel}
-          isEmpty={isEmpty}
-          isLoading={isLoading}
-          xDomain={xDomain}
-          yDomain={yDomain}
-          margin={margin}
-          referenceLineData={mergedReferenceLineData}
-          service={service}
-          isFullscreen={isFullscreen}
-        >
-          {children}
-        </ChartContent>
-      </Section>
-      {isModalOpen && (
-        <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <div className="relative flex h-full">
           <ChartContent
             data={data}
             unit={unit}
@@ -572,12 +385,48 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             xDomain={xDomain}
             yDomain={yDomain}
             margin={margin}
-            referenceLineData={mergedReferenceLineData}
+            referenceLineData={events}
             service={service}
-            isFullscreen
+            isFullscreen={isFullscreen}
           >
             {children}
           </ChartContent>
+          {isFullscreen && events && !hideEvents && (
+            <ChartEventSidebar
+              events={events}
+              service={service}
+              isLoading={isLoading || eventsLoading}
+              label={label ?? ''}
+            />
+          )}
+        </div>
+      </Section>
+      {isModalOpen && (
+        <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <div className="relative flex h-full">
+            <ChartContent
+              data={data}
+              unit={unit}
+              label={label ?? ''}
+              tooltipLabel={tooltipLabel}
+              isEmpty={isEmpty}
+              isLoading={isLoading}
+              xDomain={xDomain}
+              yDomain={yDomain}
+              margin={margin}
+              referenceLineData={events}
+              service={service}
+              isFullscreen
+            >
+              {children}
+            </ChartContent>
+            <ChartEventSidebar
+              events={events}
+              service={service}
+              isLoading={isLoading || eventsLoading}
+              label={label ?? ''}
+            />
+          </div>
         </ModalChart>
       )}
     </>
