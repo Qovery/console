@@ -24,48 +24,10 @@ import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
+import { extractChartSeriesFromChildren } from '../util-chart/extract-chart-series'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
-
-// Utility function to extract chart series information from React children
-function extractChartSeriesFromChildren(
-  children: React.ReactNode
-): Array<{ key: string; label: string; color: string }> {
-  const series: Array<{ key: string; label: string; color: string }> = []
-
-  const processChild = (child: React.ReactNode): void => {
-    if (!child) return
-
-    if (Array.isArray(child)) {
-      child.forEach(processChild)
-      return
-    }
-
-    if (typeof child === 'object' && 'props' in child) {
-      const element = child as React.ReactElement
-
-      // Check if this is a chart series component (Line, Area, Bar, etc.)
-      if (element.props?.dataKey && (element.props?.stroke || element.props?.fill)) {
-        const dataKey = String(element.props.dataKey)
-        const color = element.props.stroke || element.props.fill || 'var(--color-brand-500)'
-        const label = element.props.name || dataKey
-
-        if (!series.some((s) => s.key === dataKey)) {
-          series.push({ key: dataKey, label, color })
-        }
-      }
-
-      // Recursively process children
-      if (element.props?.children) {
-        processChild(element.props.children)
-      }
-    }
-  }
-
-  processChild(children)
-  return series
-}
 
 export type LineLabelProps = {
   x?: number
