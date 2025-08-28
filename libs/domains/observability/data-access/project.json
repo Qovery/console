@@ -1,5 +1,5 @@
 {
-  "name": "data-access",
+  "name": "data-access-observability",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/domains/observability/data-access/src",
   "projectType": "library",
