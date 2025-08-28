@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -20,10 +21,10 @@ import PageSettings from '../../ui/page-settings/page-settings'
 
 export function PageSettingsFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 
   useDocumentTitle('Cluster - Settings')
-
-  const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const pathSettings = CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL
 
@@ -77,17 +78,22 @@ export function PageSettingsFeature() {
 
   const links = match(cluster)
     .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, imageRegistryLink, advancedSettingsLink, dangerZoneLink])
-    .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => [
-      generalLink,
-      ...(cluster?.kubernetes === 'PARTIALLY_MANAGED' ? [eksLink] : []), // TODO [CQ-1108] to uncomment once the API returns the correct value
-      eksLink,
-      credentialsLink,
-      resourcesLink,
-      imageRegistryLink,
-      networkLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
+    .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => {
+      // const shouldShowEksLink = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED' // TODO [CQ-1108] to uncomment once the API returns the correct value
+      const shouldShowEksLink = isEksAnywhereEnabled
+
+      return [
+        generalLink,
+        // ...(shouldShowEksLink ? [eksLink] : []), // TODO [CQ-1108] to uncomment once the API returns the correct value
+        ...(shouldShowEksLink ? [eksLink] : []),
+        credentialsLink,
+        resourcesLink,
+        imageRegistryLink,
+        networkLink,
+        advancedSettingsLink,
+        dangerZoneLink,
+      ]
+    })
     .with({ cloud_provider: 'SCW' }, () => [
       generalLink,
       credentialsLink,
