@@ -131,6 +131,10 @@ export function useMetrics({
 }
 
 export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, offsetMultiplier = 1): string {
+  if (!Number.isInteger(offsetMultiplier) || offsetMultiplier <= 0) {
+    throw new Error('offsetMultiplier must be a positive integer')
+  }
+
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
