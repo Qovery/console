@@ -145,7 +145,7 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
         onWheel={handleWheel}
         onScroll={handleScroll}
         onMouseLeave={handleContainerMouseLeave}
-        className="m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap scrollbar-hidden"
+        className="m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {items.map((entry) => {
