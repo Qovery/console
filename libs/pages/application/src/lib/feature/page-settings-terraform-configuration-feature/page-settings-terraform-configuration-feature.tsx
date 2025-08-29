@@ -9,7 +9,6 @@ import { Button } from '@qovery/shared/ui'
 export default function PageSettingsTerraformConfigurationFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: service } = useService({ serviceId: applicationId })
-  console.log('🚀 ~ service:', service)
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
@@ -24,8 +23,6 @@ export default function PageSettingsTerraformConfigurationFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    console.log('🚀 ~ SUBMIT:', { service, data })
-
     if (!service || !data) return
 
     if (service.serviceType === 'TERRAFORM') {
@@ -46,8 +43,6 @@ export default function PageSettingsTerraformConfigurationFeature() {
           tf_var_file_paths: [],
         },
       }
-
-      console.log('payload', payload)
 
       editService({
         serviceId: service.id,
