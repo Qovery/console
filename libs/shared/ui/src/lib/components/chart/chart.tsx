@@ -71,9 +71,7 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
         </div>
       )}
 
-      {isRefreshing && !isLoading && !isEmpty && (
-        <div className="absolute inset-0 bg-white/50" style={{ pointerEvents: 'none' }} />
-      )}
+      {isRefreshing && !isLoading && !isEmpty && <div className="pointer-events-none absolute inset-0 bg-white/50" />}
     </div>
   )
 })
