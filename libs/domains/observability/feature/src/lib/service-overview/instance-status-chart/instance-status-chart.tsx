@@ -544,6 +544,7 @@ export function InstanceStatusChart({
                 reason: 'ScalingLimited',
                 description:
                   'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
+                color: 'var(--color-red-500)',
                 icon: 'exclamation',
                 pod: series.metric.pod,
                 key,
