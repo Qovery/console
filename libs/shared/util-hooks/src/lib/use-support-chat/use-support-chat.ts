@@ -23,7 +23,10 @@ declare global {
     pylon?: {
       chat_settings: ChatSettings
     }
-    Pylon?: (cmd: 'show' | 'hide') => void
+    Pylon?: {
+      (cmd: 'showTicketForm', formSlug: string): void
+      (cmd: 'show' | 'hide'): void
+    }
   }
 }
 
@@ -79,6 +82,10 @@ export function useSupportChat() {
     }
   }
 
+  const showPylonForm = (formSlug: string) => {
+    window.Pylon?.('showTicketForm', formSlug)
+  }
+
   const insertPylonScriptTag = () => {
     if (document.getElementById('pylon-script')) return
 
@@ -114,5 +121,5 @@ export function useSupportChat() {
     updateUserInfo(defaultChatParams)
   }, [defaultChatParams, updateUserInfo])
 
-  return { updateUserInfo, showChat, initChat }
+  return { updateUserInfo, showChat, initChat, showPylonForm }
 }

@@ -44,7 +44,7 @@ type CardOptionProps = {
 
 function CardOption({ icon, title, description, selectedCloudProvider, recommended, ...props }: CardOptionProps) {
   const { organizationId = '' } = useParams()
-  const { showChat } = useSupportChat()
+  const { showPylonForm } = useSupportChat()
 
   const isAzureFeatureFlag = useFeatureFlagEnabled('cluster-azure')
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
@@ -178,7 +178,12 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
                   EKS Anywhere is not available for your organization yet. Please contact us to enable it.
                 </span>
               </div>
-              <Button className="self-start" variant="outline" color="neutral" onClick={() => showChat()}>
+              <Button
+                className="self-start"
+                variant="outline"
+                color="neutral"
+                onClick={() => showPylonForm('eks-anywhere-feature-access')}
+              >
                 Contact us
               </Button>
             </div>
