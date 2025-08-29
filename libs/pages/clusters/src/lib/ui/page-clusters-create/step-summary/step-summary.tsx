@@ -261,7 +261,7 @@ export function StepSummary(props: StepSummaryProps) {
 
                   <div className="space-y-4">
                     <div>
-                      <span className="text-sm font-bold text-neutral-400">Certificate manager</span>
+                      <span className="text-sm font-bold text-neutral-400">Cert Manager</span>
                       <ul className="list-none space-y-2 text-sm text-neutral-400">
                         <li>
                           <span className="font-medium">Namespace: </span>

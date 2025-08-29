@@ -74,111 +74,111 @@ export function StepGeneral(props: StepGeneralProps) {
           <h4 className="mb-4 text-sm text-neutral-400">General</h4>
           <ClusterGeneralSettings />
         </div>
-        {watchInstallationType !== 'PARTIALLY_MANAGED' && (
-          <div className="mb-10">
-            <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
-            {cloudProviders.length > 0 ? (
-              <>
-                <Controller
-                  name="cloud_provider"
-                  control={control}
-                  rules={{
-                    required: 'Please select a cloud provider.',
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputSelect
-                      dataTestId="input-cloud-provider"
-                      label="Cloud provider"
-                      className="mb-3"
-                      options={buildCloudProviders}
-                      onChange={(value) => {
-                        field.onChange(value)
-                        setResourcesData && setResourcesData(defaultResourcesData)
-                      }}
-                      value={field.value}
-                      error={error?.message}
-                      portal
-                    />
-                  )}
-                />
-                {currentProvider && (
-                  <>
-                    <Controller
-                      name="region"
-                      control={control}
-                      rules={{
-                        required: 'Please select a region.',
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputSelect
-                          dataTestId="input-region"
-                          label="Region"
-                          className="mb-3"
-                          options={buildRegions}
-                          onChange={field.onChange}
-                          value={field.value}
-                          error={error?.message}
-                          isSearchable
-                          portal
-                        />
-                      )}
-                    />
+        <div className="mb-10">
+          <h4 className="mb-3 text-sm text-neutral-400">Provider credentials</h4>
+          {cloudProviders.length > 0 ? (
+            <>
+              <Controller
+                name="cloud_provider"
+                control={control}
+                rules={{
+                  required: 'Please select a cloud provider.',
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    dataTestId="input-cloud-provider"
+                    label="Cloud provider"
+                    className="mb-3"
+                    options={buildCloudProviders}
+                    disabled={watchInstallationType === 'PARTIALLY_MANAGED'}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      setResourcesData && setResourcesData(defaultResourcesData)
+                    }}
+                    value={field.value}
+                    error={error?.message}
+                    portal
+                  />
+                )}
+              />
+              {currentProvider && (
+                <>
+                  <Controller
+                    name="region"
+                    control={control}
+                    rules={{
+                      required: 'Please select a region.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputSelect
+                        dataTestId="input-region"
+                        label="Region"
+                        className="mb-3"
+                        options={buildRegions}
+                        disabled={watchInstallationType === 'PARTIALLY_MANAGED'}
+                        onChange={field.onChange}
+                        value={field.value}
+                        error={error?.message}
+                        isSearchable
+                        portal
+                      />
+                    )}
+                  />
 
-                    <ClusterCredentialsSettingsFeature
-                      cloudProvider={currentProvider.short_name as CloudProviderEnum}
-                      isSetting={false}
-                    />
+                  <ClusterCredentialsSettingsFeature
+                    cloudProvider={currentProvider.short_name as CloudProviderEnum}
+                    isSetting={false}
+                  />
 
-                    <Callout.Root className="mb-5 mt-10 grid grid-cols-[40px_auto] gap-4" color="neutral">
-                      <Callout.Icon className="w-10 text-4xl">
-                        <Icon name="KUBERNETES" className="w-full" />
-                      </Callout.Icon>
+                  <Callout.Root className="mb-5 mt-10 grid grid-cols-[40px_auto] gap-4" color="neutral">
+                    <Callout.Icon className="w-10 text-4xl">
+                      <Icon name="KUBERNETES" className="w-full" />
+                    </Callout.Icon>
 
-                      <Callout.Text>
-                        <div className="flex flex-col gap-3">
-                          <div className="flex flex-col gap-1">
-                            <p className="text-base font-semibold">
-                              A fully managed Kubernetes cluster will be deployed
-                              <br />
-                              on your{' '}
-                              {match(currentProvider.short_name as Exclude<CloudProviderEnum, 'ON_PREMISE'>)
-                                .with('AWS', () => 'AWS account (EKS)')
-                                .with('SCW', () => 'Scaleway account (Kapsule)')
-                                .with('AZURE', () => 'Azure account (AKS)')
-                                .with('GCP', () => 'GCP account (Autopilot GKE)')
-                                .exhaustive()}
-                            </p>
-                            <ul className="list-disc pl-3 text-neutral-350">
-                              <li>High-availability infrastructure deployed across multiple zones</li>
-                              <li>Customizable resources (in the next steps)</li>
-                              <li>No Kubernetes expertise required</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </Callout.Text>
-
-                      <div className="col-span-2 flex items-start gap-4 rounded border border-sky-500 bg-sky-50 p-3 pl-4">
-                        <Icon iconName="circle-info" iconStyle="regular" className="text-base text-sky-500" />
-
-                        <div className="flex flex-col gap-1 text-neutral-400">
-                          <p className="font-semibold">Qovery manages this infrastructure for you.</p>
-                          <p>
-                            Secure, stable, and optimized environment with continuous security patches and proactive
-                            health monitoring
+                    <Callout.Text>
+                      <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-base font-semibold">
+                            A fully managed Kubernetes cluster will be deployed
+                            <br />
+                            on your{' '}
+                            {match(currentProvider.short_name as Exclude<CloudProviderEnum, 'ON_PREMISE'>)
+                              .with('AWS', () => 'AWS account (EKS)')
+                              .with('SCW', () => 'Scaleway account (Kapsule)')
+                              .with('AZURE', () => 'Azure account (AKS)')
+                              .with('GCP', () => 'GCP account (Autopilot GKE)')
+                              .exhaustive()}
                           </p>
+                          <ul className="list-disc pl-3 text-neutral-350">
+                            <li>High-availability infrastructure deployed across multiple zones</li>
+                            <li>Customizable resources (in the next steps)</li>
+                            <li>No Kubernetes expertise required</li>
+                          </ul>
                         </div>
                       </div>
-                    </Callout.Root>
-                  </>
-                )}
-              </>
-            ) : (
-              <div className="mt-2 flex justify-center">
-                <LoaderSpinner className="w-4" />
-              </div>
-            )}
-          </div>
-        )}
+                    </Callout.Text>
+
+                    <div className="col-span-2 flex items-start gap-4 rounded border border-sky-500 bg-sky-50 p-3 pl-4">
+                      <Icon iconName="circle-info" iconStyle="regular" className="text-base text-sky-500" />
+
+                      <div className="flex flex-col gap-1 text-neutral-400">
+                        <p className="font-semibold">Qovery manages this infrastructure for you.</p>
+                        <p>
+                          Secure, stable, and optimized environment with continuous security patches and proactive
+                          health monitoring
+                        </p>
+                      </div>
+                    </div>
+                  </Callout.Root>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="mt-2 flex justify-center">
+              <LoaderSpinner className="w-4" />
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-between">
           <Button

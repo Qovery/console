@@ -5,8 +5,6 @@ import { match } from 'ts-pattern'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import {
-  CLUSTERS_CREATION_ACCESS_URL,
-  CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
   CLUSTERS_CREATION_RESOURCES_URL,
