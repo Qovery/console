@@ -33,13 +33,21 @@ export interface ClusterResourcesData {
   disk_size: number
   karpenter?: KarpenterData
   scw_control_plane?: SCWControlPlaneFeatureType
-  kubernetes_namespace?: string
-  ip_address_pools?: string[]
-  replica_count?: number
-  publish_status_address?: string
-  default_ssl_certificate?: string
-  annotation_metal_lb_load_balancer_ips?: string
-  annotation_external_dns_kubernetes_target?: string
+  infrastructure_charts_parameters?: {
+    cert_manager_parameters?: {
+      kubernetes_namespace?: string
+    }
+    metalLb_parameters?: {
+      ip_address_pools?: string[]
+    }
+    nginx_parameters?: {
+      replica_count?: number
+      default_ssl_certificate?: string
+      publish_status_address?: string
+      annotation_metal_lb_load_balancer_ips?: string
+      annotation_external_dns_kubernetes_target?: string
+    }
+  }
 }
 
 // XXX: Necessary to have `eks_subnets` for Karpenter migration

@@ -13,7 +13,7 @@ export const ClusterEksSettings = () => {
           <p className="text-sm text-neutral-350">Configure the certificate manager for your EKS cluster.</p>
         </div>
         <Controller
-          name="kubernetes_namespace"
+          name="infrastructure_charts_parameters.cert_manager_parameters.kubernetes_namespace"
           control={control}
           rules={{
             required: 'Please enter a Kubernetes namespace.',
@@ -39,7 +39,7 @@ export const ClusterEksSettings = () => {
           <p className="text-sm text-neutral-350">Configure your load-balancer (using MetalLB)</p>
         </div>
         <Controller
-          name="ip_address_pools"
+          name="infrastructure_charts_parameters.metalLb_parameters.ip_address_pools"
           control={control}
           rules={{
             required: 'Please enter a IP address pool.',
@@ -67,7 +67,7 @@ export const ClusterEksSettings = () => {
         </div>
 
         <Controller
-          name="replica_count"
+          name="infrastructure_charts_parameters.nginx_parameters.replica_count"
           control={control}
           rules={{
             required: 'Please enter a number of replicas.',
@@ -87,7 +87,7 @@ export const ClusterEksSettings = () => {
           )}
         />
         <Controller
-          name="default_ssl_certificate"
+          name="infrastructure_charts_parameters.nginx_parameters.default_ssl_certificate"
           control={control}
           rules={{
             required: 'Please enter a default SSL certificate.',
@@ -107,7 +107,7 @@ export const ClusterEksSettings = () => {
           )}
         />
         <Controller
-          name="publish_status_address"
+          name="infrastructure_charts_parameters.nginx_parameters.publish_status_address"
           control={control}
           rules={{
             required: 'Please enter a publish status address.',
@@ -127,7 +127,7 @@ export const ClusterEksSettings = () => {
           )}
         />
         <Controller
-          name="annotation_metal_lb_load_balancer_ips"
+          name="infrastructure_charts_parameters.nginx_parameters.annotation_metal_lb_load_balancer_ips"
           control={control}
           rules={{
             required: 'Please enter a annotation Metal LB load balancer IPs.',
@@ -147,7 +147,7 @@ export const ClusterEksSettings = () => {
           )}
         />
         <Controller
-          name="annotation_external_dns_kubernetes_target"
+          name="infrastructure_charts_parameters.nginx_parameters.annotation_external_dns_kubernetes_target"
           control={control}
           rules={{
             required: 'Please enter a annotation External DNS Kubernetes target.',

@@ -265,7 +265,10 @@ export function StepSummary(props: StepSummaryProps) {
                       <ul className="list-none space-y-2 text-sm text-neutral-400">
                         <li>
                           <span className="font-medium">Namespace: </span>
-                          {props.resourcesData.kubernetes_namespace}
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.cert_manager_parameters
+                              ?.kubernetes_namespace
+                          }
                         </li>
                       </ul>
                     </div>
@@ -275,7 +278,7 @@ export function StepSummary(props: StepSummaryProps) {
                       <ul className="list-none space-y-2 text-sm text-neutral-400">
                         <li>
                           <span className="font-medium">IP pool: </span>
-                          {props.resourcesData.ip_address_pools}
+                          {props.resourcesData.infrastructure_charts_parameters?.metalLb_parameters?.ip_address_pools}
                         </li>
                       </ul>
                     </div>
@@ -285,23 +288,35 @@ export function StepSummary(props: StepSummaryProps) {
                       <ul className="list-none space-y-2 text-sm text-neutral-400">
                         <li>
                           <span className="font-medium">Number of replicas: </span>
-                          {props.resourcesData.replica_count}
+                          {props.resourcesData.infrastructure_charts_parameters?.nginx_parameters?.replica_count}
                         </li>
                         <li>
                           <span className="font-medium">Default SSL certificate: </span>
-                          {props.resourcesData.default_ssl_certificate}
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.default_ssl_certificate
+                          }
                         </li>
                         <li>
                           <span className="font-medium">Publish status address: </span>
-                          {props.resourcesData.publish_status_address}
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.publish_status_address
+                          }
                         </li>
                         <li>
                           <span className="font-medium">Annotation IPs: </span>
-                          {props.resourcesData.annotation_metal_lb_load_balancer_ips}
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.annotation_metal_lb_load_balancer_ips
+                          }
                         </li>
                         <li>
                           <span className="font-medium">Annotation external DNS target: </span>
-                          {props.resourcesData.annotation_external_dns_kubernetes_target}
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.annotation_external_dns_kubernetes_target
+                          }
                         </li>
                       </ul>
                     </div>
