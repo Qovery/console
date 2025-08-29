@@ -78,7 +78,15 @@ const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
   )[${timeRange}:])
 `
 
-export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+export function CardInstanceStatus({
+  serviceId,
+  clusterId,
+  deploymentId,
+}: {
+  serviceId: string
+  clusterId: string
+  deploymentId: string
+}) {
   const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 

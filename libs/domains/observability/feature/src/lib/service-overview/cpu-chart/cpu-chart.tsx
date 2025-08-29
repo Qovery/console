@@ -21,7 +21,15 @@ const queryCpuRequest = (serviceId: string) => `
   sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_requests{resource="cpu", container!=""} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})))
 `
 
-export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function CpuChart({
+  clusterId,
+  serviceId,
+  deploymentId,
+}: {
+  clusterId: string
+  serviceId: string
+  deploymentId: string
+}) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
 

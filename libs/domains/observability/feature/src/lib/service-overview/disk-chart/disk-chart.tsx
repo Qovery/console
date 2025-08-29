@@ -22,7 +22,15 @@ const queryDiskWriteNonNvme = (serviceId: string, rateInterval: string) => `
   sum by (namespace, pod, device) (rate(container_fs_writes_bytes_total{container="", device!~"/dev/nvme0.*", device!=""}[${rateInterval}])) * on(namespace, pod) group_left(label_qovery_com_service_id) max by(namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"})
 `
 
-export function DiskChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function DiskChart({
+  clusterId,
+  serviceId,
+  deploymentId,
+}: {
+  clusterId: string
+  serviceId: string
+  deploymentId: string
+}) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const rateInterval = useMemo(

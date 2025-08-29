@@ -25,7 +25,15 @@ sum (
 ) * 100
 `
 
-export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function InstanceHTTPErrorsChart({
+  clusterId,
+  serviceId,
+  deploymentId,
+}: {
+  clusterId: string
+  serviceId: string
+  deploymentId: string
+}) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const rateInterval = useMemo(

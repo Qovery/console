@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { useDeploymentId } from '../hooks/use-deployment-id/use-deployment-id'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
@@ -33,7 +34,12 @@ function ServiceOverviewContent() {
     setIsLiveUpdateEnabled,
   } = useServiceOverviewContext()
 
-  if (!environment || !service) return null
+  const { data: deploymentId } = useDeploymentId({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: applicationId,
+  })
+
+  if (!environment || !service || !deploymentId) return null
 
   const hasPublicPort =
     (service.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
@@ -98,7 +104,11 @@ function ServiceOverviewContent() {
         <Section className="gap-4">
           <Heading weight="medium">Service health check</Heading>
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <CardInstanceStatus clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardInstanceStatus
+              clusterId={environment.cluster_id}
+              serviceId={applicationId}
+              deploymentId={deploymentId}
+            />
             <div className="flex h-full flex-col gap-3">
               <CardLogErrors
                 organizationId={environment.organization.id}
@@ -106,10 +116,25 @@ function ServiceOverviewContent() {
                 environmentId={environment.id}
                 serviceId={applicationId}
                 clusterId={environment.cluster_id}
+                deploymentId={deploymentId}
               />
-              {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
-              {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
-              {hasPublicPort && <CardPercentile99 clusterId={environment.cluster_id} serviceId={applicationId} />}
+              {hasPublicPort && (
+                <CardHTTPErrors
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  deploymentId={deploymentId}
+                />
+              )}
+              {hasStorage && (
+                <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} deploymentId={deploymentId} />
+              )}
+              {hasPublicPort && (
+                <CardPercentile99
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  deploymentId={deploymentId}
+                />
+              )}
             </div>
           </div>
         </Section>
@@ -117,14 +142,14 @@ function ServiceOverviewContent() {
           <Heading weight="medium">Resources</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
-              <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} deploymentId={deploymentId} />
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
-              <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} deploymentId={deploymentId} />
             </div>
             {hasStorage && (
               <div className="overflow-hidden rounded border border-neutral-250">
-                <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} deploymentId={deploymentId} />
               </div>
             )}
           </div>
@@ -134,13 +159,25 @@ function ServiceOverviewContent() {
             <Heading weight="medium">Network</Heading>
             <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
               <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestStatusChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <NetworkRequestStatusChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  deploymentId={deploymentId}
+                />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestDurationChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <NetworkRequestDurationChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  deploymentId={deploymentId}
+                />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestSizeChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <NetworkRequestSizeChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  deploymentId={deploymentId}
+                />
               </div>
             </div>
           </Section>

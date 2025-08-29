@@ -47,10 +47,12 @@ const queryDuration95 = (serviceId: string, rateInterval: string) => `
 export function NetworkRequestDurationChart({
   clusterId,
   serviceId,
+  deploymentId,
   isFullscreen,
 }: {
   clusterId: string
   serviceId: string
+  deploymentId: string
   isFullscreen?: boolean
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()

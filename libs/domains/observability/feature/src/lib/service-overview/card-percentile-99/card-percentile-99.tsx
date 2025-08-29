@@ -24,7 +24,15 @@ const query = (serviceId: string, timeRange: string, rateInterval: string) => `
   )
 `
 
-export function CardPercentile99({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+export function CardPercentile99({
+  serviceId,
+  clusterId,
+  deploymentId,
+}: {
+  serviceId: string
+  clusterId: string
+  deploymentId: string
+}) {
   const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -59,7 +67,12 @@ export function CardPercentile99({ serviceId, clusterId }: { serviceId: string; 
       {isModalOpen && (
         <ModalChart title={title} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <div className="grid h-full grid-cols-1">
-            <NetworkRequestDurationChart clusterId={clusterId} serviceId={serviceId} isFullscreen />
+            <NetworkRequestDurationChart
+              clusterId={clusterId}
+              serviceId={serviceId}
+              deploymentId={deploymentId}
+              isFullscreen
+            />
           </div>
         </ModalChart>
       )}
