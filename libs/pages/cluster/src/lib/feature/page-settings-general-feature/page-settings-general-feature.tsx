@@ -30,11 +30,15 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
       const cloneCluster = handleSubmit(data, cluster)
 
       if (isQoveryAdminUser) {
-        cloneCluster.metrics_parameters = {
-          enabled: data.metrics_parameters?.enabled ?? false,
-          configuration: {
-            kind: 'MANAGED_BY_QOVERY',
-          },
+        if (data.metrics_parameters?.enabled) {
+          cloneCluster.metrics_parameters = {
+            enabled: data.metrics_parameters?.enabled ?? false,
+            configuration: {
+              kind: 'MANAGED_BY_QOVERY',
+            },
+          }
+        } else {
+          cloneCluster.metrics_parameters = undefined
         }
       }
 
