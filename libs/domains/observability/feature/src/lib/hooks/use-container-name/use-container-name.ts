@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
 import { observability } from '@qovery/domains/observability/data-access'
 
-export interface UseDeploymentIdProps {
+export interface UseContainerNameProps {
   clusterId: string
   serviceId: string
 }
 
-export function useDeploymentId({ clusterId, serviceId }: UseDeploymentIdProps) {
+export function useContainerName({ clusterId, serviceId }: UseContainerNameProps) {
   return useQuery({
-    ...observability.deploymentId({ clusterId, serviceId }),
+    ...observability.containerName({ clusterId, serviceId }),
     enabled: Boolean(clusterId && serviceId),
   })
 }
 
-export default useDeploymentId
+export default useContainerName

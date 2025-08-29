@@ -24,25 +24,21 @@ const queryHealthyPods = (serviceId: string) => `
 `
 
 const queryPodReason = (serviceId: string, dynamicRange: string) => `
-  sum by (pod, reason) (
-    (
-      kube_pod_container_status_last_terminated_reason == 1
-    )
-    * on(namespace, pod) group_left(label_qovery_com_service_id)
-      max by(namespace, pod, label_qovery_com_service_id) (
-        kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-      )
-    unless on(namespace, pod, reason)
+    max_over_time(
     (
       (
-        kube_pod_container_status_last_terminated_reason offset ${dynamicRange} == 1
+        kube_pod_container_status_last_terminated_reason == 1
       )
       * on(namespace, pod) group_left(label_qovery_com_service_id)
         max by(namespace, pod, label_qovery_com_service_id) (
           kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
         )
     )
-  )
+    and on(namespace, pod, reason)
+    (
+      (kube_pod_container_status_last_terminated_reason offset 30s) != bool 1
+    )
+  )[${dynamicRange}:30s]
 `
 
 const queryExitCode = (serviceId: string, dynamicRange: string) => `

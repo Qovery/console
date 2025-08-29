@@ -9,26 +9,26 @@ import { convertPodName } from '../util-chart/convert-pod-name'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryMemoryUsage = (serviceId: string) => `
-  sum by (pod, label_qovery_com_service_id) (container_memory_working_set_bytes{container!=""} * on(namespace, pod) group_left() group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"} ))
+const queryMemoryUsage = (containerName: string) => `
+  sum by (pod) (container_memory_working_set_bytes{container="${containerName}"})
 `
 
-const queryMemoryLimit = (serviceId: string) => `
-  sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_limits{resource="memory", container!=""} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"} )))
+const queryMemoryLimit = (containerName: string) => `
+  sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", container="${containerName}"}))
 `
 
-const queryMemoryRequest = (serviceId: string) => `
-  sum by (label_qovery_com_service_id) (bottomk(1, kube_pod_container_resource_requests{resource="memory", container!=""} * on(namespace, pod) group_left(label_qovery_com_service_id) group by (namespace, pod, label_qovery_com_service_id) (kube_pod_labels{label_qovery_com_service_id="${serviceId}"} )))
+const queryMemoryRequest = (containerName: string) => `
+  sum (bottomk(1, kube_pod_container_resource_requests{resource="memory", container="${containerName}"}))
 `
 
 export function MemoryChart({
   clusterId,
   serviceId,
-  deploymentId,
+  containerName,
 }: {
   clusterId: string
   serviceId: string
-  deploymentId: string
+  containerName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
@@ -55,7 +55,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryUsage(serviceId),
+    query: queryMemoryUsage(containerName),
     timeRange,
   })
 
@@ -63,7 +63,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryLimit(serviceId),
+    query: queryMemoryLimit(containerName),
     timeRange,
   })
 
@@ -71,7 +71,7 @@ export function MemoryChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMemoryRequest(serviceId),
+    query: queryMemoryRequest(containerName),
     timeRange,
   })
 
