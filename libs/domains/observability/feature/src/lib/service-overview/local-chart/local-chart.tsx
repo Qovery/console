@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, memo, useMemo, useState } from 'react'
+import { type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -17,12 +17,14 @@ import {
   Tooltip,
   createXAxisConfig,
   getTimeGranularity,
+  useChartHighlighting,
   useZoomableChart,
 } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
+import { addSeriesClassesToChildren, extractChartSeriesFromChildren } from '../util-chart/chart-series-utils'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
@@ -87,6 +89,10 @@ interface ChartContentProps extends PropsWithChildren {
   referenceLineData?: ReferenceLineEvent[]
   service?: AnyService
   isFullscreen?: boolean
+  selectedKeys?: Set<string>
+  onHighlight?: (key: string | null) => void
+  highlightingResult?: ReturnType<typeof useChartHighlighting>
+  enableHighlighting?: boolean
 }
 
 export const ChartContent = memo(function ChartContent({
@@ -103,6 +109,10 @@ export const ChartContent = memo(function ChartContent({
   referenceLineData,
   service,
   isFullscreen = true,
+  selectedKeys,
+  onHighlight,
+  highlightingResult: passedHighlightingResult,
+  enableHighlighting = false,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -119,6 +129,20 @@ export const ChartContent = memo(function ChartContent({
     lastDropdownTimeRange,
   } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
+
+  // Use passed highlighting result or create our own if needed
+  const fallbackHighlightingResult = useChartHighlighting({
+    selectedKeys: selectedKeys || new Set(),
+  })
+  const highlightingResult = passedHighlightingResult || fallbackHighlightingResult
+
+  // Process children to add series CSS classes if highlighting is enabled
+  const processedChildren = useMemo(() => {
+    if (enableHighlighting && highlightingResult) {
+      return addSeriesClassesToChildren(children, highlightingResult.sanitizeKey)
+    }
+    return children
+  }, [children, enableHighlighting, highlightingResult])
 
   // Use the zoomable chart hook - automatically handle zoom state changes
   const {
@@ -156,7 +180,7 @@ export const ChartContent = memo(function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div className="relative flex h-full">
+    <div ref={selectedKeys ? highlightingResult.containerRef : undefined} className="relative flex h-full">
       <Chart.Container
         className={clsx('h-full w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
         isLoading={isLoading}
@@ -256,7 +280,7 @@ export const ChartContent = memo(function ChartContent({
             referenceLineData?.map((event) =>
               createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey, true)
             )}
-          {children}
+          {processedChildren}
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
@@ -387,6 +411,7 @@ export interface LocalChartProps extends PropsWithChildren {
   }
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
+  showLegend?: boolean
 }
 
 export function LocalChart({
@@ -405,10 +430,70 @@ export function LocalChart({
   margin,
   referenceLineData,
   isFullscreen = false,
+  showLegend = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
+  const {
+    startTimestamp,
+    endTimestamp,
+    chartSelectedKeys,
+    setChartSelectedKeys,
+    chartHighlightedKey,
+    setChartHighlightedKey,
+  } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  // Extract series information from children for legend
+  const chartSeries = useMemo(() => {
+    const series = extractChartSeriesFromChildren(children)
+
+    // Sort series to show limit/request metrics first and add line indicator for them
+    return series
+      .map((item) => {
+        const isLimitRequest =
+          item.label.toLowerCase().includes('limit') || item.label.toLowerCase().includes('request')
+        return {
+          ...item,
+          useLineIndicator: isLimitRequest,
+        }
+      })
+      .sort((a, b) => {
+        const aIsLimitRequest = a.useLineIndicator
+        const bIsLimitRequest = b.useLineIndicator
+
+        if (aIsLimitRequest && !bIsLimitRequest) return -1
+        if (!aIsLimitRequest && bIsLimitRequest) return 1
+        return 0
+      })
+  }, [children])
+
+  // Set up chart highlighting if legend is enabled - separate instances for local and modal
+  const localHighlightingResult = useChartHighlighting({
+    selectedKeys: showLegend ? chartSelectedKeys : new Set(),
+  })
+
+  const modalHighlightingResult = useChartHighlighting({
+    selectedKeys: showLegend ? chartSelectedKeys : new Set(),
+  })
+
+  // Combined highlight handlers that sync both local highlighting and shared state
+  const handleLocalHighlight = (key: string | null) => {
+    localHighlightingResult.handleHighlight(key)
+    setChartHighlightedKey(key)
+  }
+
+  const handleModalHighlight = (key: string | null) => {
+    modalHighlightingResult.handleHighlight(key)
+    setChartHighlightedKey(key)
+  }
+
+  // Sync local highlighting when shared state changes from other chart instances
+  useEffect(() => {
+    if (showLegend) {
+      localHighlightingResult.handleHighlight(chartHighlightedKey)
+      modalHighlightingResult.handleHighlight(chartHighlightedKey)
+    }
+  }, [chartHighlightedKey, showLegend, localHighlightingResult, modalHighlightingResult])
 
   // Alpha: Workaround to get the events
   const { data: service } = useService({ serviceId })
@@ -566,28 +651,86 @@ export function LocalChart({
           referenceLineData={mergedReferenceLineData}
           service={service}
           isFullscreen={isFullscreen}
+          selectedKeys={showLegend ? chartSelectedKeys : undefined}
+          onHighlight={showLegend ? handleLocalHighlight : undefined}
+          highlightingResult={showLegend ? localHighlightingResult : undefined}
+          enableHighlighting={showLegend}
         >
           {children}
         </ChartContent>
+        {/* Render legend if enabled */}
+        {showLegend && chartSeries.length > 0 && (
+          <div className="px-5 pb-5">
+            <Chart.Legend
+              items={chartSeries}
+              selectedKeys={chartSelectedKeys}
+              highlightedKey={chartHighlightedKey}
+              onToggle={(key) => {
+                setChartSelectedKeys((prev: Set<string>) => {
+                  const next = new Set(prev)
+                  if (next.has(key)) {
+                    next.delete(key)
+                  } else {
+                    next.add(key)
+                  }
+                  return next
+                })
+              }}
+              onHighlight={handleLocalHighlight}
+              rightGutterWidth={0}
+            />
+          </div>
+        )}
       </Section>
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <ChartContent
-            data={data}
-            unit={unit}
-            label={label ?? ''}
-            tooltipLabel={tooltipLabel}
-            isEmpty={isEmpty}
-            isLoading={isLoading}
-            xDomain={xDomain}
-            yDomain={yDomain}
-            margin={margin}
-            referenceLineData={mergedReferenceLineData}
-            service={service}
-            isFullscreen
-          >
-            {children}
-          </ChartContent>
+          <div className="flex h-full flex-col">
+            <div className="flex-1 overflow-hidden">
+              <ChartContent
+                data={data}
+                unit={unit}
+                label={label ?? ''}
+                tooltipLabel={tooltipLabel}
+                isEmpty={isEmpty}
+                isLoading={isLoading}
+                xDomain={xDomain}
+                yDomain={yDomain}
+                margin={margin}
+                referenceLineData={mergedReferenceLineData}
+                service={service}
+                isFullscreen
+                selectedKeys={showLegend ? chartSelectedKeys : undefined}
+                onHighlight={showLegend ? handleModalHighlight : undefined}
+                highlightingResult={showLegend ? modalHighlightingResult : undefined}
+                enableHighlighting={showLegend}
+              >
+                {children}
+              </ChartContent>
+            </div>
+            {/* Render legend in modal if enabled */}
+            {showLegend && chartSeries.length > 0 && (
+              <div className="flex-shrink-0 px-5 pb-5">
+                <Chart.Legend
+                  items={chartSeries}
+                  selectedKeys={chartSelectedKeys}
+                  highlightedKey={chartHighlightedKey}
+                  onToggle={(key) => {
+                    setChartSelectedKeys((prev: Set<string>) => {
+                      const next = new Set(prev)
+                      if (next.has(key)) {
+                        next.delete(key)
+                      } else {
+                        next.add(key)
+                      }
+                      return next
+                    })
+                  }}
+                  onHighlight={handleModalHighlight}
+                  rightGutterWidth={0}
+                />
+              </div>
+            )}
+          </div>
         </ModalChart>
       )}
     </>
