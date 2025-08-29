@@ -115,87 +115,81 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
   if (!items || items.length === 0) return null
 
   return (
-    <>
-      <style>{`
-        .legend-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .legend-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
-      `}</style>
+    <div
+      ref={ref}
+      className={twMerge('relative mt-2', className)}
+      style={{ width: `calc(100% - ${rightGutterWidth}px)` }}
+    >
       <div
-        ref={ref}
-        className={twMerge('relative mt-2', className)}
-        style={{ width: `calc(100% - ${rightGutterWidth}px)` }}
+        ref={scrollContainerRef}
+        onWheel={handleWheel}
+        onScroll={handleScroll}
+        onMouseLeave={handleContainerMouseLeave}
+        className="m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap scrollbar-hidden"
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div
-          ref={scrollContainerRef}
-          onWheel={handleWheel}
-          onScroll={handleScroll}
-          onMouseLeave={handleContainerMouseLeave}
-          className="legend-scrollbar m-0 box-border flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          {items.map((entry) => {
-            const isActive = selectedKeys.has(entry.key)
-            const isHighlighted = highlightedKey === entry.key
-            return (
-              <Badge
-                key={entry.key}
-                role="button"
-                tabIndex={0}
-                radius="full"
-                className="cursor-pointer gap-2 transition-all duration-150"
-                onClick={() => onToggle?.(entry.key)}
-                onMouseEnter={() => handleMouseEnter(entry.key)}
-                onMouseLeave={handleItemMouseLeave}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    onToggle?.(entry.key)
-                  }
-                }}
-                style={{
-                  ...(isActive
-                    ? {
-                        backgroundColor: entry.color.startsWith('var(')
-                          ? `color-mix(in srgb, ${entry.color} 15%, transparent)`
-                          : `${entry.color}15`,
-                        borderColor: entry.color,
-                        borderWidth: 1,
-                      }
-                    : {}),
-                  ...(isHighlighted
-                    ? {
-                        backgroundColor: entry.color.startsWith('var(')
-                          ? `color-mix(in srgb, ${entry.color} 15%, transparent)`
-                          : `${entry.color}15`,
-                        borderColor: entry.color,
-                        borderWidth: 1,
-                      }
-                    : {}),
-                }}
-              >
-                {entry.useLineIndicator ? (
-                  <span
-                    className="inline-block h-0.5 w-3 shrink-0 transition-all duration-150"
-                    style={{ backgroundColor: entry.color }}
-                  />
-                ) : (
-                  <span
-                    className="inline-block h-2 w-2 shrink-0 rounded-full transition-all duration-150"
-                    style={{ backgroundColor: entry.color }}
-                  />
-                )}
-                <span className="truncate">{entry.label}</span>
-              </Badge>
-            )
-          })}
-        </div>
-        {canScrollLeft && (
-          <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white to-white/0" />
-        )}
-        {canScrollRight && (
-          <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white to-white/0" />
-        )}
+        {items.map((entry) => {
+          const isActive = selectedKeys.has(entry.key)
+          const isHighlighted = highlightedKey === entry.key
+          return (
+            <Badge
+              key={entry.key}
+              role="button"
+              tabIndex={0}
+              radius="full"
+              className="cursor-pointer gap-2 transition-all duration-150"
+              onClick={() => onToggle?.(entry.key)}
+              onMouseEnter={() => handleMouseEnter(entry.key)}
+              onMouseLeave={handleItemMouseLeave}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onToggle?.(entry.key)
+                }
+              }}
+              style={{
+                ...(isActive
+                  ? {
+                      backgroundColor: entry.color.startsWith('var(')
+                        ? `color-mix(in srgb, ${entry.color} 15%, transparent)`
+                        : `${entry.color}15`,
+                      borderColor: entry.color,
+                      borderWidth: 1,
+                    }
+                  : {}),
+                ...(isHighlighted
+                  ? {
+                      backgroundColor: entry.color.startsWith('var(')
+                        ? `color-mix(in srgb, ${entry.color} 15%, transparent)`
+                        : `${entry.color}15`,
+                      borderColor: entry.color,
+                      borderWidth: 1,
+                    }
+                  : {}),
+              }}
+            >
+              {entry.useLineIndicator ? (
+                <span
+                  className="inline-block h-0.5 w-3 shrink-0 transition-all duration-150"
+                  style={{ backgroundColor: entry.color }}
+                />
+              ) : (
+                <span
+                  className="inline-block h-2 w-2 shrink-0 rounded-full transition-all duration-150"
+                  style={{ backgroundColor: entry.color }}
+                />
+              )}
+              <span className="truncate">{entry.label}</span>
+            </Badge>
+          )
+        })}
       </div>
-    </>
+      {canScrollLeft && (
+        <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white to-white/0" />
+      )}
+      {canScrollRight && (
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white to-white/0" />
+      )}
+    </div>
   )
 })
