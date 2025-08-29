@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -16,14 +16,12 @@ import {
   Tooltip,
   createXAxisConfig,
   getTimeGranularity,
-  useChartHighlighting,
   useZoomableChart,
 } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
-import { extractChartSeriesFromChildren } from '../util-chart/extract-chart-series'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
@@ -87,8 +85,6 @@ interface ChartContentProps extends PropsWithChildren {
   referenceLineData?: ReferenceLineEvent[]
   service?: AnyService
   isFullscreen?: boolean
-  selectedKeys?: Set<string>
-  highlightedKey?: string | null
 }
 
 export function ChartContent({
@@ -105,61 +101,10 @@ export function ChartContent({
   referenceLineData,
   service,
   isFullscreen = true,
-  selectedKeys,
-  highlightedKey,
 }: ChartContentProps) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey } =
     useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
-
-  // Use highlighting only if selectedKeys are provided
-  const highlightingResult = useChartHighlighting({
-    selectedKeys: selectedKeys || new Set(),
-  })
-
-  // Update local highlighting when global highlighted key changes
-  useEffect(() => {
-    if (selectedKeys && highlightedKey !== undefined) {
-      highlightingResult.handleHighlight(highlightedKey)
-    }
-  }, [highlightedKey, selectedKeys, highlightingResult])
-
-  // Add CSS classes to chart series children
-  const processedChildren = useMemo(() => {
-    if (!selectedKeys) return children
-
-    const processChild = (child: React.ReactNode): React.ReactNode => {
-      if (!child) return child
-
-      if (Array.isArray(child)) {
-        return child.map(processChild)
-      }
-
-      if (typeof child === 'object' && 'props' in child) {
-        const element = child as React.ReactElement
-
-        // Check if this is a chart series component
-        if (element.props?.dataKey && (element.props?.stroke || element.props?.fill)) {
-          const dataKey = String(element.props.dataKey)
-          const seriesClass = `series series--${highlightingResult.sanitizeKey(dataKey)}`
-          const existingClassName = element.props.className || ''
-          const newClassName = existingClassName ? `${existingClassName} ${seriesClass}` : seriesClass
-
-          return {
-            ...element,
-            props: {
-              ...element.props,
-              className: newClassName,
-            },
-          }
-        }
-      }
-
-      return child
-    }
-
-    return processChild(children)
-  }, [children, selectedKeys, highlightingResult])
 
   // Use the zoomable chart hook
   const {
@@ -188,7 +133,7 @@ export function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div ref={selectedKeys ? highlightingResult.containerRef : undefined} className="relative flex h-full">
+    <div className="relative flex h-full">
       <Chart.Container className="h-full w-full select-none p-5 py-2 pr-0" isLoading={isLoading} isEmpty={isEmpty}>
         <ComposedChart
           data={data}
@@ -259,7 +204,7 @@ export function ChartContent({
             isAnimationActive={false}
             content={!onHoverHideTooltip ? <div /> : <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />}
           />
-          {selectedKeys ? processedChildren : children}
+          {children}
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
@@ -378,7 +323,6 @@ export interface LocalChartProps extends PropsWithChildren {
   }
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
-  showLegend?: boolean
 }
 
 export function LocalChart({
@@ -397,64 +341,10 @@ export function LocalChart({
   margin,
   referenceLineData,
   isFullscreen = false,
-  showLegend = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const {
-    startTimestamp,
-    endTimestamp,
-    hoveredEventKey,
-    setHoveredEventKey,
-    hideEvents,
-    chartSelectedKeys,
-    setChartSelectedKeys,
-    chartHighlightedKey,
-    setChartHighlightedKey,
-  } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, hoveredEventKey, setHoveredEventKey, hideEvents } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  // Extract series information from children for legend
-  const chartSeries = useMemo(() => {
-    const series = extractChartSeriesFromChildren(children)
-
-    // Sort series to show limit/request metrics first and add line indicator for them
-    return series
-      .map((item) => {
-        const isLimitRequest =
-          item.label.toLowerCase().includes('limit') || item.label.toLowerCase().includes('request')
-        return {
-          ...item,
-          useLineIndicator: isLimitRequest,
-        }
-      })
-      .sort((a, b) => {
-        const aIsLimitRequest = a.useLineIndicator
-        const bIsLimitRequest = b.useLineIndicator
-
-        if (aIsLimitRequest && !bIsLimitRequest) return -1
-        if (!aIsLimitRequest && bIsLimitRequest) return 1
-        return 0
-      })
-  }, [children])
-
-  // Define chart highlighting handlers
-  const onSelectionToggle = (key: string) => {
-    if (!showLegend || !setChartSelectedKeys) return
-
-    const next = new Set(chartSelectedKeys)
-    if (next.has(key)) {
-      next.delete(key)
-    } else {
-      next.add(key)
-    }
-    setChartSelectedKeys(next)
-  }
-
-  const onHighlight = (key: string | null) => {
-    if (showLegend && setChartHighlightedKey) {
-      setChartHighlightedKey(key)
-    }
-  }
 
   // Alpha: Workaround to get the events
   const { data: service } = useService({ serviceId })
@@ -612,8 +502,6 @@ export function LocalChart({
           referenceLineData={mergedReferenceLineData}
           service={service}
           isFullscreen={isFullscreen}
-          selectedKeys={showLegend ? chartSelectedKeys : undefined}
-          highlightedKey={showLegend ? chartHighlightedKey : undefined}
         >
           {/* Render reference lines for events of type 'event' */}
           {!hideEvents &&
@@ -622,18 +510,6 @@ export function LocalChart({
               .map((event) => createAlignedReferenceLine(event, hoveredEventKey, setHoveredEventKey, false))}
           {children}
         </ChartContent>
-        {/* Render legend if enabled */}
-        {showLegend && chartSeries.length > 0 && (
-          <div className="px-5 pb-5">
-            <Chart.Legend
-              items={chartSeries}
-              selectedKeys={chartSelectedKeys}
-              onToggle={onSelectionToggle}
-              onHighlight={onHighlight}
-              rightGutterWidth={0}
-            />
-          </div>
-        )}
       </Section>
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -652,8 +528,6 @@ export function LocalChart({
                 referenceLineData={mergedReferenceLineData}
                 service={service}
                 isFullscreen
-                selectedKeys={showLegend ? chartSelectedKeys : undefined}
-                highlightedKey={showLegend ? chartHighlightedKey : undefined}
               >
                 {/* Render reference lines for events of type 'event' in modal as well */}
                 {!hideEvents &&
@@ -663,18 +537,6 @@ export function LocalChart({
                 {children}
               </ChartContent>
             </div>
-            {/* Render legend in modal if enabled */}
-            {showLegend && chartSeries.length > 0 && (
-              <div className="flex-shrink-0 px-5 pb-5">
-                <Chart.Legend
-                  items={chartSeries}
-                  selectedKeys={chartSelectedKeys}
-                  onToggle={onSelectionToggle}
-                  onHighlight={onHighlight}
-                  rightGutterWidth={0}
-                />
-              </div>
-            )}
           </div>
         </ModalChart>
       )}

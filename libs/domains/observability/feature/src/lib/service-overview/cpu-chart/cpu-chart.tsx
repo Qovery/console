@@ -106,7 +106,6 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
       tooltipLabel="CPU"
       unit="mCPU"
       serviceId={serviceId}
-      showLegend={true}
     >
       {seriesNames.map((name) => (
         <Line

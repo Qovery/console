@@ -76,7 +76,6 @@ export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: s
       serviceId={serviceId}
       margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
       isFullscreen
-      showLegend={true}
     >
       {seriesNames.map((name) => (
         <Area
