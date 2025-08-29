@@ -1,17 +1,6 @@
 import type { Meta } from '@storybook/react'
 import { useState } from 'react'
-import {
-  Area,
-  Bar,
-  CartesianGrid,
-  ComposedChart,
-  Line,
-  ReferenceArea,
-  ReferenceLine,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { Area, Bar, CartesianGrid, ComposedChart, Line, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
 import { useChartHighlighting } from './use-chart-highlighting'
@@ -335,14 +324,12 @@ export const MaximalEdgeCase = {
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
 
-    const { containerRef, handleHighlight, highlightingStyles, sanitizeKey } = useChartHighlighting({
-      metricKeys: maximalMetrics.map((m) => m.key),
+    const { containerRef, handleHighlight, sanitizeKey } = useChartHighlighting({
       selectedKeys,
     })
 
     return (
-      <div ref={containerRef} className="highlight-scope w-full p-5 py-2 pr-0">
-        <style>{highlightingStyles}</style>
+      <div ref={containerRef} className="w-full p-5 py-2 pr-0">
         <Chart.Container className="h-[400px] w-full">
           <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
             <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />

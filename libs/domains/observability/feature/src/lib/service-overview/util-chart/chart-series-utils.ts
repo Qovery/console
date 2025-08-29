@@ -1,3 +1,5 @@
+import React from 'react'
+
 /**
  * Utility function to extract chart series information from React children
  */
@@ -37,4 +39,34 @@ export function extractChartSeriesFromChildren(
 
   processChild(children)
   return series
+}
+
+/**
+ * Utility function to add CSS classes to chart series children for highlighting
+ * This adds the required 'series series--{sanitizedKey}' classes that the highlighting hook expects
+ */
+export function addSeriesClassesToChildren(
+  children: React.ReactNode,
+  sanitizeKey: (key: string) => string
+): React.ReactNode {
+  return React.Children.map(children, (child) => {
+    if (!React.isValidElement(child)) return child
+
+    // Check if this is a chart series component (has dataKey)
+    if (child.props?.dataKey) {
+      const dataKey = String(child.props.dataKey)
+      const seriesClass = `series series--${sanitizeKey(dataKey)}`
+
+      // Clone the element and add the CSS class
+      const existingClassName = child.props.className || ''
+      const newClassName = existingClassName ? `${existingClassName} ${seriesClass}` : seriesClass
+
+      return React.cloneElement(child, {
+        ...child.props,
+        className: newClassName,
+      })
+    }
+
+    return child
+  })
 }

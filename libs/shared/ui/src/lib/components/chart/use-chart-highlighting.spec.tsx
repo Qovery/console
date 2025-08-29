@@ -2,318 +2,78 @@ import { act, renderHook } from '@qovery/shared/util-tests'
 import { useChartHighlighting } from './use-chart-highlighting'
 
 describe('useChartHighlighting', () => {
-  const mockMetricKeys = ['cpu', 'memory', 'disk', 'pod-889b7db58-yv1kc']
-
   beforeEach(() => {
-    // Clear any existing DOM elements
     document.body.innerHTML = ''
   })
 
-  describe('initialization', () => {
-    it('should return expected properties', () => {
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      expect(result.current.containerRef).toBeDefined()
-      expect(result.current.handleHighlight).toBeInstanceOf(Function)
-      expect(result.current.highlightingStyles).toEqual(expect.any(String))
-      expect(result.current.sanitizeKey).toBeInstanceOf(Function)
-    })
-
-    it('should generate highlighting styles for all metric keys', () => {
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      const styles = result.current.highlightingStyles
-
-      // Should contain base dimming styles
-      expect(styles).toContain('.highlight-scope.has-selection g.series path')
-      expect(styles).toContain('.highlight-scope.has-hover g.series path')
-      expect(styles).toContain('opacity: 0.2')
-
-      // Should contain styles for each metric
-      mockMetricKeys.forEach((key) => {
-        const sanitizedKey = key.replace(/[^a-zA-Z0-9_-]+/g, '-')
-        expect(styles).toContain(`.highlight-scope.selected-series--${sanitizedKey}`)
-        expect(styles).toContain(`.highlight-scope.hover-series--${sanitizedKey}`)
-        expect(styles).toContain('opacity: 1 !important')
+  it('should return expected properties', () => {
+    const { result } = renderHook(() =>
+      useChartHighlighting({
+        selectedKeys: new Set(),
       })
-    })
+    )
+
+    expect(result.current.containerRef).toBeDefined()
+    expect(result.current.handleHighlight).toBeInstanceOf(Function)
+    expect(result.current.sanitizeKey).toBeInstanceOf(Function)
   })
 
-  describe('sanitizeKey function', () => {
-    it('should sanitize keys with special characters', () => {
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: [],
-          selectedKeys: new Set(),
-        })
-      )
+  it('should sanitize keys with special characters', () => {
+    const { result } = renderHook(() =>
+      useChartHighlighting({
+        selectedKeys: new Set(),
+      })
+    )
 
-      expect(result.current.sanitizeKey('pod-889b7db58-yv1kc')).toBe('pod-889b7db58-yv1kc')
-      expect(result.current.sanitizeKey('metric@123#test')).toBe('metric-123-test')
-      expect(result.current.sanitizeKey('simple-key')).toBe('simple-key')
-      expect(result.current.sanitizeKey('key_with_underscores')).toBe('key_with_underscores')
-    })
+    expect(result.current.sanitizeKey('pod-889b7db58-yv1kc')).toBe('pod-889b7db58-yv1kc')
+    expect(result.current.sanitizeKey('metric@123#test')).toBe('metric-123-test')
+    expect(result.current.sanitizeKey('simple-key')).toBe('simple-key')
+    expect(result.current.sanitizeKey('key_with_underscores')).toBe('key_with_underscores')
   })
 
-  describe('selection highlighting', () => {
-    it('should add selection classes when selectedKeys change', () => {
-      const container = document.createElement('div')
-      document.body.appendChild(container)
-
-      const { result, rerender } = renderHook(
-        ({ selectedKeys }) =>
-          useChartHighlighting({
-            metricKeys: mockMetricKeys,
-            selectedKeys,
-          }),
-        { initialProps: { selectedKeys: new Set() } }
-      )
-
-      // Set the container ref manually before triggering the effect
-      act(() => {
-        Object.defineProperty(result.current.containerRef, 'current', {
-          value: container,
-          writable: true,
-        })
+  it('should handle null container ref gracefully', () => {
+    const { result } = renderHook(() =>
+      useChartHighlighting({
+        selectedKeys: new Set(),
       })
+    )
 
-      // Re-render with new selection to trigger the useEffect
-      act(() => {
-        rerender({ selectedKeys: new Set(['cpu', 'memory']) })
-      })
-
-      expect(container).toHaveClass('has-selection')
-      expect(container).toHaveClass('selected-series--cpu')
-      expect(container).toHaveClass('selected-series--memory')
-    })
-
-    it('should remove has-selection class when no items selected', () => {
-      const container = document.createElement('div')
-      container.classList.add('has-selection', 'selected-series--cpu')
-      document.body.appendChild(container)
-
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      // Manually trigger the selection effect
-      act(() => {
-        Object.defineProperty(result.current.containerRef, 'current', {
-          value: container,
-          writable: true,
-        })
-
-        // Simulate the useEffect by manually calling the logic
-        container.classList.forEach((className) => {
-          if (className.startsWith('selected-series--')) {
-            container.classList.remove(className)
-          }
-        })
-        container.classList.toggle('has-selection', false)
-      })
-
-      expect(container).not.toHaveClass('has-selection')
-      expect(container).not.toHaveClass('selected-series--cpu')
-    })
-  })
-
-  describe('handleHighlight function', () => {
-    it('should add hover classes when highlighting a key', () => {
-      const container = document.createElement('div')
-      document.body.appendChild(container)
-
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      // Set the container ref manually
-      Object.defineProperty(result.current.containerRef, 'current', {
-        value: container,
-        writable: true,
-      })
-
+    expect(() => {
       act(() => {
         result.current.handleHighlight('cpu')
       })
-
-      expect(container).toHaveClass('has-hover')
-      expect(container).toHaveClass('hover-series--cpu')
-    })
-
-    it('should remove hover classes when highlighting null', () => {
-      const container = document.createElement('div')
-      container.classList.add('has-hover', 'hover-series--cpu')
-      document.body.appendChild(container)
-
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      // Set the container ref manually
-      Object.defineProperty(result.current.containerRef, 'current', {
-        value: container,
-        writable: true,
-      })
-
-      act(() => {
-        result.current.handleHighlight(null)
-      })
-
-      expect(container).not.toHaveClass('has-hover')
-      expect(container).not.toHaveClass('hover-series--cpu')
-    })
-
-    it('should handle keys with special characters', () => {
-      const container = document.createElement('div')
-      document.body.appendChild(container)
-
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      // Set the container ref manually
-      Object.defineProperty(result.current.containerRef, 'current', {
-        value: container,
-        writable: true,
-      })
-
-      act(() => {
-        result.current.handleHighlight('pod-889b7db58-yv1kc')
-      })
-
-      expect(container).toHaveClass('hover-series--pod-889b7db58-yv1kc')
-    })
-
-    it('should replace existing hover classes when switching highlights', () => {
-      const container = document.createElement('div')
-      document.body.appendChild(container)
-
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      // Set the container ref manually
-      Object.defineProperty(result.current.containerRef, 'current', {
-        value: container,
-        writable: true,
-      })
-
-      // Highlight first key
-      act(() => {
-        result.current.handleHighlight('cpu')
-      })
-
-      expect(container).toHaveClass('hover-series--cpu')
-
-      // Highlight second key
-      act(() => {
-        result.current.handleHighlight('memory')
-      })
-
-      expect(container).not.toHaveClass('hover-series--cpu')
-      expect(container).toHaveClass('hover-series--memory')
-    })
-
-    it('should handle null container ref gracefully', () => {
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: mockMetricKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      // Don't set the container ref, should not throw
-      expect(() => {
-        act(() => {
-          result.current.handleHighlight('cpu')
-        })
-      }).not.toThrow()
-    })
+    }).not.toThrow()
   })
 
-  describe('style generation edge cases', () => {
-    it('should handle empty metric keys array', () => {
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: [],
-          selectedKeys: new Set(),
-        })
-      )
+  it('should apply direct styling to chart elements', () => {
+    const container = document.createElement('div')
+    const seriesElement = document.createElement('g')
+    const pathElement = document.createElement('path')
 
-      const styles = result.current.highlightingStyles
-      expect(styles).toContain('.highlight-scope.has-selection')
-      expect(styles).toContain('.highlight-scope.has-hover')
-      // Should not contain any metric-specific styles
-      expect(styles).not.toContain('selected-series--')
-      expect(styles).not.toContain('hover-series--')
+    seriesElement.className = 'series series--cpu'
+    seriesElement.appendChild(pathElement)
+    container.appendChild(seriesElement)
+    document.body.appendChild(container)
+
+    const initialSelectedKeys = new Set<string>()
+    const { result, rerender } = renderHook(
+      ({ selectedKeys }: { selectedKeys: Set<string> }) => useChartHighlighting({ selectedKeys }),
+      { initialProps: { selectedKeys: initialSelectedKeys } }
+    )
+
+    act(() => {
+      Object.defineProperty(result.current.containerRef, 'current', {
+        value: container,
+        writable: true,
+      })
     })
 
-    it('should handle metric keys with various special characters', () => {
-      const specialKeys = ['key@test', 'key#hash', 'key space', 'key.dot']
-
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: specialKeys,
-          selectedKeys: new Set(),
-        })
-      )
-
-      const styles = result.current.highlightingStyles
-
-      // All special characters should be sanitized to hyphens
-      expect(styles).toContain('selected-series--key-test')
-      expect(styles).toContain('selected-series--key-hash')
-      expect(styles).toContain('selected-series--key-space')
-      expect(styles).toContain('selected-series--key-dot')
+    // Rerender with selected keys to trigger the effect
+    act(() => {
+      rerender({ selectedKeys: new Set(['cpu']) })
     })
-  })
 
-  describe('integration scenarios', () => {
-    it('should work with real-world metric keys', () => {
-      const realWorldKeys = [
-        'cpu-usage',
-        'memory_utilization',
-        'disk.io.read',
-        'network/bandwidth',
-        'pod-889b7db58-yv1kc',
-        'service@namespace#cluster',
-      ]
-
-      const { result } = renderHook(() =>
-        useChartHighlighting({
-          metricKeys: realWorldKeys,
-          selectedKeys: new Set(['cpu-usage', 'pod-889b7db58-yv1kc']),
-        })
-      )
-
-      expect(result.current.highlightingStyles).toContain('selected-series--cpu-usage')
-      expect(result.current.highlightingStyles).toContain('selected-series--pod-889b7db58-yv1kc')
-      expect(result.current.highlightingStyles).toContain('selected-series--service-namespace-cluster')
-    })
+    // The path element should have full opacity when selected
+    expect(pathElement.style.opacity).toBe('1')
   })
 })
