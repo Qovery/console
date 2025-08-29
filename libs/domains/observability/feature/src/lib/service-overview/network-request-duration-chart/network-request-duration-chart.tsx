@@ -6,54 +6,30 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryDuration50 = (serviceId: string, rateInterval: string) => `
-  histogram_quantile(0.5,(
-  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[${rateInterval}]))
-  * on(ingress) group_left(label_qovery_com_associated_service_id)
-    max by(ingress, label_qovery_com_associated_service_id)(
-      kube_ingress_labels{
-        label_qovery_com_associated_service_id =  "${serviceId}"
-      }
-    )
-  )
-)
+const queryDuration50 = (serviceId: string, rateInterval: string, ingressName: string) => `
+  histogram_quantile(0.5,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}"}[${rateInterval}]))))
 `
 
-const queryDuration99 = (serviceId: string, rateInterval: string) => `
-  histogram_quantile(0.99,(
-  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[${rateInterval}]))
-  * on(ingress) group_left(label_qovery_com_associated_service_id)
-    max by(ingress, label_qovery_com_associated_service_id)(
-      kube_ingress_labels{
-        label_qovery_com_associated_service_id =  "${serviceId}"
-      }
-  )
-)
+const queryDuration99 = (serviceId: string, rateInterval: string, ingressName: string) => `
+   histogram_quantile(0.99,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}"}[${rateInterval}]))))
 `
 
-const queryDuration95 = (serviceId: string, rateInterval: string) => `
-  histogram_quantile(0.95,(
-  sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket[${rateInterval}]))
-  * on(ingress) group_left(label_qovery_com_associated_service_id)
-    max by(ingress, label_qovery_com_associated_service_id)(
-      kube_ingress_labels{
-        label_qovery_com_associated_service_id =  "${serviceId}"
-      }
-    )
-  )
-)
+const queryDuration95 = (serviceId: string, rateInterval: string, ingressName: string) => `
+  histogram_quantile(0.95,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}"}[${rateInterval}]))))
 `
 
 export function NetworkRequestDurationChart({
   clusterId,
   serviceId,
-  deploymentId,
+  containerName,
   isFullscreen,
+  ingressName,
 }: {
   clusterId: string
   serviceId: string
-  deploymentId: string
+  containerName: string
   isFullscreen?: boolean
+  ingressName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
@@ -67,7 +43,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration50(serviceId, rateInterval),
+    query: queryDuration50(serviceId, rateInterval, ingressName),
   })
 
   const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
@@ -75,7 +51,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration99(serviceId, rateInterval),
+    query: queryDuration99(serviceId, rateInterval, ingressName),
   })
 
   const { data: metrics95, isLoading: isLoadingMetrics } = useMetrics({
@@ -83,7 +59,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration95(serviceId, rateInterval),
+    query: queryDuration95(serviceId, rateInterval, ingressName),
   })
 
   const chartData = useMemo(() => {

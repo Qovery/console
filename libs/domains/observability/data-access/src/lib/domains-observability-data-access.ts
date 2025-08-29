@@ -4,11 +4,34 @@ import { ClustersApi } from 'qovery-typescript-axios'
 const clusterApi = new ClustersApi()
 
 export const observability = createQueryKeys('observability', {
-  deploymentId: ({ clusterId, serviceId }: { clusterId: string; serviceId: string }) => ({
-    queryKey: ['deploymentId', clusterId, serviceId],
+  containerName: ({
+    clusterId,
+    serviceId,
+    resourceType = 'deployment',
+  }: {
+    clusterId: string
+    serviceId: string
+    resourceType?: 'deployment' | 'statefulset'
+  }) => ({
+    queryKey: ['deploymentId', clusterId, serviceId, resourceType],
     async queryFn() {
-      const endpoint = `api/v1/label/deployment/values?match[]=kube_deployment_labels{label_qovery_com_service_id="${serviceId}"}&match[]=kube_statefulset_labels{label_qovery_com_service_id="${serviceId}"}`
+      const endpoints = {
+        deployment: `api/v1/label/deployment/values?match[]=kube_deployment_labels{label_qovery_com_service_id="${serviceId}"}`,
+        statefulset: `api/v1/label/statefulset/values?match[]=kube_statefulset_labels{label_qovery_com_service_id="${serviceId}"}`,
+      }
+
+      const endpoint = endpoints[resourceType]
       const response = await clusterApi.getClusterMetrics(clusterId, endpoint, '')
+      return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
+    },
+  }),
+  ingressName: ({ clusterId, serviceId }: { clusterId: string; serviceId: string }) => ({
+    queryKey: ['ingressId', clusterId, serviceId],
+    async queryFn() {
+      const endpoint = `api/v1/label/ingress/values?match[]=kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}`
+      const response = await clusterApi.getClusterMetrics(clusterId, endpoint, '')
+      console.log('PGPGPG')
+      console.log(response.data.metrics)
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
   }),

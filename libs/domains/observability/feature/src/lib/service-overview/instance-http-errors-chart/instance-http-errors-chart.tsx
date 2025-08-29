@@ -28,11 +28,11 @@ sum (
 export function InstanceHTTPErrorsChart({
   clusterId,
   serviceId,
-  deploymentId,
+  containerName,
 }: {
   clusterId: string
   serviceId: string
-  deploymentId: string
+  containerName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 

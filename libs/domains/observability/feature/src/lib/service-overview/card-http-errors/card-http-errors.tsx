@@ -42,11 +42,11 @@ const queryTotalRequest = (serviceId: string, timeRange: string) => `
 export function CardHTTPErrors({
   serviceId,
   clusterId,
-  deploymentId,
+  containerName,
 }: {
   serviceId: string
   clusterId: string
-  deploymentId: string
+  containerName: string
 }) {
   const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -87,7 +87,7 @@ export function CardHTTPErrors({
           onOpenChange={setIsModalOpen}
         >
           <div className="grid h-full grid-cols-1">
-            <InstanceHTTPErrorsChart clusterId={clusterId} serviceId={serviceId} deploymentId={deploymentId} />
+            <InstanceHTTPErrorsChart clusterId={clusterId} serviceId={serviceId} containerName={containerName} />
           </div>
         </ModalChart>
       )}

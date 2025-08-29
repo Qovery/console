@@ -9,23 +9,10 @@ import { InstanceStatusChart } from '../instance-status-chart/instance-status-ch
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string, timeRange: string) => `
+const query = (serviceId: string, timeRange: string, containerName: string) => `
   (
     round(
-      max_over_time(
-        (
-          sum(
-            increase(
-              kube_pod_container_status_restarts_total{container!="POD"}[${timeRange}:]
-            )
-            * on(namespace, pod) group_left(label_qovery_com_service_id)
-              max by(namespace, pod, label_qovery_com_service_id)(
-                kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-              )
-          )
-          or vector(0)
-        )[${timeRange}:]
-      )
+      max_over_time((sum(increase(kube_pod_container_status_restarts_total{container="${containerName}"}[${timeRange}:]))or vector(0))[${timeRange}:])
     )
   )
   +
@@ -81,11 +68,11 @@ const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
 export function CardInstanceStatus({
   serviceId,
   clusterId,
-  deploymentId,
+  containerName,
 }: {
   serviceId: string
   clusterId: string
-  deploymentId: string
+  containerName: string
 }) {
   const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -93,7 +80,7 @@ export function CardInstanceStatus({
   const { data: service } = useService({ serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useMetrics({
     clusterId,
-    query: query(serviceId, queryTimeRange),
+    query: query(serviceId, queryTimeRange, containerName),
     queryRange: 'query',
   })
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useMetrics({
