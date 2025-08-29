@@ -9,7 +9,7 @@ export const observability = createQueryKeys('observability', {
     async queryFn() {
       const endpoint = `api/v1/label/deployment/values?match[]=kube_deployment_labels{label_qovery_com_service_id="${serviceId}"}&match[]=kube_statefulset_labels{label_qovery_com_service_id="${serviceId}"}`
       const response = await clusterApi.getClusterMetrics(clusterId, endpoint, '')
-      return response.data.metrics && (JSON.parse(response.data.metrics)[0] as string)
+      return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
   }),
   observability: ({
