@@ -330,13 +330,6 @@ The chart supports mixed visualization types including area charts, bar charts, 
             ) : null}
           </ComposedChart>
         </Chart.Container>
-        <Chart.Legend
-          items={[
-            { key: 'cpu', label: 'CPU', color: 'var(--color-yellow-500)' },
-            { key: 'memory', label: 'Memory', color: 'var(--color-brand-500)' },
-            { key: 'disk', label: 'Disk', color: 'var(--color-green-500)' },
-          ]}
-        />
       </div>
     )
   },
