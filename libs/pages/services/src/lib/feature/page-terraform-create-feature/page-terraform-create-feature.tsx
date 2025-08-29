@@ -1,7 +1,7 @@
-import { type GitProviderEnum, type GitTokenResponse, type TerraformRequest } from 'qovery-typescript-axios'
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { TERRAFORM_VERSIONS, type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_NEW_URL,
@@ -13,61 +13,12 @@ import { FunnelFlow } from '@qovery/shared/ui'
 import { ROUTER_SERVICE_TERRAFORM_CREATION } from '../../router/router'
 import { serviceTemplates } from '../page-new-feature/service-templates'
 
-export const TERRAFORM_VERSIONS = [
-  '1.12.1',
-  '1.11.4',
-  '1.10.5',
-  '1.9.8',
-  '1.8.5',
-  '1.7.5',
-  '1.6.6',
-  '1.5.7',
-  '1.4.7',
-  '1.3.10',
-  '1.2.9',
-  '1.1.9',
-  '1.0.11',
-  '0.15.5',
-  '0.14.11',
-  '0.13.7',
-  '0.12.31',
-  '0.11.15',
-  '0.10.8',
-  '0.9.11',
-  '0.8.8',
-  '0.7.13',
-  '0.6.16',
-  '0.5.3',
-  '0.4.2',
-  '0.3.7',
-  '0.2.2',
-  '0.1.1',
-]
 export const steps: { title: string }[] = [
   { title: 'General information' },
   { title: 'Terraform configuration' },
   { title: 'Values override as arguments' },
   { title: 'Summary' },
 ]
-export interface TerraformGeneralData
-  extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
-  source_provider: 'GIT'
-  repository: string
-  is_public_repository?: boolean
-  provider?: keyof typeof GitProviderEnum
-  git_token_id?: GitTokenResponse['id']
-  branch?: string
-  root_path?: string
-  chart_name?: string
-  chart_version?: string
-  arguments: string
-  timeout_sec: string
-  state: 'kubernetes'
-  provider_version: {
-    read_from_terraform_block: boolean
-    explicit_version: string
-  }
-}
 
 export interface TerraformInputVariablesData {
   tf_vars: {
