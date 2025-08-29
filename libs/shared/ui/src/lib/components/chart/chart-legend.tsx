@@ -13,6 +13,7 @@ export interface ChartLegendProps {
   items: ChartLegendItem[]
   rightGutterWidth?: number
   selectedKeys?: Set<string>
+  highlightedKey?: string | null
   onToggle?: (key: string) => void
   onHighlight?: (key: string | null) => void
   className?: string
@@ -27,10 +28,21 @@ export interface ChartLegendProps {
  * - Fade gradient for visual overflow indication
  */
 export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function ChartLegend(
-  { items, rightGutterWidth = 48, selectedKeys = new Set<string>(), onToggle, onHighlight, className },
+  {
+    items,
+    rightGutterWidth = 48,
+    selectedKeys = new Set<string>(),
+    highlightedKey: externalHighlightedKey,
+    onToggle,
+    onHighlight,
+    className,
+  },
   ref
 ) {
-  const [highlightedKey, setHighlightedKey] = useState<string | null>(null)
+  const [internalHighlightedKey, setInternalHighlightedKey] = useState<string | null>(null)
+
+  // Use external highlighted key if provided, otherwise use internal state
+  const highlightedKey = externalHighlightedKey !== undefined ? externalHighlightedKey : internalHighlightedKey
   const [isScrolling, setIsScrolling] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -57,7 +69,9 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
 
     // Set scrolling state to prevent highlighting
     setIsScrolling(true)
-    setHighlightedKey(null)
+    if (externalHighlightedKey === undefined) {
+      setInternalHighlightedKey(null)
+    }
     onHighlight?.(null)
 
     // Clear existing timeout
@@ -81,7 +95,10 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
 
   const handleMouseEnter = (key: string) => {
     if (!isScrolling) {
-      setHighlightedKey(key)
+      // Only set internal state if no external state is provided
+      if (externalHighlightedKey === undefined) {
+        setInternalHighlightedKey(key)
+      }
       onHighlight?.(key)
     }
   }
@@ -93,7 +110,10 @@ export const ChartLegend = forwardRef<HTMLDivElement, ChartLegendProps>(function
 
   const handleContainerMouseLeave = () => {
     if (!isScrolling) {
-      setHighlightedKey(null)
+      // Only set internal state if no external state is provided
+      if (externalHighlightedKey === undefined) {
+        setInternalHighlightedKey(null)
+      }
       onHighlight?.(null)
     }
   }

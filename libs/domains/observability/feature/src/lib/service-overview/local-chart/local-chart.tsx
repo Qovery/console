@@ -1,7 +1,7 @@
 import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, memo, useMemo, useState } from 'react'
+import { type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -435,11 +435,18 @@ export function LocalChart({
   showLegend = false,
 }: LocalChartProps) {
   const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp, hideEvents, hoveredEventKey, setHoveredEventKey } = useServiceOverviewContext()
+  const {
+    startTimestamp,
+    endTimestamp,
+    hideEvents,
+    hoveredEventKey,
+    setHoveredEventKey,
+    chartSelectedKeys,
+    setChartSelectedKeys,
+    chartHighlightedKey,
+    setChartHighlightedKey,
+  } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  // Legend state management
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
 
   // Extract series information from children for legend
   const chartSeries = useMemo(() => {
@@ -467,12 +474,31 @@ export function LocalChart({
 
   // Set up chart highlighting if legend is enabled - separate instances for local and modal
   const localHighlightingResult = useChartHighlighting({
-    selectedKeys: showLegend ? selectedKeys : new Set(),
+    selectedKeys: showLegend ? chartSelectedKeys : new Set(),
   })
 
   const modalHighlightingResult = useChartHighlighting({
-    selectedKeys: showLegend ? selectedKeys : new Set(),
+    selectedKeys: showLegend ? chartSelectedKeys : new Set(),
   })
+
+  // Combined highlight handlers that sync both local highlighting and shared state
+  const handleLocalHighlight = (key: string | null) => {
+    localHighlightingResult.handleHighlight(key)
+    setChartHighlightedKey(key)
+  }
+
+  const handleModalHighlight = (key: string | null) => {
+    modalHighlightingResult.handleHighlight(key)
+    setChartHighlightedKey(key)
+  }
+
+  // Sync local highlighting when shared state changes from other chart instances
+  useEffect(() => {
+    if (showLegend) {
+      localHighlightingResult.handleHighlight(chartHighlightedKey)
+      modalHighlightingResult.handleHighlight(chartHighlightedKey)
+    }
+  }, [chartHighlightedKey, showLegend, localHighlightingResult, modalHighlightingResult])
 
   // Alpha: Workaround to get the events
   const { data: service } = useService({ serviceId })
@@ -630,8 +656,8 @@ export function LocalChart({
           referenceLineData={mergedReferenceLineData}
           service={service}
           isFullscreen={isFullscreen}
-          selectedKeys={showLegend ? selectedKeys : undefined}
-          onHighlight={showLegend ? localHighlightingResult.handleHighlight : undefined}
+          selectedKeys={showLegend ? chartSelectedKeys : undefined}
+          onHighlight={showLegend ? handleLocalHighlight : undefined}
           highlightingResult={showLegend ? localHighlightingResult : undefined}
           enableHighlighting={showLegend}
         >
@@ -642,9 +668,10 @@ export function LocalChart({
           <div className="px-5 pb-5">
             <Chart.Legend
               items={chartSeries}
-              selectedKeys={selectedKeys}
+              selectedKeys={chartSelectedKeys}
+              highlightedKey={chartHighlightedKey}
               onToggle={(key) => {
-                setSelectedKeys((prev) => {
+                setChartSelectedKeys((prev: Set<string>) => {
                   const next = new Set(prev)
                   if (next.has(key)) {
                     next.delete(key)
@@ -654,7 +681,7 @@ export function LocalChart({
                   return next
                 })
               }}
-              onHighlight={localHighlightingResult.handleHighlight}
+              onHighlight={handleLocalHighlight}
               rightGutterWidth={0}
             />
           </div>
@@ -677,8 +704,8 @@ export function LocalChart({
                 referenceLineData={mergedReferenceLineData}
                 service={service}
                 isFullscreen
-                selectedKeys={showLegend ? selectedKeys : undefined}
-                onHighlight={showLegend ? modalHighlightingResult.handleHighlight : undefined}
+                selectedKeys={showLegend ? chartSelectedKeys : undefined}
+                onHighlight={showLegend ? handleModalHighlight : undefined}
                 highlightingResult={showLegend ? modalHighlightingResult : undefined}
                 enableHighlighting={showLegend}
               >
@@ -690,9 +717,10 @@ export function LocalChart({
               <div className="flex-shrink-0 px-5 pb-5">
                 <Chart.Legend
                   items={chartSeries}
-                  selectedKeys={selectedKeys}
+                  selectedKeys={chartSelectedKeys}
+                  highlightedKey={chartHighlightedKey}
                   onToggle={(key) => {
-                    setSelectedKeys((prev) => {
+                    setChartSelectedKeys((prev: Set<string>) => {
                       const next = new Set(prev)
                       if (next.has(key)) {
                         next.delete(key)
@@ -702,7 +730,7 @@ export function LocalChart({
                       return next
                     })
                   }}
-                  onHighlight={modalHighlightingResult.handleHighlight}
+                  onHighlight={handleModalHighlight}
                   rightGutterWidth={0}
                 />
               </div>
