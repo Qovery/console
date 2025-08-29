@@ -19,10 +19,11 @@ interface ChartContainerProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   children: ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>['children']
   isLoading?: boolean
   isEmpty?: boolean
+  isRefreshing?: boolean
 }
 
 const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function ChartContainer(
-  { children, className, isLoading, isEmpty, ...htmlProps },
+  { children, className, isLoading, isEmpty, isRefreshing, ...htmlProps },
   ref
 ) {
   return (
@@ -68,6 +69,8 @@ const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(function 
           </div>
         </div>
       )}
+
+      {isRefreshing && !isLoading && !isEmpty && <div className="pointer-events-none absolute inset-0 bg-white/50" />}
     </div>
   )
 })
@@ -79,6 +82,7 @@ const ChartTooltip = (props: ComponentProps<typeof RechartsPrimitive.Tooltip>) =
       animationDuration={100}
       animationEasing="ease-out"
       position={{ y: 13 }}
+      wrapperStyle={{ zIndex: 5 }}
       {...props}
     />
   )
