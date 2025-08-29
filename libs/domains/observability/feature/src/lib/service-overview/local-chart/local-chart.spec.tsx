@@ -19,7 +19,7 @@ jest.mock('../../hooks/use-events/use-events', () => ({
 }))
 
 jest.mock('../modal-chart/modal-chart', () => ({
-  ModalChart: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+  ModalChart: ({ children }: { children?: React.ReactNode }) => children,
 }))
 
 jest.mock('../util-chart/format-timestamp', () => ({
@@ -30,8 +30,8 @@ jest.mock('../util-chart/format-timestamp', () => ({
 }))
 
 jest.mock('./tooltip', () => ({
-  Tooltip: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  UnitType: {} as any,
+  Tooltip: ({ children }: { children?: React.ReactNode }) => children,
+  UnitType: {} as UnitType,
 }))
 
 jest.mock('@qovery/shared/util-js', () => ({

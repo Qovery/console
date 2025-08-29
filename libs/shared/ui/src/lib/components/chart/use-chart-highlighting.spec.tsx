@@ -74,6 +74,6 @@ describe('useChartHighlighting', () => {
     })
 
     // The path element should have full opacity when selected
-    expect(pathElement.style.opacity).toBe('1')
+    expect(pathElement).toHaveStyle('opacity: 1')
   })
 })

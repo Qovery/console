@@ -1,14 +1,14 @@
-import React from 'react'
+import { Children, type ReactElement, type ReactNode, cloneElement, isValidElement } from 'react'
 
 /**
  * Utility function to extract chart series information from React children
  */
 export function extractChartSeriesFromChildren(
-  children: React.ReactNode
+  children: ReactNode
 ): Array<{ key: string; label: string; color: string }> {
   const series: Array<{ key: string; label: string; color: string }> = []
 
-  const processChild = (child: React.ReactNode): void => {
+  const processChild = (child: ReactNode): void => {
     if (!child) return
 
     if (Array.isArray(child)) {
@@ -17,7 +17,7 @@ export function extractChartSeriesFromChildren(
     }
 
     if (typeof child === 'object' && 'props' in child) {
-      const element = child as React.ReactElement
+      const element = child as ReactElement
 
       // Check if this is a chart series component (Line, Area, Bar, etc.)
       if (element.props?.dataKey && (element.props?.stroke || element.props?.fill)) {
@@ -45,12 +45,9 @@ export function extractChartSeriesFromChildren(
  * Utility function to add CSS classes to chart series children for highlighting
  * This adds the required 'series series--{sanitizedKey}' classes that the highlighting hook expects
  */
-export function addSeriesClassesToChildren(
-  children: React.ReactNode,
-  sanitizeKey: (key: string) => string
-): React.ReactNode {
-  return React.Children.map(children, (child) => {
-    if (!React.isValidElement(child)) return child
+export function addSeriesClassesToChildren(children: ReactNode, sanitizeKey: (key: string) => string): ReactNode {
+  return Children.map(children, (child) => {
+    if (!isValidElement(child)) return child
 
     // Check if this is a chart series component (has dataKey)
     if (child.props?.dataKey) {
@@ -61,7 +58,7 @@ export function addSeriesClassesToChildren(
       const existingClassName = child.props.className || ''
       const newClassName = existingClassName ? `${existingClassName} ${seriesClass}` : seriesClass
 
-      return React.cloneElement(child, {
+      return cloneElement(child, {
         ...child.props,
         className: newClassName,
       })
