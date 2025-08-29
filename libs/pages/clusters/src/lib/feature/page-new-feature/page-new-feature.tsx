@@ -182,7 +182,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
                 className="self-start"
                 variant="outline"
                 color="neutral"
-                onClick={() => showPylonForm('eks-anywhere-feature-access')}
+                onClick={() => showPylonForm('request-access-eks-anywhere')}
               >
                 Contact us
               </Button>
