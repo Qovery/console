@@ -79,7 +79,8 @@ export function useChartHighlighting({ selectedKeys }: ChartHighlightingOptions)
       }
 
       // Apply the style directly
-      ;(element as HTMLElement).style.opacity = opacity
+      const htmlElement = element as HTMLElement
+      htmlElement.style.opacity = opacity
     })
   }, [selectedKeys])
 
