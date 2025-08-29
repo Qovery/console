@@ -53,7 +53,13 @@ export const TERRAFORM_VERSIONS = [
   '0.1.1',
 ]
 
-export const TerraformConfigurationSettings = ({ methods }: { methods: UseFormReturn<TerraformGeneralData> }) => {
+export const TerraformConfigurationSettings = ({
+  methods,
+  isSettings,
+}: {
+  methods: UseFormReturn<TerraformGeneralData>
+  isSettings?: boolean
+}) => {
   return (
     <div className="space-y-10">
       <Section className="space-y-2">
@@ -191,7 +197,7 @@ export const TerraformConfigurationSettings = ({ methods }: { methods: UseFormRe
               value={field.value}
               label="vCPU (milli)"
               error={error?.message}
-              disabled={true}
+              disabled={!isSettings}
             />
           )}
         />
@@ -206,7 +212,7 @@ export const TerraformConfigurationSettings = ({ methods }: { methods: UseFormRe
               value={field.value}
               label="Memory (mb)"
               error={error?.message}
-              disabled={true}
+              disabled={!isSettings}
             />
           )}
         />
@@ -221,7 +227,7 @@ export const TerraformConfigurationSettings = ({ methods }: { methods: UseFormRe
               value={field.value}
               label="Storage (gb)"
               error={error?.message}
-              disabled={true}
+              disabled={!isSettings}
             />
           )}
         />
