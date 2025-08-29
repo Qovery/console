@@ -78,22 +78,23 @@ export function PageSettingsFeature() {
 
   const links = match(cluster)
     .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, imageRegistryLink, advancedSettingsLink, dangerZoneLink])
-    .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => {
-      // const shouldShowEksLink = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED' // TODO [CQ-1108] to uncomment once the API returns the correct value
-      const shouldShowEksLink = isEksAnywhereEnabled
-
-      return [
-        generalLink,
-        // ...(shouldShowEksLink ? [eksLink] : []), // TODO [CQ-1108] to uncomment once the API returns the correct value
-        ...(shouldShowEksLink ? [eksLink] : []),
-        credentialsLink,
-        resourcesLink,
-        imageRegistryLink,
-        networkLink,
-        advancedSettingsLink,
-        dangerZoneLink,
-      ]
-    })
+    .with(
+      { cloud_provider: 'AWS', kubernetes: 'MANAGED' },
+      { cloud_provider: 'AWS', kubernetes: 'PARTIALLY_MANAGED' },
+      () => {
+        const shouldShowEksLink = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED'
+        return [
+          generalLink,
+          ...(shouldShowEksLink ? [eksLink] : []),
+          credentialsLink,
+          resourcesLink,
+          imageRegistryLink,
+          networkLink,
+          advancedSettingsLink,
+          dangerZoneLink,
+        ]
+      }
+    )
     .with({ cloud_provider: 'SCW' }, () => [
       generalLink,
       credentialsLink,
