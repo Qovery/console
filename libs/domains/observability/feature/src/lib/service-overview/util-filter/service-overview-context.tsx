@@ -127,8 +127,8 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     setHasCalendarValue(true) // Show custom date range in the UI
   }, [])
 
-  // Update every 15 seconds to match actual scrape_interval
-  // use-metrics.tsx: refetchInterval: 15_000ms
+  // Update every 30 seconds to match actual scrape_interval
+  // use-metrics.tsx: refetchInterval: 30_000ms
   useEffect(() => {
     const isLiveRange = ['5m', '15m', '30m'].includes(timeRange)
 
@@ -179,7 +179,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     updateDates()
 
-    const interval = setInterval(updateDates, 15_000) // Update every 15 seconds to match actual scrape_interval
+    const interval = setInterval(updateDates, 30_000) // Update every 30 seconds to match actual scrape_interval
     return () => clearInterval(interval)
   }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen, hasCalendarValue])
 

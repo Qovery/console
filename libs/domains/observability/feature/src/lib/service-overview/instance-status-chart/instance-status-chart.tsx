@@ -544,6 +544,7 @@ export function InstanceStatusChart({
                 reason: 'ScalingLimited',
                 description:
                   'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
+                color: 'var(--color-red-500)',
                 icon: 'exclamation',
                 pod: series.metric.pod,
                 key,
@@ -556,6 +557,7 @@ export function InstanceStatusChart({
 
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
+
     return referenceLines
   }, [metricsReason, metricsExitCode, metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached])
 
