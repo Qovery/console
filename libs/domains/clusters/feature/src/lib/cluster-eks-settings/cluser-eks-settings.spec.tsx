@@ -17,7 +17,7 @@ describe('ClusterEksSettings', () => {
     const { baseElement } = render(<ClusterEksSettings />)
     const sections = baseElement.querySelectorAll('section')
     expect(sections).toHaveLength(3)
-    expect(sections[0].querySelector('h2')?.textContent).toBe('Certificate manager')
+    expect(sections[0].querySelector('h2')?.textContent).toBe('Cert Manager')
     expect(sections[1].querySelector('h2')?.textContent).toBe('MetalLB')
     expect(sections[2].querySelector('h2')?.textContent).toBe('Nginx')
   })
