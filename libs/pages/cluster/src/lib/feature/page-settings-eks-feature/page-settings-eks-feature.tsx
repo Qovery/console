@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { ClusterEksSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
   return {
@@ -18,7 +18,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
 
 export function PageSettingsEKSAnywhereFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
-  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { data: cluster, isLoading: isClusterLoading } = useCluster({ organizationId, clusterId })
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const methods = useForm<ClusterResourcesData>({
@@ -39,32 +39,38 @@ export function PageSettingsEKSAnywhereFeature() {
   })
 
   useEffect(() => {
-    if (cluster) {
+    if (cluster && !isClusterLoading) {
       methods.reset(cluster)
     }
-  }, [cluster, methods])
+  }, [cluster, isClusterLoading, methods])
 
   return (
     <FormProvider {...methods}>
       <div className="flex w-full flex-col justify-between">
         <Section className="max-w-content-with-navigation-left p-8">
           <SettingsHeading title="EKS Anywhere configuration" />
-          <form onSubmit={onSubmit}>
-            <div className="space-y-10">
-              <ClusterEksSettings />
-              <div className="flex justify-end">
-                <Button
-                  data-testid="submit-button"
-                  type="submit"
-                  size="lg"
-                  loading={isEditClusterLoading}
-                  disabled={!methods.formState.isValid}
-                >
-                  Save
-                </Button>
-              </div>
+          {isClusterLoading ? (
+            <div className="flex items-start justify-center p-10">
+              <LoaderSpinner className="w-5" />
             </div>
-          </form>
+          ) : (
+            <form onSubmit={onSubmit}>
+              <div className="space-y-10">
+                <ClusterEksSettings />
+                <div className="flex justify-end">
+                  <Button
+                    data-testid="submit-button"
+                    type="submit"
+                    size="lg"
+                    loading={isEditClusterLoading}
+                    disabled={!methods.formState.isValid}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </div>
+            </form>
+          )}
         </Section>
       </div>
     </FormProvider>
