@@ -73,13 +73,21 @@ describe('StepSummary', () => {
         },
         resourcesData: {
           ...props.resourcesData,
-          kubernetes_namespace: 'test-namespace',
-          ip_address_pools: ['10.0.0.0/24'],
-          replica_count: 2,
-          default_ssl_certificate: 'test-certificate',
-          publish_status_address: 'test-address',
-          annotation_metal_lb_load_balancer_ips: 'test-ips',
-          annotation_external_dns_kubernetes_target: 'test-target',
+          infrastructure_charts_parameters: {
+            cert_manager_parameters: {
+              kubernetes_namespace: 'test-namespace',
+            },
+            metalLb_parameters: {
+              ip_address_pools: ['10.0.0.0/24'],
+            },
+            nginx_parameters: {
+              replica_count: 2,
+              default_ssl_certificate: 'test-certificate',
+              publish_status_address: 'test-address',
+              annotation_metal_lb_load_balancer_ips: 'test-ips',
+              annotation_external_dns_kubernetes_target: 'test-target',
+            },
+          },
         },
         kubeconfigData: {
           file_name: 'test-kubeconfig-filename',
