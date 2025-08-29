@@ -54,13 +54,13 @@ export default function PageSettingsTerraformConfigurationFeature() {
   return (
     <div className="flex w-full max-w-content-with-navigation-left flex-col p-8">
       <FormProvider {...methods}>
-        <TerraformConfigurationSettings methods={methods} />
+        <TerraformConfigurationSettings methods={methods} isSettings />
         <div className="mt-10 flex justify-end">
           <Button
             type="submit"
             size="lg"
             onClick={onSubmit}
-            disabled={!methods.formState.isDirty || !methods.formState.isValid}
+            disabled={!methods.formState.isValid}
             loading={isLoadingEditService}
           >
             Save
