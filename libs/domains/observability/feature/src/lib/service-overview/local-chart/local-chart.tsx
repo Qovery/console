@@ -2,7 +2,6 @@ import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { type PropsWithChildren, memo, useState } from 'react'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
-import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   Button,
   Chart,
@@ -79,6 +78,7 @@ interface ChartContentProps extends PropsWithChildren {
     right?: number
   }
   referenceLineData?: ReferenceLineEvent[]
+  isFullscreen?: boolean
 }
 
 export const ChartContent = memo(function ChartContent({
@@ -93,6 +93,7 @@ export const ChartContent = memo(function ChartContent({
   yDomain,
   margin = { top: 14, bottom: 0, left: 0, right: 0 },
   referenceLineData,
+  isFullscreen = false,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -349,6 +350,7 @@ export function LocalChart({
             yDomain={yDomain}
             margin={margin}
             referenceLineData={events}
+            isFullscreen={isFullscreen}
           >
             {children}
           </ChartContent>
@@ -376,6 +378,7 @@ export function LocalChart({
               yDomain={yDomain}
               margin={margin}
               referenceLineData={events}
+              isFullscreen={isFullscreen}
             >
               {children}
             </ChartContent>
