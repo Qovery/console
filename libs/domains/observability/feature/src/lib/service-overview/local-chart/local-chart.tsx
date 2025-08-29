@@ -24,7 +24,7 @@ import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
-import { extractChartSeriesFromChildren } from '../util-chart/extract-chart-series'
+import { addSeriesClassesToChildren, extractChartSeriesFromChildren } from '../util-chart/chart-series-utils'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
@@ -92,6 +92,7 @@ interface ChartContentProps extends PropsWithChildren {
   selectedKeys?: Set<string>
   onHighlight?: (key: string | null) => void
   highlightingResult?: ReturnType<typeof useChartHighlighting>
+  enableHighlighting?: boolean
 }
 
 export const ChartContent = memo(function ChartContent({
@@ -111,6 +112,7 @@ export const ChartContent = memo(function ChartContent({
   selectedKeys,
   onHighlight,
   highlightingResult: passedHighlightingResult,
+  enableHighlighting = false,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -131,49 +133,17 @@ export const ChartContent = memo(function ChartContent({
 
   // Use passed highlighting result or create our own if needed
   const fallbackHighlightingResult = useChartHighlighting({
-    metricKeys: selectedKeys
-      ? Object.keys(data[0] || {}).filter((key) => !['timestamp', 'time', 'fullTime'].includes(key))
-      : [],
     selectedKeys: selectedKeys || new Set(),
   })
   const highlightingResult = passedHighlightingResult || fallbackHighlightingResult
 
-  // Add CSS classes to chart series children
+  // Process children to add series CSS classes if highlighting is enabled
   const processedChildren = useMemo(() => {
-    if (!selectedKeys) return children
-
-    const processChild = (child: React.ReactNode): React.ReactNode => {
-      if (!child) return child
-
-      if (Array.isArray(child)) {
-        return child.map(processChild)
-      }
-
-      if (typeof child === 'object' && 'props' in child) {
-        const element = child as React.ReactElement
-
-        // Check if this is a chart series component
-        if (element.props?.dataKey && (element.props?.stroke || element.props?.fill)) {
-          const dataKey = String(element.props.dataKey)
-          const seriesClass = `series series--${highlightingResult.sanitizeKey(dataKey)}`
-          const existingClassName = element.props.className || ''
-          const newClassName = existingClassName ? `${existingClassName} ${seriesClass}` : seriesClass
-
-          return {
-            ...element,
-            props: {
-              ...element.props,
-              className: newClassName,
-            },
-          }
-        }
-      }
-
-      return child
+    if (enableHighlighting && highlightingResult) {
+      return addSeriesClassesToChildren(children, highlightingResult.sanitizeKey)
     }
-
-    return processChild(children)
-  }, [children, selectedKeys, highlightingResult])
+    return children
+  }, [children, enableHighlighting, highlightingResult])
 
   // Use the zoomable chart hook - automatically handle zoom state changes
   const {
@@ -211,11 +181,7 @@ export const ChartContent = memo(function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div
-      ref={selectedKeys ? highlightingResult.containerRef : undefined}
-      className={`relative flex h-full ${selectedKeys ? 'highlight-scope' : ''}`}
-    >
-      {selectedKeys && <style>{highlightingResult.highlightingStyles}</style>}
+    <div ref={selectedKeys ? highlightingResult.containerRef : undefined} className="relative flex h-full">
       <Chart.Container
         className={clsx('h-full w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
         isLoading={isLoading}
@@ -316,7 +282,7 @@ export const ChartContent = memo(function ChartContent({
             referenceLineData?.map((event) =>
               createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey, true)
             )}
-          {selectedKeys ? processedChildren : children}
+          {processedChildren}
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
@@ -501,12 +467,10 @@ export function LocalChart({
 
   // Set up chart highlighting if legend is enabled - separate instances for local and modal
   const localHighlightingResult = useChartHighlighting({
-    metricKeys: chartSeries.map((s) => s.key),
     selectedKeys: showLegend ? selectedKeys : new Set(),
   })
 
   const modalHighlightingResult = useChartHighlighting({
-    metricKeys: chartSeries.map((s) => s.key),
     selectedKeys: showLegend ? selectedKeys : new Set(),
   })
 
@@ -669,6 +633,7 @@ export function LocalChart({
           selectedKeys={showLegend ? selectedKeys : undefined}
           onHighlight={showLegend ? localHighlightingResult.handleHighlight : undefined}
           highlightingResult={showLegend ? localHighlightingResult : undefined}
+          enableHighlighting={showLegend}
         >
           {children}
         </ChartContent>
@@ -715,6 +680,7 @@ export function LocalChart({
                 selectedKeys={showLegend ? selectedKeys : undefined}
                 onHighlight={showLegend ? modalHighlightingResult.handleHighlight : undefined}
                 highlightingResult={showLegend ? modalHighlightingResult : undefined}
+                enableHighlighting={showLegend}
               >
                 {children}
               </ChartContent>
