@@ -4,7 +4,6 @@ import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
-import { Spinner } from './spinner'
 
 interface TooltipPayloadItem {
   dataKey: string | number
