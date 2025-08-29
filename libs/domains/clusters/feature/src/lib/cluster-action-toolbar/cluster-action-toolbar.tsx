@@ -122,11 +122,13 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
-    cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
-        Stop
-      </DropdownMenu.Item>
-    ),
+    cluster.cloud_provider !== 'GCP' &&
+      isStopAvailable(clusterStatus.status) &&
+      cluster.kubernetes !== 'PARTIALLY_MANAGED' && (
+        <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
+          Stop
+        </DropdownMenu.Item>
+      ),
     k8sUpdateAvailable && (
       <DropdownMenu.Item
         key="3"
