@@ -30,7 +30,15 @@ rate(nginx_ingress_controller_request_size_count{}[${rateInterval}])
 )
 `
 
-export function NetworkRequestSizeChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function NetworkRequestSizeChart({
+  clusterId,
+  serviceId,
+  deploymentId,
+}: {
+  clusterId: string
+  serviceId: string
+  deploymentId: string
+}) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const rateInterval = useMemo(

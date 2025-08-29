@@ -4,6 +4,14 @@ import { ClustersApi } from 'qovery-typescript-axios'
 const clusterApi = new ClustersApi()
 
 export const observability = createQueryKeys('observability', {
+  deploymentId: ({ clusterId, serviceId }: { clusterId: string; serviceId: string }) => ({
+    queryKey: ['deploymentId', clusterId, serviceId],
+    async queryFn() {
+      const endpoint = `api/v1/label/deployment/values?match[]=kube_deployment_labels{label_qovery_com_service_id="${serviceId}"}&match[]=kube_statefulset_labels{label_qovery_com_service_id="${serviceId}"}`
+      const response = await clusterApi.getClusterMetrics(clusterId, endpoint, '')
+      return response.data.metrics && (JSON.parse(response.data.metrics)[0] as string)
+    },
+  }),
   observability: ({
     clusterId,
     query,

@@ -18,7 +18,15 @@ const query = (serviceId: string, rateInterval: string) => `
   )
 `
 
-export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function NetworkRequestStatusChart({
+  clusterId,
+  serviceId,
+  deploymentId,
+}: {
+  clusterId: string
+  serviceId: string
+  deploymentId: string
+}) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const rateInterval = useMemo(
