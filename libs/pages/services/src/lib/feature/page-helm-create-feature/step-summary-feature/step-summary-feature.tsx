@@ -59,7 +59,7 @@ export function StepSummaryFeature() {
       })
       .with('HELM_REPOSITORY', () => ({
         helm_repository: {
-          repository: generalData.git_repository?.url,
+          repository: generalData.repository,
           chart_name: generalData.chart_name,
           chart_version: generalData.chart_version,
         },
