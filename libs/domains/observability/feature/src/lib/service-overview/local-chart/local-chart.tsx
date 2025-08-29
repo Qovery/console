@@ -436,9 +436,6 @@ export function LocalChart({
   const {
     startTimestamp,
     endTimestamp,
-    hideEvents,
-    hoveredEventKey,
-    setHoveredEventKey,
     chartSelectedKeys,
     setChartSelectedKeys,
     chartHighlightedKey,

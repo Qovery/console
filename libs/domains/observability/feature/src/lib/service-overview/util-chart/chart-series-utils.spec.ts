@@ -1,4 +1,4 @@
-import React from 'react'
+import { Children, createElement } from 'react'
 import { addSeriesClassesToChildren, extractChartSeriesFromChildren } from './chart-series-utils'
 
 describe('extractChartSeriesFromChildren', () => {
@@ -13,7 +13,7 @@ describe('extractChartSeriesFromChildren', () => {
   })
 
   it('should extract series from single child with dataKey and stroke', () => {
-    const child = React.createElement('Line', {
+    const child = createElement('Line', {
       dataKey: 'cpu',
       stroke: '#ff0000',
       name: 'CPU Usage',
@@ -30,7 +30,7 @@ describe('extractChartSeriesFromChildren', () => {
   })
 
   it('should extract series from child with dataKey and fill', () => {
-    const child = React.createElement('Area', {
+    const child = createElement('Area', {
       dataKey: 'memory',
       fill: '#00ff00',
     })
@@ -46,7 +46,7 @@ describe('extractChartSeriesFromChildren', () => {
   })
 
   it('should ignore elements with dataKey but no stroke or fill', () => {
-    const child = React.createElement('Bar', {
+    const child = createElement('Bar', {
       dataKey: 'disk',
     })
 
@@ -55,7 +55,7 @@ describe('extractChartSeriesFromChildren', () => {
   })
 
   it('should prefer stroke over fill for color', () => {
-    const child = React.createElement('Bar', {
+    const child = createElement('Bar', {
       dataKey: 'disk',
       stroke: '#ff0000',
       fill: '#00ff00',
@@ -72,7 +72,7 @@ describe('extractChartSeriesFromChildren', () => {
   })
 
   it('should use default color when stroke and fill are empty strings', () => {
-    const child = React.createElement('Bar', {
+    const child = createElement('Bar', {
       dataKey: 'disk',
       stroke: '',
       fill: '0',
@@ -90,11 +90,11 @@ describe('extractChartSeriesFromChildren', () => {
 
   it('should extract series from array of children', () => {
     const children = [
-      React.createElement('Line', {
+      createElement('Line', {
         dataKey: 'cpu',
         stroke: '#ff0000',
       }),
-      React.createElement('Area', {
+      createElement('Area', {
         dataKey: 'memory',
         fill: '#00ff00',
       }),
@@ -108,11 +108,11 @@ describe('extractChartSeriesFromChildren', () => {
 
   it('should deduplicate series with same dataKey', () => {
     const children = [
-      React.createElement('Line', {
+      createElement('Line', {
         dataKey: 'cpu',
         stroke: '#ff0000',
       }),
-      React.createElement('Line', {
+      createElement('Line', {
         dataKey: 'cpu',
         stroke: '#0000ff',
       }),
@@ -124,10 +124,10 @@ describe('extractChartSeriesFromChildren', () => {
   })
 
   it('should process nested children recursively', () => {
-    const parent = React.createElement(
+    const parent = createElement(
       'div',
       {},
-      React.createElement('Line', {
+      createElement('Line', {
         dataKey: 'cpu',
         stroke: '#ff0000',
       })
@@ -145,8 +145,8 @@ describe('extractChartSeriesFromChildren', () => {
 
   it('should ignore children without dataKey', () => {
     const children = [
-      React.createElement('div', { className: 'chart-container' }),
-      React.createElement('Line', {
+      createElement('div', { className: 'chart-container' }),
+      createElement('Line', {
         dataKey: 'cpu',
         stroke: '#ff0000',
       }),
@@ -168,38 +168,38 @@ describe('addSeriesClassesToChildren', () => {
   })
 
   it('should add series classes to elements with dataKey', () => {
-    const child = React.createElement('Line', {
+    const child = createElement('Line', {
       dataKey: 'cpu-usage',
       stroke: '#ff0000',
     })
 
     const result = addSeriesClassesToChildren(child, mockSanitizeKey)
-    const resultArray = React.Children.toArray(result)
+    const resultArray = Children.toArray(result)
     const firstChild = resultArray[0] as React.ReactElement
 
     expect(firstChild.props.className).toBe('series series--cpu-usage')
   })
 
   it('should append to existing className', () => {
-    const child = React.createElement('Line', {
+    const child = createElement('Line', {
       dataKey: 'memory',
       className: 'existing-class',
     })
 
     const result = addSeriesClassesToChildren(child, mockSanitizeKey)
-    const resultArray = React.Children.toArray(result)
+    const resultArray = Children.toArray(result)
     const firstChild = resultArray[0] as React.ReactElement
 
     expect(firstChild.props.className).toBe('existing-class series series--memory')
   })
 
   it('should not modify elements without dataKey', () => {
-    const child = React.createElement('div', {
+    const child = createElement('div', {
       className: 'container',
     })
 
     const result = addSeriesClassesToChildren(child, mockSanitizeKey)
-    const resultArray = React.Children.toArray(result)
+    const resultArray = Children.toArray(result)
     const firstChild = resultArray[0] as React.ReactElement
 
     expect(firstChild.props.className).toBe('container')
@@ -207,19 +207,19 @@ describe('addSeriesClassesToChildren', () => {
 
   it('should handle multiple children', () => {
     const children = [
-      React.createElement('Line', {
+      createElement('Line', {
         dataKey: 'cpu',
       }),
-      React.createElement('Area', {
+      createElement('Area', {
         dataKey: 'memory',
       }),
-      React.createElement('div', {
+      createElement('div', {
         className: 'container',
       }),
     ]
 
     const result = addSeriesClassesToChildren(children, mockSanitizeKey)
-    const resultArray = React.Children.toArray(result)
+    const resultArray = Children.toArray(result)
 
     expect((resultArray[0] as React.ReactElement).props.className).toBe('series series--cpu')
     expect((resultArray[1] as React.ReactElement).props.className).toBe('series series--memory')
@@ -227,12 +227,12 @@ describe('addSeriesClassesToChildren', () => {
   })
 
   it('should use sanitizeKey function properly', () => {
-    const child = React.createElement('Line', {
+    const child = createElement('Line', {
       dataKey: 'cpu.usage%data',
     })
 
     const result = addSeriesClassesToChildren(child, mockSanitizeKey)
-    const resultArray = React.Children.toArray(result)
+    const resultArray = Children.toArray(result)
     const firstChild = resultArray[0] as React.ReactElement
 
     expect(firstChild.props.className).toBe('series series--cpu-usage-data')

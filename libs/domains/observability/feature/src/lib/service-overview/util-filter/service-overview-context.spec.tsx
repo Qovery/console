@@ -1,4 +1,4 @@
-import { act, render, renderHook, renderWithProviders } from '@qovery/shared/util-tests'
+import { act, render, renderHook } from '@qovery/shared/util-tests'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './service-overview-context'
 
 describe('ServiceOverviewContext', () => {
