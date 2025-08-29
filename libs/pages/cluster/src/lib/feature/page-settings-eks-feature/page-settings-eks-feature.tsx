@@ -26,15 +26,19 @@ export function PageSettingsEKSAnywhereFeature() {
     defaultValues: cluster,
   })
 
-  const onSubmit = methods.handleSubmit((data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data && cluster) {
-      const cloneCluster = handleSubmit(data, cluster)
+      try {
+        const cloneCluster = handleSubmit(data, cluster)
 
-      editCluster({
-        organizationId,
-        clusterId: cluster.id,
-        clusterRequest: cloneCluster,
-      })
+        await editCluster({
+          organizationId,
+          clusterId: cluster.id,
+          clusterRequest: cloneCluster,
+        })
+      } catch (error) {
+        console.error(error)
+      }
     }
   })
 
