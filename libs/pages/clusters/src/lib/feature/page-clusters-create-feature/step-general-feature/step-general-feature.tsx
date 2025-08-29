@@ -52,13 +52,7 @@ export function StepGeneralFeature() {
           requirements: [],
         },
       },
-      kubernetes_namespace: d?.kubernetes_namespace,
-      ip_address_pools: d?.ip_address_pools,
-      replica_count: d?.replica_count,
-      publish_status_address: d?.publish_status_address,
-      default_ssl_certificate: d?.default_ssl_certificate,
-      annotation_metal_lb_load_balancer_ips: d?.annotation_metal_lb_load_balancer_ips,
-      annotation_external_dns_kubernetes_target: d?.annotation_external_dns_kubernetes_target,
+      infrastructure_charts_parameters: d?.infrastructure_charts_parameters,
     }))
 
     if (credentials.length > 0 || data.installation_type === 'PARTIALLY_MANAGED') {

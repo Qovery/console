@@ -1,4 +1,5 @@
 import { type Cluster } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { ClusterEksSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
@@ -22,9 +23,7 @@ export function PageSettingsEKSAnywhereFeature() {
 
   const methods = useForm<ClusterResourcesData>({
     mode: 'onChange',
-    defaultValues: {
-      ...cluster, // TODO [QOV-1108] EKS Anywhere data should be passed here
-    },
+    defaultValues: cluster,
   })
 
   const onSubmit = methods.handleSubmit((data) => {
@@ -38,6 +37,12 @@ export function PageSettingsEKSAnywhereFeature() {
       })
     }
   })
+
+  useEffect(() => {
+    if (cluster) {
+      methods.reset(cluster)
+    }
+  }, [cluster, methods])
 
   return (
     <FormProvider {...methods}>

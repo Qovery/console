@@ -97,11 +97,21 @@ export const defaultResourcesData: ClusterResourcesData = {
       requirements: [],
     },
   },
-  replica_count: 1,
-  publish_status_address: '',
-  default_ssl_certificate: '',
-  annotation_metal_lb_load_balancer_ips: '',
-  annotation_external_dns_kubernetes_target: '',
+  infrastructure_charts_parameters: {
+    cert_manager_parameters: {
+      kubernetes_namespace: '',
+    },
+    metalLb_parameters: {
+      ip_address_pools: [],
+    },
+    nginx_parameters: {
+      replica_count: 1,
+      default_ssl_certificate: '',
+      publish_status_address: '',
+      annotation_metal_lb_load_balancer_ips: '',
+      annotation_external_dns_kubernetes_target: '',
+    },
+  },
 }
 
 export function PageClusterCreateFeature() {
