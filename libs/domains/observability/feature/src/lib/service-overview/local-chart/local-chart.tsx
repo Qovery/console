@@ -17,7 +17,6 @@ import {
   createXAxisConfig,
   getTimeGranularity,
   useChartHighlighting,
-  useChartHighlightingSync,
   useZoomableChart,
 } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
@@ -438,13 +437,24 @@ export function LocalChart({
       })
   }, [children])
 
-  // Use chart highlighting sync
-  const chartSync = useChartHighlightingSync({
-    selectedKeys: showLegend ? chartSelectedKeys : undefined,
-    onSelectionChange: showLegend ? setChartSelectedKeys : undefined,
-    highlightedKey: showLegend ? chartHighlightedKey : undefined,
-    onHighlightChange: showLegend ? setChartHighlightedKey : undefined,
-  })
+  // Define chart highlighting handlers
+  const onSelectionToggle = (key: string) => {
+    if (!showLegend || !setChartSelectedKeys) return
+
+    const next = new Set(chartSelectedKeys)
+    if (next.has(key)) {
+      next.delete(key)
+    } else {
+      next.add(key)
+    }
+    setChartSelectedKeys(next)
+  }
+
+  const onHighlight = (key: string | null) => {
+    if (showLegend && setChartHighlightedKey) {
+      setChartHighlightedKey(key)
+    }
+  }
 
   // Alpha: Workaround to get the events
   const { data: service } = useService({ serviceId })
@@ -602,8 +612,8 @@ export function LocalChart({
           referenceLineData={mergedReferenceLineData}
           service={service}
           isFullscreen={isFullscreen}
-          selectedKeys={showLegend ? chartSync.selectedKeys : undefined}
-          highlightedKey={showLegend ? chartSync.highlightedKey : undefined}
+          selectedKeys={showLegend ? chartSelectedKeys : undefined}
+          highlightedKey={showLegend ? chartHighlightedKey : undefined}
         >
           {/* Render reference lines for events of type 'event' */}
           {!hideEvents &&
@@ -617,9 +627,9 @@ export function LocalChart({
           <div className="px-5 pb-5">
             <Chart.Legend
               items={chartSeries}
-              selectedKeys={chartSync.selectedKeys}
-              onToggle={chartSync.onSelectionToggle}
-              onHighlight={chartSync.onHighlight}
+              selectedKeys={chartSelectedKeys}
+              onToggle={onSelectionToggle}
+              onHighlight={onHighlight}
               rightGutterWidth={0}
             />
           </div>
@@ -642,8 +652,8 @@ export function LocalChart({
                 referenceLineData={mergedReferenceLineData}
                 service={service}
                 isFullscreen
-                selectedKeys={showLegend ? chartSync.selectedKeys : undefined}
-                highlightedKey={showLegend ? chartSync.highlightedKey : undefined}
+                selectedKeys={showLegend ? chartSelectedKeys : undefined}
+                highlightedKey={showLegend ? chartHighlightedKey : undefined}
               >
                 {/* Render reference lines for events of type 'event' in modal as well */}
                 {!hideEvents &&
@@ -658,9 +668,9 @@ export function LocalChart({
               <div className="flex-shrink-0 px-5 pb-5">
                 <Chart.Legend
                   items={chartSeries}
-                  selectedKeys={chartSync.selectedKeys}
-                  onToggle={chartSync.onSelectionToggle}
-                  onHighlight={chartSync.onHighlight}
+                  selectedKeys={chartSelectedKeys}
+                  onToggle={onSelectionToggle}
+                  onHighlight={onHighlight}
                   rightGutterWidth={0}
                 />
               </div>
