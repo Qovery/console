@@ -9,7 +9,7 @@ export const ClusterEksSettings = () => {
     <>
       <Section className="gap-4">
         <div className="space-y-1">
-          <Heading level={2}>Certificate manager</Heading>
+          <Heading level={2}>Cert Manager</Heading>
           <p className="text-sm text-neutral-350">Configure the certificate manager for your EKS cluster.</p>
         </div>
         <Controller

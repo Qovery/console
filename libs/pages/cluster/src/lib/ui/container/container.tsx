@@ -62,7 +62,7 @@ export function Container({ children }: PropsWithChildren) {
         ) : (
           <Skeleton width={120} height={22} show />
         )}
-        {cluster?.region !== 'on-premise' && (
+        {cluster?.region !== 'on-premise' && cluster?.kubernetes !== 'PARTIALLY_MANAGED' && (
           <Skeleton width={120} height={22} show={!cluster}>
             <Badge color="neutral" variant="surface">
               {cluster?.region}

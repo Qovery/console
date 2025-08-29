@@ -47,7 +47,8 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
   const k8sUpdateAvailable =
     clusterStatus.next_k8s_available_version &&
     clusterStatus.next_k8s_available_version !== null &&
-    clusterStatus.status === 'DEPLOYED'
+    clusterStatus.status === 'DEPLOYED' &&
+    cluster.kubernetes !== 'PARTIALLY_MANAGED'
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
 
   const tooltipClusterNeedUpdate = clusterNeedUpdate && (

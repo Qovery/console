@@ -82,10 +82,10 @@ export function PageSettingsFeature() {
       { cloud_provider: 'AWS', kubernetes: 'MANAGED' },
       { cloud_provider: 'AWS', kubernetes: 'PARTIALLY_MANAGED' },
       () => {
-        const shouldShowEksLink = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED'
+        const shouldShowEksAnywhereLink = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED'
         return [
           generalLink,
-          ...(shouldShowEksLink ? [eksLink] : []),
+          ...(shouldShowEksAnywhereLink ? [eksLink] : []),
           credentialsLink,
           resourcesLink,
           imageRegistryLink,
