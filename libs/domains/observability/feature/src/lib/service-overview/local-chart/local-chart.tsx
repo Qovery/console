@@ -79,8 +79,6 @@ interface ChartContentProps extends PropsWithChildren {
     right?: number
   }
   referenceLineData?: ReferenceLineEvent[]
-  service?: AnyService
-  isFullscreen?: boolean
 }
 
 export const ChartContent = memo(function ChartContent({
@@ -95,8 +93,6 @@ export const ChartContent = memo(function ChartContent({
   yDomain,
   margin = { top: 14, bottom: 0, left: 0, right: 0 },
   referenceLineData,
-  service,
-  isFullscreen = true,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -239,7 +235,7 @@ export const ChartContent = memo(function ChartContent({
         />
         {!hideEvents &&
           referenceLineData?.map((event) =>
-            createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey, true)
+            createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey)
           )}
         {children}
         <YAxis
@@ -353,8 +349,6 @@ export function LocalChart({
             yDomain={yDomain}
             margin={margin}
             referenceLineData={events}
-            service={service}
-            isFullscreen={isFullscreen}
           >
             {children}
           </ChartContent>
@@ -382,8 +376,6 @@ export function LocalChart({
               yDomain={yDomain}
               margin={margin}
               referenceLineData={events}
-              service={service}
-              isFullscreen
             >
               {children}
             </ChartContent>
@@ -407,12 +399,11 @@ function createAlignedReferenceLine(
   label: string,
   event: ReferenceLineEvent,
   hoveredEventKey: string | null,
-  setHoveredEventKey: (key: string | null) => void,
-  isModal = false
+  setHoveredEventKey: (key: string | null) => void
 ) {
   const key = `${label}-${event.key}`
-  const strokeWidth = isModal ? 4 : 2
-  const opacity = hoveredEventKey === key ? 1 : isModal ? 0.6 : 0.4
+  const strokeWidth = 2
+  const opacity = hoveredEventKey === key ? 1 : 0.4
 
   return (
     <ReferenceLine
