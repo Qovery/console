@@ -29,18 +29,17 @@ export default function PageSettingsTerraformConfigurationFeature() {
     if (!service || !data) return
 
     if (service.serviceType === 'TERRAFORM') {
-      const payload = {
+      const payload: TerraformRequest & { serviceType: 'TERRAFORM' } = {
         ...service,
-        // provider_version: data.provider_version,
-        // description: data.description ?? '',
-        // terraform_files_source: {
-        //   git_repository: s.terraform_files_source?.git?.git_repository ?? '',
-        // },
-        // terraform_variables_source: {
-        //   tf_vars: data.terraform_variables_source.tf_vars,
-        //   tf_var_file_paths: data.terraform_variables_source.tf_var_file_paths,
-        // },
         ...data,
+        serviceType: 'TERRAFORM',
+        terraform_files_source: {
+          git_repository: {
+            url: service.terraform_files_source?.git?.git_repository?.url ?? '',
+            branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
+            git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
+          },
+        },
         provider: 'TERRAFORM' as TerraformRequestProviderEnum,
         terraform_variables_source: {
           tf_vars: [],
@@ -58,22 +57,19 @@ export default function PageSettingsTerraformConfigurationFeature() {
   })
 
   return (
-    <div className="flex w-full max-w-content-with-navigation-left flex-col justify-between p-8">
+    <div className="flex w-full max-w-content-with-navigation-left flex-col p-8">
       <FormProvider {...methods}>
         <TerraformConfigurationSettings methods={methods} />
-
         <div className="mt-10 flex justify-end">
-          <div className="flex gap-3">
-            <Button
-              type="submit"
-              size="lg"
-              onClick={onSubmit}
-              disabled={!methods.formState.isDirty || !methods.formState.isValid}
-              loading={isLoadingEditService}
-            >
-              Save
-            </Button>
-          </div>
+          <Button
+            type="submit"
+            size="lg"
+            onClick={onSubmit}
+            disabled={!methods.formState.isDirty || !methods.formState.isValid}
+            loading={isLoadingEditService}
+          >
+            Save
+          </Button>
         </div>
       </FormProvider>
     </div>
