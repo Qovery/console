@@ -53,6 +53,7 @@ export function StepGeneral(props: StepGeneralProps) {
   )
 
   const watchCloudProvider = watch('cloud_provider')
+  const watchInstallationType = watch('installation_type')
 
   useEffect(() => {
     const currentProvider = cloudProviders?.filter(
@@ -89,6 +90,7 @@ export function StepGeneral(props: StepGeneralProps) {
                     label="Cloud provider"
                     className="mb-3"
                     options={buildCloudProviders}
+                    disabled={watchInstallationType === 'PARTIALLY_MANAGED'}
                     onChange={(value) => {
                       field.onChange(value)
                       setResourcesData && setResourcesData(defaultResourcesData)
@@ -113,6 +115,7 @@ export function StepGeneral(props: StepGeneralProps) {
                         label="Region"
                         className="mb-3"
                         options={buildRegions}
+                        disabled={watchInstallationType === 'PARTIALLY_MANAGED'}
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
@@ -121,6 +124,7 @@ export function StepGeneral(props: StepGeneralProps) {
                       />
                     )}
                   />
+
                   <ClusterCredentialsSettingsFeature
                     cloudProvider={currentProvider.short_name as CloudProviderEnum}
                     isSetting={false}

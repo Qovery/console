@@ -56,9 +56,9 @@ export function StepKubeconfig({ onSubmit }: StepKubeconfigProps) {
 
   return (
     <Section>
-      <div className="mb-10">
-        <Heading className="mb-2">Kubeconfig</Heading>
-        <p className="text-neutral-350">Upload your Kubeconfig file here.</p>
+      <div className="mb-10 flex flex-col gap-2">
+        <Heading>Kubeconfig</Heading>
+        <p className="text-sm text-neutral-350">Upload your Kubeconfig file here.</p>
       </div>
       <form onSubmit={onSubmit}>
         <div className="mb-10">
