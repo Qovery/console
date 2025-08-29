@@ -2,6 +2,7 @@ import { type Cluster } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import PageSettingsGeneral from '../../ui/page-settings-general/page-settings-general'
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
@@ -15,6 +16,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster) => {
 
 export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: Cluster; organizationId: string }) {
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
+  const { isQoveryAdminUser } = useUserRole()
 
   const methods = useForm({
     mode: 'onChange',
@@ -27,9 +29,9 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
     if (data && cluster) {
       const cloneCluster = handleSubmit(data, cluster)
 
-      if (data.metrics_parameters?.enabled) {
+      if (isQoveryAdminUser) {
         cloneCluster.metrics_parameters = {
-          enabled: data.metrics_parameters?.enabled,
+          enabled: data.metrics_parameters?.enabled ?? false,
           configuration: {
             kind: 'MANAGED_BY_QOVERY',
           },
