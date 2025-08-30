@@ -129,6 +129,7 @@ function ServiceOverviewContent() {
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
                   containerName={containerName}
+                  ingressName={ingressName}
                 />
               )}
               {hasStorage && (

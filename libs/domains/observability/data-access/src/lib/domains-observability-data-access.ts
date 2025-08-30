@@ -3,7 +3,7 @@ import { ClustersApi } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 
-export const observability = createQueryKeys('observability', {
+export const observabilityobservability = createQueryKeys('observability', {
   containerName: ({
     clusterId,
     serviceId,
@@ -11,7 +11,7 @@ export const observability = createQueryKeys('observability', {
   }: {
     clusterId: string
     serviceId: string
-    resourceType?: 'deployment' | 'statefulset'
+    resourceType?: 'deployment' | 'statefulset' // TODO PG: only for app our container => if there a volume then statefulset else deployment
   }) => ({
     queryKey: ['deploymentId', clusterId, serviceId, resourceType],
     async queryFn() {
@@ -26,6 +26,7 @@ export const observability = createQueryKeys('observability', {
     },
   }),
   ingressName: ({ clusterId, serviceId }: { clusterId: string; serviceId: string }) => ({
+    // TODO PG: only when public port
     queryKey: ['ingressId', clusterId, serviceId],
     async queryFn() {
       const endpoint = `api/v1/label/ingress/values?match[]=kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}`

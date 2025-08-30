@@ -33,6 +33,7 @@ describe('CardLogErrors', () => {
     environmentId: 'test-env-id',
     serviceId: 'test-service-id',
     clusterId: 'test-cluster-id',
+    containerName: 'test-container-name',
   }
 
   beforeEach(() => {
