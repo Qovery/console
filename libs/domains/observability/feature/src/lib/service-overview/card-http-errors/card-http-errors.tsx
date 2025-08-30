@@ -6,60 +6,43 @@ import { InstanceHTTPErrorsChart } from '../instance-http-errors-chart/instance-
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string, timeRange: string) => `
+const query = (serviceId: string, timeRange: string, ingressName: string) => `
   100 *
-  sum(
-    increase(nginx_ingress_controller_requests{status=~"499|5.."}[${timeRange}])
-      * on(ingress) group_left(label_qovery_com_associated_service_id)
-        max by(ingress, label_qovery_com_associated_service_id)(
-          kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}
-        )
-  )
+  sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"499|5.."}[${timeRange}]))
   /
   clamp_min(
-    sum(
-      increase(nginx_ingress_controller_requests[${timeRange}])
-        * on(ingress) group_left(label_qovery_com_associated_service_id)
-          max by(ingress, label_qovery_com_associated_service_id)(
-            kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}
-          )
-    ),
+    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}"}[${timeRange}])),
     1
   ) or vector(0)
 `
 
-const queryTotalRequest = (serviceId: string, timeRange: string) => `
-    sum(
-      increase(nginx_ingress_controller_requests[${timeRange}])
-        * on(ingress) group_left(label_qovery_com_associated_service_id)
-          max by(ingress, label_qovery_com_associated_service_id)(
-            kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}
-          )
-          or vector(0)
-    )
+const queryTotalRequest = (serviceId: string, timeRange: string, ingressName: string) => `
+    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}"}[${timeRange}]))
 `
 
 export function CardHTTPErrors({
   serviceId,
   clusterId,
   containerName,
+  ingressName,
 }: {
   serviceId: string
   clusterId: string
   containerName: string
+  ingressName: string
 }) {
   const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: query(serviceId, queryTimeRange),
+    query: query(serviceId, queryTimeRange, ingressName),
     queryRange: 'query',
   })
 
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useMetrics({
     clusterId,
-    query: queryTotalRequest(serviceId, queryTimeRange),
+    query: queryTotalRequest(serviceId, queryTimeRange, ingressName),
     queryRange: 'query',
   })
 
