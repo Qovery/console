@@ -39,7 +39,15 @@ const queryMaxStorage = (serviceId: string, timeRange: string) => `
 
 `
 
-export function CardStorage({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+export function CardStorage({
+  serviceId,
+  clusterId,
+  containerName,
+}: {
+  serviceId: string
+  clusterId: string
+  containerName: string
+}) {
   const { queryTimeRange } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 

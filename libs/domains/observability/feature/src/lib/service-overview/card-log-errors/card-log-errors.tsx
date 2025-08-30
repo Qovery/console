@@ -14,12 +14,14 @@ export function CardLogErrors({
   environmentId,
   serviceId,
   clusterId,
+  containerName,
 }: {
   organizationId: string
   projectId: string
   environmentId: string
   serviceId: string
   clusterId: string
+  containerName: string
 }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()

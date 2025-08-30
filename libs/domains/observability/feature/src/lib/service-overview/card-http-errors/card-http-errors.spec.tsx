@@ -28,6 +28,8 @@ describe('CardHTTPErrors', () => {
   const defaultProps = {
     serviceId: 'test-service-id',
     clusterId: 'test-cluster-id',
+    containerName: 'test-container-name',
+    ingressName: 'test-ingress-name',
   }
 
   beforeEach(() => {
