@@ -117,6 +117,7 @@ export const ChartContent = memo(function ChartContent({
     setHasCalendarValue,
     handleTimeRangeChange,
     lastDropdownTimeRange,
+    isAnyChartRefreshing,
   } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
 
@@ -161,6 +162,7 @@ export const ChartContent = memo(function ChartContent({
         className={clsx('h-full w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
         isLoading={isLoading}
         isEmpty={isEmpty}
+        isRefreshing={isAnyChartRefreshing}
       >
         <ComposedChart
           data={data}
@@ -183,7 +185,7 @@ export const ChartContent = memo(function ChartContent({
             setOnHoverHideTooltip(false)
           }}
           onDoubleClick={handleChartDoubleClick}
-          style={{ cursor: isLoading || isEmpty ? 'default' : isCtrlPressed ? 'zoom-out' : 'crosshair' }}
+          style={{ cursor: isLoading || isEmpty ? 'default' : 'crosshair' }}
         >
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis

@@ -41,16 +41,10 @@ const ALIGN_SEC = 15
 const alignStartSec = (ts?: string) => (ts == null ? undefined : Math.floor(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
 const alignEndSec = (ts?: string) => (ts == null ? undefined : Math.ceil(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
 
-// Helper hook to safely get live update setting from context
 function useLiveUpdateSetting(): boolean {
-  try {
-    const context = useServiceOverviewContext()
-    // Pause live updates when charts are zoomed or when the date picker is open
-    return context.isLiveUpdateEnabled && !context.isAnyChartZoomed && !context.isDatePickerOpen
-  } catch {
-    // Context not available, default to true
-    return true
-  }
+  const context = useServiceOverviewContext()
+  // Pause live updates when charts are zoomed or when the date picker is open
+  return context.isLiveUpdateEnabled && !context.isAnyChartZoomed && !context.isDatePickerOpen
 }
 
 // Simple wrapper that automatically applies live update toggle from context
@@ -63,7 +57,8 @@ export function useMetrics({
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
 }: UseMetricsProps) {
-  // Get live update setting from context, but allow override
+  // Get context and live update setting, but allow override
+  const context = useServiceOverviewContext()
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
 
@@ -104,6 +99,7 @@ export function useMetrics({
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 15_000 : false, // Refetch every 15 seconds only if live update is enabled
     refetchIntervalInBackground: finalLiveUpdateEnabled,
+    refetchOnWindowFocus: false,
     retry: 3,
   })
 
@@ -124,9 +120,23 @@ export function useMetrics({
     }
   }, [queryResult.isFetching])
 
+  // isRefreshing: true when fetching data but not on initial load or time range changes
+  const isRefreshing = queryResult.isFetching && !isLoadingCustom
+
+  // Track refreshing state at global level through context
+  const previousIsRefreshing = useRef(false)
+  useEffect(() => {
+    if (context && previousIsRefreshing.current !== isRefreshing) {
+      // Increment counter when starting to refresh, decrement when stopping
+      context.setIsAnyChartRefreshing(isRefreshing)
+      previousIsRefreshing.current = isRefreshing
+    }
+  }, [context, isRefreshing])
+
   return {
     ...queryResult,
     isLoading: isLoadingCustom,
+    isRefreshing,
   }
 }
 
