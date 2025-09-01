@@ -278,7 +278,7 @@ export function StepSummary(props: StepSummaryProps) {
                       <ul className="list-none space-y-2 text-sm text-neutral-400">
                         <li>
                           <span className="font-medium">IP pool: </span>
-                          {props.resourcesData.infrastructure_charts_parameters?.metalLb_parameters?.ip_address_pools}
+                          {props.resourcesData.infrastructure_charts_parameters?.metal_lb_parameters?.ip_address_pools}
                         </li>
                       </ul>
                     </div>

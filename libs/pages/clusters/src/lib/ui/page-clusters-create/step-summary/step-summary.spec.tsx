@@ -77,7 +77,7 @@ describe('StepSummary', () => {
             cert_manager_parameters: {
               kubernetes_namespace: 'test-namespace',
             },
-            metalLb_parameters: {
+            metal_lb_parameters: {
               ip_address_pools: ['10.0.0.0/24'],
             },
             nginx_parameters: {

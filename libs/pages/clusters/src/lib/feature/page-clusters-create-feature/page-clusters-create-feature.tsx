@@ -101,7 +101,7 @@ export const defaultResourcesData: ClusterResourcesData = {
     cert_manager_parameters: {
       kubernetes_namespace: '',
     },
-    metalLb_parameters: {
+    metal_lb_parameters: {
       ip_address_pools: [],
     },
     nginx_parameters: {

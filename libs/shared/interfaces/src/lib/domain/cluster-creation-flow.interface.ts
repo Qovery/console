@@ -37,7 +37,7 @@ export interface ClusterResourcesData {
     cert_manager_parameters?: {
       kubernetes_namespace?: string
     }
-    metalLb_parameters?: {
+    metal_lb_parameters?: {
       ip_address_pools?: string[]
     }
     nginx_parameters?: {

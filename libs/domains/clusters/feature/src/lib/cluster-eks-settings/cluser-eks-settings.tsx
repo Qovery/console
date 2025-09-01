@@ -39,7 +39,7 @@ export const ClusterEksSettings = () => {
           <p className="text-sm text-neutral-350">Configure your load-balancer (using MetalLB)</p>
         </div>
         <Controller
-          name="infrastructure_charts_parameters.metalLb_parameters.ip_address_pools"
+          name="infrastructure_charts_parameters.metal_lb_parameters.ip_address_pools"
           control={control}
           rules={{
             required: 'Please enter a IP address pool.',
