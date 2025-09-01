@@ -7,11 +7,11 @@ import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryErrorRequest = (timeRange: string, ingressName: string) => `
-    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"499|5.."}[${timeRange}]))
+    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"499|5.."}[${timeRange}]) or vector(0))
 `
 
 const queryTotalRequest = (timeRange: string, ingressName: string) => `
-    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}"}[${timeRange}]))
+    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}"}[${timeRange}]) or vector(0))
 `
 
 export function CardHTTPErrors({
@@ -28,7 +28,6 @@ export function CardHTTPErrors({
   const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // TODO fix query
   const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: queryErrorRequest(queryTimeRange, ingressName),
@@ -45,7 +44,7 @@ export function CardHTTPErrors({
 
   const errorRaw = Math.round(metricsErrorRequest?.data?.result[0]?.value[1])
   const totalRequest = Math.round(metricsTotalRequest?.data?.result[0]?.value[1]) || 0
-  const errorRate = Math.round(totalRequest > 0 ? errorRaw / totalRequest : 0) || 0
+  const errorRate = Math.ceil(totalRequest > 0 ? 100 * (errorRaw / totalRequest) : 0) || 0
   const isError = errorRate > 0
 
   const title = `${errorRate}% HTTP error rate`

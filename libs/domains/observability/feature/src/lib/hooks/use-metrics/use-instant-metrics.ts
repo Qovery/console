@@ -68,6 +68,7 @@ export function useInstantMetrics({
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 30_000 : false, // Refetch every 30 seconds only if live update is enabled
     refetchIntervalInBackground: finalLiveUpdateEnabled,
+    refetchOnWindowFocus: false,
     retry: 3,
   })
 
