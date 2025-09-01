@@ -30,7 +30,6 @@ interface UseMetricsProps {
   query: string
   startTimestamp?: string
   endTimestamp?: string
-  queryRange?: 'query' | 'query_range'
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
 }
@@ -53,7 +52,6 @@ export function useMetrics({
   query,
   startTimestamp,
   endTimestamp,
-  queryRange = 'query_range',
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
 }: UseMetricsProps) {
@@ -89,7 +87,7 @@ export function useMetrics({
     ...observability.observability({
       clusterId,
       query,
-      queryRange,
+      queryRange: 'query_range',
       startTimestamp: alignedStart,
       endTimestamp: alignedEnd,
       timeRange,

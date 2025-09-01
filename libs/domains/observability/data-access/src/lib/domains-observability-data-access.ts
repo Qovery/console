@@ -3,7 +3,7 @@ import { ClustersApi } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 
-export const observabilityobservability = createQueryKeys('observability', {
+export const observability = createQueryKeys('observability', {
   containerName: ({
     clusterId,
     serviceId,
@@ -38,19 +38,21 @@ export const observabilityobservability = createQueryKeys('observability', {
   observability: ({
     clusterId,
     query,
-    queryRange = 'query_range',
+    queryRange,
     startTimestamp,
     endTimestamp,
+    time,
     step,
     timeRange,
     maxSourceResolution,
   }: {
     clusterId: string
     query: string
-    step: string
+    step?: string
     maxSourceResolution: string
     startTimestamp?: string
     endTimestamp?: string
+    time?: string
     queryRange?: 'query' | 'query_range'
     timeRange?: string
   }) => ({
@@ -63,7 +65,7 @@ export const observabilityobservability = createQueryKeys('observability', {
         startTimestamp,
         endTimestamp,
         step,
-        undefined,
+        time,
         undefined,
         'True',
         'True',

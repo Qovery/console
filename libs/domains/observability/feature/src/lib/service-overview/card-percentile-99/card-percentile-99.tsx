@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useInstantMetrics } from '../../hooks/use-metrics/use-instant-metrics'
+import { calculateRateInterval } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import ModalChart from '../modal-chart/modal-chart'
 import NetworkRequestDurationChart from '../network-request-duration-chart/network-request-duration-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string, timeRange: string, rateInterval: string, ingressName: string) => `
+const query = (timeRange: string, rateInterval: string, ingressName: string) => `
   max_over_time(histogram_quantile(0.99, (sum by(le) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}"}[${rateInterval}]))))[${timeRange}:])
 `
 
@@ -28,10 +29,11 @@ export function CardPercentile99({
     [startTimestamp, endTimestamp]
   )
 
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+  const { data: metrics, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
-    query: query(serviceId, queryTimeRange, rateInterval, ingressName),
-    queryRange: 'query',
+    query: query(queryTimeRange, rateInterval, ingressName),
+    startTimestamp,
+    endTimestamp,
   })
 
   const value = Math.round(Number(metrics?.data?.result[0]?.value[1]) * 1000) || 0

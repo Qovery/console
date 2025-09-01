@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { pluralize } from '@qovery/shared/util-js'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useInstantMetrics } from '../../hooks/use-metrics/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { InstanceHTTPErrorsChart } from '../instance-http-errors-chart/instance-http-errors-chart'
 import { ModalChart } from '../modal-chart/modal-chart'
@@ -25,20 +25,22 @@ export function CardHTTPErrors({
   containerName: string
   ingressName: string
 }) {
-  const { queryTimeRange } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // TODO fix query
-  const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useMetrics({
+  const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: queryErrorRequest(queryTimeRange, ingressName),
-    queryRange: 'query',
+    startTimestamp,
+    endTimestamp,
   })
 
-  const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useMetrics({
+  const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(queryTimeRange, ingressName),
-    queryRange: 'query',
+    startTimestamp,
+    endTimestamp,
   })
 
   const errorRaw = Math.round(metricsErrorRequest?.data?.result[0]?.value[1])
