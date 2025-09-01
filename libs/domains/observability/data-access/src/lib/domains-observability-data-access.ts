@@ -13,7 +13,7 @@ export const observabilityobservability = createQueryKeys('observability', {
     serviceId: string
     resourceType?: 'deployment' | 'statefulset' // TODO PG: only for app our container => if there a volume then statefulset else deployment
   }) => ({
-    queryKey: ['deploymentId', clusterId, serviceId, resourceType],
+    queryKey: ['containerName', clusterId, serviceId, resourceType],
     async queryFn() {
       const endpoints = {
         deployment: `api/v1/label/deployment/values?match[]=kube_deployment_labels{label_qovery_com_service_id="${serviceId}"}`,
@@ -26,8 +26,7 @@ export const observabilityobservability = createQueryKeys('observability', {
     },
   }),
   ingressName: ({ clusterId, serviceId }: { clusterId: string; serviceId: string }) => ({
-    // TODO PG: only when public port
-    queryKey: ['ingressId', clusterId, serviceId],
+    queryKey: ['ingressName', clusterId, serviceId],
     async queryFn() {
       const endpoint = `api/v1/label/ingress/values?match[]=kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}`
       const response = await clusterApi.getClusterMetrics(clusterId, endpoint, '')

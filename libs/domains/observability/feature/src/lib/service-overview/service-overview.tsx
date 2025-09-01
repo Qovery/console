@@ -35,23 +35,25 @@ function ServiceOverviewContent() {
     setIsLiveUpdateEnabled,
   } = useServiceOverviewContext()
 
+  const hasPublicPort =
+    (service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
+    (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
+
+  const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+
   const { data: containerName } = useContainerName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
+    resourceType: hasStorage ? 'statefulset' : 'deployment',
   })
 
   const { data: ingressName } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
+    enabled: hasPublicPort,
   })
 
   if (!environment || !service || !containerName || !ingressName) return null
-
-  const hasPublicPort =
-    (service.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
-    (service.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
-
-  const hasStorage = service.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
   return (
     <div className="isolate">

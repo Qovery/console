@@ -107,12 +107,12 @@ export function NetworkRequestDurationChart({
   return (
     <LocalChart
       data={chartData}
+      serviceId={serviceId}
       isLoading={isLoadingMetrics || isLoadingMetrics99 || isLoadingMetrics50}
       isEmpty={chartData.length === 0}
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"
       unit="ms"
-      serviceId={serviceId}
     >
       <Line
         key="50th-percentile"
