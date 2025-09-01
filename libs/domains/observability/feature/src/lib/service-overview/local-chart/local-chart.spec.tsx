@@ -23,7 +23,7 @@ jest.mock('../modal-chart/modal-chart', () => ({
 }))
 
 jest.mock('../util-chart/format-timestamp', () => ({
-  formatTimestamp: (timestamp: number, useLocalTime: boolean) => ({
+  formatTimestamp: (timestamp: number) => ({
     fullTimeString: new Date(timestamp).toLocaleString(),
     timeString: new Date(timestamp).toLocaleTimeString(),
   }),
@@ -31,7 +31,7 @@ jest.mock('../util-chart/format-timestamp', () => ({
 
 jest.mock('./tooltip', () => ({
   Tooltip: ({ children }: { children?: React.ReactNode }) => children,
-  UnitType: {} as UnitType,
+  UnitType: {},
 }))
 
 jest.mock('@qovery/shared/util-js', () => ({
