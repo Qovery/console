@@ -99,6 +99,7 @@ export function useMetrics({
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 15_000 : false, // Refetch every 15 seconds only if live update is enabled
     refetchIntervalInBackground: finalLiveUpdateEnabled,
+    refetchOnWindowFocus: false,
     retry: 3,
   })
 

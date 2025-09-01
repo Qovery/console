@@ -185,7 +185,7 @@ export const ChartContent = memo(function ChartContent({
             setOnHoverHideTooltip(false)
           }}
           onDoubleClick={handleChartDoubleClick}
-          style={{ cursor: isLoading || isEmpty ? 'default' : isCtrlPressed ? 'zoom-out' : 'crosshair' }}
+          style={{ cursor: isLoading || isEmpty ? 'default' : 'crosshair' }}
         >
           <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
           <XAxis

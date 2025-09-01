@@ -184,11 +184,6 @@ export const Tooltip = memo(({ active, unit, payload, customLabel }: TooltipProp
               <span>Zoom In</span>
             </div>
             <div className="flex items-center gap-1">
-              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">{metaKey}</Kbd>
-              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">CLICK</Kbd>
-              <span>Zoom Out</span>
-            </div>
-            <div className="flex items-center gap-1">
               <Kbd className="bg-neutral-500 text-2xs text-neutral-50">DBL-CLICK</Kbd>
               <span>Reset</span>
             </div>
