@@ -1,6 +1,8 @@
-import { type ComponentProps, forwardRef, useMemo } from 'react'
+import clsx from 'clsx'
+import { type ComponentProps, forwardRef, useMemo, useRef, useState } from 'react'
 import * as RechartsPrimitive from 'recharts'
 import { twMerge } from '@qovery/shared/util-js'
+import { Button } from '../button/button'
 import { Icon } from '../icon/icon'
 import { ChartLoader } from './chart-loader'
 import { ChartSkeleton } from './chart-skeleton'
@@ -150,10 +152,9 @@ const ChartTooltipContent = forwardRef<HTMLDivElement, ChartTooltipContentProps>
           )
         })}
         {maxItems && filteredPayload.length > maxItems && (
-          <>
-            <div className="-mx-3 mt-2 border-t border-neutral-400" />
-            <div className="text-left text-xs text-neutral-250">+{filteredPayload.length - maxItems} more</div>
-          </>
+          <div className="flex items-center text-xs">
+            <span className="text-neutral-250">+{filteredPayload.length - maxItems} more</span>
+          </div>
         )}
       </div>
     </div>
@@ -190,11 +191,150 @@ export const ChartTooltipZoomRange = forwardRef<HTMLDivElement, ChartTooltipZoom
   }
 )
 
+const ChartLegend = RechartsPrimitive.Legend
+
+export const ChartLegendContent = ({
+  name,
+  className,
+  payload,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  formatter,
+  // Custom props
+  selectedKeys = new Set<string>(),
+}: RechartsPrimitive.DefaultLegendContentProps & {
+  selectedKeys?: Set<string>
+}) => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+  const isScrollingRef = useRef(false)
+
+  // Apply highlighting styles to chart paths
+  const applyHighlightStyles = (key: string | null) => {
+    const styleId = `${name ? name + '-' : ''}chart-highlight-style`
+    const style = document.getElementById(styleId) || document.createElement('style')
+    style.id = styleId
+
+    if (key) {
+      // When highlighting, make non-highlighted paths semi-transparent
+      style.textContent = `
+        #${styleId} path[name]:not([name="${key}"]) {
+          opacity: 0.15 !important;
+        }
+        #${styleId} path[name="${key}"] {
+          opacity: 1 !important;
+        }
+      `
+    } else {
+      // When not highlighting, reset all paths to full opacity
+      style.textContent = `
+        #${styleId} path[name] {
+          opacity: 1 !important;
+        }
+      `
+    }
+
+    if (!document.head.contains(style)) {
+      document.head.appendChild(style)
+    }
+  }
+
+  const handleScroll = () => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    isScrollingRef.current = true
+
+    const { scrollLeft, scrollWidth, clientWidth } = container
+    setCanScrollLeft(scrollLeft > 0)
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth)
+    setTimeout(() => {
+      isScrollingRef.current = false
+    }, 300)
+  }
+
+  const handleClick = (item: RechartsPrimitive.LegendPayload, index: number, event: React.MouseEvent) => {
+    if (isScrollingRef.current) return
+    onClick?.(item, index, event)
+  }
+
+  const handleMouseOver = (item: RechartsPrimitive.LegendPayload, index: number, event: React.MouseEvent) => {
+    if (isScrollingRef.current) return
+    const key = String(item.dataKey)
+    applyHighlightStyles(key)
+    onMouseEnter?.(item, index, event)
+  }
+
+  const handleMouseLeave = (item: RechartsPrimitive.LegendPayload, index: number, event: React.MouseEvent) => {
+    if (isScrollingRef.current) return
+    applyHighlightStyles(null)
+    onMouseLeave?.(item, index, event)
+  }
+
+  if (!payload?.length) {
+    return null
+  }
+
+  return (
+    <div className={twMerge('relative', className)}>
+      <span
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex w-full touch-pan-x flex-nowrap items-center gap-2 overflow-x-auto overscroll-y-none overscroll-x-contain whitespace-nowrap pb-2"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
+        <span className="flex w-full flex-nowrap items-center gap-2">
+          {payload?.map((item, index) => {
+            if (!item.dataKey) return null
+
+            const isActive = selectedKeys.has(String(item.dataKey))
+            const displayValue = formatter ? formatter(item.value, item, index) : item.value
+
+            return (
+              <Button
+                key={String(item.dataKey)}
+                variant={isActive ? 'surface' : 'outline'}
+                radius="full"
+                className={clsx(
+                  "relative z-0 cursor-pointer gap-2 transition-colors duration-100 before:absolute before:bottom-0 before:left-[-8px] before:right-[-8px] before:top-0 before:-z-[1] before:content-['']",
+                  isActive && '!border-neutral-300 hover:!bg-neutral-150'
+                )}
+                onClick={(e) => handleClick(item, index, e)}
+                onMouseEnter={(e) => handleMouseOver(item, index, e)}
+                onMouseLeave={(e) => handleMouseLeave(item, index, e)}
+              >
+                <span
+                  className={clsx(
+                    'inline-block shrink-0 transition-all duration-150',
+                    item.type === 'line' ? 'h-0.5 w-3' : 'h-2 w-2 rounded-full'
+                  )}
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="truncate">{displayValue}</span>
+              </Button>
+            )
+          })}
+        </span>
+      </span>
+      {canScrollLeft && (
+        <span className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white to-white/0" />
+      )}
+      {canScrollRight && (
+        <span className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white to-white/0" />
+      )}
+    </div>
+  )
+}
+
 export const Chart = {
   Container: ChartContainer,
   Tooltip: ChartTooltip,
   TooltipContent: ChartTooltipContent,
   TooltipZoomRange: ChartTooltipZoomRange,
+  Legend: ChartLegend,
+  LegendContent: ChartLegendContent,
   Skeleton: ChartSkeleton,
   Loader: ChartLoader,
 }

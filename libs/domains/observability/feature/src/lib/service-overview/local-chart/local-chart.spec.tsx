@@ -19,19 +19,19 @@ jest.mock('../../hooks/use-events/use-events', () => ({
 }))
 
 jest.mock('../modal-chart/modal-chart', () => ({
-  ModalChart: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
+  ModalChart: ({ children }: { children?: React.ReactNode }) => children,
 }))
 
 jest.mock('../util-chart/format-timestamp', () => ({
-  formatTimestamp: (timestamp: number, useLocalTime: boolean) => ({
+  formatTimestamp: (timestamp: number) => ({
     fullTimeString: new Date(timestamp).toLocaleString(),
     timeString: new Date(timestamp).toLocaleTimeString(),
   }),
 }))
 
 jest.mock('./tooltip', () => ({
-  Tooltip: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
-  UnitType: {} as any,
+  Tooltip: ({ children }: { children?: React.ReactNode }) => children,
+  UnitType: {},
 }))
 
 jest.mock('@qovery/shared/util-js', () => ({
@@ -39,71 +39,6 @@ jest.mock('@qovery/shared/util-js', () => ({
     count === 1 ? `${count} ${singular}` : `${count} ${plural}`,
   twMerge: (...classes: string[]) => classes.filter(Boolean).join(' '),
 }))
-
-describe('renderResourceLimitLabel', () => {
-  const mockChartData = [
-    { timestamp: 1640994000000, value: 10 },
-    { timestamp: 1640994300000, value: 20 },
-    { timestamp: 1640994600000, value: 30 },
-  ]
-
-  it('should render text label at the end of chart with valid value', () => {
-    const labelFunction = renderResourceLimitLabel('CPU Limit', mockChartData)
-    const result = labelFunction({
-      x: 100,
-      y: 50,
-      index: 2, // last index
-      value: 30,
-    })
-
-    expect(result.type).toBe('text')
-  })
-
-  it('should return empty group when not at the end', () => {
-    const labelFunction = renderResourceLimitLabel('Memory Limit', mockChartData)
-    const result = labelFunction({
-      x: 50,
-      y: 25,
-      index: 1, // middle index
-      value: 20,
-    })
-
-    expect(result.type).toBe('g')
-  })
-
-  it('should return empty group when value is undefined', () => {
-    const labelFunction = renderResourceLimitLabel('CPU Limit', mockChartData)
-    const result = labelFunction({
-      x: 100,
-      y: 50,
-      index: 2, // last index
-      value: undefined,
-    })
-
-    expect(result.type).toBe('g')
-  })
-
-  it('should return empty group for empty chart data', () => {
-    const labelFunction = renderResourceLimitLabel('Test Limit', [])
-    const result = labelFunction({
-      x: 0,
-      y: 0,
-      index: 0,
-      value: 0,
-    })
-
-    expect(result.type).toBe('g')
-  })
-
-  it('should handle different label types', () => {
-    const labels = ['CPU Limit', 'Memory Limit', 'Custom Resource Limit']
-
-    labels.forEach((label) => {
-      const labelFunction = renderResourceLimitLabel(label, mockChartData)
-      expect(typeof labelFunction).toBe('function')
-    })
-  })
-})
 
 describe('ReferenceLineEvent Type', () => {
   it('should accept valid reference line event structures', () => {

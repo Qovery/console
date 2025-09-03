@@ -86,6 +86,7 @@ export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: s
         <Area
           key={name}
           dataKey={name}
+          name={name}
           stackId="httpErrors"
           stroke={getColorByPod(name)}
           fill={getColorByPod(name)}

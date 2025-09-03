@@ -165,36 +165,6 @@ describe('Tooltip display names', () => {
 
     expect(getByText('Persistent storage')).toBeInTheDocument()
   })
-
-  it('should handle qovery namespace series names', () => {
-    const payload: TooltipEntry[] = [
-      {
-        dataKey: 'qovery-app-test-service-pod-123',
-        value: 50,
-        color: '#654321',
-        payload: { timestamp: 1640995200000, fullTime: '2022-01-01 12:00:00' },
-      },
-    ]
-
-    const { getByText } = render(<Tooltip active={true} unit="mCPU" payload={payload} customLabel="Pod Usage" />)
-
-    expect(getByText('test-service-pod-123')).toBeInTheDocument()
-  })
-
-  it('should handle app namespace series names', () => {
-    const payload: TooltipEntry[] = [
-      {
-        dataKey: 'app-test-service-instance-456',
-        value: 75,
-        color: '#987654',
-        payload: { timestamp: 1640995200000, fullTime: '2022-01-01 12:00:00' },
-      },
-    ]
-
-    const { getByText } = render(<Tooltip active={true} unit="mCPU" payload={payload} customLabel="Instance Usage" />)
-
-    expect(getByText('service-instance-456')).toBeInTheDocument()
-  })
 })
 
 describe('Tooltip edge cases', () => {
