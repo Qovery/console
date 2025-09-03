@@ -147,7 +147,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
             dot={false}
             connectNulls={false}
             isAnimationActive={false}
-            className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? '[&>path]:opacity-0' : ''}
+            hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? true : false}
           />
         )
       })}
@@ -160,7 +160,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-request') ? '[&>path]:opacity-0' : ''}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-request') ? true : false}
       />
       <Line
         dataKey="cpu-limit"
@@ -171,7 +171,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-limit') ? '[&>path]:opacity-0' : ''}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-limit') ? true : false}
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
