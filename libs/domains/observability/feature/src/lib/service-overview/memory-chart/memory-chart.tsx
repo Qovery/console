@@ -141,7 +141,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
           dot={false}
           connectNulls={false}
           isAnimationActive={false}
-          className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? 'opacity-0' : ''}
+          className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? '[&>path]:opacity-0' : ''}
         />
       ))}
       <Line
@@ -153,7 +153,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-request') ? 'opacity-0' : ''}
+        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-request') ? '[&>path]:opacity-0' : ''}
       />
       <Line
         dataKey="memory-limit"
@@ -164,7 +164,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-limit') ? 'opacity-0' : ''}
+        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-limit') ? '[&>path]:opacity-0' : ''}
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend

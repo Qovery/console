@@ -97,7 +97,7 @@ function ServiceOverviewContent() {
       <div className="space-y-10 px-8 py-10">
         <Section className="gap-4">
           <Heading weight="medium">Service health check</Heading>
-          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'grid-cols-2')}>
+          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <CardInstanceStatus clusterId={environment.cluster_id} serviceId={applicationId} />
             <div className="flex h-full flex-col gap-3">
               <CardLogErrors
@@ -115,7 +115,7 @@ function ServiceOverviewContent() {
         </Section>
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
-          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'grid-cols-2')}>
+          <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
               <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
             </div>
@@ -132,7 +132,7 @@ function ServiceOverviewContent() {
         {hasPublicPort && (
           <Section className="gap-4">
             <Heading weight="medium">Network</Heading>
-            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'grid-cols-2')}>
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
               <div className="overflow-hidden rounded border border-neutral-250">
                 <NetworkRequestStatusChart clusterId={environment.cluster_id} serviceId={applicationId} />
               </div>

@@ -220,17 +220,17 @@ export const ChartLegendContent = ({
     if (key) {
       // When highlighting, make non-highlighted paths semi-transparent
       style.textContent = `
-        #${styleId} path[name]:not([name="${key}"]) {
+        path[name]:not([name="${key}"]) {
           opacity: 0.15 !important;
         }
-        #${styleId} path[name="${key}"] {
+        path[name="${key}"] {
           opacity: 1 !important;
         }
       `
     } else {
       // When not highlighting, reset all paths to full opacity
       style.textContent = `
-        #${styleId} path[name] {
+        path[name] {
           opacity: 1 !important;
         }
       `

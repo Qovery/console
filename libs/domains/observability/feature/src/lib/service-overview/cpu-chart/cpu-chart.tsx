@@ -147,7 +147,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
             dot={false}
             connectNulls={false}
             isAnimationActive={false}
-            className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? 'opacity-0' : ''}
+            className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? '[&>path]:opacity-0' : ''}
           />
         )
       })}
@@ -160,7 +160,7 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-request') ? 'opacity-0' : ''}
+        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-request') ? '[&>path]:opacity-0' : ''}
       />
       <Line
         dataKey="cpu-limit"
@@ -171,13 +171,22 @@ export function CpuChart({ clusterId, serviceId }: { clusterId: string; serviceI
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-limit') ? 'opacity-0' : ''}
+        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('cpu-limit') ? '[&>path]:opacity-0' : ''}
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
           name="cpu"
           className="w-[calc(100%-0.5rem)] py-2"
           onClick={onClick}
+          itemSorter={(item) => {
+            if (item.value === 'cpu-request') {
+              return -1
+            }
+            if (item.value === 'cpu-limit') {
+              return -2
+            }
+            return 0
+          }}
           content={(props) => (
             <Chart.LegendContent
               selectedKeys={legendSelectedKeys}
