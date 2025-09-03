@@ -30,8 +30,6 @@ export const observability = createQueryKeys('observability', {
     async queryFn() {
       const endpoint = `api/v1/label/ingress/values?match[]=kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}`
       const response = await clusterApi.getClusterMetrics(clusterId, endpoint, '')
-      console.log('PGPGPG')
-      console.log(response.data.metrics)
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
   }),

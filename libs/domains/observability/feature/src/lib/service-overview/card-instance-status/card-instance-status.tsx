@@ -77,7 +77,7 @@ export function CardInstanceStatus({
     endTimestamp,
   })
 
-  const instanceErrors = Math.ceil(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0
+  const instanceErrors = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0
   const autoscalingReachedRaw = metricsAutoscalingReached?.data?.result[0]?.value[1] || '0'
   const autoscalingReachedNum = parseFloat(autoscalingReachedRaw)
   const autoscalingReached = Number(autoscalingReachedNum.toFixed(1))
@@ -107,7 +107,7 @@ export function CardInstanceStatus({
             {isAutoscalingEnabled && (
               <Skeleton show={isLoading} width={174} height={16}>
                 <span className="text-ssm text-neutral-400">
-                  Auto-scaling limit reached <span className="font-medium">{autoscalingReached}% </span> of the time
+                  Auto-scaling limit hit rate <span className="font-medium">{autoscalingReached}% </span>
                 </span>
               </Skeleton>
             )}
@@ -121,13 +121,18 @@ export function CardInstanceStatus({
           </div>
         </div>
         <div>
-          <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} />
+          <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} containerName={containerName} />
         </div>
       </Section>
       {isModalOpen && (
         <ModalChart title={title} description={description} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <div className="grid h-full grid-cols-1">
-            <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} isFullscreen />
+            <InstanceStatusChart
+              clusterId={clusterId}
+              serviceId={serviceId}
+              containerName={containerName}
+              isFullscreen
+            />
           </div>
         </ModalChart>
       )}

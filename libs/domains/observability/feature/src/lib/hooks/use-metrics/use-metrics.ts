@@ -32,6 +32,8 @@ interface UseMetricsProps {
   endTimestamp?: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
+  overriddenStep?: string
+  overriddenResolution?: string
 }
 
 // Helpers for alignment (timestamps in seconds)
@@ -54,6 +56,8 @@ export function useMetrics({
   endTimestamp,
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
+  overriddenStep,
+  overriddenResolution,
 }: UseMetricsProps) {
   // Get context and live update setting, but allow override
   const context = useServiceOverviewContext()
@@ -64,6 +68,9 @@ export function useMetrics({
   const alignedEnd = alignEndSec(endTimestamp)
 
   const step = useMemo(() => {
+    if (overriddenStep !== undefined) {
+      return overriddenStep
+    }
     // TODO: Verify these step intervals match actual Prometheus scrape_interval configuration
     // Actual scrape_interval = 15s
     // https://prometheus.io/docs/prometheus/latest/configuration/configuration/#duration
@@ -75,13 +82,16 @@ export function useMetrics({
       return calculateDynamicRange(alignedStart, alignedEnd, 1)
     }
     return '30000ms' // Default: 30 seconds (match actual scrape_interval)
-  }, [timeRange, alignedStart, alignedEnd])
+  }, [timeRange, alignedStart, alignedEnd, overriddenStep])
 
   const maxSourceResolution = useMemo(() => {
+    if (overriddenResolution !== undefined) {
+      return overriddenResolution ?? ('0s' as const)
+    }
     if (!alignedStart || !alignedEnd) return '0s' as const
     const safeStep = step ?? '1m'
     return calculateMaxSourceResolution(alignedStart, alignedEnd, safeStep)
-  }, [alignedStart, alignedEnd, step])
+  }, [alignedStart, alignedEnd, step, overriddenResolution])
 
   const queryResult = useQuery({
     ...observability.observability({
