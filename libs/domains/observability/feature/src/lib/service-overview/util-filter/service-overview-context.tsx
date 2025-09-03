@@ -1,14 +1,4 @@
-import {
-  type Dispatch,
-  type PropsWithChildren,
-  type SetStateAction,
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
@@ -56,12 +46,6 @@ interface ServiceOverviewContextType {
   hoveredEventKey: string | null
   setHoveredEventKey: (value: string | null) => void
 
-  // Chart legend synchronization
-  chartSelectedKeys: Set<string>
-  setChartSelectedKeys: Dispatch<SetStateAction<Set<string>>>
-  chartHighlightedKey: string | null
-  setChartHighlightedKey: Dispatch<SetStateAction<string | null>>
-
   // Live update toggle
   isLiveUpdateEnabled: boolean
   setIsLiveUpdateEnabled: (value: boolean) => void
@@ -108,10 +92,6 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
   const [hasCalendarValue, setHasCalendarValue] = useState(false)
   const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
-
-  // Chart legend synchronization
-  const [chartSelectedKeys, setChartSelectedKeys] = useState<Set<string>>(new Set())
-  const [chartHighlightedKey, setChartHighlightedKey] = useState<string | null>(null)
 
   const registerZoomReset = useCallback((resetFn: () => void) => {
     setZoomResetFunctions((prev) => [...prev, resetFn])
@@ -251,10 +231,6 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       setHasCalendarValue,
       hoveredEventKey,
       setHoveredEventKey,
-      chartSelectedKeys,
-      setChartSelectedKeys,
-      chartHighlightedKey,
-      setChartHighlightedKey,
       isLiveUpdateEnabled,
       setIsLiveUpdateEnabled,
       isDatePickerOpen,
@@ -285,10 +261,6 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       setHasCalendarValue,
       hoveredEventKey,
       setHoveredEventKey,
-      chartSelectedKeys,
-      setChartSelectedKeys,
-      chartHighlightedKey,
-      setChartHighlightedKey,
       isLiveUpdateEnabled,
       setIsLiveUpdateEnabled,
       isDatePickerOpen,

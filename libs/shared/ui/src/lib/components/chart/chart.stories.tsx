@@ -1,9 +1,19 @@
 import type { Meta } from '@storybook/react'
 import { useState } from 'react'
-import { Area, Bar, CartesianGrid, ComposedChart, Line, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
+import {
+  Area,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  type LegendPayload,
+  Line,
+  ReferenceArea,
+  ReferenceLine,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { Chart, useZoomableChart } from './chart'
 import { createXAxisConfig, getTimeGranularity } from './chart-utils'
-import { useChartHighlighting } from './use-chart-highlighting'
 
 const CHART_COLORS = [
   'var(--color-r-ams)',
@@ -305,85 +315,78 @@ The chart supports mixed visualization types including area charts, bar charts, 
             {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
               <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
             ) : null}
+            <Chart.Legend />
           </ComposedChart>
         </Chart.Container>
-        <Chart.Legend
-          items={[
-            { key: 'cpu', label: 'CPU', color: 'var(--color-yellow-500)' },
-            { key: 'memory', label: 'Memory', color: 'var(--color-brand-500)' },
-            { key: 'disk', label: 'Disk', color: 'var(--color-green-500)' },
-          ]}
-        />
       </div>
     )
   },
 }
 
-export const MaximalEdgeCase = {
+export const MaximalEdgeCaseLegend = {
   render: () => {
-    const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set())
     const xAxisConfig = createXAxisConfig(1704067200, 1704081600, { tickCount: 10 }) // Custom tick count for demo
 
-    const { containerRef, handleHighlight, sanitizeKey } = useChartHighlighting({
-      selectedKeys,
-    })
+    const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
+
+    const onClick = (value: LegendPayload) => {
+      if (!value?.dataKey) return
+      setLegendSelectedKeys((prev) => {
+        const key = value.dataKey as string
+        if (prev.has(key)) {
+          prev.delete(key)
+          return new Set(prev)
+        }
+        const next = new Set(prev)
+        next.add(key)
+        return next
+      })
+    }
 
     return (
-      <div ref={containerRef} className="w-full p-5 py-2 pr-0">
-        <Chart.Container className="h-[400px] w-full">
-          <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
-            <XAxis
-              {...xAxisConfig}
-              tickFormatter={(timestamp) => {
-                const date = new Date(timestamp)
-                const hours = date.getHours().toString().padStart(2, '0')
-                const minutes = date.getMinutes().toString().padStart(2, '0')
-                return `${hours}:${minutes}`
-              }}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-              tickLine={{ stroke: 'transparent' }}
-              axisLine={{ stroke: 'transparent' }}
-              orientation="right"
-              tickCount={5}
-              tickFormatter={(value) => (value === 0 ? '' : value)}
-            />
-            <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
-            {maximalMetrics.map((metric, index) => {
-              const seriesClass = `series series--${sanitizeKey(metric.key)}`
-              return (
-                <Line
-                  key={metric.key}
-                  type="linear"
-                  dataKey={metric.key}
-                  name={metric.key}
-                  stroke={EXPANDED_COLORS_50[index]}
-                  strokeWidth={2}
-                  className={seriesClass}
-                  dot={false}
-                  connectNulls={false}
-                  isAnimationActive={false}
-                />
-              )
-            })}
-          </ComposedChart>
-        </Chart.Container>
-        <Chart.Legend
-          items={maximalMetrics.map((m, i) => ({ key: m.key, label: m.key, color: EXPANDED_COLORS_50[i] }))}
-          selectedKeys={selectedKeys}
-          onToggle={(key) => {
-            setSelectedKeys((prev) => {
-              const next = new Set(prev)
-              if (next.has(key)) next.delete(key)
-              else next.add(key)
-              return next
-            })
-          }}
-          onHighlight={handleHighlight}
-        />
-      </div>
+      <Chart.Container className="h-[400px] w-full">
+        <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <XAxis
+            {...xAxisConfig}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            }}
+          />
+          <YAxis
+            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tickLine={{ stroke: 'transparent' }}
+            axisLine={{ stroke: 'transparent' }}
+            orientation="right"
+            tickCount={5}
+            tickFormatter={(value) => (value === 0 ? '' : value)}
+          />
+          <Chart.Tooltip content={<Chart.TooltipContent title="CPU" maxItems={10} />} />
+          <Chart.Legend
+            onClick={onClick}
+            content={(props) => <Chart.LegendContent selectedKeys={legendSelectedKeys} {...props} />}
+          />
+          {maximalMetrics.map((metric, index) => {
+            return (
+              <Line
+                key={metric.key}
+                type="linear"
+                dataKey={metric.key}
+                name={metric.key}
+                stroke={EXPANDED_COLORS_50[index]}
+                strokeWidth={2}
+                dot={false}
+                connectNulls={false}
+                isAnimationActive={false}
+                className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(metric.key) ? 'opacity-0' : ''}
+              />
+            )
+          })}
+        </ComposedChart>
+      </Chart.Container>
     )
   },
 }

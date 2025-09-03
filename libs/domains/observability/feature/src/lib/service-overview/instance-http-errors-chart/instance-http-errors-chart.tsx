@@ -81,12 +81,12 @@ export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: s
       serviceId={serviceId}
       margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
       isFullscreen
-      showLegend
     >
       {seriesNames.map((name) => (
         <Area
           key={name}
           dataKey={name}
+          name={name}
           stackId="httpErrors"
           stroke={getColorByPod(name)}
           fill={getColorByPod(name)}

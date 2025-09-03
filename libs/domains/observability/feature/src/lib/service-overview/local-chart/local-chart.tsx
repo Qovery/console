@@ -1,7 +1,7 @@
-import type { IconName, IconStyle } from '@fortawesome/fontawesome-common-types'
+import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
+import { type ElementRef, type PropsWithChildren, forwardRef, memo, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
 import { type AnyService } from '@qovery/domains/services/data-access'
@@ -17,14 +17,12 @@ import {
   Tooltip,
   createXAxisConfig,
   getTimeGranularity,
-  useChartHighlighting,
   useZoomableChart,
 } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useEvents } from '../../hooks/use-events/use-events'
 import { ModalChart } from '../modal-chart/modal-chart'
-import { addSeriesClassesToChildren, extractChartSeriesFromChildren } from '../util-chart/chart-series-utils'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
@@ -35,26 +33,6 @@ export type LineLabelProps = {
   index?: number
   value?: number | string
   [key: string]: unknown
-}
-
-export function renderResourceLimitLabel(
-  labelText: string,
-  chartData: Array<{ [key: string]: string | number | null }>,
-  color = 'var(--color-red-500)'
-) {
-  return (props: LineLabelProps) => {
-    const { x, y, index, value } = props
-    // Only render for the last point with a value
-    if (chartData && index === chartData.length - 1 && value != null) {
-      return (
-        <text x={x} y={(y ?? 0) - 8} fill={color} fontSize={12} fontWeight={500} textAnchor="end">
-          {labelText}
-        </text>
-      )
-    }
-    // Return an empty SVG group instead of null to satisfy type requirements
-    return <g />
-  }
 }
 
 export interface ReferenceLineEvent {
@@ -89,10 +67,6 @@ interface ChartContentProps extends PropsWithChildren {
   referenceLineData?: ReferenceLineEvent[]
   service?: AnyService
   isFullscreen?: boolean
-  selectedKeys?: Set<string>
-  onHighlight?: (key: string | null) => void
-  highlightingResult?: ReturnType<typeof useChartHighlighting>
-  enableHighlighting?: boolean
 }
 
 export const ChartContent = memo(function ChartContent({
@@ -109,10 +83,6 @@ export const ChartContent = memo(function ChartContent({
   referenceLineData,
   service,
   isFullscreen = true,
-  selectedKeys,
-  onHighlight,
-  highlightingResult: passedHighlightingResult,
-  enableHighlighting = false,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -130,20 +100,6 @@ export const ChartContent = memo(function ChartContent({
     isAnyChartRefreshing,
   } = useServiceOverviewContext()
   const [onHoverHideTooltip, setOnHoverHideTooltip] = useState(false)
-
-  // Use passed highlighting result or create our own if needed
-  const fallbackHighlightingResult = useChartHighlighting({
-    selectedKeys: selectedKeys || new Set(),
-  })
-  const highlightingResult = passedHighlightingResult || fallbackHighlightingResult
-
-  // Process children to add series CSS classes if highlighting is enabled
-  const processedChildren = useMemo(() => {
-    if (enableHighlighting && highlightingResult) {
-      return addSeriesClassesToChildren(children, highlightingResult.sanitizeKey)
-    }
-    return children
-  }, [children, enableHighlighting, highlightingResult])
 
   // Use the zoomable chart hook - automatically handle zoom state changes
   const {
@@ -181,9 +137,9 @@ export const ChartContent = memo(function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div ref={selectedKeys ? highlightingResult.containerRef : undefined} className="relative flex h-full">
+    <div className="relative flex h-full">
       <Chart.Container
-        className={clsx('h-full w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
+        className={clsx('h-full min-h-72 w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
         isLoading={isLoading}
         isEmpty={isEmpty}
         isRefreshing={isAnyChartRefreshing}
@@ -282,7 +238,7 @@ export const ChartContent = memo(function ChartContent({
             referenceLineData?.map((event) =>
               createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey, true)
             )}
-          {processedChildren}
+          {children}
           <YAxis
             tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
             tickLine={{ stroke: 'transparent' }}
@@ -413,89 +369,33 @@ export interface LocalChartProps extends PropsWithChildren {
   }
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
-  showLegend?: boolean
+  handleResetLegend?: () => void
 }
 
-export function LocalChart({
-  data,
-  unit,
-  isLoading = false,
-  isEmpty = false,
-  label,
-  tooltipLabel,
-  description,
-  className,
-  children,
-  serviceId,
-  yDomain,
-  xDomain,
-  margin,
-  referenceLineData,
-  isFullscreen = false,
-  showLegend = false,
-}: LocalChartProps) {
+export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(function LocalChart(
+  {
+    data,
+    unit,
+    isLoading = false,
+    isEmpty = false,
+    label,
+    tooltipLabel,
+    description,
+    className,
+    children,
+    serviceId,
+    yDomain,
+    xDomain,
+    margin,
+    referenceLineData,
+    isFullscreen = false,
+    handleResetLegend,
+  },
+  ref
+) {
   const { organizationId = '' } = useParams()
-  const {
-    startTimestamp,
-    endTimestamp,
-    chartSelectedKeys,
-    setChartSelectedKeys,
-    chartHighlightedKey,
-    setChartHighlightedKey,
-  } = useServiceOverviewContext()
+  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
-
-  // Extract series information from children for legend
-  const chartSeries = useMemo(() => {
-    const series = extractChartSeriesFromChildren(children)
-
-    // Sort series to show limit/request metrics first and add line indicator for them
-    return series
-      .map((item) => {
-        const isLimitRequest =
-          item.label.toLowerCase().includes('limit') || item.label.toLowerCase().includes('request')
-        return {
-          ...item,
-          useLineIndicator: isLimitRequest,
-        }
-      })
-      .sort((a, b) => {
-        const aIsLimitRequest = a.useLineIndicator
-        const bIsLimitRequest = b.useLineIndicator
-
-        if (aIsLimitRequest && !bIsLimitRequest) return -1
-        if (!aIsLimitRequest && bIsLimitRequest) return 1
-        return 0
-      })
-  }, [children])
-
-  // Set up chart highlighting if legend is enabled - separate instances for local and modal
-  const localHighlightingResult = useChartHighlighting({
-    selectedKeys: showLegend ? chartSelectedKeys : new Set(),
-  })
-
-  const modalHighlightingResult = useChartHighlighting({
-    selectedKeys: showLegend ? chartSelectedKeys : new Set(),
-  })
-
-  // Combined highlight handlers that sync both local highlighting and shared state
-  const handleLocalHighlight = (key: string | null) => {
-    localHighlightingResult.handleHighlight(key)
-    setChartHighlightedKey(key)
-  }
-
-  const handleModalHighlight = (key: string | null) => {
-    modalHighlightingResult.handleHighlight(key)
-    setChartHighlightedKey(key)
-  }
-
-  // Sync local highlighting when shared state changes from other chart instances
-  useEffect(() => {
-    if (showLegend) {
-      localHighlightingResult.handleHighlight(chartHighlightedKey)
-      modalHighlightingResult.handleHighlight(chartHighlightedKey)
-    }
-  }, [chartHighlightedKey, showLegend, localHighlightingResult, modalHighlightingResult])
 
   // Alpha: Workaround to get the events
   const { data: service } = useService({ serviceId })
@@ -611,33 +511,48 @@ export function LocalChart({
 
   return (
     <>
-      <Section className={twMerge('h-full min-h-[300px] w-full', className)}>
+      <Section ref={ref} className={twMerge('h-full min-h-[300px] w-full', className)}>
         {label && (
           <div className="flex w-full justify-between gap-1 p-4 pb-0">
             <div>
               <Heading className="flex items-center">{label}</Heading>
               <p className="text-ssm text-neutral-350">{description}</p>
             </div>
-            <Tooltip content="Show chart">
-              <Button
-                variant="outline"
-                color="neutral"
-                size="xs"
-                className="w-6 items-center justify-center p-0"
-                onClick={() => setIsModalOpen(true)}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
-                  <g fill="#383E50" fillRule="evenodd" clipPath="url(#clip0_25356_47547)" clipRule="evenodd">
-                    <path d="M4.15 3.6a.55.55 0 0 0-.55.55v1.1a.55.55 0 1 1-1.1 0v-1.1A1.65 1.65 0 0 1 4.15 2.5h1.1a.55.55 0 1 1 0 1.1zM10.2 3.05a.55.55 0 0 1 .55-.55h1.1a1.65 1.65 0 0 1 1.65 1.65v1.1a.55.55 0 1 1-1.1 0v-1.1a.55.55 0 0 0-.55-.55h-1.1a.55.55 0 0 1-.55-.55M12.95 10.2a.55.55 0 0 1 .55.55v1.1a1.65 1.65 0 0 1-1.65 1.65h-1.1a.55.55 0 1 1 0-1.1h1.1a.55.55 0 0 0 .55-.55v-1.1a.55.55 0 0 1 .55-.55M3.05 10.2a.55.55 0 0 1 .55.55v1.1a.55.55 0 0 0 .55.55h1.1a.55.55 0 1 1 0 1.1h-1.1a1.65 1.65 0 0 1-1.65-1.65v-1.1a.55.55 0 0 1 .55-.55M4.7 6.35a1.1 1.1 0 0 1 1.1-1.1h4.4a1.1 1.1 0 0 1 1.1 1.1v3.3a1.1 1.1 0 0 1-1.1 1.1H5.8a1.1 1.1 0 0 1-1.1-1.1zm5.5 0H5.8v3.3h4.4z"></path>
-                  </g>
-                  <defs>
-                    <clipPath id="clip0_25356_47547">
-                      <path fill="#fff" d="M2 2h12v12H2z"></path>
-                    </clipPath>
-                  </defs>
-                </svg>
-              </Button>
-            </Tooltip>
+            <div className="flex items-center gap-1">
+              {handleResetLegend && (
+                <Tooltip content="Reset filters">
+                  <Button
+                    variant="outline"
+                    color="neutral"
+                    size="xs"
+                    className="w-6 items-center justify-center p-0"
+                    onClick={handleResetLegend}
+                  >
+                    <Icon iconName="xmark" />
+                  </Button>
+                </Tooltip>
+              )}
+              <Tooltip content="Show chart">
+                <Button
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  className="w-6 items-center justify-center p-0"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 16 16">
+                    <g fill="#383E50" fillRule="evenodd" clipPath="url(#clip0_25356_47547)" clipRule="evenodd">
+                      <path d="M4.15 3.6a.55.55 0 0 0-.55.55v1.1a.55.55 0 1 1-1.1 0v-1.1A1.65 1.65 0 0 1 4.15 2.5h1.1a.55.55 0 1 1 0 1.1zM10.2 3.05a.55.55 0 0 1 .55-.55h1.1a1.65 1.65 0 0 1 1.65 1.65v1.1a.55.55 0 1 1-1.1 0v-1.1a.55.55 0 0 0-.55-.55h-1.1a.55.55 0 0 1-.55-.55M12.95 10.2a.55.55 0 0 1 .55.55v1.1a1.65 1.65 0 0 1-1.65 1.65h-1.1a.55.55 0 1 1 0-1.1h1.1a.55.55 0 0 0 .55-.55v-1.1a.55.55 0 0 1 .55-.55M3.05 10.2a.55.55 0 0 1 .55.55v1.1a.55.55 0 0 0 .55.55h1.1a.55.55 0 1 1 0 1.1h-1.1a1.65 1.65 0 0 1-1.65-1.65v-1.1a.55.55 0 0 1 .55-.55M4.7 6.35a1.1 1.1 0 0 1 1.1-1.1h4.4a1.1 1.1 0 0 1 1.1 1.1v3.3a1.1 1.1 0 0 1-1.1 1.1H5.8a1.1 1.1 0 0 1-1.1-1.1zm5.5 0H5.8v3.3h4.4z"></path>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_25356_47547">
+                        <path fill="#fff" d="M2 2h12v12H2z"></path>
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </Button>
+              </Tooltip>
+            </div>
           </div>
         )}
         <ChartContent
@@ -653,91 +568,33 @@ export function LocalChart({
           referenceLineData={mergedReferenceLineData}
           service={service}
           isFullscreen={isFullscreen}
-          selectedKeys={showLegend ? chartSelectedKeys : undefined}
-          onHighlight={showLegend ? handleLocalHighlight : undefined}
-          highlightingResult={showLegend ? localHighlightingResult : undefined}
-          enableHighlighting={showLegend}
         >
           {children}
         </ChartContent>
-        {/* Render legend if enabled */}
-        {showLegend && chartSeries.length > 0 && (
-          <div className="px-5 pb-5">
-            <Chart.Legend
-              items={chartSeries}
-              selectedKeys={chartSelectedKeys}
-              highlightedKey={chartHighlightedKey}
-              onToggle={(key) => {
-                setChartSelectedKeys((prev: Set<string>) => {
-                  const next = new Set(prev)
-                  if (next.has(key)) {
-                    next.delete(key)
-                  } else {
-                    next.add(key)
-                  }
-                  return next
-                })
-              }}
-              onHighlight={handleLocalHighlight}
-              rightGutterWidth={0}
-            />
-          </div>
-        )}
       </Section>
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <div className="flex h-full flex-col">
-            <div className="flex-1 overflow-hidden">
-              <ChartContent
-                data={data}
-                unit={unit}
-                label={label ?? ''}
-                tooltipLabel={tooltipLabel}
-                isEmpty={isEmpty}
-                isLoading={isLoading}
-                xDomain={xDomain}
-                yDomain={yDomain}
-                margin={margin}
-                referenceLineData={mergedReferenceLineData}
-                service={service}
-                isFullscreen
-                selectedKeys={showLegend ? chartSelectedKeys : undefined}
-                onHighlight={showLegend ? handleModalHighlight : undefined}
-                highlightingResult={showLegend ? modalHighlightingResult : undefined}
-                enableHighlighting={showLegend}
-              >
-                {children}
-              </ChartContent>
-            </div>
-            {/* Render legend in modal if enabled */}
-            {showLegend && chartSeries.length > 0 && (
-              <div className="flex-shrink-0 px-5 pb-5">
-                <Chart.Legend
-                  items={chartSeries}
-                  selectedKeys={chartSelectedKeys}
-                  highlightedKey={chartHighlightedKey}
-                  onToggle={(key) => {
-                    setChartSelectedKeys((prev: Set<string>) => {
-                      const next = new Set(prev)
-                      if (next.has(key)) {
-                        next.delete(key)
-                      } else {
-                        next.add(key)
-                      }
-                      return next
-                    })
-                  }}
-                  onHighlight={handleModalHighlight}
-                  rightGutterWidth={0}
-                />
-              </div>
-            )}
-          </div>
+          <ChartContent
+            data={data}
+            unit={unit}
+            label={label ?? ''}
+            tooltipLabel={tooltipLabel}
+            isEmpty={isEmpty}
+            isLoading={isLoading}
+            xDomain={xDomain}
+            yDomain={yDomain}
+            margin={margin}
+            referenceLineData={mergedReferenceLineData}
+            service={service}
+            isFullscreen
+          >
+            {children}
+          </ChartContent>
         </ModalChart>
       )}
     </>
   )
-}
+})
 
 export default LocalChart
 

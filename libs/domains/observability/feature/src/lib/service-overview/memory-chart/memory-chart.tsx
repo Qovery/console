@@ -1,9 +1,11 @@
-import { useMemo } from 'react'
-import { Line } from 'recharts'
+import { useMemo, useState } from 'react'
+import { type LegendPayload, Line } from 'recharts'
+import { Chart } from '@qovery/shared/ui'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
+import { convertPodName } from '../util-chart/convert-pod-name'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
@@ -22,6 +24,24 @@ const queryMemoryRequest = (serviceId: string) => `
 export function MemoryChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
   const getColorByPod = usePodColor()
+
+  const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
+
+  const onClick = (value: LegendPayload) => {
+    if (!value?.dataKey) return
+    const key = value.dataKey as string
+    const newKeys = new Set(legendSelectedKeys)
+    if (newKeys.has(key)) {
+      newKeys.delete(key)
+    } else {
+      newKeys.add(key)
+    }
+    setLegendSelectedKeys(newKeys)
+  }
+
+  const handleResetLegend = () => {
+    setLegendSelectedKeys(new Set())
+  }
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
@@ -61,7 +81,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
     processMetricsData(
       metrics,
       timeSeriesMap,
-      (_, index) => metrics.data.result[index].metric.pod,
+      (_, index) => convertPodName(metrics.data.result[index].metric.pod),
       (value) => parseFloat(value) / 1024 / 1024, // Convert to MiB
       useLocalTime
     )
@@ -91,54 +111,92 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
 
   const seriesNames = useMemo(() => {
     if (!metrics?.data?.result) return []
-    return metrics.data.result.map((_: unknown, index: number) => metrics.data.result[index].metric.pod) as string[]
+    return metrics.data.result.map((_: unknown, index: number) =>
+      convertPodName(metrics.data.result[index].metric.pod)
+    ) as string[]
   }, [metrics])
 
-  // const renderMemoryLimitLabel = renderResourceLimitLabel('Memory limit', chartData)
+  const isLoading = isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest
 
   return (
     <LocalChart
       data={chartData}
       unit="MiB"
-      isLoading={isLoadingMetrics || isLoadingMetricsLimit || isLoadingMetricsRequest}
+      isLoading={isLoading}
       isEmpty={chartData.length === 0}
       label="Memory usage (MiB)"
       description="Usage per instance in MiB of memory limit and request"
       tooltipLabel="Memory"
       serviceId={serviceId}
-      showLegend
+      handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
       {seriesNames.map((name) => (
         <Line
           key={name}
           dataKey={name}
+          name={name}
           type="linear"
           stroke={getColorByPod(name)}
           strokeWidth={2}
           dot={false}
           connectNulls={false}
           isAnimationActive={false}
+          className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? 'opacity-0' : ''}
         />
       ))}
       <Line
         dataKey="memory-request"
+        name="memory-request"
         type="linear"
         stroke="var(--color-neutral-300)"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
+        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-request') ? 'opacity-0' : ''}
       />
       <Line
         dataKey="memory-limit"
+        name="memory-limit"
         type="linear"
         stroke="var(--color-red-500)"
         strokeWidth={2}
-        // label={renderMemoryLimitLabel}
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
+        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-limit') ? 'opacity-0' : ''}
       />
+      {!isLoading && chartData.length > 0 && (
+        <Chart.Legend
+          className="w-[calc(100%-0.5rem)] py-2"
+          onClick={onClick}
+          itemSorter={(item) => {
+            if (item.value === 'memory-request') {
+              return -1
+            }
+            if (item.value === 'memory-limit') {
+              return -2
+            }
+            return 0
+          }}
+          content={(props) => (
+            <Chart.LegendContent
+              name="memory"
+              selectedKeys={legendSelectedKeys}
+              formatter={(value) => {
+                if (value === 'memory-request') {
+                  return 'Memory Request'
+                }
+                if (value === 'memory-limit') {
+                  return 'Memory Limit'
+                }
+                return value as string
+              }}
+              {...props}
+            />
+          )}
+        />
+      )}
     </LocalChart>
   )
 }

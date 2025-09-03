@@ -49,10 +49,6 @@ function getDisplayName(seriesKey: string): string {
   } else if (seriesKey.endsWith('-storage')) {
     return `${upperCaseFirstLetter(seriesKey)}`.replace(/-/g, ' ')
   }
-  // Remove the qovery namespace of the series key (<qovery-namespace>-<service-name>-<pod-name>)
-  if (seriesKey.startsWith('qovery-') || seriesKey.startsWith('app-')) {
-    return seriesKey.replace(/^[^-]+-[^-]+-/, '')
-  }
   return seriesKey
 }
 

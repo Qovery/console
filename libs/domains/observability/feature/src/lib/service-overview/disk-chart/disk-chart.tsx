@@ -153,10 +153,10 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       tooltipLabel="Storage I/O"
       serviceId={serviceId}
       yDomain={yDomain}
-      showLegend
     >
       <Line
         dataKey="read-ephemeral-storage"
+        name="read-ephemeral-storage"
         type="linear"
         stroke="var(--color-green-500)"
         strokeWidth={2}
@@ -166,6 +166,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       />
       <Line
         dataKey="read-persistent-storage"
+        name="read-persistent-storage"
         type="linear"
         stroke="var(--color-green-700)"
         strokeWidth={2}
@@ -175,6 +176,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       />
       <Line
         dataKey="write-ephemeral-storage"
+        name="write-ephemeral-storage"
         type="linear"
         stroke="var(--color-yellow-500)"
         strokeWidth={2}
@@ -184,6 +186,7 @@ export function DiskChart({ clusterId, serviceId }: { clusterId: string; service
       />
       <Line
         dataKey="write-persistent-storage"
+        name="write-persistent-storage"
         type="linear"
         stroke="var(--color-yellow-700)"
         strokeWidth={2}
