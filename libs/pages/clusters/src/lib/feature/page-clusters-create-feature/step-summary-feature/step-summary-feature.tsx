@@ -10,6 +10,7 @@ import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
 import {
+  CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
@@ -80,6 +81,10 @@ export function StepSummaryFeature() {
     navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL)
   }
 
+  const goToEksConfig = () => {
+    navigate(creationFlowUrl + CLUSTERS_CREATION_EKS_URL)
+  }
+
   const onBack = () => {
     if (generalData?.installation_type === 'SELF_MANAGED') {
       goToKubeconfig()
@@ -137,6 +142,33 @@ export function StepSummaryFeature() {
       }
       return
     }
+
+    // EKS
+    if (generalData.installation_type === 'PARTIALLY_MANAGED') {
+      try {
+        await createCluster({
+          organizationId,
+          clusterRequest: {
+            name: generalData.name,
+            description: generalData.description,
+            region: generalData.region,
+            cloud_provider: generalData.cloud_provider,
+            kubernetes: 'PARTIALLY_MANAGED',
+            production: generalData.production,
+            features: [],
+            cloud_provider_credentials,
+            infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
+          },
+        })
+
+        navigate(CLUSTERS_URL(organizationId))
+      } catch (e) {
+        console.error(e)
+      }
+
+      return
+    }
+
     if (resourcesData) {
       let formatFeatures: ClusterRequestFeaturesInner[] = []
 
@@ -324,6 +356,7 @@ export function StepSummaryFeature() {
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
           goToKubeconfig={goToKubeconfig}
+          goToEksConfig={goToEksConfig}
         />
       )}
     </FunnelFlowBody>

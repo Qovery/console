@@ -1,3 +1,4 @@
+import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -47,6 +48,12 @@ export const useClusterContainerCreateContext = () => {
 
 export const steps = (clusterGeneralData?: ClusterGeneralData) => {
   return match(clusterGeneralData)
+    .with({ installation_type: 'PARTIALLY_MANAGED' }, () => [
+      { title: 'Create new cluster', key: 'general' },
+      { title: 'Kubeconfig', key: 'kubeconfig' },
+      { title: 'EKS configuration', key: 'eks' },
+      { title: 'Ready to install', key: 'summary' },
+    ])
     .with({ installation_type: 'SELF_MANAGED' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Kubeconfig', key: 'kubeconfig' },
@@ -90,6 +97,21 @@ export const defaultResourcesData: ClusterResourcesData = {
       requirements: [],
     },
   },
+  infrastructure_charts_parameters: {
+    cert_manager_parameters: {
+      kubernetes_namespace: '',
+    },
+    metal_lb_parameters: {
+      ip_address_pools: [],
+    },
+    nginx_parameters: {
+      replica_count: 1,
+      default_ssl_certificate: '',
+      publish_status_address: '',
+      annotation_metal_lb_load_balancer_ips: '',
+      annotation_external_dns_kubernetes_target: '',
+    },
+  },
 }
 
 export function PageClusterCreateFeature() {
@@ -114,11 +136,28 @@ export function PageClusterCreateFeature() {
 
   useEffect(() => {
     if (slug) {
-      const defaultOptions = match(slug)
-        .with('AWS', () => ({ installation_type: 'MANAGED', cloud_provider: 'AWS' }))
-        .with('SCW', () => ({ installation_type: 'MANAGED', cloud_provider: 'SCW' }))
-        .with('GCP', () => ({ installation_type: 'MANAGED', cloud_provider: 'GCP' }))
-        .with('AZURE', () => ({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }))
+      const defaultOptions: Partial<ClusterGeneralData> | undefined = match(slug)
+        .with('AWS-eks-anywhere', () => ({
+          installation_type: 'PARTIALLY_MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.AWS,
+          region: 'eu-west-3', // This value is hardcoded because the API doesn't support it yet
+        }))
+        .with('AWS', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.AWS,
+        }))
+        .with('SCW', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.SCW,
+        }))
+        .with('GCP', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.GCP,
+        }))
+        .with('AZURE', () => ({
+          installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],
+          cloud_provider: CloudProviderEnum.AZURE,
+        }))
         .otherwise(() => undefined)
       if (defaultOptions) {
         setGeneralData({

@@ -47,7 +47,8 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
   const k8sUpdateAvailable =
     clusterStatus.next_k8s_available_version &&
     clusterStatus.next_k8s_available_version !== null &&
-    clusterStatus.status === 'DEPLOYED'
+    clusterStatus.status === 'DEPLOYED' &&
+    cluster.kubernetes !== 'PARTIALLY_MANAGED'
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
 
   const tooltipClusterNeedUpdate = clusterNeedUpdate && (
@@ -121,11 +122,13 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
-    cluster.cloud_provider !== 'GCP' && isStopAvailable(clusterStatus.status) && (
-      <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
-        Stop
-      </DropdownMenu.Item>
-    ),
+    cluster.cloud_provider !== 'GCP' &&
+      isStopAvailable(clusterStatus.status) &&
+      cluster.kubernetes !== 'PARTIALLY_MANAGED' && (
+        <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
+          Stop
+        </DropdownMenu.Item>
+      ),
     k8sUpdateAvailable && (
       <DropdownMenu.Item
         key="3"

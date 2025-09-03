@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -5,6 +6,7 @@ import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
+  CLUSTER_SETTINGS_EKS_ANYWHERE_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
   CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
@@ -19,10 +21,10 @@ import PageSettings from '../../ui/page-settings/page-settings'
 
 export function PageSettingsFeature() {
   const { organizationId = '', clusterId = '' } = useParams()
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 
   useDocumentTitle('Cluster - Settings')
-
-  const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const pathSettings = CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL
 
@@ -30,6 +32,12 @@ export function PageSettingsFeature() {
     title: 'General',
     icon: IconAwesomeEnum.WHEEL,
     url: pathSettings + CLUSTER_SETTINGS_GENERAL_URL,
+  }
+
+  const eksLink = {
+    title: 'EKS Anywhere configuration',
+    icon: IconAwesomeEnum.CLOUD,
+    url: pathSettings + CLUSTER_SETTINGS_EKS_ANYWHERE_URL,
   }
 
   const credentialsLink = {
@@ -70,15 +78,23 @@ export function PageSettingsFeature() {
 
   const links = match(cluster)
     .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, imageRegistryLink, advancedSettingsLink, dangerZoneLink])
-    .with({ cloud_provider: 'AWS', kubernetes: 'MANAGED' }, () => [
-      generalLink,
-      credentialsLink,
-      resourcesLink,
-      imageRegistryLink,
-      networkLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
+    .with(
+      { cloud_provider: 'AWS', kubernetes: 'MANAGED' },
+      { cloud_provider: 'AWS', kubernetes: 'PARTIALLY_MANAGED' },
+      () => {
+        const eksAnywhereCluster = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED'
+        return [
+          generalLink,
+          ...(eksAnywhereCluster ? [eksLink] : []),
+          credentialsLink,
+          ...(eksAnywhereCluster ? [] : [resourcesLink]),
+          imageRegistryLink,
+          ...(eksAnywhereCluster ? [] : [networkLink]),
+          advancedSettingsLink,
+          dangerZoneLink,
+        ]
+      }
+    )
     .with({ cloud_provider: 'SCW' }, () => [
       generalLink,
       credentialsLink,

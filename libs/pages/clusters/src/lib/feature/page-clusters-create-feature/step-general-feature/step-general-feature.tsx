@@ -52,18 +52,24 @@ export function StepGeneralFeature() {
           requirements: [],
         },
       },
+      infrastructure_charts_parameters: d?.infrastructure_charts_parameters,
     }))
 
-    if (credentials.length > 0) {
+    if (credentials.length > 0 || data.installation_type === 'PARTIALLY_MANAGED') {
       // necessary to get the name of credentials
-      const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
-      data['credentials_name'] = currentCredentials.name
+      if (data['credentials']) {
+        const currentCredentials = credentials?.filter((item) => item.id === data['credentials'])[0]
+        data['credentials_name'] = currentCredentials.name
+      }
 
       setGeneralData(data)
       match(data)
         .with({ installation_type: 'SELF_MANAGED' }, () => navigate(creationFlowUrl + CLUSTERS_CREATION_KUBECONFIG_URL))
         .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () =>
           navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
+        )
+        .with({ installation_type: 'PARTIALLY_MANAGED' }, () =>
+          navigate(creationFlowUrl + CLUSTERS_CREATION_KUBECONFIG_URL)
         )
         .otherwise(() => navigate(creationFlowUrl + CLUSTERS_CREATION_RESOURCES_URL))
     }

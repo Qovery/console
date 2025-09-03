@@ -21,6 +21,7 @@ export interface StepSummaryProps {
   goToFeatures: () => void
   goToResources: () => void
   goToKubeconfig: () => void
+  goToEksConfig: () => void
   goToGeneral: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
@@ -117,6 +118,7 @@ export function StepSummary(props: StepSummaryProps) {
                 {match(props.generalData.installation_type)
                   .with('MANAGED', () => 'Managed')
                   .with('SELF_MANAGED', () => 'Self-Managed')
+                  .with('PARTIALLY_MANAGED', () => 'Partially managed (EKS Anywhere)')
                   .with('LOCAL_DEMO', () => undefined)
                   .exhaustive()}
               </li>
@@ -129,16 +131,20 @@ export function StepSummary(props: StepSummaryProps) {
                   <strong className="font-medium">Production: </strong>true
                 </li>
               )}
-              <li>
-                <strong className="font-medium">Provider: </strong>
-                <span className="inline-flex items-center font-medium">
-                  <Icon className="ml-1 w-4" name={props.generalData.cloud_provider} />
-                </span>
-              </li>
-              <li>
-                <strong className="font-medium">Region: </strong>
-                {props.generalData.region}
-              </li>
+              {props.generalData.installation_type !== 'PARTIALLY_MANAGED' && (
+                <>
+                  <li>
+                    <strong className="font-medium">Provider: </strong>
+                    <span className="inline-flex items-center font-medium">
+                      <Icon className="ml-1 w-4" name={props.generalData.cloud_provider} />
+                    </span>
+                  </li>
+                  <li>
+                    <strong className="font-medium">Region: </strong>
+                    {props.generalData.region}
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -226,6 +232,101 @@ export function StepSummary(props: StepSummaryProps) {
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </Section>
+          ))
+          .with({ installation_type: 'PARTIALLY_MANAGED' }, () => (
+            <>
+              <Section
+                data-testid="summary-kubeconfig"
+                className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
+              >
+                <div className="mr-2 flex-grow">
+                  <Heading className="mb-3">Kubeconfig</Heading>
+                  <ul className="list-none text-sm text-neutral-400">
+                    <li>
+                      <strong className="font-medium">Kubeconfig: </strong>
+                      {props.kubeconfigData?.file_name}
+                    </li>
+                  </ul>
+                </div>
+                <Button type="button" variant="plain" size="md" onClick={props.goToKubeconfig}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </Section>
+              <Section
+                data-testid="summary-eks-anywhere"
+                className="mb-2 flex w-full flex-row rounded border border-neutral-250 bg-neutral-100 p-4"
+              >
+                <div className="mr-2 flex-grow">
+                  <Heading className="mb-3">EKS configuration</Heading>
+
+                  <div className="space-y-4">
+                    <div>
+                      <span className="text-sm font-bold text-neutral-400">Cert Manager</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-400">
+                        <li>
+                          <span className="font-medium">Namespace: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.cert_manager_parameters
+                              ?.kubernetes_namespace
+                          }
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="text-sm font-bold text-neutral-400">MetalLB</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-400">
+                        <li>
+                          <span className="font-medium">IP pool: </span>
+                          {props.resourcesData.infrastructure_charts_parameters?.metal_lb_parameters?.ip_address_pools}
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div>
+                      <span className="text-sm font-bold text-neutral-400">Nginx</span>
+                      <ul className="list-none space-y-2 text-sm text-neutral-400">
+                        <li>
+                          <span className="font-medium">Number of replicas: </span>
+                          {props.resourcesData.infrastructure_charts_parameters?.nginx_parameters?.replica_count}
+                        </li>
+                        <li>
+                          <span className="font-medium">Default SSL certificate: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.default_ssl_certificate
+                          }
+                        </li>
+                        <li>
+                          <span className="font-medium">Publish status address: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.publish_status_address
+                          }
+                        </li>
+                        <li>
+                          <span className="font-medium">Annotation IPs: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.annotation_metal_lb_load_balancer_ips
+                          }
+                        </li>
+                        <li>
+                          <span className="font-medium">Annotation external DNS target: </span>
+                          {
+                            props.resourcesData.infrastructure_charts_parameters?.nginx_parameters
+                              ?.annotation_external_dns_kubernetes_target
+                          }
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <Button type="button" variant="plain" size="md" onClick={props.goToEksConfig}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </Section>
+            </>
           ))
           .otherwise(() => null)}
 

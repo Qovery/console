@@ -1,4 +1,5 @@
 import {
+  CLUSTERS_CREATION_EKS_URL,
   CLUSTERS_CREATION_FEATURES_URL,
   CLUSTERS_CREATION_GENERAL_URL,
   CLUSTERS_CREATION_KUBECONFIG_URL,
@@ -8,6 +9,7 @@ import {
   CLUSTERS_NEW_URL,
   type Route,
 } from '@qovery/shared/routes'
+import { StepEKSFeature } from '../feature/page-clusters-create-feature/step-eks-feature/step-eks-feature'
 import StepFeaturesFeature from '../feature/page-clusters-create-feature/step-features-feature/step-features-feature'
 import StepGeneralFeature from '../feature/page-clusters-create-feature/step-general-feature/step-general-feature'
 import StepKubeconfigFeature from '../feature/page-clusters-create-feature/step-kubeconfig-feature/step-kubeconfig-feature'
@@ -31,6 +33,10 @@ export const ROUTER_CLUSTER_CREATION: Route[] = [
   {
     path: CLUSTERS_CREATION_GENERAL_URL,
     component: <StepGeneralFeature />,
+  },
+  {
+    path: CLUSTERS_CREATION_EKS_URL,
+    component: <StepEKSFeature />,
   },
   {
     path: CLUSTERS_CREATION_KUBECONFIG_URL,

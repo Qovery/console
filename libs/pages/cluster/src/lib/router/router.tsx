@@ -3,6 +3,7 @@ import {
   CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
+  CLUSTER_SETTINGS_EKS_ANYWHERE_URL,
   CLUSTER_SETTINGS_GENERAL_URL,
   CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
   CLUSTER_SETTINGS_NETWORK_URL,
@@ -14,6 +15,7 @@ import { PageOverviewFeature } from '../feature/page-overview-feature/page-overv
 import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsCredentialsFeature from '../feature/page-settings-credentials-feature/page-settings-credentials-feature'
 import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
+import { PageSettingsEKSAnywhereFeature } from '../feature/page-settings-eks-feature/page-settings-eks-feature'
 import { PageSettingsFeature } from '../feature/page-settings-feature/page-settings-feature'
 import PageSettingsGeneralFeature from '../feature/page-settings-general-feature/page-settings-general-feature'
 import PageSettingsImageRegistryFeature from '../feature/page-settings-image-registry-feature/page-settings-image-registry-feature'
@@ -35,6 +37,10 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   {
     path: CLUSTER_SETTINGS_GENERAL_URL,
     component: <PageSettingsGeneralFeature />,
+  },
+  {
+    path: CLUSTER_SETTINGS_EKS_ANYWHERE_URL,
+    component: <PageSettingsEKSAnywhereFeature />,
   },
   {
     path: CLUSTER_SETTINGS_CREDENTIALS_URL,
