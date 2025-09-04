@@ -520,7 +520,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             </div>
             <div className="flex items-center gap-1">
               {handleResetLegend && (
-                <Tooltip content="Reset filters">
+                <Tooltip content="Reset filter">
                   <Button
                     variant="outline"
                     color="neutral"
@@ -528,7 +528,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
                     className="w-6 items-center justify-center p-0"
                     onClick={handleResetLegend}
                   >
-                    <Icon iconName="xmark" />
+                    <Icon iconName="filter-slash" iconStyle="regular" />
                   </Button>
                 </Tooltip>
               )}

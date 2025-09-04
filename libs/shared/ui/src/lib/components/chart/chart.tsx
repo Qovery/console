@@ -296,6 +296,7 @@ export const ChartLegendContent = ({
               <Button
                 key={String(item.dataKey)}
                 variant={isActive ? 'surface' : 'outline'}
+                size="xs"
                 radius="full"
                 className={clsx(
                   "relative z-0 cursor-pointer gap-2 transition-colors duration-100 before:absolute before:bottom-0 before:left-[-8px] before:right-[-8px] before:top-0 before:-z-[1] before:content-['']",

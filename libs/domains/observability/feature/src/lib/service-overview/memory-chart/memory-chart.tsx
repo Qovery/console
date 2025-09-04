@@ -168,7 +168,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
-          className="w-[calc(100%-0.5rem)] py-2"
+          className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
           itemSorter={(item) => {
             if (item.value === 'memory-request') {
