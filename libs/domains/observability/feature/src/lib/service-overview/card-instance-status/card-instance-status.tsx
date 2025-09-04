@@ -3,99 +3,82 @@ import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { CardMetricButton } from '../card-metric/card-metric'
 import { InstanceStatusChart } from '../instance-status-chart/instance-status-chart'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string, timeRange: string) => `
-  (
-    round(
-      max_over_time(
-        (
-          sum(
-            increase(
-              kube_pod_container_status_restarts_total{container!="POD"}[${timeRange}:]
-            )
-            * on(namespace, pod) group_left(label_qovery_com_service_id)
-              max by(namespace, pod, label_qovery_com_service_id)(
-                kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-              )
-          )
-          or vector(0)
-        )[${timeRange}:]
-      )
-    )
-  )
+const query = (timeRange: string, containerName: string) => `
+  sum(increase(kube_pod_container_status_restarts_total{container="${containerName}"}[${timeRange}]))
   +
-  sum_over_time(
-    (
-      sum(
-        (
-          kube_pod_container_status_waiting_reason{
-            container!="POD",
-            reason!~"ContainerCreating|PodInitializing|Completed"
-          }
-          * on(namespace, pod) group_left(label_qovery_com_service_id)
-            kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-        )
-        or vector(0)
+  count(
+    max by (pod) (
+      max_over_time(
+        kube_pod_container_status_waiting_reason{
+          container="${containerName}",
+          reason!~"ContainerCreating|PodInitializing|Completed"
+        }[${timeRange}]
       )
-    )[${timeRange}:]
+    ) > 0
   )
 `
-
-const queryAutoscalingReached = (serviceId: string, timeRange: string) => `
-  max_over_time(
+const queryAutoscalingReached = (timeRange: string, containerName: string) => `
+  100 *
+  avg_over_time(
+  (
+    max by (namespace, horizontalpodautoscaler) (
+      kube_horizontalpodautoscaler_status_condition{
+        condition="ScalingLimited", status="true",
+        horizontalpodautoscaler="${containerName}"
+      }
+    )
+    *
     (
-    sum by (label_qovery_com_service_id) (
-
-      increase(
-        kube_horizontalpodautoscaler_status_condition{
-          condition="ScalingLimited", status="true"
-        }[5m]
-      )
-      *
-      on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
-      (
-        max by(namespace, horizontalpodautoscaler)(
-          kube_horizontalpodautoscaler_status_current_replicas
-        )
-        == bool on(namespace, horizontalpodautoscaler)
-        max by(namespace, horizontalpodautoscaler)(
-          kube_horizontalpodautoscaler_spec_max_replicas
-        )
-      )
-      *
-      on(namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
-      max by(namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
-        kube_horizontalpodautoscaler_labels{
-          label_qovery_com_service_id="${serviceId}"
+      max by (namespace, horizontalpodautoscaler) (
+        kube_horizontalpodautoscaler_status_current_replicas{
+          horizontalpodautoscaler="${containerName}"
         }
       )
-    ) > bool 0
-  )[${timeRange}:])
+      == bool
+      max by (namespace, horizontalpodautoscaler) (
+        kube_horizontalpodautoscaler_spec_max_replicas{
+          horizontalpodautoscaler="${containerName}"
+        }
+      )
+    )
+  )[${timeRange}:30s]
+)
 `
 
-export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
-  const { queryTimeRange } = useServiceOverviewContext()
+export function CardInstanceStatus({
+  serviceId,
+  clusterId,
+  containerName,
+}: {
+  serviceId: string
+  clusterId: string
+  containerName: string
+}) {
+  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: service } = useService({ serviceId })
-  const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useMetrics({
+  const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useInstantMetrics({
     clusterId,
-    query: query(serviceId, queryTimeRange),
-    queryRange: 'query',
+    query: query(queryTimeRange, containerName),
+    endTimestamp,
   })
-  const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useMetrics({
+  const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useInstantMetrics({
     clusterId,
-    query: queryAutoscalingReached(serviceId, queryTimeRange),
-    queryRange: 'query',
+    query: queryAutoscalingReached(queryTimeRange, containerName),
+    endTimestamp,
   })
 
   const instanceErrors = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0
-  const autoscalingReached = metricsAutoscalingReached?.data?.result[0]?.value[1] || 0
+  const autoscalingReachedRaw = metricsAutoscalingReached?.data?.result[0]?.value[1] || '0'
+  const autoscalingReachedNum = parseFloat(autoscalingReachedRaw)
+  const autoscalingReached = Number(autoscalingReachedNum.toFixed(1))
 
   const title = 'Instance number'
   const description = 'Number of healthy and unhealthy instances over time.'
@@ -122,7 +105,7 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
             {isAutoscalingEnabled && (
               <Skeleton show={isLoading} width={174} height={16}>
                 <span className="text-ssm text-neutral-400">
-                  Auto-scaling limit reached <span className="font-medium">{autoscalingReached}</span>
+                  Auto-scaling limit hit rate <span className="font-medium">{autoscalingReached}% </span>
                 </span>
               </Skeleton>
             )}
@@ -136,13 +119,18 @@ export function CardInstanceStatus({ serviceId, clusterId }: { serviceId: string
           </div>
         </div>
         <div>
-          <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} />
+          <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} containerName={containerName} />
         </div>
       </Section>
       {isModalOpen && (
         <ModalChart title={title} description={description} open={isModalOpen} onOpenChange={setIsModalOpen}>
           <div className="grid h-full grid-cols-1">
-            <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} isFullscreen />
+            <InstanceStatusChart
+              clusterId={clusterId}
+              serviceId={serviceId}
+              containerName={containerName}
+              isFullscreen
+            />
           </div>
         </ModalChart>
       )}

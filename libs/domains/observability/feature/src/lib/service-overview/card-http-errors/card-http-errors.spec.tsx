@@ -1,15 +1,17 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as useMetricsImport from '../../hooks/use-metrics/use-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardHTTPErrors } from './card-http-errors'
 
-jest.mock('../../hooks/use-metrics/use-metrics')
-const useMetrics = useMetricsImport.useMetrics as jest.MockedFunction<typeof useMetricsImport.useMetrics>
+jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
+  typeof useInstantMetricsImport.useInstantMetrics
+>
 
 jest.mock('../instance-http-errors-chart/instance-http-errors-chart', () => ({
   InstanceHTTPErrorsChart: () => <div data-testid="instance-http-errors-chart">Chart Component</div>,
 }))
-const createMockUseMetricsReturn = (
+const createMockUseInstantMetricsReturn = (
   data?: {
     data?: {
       result?: Array<{
@@ -22,12 +24,14 @@ const createMockUseMetricsReturn = (
   ({
     data,
     isLoading,
-  }) as unknown as ReturnType<typeof useMetricsImport.useMetrics>
+  }) as unknown as ReturnType<typeof useInstantMetricsImport.useInstantMetrics>
 
 describe('CardHTTPErrors', () => {
   const defaultProps = {
     serviceId: 'test-service-id',
     clusterId: 'test-cluster-id',
+    containerName: 'test-container-name',
+    ingressName: 'test-ingress-name',
   }
 
   beforeEach(() => {
@@ -35,7 +39,7 @@ describe('CardHTTPErrors', () => {
   })
 
   it('should render successfully with loading state', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn(undefined, true))
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn(undefined, true))
 
     const { baseElement } = renderWithProviders(
       <ServiceOverviewProvider>
@@ -47,17 +51,29 @@ describe('CardHTTPErrors', () => {
   })
 
   it('should render with no errors (GREEN status)', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
-        data: {
-          result: [
-            {
-              value: [1234567890, '0'],
-            },
-          ],
-        },
-      })
-    )
+    useInstantMetrics
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      )
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      )
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -70,17 +86,29 @@ describe('CardHTTPErrors', () => {
   })
 
   it('should render with errors (RED status) and show modal link', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
-        data: {
-          result: [
-            {
-              value: [1234567890, '15.5'],
-            },
-          ],
-        },
-      })
-    )
+    useInstantMetrics
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '15.5'],
+              },
+            ],
+          },
+        })
+      )
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      )
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -96,13 +124,21 @@ describe('CardHTTPErrors', () => {
   })
 
   it('should handle empty metrics data', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
-        data: {
-          result: [],
-        },
-      })
-    )
+    useInstantMetrics
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [],
+          },
+        })
+      )
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [],
+          },
+        })
+      )
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -114,7 +150,9 @@ describe('CardHTTPErrors', () => {
   })
 
   it('should handle undefined metrics data', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn())
+    useInstantMetrics
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -126,17 +164,31 @@ describe('CardHTTPErrors', () => {
   })
 
   it('should open modal when clicking on card with errors', async () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
-        data: {
-          result: [
-            {
-              value: [1234567890, '25'],
-            },
-          ],
-        },
-      })
-    )
+    let callCount = 0
+    useInstantMetrics.mockImplementation(() => {
+      callCount++
+      if (callCount === 1) {
+        return createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '25'],
+              },
+            ],
+          },
+        })
+      } else {
+        return createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      }
+    })
 
     const { userEvent } = renderWithProviders(
       <ServiceOverviewProvider>
@@ -155,10 +207,10 @@ describe('CardHTTPErrors', () => {
     })
   })
 
-  it('should call useMetrics with correct parameters', () => {
-    const mockUseMetrics = jest.spyOn(useMetricsImport, 'useMetrics')
-
-    mockUseMetrics.mockReturnValue(createMockUseMetricsReturn())
+  it('should call useInstantMetrics with correct parameters', () => {
+    useInstantMetrics
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
+      .mockReturnValueOnce(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -166,28 +218,41 @@ describe('CardHTTPErrors', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(mockUseMetrics).toHaveBeenCalledWith({
+    expect(useInstantMetrics).toHaveBeenCalledTimes(2)
+    expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
-      query: expect.stringContaining('nginx_ingress_controller_requests{status=~"499|5.."}'),
-      queryRange: 'query',
+      query: expect.stringContaining('nginx_ingress_controller_requests'),
+      endTimestamp: expect.any(String),
     })
 
-    const calledQuery = mockUseMetrics.mock.calls[0][0].query
-    expect(calledQuery).toContain('test-service-id')
+    const calledQuery = useInstantMetrics.mock.calls[0][0].query
+    expect(calledQuery).toContain('test-ingress-name')
   })
 
   it('should not show modal link when there are no errors', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
-        data: {
-          result: [
-            {
-              value: [1234567890, '0'],
-            },
-          ],
-        },
-      })
-    )
+    useInstantMetrics
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      )
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '100'],
+              },
+            ],
+          },
+        })
+      )
 
     renderWithProviders(
       <ServiceOverviewProvider>

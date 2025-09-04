@@ -1,4 +1,3 @@
-import type { IconName } from '@fortawesome/fontawesome-common-types'
 import { useMemo } from 'react'
 import { Area, Line, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
@@ -9,56 +8,33 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 
 const queryUnhealthyPods = (serviceId: string) => `
   sum (kube_pod_status_ready{condition="false"}
-  * on(namespace,pod) group_left(label_qovery_com_service_id)
-    max by(namespace,pod,label_qovery_com_service_id)(
-      kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-    )) > 0
+* on(namespace,pod) group_left(label_qovery_com_service_id)
+  max by(namespace,pod,label_qovery_com_service_id)(
+    kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
+  )) > 0
 `
 
 const queryHealthyPods = (serviceId: string) => `
   sum (kube_pod_status_ready{condition="true"}
-  * on(namespace,pod) group_left(label_qovery_com_service_id)
-    max by(namespace,pod,label_qovery_com_service_id)(
-      kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-    )) >0
+* on(namespace,pod) group_left(label_qovery_com_service_id)
+  max by(namespace,pod,label_qovery_com_service_id)(
+    kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
+  )) >0
 `
 
-const queryPodReason = (serviceId: string, dynamicRange: string) => `
+const queryRestartWithReason = (containerName: string, timeRange: string) => `
+sum by (reason) (
+  sum by (pod) (
+    increase(kube_pod_container_status_restarts_total{container="${containerName}"}[${timeRange}])
+  )
+  *
+  on(pod) group_left(reason)
   sum by (pod, reason) (
-    (
-      kube_pod_container_status_last_terminated_reason == 1
-    )
-    * on(namespace, pod) group_left(label_qovery_com_service_id)
-      max by(namespace, pod, label_qovery_com_service_id) (
-        kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-      )
-    unless on(namespace, pod, reason)
-    (
-      (
-        kube_pod_container_status_last_terminated_reason offset ${dynamicRange} == 1
-      )
-      * on(namespace, pod) group_left(label_qovery_com_service_id)
-        max by(namespace, pod, label_qovery_com_service_id) (
-          kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-        )
+    max without(instance, job, endpoint, service, prometheus, uid) (
+      kube_pod_container_status_last_terminated_reason{container="${containerName}"}
     )
   )
-`
-
-const queryExitCode = (serviceId: string, dynamicRange: string) => `
-  (
-    kube_pod_container_status_last_terminated_exitcode
-    * on(namespace, pod) group_left(label_qovery_com_service_id)
-      max by(namespace, pod, label_qovery_com_service_id) (
-        kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-      )
-  )
-  and on(namespace, pod, container)
-  (
-    kube_pod_container_status_restarts_total
-    >
-    kube_pod_container_status_restarts_total offset ${dynamicRange}
-  )
+)
 `
 
 const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
@@ -66,34 +42,30 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|ScalingReplicaSet"
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     }
     -
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|ScalingReplicaSet"
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     } offset ${dynamicRange}
   ) > 0
 )
 `
 
-const queryProbe = (serviceId: string, rateInterval: string) => `
- sum by (probe_type) (   increase(
-      prober_probe_total{result!="successful", probe_type="Readiness"}[${rateInterval}]
+const queryProbe = (containerName: string, rateInterval: string) => `
+ sum by (probe_type) (  increase(
+      prober_probe_total{result!="successful", probe_type="Readiness", container="${containerName}"}[${rateInterval}]
     )
-    * on(namespace,pod) group_left(label_qovery_com_service_id)
-      max by(namespace,pod,label_qovery_com_service_id)(
-        kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-      )
-      )
+ )
 `
 
-const queryMinReplicas = (serviceId: string) => `
-  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}))
+const queryMinReplicas = (containerName: string) => `
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas{horizontalpodautoscaler="${containerName}"})
 `
 
-const queryMaxReplicas = (serviceId: string) => `
-  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas * on(namespace,horizontalpodautoscaler) group_left(label_qovery_com_service_id) max by(namespace,horizontalpodautoscaler,label_qovery_com_service_id)(kube_horizontalpodautoscaler_labels{label_qovery_com_service_id="${serviceId}"}))
+const queryMaxReplicas = (containerName: string) => `
+  max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="${containerName}"})
 `
 
 const queryMaxLimitReached = (serviceId: string, rateInterval: string) => `
@@ -138,7 +110,7 @@ const getDescriptionFromReason = (reason: string): string => {
   }
 }
 
-export const getDescriptionFromProbeType = (probeType: string): string => {
+const getDescriptionFromProbeType = (probeType: string): string => {
   switch (probeType.toLowerCase()) {
     case 'readiness':
       return 'Readiness probe failed: the container is not ready to receive traffic.'
@@ -151,7 +123,7 @@ export const getDescriptionFromProbeType = (probeType: string): string => {
   }
 }
 
-export const getDescriptionFromK8sEvent = (reason: string): string => {
+const getDescriptionFromK8sEvent = (reason: string): string => {
   switch (reason) {
     case 'OOMKilled':
       return 'Container was killed because it exceeded its memory limit (Out-Of-Memory).'
@@ -173,89 +145,70 @@ export const getDescriptionFromK8sEvent = (reason: string): string => {
       return 'Pod was pre-empted by another higher-priority pod.'
     case 'NodeNotReady':
       return 'The node hosting the pod became NotReady.'
-    case 'ScalingReplicaSet':
-      return 'The autoscaler changes the number of pods based on CPU usage; new instances may be unready at first.'
     default:
       return 'Unknown'
   }
 }
 
-export const getIconFromK8sEvent = (reason: string): IconName => {
-  switch (reason) {
-    case 'ScalingReplicaSet':
-      return 'up-right-and-down-left-from-center'
-    default:
-      return 'xmark'
-  }
-}
-
-export const getColorFromK8sEvent = (reason: string): string => {
-  switch (reason) {
-    case 'ScalingReplicaSet':
-      return 'var(--color-green-500)'
-    default:
-      return 'var(--color-red-500)'
-  }
-}
-
+// TODO: keep it for now, but we should improve it
 const getExitCodeInfo = (exitCode: string): { name: string; description: string } => {
   const code = parseInt(exitCode, 10)
 
   switch (code) {
     case 0:
       return {
-        name: 'Purposely stopped',
+        name: exitCode + ': Purposely stopped',
         description: 'Used by developers to indicate that the container was automatically stopped.',
       }
     case 1:
       return {
-        name: 'Application error',
+        name: exitCode + ': Application error',
         description:
           'Container was stopped due to application error or incorrect reference in the image specification.',
       }
     case 125:
       return {
-        name: 'Container failed to run error',
+        name: exitCode + ': Container failed to run error',
         description: 'The docker run command did not execute successfully.',
       }
     case 126:
       return {
-        name: 'Command invoke error',
+        name: exitCode + ': Command invoke error',
         description: 'A command specified in the image specification could not be invoked.',
       }
     case 127:
       return {
-        name: 'File or directory not found',
+        name: exitCode + ': File or directory not found',
         description: 'File or directory specified in the image specification was not found.',
       }
     case 128:
       return {
-        name: 'Invalid argument used on exit',
+        name: exitCode + ': Invalid argument used on exit',
         description: 'Exit was triggered with an invalid exit code (valid codes are integers between 0-255).',
       }
     case 134:
       return {
-        name: 'Abnormal termination (SIGABRT)',
+        name: exitCode + ': Abnormal termination (SIGABRT)',
         description: 'The container aborted itself using the abort() function.',
       }
     case 137:
       return {
-        name: 'Immediate termination (SIGKILL)',
+        name: exitCode + ': Immediate termination (SIGKILL)',
         description: 'Container was immediately terminated by the operating system via SIGKILL signal.',
       }
     case 139:
       return {
-        name: 'Segmentation fault (SIGSEGV)',
+        name: exitCode + ': Segmentation fault (SIGSEGV)',
         description: 'Container attempted to access memory that was not assigned to it and was terminated.',
       }
     case 143:
       return {
-        name: 'Graceful termination (SIGTERM)',
+        name: exitCode + ': Graceful termination (SIGTERM)',
         description: 'Container received warning that it was about to be terminated, then terminated.',
       }
     case 255:
       return {
-        name: 'Exit Status Out Of Range',
+        name: exitCode + ': Exit Status Out Of Range',
         description:
           'Container exited, returning an exit code outside the acceptable range, meaning the cause of the error is not known.',
       }
@@ -270,10 +223,12 @@ const getExitCodeInfo = (exitCode: string): { name: string; description: string 
 export function InstanceStatusChart({
   clusterId,
   serviceId,
+  containerName,
   isFullscreen,
 }: {
   clusterId: string
   serviceId: string
+  containerName: string
   isFullscreen?: boolean
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey, timeRange } =
@@ -289,6 +244,34 @@ export function InstanceStatusChart({
     () => calculateRateInterval(startTimestamp, endTimestamp),
     [startTimestamp, endTimestamp]
   )
+
+  const intervalForEvent = useMemo(() => {
+    const startMs = Number(startTimestamp) * 1000
+    const endMs = Number(endTimestamp) * 1000
+    const durationMs = endMs - startMs
+
+    if (durationMs < 24 * 60 * 60 * 1000) {
+      return '1m'
+    } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
+      return '10m'
+    } else {
+      return '6h'
+    }
+  }, [startTimestamp, endTimestamp])
+
+  const intervalForEventInSec = useMemo(() => {
+    const startMs = Number(startTimestamp) * 1000
+    const endMs = Number(endTimestamp) * 1000
+    const durationMs = endMs - startMs
+
+    if (durationMs < 24 * 60 * 60 * 1000) {
+      return 60
+    } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
+      return 10 * 60
+    } else {
+      return 6 * 60 * 60
+    }
+  }, [startTimestamp, endTimestamp])
 
   const { data: metricsUnhealthy, isLoading: isLoadingUnhealthy } = useMetrics({
     clusterId,
@@ -306,20 +289,14 @@ export function InstanceStatusChart({
     query: queryHealthyPods(serviceId),
   })
 
-  const { data: metricsReason, isLoading: isLoadingMetricsReason } = useMetrics({
+  const { data: metricsRestartsWithReason, isLoading: isLoadingMetricsRestartsWithReason } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryPodReason(serviceId, dynamicRange),
-  })
-
-  const { data: metricsExitCode, isLoading: isLoadingMetricsExitCode } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    timeRange,
-    query: queryExitCode(serviceId, dynamicRange),
+    query: queryRestartWithReason(containerName, timeRange),
+    overriddenStep: intervalForEvent, // TODO PG check if necessary
+    overriddenResolution: '0s', // TODO PG check if necessary
   })
 
   const { data: metricsK8sEvent, isLoading: isLoadingMetricsK8sEvent } = useMetrics({
@@ -342,7 +319,7 @@ export function InstanceStatusChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMinReplicas(serviceId),
+    query: queryMinReplicas(containerName),
     timeRange,
   })
 
@@ -350,7 +327,7 @@ export function InstanceStatusChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMaxReplicas(serviceId),
+    query: queryMaxReplicas(containerName),
     timeRange,
   })
 
@@ -426,8 +403,7 @@ export function InstanceStatusChart({
 
   const referenceLineData = useMemo(() => {
     if (
-      !metricsReason?.data?.result &&
-      !metricsExitCode?.data?.result &&
+      !metricsRestartsWithReason?.data?.result &&
       !metricsK8sEvent?.data?.result &&
       !metricsProbe?.data?.result &&
       !metricsHpaMaxLimitReached?.data?.result
@@ -437,50 +413,41 @@ export function InstanceStatusChart({
     const referenceLines: ReferenceLineEvent[] = []
 
     // Add metric-based reference lines
-    if (metricsReason?.data?.result) {
-      metricsReason.data.result.forEach(
-        (series: { metric: { reason: string; pod: string }; values: [number, string][] }) => {
+    if (metricsRestartsWithReason?.data?.result) {
+      metricsRestartsWithReason.data.result.forEach(
+        (series: { metric: { reason: string }; values: [number, string][] }) => {
+          let prevValue: number | null = null
+          let prevTime = 0
+
           series.values.forEach(([timestamp, value]: [number, string]) => {
-            const numValue = parseFloat(value)
-            if (numValue > 0) {
+            const numValue = Math.floor(parseFloat(value))
+            const currentTime = timestamp
+
+            if (numValue > 0 && (numValue !== prevValue || currentTime - prevTime > 3 * intervalForEventInSec)) {
+              if (currentTime - prevTime > 3 * intervalForEventInSec) {
+                prevValue = 0
+              }
+
+              const count = Math.abs(numValue - (prevValue || 0))
               const key = `${series.metric.reason}-${timestamp}`
               referenceLines.push({
                 type: 'metric',
                 timestamp: timestamp * 1000,
-                reason: series.metric.reason,
+                reason:
+                  count > 1
+                    ? (series.metric['reason'] || 'unknown') + ` (${count} times)`
+                    : series.metric['reason'] || 'unknown',
                 description: getDescriptionFromReason(series.metric.reason),
                 icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
-                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-500)' : 'var(--color-red-500)',
-                pod: series.metric.pod,
+                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-600)' : 'var(--color-red-500)',
                 key,
               })
             }
+            prevValue = numValue
+            prevTime = currentTime
           })
         }
       )
-    }
-
-    // Add exit code as reference lines
-    if (metricsExitCode?.data?.result) {
-      metricsExitCode.data.result.forEach((series: { metric: { pod: string }; values: [number, string][] }) => {
-        series.values.forEach(([timestamp, value]: [number, string]) => {
-          const numValue = parseFloat(value)
-          if (numValue >= 0) {
-            const key = `${series.metric.pod}-${timestamp}`
-            const exitCodeInfo = getExitCodeInfo(series.values?.[0]?.[1])
-            referenceLines.push({
-              type: 'exit-code',
-              timestamp: timestamp * 1000,
-              reason: exitCodeInfo.name,
-              description: exitCodeInfo.description,
-              color: 'var(--color-red-500)',
-              icon: 'exclamation',
-              pod: series.metric.pod,
-              key,
-            })
-          }
-        })
-      })
     }
 
     // Add k8s event as reference lines
@@ -496,8 +463,8 @@ export function InstanceStatusChart({
                 timestamp: timestamp * 1000,
                 reason: series.metric.reason,
                 description: getDescriptionFromK8sEvent(series.metric.reason),
-                icon: getIconFromK8sEvent(series.metric.reason),
-                color: getColorFromK8sEvent(series.metric.reason),
+                icon: 'xmark',
+                color: 'var(--color-red-500)',
                 pod: series.metric.pod,
                 key,
               })
@@ -544,6 +511,7 @@ export function InstanceStatusChart({
                 reason: 'ScalingLimited',
                 description:
                   'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
+                color: 'var(--color-red-500)',
                 icon: 'exclamation',
                 pod: series.metric.pod,
                 key,
@@ -556,15 +524,15 @@ export function InstanceStatusChart({
 
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
+
     return referenceLines
-  }, [metricsReason, metricsExitCode, metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached])
+  }, [metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached, metricsRestartsWithReason, intervalForEventInSec])
 
   const isLoading = useMemo(
     () =>
       isLoadingUnhealthy ||
       isLoadingHealthy ||
-      isLoadingMetricsReason ||
-      isLoadingMetricsExitCode ||
+      isLoadingMetricsRestartsWithReason ||
       isLoadingMetricsK8sEvent ||
       isLoadingMetricsProbe ||
       isLoadingHpaMinReplicas ||
@@ -573,8 +541,7 @@ export function InstanceStatusChart({
     [
       isLoadingUnhealthy,
       isLoadingHealthy,
-      isLoadingMetricsReason,
-      isLoadingMetricsExitCode,
+      isLoadingMetricsRestartsWithReason,
       isLoadingMetricsK8sEvent,
       isLoadingMetricsProbe,
       isLoadingHpaMinReplicas,
@@ -591,7 +558,6 @@ export function InstanceStatusChart({
       tooltipLabel="Instance issues"
       unit="instance"
       serviceId={serviceId}
-      margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
       yDomain={[0, 'dataMax + 1']}
       referenceLineData={referenceLineData}
       isFullscreen={isFullscreen}

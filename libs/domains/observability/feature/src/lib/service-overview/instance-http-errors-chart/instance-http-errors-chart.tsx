@@ -25,7 +25,15 @@ sum (
 ) * 100
 `
 
-export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function InstanceHTTPErrorsChart({
+  clusterId,
+  serviceId,
+  containerName,
+}: {
+  clusterId: string
+  serviceId: string
+  containerName: string
+}) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const rateInterval = useMemo(
@@ -79,7 +87,6 @@ export function InstanceHTTPErrorsChart({ clusterId, serviceId }: { clusterId: s
       tooltipLabel="HTTP Error Rate"
       unit="%"
       serviceId={serviceId}
-      margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
       isFullscreen
     >
       {seriesNames.map((name) => (

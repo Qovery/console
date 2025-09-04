@@ -7,18 +7,21 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (serviceId: string, rateInterval: string) => `
-  sum by(path,status)( rate(nginx_ingress_controller_requests{}[${rateInterval}])
-    * on(ingress) group_left(label_qovery_com_associated_service_id)
-      max by(ingress, label_qovery_com_associated_service_id)(
-        kube_ingress_labels{
-          label_qovery_com_associated_service_id =  "${serviceId}"
-        }
-      )
-  )
+const query = (serviceId: string, rateInterval: string, ingressName: string) => `
+  sum by(path,status)(rate(nginx_ingress_controller_requests{ingress="${ingressName}"}[${rateInterval}]))
 `
 
-export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId: string; serviceId: string }) {
+export function NetworkRequestStatusChart({
+  clusterId,
+  serviceId,
+  containerName,
+  ingressName,
+}: {
+  clusterId: string
+  serviceId: string
+  containerName: string
+  ingressName: string
+}) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
   const rateInterval = useMemo(
@@ -31,7 +34,7 @@ export function NetworkRequestStatusChart({ clusterId, serviceId }: { clusterId:
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: query(serviceId, rateInterval),
+    query: query(serviceId, rateInterval, ingressName),
   })
 
   const chartData = useMemo(() => {

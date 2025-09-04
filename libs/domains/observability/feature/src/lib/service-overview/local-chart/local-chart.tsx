@@ -1,39 +1,25 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { type ElementRef, type PropsWithChildren, forwardRef, memo, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { type ElementRef, type PropsWithChildren, forwardRef, memo, useState } from 'react'
 import { CartesianGrid, ComposedChart, ReferenceArea, ReferenceLine, XAxis, YAxis } from 'recharts'
-import { type AnyService } from '@qovery/domains/services/data-access'
-import { useService } from '@qovery/domains/services/feature'
 import {
-  Badge,
   Button,
   Chart,
   Heading,
   Icon,
   Section,
-  Skeleton,
   Tooltip,
   createXAxisConfig,
   getTimeGranularity,
   useZoomableChart,
 } from '@qovery/shared/ui'
-import { getColorByPod } from '@qovery/shared/util-hooks'
-import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { useEvents } from '../../hooks/use-events/use-events'
+import { twMerge } from '@qovery/shared/util-js'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
+import { EventSidebar } from './event-sidebar'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
-
-export type LineLabelProps = {
-  x?: number
-  y?: number
-  index?: number
-  value?: number | string
-  [key: string]: unknown
-}
+import { useChartEvents } from './use-chart-events'
 
 export interface ReferenceLineEvent {
   type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe'
@@ -58,14 +44,7 @@ interface ChartContentProps extends PropsWithChildren {
   xDomain?: [number | string, number | string]
   yDomain?: [number | string, number | string]
   tooltipLabel?: string
-  margin?: {
-    top?: number
-    bottom?: number
-    left?: number
-    right?: number
-  }
   referenceLineData?: ReferenceLineEvent[]
-  service?: AnyService
   isFullscreen?: boolean
 }
 
@@ -79,10 +58,8 @@ export const ChartContent = memo(function ChartContent({
   children,
   xDomain,
   yDomain,
-  margin = { top: 14, bottom: 0, left: 0, right: 0 },
   referenceLineData,
-  service,
-  isFullscreen = true,
+  isFullscreen = false,
 }: ChartContentProps) {
   const {
     startTimestamp,
@@ -137,215 +114,113 @@ export const ChartContent = memo(function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div className="relative flex h-full">
-      <Chart.Container
-        className={clsx('h-full min-h-72 w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
-        isLoading={isLoading}
-        isEmpty={isEmpty}
-        isRefreshing={isAnyChartRefreshing}
+    <Chart.Container
+      className={clsx('h-full min-h-72 w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
+      isLoading={isLoading}
+      isEmpty={isEmpty}
+      isRefreshing={isAnyChartRefreshing}
+    >
+      <ComposedChart
+        data={data}
+        syncId="syncId"
+        margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+        onMouseDown={(e) => {
+          handleMouseDown(e)
+          setOnHoverHideTooltip(true)
+        }}
+        onMouseMove={(e) => {
+          handleMouseMove(e)
+          setOnHoverHideTooltip(true)
+        }}
+        onMouseLeave={() => {
+          handleMouseLeave()
+          setOnHoverHideTooltip(false)
+        }}
+        onMouseUp={() => {
+          handleMouseUp()
+          setOnHoverHideTooltip(false)
+        }}
+        onDoubleClick={handleChartDoubleClick}
+        style={{ cursor: isLoading || isEmpty ? 'default' : 'crosshair' }}
       >
-        <ComposedChart
-          data={data}
-          syncId="syncId"
-          margin={margin}
-          onMouseDown={(e) => {
-            handleMouseDown(e)
-            setOnHoverHideTooltip(true)
-          }}
-          onMouseMove={(e) => {
-            handleMouseMove(e)
-            setOnHoverHideTooltip(true)
-          }}
-          onMouseLeave={() => {
-            handleMouseLeave()
-            setOnHoverHideTooltip(false)
-          }}
-          onMouseUp={() => {
-            handleMouseUp()
-            setOnHoverHideTooltip(false)
-          }}
-          onDoubleClick={handleChartDoubleClick}
-          style={{ cursor: isLoading || isEmpty ? 'default' : 'crosshair' }}
-        >
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
-          <XAxis
-            {...xAxisConfig}
-            allowDataOverflow
-            domain={currentDomain}
-            ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
-            type="number"
-            dataKey="timestamp"
-            tick={{ ...xAxisConfig.tick }}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+        <XAxis
+          {...xAxisConfig}
+          allowDataOverflow
+          domain={currentDomain}
+          ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
+          type="number"
+          dataKey="timestamp"
+          tick={{ ...xAxisConfig.tick }}
+          tickFormatter={(timestamp) => {
+            const date = new Date(timestamp)
 
-              // Get current zoom domain for dynamic time granularity
-              const [startMs, endMs] = currentDomain.map((d) =>
-                typeof d === 'number'
-                  ? d
-                  : d === 'dataMin'
-                    ? Number(startTimestamp) * 1000
-                    : Number(endTimestamp) * 1000
-              )
-              const granularity = getTimeGranularity(startMs, endMs)
+            // Get current zoom domain for dynamic time granularity
+            const [startMs, endMs] = currentDomain.map((d) =>
+              typeof d === 'number' ? d : d === 'dataMin' ? Number(startTimestamp) * 1000 : Number(endTimestamp) * 1000
+            )
+            const granularity = getTimeGranularity(startMs, endMs)
 
-              // Helper functions for local vs UTC time
-              const getDatePart = (fn: (d: Date) => number) =>
-                useLocalTime ? fn(date) : fn(new Date(date.getTime() + date.getTimezoneOffset() * 60000))
+            // Helper functions for local vs UTC time
+            const getDatePart = (fn: (d: Date) => number) =>
+              useLocalTime ? fn(date) : fn(new Date(date.getTime() + date.getTimezoneOffset() * 60000))
 
-              const pad = (num: number) => num.toString().padStart(2, '0')
+            const pad = (num: number) => num.toString().padStart(2, '0')
 
-              switch (granularity) {
-                case 'seconds':
-                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}:${pad(getDatePart((d) => d.getSeconds()))}`
+            switch (granularity) {
+              case 'seconds':
+                return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}:${pad(getDatePart((d) => d.getSeconds()))}`
 
-                case 'minutes':
-                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
+              case 'minutes':
+                return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
 
-                case 'days':
-                default:
-                  return `${pad(getDatePart((d) => d.getDate()))}/${pad(getDatePart((d) => d.getMonth() + 1))} ${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
-              }
-            }}
-            interval="preserveStartEnd"
-          />
-          <Chart.Tooltip
-            position={{ y: isFullscreen ? undefined : 13 }}
-            content={
-              zoomState.refAreaLeft && zoomState.refAreaRight ? (
-                <Chart.TooltipZoomRange
-                  startTime={
-                    formatTimestamp(
-                      Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
-                      useLocalTime
-                    ).fullTimeString
-                  }
-                  endTime={
-                    formatTimestamp(
-                      Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
-                      useLocalTime
-                    ).fullTimeString
-                  }
-                />
-              ) : !onHoverHideTooltip ? (
-                <div />
-              ) : (
-                <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
-              )
+              case 'days':
+              default:
+                return `${pad(getDatePart((d) => d.getDate()))}/${pad(getDatePart((d) => d.getMonth() + 1))} ${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
             }
-          />
-          {!hideEvents &&
-            referenceLineData?.map((event) =>
-              createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey, true)
-            )}
-          {children}
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            domain={yDomain}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
-            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
-          ) : null}
-        </ComposedChart>
-      </Chart.Container>
-      {isFullscreen && referenceLineData && !hideEvents && (
-        <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-250">
-          <p className="border-b border-neutral-250 bg-neutral-100 px-4 py-2 text-xs font-medium text-neutral-500">
-            {pluralize(referenceLineData.length, 'Event', 'Events')} associated
-          </p>
-          <div className="h-full overflow-y-auto">
-            {isLoading ? (
-              <>
-                {Array.from({ length: 8 }).map((_, idx) => (
-                  <div key={idx} className="flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500">
-                    <Skeleton className="h-5 min-h-5 w-5 min-w-5" rounded />
-                    <div className="flex w-full flex-col gap-1 text-xs">
-                      <div className="flex w-full items-center justify-between gap-2">
-                        <Skeleton className="h-4 w-24" />
-                      </div>
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </>
-            ) : referenceLineData.length > 0 ? (
-              <>
-                {referenceLineData.map((event) => {
-                  const timestamp = formatTimestamp(event.timestamp, useLocalTime)
-                  const key = `${label}-${event.key}`
-                  return (
-                    <div
-                      key={key}
-                      className={clsx('flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500', {
-                        'bg-neutral-150': hoveredEventKey === key,
-                      })}
-                      onMouseEnter={() => setHoveredEventKey(key)}
-                      onMouseLeave={() => setHoveredEventKey(null)}
-                    >
-                      <span
-                        className="flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full"
-                        style={{ backgroundColor: event.color ?? 'var(--color-red-500)' }}
-                      >
-                        <Icon
-                          iconName={event.icon}
-                          iconStyle={event.iconStyle ?? 'regular'}
-                          className="text-xs text-white"
-                        />
-                      </span>
-                      <div className="flex w-full flex-col gap-1 text-xs">
-                        <div className="flex w-full items-center justify-between gap-2">
-                          <span className="font-medium">{event.reason}</span>
-                          <span className="text-neutral-350">{timestamp.fullTimeString}</span>
-                        </div>
-                        {event.type === 'event' && (
-                          <>
-                            <span className="text-neutral-350">
-                              {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
-                            </span>
-                            <span className="text-neutral-350">
-                              {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
-                            </span>
-                          </>
-                        )}
-                        {event.description && <span className="text-neutral-350">{event.description}</span>}
-                        {event.type === 'exit-code' && (
-                          <div className="flex items-center gap-1">
-                            <span className="text-neutral-350">Instance name:</span>
-                            <Tooltip content={event.pod ?? ''}>
-                              <Badge
-                                variant="surface"
-                                color="neutral"
-                                size="sm"
-                                className="max-w-max gap-1 font-code text-2xs"
-                              >
-                                <span
-                                  className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                                  style={{ backgroundColor: getColorByPod(event.pod ?? '') }}
-                                />
-                                {event.pod?.substring(event.pod?.length - 5)}
-                              </Badge>
-                            </Tooltip>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </>
+          }}
+          interval="preserveStartEnd"
+        />
+        <Chart.Tooltip
+          position={{ y: isFullscreen ? undefined : 13 }}
+          content={
+            zoomState.refAreaLeft && zoomState.refAreaRight ? (
+              <Chart.TooltipZoomRange
+                startTime={
+                  formatTimestamp(Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)), useLocalTime)
+                    .fullTimeString
+                }
+                endTime={
+                  formatTimestamp(Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)), useLocalTime)
+                    .fullTimeString
+                }
+              />
+            ) : !onHoverHideTooltip ? (
+              <div />
             ) : (
-              <div className="flex h-full items-center justify-center text-sm">
-                <p className="text-neutral-350">No events associated</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+              <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
+            )
+          }
+        />
+        {!hideEvents &&
+          referenceLineData?.map((event) =>
+            createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey)
+          )}
+        {children}
+        <YAxis
+          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+          tickLine={{ stroke: 'transparent' }}
+          axisLine={{ stroke: 'transparent' }}
+          orientation="right"
+          tickCount={5}
+          domain={yDomain}
+          tickFormatter={(value) => (value === 0 ? '' : value)}
+        />
+        {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+          <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+        ) : null}
+      </ComposedChart>
+    </Chart.Container>
   )
 })
 
@@ -361,12 +236,6 @@ export interface LocalChartProps extends PropsWithChildren {
   tooltipLabel?: string
   yDomain?: [number | string, number | string]
   xDomain?: [number | string, number | string]
-  margin?: {
-    top?: number
-    bottom?: number
-    left?: number
-    right?: number
-  }
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
   handleResetLegend?: () => void
@@ -386,128 +255,23 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
     serviceId,
     yDomain,
     xDomain,
-    margin,
     referenceLineData,
     isFullscreen = false,
     handleResetLegend,
   },
   ref
 ) {
-  const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { hideEvents } = useServiceOverviewContext()
 
-  // Alpha: Workaround to get the events
-  const { data: service } = useService({ serviceId })
-
-  const { data: events } = useEvents({
-    organizationId,
+  const {
+    service,
+    events,
+    isLoading: eventsLoading,
+  } = useChartEvents({
     serviceId,
-    targetType:
-      service?.service_type === 'CONTAINER'
-        ? OrganizationEventTargetType.CONTAINER
-        : OrganizationEventTargetType.APPLICATION,
-    toTimestamp: endTimestamp,
-    fromTimestamp: startTimestamp,
+    additionalEvents: referenceLineData || [],
   })
-
-  const eventsFiltered = events?.filter((event) => event.target_id === serviceId)
-
-  const eventReferenceLines: ReferenceLineEvent[] = useMemo(() => {
-    // Get chart data timestamps for alignment
-    const chartTimestamps = data.map((d) => d.timestamp)
-
-    return (eventsFiltered || [])
-      .filter(
-        (event) =>
-          (event.event_type === 'TRIGGER_DEPLOY' ||
-            event.event_type === 'DEPLOY_FAILED' ||
-            event.event_type === 'DEPLOYED') &&
-          event.target_id === serviceId
-      )
-      .map((event) => {
-        const eventTimestamp = new Date(event.timestamp || '').getTime()
-
-        // Find the closest chart data point timestamp
-        let alignedTimestamp = eventTimestamp
-        if (chartTimestamps.length > 0) {
-          const closestTimestamp = chartTimestamps.reduce((prev, curr) => {
-            return Math.abs(curr - eventTimestamp) < Math.abs(prev - eventTimestamp) ? curr : prev
-          })
-          alignedTimestamp = closestTimestamp
-        }
-
-        const key = `event-${event.id || alignedTimestamp}`
-        const change = JSON.parse(event.change || '')
-        // TODO: Add support for other service types and clean-up api endpoint
-        const version =
-          change?.service_source?.image?.tag ??
-          change?.service_source?.docker?.git_repository?.deployed_commit_id ??
-          'Unknown'
-
-        const repository =
-          change?.service_source?.image?.image_name ?? change?.service_source?.docker?.git_repository?.url ?? 'Unknown'
-
-        if (event.event_type === 'DEPLOY_FAILED') {
-          return {
-            type: 'event',
-            timestamp: alignedTimestamp,
-            reason: 'Deploy failed',
-            icon: 'xmark',
-            color: 'var(--color-red-500)',
-            key,
-            version,
-            repository,
-          }
-        } else if (event.event_type === 'DEPLOYED') {
-          return {
-            type: 'event',
-            timestamp: alignedTimestamp,
-            reason: 'Deployed',
-            icon: 'check',
-            color: 'var(--color-green-500)',
-            key,
-            version,
-            repository,
-          }
-        } else if (event.event_type === 'TRIGGER_DEPLOY') {
-          return {
-            type: 'event',
-            timestamp: alignedTimestamp,
-            reason: 'Trigger deploy',
-            icon: 'play',
-            iconStyle: 'solid',
-            color: 'var(--color-brand-500)',
-            key,
-            version,
-            repository,
-          }
-        }
-
-        return {
-          type: 'event',
-          timestamp: alignedTimestamp,
-          reason: 'Unknown',
-          icon: 'question',
-          color: 'var(--color-neutral-350)',
-          key,
-          version,
-          repository,
-        }
-      })
-  }, [eventsFiltered, serviceId, data])
-
-  // Merge with any referenceLineData passed as prop
-  const mergedReferenceLineData = useMemo(() => {
-    const allEvents = [...(referenceLineData || []), ...eventReferenceLines]
-
-    // Remove duplicates based on timestamp and key
-    const uniqueEvents = allEvents.filter(
-      (event, index, array) => array.findIndex((e) => e.timestamp === event.timestamp && e.key === event.key) === index
-    )
-
-    return uniqueEvents.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
-  }, [referenceLineData, eventReferenceLines])
 
   return (
     <>
@@ -555,25 +319,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             </div>
           </div>
         )}
-        <ChartContent
-          data={data}
-          unit={unit}
-          label={label ?? ''}
-          tooltipLabel={tooltipLabel}
-          isEmpty={isEmpty}
-          isLoading={isLoading}
-          xDomain={xDomain}
-          yDomain={yDomain}
-          margin={margin}
-          referenceLineData={mergedReferenceLineData}
-          service={service}
-          isFullscreen={isFullscreen}
-        >
-          {children}
-        </ChartContent>
-      </Section>
-      {isModalOpen && (
-        <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <div className="relative flex h-full w-full">
           <ChartContent
             data={data}
             unit={unit}
@@ -583,13 +329,45 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             isLoading={isLoading}
             xDomain={xDomain}
             yDomain={yDomain}
-            margin={margin}
-            referenceLineData={mergedReferenceLineData}
-            service={service}
-            isFullscreen
+            referenceLineData={events}
+            isFullscreen={isFullscreen}
           >
             {children}
           </ChartContent>
+          {isFullscreen && events && !hideEvents && (
+            <EventSidebar
+              events={events}
+              service={service}
+              isLoading={isLoading || eventsLoading}
+              label={label ?? ''}
+            />
+          )}
+        </div>
+      </Section>
+      {isModalOpen && (
+        <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <div className="relative flex h-full w-full">
+            <ChartContent
+              data={data}
+              unit={unit}
+              label={label ?? ''}
+              tooltipLabel={tooltipLabel}
+              isEmpty={isEmpty}
+              isLoading={isLoading}
+              xDomain={xDomain}
+              yDomain={yDomain}
+              referenceLineData={events}
+              isFullscreen={isFullscreen}
+            >
+              {children}
+            </ChartContent>
+            <EventSidebar
+              events={events}
+              service={service}
+              isLoading={isLoading || eventsLoading}
+              label={label ?? ''}
+            />
+          </div>
         </ModalChart>
       )}
     </>
@@ -603,12 +381,11 @@ function createAlignedReferenceLine(
   label: string,
   event: ReferenceLineEvent,
   hoveredEventKey: string | null,
-  setHoveredEventKey: (key: string | null) => void,
-  isModal = false
+  setHoveredEventKey: (key: string | null) => void
 ) {
   const key = `${label}-${event.key}`
-  const strokeWidth = isModal ? 4 : 2
-  const opacity = hoveredEventKey === key ? 1 : isModal ? 0.6 : 0.4
+  const strokeWidth = 2
+  const opacity = hoveredEventKey === key ? 1 : 0.4
 
   return (
     <ReferenceLine

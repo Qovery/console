@@ -1,15 +1,17 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as useMetricsImport from '../../hooks/use-metrics/use-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardInstanceStatus } from './card-instance-status'
 
-jest.mock('../../hooks/use-metrics/use-metrics')
-const useMetrics = useMetricsImport.useMetrics as jest.MockedFunction<typeof useMetricsImport.useMetrics>
+jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
+  typeof useInstantMetricsImport.useInstantMetrics
+>
 
 jest.mock('../instance-status-chart/instance-status-chart', () => ({
   InstanceStatusChart: () => <div data-testid="instance-status-chart">Chart Component</div>,
 }))
-const createMockUseMetricsReturn = (
+const createMockUseInstantMetricsReturn = (
   data?: {
     data?: {
       result?: Array<{
@@ -22,12 +24,13 @@ const createMockUseMetricsReturn = (
   ({
     data,
     isLoading,
-  }) as unknown as ReturnType<typeof useMetricsImport.useMetrics>
+  }) as unknown as ReturnType<typeof useInstantMetricsImport.useInstantMetrics>
 
 describe('CardInstanceStatus', () => {
   const defaultProps = {
     serviceId: 'test-service-id',
     clusterId: 'test-cluster-id',
+    containerName: 'test-container-name',
   }
 
   beforeEach(() => {
@@ -35,7 +38,7 @@ describe('CardInstanceStatus', () => {
   })
 
   it('should render successfully with loading state', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn(undefined, true))
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn(undefined, true))
 
     const { baseElement } = renderWithProviders(
       <ServiceOverviewProvider>
@@ -47,8 +50,8 @@ describe('CardInstanceStatus', () => {
   })
 
   it('should render with no instance issues (GREEN status)', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {
@@ -72,8 +75,8 @@ describe('CardInstanceStatus', () => {
   })
 
   it('should render with instance issues (RED status) and show modal link', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {
@@ -100,8 +103,8 @@ describe('CardInstanceStatus', () => {
   })
 
   it('should handle empty metrics data', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [],
         },
@@ -120,7 +123,7 @@ describe('CardInstanceStatus', () => {
   })
 
   it('should handle undefined metrics data', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn())
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -134,8 +137,8 @@ describe('CardInstanceStatus', () => {
   })
 
   it('should open modal when clicking on card with instance issues', async () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {
@@ -163,8 +166,8 @@ describe('CardInstanceStatus', () => {
     })
   })
 
-  it('should call useMetrics with correct parameters', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn())
+  it('should call useInstantMetrics with correct parameters', () => {
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -172,21 +175,21 @@ describe('CardInstanceStatus', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(useMetrics).toHaveBeenCalledTimes(2)
-    expect(useMetrics).toHaveBeenCalledWith({
+    expect(useInstantMetrics).toHaveBeenCalledTimes(2)
+    expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
-      queryRange: 'query',
+      endTimestamp: expect.any(String),
     })
 
-    const call = useMetrics.mock.calls[0][0].query
-    expect(call).toContain('test-service-id')
+    const call = useInstantMetrics.mock.calls[0][0].query
+    expect(call).toContain('test-container-name')
     expect(call).toContain('kube_pod_container_status_waiting_reason')
   })
 
   it('should always show modal link', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {

@@ -1,16 +1,18 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as useMetricsImport from '../../hooks/use-metrics/use-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardStorage } from './card-storage'
 
-jest.mock('../../hooks/use-metrics/use-metrics')
-const useMetrics = useMetricsImport.useMetrics as jest.MockedFunction<typeof useMetricsImport.useMetrics>
+jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
+  typeof useInstantMetricsImport.useInstantMetrics
+>
 
 jest.mock('../persistent-storage-chart/persistent-storage-chart', () => ({
   PersistentStorageChart: () => <div data-testid="persistent-storage-chart">Storage Chart Component</div>,
 }))
 
-const createMockUseMetricsReturn = (
+const createMockUseInstantMetricsReturn = (
   data?: {
     data?: {
       result?: Array<{
@@ -23,7 +25,7 @@ const createMockUseMetricsReturn = (
   ({
     data,
     isLoading,
-  }) as unknown as ReturnType<typeof useMetricsImport.useMetrics>
+  }) as unknown as ReturnType<typeof useInstantMetricsImport.useInstantMetrics>
 
 describe('CardStorage', () => {
   const defaultProps = {
@@ -36,7 +38,7 @@ describe('CardStorage', () => {
   })
 
   it('should render successfully with loading state', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn(undefined, true))
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn(undefined, true))
 
     const { baseElement } = renderWithProviders(
       <ServiceOverviewProvider>
@@ -50,8 +52,8 @@ describe('CardStorage', () => {
   })
 
   it('should render with low storage usage (GREEN status)', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {
@@ -73,8 +75,8 @@ describe('CardStorage', () => {
   })
 
   it('should render with high storage usage (RED status)', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {
@@ -96,8 +98,8 @@ describe('CardStorage', () => {
   })
 
   it('should handle empty metrics data', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [],
         },
@@ -114,7 +116,7 @@ describe('CardStorage', () => {
   })
 
   it('should handle undefined metrics data', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn())
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -126,8 +128,8 @@ describe('CardStorage', () => {
   })
 
   it('should open modal when clicking on card', async () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {
@@ -154,8 +156,8 @@ describe('CardStorage', () => {
     })
   })
 
-  it('should call useMetrics with correct parameters', () => {
-    useMetrics.mockReturnValue(createMockUseMetricsReturn())
+  it('should call useInstantMetrics with correct parameters', () => {
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -163,20 +165,20 @@ describe('CardStorage', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(useMetrics).toHaveBeenCalledWith({
+    expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kubelet_volume_stats_used_bytes'),
-      queryRange: 'query',
+      endTimestamp: expect.any(String),
     })
 
-    const call = useMetrics.mock.calls[0][0].query
+    const call = useInstantMetrics.mock.calls[0][0].query
     expect(call).toContain('test-service-id')
     expect(call).toContain('kubelet_volume_stats_capacity_bytes')
   })
 
   it('should always show modal link', () => {
-    useMetrics.mockReturnValue(
-      createMockUseMetricsReturn({
+    useInstantMetrics.mockReturnValue(
+      createMockUseInstantMetricsReturn({
         data: {
           result: [
             {

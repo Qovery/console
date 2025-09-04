@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { pluralize } from '@qovery/shared/util-js'
-import { useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (serviceId: string, timeRange: string) =>
-  `sum (increase(promtail_custom_q_log_errors_total{qovery_com_service_id="${serviceId}"}[${timeRange}])) or vector(0)`
+  `sum(increase(promtail_custom_q_log_errors_total{qovery_com_service_id="${serviceId}"}[${timeRange}]) or vector(0))`
 
 export function CardLogErrors({
   organizationId,
@@ -20,17 +20,18 @@ export function CardLogErrors({
   environmentId: string
   serviceId: string
   clusterId: string
+  containerName: string
 }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { queryTimeRange } = useServiceOverviewContext()
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { data: metrics, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: query(serviceId, queryTimeRange),
-    queryRange: 'query',
+    endTimestamp,
   })
 
-  const value = Math.round(metrics?.data?.result?.[0]?.value?.[1]) || 0
+  const value = Math.ceil(metrics?.data?.result?.[0]?.value?.[1]) || 0
 
   const title = `${value} log ${pluralize(value, 'error', 'errors')}`
   const description = 'total log errors detected in the selected time range'

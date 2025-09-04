@@ -1,8 +1,10 @@
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { useContainerName } from '../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+import useIngressName from '../hooks/use-ingress-name/use-ingress-name'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
@@ -33,13 +35,53 @@ function ServiceOverviewContent() {
     setIsLiveUpdateEnabled,
   } = useServiceOverviewContext()
 
-  if (!environment || !service) return null
-
   const hasPublicPort =
-    (service.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
-    (service.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
+    (service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
+    (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
 
-  const hasStorage = service.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+  const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
+
+  const { data: containerName, isFetched: isFetchedContainerName } = useContainerName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: applicationId,
+    resourceType: hasStorage ? 'statefulset' : 'deployment',
+  })
+
+  const { data: ingressName = '' } = useIngressName({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: applicationId,
+    enabled: hasPublicPort,
+  })
+
+  if (!containerName && isFetchedContainerName) {
+    return (
+      <div className="h-full w-full p-5">
+        <Callout.Root color="yellow" className="max-w-lg">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>Monitoring service data is not available</Callout.TextHeading>
+            <Callout.TextDescription className="flex flex-col gap-2">
+              Please retry in a few seconds.
+              <Button
+                variant="surface"
+                size="sm"
+                className="max-w-fit"
+                onClick={() => {
+                  window.location.reload()
+                }}
+              >
+                Reload page
+              </Button>
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      </div>
+    )
+  }
+
+  if (!environment || !service || !containerName) return null
 
   return (
     <div className="isolate">
@@ -98,7 +140,11 @@ function ServiceOverviewContent() {
         <Section className="gap-4">
           <Heading weight="medium">Service health check</Heading>
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <CardInstanceStatus clusterId={environment.cluster_id} serviceId={applicationId} />
+            <CardInstanceStatus
+              clusterId={environment.cluster_id}
+              serviceId={applicationId}
+              containerName={containerName}
+            />
             <div className="flex h-full flex-col gap-3">
               <CardLogErrors
                 organizationId={environment.organization.id}
@@ -106,10 +152,25 @@ function ServiceOverviewContent() {
                 environmentId={environment.id}
                 serviceId={applicationId}
                 clusterId={environment.cluster_id}
+                containerName={containerName}
               />
-              {hasPublicPort && <CardHTTPErrors clusterId={environment.cluster_id} serviceId={applicationId} />}
+              {hasPublicPort && (
+                <CardHTTPErrors
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                  ingressName={ingressName}
+                />
+              )}
               {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
-              {hasPublicPort && <CardPercentile99 clusterId={environment.cluster_id} serviceId={applicationId} />}
+              {hasPublicPort && (
+                <CardPercentile99
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                  ingressName={ingressName}
+                />
+              )}
             </div>
           </div>
         </Section>
@@ -117,14 +178,14 @@ function ServiceOverviewContent() {
           <Heading weight="medium">Resources</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
             <div className="overflow-hidden rounded border border-neutral-250">
-              <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
             </div>
             <div className="overflow-hidden rounded border border-neutral-250">
-              <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} />
+              <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
             </div>
             {hasStorage && (
               <div className="overflow-hidden rounded border border-neutral-250">
-                <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
               </div>
             )}
           </div>
@@ -134,13 +195,28 @@ function ServiceOverviewContent() {
             <Heading weight="medium">Network</Heading>
             <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
               <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestStatusChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <NetworkRequestStatusChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                  ingressName={ingressName}
+                />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestDurationChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <NetworkRequestDurationChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                  ingressName={ingressName}
+                />
               </div>
               <div className="overflow-hidden rounded border border-neutral-250">
-                <NetworkRequestSizeChart clusterId={environment.cluster_id} serviceId={applicationId} />
+                <NetworkRequestSizeChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                  ingressName={ingressName}
+                />
               </div>
             </div>
           </Section>
