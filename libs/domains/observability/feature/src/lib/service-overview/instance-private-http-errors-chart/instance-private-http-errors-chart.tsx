@@ -7,31 +7,32 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (ingressName: string, rateInterval: string) => `
+const query = (containerName: string, rateInterval: string) => `
 100 *
-sum by (status)(
-  rate(nginx_ingress_controller_requests{
-    ingress="${ingressName}", status=~"499|5.."
+sum by (http_response_status_code)(
+  rate(http_server_request_duration_seconds_bucket{
+    k8s_container_name="${containerName}", http_response_status_code=~"499|5.."
   }[${rateInterval}])
 )
-/
-ignoring(status) group_left
-sum (
-  rate(nginx_ingress_controller_requests{
-    ingress="${ingressName}"
-  }[${rateInterval}])
+/ ignoring(http_response_status_code) group_left
+clamp_min(
+  sum(
+    rate(http_server_request_duration_seconds_bucket{
+      k8s_container_name="${containerName}"
+    }[${rateInterval}])
+  ),
+  1e-9
 )
 `
 
-export function InstanceHTTPErrorsChart({
+export function PrivateInstanceHTTPErrorsChart({
   clusterId,
   serviceId,
-  ingressName,
+  containerName,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
-  ingressName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
@@ -44,7 +45,7 @@ export function InstanceHTTPErrorsChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: query(ingressName, rateInterval),
+    query: query(containerName, rateInterval),
     timeRange,
   })
 
@@ -105,4 +106,4 @@ export function InstanceHTTPErrorsChart({
   )
 }
 
-export default InstanceHTTPErrorsChart
+export default PrivateInstanceHTTPErrorsChart

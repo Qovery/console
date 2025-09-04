@@ -2,41 +2,39 @@ import { useState } from 'react'
 import { pluralize } from '@qovery/shared/util-js'
 import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
-import { InstanceHTTPErrorsChart } from '../instance-http-errors-chart/instance-http-errors-chart'
+import { PrivateInstanceHTTPErrorsChart } from '../instance-private-http-errors-chart/instance-private-http-errors-chart'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryErrorRequest = (timeRange: string, ingressName: string) => `
-    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"499|5.."}[${timeRange}]) or vector(0))
+const queryErrorRequest = (containerName: string, timeRange: string) => `
+      sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}", http_response_status_code=~"200"}[${timeRange}]) or vector(0))
 `
 
-const queryTotalRequest = (timeRange: string, ingressName: string) => `
-    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}"}[${timeRange}]) or vector(0))
+const queryTotalRequest = (containerName: string, timeRange: string) => `
+    sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}"}[${timeRange}]) or vector(0))
 `
 
-export function CardHTTPErrors({
+export function CardPrivateHTTPErrors({
   serviceId,
   clusterId,
   containerName,
-  ingressName,
 }: {
   serviceId: string
   clusterId: string
   containerName: string
-  ingressName: string
 }) {
   const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
-    query: queryErrorRequest(queryTimeRange, ingressName),
+    query: queryErrorRequest(containerName, queryTimeRange),
     endTimestamp,
   })
 
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
-    query: queryTotalRequest(queryTimeRange, ingressName),
+    query: queryTotalRequest(containerName, queryTimeRange),
     endTimestamp,
   })
 
@@ -65,12 +63,7 @@ export function CardHTTPErrors({
           onOpenChange={setIsModalOpen}
         >
           <div className="grid h-full grid-cols-1">
-            <InstanceHTTPErrorsChart
-              clusterId={clusterId}
-              serviceId={serviceId}
-              containerName={containerName}
-              ingressName={ingressName}
-            />
+            <PrivateInstanceHTTPErrorsChart clusterId={clusterId} serviceId={serviceId} containerName={containerName} />
           </div>
         </ModalChart>
       )}
@@ -78,4 +71,4 @@ export function CardHTTPErrors({
   )
 }
 
-export default CardHTTPErrors
+export default CardPrivateHTTPErrors
