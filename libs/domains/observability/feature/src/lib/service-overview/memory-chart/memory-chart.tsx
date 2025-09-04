@@ -141,7 +141,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
           dot={false}
           connectNulls={false}
           isAnimationActive={false}
-          className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? 'opacity-0' : ''}
+          hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? true : false}
         />
       ))}
       <Line
@@ -153,7 +153,7 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-request') ? 'opacity-0' : ''}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-request') ? true : false}
       />
       <Line
         dataKey="memory-limit"
@@ -164,11 +164,11 @@ export function MemoryChart({ clusterId, serviceId }: { clusterId: string; servi
         connectNulls={false}
         dot={false}
         isAnimationActive={false}
-        className={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-limit') ? 'opacity-0' : ''}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('memory-limit') ? true : false}
       />
       {!isLoading && chartData.length > 0 && (
         <Chart.Legend
-          className="w-[calc(100%-0.5rem)] py-2"
+          className="w-[calc(100%-0.5rem)] pb-1 pt-2"
           onClick={onClick}
           itemSorter={(item) => {
             if (item.value === 'memory-request') {

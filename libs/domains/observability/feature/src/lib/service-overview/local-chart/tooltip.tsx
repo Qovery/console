@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { Kbd } from '@qovery/shared/ui'
 import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -135,52 +135,69 @@ function processGroupedEntries(groupedEntries: Map<string, GroupedEntry>): Toolt
 
 // Tooltip component for displaying metric and events details
 export const Tooltip = memo(({ active, unit, payload, customLabel }: TooltipProps) => {
+  const MAX_ITEMS = 6
   const metaKey = useFormatHotkeys('meta')
 
-  if (!active || !payload || payload.length === 0) return null
+  const filteredPayload = useMemo(
+    () =>
+      payload?.filter(
+        (entry: TooltipEntry, index: number, arr: TooltipEntry[]) =>
+          arr.findIndex((e: TooltipEntry) => e.dataKey === entry.dataKey) === index
+      ) || [],
+    [payload]
+  )
 
-  const dataPoint = payload[0]?.payload
+  if (!active || !filteredPayload || filteredPayload.length === 0) return null
 
-  const groupedEntries = groupEntriesByType(payload)
+  const dataPoint = filteredPayload[0]?.payload
+
+  const groupedEntries = groupEntriesByType(filteredPayload)
   const processedEntries = processGroupedEntries(groupedEntries)
+    .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
+    .sort((a, b) => {
+      const isARequestOrLimit =
+        a.dataKey.endsWith('-limit') || a.dataKey.endsWith('-request') || a.dataKey.endsWith('-request-limit')
+      const isBRequestOrLimit =
+        b.dataKey.endsWith('-limit') || b.dataKey.endsWith('-request') || b.dataKey.endsWith('-request-limit')
+      if (isARequestOrLimit && !isBRequestOrLimit) return -1
+      if (!isARequestOrLimit && isBRequestOrLimit) return 1
+
+      const aValue = parseFloat(a.value?.toString() || '0')
+      const bValue = parseFloat(b.value?.toString() || '0')
+      return bValue - aValue
+    })
 
   return (
-    <div className="rounded-md bg-neutral-600 shadow-lg">
+    <div className="rounded-md bg-neutral-600 text-xs shadow-lg">
       <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 px-3 py-2">
         <span className="text-xs font-medium text-neutral-50">{customLabel}</span>
         <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
       </div>
-      <div className="space-y-1 p-3 pt-0">
-        {processedEntries
-          .filter((entry, index, arr) => arr.findIndex((e) => e.dataKey === entry.dataKey) === index)
-          .sort((a, b) => {
-            const isARequestOrLimit =
-              a.dataKey.endsWith('-limit') || a.dataKey.endsWith('-request') || a.dataKey.endsWith('-request-limit')
-            const isBRequestOrLimit =
-              b.dataKey.endsWith('-limit') || b.dataKey.endsWith('-request') || b.dataKey.endsWith('-request-limit')
-            if (isARequestOrLimit && !isBRequestOrLimit) return -1
-            if (!isARequestOrLimit && isBRequestOrLimit) return 1
-            return 0
-          })
-          .map((entry, index) => (
-            <div key={index} className="flex items-center justify-between gap-4 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="text-neutral-50">{getDisplayName(entry.dataKey)}</span>
-              </div>
-              <span className="text-neutral-50">{formatValue(entry.value, unit)}</span>
+      <div className="space-y-1 px-2 pb-2">
+        {(MAX_ITEMS ? processedEntries.slice(0, MAX_ITEMS) : processedEntries).map((entry, index) => (
+          <div key={index} className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="text-neutral-50">{getDisplayName(entry.dataKey)}</span>
             </div>
-          ))}
+            <span className="text-neutral-50">{formatValue(entry.value, unit)}</span>
+          </div>
+        ))}
       </div>
+      {MAX_ITEMS && processedEntries.length > MAX_ITEMS && (
+        <div className="flex h-3 items-center px-2 pb-3.5 pt-1">
+          <span className="text-neutral-250">+{processedEntries.length - MAX_ITEMS} more</span>
+        </div>
+      )}
       {metaKey && (
-        <div className="border-t border-neutral-400 px-4 py-3">
-          <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-250">
+        <div className="border-t border-neutral-400 px-2 py-2">
+          <div className="flex flex-wrap items-center gap-3 text-neutral-250">
             <div className="flex items-center gap-1">
-              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">DRAG</Kbd>
+              <Kbd className="bg-neutral-500 text-2xs font-medium text-neutral-50">DRAG</Kbd>
               <span>Zoom In</span>
             </div>
             <div className="flex items-center gap-1">
-              <Kbd className="bg-neutral-500 text-2xs text-neutral-50">DBL-CLICK</Kbd>
+              <Kbd className="bg-neutral-500 text-2xs font-medium text-neutral-50">DBL-CLICK</Kbd>
               <span>Reset</span>
             </div>
           </div>

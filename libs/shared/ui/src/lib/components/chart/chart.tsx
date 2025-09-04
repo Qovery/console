@@ -220,17 +220,17 @@ export const ChartLegendContent = ({
     if (key) {
       // When highlighting, make non-highlighted paths semi-transparent
       style.textContent = `
-        #${styleId} path[name]:not([name="${key}"]) {
+        path[name]:not([name="${key}"]) {
           opacity: 0.15 !important;
         }
-        #${styleId} path[name="${key}"] {
+        path[name="${key}"] {
           opacity: 1 !important;
         }
       `
     } else {
       // When not highlighting, reset all paths to full opacity
       style.textContent = `
-        #${styleId} path[name] {
+        path[name] {
           opacity: 1 !important;
         }
       `
@@ -296,6 +296,7 @@ export const ChartLegendContent = ({
               <Button
                 key={String(item.dataKey)}
                 variant={isActive ? 'surface' : 'outline'}
+                size="xs"
                 radius="full"
                 className={clsx(
                   "relative z-0 cursor-pointer gap-2 transition-colors duration-100 before:absolute before:bottom-0 before:left-[-8px] before:right-[-8px] before:top-0 before:-z-[1] before:content-['']",
