@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useContainerName } from '../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import useIngressName from '../hooks/use-ingress-name/use-ingress-name'
@@ -41,19 +41,47 @@ function ServiceOverviewContent() {
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
-  const { data: containerName } = useContainerName({
+  const { data: containerName, isFetched: isFetchedContainerName } = useContainerName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     resourceType: hasStorage ? 'statefulset' : 'deployment',
   })
 
-  const { data: ingressName } = useIngressName({
+  const { data: ingressName = '' } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     enabled: hasPublicPort,
   })
 
-  if (!environment || !service || !containerName || !ingressName) return null
+  if (!containerName && isFetchedContainerName) {
+    return (
+      <div className="h-full w-full p-5">
+        <Callout.Root color="yellow" className="max-w-lg">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextHeading>Monitoring service data is not available</Callout.TextHeading>
+            <Callout.TextDescription className="flex flex-col gap-2">
+              Please retry in a few seconds.
+              <Button
+                variant="surface"
+                size="sm"
+                className="max-w-fit"
+                onClick={() => {
+                  window.location.reload()
+                }}
+              >
+                Reload page
+              </Button>
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      </div>
+    )
+  }
+
+  if (!environment || !service || !containerName) return null
 
   return (
     <div className="isolate">

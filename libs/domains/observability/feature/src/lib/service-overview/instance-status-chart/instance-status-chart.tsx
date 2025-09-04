@@ -150,6 +150,76 @@ const getDescriptionFromK8sEvent = (reason: string): string => {
   }
 }
 
+// TODO: keep it for now, but we should improve it
+const getExitCodeInfo = (exitCode: string): { name: string; description: string } => {
+  const code = parseInt(exitCode, 10)
+
+  switch (code) {
+    case 0:
+      return {
+        name: exitCode + ': Purposely stopped',
+        description: 'Used by developers to indicate that the container was automatically stopped.',
+      }
+    case 1:
+      return {
+        name: exitCode + ': Application error',
+        description:
+          'Container was stopped due to application error or incorrect reference in the image specification.',
+      }
+    case 125:
+      return {
+        name: exitCode + ': Container failed to run error',
+        description: 'The docker run command did not execute successfully.',
+      }
+    case 126:
+      return {
+        name: exitCode + ': Command invoke error',
+        description: 'A command specified in the image specification could not be invoked.',
+      }
+    case 127:
+      return {
+        name: exitCode + ': File or directory not found',
+        description: 'File or directory specified in the image specification was not found.',
+      }
+    case 128:
+      return {
+        name: exitCode + ': Invalid argument used on exit',
+        description: 'Exit was triggered with an invalid exit code (valid codes are integers between 0-255).',
+      }
+    case 134:
+      return {
+        name: exitCode + ': Abnormal termination (SIGABRT)',
+        description: 'The container aborted itself using the abort() function.',
+      }
+    case 137:
+      return {
+        name: exitCode + ': Immediate termination (SIGKILL)',
+        description: 'Container was immediately terminated by the operating system via SIGKILL signal.',
+      }
+    case 139:
+      return {
+        name: exitCode + ': Segmentation fault (SIGSEGV)',
+        description: 'Container attempted to access memory that was not assigned to it and was terminated.',
+      }
+    case 143:
+      return {
+        name: exitCode + ': Graceful termination (SIGTERM)',
+        description: 'Container received warning that it was about to be terminated, then terminated.',
+      }
+    case 255:
+      return {
+        name: exitCode + ': Exit Status Out Of Range',
+        description:
+          'Container exited, returning an exit code outside the acceptable range, meaning the cause of the error is not known.',
+      }
+    default:
+      return {
+        name: `Exit Code ${exitCode}`,
+        description: 'Unknown exit code.',
+      }
+  }
+}
+
 export function InstanceStatusChart({
   clusterId,
   serviceId,
@@ -358,14 +428,18 @@ export function InstanceStatusChart({
                 prevValue = 0
               }
 
+              const count = Math.abs(numValue - (prevValue || 0))
               const key = `${series.metric.reason}-${timestamp}`
               referenceLines.push({
                 type: 'metric',
                 timestamp: timestamp * 1000,
-                reason: Math.abs(numValue - (prevValue || 0)) + 'x ' + (series.metric['reason'] || 'unknown'),
+                reason:
+                  count > 1
+                    ? (series.metric['reason'] || 'unknown') + ` (${count} times)`
+                    : series.metric['reason'] || 'unknown',
                 description: getDescriptionFromReason(series.metric.reason),
                 icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
-                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-500)' : 'var(--color-red-500)',
+                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-600)' : 'var(--color-red-500)',
                 key,
               })
             }
