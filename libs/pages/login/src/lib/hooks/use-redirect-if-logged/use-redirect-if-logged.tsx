@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
@@ -22,7 +22,8 @@ import {
 
 export function useRedirectIfLogged() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const [searchParams] = useSearchParams()
+  const { user, authLogin } = useAuth()
   const { isAuthenticated } = useAuth0()
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
@@ -32,11 +33,24 @@ export function useRedirectIfLogged() {
   const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
+    const connectionParam = searchParams.get('connection')
+    if (connectionParam && !isAuthenticated) {
+      const domainWithoutDots = connectionParam.trim().replace(/\./g, '')
+
+      // Trigger the auth login with the domain from URL parameter
+      authLogin(domainWithoutDots).catch((error) => {
+        console.error('Auto-connection failed:', error)
+      })
+
+      return // Exit early to prevent further processing
+    }
+
     async function fetchData() {
       if (!isFetchedOrganizations) {
         return
       }
 
+      // User has at least 1 organization attached
       if (organizations.length > 0) {
         const organizationId = organizations[0].id
         if (projects.length > 0) navigate(OVERVIEW_URL(organizationId, projects[0].id))
