@@ -3,22 +3,15 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
+import { alignEndSec, alignStartSec } from '../use-metrics/align-timestamp'
 
 interface UseInstantMetricsProps {
   clusterId: string
   query: string
-  startTimestamp: string
   endTimestamp: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
 }
-
-// TODO PG (factorize wit use-metrics?
-// Helpers for alignment (timestamps in seconds)
-// Needed to avoid issues with Prometheus when the time range is not aligned with the step interval
-const ALIGN_SEC = 30
-const alignStartSec = (ts?: string) => (ts == null ? undefined : Math.floor(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
-const alignEndSec = (ts?: string) => (ts == null ? undefined : Math.ceil(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
 
 // Helper hook to safely get live update setting from context
 function useLiveUpdateSetting(): boolean {
@@ -32,11 +25,12 @@ function useLiveUpdateSetting(): boolean {
   }
 }
 
-// Simple wrapper that automatically applies live update toggle from context
+// Inspired by use-metrics.tsx
+// When querying Prometheus in instant mode, only the 'time' parameter is used (which is our 'endTimestamp').
+// 'startTimestamp' and 'endTimestamp' are only needed to calculate the range, but are otherwise unused here.
 export function useInstantMetrics({
   clusterId,
   query,
-  startTimestamp,
   endTimestamp,
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
@@ -51,11 +45,11 @@ export function useInstantMetrics({
   const maxSourceResolution = useMemo(() => {
     if (!alignedStart || !alignedEnd) return '0s' as const
 
-    return '0s' as const // TODO PG calculate the maxSourceResolution according to time windows.
+    return '0s' as const // TODO PG: calculate the maxSourceResolution according to time windows.
   }, [alignedStart, alignedEnd])
 
   const queryResult = useQuery({
-    ...observability.observability({
+    ...observability.metrics({
       clusterId,
       query,
       queryRange: 'query',

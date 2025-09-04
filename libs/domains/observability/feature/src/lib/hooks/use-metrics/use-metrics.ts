@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
+import { alignEndSec, alignStartSec } from './align-timestamp'
 
 export interface MetricData {
   metric: {
@@ -35,12 +36,6 @@ interface UseMetricsProps {
   overriddenStep?: string
   overriddenResolution?: string
 }
-
-// Helpers for alignment (timestamps in seconds)
-// Needed to avoid issues with Prometheus when the time range is not aligned with the step interval
-const ALIGN_SEC = 30
-const alignStartSec = (ts?: string) => (ts == null ? undefined : Math.floor(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
-const alignEndSec = (ts?: string) => (ts == null ? undefined : Math.ceil(Number(ts) / ALIGN_SEC) * ALIGN_SEC + '')
 
 function useLiveUpdateSetting(): boolean {
   const context = useServiceOverviewContext()
@@ -94,7 +89,7 @@ export function useMetrics({
   }, [alignedStart, alignedEnd, step, overriddenResolution])
 
   const queryResult = useQuery({
-    ...observability.observability({
+    ...observability.metrics({
       clusterId,
       query,
       queryRange: 'query_range',

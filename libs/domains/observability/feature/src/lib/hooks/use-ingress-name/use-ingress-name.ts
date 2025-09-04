@@ -7,6 +7,7 @@ export interface UseIngressNameProps {
   enabled?: boolean
 }
 
+// Retrieves the ingress name associated with a specific service
 export function useIngressName({ clusterId, serviceId, enabled = true }: UseIngressNameProps) {
   return useQuery({
     ...observability.ingressName({ clusterId, serviceId }),

@@ -7,14 +7,14 @@ import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 import type { ReferenceLineEvent } from './local-chart'
 
-export interface ChartEventSidebarProps {
+export interface EventSidebarProps {
   events: ReferenceLineEvent[]
   service?: AnyService
   isLoading?: boolean
   label?: string
 }
 
-export function ChartEventSidebar({ events, service, isLoading = false, label = '' }: ChartEventSidebarProps) {
+export function EventSidebar({ events, service, isLoading = false, label = '' }: EventSidebarProps) {
   const { useLocalTime, hoveredEventKey, setHoveredEventKey } = useServiceOverviewContext()
 
   return (

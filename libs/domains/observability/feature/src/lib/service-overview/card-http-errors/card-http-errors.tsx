@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { pluralize } from '@qovery/shared/util-js'
-import { useInstantMetrics } from '../../hooks/use-metrics/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { InstanceHTTPErrorsChart } from '../instance-http-errors-chart/instance-http-errors-chart'
 import { ModalChart } from '../modal-chart/modal-chart'
@@ -25,20 +25,18 @@ export function CardHTTPErrors({
   containerName: string
   ingressName: string
 }) {
-  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: queryErrorRequest(queryTimeRange, ingressName),
-    startTimestamp,
     endTimestamp,
   })
 
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(queryTimeRange, ingressName),
-    startTimestamp,
     endTimestamp,
   })
 

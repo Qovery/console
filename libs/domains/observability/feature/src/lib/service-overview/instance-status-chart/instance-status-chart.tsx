@@ -1,4 +1,3 @@
-import type { IconName } from '@fortawesome/fontawesome-common-types'
 import { useMemo } from 'react'
 import { Area, Line, ReferenceLine } from 'recharts'
 import { calculateDynamicRange, calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
@@ -43,12 +42,12 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|ScalingReplicaSet"
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     }
     -
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|ScalingReplicaSet"
+      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     } offset ${dynamicRange}
   ) > 0
 )
@@ -111,7 +110,7 @@ const getDescriptionFromReason = (reason: string): string => {
   }
 }
 
-export const getDescriptionFromProbeType = (probeType: string): string => {
+const getDescriptionFromProbeType = (probeType: string): string => {
   switch (probeType.toLowerCase()) {
     case 'readiness':
       return 'Readiness probe failed: the container is not ready to receive traffic.'
@@ -124,7 +123,7 @@ export const getDescriptionFromProbeType = (probeType: string): string => {
   }
 }
 
-export const getDescriptionFromK8sEvent = (reason: string): string => {
+const getDescriptionFromK8sEvent = (reason: string): string => {
   switch (reason) {
     case 'OOMKilled':
       return 'Container was killed because it exceeded its memory limit (Out-Of-Memory).'
@@ -146,97 +145,8 @@ export const getDescriptionFromK8sEvent = (reason: string): string => {
       return 'Pod was pre-empted by another higher-priority pod.'
     case 'NodeNotReady':
       return 'The node hosting the pod became NotReady.'
-    case 'ScalingReplicaSet':
-      return 'The autoscaler changes the number of pods based on CPU usage; new instances may be unready at first.'
     default:
       return 'Unknown'
-  }
-}
-
-export const getIconFromK8sEvent = (reason: string): IconName => {
-  switch (reason) {
-    case 'ScalingReplicaSet':
-      return 'up-right-and-down-left-from-center'
-    default:
-      return 'xmark'
-  }
-}
-
-export const getColorFromK8sEvent = (reason: string): string => {
-  switch (reason) {
-    case 'ScalingReplicaSet':
-      return 'var(--color-green-500)'
-    default:
-      return 'var(--color-red-500)'
-  }
-}
-
-const getExitCodeInfo = (exitCode: string): { name: string; description: string } => {
-  const code = parseInt(exitCode, 10)
-
-  switch (code) {
-    case 0:
-      return {
-        name: exitCode + ': Purposely stopped',
-        description: 'Used by developers to indicate that the container was automatically stopped.',
-      }
-    case 1:
-      return {
-        name: exitCode + ': Application error',
-        description:
-          'Container was stopped due to application error or incorrect reference in the image specification.',
-      }
-    case 125:
-      return {
-        name: exitCode + ': Container failed to run error',
-        description: 'The docker run command did not execute successfully.',
-      }
-    case 126:
-      return {
-        name: exitCode + ': Command invoke error',
-        description: 'A command specified in the image specification could not be invoked.',
-      }
-    case 127:
-      return {
-        name: exitCode + ': File or directory not found',
-        description: 'File or directory specified in the image specification was not found.',
-      }
-    case 128:
-      return {
-        name: exitCode + ': Invalid argument used on exit',
-        description: 'Exit was triggered with an invalid exit code (valid codes are integers between 0-255).',
-      }
-    case 134:
-      return {
-        name: exitCode + ': Abnormal termination (SIGABRT)',
-        description: 'The container aborted itself using the abort() function.',
-      }
-    case 137:
-      return {
-        name: exitCode + ': Immediate termination (SIGKILL)',
-        description: 'Container was immediately terminated by the operating system via SIGKILL signal.',
-      }
-    case 139:
-      return {
-        name: exitCode + ': Segmentation fault (SIGSEGV)',
-        description: 'Container attempted to access memory that was not assigned to it and was terminated.',
-      }
-    case 143:
-      return {
-        name: exitCode + ': Graceful termination (SIGTERM)',
-        description: 'Container received warning that it was about to be terminated, then terminated.',
-      }
-    case 255:
-      return {
-        name: exitCode + ': Exit Status Out Of Range',
-        description:
-          'Container exited, returning an exit code outside the acceptable range, meaning the cause of the error is not known.',
-      }
-    default:
-      return {
-        name: `Exit Code ${exitCode}`,
-        description: 'Unknown exit code.',
-      }
   }
 }
 
@@ -479,8 +389,8 @@ export function InstanceStatusChart({
                 timestamp: timestamp * 1000,
                 reason: series.metric.reason,
                 description: getDescriptionFromK8sEvent(series.metric.reason),
-                icon: getIconFromK8sEvent(series.metric.reason),
-                color: getColorFromK8sEvent(series.metric.reason),
+                icon: 'xmark',
+                color: 'var(--color-red-500)',
                 pod: series.metric.pod,
                 key,
               })
@@ -574,7 +484,6 @@ export function InstanceStatusChart({
       tooltipLabel="Instance issues"
       unit="instance"
       serviceId={serviceId}
-      margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
       yDomain={[0, 'dataMax + 1']}
       referenceLineData={referenceLineData}
       isFullscreen={isFullscreen}

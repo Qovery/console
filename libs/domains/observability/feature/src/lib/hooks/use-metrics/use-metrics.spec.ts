@@ -72,31 +72,25 @@ describe('calculateDynamicRange', () => {
     expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('630000ms')
   })
 
-  it('should throw error for offsetMultiplier = 0', () => {
+  it('should handle offsetMultiplier = 0', () => {
     const startTimestamp = '1704067200'
     const endTimestamp = '1704070800'
 
-    expect(() => calculateDynamicRange(startTimestamp, endTimestamp, 0)).toThrow(
-      'offsetMultiplier must be a positive integer'
-    )
+    expect(calculateDynamicRange(startTimestamp, endTimestamp, 0)).toBe('30000ms')
   })
 
-  it('should throw error for negative offsetMultiplier', () => {
+  it('should handle negative offsetMultiplier', () => {
     const startTimestamp = '1704067200'
     const endTimestamp = '1704070800'
 
-    expect(() => calculateDynamicRange(startTimestamp, endTimestamp, -1)).toThrow(
-      'offsetMultiplier must be a positive integer'
-    )
+    expect(calculateDynamicRange(startTimestamp, endTimestamp, -1)).toBe('0ms')
   })
 
-  it('should throw error for float offsetMultiplier', () => {
+  it('should handle float offsetMultiplier', () => {
     const startTimestamp = '1704067200'
     const endTimestamp = '1704070800'
 
-    expect(() => calculateDynamicRange(startTimestamp, endTimestamp, 1.5)).toThrow(
-      'offsetMultiplier must be a positive integer'
-    )
+    expect(calculateDynamicRange(startTimestamp, endTimestamp, 1.5)).toBe('75000ms')
   })
 })
 

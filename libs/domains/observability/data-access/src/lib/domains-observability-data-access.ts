@@ -11,7 +11,7 @@ export const observability = createQueryKeys('observability', {
   }: {
     clusterId: string
     serviceId: string
-    resourceType?: 'deployment' | 'statefulset' // TODO PG: only for app our container => if there a volume then statefulset else deployment
+    resourceType?: 'deployment' | 'statefulset'
   }) => ({
     queryKey: ['containerName', clusterId, serviceId, resourceType],
     async queryFn() {
@@ -33,7 +33,7 @@ export const observability = createQueryKeys('observability', {
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
   }),
-  observability: ({
+  metrics: ({
     clusterId,
     query,
     queryRange,

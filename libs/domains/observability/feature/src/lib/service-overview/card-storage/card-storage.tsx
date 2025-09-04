@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useInstantMetrics } from '../../hooks/use-metrics/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { PersistentStorageChart } from '../persistent-storage-chart/persistent-storage-chart'
@@ -39,29 +39,19 @@ const queryMaxStorage = (serviceId: string, timeRange: string) => `
 
 `
 
-export function CardStorage({
-  serviceId,
-  clusterId,
-  containerName,
-}: {
-  serviceId: string
-  clusterId: string
-  containerName: string
-}) {
-  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
+export function CardStorage({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
+  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsPercentage, isLoading: isLoadingMetricsPercentage } = useInstantMetrics({
     clusterId,
     query: queryPercentage(serviceId, queryTimeRange),
-    startTimestamp,
     endTimestamp,
   })
 
   const { data: metricsMaxStorage, isLoading: isLoadingMetricsMaxStorage } = useInstantMetrics({
     clusterId,
     query: queryMaxStorage(serviceId, queryTimeRange),
-    startTimestamp,
     endTimestamp,
   })
 

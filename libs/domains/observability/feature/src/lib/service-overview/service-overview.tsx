@@ -134,13 +134,7 @@ function ServiceOverviewContent() {
                   ingressName={ingressName}
                 />
               )}
-              {hasStorage && (
-                <CardStorage
-                  clusterId={environment.cluster_id}
-                  serviceId={applicationId}
-                  containerName={containerName}
-                />
-              )}
+              {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
               {hasPublicPort && (
                 <CardPercentile99
                   clusterId={environment.cluster_id}

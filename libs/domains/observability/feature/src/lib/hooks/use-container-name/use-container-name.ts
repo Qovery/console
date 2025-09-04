@@ -7,6 +7,7 @@ export interface UseContainerNameProps {
   resourceType: 'deployment' | 'statefulset'
 }
 
+// Retrieves the container name associated with a specific service
 export function useContainerName({ clusterId, serviceId, resourceType }: UseContainerNameProps) {
   return useQuery({
     ...observability.containerName({ clusterId, serviceId, resourceType }),

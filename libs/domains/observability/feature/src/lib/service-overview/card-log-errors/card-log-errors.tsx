@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { pluralize } from '@qovery/shared/util-js'
-import { useInstantMetrics } from '../../hooks/use-metrics/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
@@ -24,11 +24,10 @@ export function CardLogErrors({
 }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
   const { data: metrics, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: query(serviceId, queryTimeRange),
-    startTimestamp,
     endTimestamp,
   })
 

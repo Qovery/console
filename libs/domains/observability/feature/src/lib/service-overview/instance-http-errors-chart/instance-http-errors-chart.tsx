@@ -87,7 +87,6 @@ export function InstanceHTTPErrorsChart({
       tooltipLabel="HTTP Error Rate"
       unit="%"
       serviceId={serviceId}
-      margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
       isFullscreen
     >
       {seriesNames.map((name) => (

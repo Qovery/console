@@ -3,7 +3,7 @@ import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useInstantMetrics } from '../../hooks/use-metrics/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
 import { CardMetricButton } from '../card-metric/card-metric'
 import { InstanceStatusChart } from '../instance-status-chart/instance-status-chart'
 import { ModalChart } from '../modal-chart/modal-chart'
@@ -60,20 +60,18 @@ export function CardInstanceStatus({
   clusterId: string
   containerName: string
 }) {
-  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: service } = useService({ serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useInstantMetrics({
     clusterId,
     query: query(queryTimeRange, containerName),
-    startTimestamp,
     endTimestamp,
   })
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useInstantMetrics({
     clusterId,
     query: queryAutoscalingReached(queryTimeRange, containerName),
-    startTimestamp,
     endTimestamp,
   })
 

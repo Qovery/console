@@ -17,37 +17,9 @@ import { twMerge } from '@qovery/shared/util-js'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
-import { ChartEventSidebar } from './chart-event-sidebar'
+import { EventSidebar } from './event-sidebar'
 import { Tooltip as TooltipChart, type UnitType } from './tooltip'
 import { useChartEvents } from './use-chart-events'
-
-export type LineLabelProps = {
-  x?: number
-  y?: number
-  index?: number
-  value?: number | string
-  [key: string]: unknown
-}
-
-export function renderResourceLimitLabel(
-  labelText: string,
-  chartData: Array<{ [key: string]: string | number | null }>,
-  color = 'var(--color-red-500)'
-) {
-  return (props: LineLabelProps) => {
-    const { x, y, index, value } = props
-    // Only render for the last point with a value
-    if (chartData && index === chartData.length - 1 && value != null) {
-      return (
-        <text x={x} y={(y ?? 0) - 8} fill={color} fontSize={12} fontWeight={500} textAnchor="end">
-          {labelText}
-        </text>
-      )
-    }
-    // Return an empty SVG group instead of null to satisfy type requirements
-    return <g />
-  }
-}
 
 export interface ReferenceLineEvent {
   type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe'
@@ -72,12 +44,6 @@ interface ChartContentProps extends PropsWithChildren {
   xDomain?: [number | string, number | string]
   yDomain?: [number | string, number | string]
   tooltipLabel?: string
-  margin?: {
-    top?: number
-    bottom?: number
-    left?: number
-    right?: number
-  }
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
 }
@@ -92,7 +58,6 @@ export const ChartContent = memo(function ChartContent({
   children,
   xDomain,
   yDomain,
-  margin = { top: 14, bottom: 0, left: 0, right: 0 },
   referenceLineData,
   isFullscreen = false,
 }: ChartContentProps) {
@@ -149,123 +114,113 @@ export const ChartContent = memo(function ChartContent({
   const xAxisConfig = createXAxisConfig(Number(startTimestamp), Number(endTimestamp))
 
   return (
-    <div className="relative flex h-full">
-      <Chart.Container
-        className={clsx('h-full min-h-72 w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
-        isLoading={isLoading}
-        isEmpty={isEmpty}
-        isRefreshing={isAnyChartRefreshing}
+    <Chart.Container
+      className={clsx('h-full min-h-72 w-full select-none p-5 py-2', { 'pr-0': !isLoading && !isEmpty })}
+      isLoading={isLoading}
+      isEmpty={isEmpty}
+      isRefreshing={isAnyChartRefreshing}
+    >
+      <ComposedChart
+        data={data}
+        syncId="syncId"
+        margin={{ top: 14, bottom: 0, left: 0, right: 0 }}
+        onMouseDown={(e) => {
+          handleMouseDown(e)
+          setOnHoverHideTooltip(true)
+        }}
+        onMouseMove={(e) => {
+          handleMouseMove(e)
+          setOnHoverHideTooltip(true)
+        }}
+        onMouseLeave={() => {
+          handleMouseLeave()
+          setOnHoverHideTooltip(false)
+        }}
+        onMouseUp={() => {
+          handleMouseUp()
+          setOnHoverHideTooltip(false)
+        }}
+        onDoubleClick={handleChartDoubleClick}
+        style={{ cursor: isLoading || isEmpty ? 'default' : 'crosshair' }}
       >
-        <ComposedChart
-          data={data}
-          syncId="syncId"
-          margin={margin}
-          onMouseDown={(e) => {
-            handleMouseDown(e)
-            setOnHoverHideTooltip(true)
-          }}
-          onMouseMove={(e) => {
-            handleMouseMove(e)
-            setOnHoverHideTooltip(true)
-          }}
-          onMouseLeave={() => {
-            handleMouseLeave()
-            setOnHoverHideTooltip(false)
-          }}
-          onMouseUp={() => {
-            handleMouseUp()
-            setOnHoverHideTooltip(false)
-          }}
-          onDoubleClick={handleChartDoubleClick}
-          style={{ cursor: isLoading || isEmpty ? 'default' : 'crosshair' }}
-        >
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
-          <XAxis
-            {...xAxisConfig}
-            allowDataOverflow
-            domain={currentDomain}
-            ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
-            type="number"
-            dataKey="timestamp"
-            tick={{ ...xAxisConfig.tick }}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp)
+        <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+        <XAxis
+          {...xAxisConfig}
+          allowDataOverflow
+          domain={currentDomain}
+          ticks={currentTicks.length > 0 ? currentTicks : xAxisConfig.ticks}
+          type="number"
+          dataKey="timestamp"
+          tick={{ ...xAxisConfig.tick }}
+          tickFormatter={(timestamp) => {
+            const date = new Date(timestamp)
 
-              // Get current zoom domain for dynamic time granularity
-              const [startMs, endMs] = currentDomain.map((d) =>
-                typeof d === 'number'
-                  ? d
-                  : d === 'dataMin'
-                    ? Number(startTimestamp) * 1000
-                    : Number(endTimestamp) * 1000
-              )
-              const granularity = getTimeGranularity(startMs, endMs)
+            // Get current zoom domain for dynamic time granularity
+            const [startMs, endMs] = currentDomain.map((d) =>
+              typeof d === 'number' ? d : d === 'dataMin' ? Number(startTimestamp) * 1000 : Number(endTimestamp) * 1000
+            )
+            const granularity = getTimeGranularity(startMs, endMs)
 
-              // Helper functions for local vs UTC time
-              const getDatePart = (fn: (d: Date) => number) =>
-                useLocalTime ? fn(date) : fn(new Date(date.getTime() + date.getTimezoneOffset() * 60000))
+            // Helper functions for local vs UTC time
+            const getDatePart = (fn: (d: Date) => number) =>
+              useLocalTime ? fn(date) : fn(new Date(date.getTime() + date.getTimezoneOffset() * 60000))
 
-              const pad = (num: number) => num.toString().padStart(2, '0')
+            const pad = (num: number) => num.toString().padStart(2, '0')
 
-              switch (granularity) {
-                case 'seconds':
-                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}:${pad(getDatePart((d) => d.getSeconds()))}`
+            switch (granularity) {
+              case 'seconds':
+                return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}:${pad(getDatePart((d) => d.getSeconds()))}`
 
-                case 'minutes':
-                  return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
+              case 'minutes':
+                return `${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
 
-                case 'days':
-                default:
-                  return `${pad(getDatePart((d) => d.getDate()))}/${pad(getDatePart((d) => d.getMonth() + 1))} ${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
-              }
-            }}
-            interval="preserveStartEnd"
-          />
-          <Chart.Tooltip
-            position={{ y: isFullscreen ? undefined : 13 }}
-            content={
-              zoomState.refAreaLeft && zoomState.refAreaRight ? (
-                <Chart.TooltipZoomRange
-                  startTime={
-                    formatTimestamp(
-                      Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
-                      useLocalTime
-                    ).fullTimeString
-                  }
-                  endTime={
-                    formatTimestamp(
-                      Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)),
-                      useLocalTime
-                    ).fullTimeString
-                  }
-                />
-              ) : !onHoverHideTooltip ? (
-                <div />
-              ) : (
-                <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
-              )
+              case 'days':
+              default:
+                return `${pad(getDatePart((d) => d.getDate()))}/${pad(getDatePart((d) => d.getMonth() + 1))} ${pad(getDatePart((d) => d.getHours()))}:${pad(getDatePart((d) => d.getMinutes()))}`
             }
-          />
-          {!hideEvents &&
-            referenceLineData?.map((event) =>
-              createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey)
-            )}
-          {children}
-          <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
-            tickLine={{ stroke: 'transparent' }}
-            axisLine={{ stroke: 'transparent' }}
-            orientation="right"
-            tickCount={5}
-            domain={yDomain}
-            tickFormatter={(value) => (value === 0 ? '' : value)}
-          />
-          {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
-            <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
-          ) : null}
-        </ComposedChart>
-      </Chart.Container>
-    </div>
+          }}
+          interval="preserveStartEnd"
+        />
+        <Chart.Tooltip
+          position={{ y: isFullscreen ? undefined : 13 }}
+          content={
+            zoomState.refAreaLeft && zoomState.refAreaRight ? (
+              <Chart.TooltipZoomRange
+                startTime={
+                  formatTimestamp(Math.min(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)), useLocalTime)
+                    .fullTimeString
+                }
+                endTime={
+                  formatTimestamp(Math.max(Number(zoomState.refAreaLeft), Number(zoomState.refAreaRight)), useLocalTime)
+                    .fullTimeString
+                }
+              />
+            ) : !onHoverHideTooltip ? (
+              <div />
+            ) : (
+              <TooltipChart customLabel={tooltipLabel ?? label} unit={unit} />
+            )
+          }
+        />
+        {!hideEvents &&
+          referenceLineData?.map((event) =>
+            createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey)
+          )}
+        {children}
+        <YAxis
+          tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+          tickLine={{ stroke: 'transparent' }}
+          axisLine={{ stroke: 'transparent' }}
+          orientation="right"
+          tickCount={5}
+          domain={yDomain}
+          tickFormatter={(value) => (value === 0 ? '' : value)}
+        />
+        {!isCtrlPressed && zoomState.refAreaLeft && zoomState.refAreaRight ? (
+          <ReferenceArea x1={zoomState.refAreaLeft} x2={zoomState.refAreaRight} strokeOpacity={0.3} />
+        ) : null}
+      </ComposedChart>
+    </Chart.Container>
   )
 })
 
@@ -281,12 +236,6 @@ export interface LocalChartProps extends PropsWithChildren {
   tooltipLabel?: string
   yDomain?: [number | string, number | string]
   xDomain?: [number | string, number | string]
-  margin?: {
-    top?: number
-    bottom?: number
-    left?: number
-    right?: number
-  }
   referenceLineData?: ReferenceLineEvent[]
   isFullscreen?: boolean
   handleResetLegend?: () => void
@@ -306,7 +255,6 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
     serviceId,
     yDomain,
     xDomain,
-    margin,
     referenceLineData,
     isFullscreen = false,
     handleResetLegend,
@@ -371,7 +319,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             </div>
           </div>
         )}
-        <div className="relative flex h-full">
+        <div className="relative flex h-full w-full">
           <ChartContent
             data={data}
             unit={unit}
@@ -381,14 +329,13 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             isLoading={isLoading}
             xDomain={xDomain}
             yDomain={yDomain}
-            margin={margin}
             referenceLineData={events}
             isFullscreen={isFullscreen}
           >
             {children}
           </ChartContent>
           {isFullscreen && events && !hideEvents && (
-            <ChartEventSidebar
+            <EventSidebar
               events={events}
               service={service}
               isLoading={isLoading || eventsLoading}
@@ -399,7 +346,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
       </Section>
       {isModalOpen && (
         <ModalChart title={label ?? ''} open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <div className="relative flex h-full">
+          <div className="relative flex h-full w-full">
             <ChartContent
               data={data}
               unit={unit}
@@ -409,13 +356,12 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
               isLoading={isLoading}
               xDomain={xDomain}
               yDomain={yDomain}
-              margin={margin}
               referenceLineData={events}
               isFullscreen={isFullscreen}
             >
               {children}
             </ChartContent>
-            <ChartEventSidebar
+            <EventSidebar
               events={events}
               service={service}
               isLoading={isLoading || eventsLoading}
