@@ -9,6 +9,8 @@ import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CardPercentile99 } from './card-percentile-99/card-percentile-99'
+import { CardPrivateHTTPErrors } from './card-private-http-errors/card-private-http-errors'
+import { CardPrivatePercentile99 } from './card-private-percentile-99/card-private-percentile-99'
 import { CardStorage } from './card-storage/card-storage'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
@@ -38,6 +40,11 @@ function ServiceOverviewContent() {
   const hasPublicPort =
     (service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
     (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
+
+  const hasOnlyPrivatePort =
+    !hasPublicPort &&
+    ((service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => !port.publicly_accessible)) ||
+      (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => !port.publicly_accessible)))
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
@@ -140,26 +147,37 @@ function ServiceOverviewContent() {
         <Section className="gap-4">
           <Heading weight="medium">Service health check</Heading>
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <CardInstanceStatus
-              clusterId={environment.cluster_id}
-              serviceId={applicationId}
-              containerName={containerName}
-            />
-            <div className="flex h-full flex-col gap-3">
-              <CardLogErrors
-                organizationId={environment.organization.id}
-                projectId={environment.project.id}
-                environmentId={environment.id}
-                serviceId={applicationId}
+            {hasStorage && (
+              <CardInstanceStatus
                 clusterId={environment.cluster_id}
+                serviceId={applicationId}
                 containerName={containerName}
               />
+            )}
+            <div className="flex h-full flex-col gap-3">
+              {hasStorage && (
+                <CardLogErrors
+                  organizationId={environment.organization.id}
+                  projectId={environment.project.id}
+                  environmentId={environment.id}
+                  serviceId={applicationId}
+                  clusterId={environment.cluster_id}
+                  containerName={containerName}
+                />
+              )}
               {hasPublicPort && (
                 <CardHTTPErrors
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
                   containerName={containerName}
                   ingressName={ingressName}
+                />
+              )}
+              {hasOnlyPrivatePort && (
+                <CardPrivateHTTPErrors
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
                 />
               )}
               {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
@@ -171,18 +189,33 @@ function ServiceOverviewContent() {
                   ingressName={ingressName}
                 />
               )}
+              {hasOnlyPrivatePort && (
+                <CardPrivatePercentile99
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                />
+              )}
             </div>
           </div>
         </Section>
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
-            </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
-            </div>
+            {hasStorage && (
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
+              </div>
+            )}
+            {hasStorage && (
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <MemoryChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                />
+              </div>
+            )}
             {hasStorage && (
               <div className="overflow-hidden rounded border border-neutral-250">
                 <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
