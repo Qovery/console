@@ -127,6 +127,22 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
   const hasStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
 
+  useEffect(() => {
+    if (!props.fromDetail && props.isProduction && props.cloudProvider === 'AWS') {
+      setValue('karpenter', {
+        enabled: true,
+        spot_enabled: false,
+        disk_size_in_gib: 50,
+        default_service_architecture: 'AMD64',
+        qovery_node_pools: {
+          requirements: cloudProviderInstanceTypesKarpenter
+            ? convertToKarpenterRequirements(cloudProviderInstanceTypesKarpenter)
+            : [],
+        },
+      })
+    }
+  }, [props.fromDetail, props.isProduction, props.cloudProvider, cloudProviderInstanceTypesKarpenter, setValue])
+
   return (
     <div className="flex flex-col gap-10">
       {props.cloudProvider === 'AWS' && watchClusterType === KubernetesEnum.MANAGED && (
