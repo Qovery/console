@@ -6,24 +6,22 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryResponseSize = (rateInterval: string, ingressName: string) => `
-  sum by (path) (rate(nginx_ingress_controller_response_size_sum{ingress="${ingressName}"}[${rateInterval}]))
+const queryResponseSize = (containerName: string, rateInterval: string) => `
+   sum by (http_response_status_code) (rate(http_server_response_body_size_bytes_sum{k8s_container_name="${containerName}",  http_request_method="GET"}[${rateInterval}]))
 `
 
-const queryRequestSize = (rateInterval: string, ingressName: string) => `
-  sum by (path) (rate(nginx_ingress_controller_request_size_sum{ingress="${ingressName}"}[${rateInterval}]))
+const queryRequestSize = (containerName: string, rateInterval: string) => `
+  sum by (http_response_status_code) (rate(http_server_request_body_size_bytes_sum{k8s_container_name="${containerName}",  http_request_method="GET"}[${rateInterval}]))
 `
 
-export function NetworkRequestSizeChart({
+export function PrivateNetworkRequestSizeChart({
   clusterId,
   serviceId,
   containerName,
-  ingressName,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
-  ingressName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
@@ -37,7 +35,7 @@ export function NetworkRequestSizeChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryResponseSize(rateInterval, ingressName),
+    query: queryResponseSize(containerName, rateInterval),
   })
 
   const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
@@ -45,7 +43,7 @@ export function NetworkRequestSizeChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryRequestSize(rateInterval, ingressName),
+    query: queryRequestSize(containerName, rateInterval),
   })
 
   const chartData = useMemo(() => {
@@ -72,7 +70,10 @@ export function NetworkRequestSizeChart({
       metricsRequestSize,
       timeSeriesMap,
       () => 'Request size',
-      (value) => parseFloat(value), // Convert to bytes
+      (value) => {
+        console.log('vvv')
+        return parseFloat(value)
+      }, // Convert to bytes
       useLocalTime
     )
 
@@ -115,4 +116,4 @@ export function NetworkRequestSizeChart({
   )
 }
 
-export default NetworkRequestSizeChart
+export default PrivateNetworkRequestSizeChart

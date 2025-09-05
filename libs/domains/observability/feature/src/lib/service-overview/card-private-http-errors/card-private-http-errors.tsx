@@ -7,7 +7,7 @@ import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryErrorRequest = (containerName: string, timeRange: string) => `
-      sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}", http_response_status_code=~"200"}[${timeRange}]) or vector(0))
+      sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}[${timeRange}]) or vector(0))
 `
 
 const queryTotalRequest = (containerName: string, timeRange: string) => `

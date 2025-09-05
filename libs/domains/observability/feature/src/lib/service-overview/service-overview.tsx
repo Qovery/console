@@ -18,6 +18,9 @@ import { MemoryChart } from './memory-chart/memory-chart'
 import { NetworkRequestDurationChart } from './network-request-duration-chart/network-request-duration-chart'
 import { NetworkRequestSizeChart } from './network-request-size-chart/network-request-size-chart'
 import { NetworkRequestStatusChart } from './network-request-status-chart/network-request-status-chart'
+import PrivateNetworkRequestDurationChart from './private-network-request-duration-chart/private-network-request-duration-chart'
+import PrivateNetworkRequestSizeChart from './private-network-request-size-chart/private-network-request-size-chart'
+import PrivateNetworkRequestStatusChart from './private-network-request-status-chart/private-network-request-status-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
 
@@ -41,7 +44,7 @@ function ServiceOverviewContent() {
     (service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
     (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
 
-  const hasOnlyPrivatePort =
+  const hasOnlyPrivatePorts =
     !hasPublicPort &&
     ((service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => !port.publicly_accessible)) ||
       (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => !port.publicly_accessible)))
@@ -147,24 +150,20 @@ function ServiceOverviewContent() {
         <Section className="gap-4">
           <Heading weight="medium">Service health check</Heading>
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            {hasStorage && (
-              <CardInstanceStatus
-                clusterId={environment.cluster_id}
+            <CardInstanceStatus
+              clusterId={environment.cluster_id}
+              serviceId={applicationId}
+              containerName={containerName}
+            />
+            <div className="flex h-full flex-col gap-3">
+              <CardLogErrors
+                organizationId={environment.organization.id}
+                projectId={environment.project.id}
+                environmentId={environment.id}
                 serviceId={applicationId}
+                clusterId={environment.cluster_id}
                 containerName={containerName}
               />
-            )}
-            <div className="flex h-full flex-col gap-3">
-              {hasStorage && (
-                <CardLogErrors
-                  organizationId={environment.organization.id}
-                  projectId={environment.project.id}
-                  environmentId={environment.id}
-                  serviceId={applicationId}
-                  clusterId={environment.cluster_id}
-                  containerName={containerName}
-                />
-              )}
               {hasPublicPort && (
                 <CardHTTPErrors
                   clusterId={environment.cluster_id}
@@ -173,7 +172,7 @@ function ServiceOverviewContent() {
                   ingressName={ingressName}
                 />
               )}
-              {hasOnlyPrivatePort && (
+              {hasOnlyPrivatePorts && (
                 <CardPrivateHTTPErrors
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
@@ -189,7 +188,7 @@ function ServiceOverviewContent() {
                   ingressName={ingressName}
                 />
               )}
-              {hasOnlyPrivatePort && (
+              {hasOnlyPrivatePorts && (
                 <CardPrivatePercentile99
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
@@ -202,20 +201,12 @@ function ServiceOverviewContent() {
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
-            {hasStorage && (
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
-              </div>
-            )}
-            {hasStorage && (
-              <div className="overflow-hidden rounded border border-neutral-250">
-                <MemoryChart
-                  clusterId={environment.cluster_id}
-                  serviceId={applicationId}
-                  containerName={containerName}
-                />
-              </div>
-            )}
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <CpuChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
+            </div>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <MemoryChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
+            </div>
             {hasStorage && (
               <div className="overflow-hidden rounded border border-neutral-250">
                 <DiskChart clusterId={environment.cluster_id} serviceId={applicationId} containerName={containerName} />
@@ -249,6 +240,34 @@ function ServiceOverviewContent() {
                   serviceId={applicationId}
                   containerName={containerName}
                   ingressName={ingressName}
+                />
+              </div>
+            </div>
+          </Section>
+        )}
+        {hasOnlyPrivatePorts && (
+          <Section className="gap-4">
+            <Heading weight="medium">Network</Heading>
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <PrivateNetworkRequestStatusChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                />
+              </div>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <PrivateNetworkRequestDurationChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                />
+              </div>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <PrivateNetworkRequestSizeChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
                 />
               </div>
             </div>
