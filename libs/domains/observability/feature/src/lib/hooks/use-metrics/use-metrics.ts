@@ -35,6 +35,7 @@ interface UseMetricsProps {
   isLiveUpdateEnabled?: boolean
   overriddenStep?: string
   overriddenResolution?: string
+  overriddenPoint?: number
 }
 
 function useLiveUpdateSetting(): boolean {
@@ -53,6 +54,7 @@ export function useMetrics({
   isLiveUpdateEnabled: overrideLiveUpdate,
   overriddenStep,
   overriddenResolution,
+  overriddenPoint,
 }: UseMetricsProps) {
   // Get context and live update setting, but allow override
   const context = useServiceOverviewContext()
@@ -74,7 +76,7 @@ export function useMetrics({
     if (timeRange === '15m') return '60000ms' // 1 minute for longer ranges (2x scrape_interval)
     if (timeRange === '30m') return '120000ms' // 2 minutes for longer ranges (4x scrape_interval)
     if (alignedStart && alignedEnd) {
-      return calculateDynamicRange(alignedStart, alignedEnd, 1)
+      return calculateDynamicRange(alignedStart, alignedEnd, overriddenPoint)
     }
     return '30000ms' // Default: 30 seconds (match actual scrape_interval)
   }, [timeRange, alignedStart, alignedEnd, overriddenStep])
@@ -143,7 +145,7 @@ export function useMetrics({
   }
 }
 
-export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, offsetMultiplier = 1): string {
+export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, overriddenPoint?: number): string {
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
@@ -164,7 +166,7 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   ] as const
 
   // Cap points by escalating to the next quantized step until under target
-  const MAX_POINTS_TARGET = 150
+  const MAX_POINTS_TARGET = overriddenPoint || 150
 
   // Minimal step to respect the max points target
   const minimalStepForCapMs = Math.ceil(durationMs / MAX_POINTS_TARGET)
@@ -173,7 +175,12 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
   const roundedStepMs =
     allowedStepsMs.find((step) => step >= minimalStepForCapMs) ?? allowedStepsMs[allowedStepsMs.length - 1]
 
-  const finalStepMs = roundedStepMs + offsetMultiplier * 30000
+  const finalStepMs = roundedStepMs
+
+  if (overriddenPoint != null) {
+    console.log('overriddenPoint', overriddenPoint)
+    console.log('finalStepMs', finalStepMs + 'ms')
+  }
 
   return `${finalStepMs}ms`
 }
