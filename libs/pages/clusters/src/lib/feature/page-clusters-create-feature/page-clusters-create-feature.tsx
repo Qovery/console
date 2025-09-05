@@ -77,7 +77,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
 }
 
 export const defaultResourcesData: ClusterResourcesData = {
-  cluster_type: '',
+  cluster_type: 'MANAGED',
   disk_size: 50,
   instance_type: '',
   nodes: [3, 10],
