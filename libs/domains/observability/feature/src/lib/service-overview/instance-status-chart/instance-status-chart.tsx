@@ -6,20 +6,12 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryUnhealthyPods = (serviceId: string) => `
-  sum (kube_pod_status_ready{condition="false"}
-* on(namespace,pod) group_left(label_qovery_com_service_id)
-  max by(namespace,pod,label_qovery_com_service_id)(
-    kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-  )) > 0
-`
-
 const queryHealthyPods = (serviceId: string) => `
-  sum (kube_pod_status_ready{condition="true"}
+  sum by (condition) (kube_pod_status_ready
 * on(namespace,pod) group_left(label_qovery_com_service_id)
   max by(namespace,pod,label_qovery_com_service_id)(
     kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-  )) >0
+  ))
 `
 
 const queryRestartWithReason = (containerName: string, timeRange: string) => `
@@ -42,12 +34,14 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady",
+      type="Warning"
     }
     -
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady",
+       type="Warning"
     } offset ${dynamicRange}
   ) > 0
 )
@@ -236,7 +230,7 @@ export function InstanceStatusChart({
 
   // Calculate dynamic range based on time range
   const dynamicRange = useMemo(
-    () => calculateDynamicRange(startTimestamp, endTimestamp, 1),
+    () => calculateDynamicRange(startTimestamp, endTimestamp),
     [startTimestamp, endTimestamp]
   )
 
@@ -273,20 +267,13 @@ export function InstanceStatusChart({
     }
   }, [startTimestamp, endTimestamp])
 
-  const { data: metricsUnhealthy, isLoading: isLoadingUnhealthy } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    timeRange,
-    query: queryUnhealthyPods(serviceId),
-  })
-
   const { data: metricsHealthy, isLoading: isLoadingHealthy } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
     query: queryHealthyPods(serviceId),
+    // overriddenPoint: 450,  TODO PG: doing that remove sometile the limit and remove some points in the graph (for example 24 hours)
   })
 
   const { data: metricsRestartsWithReason, isLoading: isLoadingMetricsRestartsWithReason } = useMetrics({
@@ -321,6 +308,7 @@ export function InstanceStatusChart({
     endTimestamp,
     query: queryMinReplicas(containerName),
     timeRange,
+    overriddenPoint: 100,
   })
 
   const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
@@ -329,6 +317,7 @@ export function InstanceStatusChart({
     endTimestamp,
     query: queryMaxReplicas(containerName),
     timeRange,
+    overriddenPoint: 100,
   })
 
   const { data: metricsHpaMaxLimitReached, isLoading: isLoadingHpaMaxLimitReached } = useMetrics({
@@ -346,24 +335,30 @@ export function InstanceStatusChart({
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
 
-    // Process unhealthy
-    if (metricsUnhealthy?.data?.result) {
-      processMetricsData(
-        metricsUnhealthy,
-        timeSeriesMap,
-        () => 'Instance unhealthy',
-        (value) => parseFloat(value),
-        useLocalTime
-      )
-    }
-    // Process healthy
+    // Process healthy / unhealthy
     if (metricsHealthy?.data?.result) {
-      processMetricsData(
-        metricsHealthy,
-        timeSeriesMap,
-        () => 'Instance healthy',
-        (value) => parseFloat(value),
-        useLocalTime
+      metricsHealthy.data.result.forEach(
+        (serie: { metric: { condition: string }; values: [number, string][] }, index: number) => {
+          if (serie.metric.condition === 'false' || serie.metric.condition === 'true') {
+            // TODO PG: remove that to avoid the copy
+            const data = {
+              ...metricsHealthy,
+              data: {
+                ...metricsHealthy.data,
+                result: [metricsHealthy.data.result[index]],
+              },
+            }
+
+            processMetricsData(
+              data,
+              timeSeriesMap,
+              () => (serie.metric.condition === 'true' ? 'Instance healthy' : 'Instance unhealthy'),
+              (value) => parseFloat(value),
+              useLocalTime
+            )
+          }
+          index++ // TODO PG forEach can provide the index
+        }
       )
     }
 
@@ -391,15 +386,7 @@ export function InstanceStatusChart({
     // Convert map to sorted array and add time range padding
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [
-    metricsUnhealthy,
-    metricsHealthy,
-    useLocalTime,
-    startTimestamp,
-    endTimestamp,
-    metricsHpaMinReplicas,
-    metricsHpaMaxReplicas,
-  ])
+  }, [metricsHealthy, useLocalTime, startTimestamp, endTimestamp, metricsHpaMinReplicas, metricsHpaMaxReplicas])
 
   const referenceLineData = useMemo(() => {
     if (
@@ -530,7 +517,6 @@ export function InstanceStatusChart({
 
   const isLoading = useMemo(
     () =>
-      isLoadingUnhealthy ||
       isLoadingHealthy ||
       isLoadingMetricsRestartsWithReason ||
       isLoadingMetricsK8sEvent ||
@@ -539,7 +525,6 @@ export function InstanceStatusChart({
       isLoadingHpaMaxReplicas ||
       isLoadingHpaMaxLimitReached,
     [
-      isLoadingUnhealthy,
       isLoadingHealthy,
       isLoadingMetricsRestartsWithReason,
       isLoadingMetricsK8sEvent,
@@ -570,7 +555,7 @@ export function InstanceStatusChart({
         fillOpacity={0.3}
         isAnimationActive={false}
         dot={false}
-        strokeWidth={2}
+        strokeWidth={0}
         stackId="status"
       />
       <Area
@@ -581,7 +566,7 @@ export function InstanceStatusChart({
         fillOpacity={0.3}
         isAnimationActive={false}
         dot={false}
-        strokeWidth={2}
+        strokeWidth={0}
         stackId="status"
       />
       <Line
