@@ -1,10 +1,11 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import axios from 'axios'
-
-export const DEVOPS_COPILOT_API_BASE_URL = 'https://p8080-z7df85604-zb0f30ecb-gtw.qovery.com'
+import { DEVOPS_COPILOT_API_BASE_URL } from '@qovery/shared/util-node-env'
 
 // Create a dedicated axios instance for DevOps Copilot
-export const devopsCopilotAxios = axios.create()
+export const devopsCopilotAxios = axios.create({
+  baseURL: DEVOPS_COPILOT_API_BASE_URL,
+})
 
 export const devopsCopilot = createQueryKeys('devopsCopilot', {
   threads: ({ userId, organizationId }: { userId: string; organizationId: string }) => ({
