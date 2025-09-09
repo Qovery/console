@@ -70,10 +70,7 @@ export function PrivateNetworkRequestSizeChart({
       metricsRequestSize,
       timeSeriesMap,
       () => 'Request size',
-      (value) => {
-        console.log('vvv')
-        return parseFloat(value)
-      }, // Convert to bytes
+      (value) => parseFloat(value), // Convert to bytes
       useLocalTime
     )
 

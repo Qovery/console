@@ -50,7 +50,6 @@ export function PrivateInstanceHTTPErrorsChart({
   })
 
   const chartData = useMemo(() => {
-    // Merge healthy and unhealthy metrics into a single timeSeriesMap
     const timeSeriesMap = new Map<
       number,
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
