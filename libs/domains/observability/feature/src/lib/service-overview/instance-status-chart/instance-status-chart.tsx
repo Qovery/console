@@ -268,7 +268,7 @@ export function InstanceStatusChart({
     timeRange,
     query: queryHealthyPods(serviceId),
     overriddenStep: customStep,
-    overriddenMaxPoints: 500,
+    overriddenMaxPoints: 250,
   })
 
   const { data: metricsRestartsWithReason, isLoading: isLoadingMetricsRestartsWithReason } = useMetrics({
@@ -296,7 +296,7 @@ export function InstanceStatusChart({
     timeRange,
     query: queryMinReplicas(containerName),
     overriddenStep: customStep,
-    overriddenMaxPoints: 100,
+    overriddenMaxPoints: 75,
   })
 
   const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
@@ -306,7 +306,7 @@ export function InstanceStatusChart({
     timeRange,
     query: queryMaxReplicas(containerName),
     overriddenStep: customStep,
-    overriddenMaxPoints: 100,
+    overriddenMaxPoints: 75,
   })
 
   const { data: metricsHpaMaxLimitReached, isLoading: isLoadingHpaMaxLimitReached } = useMetrics({
