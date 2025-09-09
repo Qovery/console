@@ -66,8 +66,6 @@ export const ChartContent = memo(function ChartContent({
     endTimestamp,
     useLocalTime,
     hideEvents,
-    hoveredEventKey,
-    setHoveredEventKey,
     handleZoomTimeRangeChange,
     registerZoomReset,
     setIsAnyChartZoomed,
@@ -202,10 +200,7 @@ export const ChartContent = memo(function ChartContent({
             )
           }
         />
-        {!hideEvents &&
-          referenceLineData?.map((event) =>
-            createAlignedReferenceLine(label, event, hoveredEventKey, setHoveredEventKey)
-          )}
+        {!hideEvents && referenceLineData?.map((event) => createAlignedReferenceLine(event))}
         {children}
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
@@ -335,12 +330,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             {children}
           </ChartContent>
           {isFullscreen && events && !hideEvents && (
-            <EventSidebar
-              events={events}
-              service={service}
-              isLoading={isLoading || eventsLoading}
-              label={label ?? ''}
-            />
+            <EventSidebar events={events} service={service} isLoading={isLoading || eventsLoading} />
           )}
         </div>
       </Section>
@@ -361,12 +351,9 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             >
               {children}
             </ChartContent>
-            <EventSidebar
-              events={events}
-              service={service}
-              isLoading={isLoading || eventsLoading}
-              label={label ?? ''}
-            />
+            {events && !hideEvents && (
+              <EventSidebar events={events} service={service} isLoading={isLoading || eventsLoading} />
+            )}
           </div>
         </ModalChart>
       )}
@@ -377,33 +364,33 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
 export default LocalChart
 
 // Utility function to create reference lines with better clickable areas
-function createAlignedReferenceLine(
-  label: string,
-  event: ReferenceLineEvent,
-  hoveredEventKey: string | null,
-  setHoveredEventKey: (key: string | null) => void
-) {
-  const key = `${label}-${event.key}`
+function createAlignedReferenceLine(event: ReferenceLineEvent) {
+  const key = event.key
   const strokeWidth = 2
-  const opacity = hoveredEventKey === key ? 1 : 0.4
 
   return (
     <ReferenceLine
       key={event.key}
+      name={event.key}
       x={event.timestamp}
       stroke={event.color || 'var(--color-brand-500)'}
       strokeDasharray="3 3"
-      opacity={opacity}
+      opacity={0.4}
       strokeWidth={strokeWidth}
       onMouseEnter={() => {
-        setHoveredEventKey(key)
+        const referenceLine = document.querySelectorAll(`line[name="${key}"].recharts-reference-line-line`)
+        referenceLine.forEach((line) => {
+          line.classList.add('active')
+        })
       }}
       onMouseLeave={() => {
-        setHoveredEventKey(null)
+        const referenceLine = document.querySelectorAll(`line[name="${key}"].recharts-reference-line-line`)
+        referenceLine.forEach((line) => {
+          line.classList.remove('active')
+        })
       }}
-      style={{ cursor: 'pointer' }}
       label={{
-        value: hoveredEventKey === key ? event.reason : undefined,
+        value: event.reason,
         position: 'top',
         fill: event.color || 'var(--color-brand-500)',
         fontSize: 12,

@@ -45,6 +45,7 @@ function calculateInterval(startMs: number, endMs: number, existingDataInterval?
   }
 }
 
+// This function is useful if you want to make missing data visible by creating padding points with null values.
 export function addTimeRangePadding<T extends { timestamp: number; time: string; fullTime: string }>(
   chartData: T[],
   startTimestamp: string,

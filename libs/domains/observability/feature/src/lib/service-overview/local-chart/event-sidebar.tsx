@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import type { AnyService } from '@qovery/domains/services/data-access'
 import { Badge, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
@@ -11,11 +10,10 @@ export interface EventSidebarProps {
   events: ReferenceLineEvent[]
   service?: AnyService
   isLoading?: boolean
-  label?: string
 }
 
-export function EventSidebar({ events, service, isLoading = false, label = '' }: EventSidebarProps) {
-  const { useLocalTime, hoveredEventKey, setHoveredEventKey } = useServiceOverviewContext()
+export function EventSidebar({ events, service, isLoading = false }: EventSidebarProps) {
+  const { useLocalTime } = useServiceOverviewContext()
 
   return (
     <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-250">
@@ -41,15 +39,24 @@ export function EventSidebar({ events, service, isLoading = false, label = '' }:
           <>
             {events.map((event) => {
               const timestamp = formatTimestamp(event.timestamp, useLocalTime)
-              const key = `${label}-${event.key}`
+              const key = event.key
               return (
                 <div
                   key={key}
-                  className={clsx('flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500', {
-                    'bg-neutral-150': hoveredEventKey === key,
-                  })}
-                  onMouseEnter={() => setHoveredEventKey(key)}
-                  onMouseLeave={() => setHoveredEventKey(null)}
+                  className="flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150"
+                  data-event-key={key}
+                  onMouseEnter={() => {
+                    const referenceLine = document.querySelectorAll(`.recharts-reference-line-line[name="${key}"]`)
+                    referenceLine.forEach((line) => {
+                      line.classList.add('active')
+                    })
+                  }}
+                  onMouseLeave={() => {
+                    const referenceLine = document.querySelectorAll(`.recharts-reference-line-line[name="${key}"]`)
+                    referenceLine.forEach((line) => {
+                      line.classList.remove('active')
+                    })
+                  }}
                 >
                   <span
                     className="flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full"

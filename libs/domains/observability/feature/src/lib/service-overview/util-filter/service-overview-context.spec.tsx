@@ -24,7 +24,6 @@ describe('ServiceOverviewContext', () => {
     expect(result.current.hideEvents).toBe(false)
     expect(result.current.expandCharts).toBe(false)
     expect(result.current.hasCalendarValue).toBe(false)
-    expect(result.current.hoveredEventKey).toBe(null)
   })
 
   it('should allow updating useLocalTime', () => {
@@ -85,18 +84,6 @@ describe('ServiceOverviewContext', () => {
     })
 
     expect(result.current.hasCalendarValue).toBe(true)
-  })
-
-  it('should allow updating hoveredEventKey', () => {
-    const { result } = renderHook(() => useServiceOverviewContext(), {
-      wrapper: ServiceOverviewProvider,
-    })
-
-    act(() => {
-      result.current.setHoveredEventKey('test-key')
-    })
-
-    expect(result.current.hoveredEventKey).toBe('test-key')
   })
 
   it('should handle timeRange changes with handleTimeRangeChange', () => {

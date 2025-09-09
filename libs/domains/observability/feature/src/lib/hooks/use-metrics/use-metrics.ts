@@ -35,6 +35,7 @@ interface UseMetricsProps {
   isLiveUpdateEnabled?: boolean
   overriddenStep?: string
   overriddenResolution?: string
+  overriddenMaxPoints?: number
 }
 
 function useLiveUpdateSetting(): boolean {
@@ -53,6 +54,7 @@ export function useMetrics({
   isLiveUpdateEnabled: overrideLiveUpdate,
   overriddenStep,
   overriddenResolution,
+  overriddenMaxPoints,
 }: UseMetricsProps) {
   // Get context and live update setting, but allow override
   const context = useServiceOverviewContext()
@@ -66,18 +68,17 @@ export function useMetrics({
     if (overriddenStep !== undefined) {
       return overriddenStep
     }
-    // TODO: Verify these step intervals match actual Prometheus scrape_interval configuration
-    // Actual scrape_interval = 15s
+    // Actual scrape_interval = 30s
     // https://prometheus.io/docs/prometheus/latest/configuration/configuration/#duration
     // https://qovery.slack.com/archives/C02NQ0LC8M9/p1753804730631609?thread_ts=1753803872.246399&cid=C02NQ0LC8M9
     if (timeRange === '5m') return '30000ms' // 30 seconds (match actual scrape_interval)
     if (timeRange === '15m') return '60000ms' // 1 minute for longer ranges (2x scrape_interval)
     if (timeRange === '30m') return '120000ms' // 2 minutes for longer ranges (4x scrape_interval)
     if (alignedStart && alignedEnd) {
-      return calculateDynamicRange(alignedStart, alignedEnd, 1)
+      return calculateDynamicRange(alignedStart, alignedEnd, 1, overriddenMaxPoints)
     }
     return '30000ms' // Default: 30 seconds (match actual scrape_interval)
-  }, [timeRange, alignedStart, alignedEnd, overriddenStep])
+  }, [timeRange, alignedStart, alignedEnd, overriddenStep, overriddenMaxPoints])
 
   const maxSourceResolution = useMemo(() => {
     if (overriddenResolution !== undefined) {
@@ -143,7 +144,12 @@ export function useMetrics({
   }
 }
 
-export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, offsetMultiplier = 1): string {
+export function calculateDynamicRange(
+  startTimestamp: string,
+  endTimestamp: string,
+  offsetMultiplier = 1,
+  overriddenMaxPoints = 150
+): string {
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = endMs - startMs
@@ -163,11 +169,8 @@ export function calculateDynamicRange(startTimestamp: string, endTimestamp: stri
     21600000, // 6h - added for better 24h+ range optimization
   ] as const
 
-  // Cap points by escalating to the next quantized step until under target
-  const MAX_POINTS_TARGET = 150
-
   // Minimal step to respect the max points target
-  const minimalStepForCapMs = Math.ceil(durationMs / MAX_POINTS_TARGET)
+  const minimalStepForCapMs = Math.ceil(durationMs / overriddenMaxPoints)
 
   // Round up to the nearest allowed step
   const roundedStepMs =
