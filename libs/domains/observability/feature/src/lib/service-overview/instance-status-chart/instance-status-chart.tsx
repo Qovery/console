@@ -245,12 +245,30 @@ export function InstanceStatusChart({
     }
   }, [startTimestamp, endTimestamp])
 
+  // Custom step calculation for instance status chart to get more details
+  const customStep = useMemo(() => {
+    const startMs = Number(startTimestamp) * 1000
+    const endMs = Number(endTimestamp) * 1000
+    const durationMs = endMs - startMs
+    const durationHours = durationMs / (1000 * 60 * 60)
+
+    // Optimized for Prometheus 30s interval with more detail
+    if (durationHours <= 0.25) return '30000ms' // 15min: 30s (Prometheus interval)
+    if (durationHours <= 1) return '60000ms' // 1h: 1min
+    if (durationHours <= 6) return '120000ms' // 6h: 2min
+    if (durationHours <= 24) return '300000ms' // 24h: 5min (more detail than default)
+    if (durationHours <= 72) return '600000ms' // 3d: 10min
+    return '1800000ms' // 7d+: 30min
+  }, [startTimestamp, endTimestamp])
+
   const { data: metricsHealthy, isLoading: isLoadingHealthy } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
     query: queryHealthyPods(serviceId),
+    overriddenStep: customStep,
+    overriddenMaxPoints: 500,
   })
 
   const { data: metricsRestartsWithReason, isLoading: isLoadingMetricsRestartsWithReason } = useMetrics({
@@ -275,16 +293,20 @@ export function InstanceStatusChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMinReplicas(containerName),
     timeRange,
+    query: queryMinReplicas(containerName),
+    overriddenStep: customStep,
+    overriddenMaxPoints: 100,
   })
 
   const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMaxReplicas(containerName),
     timeRange,
+    query: queryMaxReplicas(containerName),
+    overriddenStep: customStep,
+    overriddenMaxPoints: 100,
   })
 
   const { data: metricsHpaMaxLimitReached, isLoading: isLoadingHpaMaxLimitReached } = useMetrics({
@@ -292,11 +314,9 @@ export function InstanceStatusChart({
     startTimestamp,
     endTimestamp,
     query: queryMaxLimitReached(serviceId, rateInterval),
-    timeRange,
   })
 
   const chartData = useMemo(() => {
-    // Merge healthy and unhealthy metrics into a single timeSeriesMap
     const timeSeriesMap = new Map<
       number,
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
