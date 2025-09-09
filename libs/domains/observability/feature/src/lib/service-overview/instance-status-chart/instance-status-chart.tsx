@@ -42,22 +42,15 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     }
     -
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Unhealthy|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
+      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady"
     } offset ${dynamicRange}
   ) > 0
 )
-`
-
-const queryProbe = (containerName: string, rateInterval: string) => `
- sum by (probe_type) (  increase(
-      prober_probe_total{result!="successful", probe_type="Readiness", container="${containerName}"}[${rateInterval}]
-    )
- )
 `
 
 const queryMinReplicas = (containerName: string) => `
@@ -110,19 +103,6 @@ const getDescriptionFromReason = (reason: string): string => {
   }
 }
 
-const getDescriptionFromProbeType = (probeType: string): string => {
-  switch (probeType.toLowerCase()) {
-    case 'readiness':
-      return 'Readiness probe failed: the container is not ready to receive traffic.'
-    case 'liveness':
-      return 'Liveness probe failed: Kubernetes will restart the container.'
-    case 'startup':
-      return 'Startup probe failed: the container did not finish its startup sequence in time.'
-    default:
-      return 'Unknown probe type'
-  }
-}
-
 const getDescriptionFromK8sEvent = (reason: string): string => {
   switch (reason) {
     case 'OOMKilled':
@@ -131,8 +111,6 @@ const getDescriptionFromK8sEvent = (reason: string): string => {
       return 'Pod or container failed to start or run.'
     case 'BackOff':
       return 'Container restart is being delayed due to repeated failures (CrashLoopBackOff or image-pull back-off).'
-    case 'Unhealthy':
-      return 'Container reported as unhealthy after failing its health checks.'
     case 'Evicted':
       return 'Pod was evicted from the node due to resource pressure or eviction policy.'
     case 'FailedScheduling':
@@ -231,8 +209,7 @@ export function InstanceStatusChart({
   containerName: string
   isFullscreen?: boolean
 }) {
-  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, hoveredEventKey, setHoveredEventKey, timeRange } =
-    useServiceOverviewContext()
+  const { startTimestamp, endTimestamp, useLocalTime, hideEvents, timeRange } = useServiceOverviewContext()
 
   // Calculate dynamic range based on time range
   const dynamicRange = useMemo(
@@ -305,14 +282,6 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryK8sEvent(serviceId, dynamicRange),
-  })
-
-  const { data: metricsProbe, isLoading: isLoadingMetricsProbe } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    timeRange,
-    query: queryProbe(serviceId, rateInterval),
   })
 
   const { data: metricsHpaMinReplicas, isLoading: isLoadingHpaMinReplicas } = useMetrics({
@@ -405,7 +374,6 @@ export function InstanceStatusChart({
     if (
       !metricsRestartsWithReason?.data?.result &&
       !metricsK8sEvent?.data?.result &&
-      !metricsProbe?.data?.result &&
       !metricsHpaMaxLimitReached?.data?.result
     )
       return []
@@ -474,29 +442,6 @@ export function InstanceStatusChart({
       )
     }
 
-    // Add probe event as reference lines
-    if (metricsProbe?.data?.result) {
-      metricsProbe.data.result.forEach(
-        (series: { metric: { probe_type: string; pod: string }; values: [number, string][] }) => {
-          series.values.forEach(([timestamp, value]: [number, string]) => {
-            const numValue = parseFloat(value)
-            if (numValue > 0) {
-              const key = `${series.metric.probe_type}-${timestamp}`
-              referenceLines.push({
-                type: 'probe',
-                timestamp: timestamp * 1000,
-                reason: series.metric.probe_type,
-                description: getDescriptionFromProbeType(series.metric.probe_type),
-                icon: 'exclamation',
-                pod: series.metric.pod,
-                key,
-              })
-            }
-          })
-        }
-      )
-    }
-
     // Add hpa max limit reached lines
     if (metricsHpaMaxLimitReached?.data?.result) {
       metricsHpaMaxLimitReached.data.result.forEach(
@@ -526,7 +471,7 @@ export function InstanceStatusChart({
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
 
     return referenceLines
-  }, [metricsK8sEvent, metricsProbe, metricsHpaMaxLimitReached, metricsRestartsWithReason, intervalForEventInSec])
+  }, [metricsK8sEvent, metricsHpaMaxLimitReached, metricsRestartsWithReason, intervalForEventInSec])
 
   const isLoading = useMemo(
     () =>
@@ -534,7 +479,6 @@ export function InstanceStatusChart({
       isLoadingHealthy ||
       isLoadingMetricsRestartsWithReason ||
       isLoadingMetricsK8sEvent ||
-      isLoadingMetricsProbe ||
       isLoadingHpaMinReplicas ||
       isLoadingHpaMaxReplicas ||
       isLoadingHpaMaxLimitReached,
@@ -543,7 +487,6 @@ export function InstanceStatusChart({
       isLoadingHealthy,
       isLoadingMetricsRestartsWithReason,
       isLoadingMetricsK8sEvent,
-      isLoadingMetricsProbe,
       isLoadingHpaMinReplicas,
       isLoadingHpaMaxReplicas,
       isLoadingHpaMaxLimitReached,
@@ -611,15 +554,30 @@ export function InstanceStatusChart({
             .map((event) => (
               <ReferenceLine
                 key={event.key}
+                name={event.key}
                 x={event.timestamp}
                 stroke={event.color}
                 strokeDasharray="3 3"
-                opacity={hoveredEventKey === event.key ? 1 : 0.3}
+                opacity={0.4}
                 strokeWidth={2}
-                onMouseEnter={() => setHoveredEventKey(event.key)}
-                onMouseLeave={() => setHoveredEventKey(null)}
+                onMouseEnter={() => {
+                  const referenceLine = document.querySelectorAll(
+                    `line[name="${event.key}"].recharts-reference-line-line`
+                  )
+                  referenceLine.forEach((line) => {
+                    line.classList.add('active')
+                  })
+                }}
+                onMouseLeave={() => {
+                  const referenceLine = document.querySelectorAll(
+                    `line[name="${event.key}"].recharts-reference-line-line`
+                  )
+                  referenceLine.forEach((line) => {
+                    line.classList.remove('active')
+                  })
+                }}
                 label={{
-                  value: hoveredEventKey === event.key ? event.reason : undefined,
+                  value: event.reason,
                   position: 'top',
                   fill: event.color,
                   fontSize: 12,
@@ -638,15 +596,30 @@ export function InstanceStatusChart({
             .map((event) => (
               <ReferenceLine
                 key={event.key}
+                name={event.key}
                 x={event.timestamp}
                 stroke={event.color}
                 strokeDasharray="3 3"
-                opacity={hoveredEventKey === event.key ? 1 : 0.3}
+                opacity={0.4}
                 strokeWidth={2}
-                onMouseEnter={() => setHoveredEventKey(event.key)}
-                onMouseLeave={() => setHoveredEventKey(null)}
+                onMouseEnter={() => {
+                  const referenceLine = document.querySelectorAll(
+                    `line[name="${event.key}"].recharts-reference-line-line`
+                  )
+                  referenceLine.forEach((line) => {
+                    line.classList.add('active')
+                  })
+                }}
+                onMouseLeave={() => {
+                  const referenceLine = document.querySelectorAll(
+                    `line[name="${event.key}"].recharts-reference-line-line`
+                  )
+                  referenceLine.forEach((line) => {
+                    line.classList.remove('active')
+                  })
+                }}
                 label={{
-                  value: hoveredEventKey === event.key ? event.reason : undefined,
+                  value: event.reason,
                   position: 'top',
                   fill: event.color,
                   fontSize: 12,

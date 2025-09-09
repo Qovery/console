@@ -42,10 +42,6 @@ interface ServiceOverviewContextType {
   hasCalendarValue: boolean
   setHasCalendarValue: (value: boolean) => void
 
-  // Hovered event
-  hoveredEventKey: string | null
-  setHoveredEventKey: (value: string | null) => void
-
   // Live update toggle
   isLiveUpdateEnabled: boolean
   setIsLiveUpdateEnabled: (value: boolean) => void
@@ -67,6 +63,40 @@ const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefi
 export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [useLocalTime, setUseLocalTime] = useState(false)
   const [timeRange, setTimeRange] = useState<TimeRangeOption>('1h')
+
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.innerHTML = `
+      /* Event sidebar hover synchronization */
+      /* When hovering over a sidebar event, highlight the corresponding reference line */
+      [data-event-key]:hover {
+        background-color: var(--color-neutral-150);
+      }
+
+      .recharts-reference-line-line {
+        cursor: pointer;
+      }
+
+      .recharts-reference-line-line.active {
+        opacity: 1 !important;
+      }
+
+      /* ReferenceLine labels - hidden by default, visible only when active */
+      .recharts-reference-line .recharts-text.recharts-label {
+        opacity: 0;
+      }
+
+      /* Show label when the line has active class */
+      .recharts-reference-line-line.active ~ .recharts-text.recharts-label {
+        opacity: 1;
+      }
+    `
+    document.head.appendChild(style)
+
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
 
   // Track the last time range selected from dropdown (not from zoom)
   const [lastDropdownTimeRange, setLastDropdownTimeRange] = useState<TimeRangeOption>('1h')
@@ -91,7 +121,6 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const [expandCharts, setExpandCharts] = useState(false)
 
   const [hasCalendarValue, setHasCalendarValue] = useState(false)
-  const [hoveredEventKey, setHoveredEventKey] = useState<string | null>(null)
 
   const registerZoomReset = useCallback((resetFn: () => void) => {
     setZoomResetFunctions((prev) => [...prev, resetFn])
@@ -229,8 +258,6 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       setExpandCharts,
       hasCalendarValue,
       setHasCalendarValue,
-      hoveredEventKey,
-      setHoveredEventKey,
       isLiveUpdateEnabled,
       setIsLiveUpdateEnabled,
       isDatePickerOpen,
@@ -259,8 +286,6 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       setExpandCharts,
       hasCalendarValue,
       setHasCalendarValue,
-      hoveredEventKey,
-      setHoveredEventKey,
       isLiveUpdateEnabled,
       setIsLiveUpdateEnabled,
       isDatePickerOpen,
