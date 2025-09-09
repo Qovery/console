@@ -9,6 +9,8 @@ import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
 import { CardPercentile99 } from './card-percentile-99/card-percentile-99'
+import { CardPrivateHTTPErrors } from './card-private-http-errors/card-private-http-errors'
+import { CardPrivatePercentile99 } from './card-private-percentile-99/card-private-percentile-99'
 import { CardStorage } from './card-storage/card-storage'
 import { CpuChart } from './cpu-chart/cpu-chart'
 import { DiskChart } from './disk-chart/disk-chart'
@@ -16,6 +18,9 @@ import { MemoryChart } from './memory-chart/memory-chart'
 import { NetworkRequestDurationChart } from './network-request-duration-chart/network-request-duration-chart'
 import { NetworkRequestSizeChart } from './network-request-size-chart/network-request-size-chart'
 import { NetworkRequestStatusChart } from './network-request-status-chart/network-request-status-chart'
+import PrivateNetworkRequestDurationChart from './private-network-request-duration-chart/private-network-request-duration-chart'
+import PrivateNetworkRequestSizeChart from './private-network-request-size-chart/private-network-request-size-chart'
+import PrivateNetworkRequestStatusChart from './private-network-request-status-chart/private-network-request-status-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
 
@@ -38,6 +43,11 @@ function ServiceOverviewContent() {
   const hasPublicPort =
     (service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => port.publicly_accessible)) ||
     (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => port.publicly_accessible))
+
+  const hasOnlyPrivatePorts =
+    !hasPublicPort &&
+    ((service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => !port.publicly_accessible)) ||
+      (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => !port.publicly_accessible)))
 
   const hasStorage = service?.serviceType === 'CONTAINER' && (service.storage || []).length > 0
 
@@ -162,6 +172,13 @@ function ServiceOverviewContent() {
                   ingressName={ingressName}
                 />
               )}
+              {hasOnlyPrivatePorts && (
+                <CardPrivateHTTPErrors
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                />
+              )}
               {hasStorage && <CardStorage clusterId={environment.cluster_id} serviceId={applicationId} />}
               {hasPublicPort && (
                 <CardPercentile99
@@ -169,6 +186,13 @@ function ServiceOverviewContent() {
                   serviceId={applicationId}
                   containerName={containerName}
                   ingressName={ingressName}
+                />
+              )}
+              {hasOnlyPrivatePorts && (
+                <CardPrivatePercentile99
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
                 />
               )}
             </div>
@@ -216,6 +240,34 @@ function ServiceOverviewContent() {
                   serviceId={applicationId}
                   containerName={containerName}
                   ingressName={ingressName}
+                />
+              </div>
+            </div>
+          </Section>
+        )}
+        {hasOnlyPrivatePorts && (
+          <Section className="gap-4">
+            <Heading weight="medium">Network</Heading>
+            <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <PrivateNetworkRequestStatusChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                />
+              </div>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <PrivateNetworkRequestDurationChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
+                />
+              </div>
+              <div className="overflow-hidden rounded border border-neutral-250">
+                <PrivateNetworkRequestSizeChart
+                  clusterId={environment.cluster_id}
+                  serviceId={applicationId}
+                  containerName={containerName}
                 />
               </div>
             </div>
