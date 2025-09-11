@@ -120,13 +120,18 @@ export const TerraformConfigurationSettings = ({
           name="timeout_sec"
           control={methods.control}
           defaultValue={methods.getValues('timeout_sec')}
+          rules={{
+            required: true,
+            validate: (value) =>
+              value !== '' && !isNaN(Number(value)) && Number(value) > 0 ? true : 'Timeout must be a positive number',
+          }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               name={field.name}
               type="number"
               onChange={field.onChange}
               value={field.value}
-              label="Execution timeout (in minutes)"
+              label="Execution timeout (in seconds)"
               error={error?.message}
               hint="Maximum duration for Terraform operations"
             />
