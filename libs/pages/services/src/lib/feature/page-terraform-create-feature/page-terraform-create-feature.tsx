@@ -73,7 +73,7 @@ export function PageTerraformCreateFeature() {
         tf_vars: [],
         tf_var_file_paths: [],
       },
-      timeout_sec: '60',
+      timeout_sec: '3600',
       use_cluster_credentials: true,
     },
   })

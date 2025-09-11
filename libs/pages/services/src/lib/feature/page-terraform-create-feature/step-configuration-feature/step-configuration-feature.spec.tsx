@@ -30,7 +30,7 @@ const generalDataDefaultValues: TerraformGeneralData = {
   source_provider: 'GIT',
   repository: 'Qovery/github',
   arguments: '',
-  timeout_sec: '60',
+  timeout_sec: '3600',
   state: 'kubernetes',
   provider: 'GITHUB',
   branch: 'main',
