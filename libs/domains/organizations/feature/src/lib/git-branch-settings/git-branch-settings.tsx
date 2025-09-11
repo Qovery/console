@@ -24,7 +24,7 @@ export function GitBranchSettings({
   const { control, watch } = useFormContext()
   const { organizationId = '' } = useParams()
 
-  const watchFieldRepository = watch('repository')
+  const watchFieldGitRepository = watch('git_repository')
   const watchFieldBranch = watch('branch')
 
   const {
@@ -35,7 +35,7 @@ export function GitBranchSettings({
   } = useBranches({
     organizationId,
     gitProvider,
-    name: watchFieldRepository,
+    name: watchFieldGitRepository.name,
     gitToken: gitTokenId,
     enabled: !disabled,
   })

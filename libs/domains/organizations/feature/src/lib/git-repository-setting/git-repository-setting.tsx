@@ -1,4 +1,4 @@
-import { type GitProviderEnum } from 'qovery-typescript-axios'
+import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { type SelectOptionValue } from '@qovery/shared/interfaces'
@@ -14,10 +14,13 @@ export interface GitRepositorySettingProps {
 }
 
 export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRepository }: GitRepositorySettingProps) {
-  const { control, setValue, watch } = useFormContext()
+  const { control, setValue, watch } = useFormContext<{
+    git_repository: GitRepository | undefined
+    branch: string | undefined
+  }>()
   const { organizationId = '' } = useParams()
 
-  const watchFieldRepository = watch('repository')
+  const watchFieldGitRepository = watch('git_repository')
 
   const {
     data: repositories = [],
@@ -45,7 +48,7 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
 
   return (
     <Controller
-      name="repository"
+      name="git_repository"
       control={control}
       rules={{
         required: 'Please select a repository.',
@@ -59,20 +62,19 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
               disabled
                 ? [
                     {
-                      label: upperCaseFirstLetter(watchFieldRepository) ?? '',
-                      value: watchFieldRepository ?? '',
+                      label: upperCaseFirstLetter(watchFieldGitRepository?.name ?? '') ?? '',
+                      value: watchFieldGitRepository ?? '',
                     },
                   ]
                 : repositories.map((repository) => ({
                     label: upperCaseFirstLetter(repository.name),
-                    value: repository.name,
+                    value: repository,
                   }))
             }
             onChange={(option: SelectOptionValue | SelectOptionValue[]) => {
               field.onChange(option)
-              const gitRepository = repositories.find((repo) => repo.name === option)
-              setValue('branch', gitRepository?.default_branch)
-              setValue('git_repository', gitRepository)
+              const repository = repositories.find((repository) => repository.name === option)
+              setValue('branch', repository?.default_branch)
             }}
             value={field.value}
             error={error?.message}
