@@ -1,7 +1,6 @@
 import { type Row } from '@tanstack/react-table'
 import clsx from 'clsx'
 import { type ServiceLogResponseDto } from 'qovery-ws-typescript-axios'
-import { useContext } from 'react'
 import {
   Ansi,
   Button,
@@ -16,7 +15,7 @@ import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { type LogType } from '../../hooks/use-service-logs/use-service-logs'
-import { UpdateTimeContext } from '../../update-time-context/update-time-context'
+import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
 const { Table } = TablePrimitives
@@ -38,7 +37,8 @@ export function RowServiceLogs({
   getIsExpanded,
   original,
 }: RowServiceLogsProps) {
-  const { utc } = useContext(UpdateTimeContext)
+  const { updateTimeContextValue } = useServiceLogsContext()
+  const { utc } = updateTimeContextValue
   const getColorByPod = usePodColor()
 
   const isExpanded = getIsExpanded()
