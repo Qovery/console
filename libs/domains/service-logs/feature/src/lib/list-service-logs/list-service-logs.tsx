@@ -61,10 +61,7 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
 
   // Live logs hook - only enabled when in live mode
   const { data: liveLogs = [], enabledNginx } = useServiceLiveLogs({
-    organizationId: environment.organization.id,
     clusterId,
-    projectId: environment.project.id,
-    environmentId: environment.id,
     serviceId: serviceId ?? '',
     enabled: isLiveMode && serviceEnabled,
   })

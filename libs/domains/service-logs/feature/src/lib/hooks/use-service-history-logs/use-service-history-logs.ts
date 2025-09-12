@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { useQueryParams } from 'use-query-params'
 import { serviceLogs } from '@qovery/domains/service-logs/data-access'
 import { useDebounce } from '@qovery/shared/util-hooks'
+import { queryParamsServiceLogs } from '../../list-service-logs/service-logs-context/service-logs-context'
 
 export interface UseServiceHistoryLogsProps {
   clusterId: string
@@ -14,12 +15,7 @@ export interface UseServiceHistoryLogsProps {
 
 export type LogType = 'INFRA' | 'SERVICE'
 
-// Type for formatted service logs
-// type FormattedServiceLog = ServiceLogResponseDto & { type: LogType; id: number }
-
-const POD_NAME_KEY = 'pod_name'
 const DEBOUNCE_TIME = 400
-const OFFSET = 20
 
 export function useServiceHistoryLogs({
   clusterId,
@@ -28,8 +24,7 @@ export function useServiceHistoryLogs({
   endDate,
   enabled = false,
 }: UseServiceHistoryLogsProps) {
-  const logCounter = useRef(0)
-  const [searchParams] = useSearchParams()
+  const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   // States for controlling log actions, showing new, previous or paused logs
   const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
@@ -38,7 +33,16 @@ export function useServiceHistoryLogs({
 
   const [enabledNginx, setEnabledNginx] = useState(false)
 
-  const now = useMemo(() => Date.now(), [])
+  // Build filters from query parameters
+  const filters = useMemo(
+    () => ({
+      level: queryParams.level || undefined,
+      pod: queryParams.podName || undefined,
+      message: queryParams.message || undefined,
+      version: queryParams.version || undefined,
+    }),
+    [queryParams.level, queryParams.podName, queryParams.message, queryParams.version]
+  )
 
   // Fetch service logs using useQuery instead of websocket
   const { data: serviceLogsData = [] } = useQuery({
@@ -47,6 +51,7 @@ export function useServiceHistoryLogs({
       serviceId,
       startDate,
       endDate,
+      filters,
     }),
     enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(startDate) && Boolean(endDate) && enabled,
   })
@@ -74,7 +79,7 @@ export function useServiceHistoryLogs({
   // }, [serviceLogsData, showPreviousLogs, now])
 
   const debouncedLogs = useDebounce(serviceLogsData, DEBOUNCE_TIME)
-  const pausedDataLogs = useMemo(() => debouncedLogs, [pauseLogs])
+  const pausedDataLogs = useMemo(() => debouncedLogs, [debouncedLogs])
 
   // console.log('debouncedLogs', debouncedLogs)
   console.log('history logs', debouncedLogs)

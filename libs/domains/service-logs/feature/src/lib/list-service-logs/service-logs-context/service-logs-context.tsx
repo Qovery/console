@@ -48,12 +48,13 @@ interface ServiceLogsContextType {
   downloadLogs: (logs: ServiceLog[]) => void
 }
 
-export const queryParamsValues = {
+export const queryParamsServiceLogs = {
   startDate: StringParam,
   endDate: StringParam,
   podName: StringParam,
   version: StringParam,
   message: StringParam,
+  level: StringParam,
 }
 
 export const ServiceLogsContext = createContext<ServiceLogsContextType | undefined>(undefined)
@@ -72,7 +73,7 @@ export function ServiceLogsProvider({
   serviceStatus,
   environmentStatus,
 }: ServiceLogsProviderProps) {
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
   // Date/Time states
   const startDate = useMemo(
