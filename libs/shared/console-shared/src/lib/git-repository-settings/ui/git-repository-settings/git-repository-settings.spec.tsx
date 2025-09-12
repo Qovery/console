@@ -21,7 +21,7 @@ describe('GitRepositorySettings', () => {
 
   const defaultValues = {
     provider: GitProviderEnum.GITHUB,
-    repository: 'fake-repository-name',
+    repository: 'qovery/console',
     branch: 'main',
     root_path: '/',
   }
