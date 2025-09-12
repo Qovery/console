@@ -53,7 +53,6 @@ export function StepIntroductionFeature() {
   const [dontShowAgain, setDontShowAgain] = useState(false)
 
   useEffect(() => {
-    // Introduction step is always #1 when it's shown
     setCurrentStep(1)
   }, [setCurrentStep])
 

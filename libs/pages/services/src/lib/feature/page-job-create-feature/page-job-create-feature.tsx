@@ -57,7 +57,6 @@ export interface JobContainerCreateContextInterface {
 
 export const JobContainerCreateContext = createContext<JobContainerCreateContextInterface | undefined>(undefined)
 
-// this is to avoid to set initial value twice https://stackoverflow.com/questions/49949099/react-createcontext-point-of-defaultvalue
 export const useJobContainerCreateContext = () => {
   const applicationContainerCreateContext = useContext(JobContainerCreateContext)
   if (!applicationContainerCreateContext)
@@ -139,7 +138,6 @@ export function PageJobCreateFeature() {
   const location = useLocation()
   const templateData = findTemplateData(slug, option)
 
-  // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
   const [jobType, setJobType] = useState<JobType>(ServiceTypeEnum.CRON_JOB)
