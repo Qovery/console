@@ -22,16 +22,8 @@ describe('GitRepositorySettings', () => {
   const defaultValues = {
     provider: GitProviderEnum.GITHUB,
     repository: 'fake-repository-name',
-    git_repository: {
-      name: 'Qovery/console',
-      default_branch: 'main',
-      url: 'https://github.com/qovery/console',
-      root_path: '/',
-      git_token_name: 'qovery-token',
-      git_token_id: '1234567890',
-    },
     branch: 'main',
-    root_path: '/root_path',
+    root_path: '/',
   }
 
   it('should render successfully', () => {
@@ -46,9 +38,9 @@ describe('GitRepositorySettings', () => {
       })
     )
 
-    screen.getByText(defaultValues.provider)
-    screen.getByText(defaultValues.git_repository.name)
-    screen.getByText(defaultValues.branch)
+    screen.getByDisplayValue(defaultValues.provider)
+    screen.getByDisplayValue(defaultValues.repository)
+    screen.getByDisplayValue(defaultValues.branch)
     screen.getByDisplayValue(defaultValues.root_path)
   })
 

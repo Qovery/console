@@ -21,7 +21,7 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
   }>()
   const { organizationId = '' } = useParams()
 
-  const watchFieldGitRepository = watch('repository')
+  const watchFieldRepository = watch('repository')
 
   const {
     data: repositories = [],
@@ -63,8 +63,8 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
               disabled
                 ? [
                     {
-                      label: upperCaseFirstLetter(watchFieldGitRepository ?? '') ?? '',
-                      value: watchFieldGitRepository ?? '',
+                      label: upperCaseFirstLetter(watchFieldRepository ?? '') ?? '',
+                      value: watchFieldRepository ?? '',
                     },
                   ]
                 : repositories.map((repository) => ({
@@ -74,9 +74,9 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
             }
             onChange={(option: SelectOptionValue | SelectOptionValue[]) => {
               field.onChange(option)
-              const repository = repositories.find((repo) => repo.name === option)
-              setValue('branch', repository?.default_branch)
-              setValue('git_repository', repository)
+              const gitRepository = repositories.find((repo) => repo.name === option)
+              setValue('branch', gitRepository?.default_branch)
+              setValue('git_repository', gitRepository)
             }}
             value={field.value}
             error={error?.message}
