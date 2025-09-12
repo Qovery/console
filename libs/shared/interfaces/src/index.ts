@@ -1,4 +1,3 @@
-export * from './lib/common/select-option.interface'
 export * from './lib/common/value.interface'
 export * from './lib/common/flow-port-data.interface'
 export * from './lib/common/flow-variable-data.interface'

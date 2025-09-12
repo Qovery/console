@@ -65,6 +65,7 @@ export function PageSettingsValuesOverrideFileFeature() {
         valuesOverrideFile?.git?.git_repository?.git_token_id === null
           ? undefined
           : valuesOverrideFile?.git?.git_repository?.git_token_id,
+      repository: valuesOverrideFile?.git?.git_repository?.name,
       git_repository: valuesOverrideFile?.git?.git_repository,
       branch: valuesOverrideFile?.git?.git_repository?.branch,
       paths: valuesOverrideFile?.git?.paths?.toString(),

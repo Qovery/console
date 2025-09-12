@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useId, useMemo, useState } from 'react'
+import { type ReactNode, useEffect, useId, useState } from 'react'
 import Select, {
   type GroupBase,
   type MenuListProps,
@@ -13,38 +13,20 @@ import Select, {
   components,
 } from 'react-select'
 import CreatableSelect from 'react-select/creatable'
-import { P, match } from 'ts-pattern'
-import { type SelectOption, type SelectOptionValue } from '@qovery/shared/interfaces'
+import { match } from 'ts-pattern'
+import { type Value } from '@qovery/shared/interfaces'
 import { Icon } from '../../icon/icon'
 import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
-
-// Helper function to compare SelectOptionValue types
-const isEqualValue = (a: SelectOptionValue, b: SelectOptionValue): boolean => {
-  if (typeof a === 'string' && typeof b === 'string') {
-    return a === b
-  }
-
-  if (typeof a === 'object' && typeof b === 'object' && a !== null && b !== null) {
-    // For GitRepository objects, compare by name property
-    if ('name' in a && 'name' in b) {
-      return a.name === b.name
-    }
-    // Fallback to JSON comparison for other objects
-    return JSON.stringify(a) === JSON.stringify(b)
-  }
-
-  return false
-}
 
 export interface InputSelectProps {
   className?: string
   label?: string
-  value?: SelectOptionValue | SelectOptionValue[]
-  options: SelectOption[]
+  value?: string | string[]
+  options: Value[]
   disabled?: boolean
   hint?: ReactNode
   error?: string
-  onChange?: (e: SelectOptionValue | SelectOptionValue[]) => void
+  onChange?: (e: string | string[]) => void
   onInputChange?: (e: string) => void
   dataTestId?: string
   isMulti?: true
@@ -97,25 +79,25 @@ export function InputSelect({
   isValidNewOption,
 }: InputSelectProps) {
   const [focused, setFocused] = useState(false)
-  const [selectedItems, setSelectedItems] = useState<MultiValue<SelectOption> | SingleValue<SelectOption>>([])
-  const [selectedValue, setSelectedValue] = useState<SelectOptionValue | SelectOptionValue[]>([])
+  const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
+  const [selectedValue, setSelectedValue] = useState<string | string[]>([])
 
   const selectedWithIconClassName = 'ml-8'
 
   const hasFocus = focused
   const hasError = error ? 'input--error' : ''
 
-  const handleChange = (items: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
-    setSelectedItems(items)
+  const handleChange = (values: MultiValue<Value> | SingleValue<Value>) => {
+    setSelectedItems(values)
 
     if (isMulti) {
-      const vals = (items as MultiValue<SelectOption>).map((item) => item.value)
+      const vals = (values as MultiValue<Value>).map((value) => value.value)
       onChange && onChange(vals)
       setSelectedValue(vals)
     } else {
-      if (items) {
-        onChange && onChange((items as SelectOption).value)
-        setSelectedValue((items as SelectOption).value)
+      if (values) {
+        onChange && onChange((values as Value).value)
+        setSelectedValue((values as Value).value)
       }
     }
   }
@@ -123,12 +105,12 @@ export function InputSelect({
   useEffect(() => {
     const items = options.filter((option) => {
       if (isMulti) {
-        return (value as SelectOptionValue[])?.some((val) => isEqualValue(val, option.value))
+        return (value as string[])?.includes(option.value)
       } else {
         if (Array.isArray(value)) {
-          return (value as SelectOptionValue[])?.some((val) => isEqualValue(val, option.value))
+          return (value as string[])?.includes(option.value)
         } else {
-          return isEqualValue(option.value, value as SelectOptionValue)
+          return option.value === (value as string)
         }
       }
     })
@@ -143,7 +125,7 @@ export function InputSelect({
     }
   }, [value, isMulti, options])
 
-  const MenuList = (props: MenuListProps<SelectOption, true, GroupBase<SelectOption>>) => (
+  const MenuList = (props: MenuListProps<Value, true, GroupBase<Value>>) => (
     <div role="listbox">
       <components.MenuList {...props}>
         {menuListButton && (
@@ -167,7 +149,7 @@ export function InputSelect({
     </div>
   )
 
-  const Option = (props: OptionProps<SelectOption, true, GroupBase<SelectOption>>) => {
+  const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => {
     const id = useId()
     return (
       <div role="option" aria-labelledby={id}>
@@ -192,21 +174,21 @@ export function InputSelect({
     )
   }
 
-  const MultiValue = (props: MultiValueProps<SelectOption, true, GroupBase<SelectOption>>) => (
+  const MultiValue = (props: MultiValueProps<Value, true, GroupBase<Value>>) => (
     <span className="mr-1 flex text-sm text-neutral-400">
       {props.data.label}
-      {props.index + 1 !== (selectedItems as MultiValue<SelectOption>).length && ', '}
+      {props.index + 1 !== (selectedItems as MultiValue<Value>).length && ', '}
     </span>
   )
 
-  const SingleValue = (props: SingleValueProps<SelectOption>) => (
+  const SingleValue = (props: SingleValueProps<Value>) => (
     <span className="mr-1 text-sm text-neutral-400">
       {props.data.label}
       {props.data.description ? `: ${props.data.description}` : ''}
     </span>
   )
 
-  const NoOptionsMessage = (props: NoticeProps<SelectOption>) => {
+  const NoOptionsMessage = (props: NoticeProps<Value>) => {
     const value = props.selectProps.inputValue
 
     if (value.length <= minInputLength) {
@@ -231,7 +213,7 @@ export function InputSelect({
     )
   }
 
-  const LoadingMessage = (props: NoticeProps<SelectOption>) => {
+  const LoadingMessage = (props: NoticeProps<Value>) => {
     return (
       <components.LoadingMessage {...props}>
         <div className="flex justify-center">
@@ -241,14 +223,8 @@ export function InputSelect({
     )
   }
 
-  const selectedOption = options.find((option) => {
-    if (isMulti) {
-      return Array.isArray(selectedValue) && selectedValue.some((val) => isEqualValue(option.value, val))
-    } else {
-      return isEqualValue(option.value, selectedValue as SelectOptionValue)
-    }
-  })
-  const hasIcon = !isMulti && selectedOption?.icon
+  const currentIcon = options.find((option) => option.value === selectedValue)
+  const hasIcon = !isMulti && currentIcon?.icon
 
   const inputActions =
     hasFocus && !disabled
@@ -259,11 +235,13 @@ export function InputSelect({
           ? 'input--error'
           : ''
 
-  const hasLabelUp = useMemo(() => {
-    return hasFocus || selectedOption ? 'input--label-up' : ''
-  }, [hasFocus, selectedOption])
+  const [hasLabelUp, setHasLabelUp] = useState(value?.length !== 0 ? 'input--label-up' : '')
 
-  const selectProps: SelectProps<SelectOption, true, GroupBase<SelectOption>> = {
+  useEffect(() => {
+    setHasLabelUp(hasFocus || selectedValue.length !== 0 ? 'input--label-up' : '')
+  }, [hasFocus, selectedValue, setHasLabelUp])
+
+  const selectProps: SelectProps<Value, true, GroupBase<Value>> = {
     autoFocus,
     options,
     isMulti,
@@ -302,11 +280,12 @@ export function InputSelect({
     defaultMenuIsOpen: isFilter ? true : undefined,
     filterOption: match(filterOption)
       .with('fuzzy', () => undefined)
-      .with('startsWith', () => ({ value }: SelectOption, inputValue: string) => {
-        return match(value)
-          .with(P.string, (val) => val?.startsWith(inputValue.toLowerCase()) ?? false)
-          .otherwise((val) => JSON.stringify(val).toLowerCase().includes(inputValue.toLowerCase()))
-      })
+      .with(
+        'startsWith',
+        () =>
+          ({ value }: Value, inputValue: string) =>
+            value?.startsWith(inputValue.toLowerCase()) ?? false
+      )
       .exhaustive(),
   }
 
@@ -325,7 +304,7 @@ export function InputSelect({
             data-testid="selected-icon"
             className="absolute left-0 top-0 flex h-full w-12 items-center justify-center"
           >
-            {selectedOption.icon}
+            {currentIcon.icon}
           </div>
         )}
         {label && (
@@ -346,21 +325,19 @@ export function InputSelect({
           isValidNewOption={isValidNewOption}
           formatCreateLabel={formatCreateLabel ?? ((value) => `Select "${value}"`)}
         />
-
-        <input type="hidden" name={label} value={selectedValue.toString()} />
-
+        <input type="hidden" name={label} value={selectedValue} />
         {!isFilter && (
           <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
             <Icon name="icon-solid-angle-down" className="text-sm text-neutral-400" />
           </div>
         )}
-        {selectedOption?.onClickEditable && (
+        {currentIcon?.onClickEditable && (
           <div
             data-testid="selected-edit-icon"
             className="absolute right-8 top-[10px] flex h-8 w-8 cursor-pointer items-center justify-center text-sm text-neutral-400 hover:text-brand-500"
             onClick={(event) => {
               event.stopPropagation()
-              selectedOption.onClickEditable && selectedOption.onClickEditable()
+              currentIcon.onClickEditable && currentIcon.onClickEditable()
             }}
           >
             <Icon iconName="pen" />
