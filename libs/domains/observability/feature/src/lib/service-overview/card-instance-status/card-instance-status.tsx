@@ -55,10 +55,12 @@ export function CardInstanceStatus({
   serviceId,
   clusterId,
   containerName,
+  namespace,
 }: {
   serviceId: string
   clusterId: string
   containerName: string
+  namespace: string
 }) {
   const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -119,7 +121,12 @@ export function CardInstanceStatus({
           </div>
         </div>
         <div>
-          <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} containerName={containerName} />
+          <InstanceStatusChart
+            clusterId={clusterId}
+            serviceId={serviceId}
+            containerName={containerName}
+            namespace={namespace}
+          />
         </div>
       </Section>
       {isModalOpen && (
@@ -130,6 +137,7 @@ export function CardInstanceStatus({
               serviceId={serviceId}
               containerName={containerName}
               isFullscreen
+              namespace={namespace}
             />
           </div>
         </ModalChart>

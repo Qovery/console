@@ -7,12 +7,12 @@ import { formatTimestamp } from '../util-chart/format-timestamp'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryHealthyPods = (serviceId: string) => `
-  sum by (condition) (kube_pod_status_ready{condition=~"true|false"}
-* on(namespace,pod) group_left(label_qovery_com_service_id)
-  max by(namespace,pod,label_qovery_com_service_id)(
-    kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-  ))
+const queryHealthyPods = (serviceId: string, namespace: string) => `
+sum by (condition) (
+  kube_pod_status_ready{condition=~"true|false", namespace="${namespace}"}
+  and on (namespace, pod)
+  kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
+)
 `
 
 const queryRestartWithReason = (containerName: string, timeRange: string) => `
@@ -198,11 +198,13 @@ export function InstanceStatusChart({
   serviceId,
   containerName,
   isFullscreen,
+  namespace,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
   isFullscreen?: boolean
+  namespace: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, timeRange } = useServiceOverviewContext()
 
@@ -266,7 +268,7 @@ export function InstanceStatusChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryHealthyPods(serviceId),
+    query: queryHealthyPods(serviceId, namespace),
     overriddenStep: customStep,
     overriddenMaxPoints: 250,
   })

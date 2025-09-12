@@ -33,6 +33,14 @@ export const observability = createQueryKeys('observability', {
       return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
     },
   }),
+   namespace: ({ clusterId, serviceId }: { clusterId: string; serviceId: string }) => ({
+    queryKey: ['namespace', clusterId, serviceId],
+    async queryFn() {
+      const endpoint = `api/v1/label/namespace/values?match[]=kube_ingress_labels{label_qovery_com_associated_service_id="${serviceId}"}`
+      const response = await clusterApi.getClusterMetrics(clusterId, endpoint, '')
+      return response.data.metrics && (JSON.parse(response.data.metrics).data[0] as string)
+    },
+  }),
   metrics: ({
     clusterId,
     query,
