@@ -79,7 +79,7 @@ export function Container({ children }: PropsWithChildren) {
               )}
             </Skeleton>
             <Skeleton width={120} height={22} show={!cluster}>
-              {cluster?.instance_type && cluster.kubernetes !== 'PARTIALLY_MANAGED' && (
+              {cluster?.instance_type && cluster.kubernetes !== 'PARTIALLY_MANAGED' && cluster?.instance_type !== 'KARPENTER' && (
                 <Badge color="neutral" variant="surface">
                   {cluster?.instance_type?.toLowerCase().replace('_', '.')}
                 </Badge>
