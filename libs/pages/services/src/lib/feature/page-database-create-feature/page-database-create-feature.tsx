@@ -49,7 +49,7 @@ export function PageDatabaseCreateFeature() {
   const [resourcesData, setResourcesData] = useState<ResourcesData | undefined>({
     memory: 512,
     cpu: 500,
-    storage: 10,
+    storage: 20,
   })
 
   const navigate = useNavigate()

@@ -27,7 +27,10 @@ export function DatabaseSettingsResources({
   displayStorageWarning = false,
   isSetting = false,
 }: DatabaseSettingsResourcesProps) {
-  const { control } = useFormContext()
+  const {
+    control,
+    formState: { defaultValues },
+  } = useFormContext()
   const { organizationId = '', environmentId } = useParams()
   const { data: environment } = useEnvironment({ environmentId })
 
@@ -45,6 +48,9 @@ export function DatabaseSettingsResources({
   const minMemory = match(cloudProvider)
     .with('GCP', () => 512)
     .otherwise(() => 1)
+
+  // For GP3 DBs, the minimum storage is 20 GiB, whereas for GP2 it's 10 GiB.
+  const minStorageValue = defaultValues?.['storage'] !== 10 ? 20 : 10
 
   return (
     <>
@@ -153,6 +159,10 @@ export function DatabaseSettingsResources({
           pattern: {
             value: /^[0-9]+$/,
             message: 'Please enter a number.',
+          },
+          min: {
+            value: minStorageValue,
+            message: `Storage must be at least ${minStorageValue} GiB.`,
           },
         }}
         render={({ field, fieldState: { error } }) => (
