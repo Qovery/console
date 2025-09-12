@@ -5,6 +5,7 @@ import { Button, Callout, Heading, Icon, InputSelectSmall, Section, Tooltip } fr
 import { useContainerName } from '../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import useIngressName from '../hooks/use-ingress-name/use-ingress-name'
+import useNamespace from '../hooks/use-namespace/use-namespace'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
@@ -57,13 +58,18 @@ function ServiceOverviewContent() {
     resourceType: hasStorage ? 'statefulset' : 'deployment',
   })
 
+  const { data: namespace, isFetched: isFetchedNamespace } = useNamespace({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: applicationId,
+  })
+
   const { data: ingressName = '' } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     enabled: hasPublicPort,
   })
 
-  if (!containerName && isFetchedContainerName) {
+  if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
     return (
       <div className="h-full w-full p-5">
         <Callout.Root color="yellow" className="max-w-lg">
@@ -91,7 +97,7 @@ function ServiceOverviewContent() {
     )
   }
 
-  if (!environment || !service || !containerName) return null
+  if (!environment || !service || !containerName || !namespace) return null
 
   return (
     <div className="isolate">
@@ -154,6 +160,7 @@ function ServiceOverviewContent() {
               clusterId={environment.cluster_id}
               serviceId={applicationId}
               containerName={containerName}
+              namespace={namespace}
             />
             <div className="flex h-full flex-col gap-3">
               <CardLogErrors
