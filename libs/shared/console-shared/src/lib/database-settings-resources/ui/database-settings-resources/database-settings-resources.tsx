@@ -49,7 +49,7 @@ export function DatabaseSettingsResources({
     .with('GCP', () => 512)
     .otherwise(() => 1)
 
-  // For GP3 DBs, the minimum storage is 20 GiB, whereas for GP2 it's 10 GiB.
+  // For GP3 DBs, the minimum storage is 20 GiB, whereas for GP2 it's 10 GiB
   const minStorageValue = defaultValues?.['storage'] !== 10 ? 20 : 10
 
   return (
