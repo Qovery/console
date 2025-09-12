@@ -5,7 +5,7 @@ import { SERVICES_JOB_CREATION_GENERAL_URL, SERVICES_URL } from '@qovery/shared/
 import { Button, Checkbox, ExternalLink, FunnelFlowBody, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { getStepNumber, useJobContainerCreateContext } from '../page-job-create-feature'
 import imageBuild from './images/build.svg'
 import imageOutput from './images/output.svg'
 import imageRun from './images/run.svg'
