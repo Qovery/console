@@ -32,7 +32,7 @@ import {
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepSummary from '../../../ui/page-job-create/step-summary/step-summary'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { getStepNumber, useJobContainerCreateContext } from '../page-job-create-feature'
 
 function prepareJobRequest({
   generalData,
@@ -320,8 +320,11 @@ export function StepSummaryFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(6)
-  }, [setCurrentStep])
+    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
+      !localStorage.getItem('step-lifecycle-introduction')
+    const stepNumber = getStepNumber('summary', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
+    setCurrentStep(stepNumber)
+  }, [setCurrentStep, jobType, generalData?.serviceType])
 
   return (
     <FunnelFlowBody>

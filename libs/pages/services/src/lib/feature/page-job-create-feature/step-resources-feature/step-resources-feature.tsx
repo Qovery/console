@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
@@ -11,11 +12,11 @@ import {
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import StepResources from '../../../ui/page-job-create/step-resources/step-resources'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { getStepNumber, useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepResourcesFeature() {
   useDocumentTitle('Resources - Create Job')
-  const { setCurrentStep, resourcesData, setResourcesData, generalData, jobURL, templateType } =
+  const { setCurrentStep, resourcesData, setResourcesData, generalData, jobURL, templateType, jobType } =
     useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
@@ -27,8 +28,11 @@ export function StepResourcesFeature() {
   }, [generalData, navigate, environmentId, organizationId, jobURL, projectId])
 
   useEffect(() => {
-    setCurrentStep(4)
-  }, [setCurrentStep])
+    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
+      !localStorage.getItem('step-lifecycle-introduction')
+    const stepNumber = getStepNumber('resources', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
+    setCurrentStep(stepNumber)
+  }, [setCurrentStep, jobType, generalData?.serviceType])
 
   const methods = useForm<ApplicationResourcesData>({
     defaultValues: resourcesData,

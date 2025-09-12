@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCheckDockerfile } from '@qovery/domains/environments/feature'
 import { DockerfileSettings } from '@qovery/domains/services/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   SERVICES_JOB_CREATION_CONFIGURE_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -12,11 +13,11 @@ import {
 import { Button, FunnelFlowBody, Heading, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { getStepNumber, useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepDockerfileFeature() {
   useDocumentTitle('Dockerfile - Create Job')
-  const { dockerfileForm, setCurrentStep, generalData, jobURL, dockerfileDefaultContent, templateType } =
+  const { dockerfileForm, setCurrentStep, generalData, jobURL, dockerfileDefaultContent, templateType, jobType } =
     useJobContainerCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const navigate = useNavigate()
@@ -30,8 +31,11 @@ export function StepDockerfileFeature() {
   const { mutateAsync: mutateCheckDockerfile, isLoading: isLoadingCheckDockerfile } = useCheckDockerfile()
 
   useEffect(() => {
-    setCurrentStep(2)
-  }, [setCurrentStep])
+    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
+      !localStorage.getItem('step-lifecycle-introduction')
+    const stepNumber = getStepNumber('dockerfile', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
+    setCurrentStep(stepNumber)
+  }, [setCurrentStep, jobType, generalData?.serviceType])
 
   const onSubmit = dockerfileForm.handleSubmit(async (data) => {
     const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`

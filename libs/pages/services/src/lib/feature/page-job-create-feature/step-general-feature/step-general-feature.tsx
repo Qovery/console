@@ -13,7 +13,7 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { parseCmd } from '@qovery/shared/util-js'
 import StepGeneral from '../../../ui/page-job-create/step-general/step-general'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { getStepNumber, useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepGeneralFeature() {
   useDocumentTitle('General - Create Job')
@@ -25,8 +25,11 @@ export function StepGeneralFeature() {
   const { data: organization } = useOrganization({ organizationId })
 
   useEffect(() => {
-    setCurrentStep(1)
-  }, [setCurrentStep])
+    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
+      !localStorage.getItem('step-lifecycle-introduction')
+    const stepNumber = getStepNumber('general', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
+    setCurrentStep(stepNumber)
+  }, [setCurrentStep, jobType, generalData?.serviceType])
 
   const methods = useForm<JobGeneralData>({
     defaultValues: {

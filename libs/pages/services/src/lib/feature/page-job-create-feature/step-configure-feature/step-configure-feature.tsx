@@ -13,7 +13,7 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { parseCmd } from '@qovery/shared/util-js'
 import StepConfigure from '../../../ui/page-job-create/step-configure/step-configure'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { getStepNumber, useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepConfigureFeature() {
   useDocumentTitle('Configure - Create Job')
@@ -37,7 +37,10 @@ export function StepConfigureFeature() {
   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
 
   useEffect(() => {
-    setCurrentStep(3)
+    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
+      !localStorage.getItem('step-lifecycle-introduction')
+    const stepNumber = getStepNumber('configure', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
+    setCurrentStep(stepNumber)
 
     if (configureData?.nb_restarts === undefined) {
       methods.setValue('nb_restarts', 0)
@@ -46,7 +49,7 @@ export function StepConfigureFeature() {
     if (configureData?.max_duration === undefined) {
       methods.setValue('max_duration', 300)
     }
-  }, [setCurrentStep])
+  }, [setCurrentStep, jobType, generalData?.serviceType])
 
   const methods = useForm<JobConfigureData>({
     defaultValues: configureData,

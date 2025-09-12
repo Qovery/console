@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { FlowCreateVariable } from '@qovery/domains/variables/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type FlowVariableData, type VariableData } from '@qovery/shared/interfaces'
 import {
   SERVICES_JOB_CREATION_GENERAL_URL,
@@ -13,7 +14,7 @@ import {
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { computeAvailableScope } from '@qovery/shared/util-js'
-import { useJobContainerCreateContext } from '../page-job-create-feature'
+import { getStepNumber, useJobContainerCreateContext } from '../page-job-create-feature'
 
 export function StepVariableFeature() {
   useDocumentTitle('Environment Variable - Create Job')
@@ -70,8 +71,11 @@ export function StepVariableFeature() {
   }
 
   useEffect(() => {
-    setCurrentStep(5)
-  }, [setCurrentStep, variableData])
+    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
+      !localStorage.getItem('step-lifecycle-introduction')
+    const stepNumber = getStepNumber('variables', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
+    setCurrentStep(stepNumber)
+  }, [setCurrentStep, variableData, jobType, generalData?.serviceType])
 
   return (
     <FunnelFlowBody>
