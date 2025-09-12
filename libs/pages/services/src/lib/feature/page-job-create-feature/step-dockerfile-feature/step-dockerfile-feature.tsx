@@ -31,8 +31,8 @@ export function StepDockerfileFeature() {
   const { mutateAsync: mutateCheckDockerfile, isLoading: isLoadingCheckDockerfile } = useCheckDockerfile()
 
   useEffect(() => {
-    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
-      !localStorage.getItem('step-lifecycle-introduction')
+    const isLifecycleJobWithIntro =
+      jobType === ServiceTypeEnum.LIFECYCLE_JOB && !localStorage.getItem('step-lifecycle-introduction')
     const stepNumber = getStepNumber('dockerfile', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
     setCurrentStep(stepNumber)
   }, [setCurrentStep, jobType, generalData?.serviceType])

@@ -25,8 +25,8 @@ export function StepGeneralFeature() {
   const { data: organization } = useOrganization({ organizationId })
 
   useEffect(() => {
-    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
-      !localStorage.getItem('step-lifecycle-introduction')
+    const isLifecycleJobWithIntro =
+      jobType === ServiceTypeEnum.LIFECYCLE_JOB && !localStorage.getItem('step-lifecycle-introduction')
     const stepNumber = getStepNumber('general', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
     setCurrentStep(stepNumber)
   }, [setCurrentStep, jobType, generalData?.serviceType])

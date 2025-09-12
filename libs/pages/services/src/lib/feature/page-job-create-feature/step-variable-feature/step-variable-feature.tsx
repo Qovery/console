@@ -71,8 +71,8 @@ export function StepVariableFeature() {
   }
 
   useEffect(() => {
-    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
-      !localStorage.getItem('step-lifecycle-introduction')
+    const isLifecycleJobWithIntro =
+      jobType === ServiceTypeEnum.LIFECYCLE_JOB && !localStorage.getItem('step-lifecycle-introduction')
     const stepNumber = getStepNumber('variables', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
     setCurrentStep(stepNumber)
   }, [setCurrentStep, variableData, jobType, generalData?.serviceType])

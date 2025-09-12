@@ -37,8 +37,8 @@ export function StepConfigureFeature() {
   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
 
   useEffect(() => {
-    const isLifecycleJobWithIntro = jobType === ServiceTypeEnum.LIFECYCLE_JOB && 
-      !localStorage.getItem('step-lifecycle-introduction')
+    const isLifecycleJobWithIntro =
+      jobType === ServiceTypeEnum.LIFECYCLE_JOB && !localStorage.getItem('step-lifecycle-introduction')
     const stepNumber = getStepNumber('configure', jobType, generalData?.serviceType, isLifecycleJobWithIntro)
     setCurrentStep(stepNumber)
 

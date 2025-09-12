@@ -73,11 +73,11 @@ export const steps = (jobType: JobType, hasIntroduction: boolean = false, hasDoc
     { title: 'Set variable environments' },
     { title: 'Ready to install' },
   ]
-  
+
   if (hasIntroduction) {
     return [{ title: 'Introduction' }, ...baseSteps]
   }
-  
+
   return baseSteps
 }
 
@@ -89,33 +89,35 @@ export const getStepNumber = (
 ): number => {
   const hasDockerfile = serviceType === 'APPLICATION' && jobType !== ServiceTypeEnum.CRON_JOB
   const allSteps = steps(jobType, hasIntroduction, hasDockerfile)
-  
+
   let stepIndex = -1
-  
+
   switch (stepName) {
     case 'introduction':
-      stepIndex = allSteps.findIndex(step => step.title === 'Introduction')
+      stepIndex = allSteps.findIndex((step) => step.title === 'Introduction')
       break
     case 'general':
-      stepIndex = allSteps.findIndex(step => step.title === 'Create new job')
+      stepIndex = allSteps.findIndex((step) => step.title === 'Create new job')
       break
     case 'dockerfile':
-      stepIndex = allSteps.findIndex(step => step.title === 'Dockerfile')
+      stepIndex = allSteps.findIndex((step) => step.title === 'Dockerfile')
       break
     case 'configure':
-      stepIndex = allSteps.findIndex(step => step.title.includes('configuration') || step.title.includes('Triggers'))
+      stepIndex = allSteps.findIndex(
+        (step) => step.title.includes('configuration') || step.title.includes('Triggers')
+      )
       break
     case 'resources':
-      stepIndex = allSteps.findIndex(step => step.title === 'Set resources')
+      stepIndex = allSteps.findIndex((step) => step.title === 'Set resources')
       break
     case 'variables':
-      stepIndex = allSteps.findIndex(step => step.title === 'Set variable environments')
+      stepIndex = allSteps.findIndex((step) => step.title === 'Set variable environments')
       break
     case 'summary':
-      stepIndex = allSteps.findIndex(step => step.title === 'Ready to install')
+      stepIndex = allSteps.findIndex((step) => step.title === 'Ready to install')
       break
   }
-  
+
   return stepIndex >= 0 ? stepIndex + 1 : 1
 }
 
@@ -184,7 +186,7 @@ export function PageJobCreateFeature() {
 
   const hasDockerfile = generalData?.serviceType === 'APPLICATION' && jobType !== ServiceTypeEnum.CRON_JOB
   const totalSteps = steps(jobType, displayIntroductionView, hasDockerfile)
-  
+
   const funnel = (
     <FunnelFlow
       onExit={() => {
