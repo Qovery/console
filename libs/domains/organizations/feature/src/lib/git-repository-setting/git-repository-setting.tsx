@@ -15,12 +15,13 @@ export interface GitRepositorySettingProps {
 
 export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRepository }: GitRepositorySettingProps) {
   const { control, setValue, watch } = useFormContext<{
+    repository: string | undefined
     git_repository: GitRepository | undefined
     branch: string | undefined
   }>()
   const { organizationId = '' } = useParams()
 
-  const watchFieldGitRepository = watch('git_repository')
+  const watchFieldGitRepository = watch('repository')
 
   const {
     data: repositories = [],
@@ -48,7 +49,7 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
 
   return (
     <Controller
-      name="git_repository"
+      name="repository"
       control={control}
       rules={{
         required: 'Please select a repository.',
@@ -62,19 +63,20 @@ export function GitRepositorySetting({ disabled, gitProvider, gitTokenId, urlRep
               disabled
                 ? [
                     {
-                      label: upperCaseFirstLetter(watchFieldGitRepository?.name ?? '') ?? '',
+                      label: upperCaseFirstLetter(watchFieldGitRepository ?? '') ?? '',
                       value: watchFieldGitRepository ?? '',
                     },
                   ]
                 : repositories.map((repository) => ({
                     label: upperCaseFirstLetter(repository.name),
-                    value: repository,
+                    value: repository.name,
                   }))
             }
             onChange={(option: SelectOptionValue | SelectOptionValue[]) => {
               field.onChange(option)
-              const repository = repositories.find((repository) => repository.name === option)
+              const repository = repositories.find((repo) => repo.name === option)
               setValue('branch', repository?.default_branch)
+              setValue('git_repository', repository)
             }}
             value={field.value}
             error={error?.message}

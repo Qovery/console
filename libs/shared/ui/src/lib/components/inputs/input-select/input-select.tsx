@@ -18,24 +18,6 @@ import { type SelectOption, type SelectOptionValue } from '@qovery/shared/interf
 import { Icon } from '../../icon/icon'
 import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
 
-// Helper function to compare SelectOptionValue types
-const isEqualValue = (a: SelectOptionValue, b: SelectOptionValue): boolean => {
-  if (typeof a === 'string' && typeof b === 'string') {
-    return a === b
-  }
-
-  if (typeof a === 'object' && typeof b === 'object' && a !== null && b !== null) {
-    // For GitRepository objects, compare by name property
-    if ('name' in a && 'name' in b) {
-      return a.name === b.name
-    }
-    // Fallback to JSON comparison for other objects
-    return JSON.stringify(a) === JSON.stringify(b)
-  }
-
-  return false
-}
-
 export interface InputSelectProps {
   className?: string
   label?: string
@@ -122,14 +104,10 @@ export function InputSelect({
 
   useEffect(() => {
     const items = options.filter((option) => {
-      if (isMulti) {
-        return (value as SelectOptionValue[])?.some((val) => isEqualValue(val, option.value))
+      if (isMulti || Array.isArray(value)) {
+        return (value as SelectOptionValue[])?.some((val) => val === option.value)
       } else {
-        if (Array.isArray(value)) {
-          return (value as SelectOptionValue[])?.some((val) => isEqualValue(val, option.value))
-        } else {
-          return isEqualValue(option.value, value as SelectOptionValue)
-        }
+        return option.value === (value as SelectOptionValue)
       }
     })
 
@@ -243,9 +221,9 @@ export function InputSelect({
 
   const selectedOption = options.find((option) => {
     if (isMulti) {
-      return Array.isArray(selectedValue) && selectedValue.some((val) => isEqualValue(option.value, val))
+      return Array.isArray(selectedValue) && selectedValue.some((val) => val === option.value)
     } else {
-      return isEqualValue(option.value, selectedValue as SelectOptionValue)
+      return option.value === (selectedValue as SelectOptionValue)
     }
   })
   const hasIcon = !isMulti && selectedOption?.icon

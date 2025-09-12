@@ -42,6 +42,7 @@ export default function PageSettingsTerraformConfigurationFeature() {
           tf_vars: [],
           tf_var_file_paths: [],
         },
+        timeout_sec: Number(data.timeout_sec),
       }
 
       editService({
