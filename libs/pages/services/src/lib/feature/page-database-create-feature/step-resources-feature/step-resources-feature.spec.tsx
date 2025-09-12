@@ -41,7 +41,7 @@ const ContextWrapper = (props: { children: ReactNode }) => {
         },
         setGeneralData: jest.fn(),
         resourcesData: {
-          storage: 1,
+          storage: 20,
           cpu: [100],
           memory: 100,
         },
@@ -75,7 +75,7 @@ describe('PageDatabaseCreateResourcesFeature', () => {
     await userEvent.click(button)
 
     expect(mockSetResourcesData).toHaveBeenCalledWith({
-      storage: 1,
+      storage: 20,
       cpu: [100],
       memory: 100,
     })
