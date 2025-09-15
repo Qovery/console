@@ -115,8 +115,11 @@ export const isCancelBuildAvailable = (status: keyof typeof StateEnum | keyof ty
     .otherwise(() => false)
 }
 
-export const isDryRunAvailable = (serviceType: ServiceType): boolean => {
+export const isDryRunAvailable = (
+  serviceType: ServiceType,
+  status: keyof typeof StateEnum | keyof typeof ClusterStateEnum
+): boolean => {
   return match(serviceType)
-    .with('TERRAFORM', () => true)
+    .with('TERRAFORM', () => !isCancelBuildAvailable(status))
     .otherwise(() => false)
 }

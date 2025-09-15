@@ -355,7 +355,7 @@ function MenuManageDeployment({
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
-        {isDryRunAvailable(service.serviceType) && (
+        {isDryRunAvailable(service.serviceType, state) && (
           <DropdownMenu.Item icon={<Icon iconName="play" iconStyle="regular" />} onSelect={mutationDryRun}>
             Run plan
           </DropdownMenu.Item>
