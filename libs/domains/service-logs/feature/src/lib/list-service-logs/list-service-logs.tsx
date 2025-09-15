@@ -6,13 +6,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
-import { memo, useMemo, useRef } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { type ServiceLog } from '@qovery/domains/service-logs/data-access'
+import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
-import { dateUTCString } from '@qovery/shared/util-dates'
 import { useServiceHistoryLogs } from '../hooks/use-service-history-logs/use-service-history-logs'
 import { useServiceLiveLogs } from '../hooks/use-service-live-logs/use-service-live-logs'
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
@@ -41,18 +40,7 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
   const { serviceId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
-  const {
-    environment,
-    pauseLogs,
-    setPauseLogs,
-    newMessagesAvailable,
-    setNewMessagesAvailable,
-    showPreviousLogs,
-    setShowPreviousLogs,
-    isLiveMode,
-    startDate,
-    endDate,
-  } = useServiceLogsContext()
+  const { environment, isLiveMode } = useServiceLogsContext()
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
@@ -60,21 +48,27 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
   const serviceEnabled = service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true
 
   // Live logs hook - only enabled when in live mode
-  const { data: liveLogs = [], enabledNginx } = useServiceLiveLogs({
-    organizationId: environment.organization.id,
+  const {
+    data: liveLogs = [],
+    enabledNginx,
+    pauseLogs,
+    setPauseLogs,
+    newLogsAvailable,
+    setNewLogsAvailable,
+  } = useServiceLiveLogs({
     clusterId,
-    projectId: environment.project.id,
-    environmentId: environment.id,
     serviceId: serviceId ?? '',
     enabled: isLiveMode && serviceEnabled,
   })
 
   // Historical logs hook - only enabled when in historical mode
-  const { data: historyLogs = [] } = useServiceHistoryLogs({
+  const {
+    data: historyLogs = [],
+    showPreviousLogs,
+    setShowPreviousLogs,
+  } = useServiceHistoryLogs({
     clusterId,
     serviceId: serviceId ?? '',
-    startDate,
-    endDate,
     enabled: !isLiveMode && serviceEnabled,
   })
 
@@ -83,9 +77,9 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
 
   const hasMultipleContainers = new Set(logs?.map((i) => i.container)).size > 1
 
-  const columnHelper = createColumnHelper<ServiceLog>()
+  const columnHelper = createColumnHelper<NormalizedServiceLog>()
 
-  // const customFilter: FilterFn<ServiceLog> = (row, columnId, filterValue) => {
+  // const customFilter: FilterFn<NormalizedServiceLog> = (row, columnId, filterValue) => {
   //   // Always return true for `INFRA` type logs to ensure they are always visible
   //   // if (row.original.type === 'INFRA') return true
 
@@ -118,16 +112,18 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
   })
 
   // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
-  // useEffect(() => {
-  //   const section = refScrollSection.current
-  //   if (!section) return
+  useEffect(() => {
+    const section = refScrollSection.current
+    if (!section) return
 
-  //   !pauseLogs && section.scroll(0, section.scrollHeight)
-  // }, [logs, pauseLogs])
+    !pauseLogs && section.scroll(0, section.scrollHeight)
+  }, [logs, pauseLogs])
 
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
     .otherwise(() => false)
+
+  console.log('logs: ', logs.length)
 
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
   if (!logs || logs.length === 0 || (logs.length > 0 && logs[0].message.includes('No pods found'))) {
@@ -157,35 +153,39 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
           className="h-[calc(100vh-160px)] w-full overflow-y-scroll pb-3"
           ref={refScrollSection}
           onWheel={(event) => {
-            if (
-              !pauseLogs &&
-              refScrollSection.current &&
-              refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
-              event.deltaY < 0
-            ) {
+            if (!liveLogs) return
+
+            const section = refScrollSection.current
+            if (!section) return
+
+            const hasScrollableContent = section.clientHeight !== section.scrollHeight
+
+            if (!pauseLogs && hasScrollableContent && event.deltaY < 0) {
               setPauseLogs(true)
-              setNewMessagesAvailable(false)
+              setNewLogsAvailable(false)
             }
           }}
         >
-          <ShowPreviousLogsButton
-            showPreviousLogs={showPreviousLogs}
-            setShowPreviousLogs={setShowPreviousLogs}
-            setPauseLogs={setPauseLogs}
-          />
+          {showPreviousLogs && setShowPreviousLogs && (
+            <ShowPreviousLogsButton
+              showPreviousLogs={showPreviousLogs}
+              setShowPreviousLogs={setShowPreviousLogs}
+              setPauseLogs={setPauseLogs}
+            />
+          )}
           <Table.Root className="w-full text-xs">
             <Table.Body className="divide-y-0">
-              {table.getRowModel().rows.map((row) => {
-                const podName = row.getValue('pod') as string
-                const message = row.getValue('message') as string
+              {table.getRowModel().rows.map((row, index) => {
                 const timestamp = row.getValue('timestamp') as string
                 return (
-                  <span key={row.id} className="flex gap-1 text-neutral-50">
-                    <span>{dateUTCString(Number(timestamp))}</span>
-                    <span className="text-neutral-300">{podName}</span>
-                    {message}
-                  </span>
+                  <MemoizedRowServiceLogs
+                    key={timestamp + index}
+                    hasMultipleContainers={hasMultipleContainers}
+                    {...row}
+                  />
                 )
+              })}
+              {/*
                 // if (row.original.type === 'INFRA') {
                 //   return (
                 //     <MemoizedRowInfraLogs
@@ -197,25 +197,24 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
                 //   )
                 // } else {
                 //   return (
-                //     <MemoizedRowServiceLogs
-                //       key={row.id}
-                //       hasMultipleContainers={hasMultipleContainers}
-                //       toggleColumnFilter={toggleColumnFilter}
-                //       isFilterActive={isFilterActive}
-                //       {...row}
-                //     />
-                //   )
-                // }
-              })}
+                  //   <MemoizedRowServiceLogs
+                  //     key={row.id}
+                  //     hasMultipleContainers={hasMultipleContainers}
+                  //     toggleColumnFilter={toggleColumnFilter}
+                  //     isFilterActive={isFilterActive}
+                  //     {...row}
+                  //   />
+                  // )
+                // } */}
             </Table.Body>
           </Table.Root>
-          {isServiceProgressing && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />}
+          {isLiveMode ? (
+            isServiceProgressing && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
+          ) : (
+            <div className="h-8" />
+          )}
         </div>
-        <ShowNewLogsButton
-          pauseLogs={pauseLogs}
-          setPauseLogs={setPauseLogs}
-          newMessagesAvailable={newMessagesAvailable}
-        />
+        <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} newMessagesAvailable={newLogsAvailable} />
       </div>
     </div>
   )
