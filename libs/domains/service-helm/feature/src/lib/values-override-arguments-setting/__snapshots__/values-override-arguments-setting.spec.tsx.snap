@@ -125,7 +125,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
-                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
+                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                     data-testid="input-value"
                     name="arguments.0.key"
                     type="text"
@@ -148,7 +148,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 pr-11"
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350 pr-11"
                       data-testid="input-value"
                       name="arguments.0.value"
                       type="text"
@@ -228,7 +228,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
-                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
+                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                     data-testid="input-value"
                     name="arguments.1.key"
                     type="text"
@@ -336,7 +336,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                     class="hidden"
                   />
                   <input
-                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350"
+                    class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
                     data-testid="input-value"
                     name="arguments.2.key"
                     type="text"
@@ -359,7 +359,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                       class="hidden"
                     />
                     <input
-                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 pr-11"
+                      class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350 pr-11"
                       data-testid="input-value"
                       name="arguments.2.value"
                       type="text"

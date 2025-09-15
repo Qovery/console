@@ -80,7 +80,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
         <input
           className={twMerge(
             clsx(
-              'absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350',
+              'absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350',
               {
                 'pr-8': hasShowPasswordButton,
               }
@@ -103,7 +103,7 @@ export const InputTextSmall = forwardRef<HTMLInputElement, InputTextSmallProps>(
           <div
             data-testid="show-password-button"
             onClick={() => setCurrentType(currentType === 'password' ? 'text' : 'password')}
-            className="absolute right-2 -translate-y-0.5 transform text-sm text-neutral-400"
+            className="absolute right-2 -translate-y-0.5 transform text-sm text-neutral-400 dark:text-neutral-50"
           >
             <Icon name={currentType === 'password' ? IconAwesomeEnum.EYE : IconAwesomeEnum.EYE_SLASH} />
           </div>
