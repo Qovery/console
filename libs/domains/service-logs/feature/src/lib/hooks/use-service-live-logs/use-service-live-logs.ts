@@ -84,11 +84,19 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     return buildLokiQuery({
       serviceId,
       level: queryParams.level || undefined,
-      pod: queryParams.podName || undefined,
+      instance: queryParams.instance || undefined,
+      container: queryParams.container || undefined,
       message: queryParams.message || undefined,
       version: queryParams.version || undefined,
     })
-  }, [serviceId, queryParams.level, queryParams.podName, queryParams.message, queryParams.version])
+  }, [
+    serviceId,
+    queryParams.level,
+    queryParams.instance,
+    queryParams.container,
+    queryParams.message,
+    queryParams.version,
+  ])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/service/logs',
