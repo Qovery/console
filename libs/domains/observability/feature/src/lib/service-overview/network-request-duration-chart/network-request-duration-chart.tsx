@@ -6,16 +6,12 @@ import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryDuration50 = (serviceId: string, rateInterval: string, ingressName: string) => `
-  histogram_quantile(0.5,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}"}[${rateInterval}]))))
+const queryDuration50 = (rateInterval: string, ingressName: string) => `
+  histogram_quantile(0.5,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}", status="200", path="/"}[${rateInterval}]))))
 `
 
-const queryDuration99 = (serviceId: string, rateInterval: string, ingressName: string) => `
-   histogram_quantile(0.99,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}"}[${rateInterval}]))))
-`
-
-const queryDuration95 = (serviceId: string, rateInterval: string, ingressName: string) => `
-  histogram_quantile(0.95,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}"}[${rateInterval}]))))
+const queryDuration99 = (rateInterval: string, ingressName: string) => `
+   histogram_quantile(0.99,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}", status="200", path="/"}[${rateInterval}]))))
 `
 
 export function NetworkRequestDurationChart({
@@ -43,7 +39,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration50(serviceId, rateInterval, ingressName),
+    query: queryDuration50(rateInterval, ingressName),
   })
 
   const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
@@ -51,19 +47,11 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration99(serviceId, rateInterval, ingressName),
-  })
-
-  const { data: metrics95, isLoading: isLoadingMetrics } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    timeRange,
-    query: queryDuration95(serviceId, rateInterval, ingressName),
+    query: queryDuration99(rateInterval, ingressName),
   })
 
   const chartData = useMemo(() => {
-    if (!metrics95?.data?.result) {
+    if (!metrics99?.data?.result) {
       return []
     }
 
@@ -71,15 +59,6 @@ export function NetworkRequestDurationChart({
       number,
       { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
     >()
-
-    // Process network duration 95th percentile metrics
-    processMetricsData(
-      metrics95,
-      timeSeriesMap,
-      () => '95th percentile',
-      (value) => parseFloat(value) * 1000, // Convert to ms
-      useLocalTime
-    )
 
     // Process network duration 99th percentile metrics
     processMetricsData(
@@ -102,13 +81,13 @@ export function NetworkRequestDurationChart({
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics95, metrics99, metrics50, useLocalTime, startTimestamp, endTimestamp])
+  }, [metrics99, metrics50, useLocalTime, startTimestamp, endTimestamp])
 
   return (
     <LocalChart
       data={chartData}
       serviceId={serviceId}
-      isLoading={isLoadingMetrics || isLoadingMetrics99 || isLoadingMetrics50}
+      isLoading={isLoadingMetrics99 || isLoadingMetrics50}
       isEmpty={chartData.length === 0}
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"
