@@ -1,89 +1,118 @@
-import { useQuery } from '@tanstack/react-query'
-import { useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { serviceLogs } from '@qovery/domains/service-logs/data-access'
-import { useDebounce } from '@qovery/shared/util-hooks'
+import { type QueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { useQueryParams } from 'use-query-params'
+import {
+  type NormalizedServiceLog,
+  buildLokiQuery,
+  normalizeWebSocketLog,
+} from '@qovery/domains/service-logs/data-access'
+import { QOVERY_WS } from '@qovery/shared/util-node-env'
+import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
+import { queryParamsServiceLogs } from '../../list-service-logs/service-logs-context/service-logs-context'
 
 export interface UseServiceLiveLogsProps {
-  organizationId: string
-  clusterId: string
-  projectId: string
-  environmentId: string
-  serviceId: string
+  clusterId?: string
+  serviceId?: string
   enabled?: boolean
 }
 
-export type LogType = 'INFRA' | 'SERVICE'
-
-const POD_NAME_KEY = 'pod_name'
 const DEBOUNCE_TIME = 400
-const OFFSET = 20
+const LIMIT = 200
 
-// This hook simplifies the process of fetching and managing service logs data
-export function useServiceLiveLogs({
-  organizationId,
-  clusterId,
-  projectId,
-  environmentId,
-  serviceId,
-  enabled = false,
-}: UseServiceLiveLogsProps) {
-  const logCounter = useRef(0)
-  const [searchParams] = useSearchParams()
+export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: UseServiceLiveLogsProps) {
+  const { organizationId, projectId, environmentId } = useParams()
+  const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
-  // States for controlling log actions, showing new, previous or paused logs
-  const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
-  const [showPreviousLogs, setShowPreviousLogs] = useState(false)
+  const serviceLogsBuffer = useRef<NormalizedServiceLog[]>([])
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  const [newLogsAvailable, setNewLogsAvailable] = useState(false)
   const [pauseLogs, setPauseLogs] = useState(false)
 
   const [enabledNginx, setEnabledNginx] = useState(false)
+  const [debouncedLogs, setDebouncedLogs] = useState<NormalizedServiceLog[]>([])
 
-  const now = useMemo(() => Date.now(), [])
+  const flushBufferedLogs = useCallback(() => {
+    if (serviceLogsBuffer.current.length > 0) {
+      setDebouncedLogs((prev) => [...prev, ...serviceLogsBuffer.current])
+      serviceLogsBuffer.current = []
+    }
+  }, [])
 
-  // Fetch service logs using useQuery instead of websocket
-  const { data: serviceLogsData = [] } = useQuery({
-    ...serviceLogs.serviceLogs({
-      clusterId,
+  const scheduleFlush = useCallback(() => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      flushBufferedLogs()
+    }, DEBOUNCE_TIME)
+  }, [flushBufferedLogs])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  const onLogHandler = useCallback(
+    (
+      _: QueryClient,
+      log: {
+        created_at?: number
+        message?: string
+        pod_name?: string
+        container_name?: string
+        version?: string
+      }
+    ) => {
+      setNewLogsAvailable(true)
+      const normalizedLog = normalizeWebSocketLog(log)
+      serviceLogsBuffer.current.push(normalizedLog)
+      scheduleFlush()
+    },
+    [scheduleFlush]
+  )
+
+  const dynamicQuery = useMemo(() => {
+    if (!serviceId) return ''
+
+    return buildLokiQuery({
       serviceId,
-    }),
-    enabled,
+      level: queryParams.level || undefined,
+      pod: queryParams.podName || undefined,
+      message: queryParams.message || undefined,
+      version: queryParams.version || undefined,
+    })
+  }, [serviceId, queryParams.level, queryParams.podName, queryParams.message, queryParams.version])
+
+  useReactQueryWsSubscription({
+    url: QOVERY_WS + '/service/logs',
+    urlSearchParams: {
+      organization: organizationId,
+      project: projectId,
+      environment: environmentId,
+      service: serviceId,
+      cluster: clusterId,
+      query: dynamicQuery,
+      limit: LIMIT.toString(),
+    },
+    enabled: Boolean(clusterId) && Boolean(serviceId) && enabled && Boolean(dynamicQuery),
+    onMessage: onLogHandler,
   })
 
-  // const data = useMemo(() => {
-  //   // Convert serviceLogsData to the expected format and combine with infra messages
-  //   const serviceLogsFormatted: FormattedServiceLog[] = serviceLogsData.map((log: ServiceLogResponseDto) => ({
-  //     ...log,
-  //     type: 'SERVICE' as LogType,
-  //     id: logCounter.current++,
-  //   }))
-
-  //   // Check if there are new messages available
-  //   if (serviceLogsData.length > 0) {
-  //     setNewMessagesAvailable(true)
-  //   }
-
-  //   return serviceLogsFormatted
-  //     .filter((log: FormattedServiceLog, index: number, array: FormattedServiceLog[]) =>
-  //       showPreviousLogs || array.length - 1 - OFFSET <= index ? true : log.created_at > now
-  //     )
-  //     .sort((a: FormattedServiceLog, b: FormattedServiceLog) =>
-  //       a.created_at && b.created_at ? a.created_at - b.created_at : 0
-  //     )
-  // }, [serviceLogsData, showPreviousLogs, now])
-
-  const debouncedLogs = useDebounce(serviceLogsData, DEBOUNCE_TIME)
   const pausedDataLogs = useMemo(() => debouncedLogs, [pauseLogs])
-
-  // console.log('debouncedLogs', debouncedLogs)
 
   return {
     data: pauseLogs ? pausedDataLogs : debouncedLogs,
     pauseLogs,
     setPauseLogs,
-    setNewMessagesAvailable,
-    newMessagesAvailable,
-    showPreviousLogs,
-    setShowPreviousLogs,
+    setNewLogsAvailable,
+    newLogsAvailable,
     enabledNginx,
     setEnabledNginx,
   }

@@ -1,6 +1,8 @@
 import { subDays } from 'date-fns'
+import { useMemo } from 'react'
 import { match } from 'ts-pattern'
-import { type ServiceLog } from '@qovery/domains/service-logs/data-access'
+import { useQueryParams } from 'use-query-params'
+import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, DatePicker, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
@@ -8,9 +10,10 @@ import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
+import { queryParamsServiceLogs } from '../service-logs-context/service-logs-context'
 
 export interface HeaderServiceLogsProps {
-  logs: ServiceLog[]
+  logs: NormalizedServiceLog[]
 }
 
 export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
@@ -19,8 +22,6 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
     serviceId,
     serviceStatus,
     environmentStatus,
-    startDate,
-    endDate,
     isOpenTimestamp,
     setStartDate,
     setEndDate,
@@ -33,7 +34,17 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
     setIsLiveMode,
   } = useServiceLogsContext()
 
+  const [queryParams] = useQueryParams(queryParamsServiceLogs)
   const { data: service } = useService({ environmentId: environment.id, serviceId })
+
+  const startDate = useMemo(
+    () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
+    [queryParams.startDate]
+  )
+  const endDate = useMemo(
+    () => (queryParams.endDate ? new Date(queryParams.endDate) : undefined),
+    [queryParams.endDate]
+  )
 
   return (
     <>

@@ -3,7 +3,7 @@ import download from 'downloadjs'
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { StringParam, useQueryParams } from 'use-query-params'
-import { type ServiceLog } from '@qovery/domains/service-logs/data-access'
+import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 
 interface UpdateTimeContextProps {
   utc: boolean
@@ -18,8 +18,6 @@ interface ServiceLogsContextType {
   environmentStatus?: EnvironmentStatus
 
   // Date/Time management
-  startDate?: Date
-  endDate?: Date
   isOpenTimestamp: boolean
   setStartDate: (date?: Date) => void
   setEndDate: (date?: Date) => void
@@ -36,24 +34,18 @@ interface ServiceLogsContextType {
   isLiveMode: boolean
   setIsLiveMode: (isLive: boolean) => void
 
-  // Log streaming control
-  pauseLogs: boolean
-  setPauseLogs: (pause: boolean | ((prev: boolean) => boolean)) => void
-  newMessagesAvailable: boolean
-  setNewMessagesAvailable: (available: boolean | ((prev: boolean) => boolean)) => void
-  showPreviousLogs: boolean
-  setShowPreviousLogs: (show: boolean | ((prev: boolean) => boolean)) => void
-
   // Actions
-  downloadLogs: (logs: ServiceLog[]) => void
+  downloadLogs: (logs: NormalizedServiceLog[]) => void
 }
 
-export const queryParamsValues = {
+export const queryParamsServiceLogs = {
   startDate: StringParam,
   endDate: StringParam,
   podName: StringParam,
+  containerName: StringParam,
   version: StringParam,
   message: StringParam,
+  level: StringParam,
 }
 
 export const ServiceLogsContext = createContext<ServiceLogsContextType | undefined>(undefined)
@@ -72,17 +64,9 @@ export function ServiceLogsProvider({
   serviceStatus,
   environmentStatus,
 }: ServiceLogsProviderProps) {
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsValues)
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
   // Date/Time states
-  const startDate = useMemo(
-    () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
-    [queryParams.startDate]
-  )
-  const endDate = useMemo(
-    () => (queryParams.endDate ? new Date(queryParams.endDate) : undefined),
-    [queryParams.endDate]
-  )
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
   // Filtering states - derived from queryParams
@@ -105,7 +89,6 @@ export function ServiceLogsProvider({
   // Log streaming control states - managed internally now
   const [pauseLogs, setPauseLogs] = useState(false)
   const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
-  const [showPreviousLogs, setShowPreviousLogs] = useState(false)
 
   // Actions
   const setStartDate = useCallback(
@@ -123,8 +106,6 @@ export function ServiceLogsProvider({
   )
 
   const clearDate = useCallback(() => {
-    setStartDate(undefined)
-    setEndDate(undefined)
     setQueryParams({
       startDate: undefined,
       endDate: undefined,
@@ -186,7 +167,7 @@ export function ServiceLogsProvider({
     [columnFilters]
   )
 
-  const downloadLogs = useCallback((logs: ServiceLog[]) => {
+  const downloadLogs = useCallback((logs: NormalizedServiceLog[]) => {
     download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')
   }, [])
 
@@ -199,8 +180,6 @@ export function ServiceLogsProvider({
       environmentStatus,
 
       // Date/Time management
-      startDate,
-      endDate,
       isOpenTimestamp,
       setStartDate,
       setEndDate,
@@ -222,14 +201,6 @@ export function ServiceLogsProvider({
       isLiveMode,
       setIsLiveMode,
 
-      // Log streaming control
-      pauseLogs,
-      setPauseLogs,
-      newMessagesAvailable,
-      setNewMessagesAvailable,
-      showPreviousLogs,
-      setShowPreviousLogs,
-
       // Actions
       downloadLogs,
     }),
@@ -238,8 +209,6 @@ export function ServiceLogsProvider({
       serviceId,
       serviceStatus,
       environmentStatus,
-      startDate,
-      endDate,
       isOpenTimestamp,
       setStartDate,
       setEndDate,
@@ -252,12 +221,6 @@ export function ServiceLogsProvider({
       updateTimeContextValue,
       isLiveMode,
       setIsLiveMode,
-      pauseLogs,
-      setPauseLogs,
-      newMessagesAvailable,
-      setNewMessagesAvailable,
-      showPreviousLogs,
-      setShowPreviousLogs,
       downloadLogs,
     ]
   )
