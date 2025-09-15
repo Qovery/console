@@ -31,11 +31,12 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   const filters = useMemo(
     () => ({
       level: queryParams.level || undefined,
-      pod: queryParams.podName || undefined,
+      instance: queryParams.instance || undefined,
+      container: queryParams.container || undefined,
       message: queryParams.message || undefined,
       version: queryParams.version || undefined,
     }),
-    [queryParams.level, queryParams.podName, queryParams.message, queryParams.version]
+    [queryParams.level, queryParams.instance, queryParams.container, queryParams.message, queryParams.version]
   )
 
   // Fetch service logs using useQuery instead of websocket
