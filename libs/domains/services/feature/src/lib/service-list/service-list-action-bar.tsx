@@ -203,6 +203,9 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                     .map(({ id }) => id),
                   helm_ids: stoppableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
                   job_ids: stoppableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
+                  terraform_ids: stoppableServices
+                    .filter(({ serviceType }) => serviceType === 'TERRAFORM')
+                    .map(({ id }) => id),
                 },
               })
               resetRowSelection()
@@ -272,6 +275,9 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                     .filter(({ serviceType }) => serviceType === 'HELM')
                     .map(({ id }) => id),
                   job_ids: uninstallableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
+                  terraform_ids: uninstallableServices
+                    .filter(({ serviceType }) => serviceType === 'TERRAFORM')
+                    .map(({ id }) => id),
                 },
               })
               resetRowSelection()
@@ -321,6 +327,9 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                     .map(({ id }) => id),
                   helm_ids: deletableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
                   job_ids: deletableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
+                  terraform_ids: deletableServices
+                    .filter(({ serviceType }) => serviceType === 'TERRAFORM')
+                    .map(({ id }) => id),
                 },
               })
               resetRowSelection()
