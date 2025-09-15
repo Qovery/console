@@ -3,6 +3,48 @@ import { ClustersApi } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 
+export interface LogFilters {
+  serviceId: string
+  level?: string
+  pod?: string
+  message?: string
+  version?: string
+  container?: string
+  namespace?: string
+}
+
+export function buildLokiQuery(filters: LogFilters): string {
+  const labels: string[] = [`qovery_com_service_id="${filters.serviceId}"`]
+
+  if (filters.level) {
+    labels.push(`level="${filters.level}"`)
+  }
+
+  if (filters.pod) {
+    labels.push(`pod="${filters.pod}"`)
+  }
+
+  if (filters.container) {
+    labels.push(`container="${filters.container}"`)
+  }
+
+  if (filters.namespace) {
+    labels.push(`namespace="${filters.namespace}"`)
+  }
+
+  if (filters.version) {
+    labels.push(`app="${filters.version}"`)
+  }
+
+  let query = `{${labels.join(', ')}}`
+
+  if (filters.message) {
+    query += ` |= '${filters.message}'`
+  }
+
+  return query
+}
+
 interface StreamLabels {
   // Common labels
   job: string
@@ -42,26 +84,67 @@ export interface ServiceLog extends StreamLabels {
   message: string
 }
 
+// Common normalized log interface for both live and history logs
+export interface NormalizedServiceLog {
+  timestamp: string
+  message: string
+  pod?: string
+  container?: string
+  exporter?: string
+  level?: string
+  version?: string
+}
+
 function formatLogs(logs: LogStream[]): ServiceLog[] {
   return logs.flatMap((log) => {
     const stream = log.stream
     const values = log.values
 
-    return values
-      .map((value) => {
-        const timestampStr = value[0] ?? ''
-        const timestampNum = Number(timestampStr)
-        // Convert nanoseconds to milliseconds if timestamp has more than 13 digits
-        const convertedTimestamp = timestampNum > 9999999999999 ? Math.floor(timestampNum / 1000000) : timestampNum
+    return values.map((value) => {
+      const timestampStr = value[0] ?? ''
+      const timestampNum = Number(timestampStr)
+      // Convert nanoseconds to milliseconds if timestamp has more than 13 digits
+      const convertedTimestamp = timestampNum > 9999999999999 ? Math.floor(timestampNum / 1000000) : timestampNum
 
-        return {
-          ...stream,
-          timestamp: convertedTimestamp.toString(),
-          message: value[1],
-        }
-      })
-      .sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
+      return {
+        ...stream,
+        timestamp: convertedTimestamp.toString(),
+        message: value[1],
+      }
+    })
   })
+}
+
+// Normalize ServiceLog (API) to common format
+export function normalizeServiceLog(log: ServiceLog): NormalizedServiceLog {
+  return {
+    timestamp: log.timestamp,
+    message: log.message,
+    pod: log.pod,
+    container: log.container,
+    exporter: log.exporter,
+    level: log.level,
+    version: log.app, // API uses 'app' field for version
+  }
+}
+
+// Normalize ServiceLogResponseDto (WebSocket) to common format
+export function normalizeWebSocketLog(log: {
+  created_at?: number
+  message?: string
+  pod_name?: string
+  container_name?: string
+  version?: string
+}): NormalizedServiceLog {
+  return {
+    timestamp: log.created_at?.toString() || '',
+    message: log.message || '',
+    pod: log.pod_name,
+    container: log.container_name,
+    exporter: undefined, // WebSocket logs don't have exporter
+    level: undefined, // WebSocket logs don't have level in the main object
+    version: log.version,
+  }
 }
 
 export const serviceLogs = createQueryKeys('serviceLogs', {
@@ -71,24 +154,28 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     startDate,
     endDate,
     timeRange,
+    filters,
   }: {
     clusterId: string
     serviceId: string
     startDate?: Date
     endDate?: Date
     timeRange?: string
+    filters?: Omit<LogFilters, 'serviceId'>
   }) => ({
-    queryKey: [clusterId, timeRange, startDate, endDate, serviceId],
+    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters],
     async queryFn() {
       // Convert Date objects to nanosecond Unix epoch format for Loki API
       // https://grafana.com/docs/loki/latest/reference/loki-http-api/#timestamps
       const startTimestamp = startDate ? (startDate.getTime() * 1000000).toString() : undefined
       const endTimestamp = endDate ? (endDate.getTime() * 1000000).toString() : undefined
 
+      const query = buildLokiQuery({ serviceId, ...filters })
+
       const response = await clusterApi.getClusterLogs(
         clusterId,
         '/loki/api/v1/query_range',
-        `{qovery_com_service_id="${serviceId}"}`,
+        query,
         startTimestamp,
         endTimestamp,
         undefined,
