@@ -1,6 +1,8 @@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from 'cmdk'
-import { type ComponentPropsWithoutRef, useEffect, useRef, useState } from 'react'
+import { type ComponentPropsWithoutRef, useRef, useState } from 'react'
+import { useQueryParams } from 'use-query-params'
 import { Icon } from '@qovery/shared/ui'
+import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 const defaultFilters = [
   {
@@ -14,6 +16,10 @@ const defaultFilters = [
   {
     value: 'service:',
     label: 'service:',
+  },
+  {
+    value: 'instance:',
+    label: 'instance:',
   },
 ]
 
@@ -88,6 +94,8 @@ export function SearchServiceLogs() {
   const [cursorPosition, setCursorPosition] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
   const getContextualSuggestions = () => {
     const beforeCursor = value.substring(0, cursorPosition)

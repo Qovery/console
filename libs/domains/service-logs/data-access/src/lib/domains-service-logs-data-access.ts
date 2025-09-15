@@ -6,7 +6,7 @@ const clusterApi = new ClustersApi()
 export interface LogFilters {
   serviceId: string
   level?: string
-  pod?: string
+  instance?: string
   message?: string
   version?: string
   container?: string
@@ -20,8 +20,8 @@ export function buildLokiQuery(filters: LogFilters): string {
     labels.push(`level="${filters.level}"`)
   }
 
-  if (filters.pod) {
-    labels.push(`pod="${filters.pod}"`)
+  if (filters.instance) {
+    labels.push(`pod="${filters.instance}"`)
   }
 
   if (filters.container) {
@@ -88,7 +88,7 @@ export interface ServiceLog extends StreamLabels {
 export interface NormalizedServiceLog {
   timestamp: string
   message: string
-  pod?: string
+  instance?: string
   container?: string
   exporter?: string
   level?: string
@@ -120,7 +120,7 @@ export function normalizeServiceLog(log: ServiceLog): NormalizedServiceLog {
   return {
     timestamp: log.timestamp,
     message: log.message,
-    pod: log.pod,
+    instance: log.pod,
     container: log.container,
     exporter: log.exporter,
     level: log.level,
@@ -139,7 +139,7 @@ export function normalizeWebSocketLog(log: {
   return {
     timestamp: log.created_at?.toString() || '',
     message: log.message || '',
-    pod: log.pod_name,
+    instance: log.pod_name,
     container: log.container_name,
     exporter: undefined, // WebSocket logs don't have exporter
     level: undefined, // WebSocket logs don't have level in the main object

@@ -1,10 +1,4 @@
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
+import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
@@ -92,7 +86,7 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('pod', {}),
+      columnHelper.accessor('instance', {}),
       columnHelper.accessor('timestamp', {}),
       ...(hasMultipleContainers ? [columnHelper.accessor('container', {})] : []),
       columnHelper.accessor('exporter', {}),
@@ -105,10 +99,6 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
     data: logs,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getRowCanExpand: () => true,
-    getExpandedRowModel: getExpandedRowModel(),
-    enableFilters: true,
-    getFilteredRowModel: getFilteredRowModel(),
   })
 
   // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
@@ -122,8 +112,6 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
     .otherwise(() => false)
-
-  console.log('logs: ', logs.length)
 
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
   if (!logs || logs.length === 0 || (logs.length > 0 && logs[0].message.includes('No pods found'))) {
@@ -146,7 +134,7 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
+    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 pb-0">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
         <HeaderServiceLogs logs={logs} />
         <div

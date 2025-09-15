@@ -41,8 +41,8 @@ interface ServiceLogsContextType {
 export const queryParamsServiceLogs = {
   startDate: StringParam,
   endDate: StringParam,
-  podName: StringParam,
-  containerName: StringParam,
+  instance: StringParam,
+  container: StringParam,
   version: StringParam,
   message: StringParam,
   level: StringParam,
@@ -69,15 +69,6 @@ export function ServiceLogsProvider({
   // Date/Time states
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
-  // Filtering states - derived from queryParams
-  const columnFilters: ColumnFiltersState = useMemo(() => {
-    const filters: ColumnFiltersState = []
-    if (queryParams.podName) filters.push({ id: 'pod_name', value: queryParams.podName })
-    if (queryParams.version) filters.push({ id: 'version', value: queryParams.version })
-    if (queryParams.message) filters.push({ id: 'message', value: queryParams.message })
-    return filters
-  }, [queryParams.podName, queryParams.version, queryParams.message])
-
   // Time format preferences
   const [updateTimeContextValue, setUpdateTimeContext] = useState<UpdateTimeContextProps>({
     utc: false,
@@ -85,10 +76,6 @@ export function ServiceLogsProvider({
 
   // Live/Historical mode toggle (default to live mode when no dates)
   const isLiveMode = !queryParams.startDate && !queryParams.endDate
-
-  // Log streaming control states - managed internally now
-  const [pauseLogs, setPauseLogs] = useState(false)
-  const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
 
   // Actions
   const setStartDate = useCallback(
@@ -112,42 +99,6 @@ export function ServiceLogsProvider({
     })
   }, [setQueryParams])
 
-  const setColumnFilters = useCallback(
-    (filters: ColumnFiltersState | ((prev: ColumnFiltersState) => ColumnFiltersState)) => {
-      const newFilters = typeof filters === 'function' ? filters(columnFilters) : filters
-      const updates: Record<string, string | undefined> = {}
-
-      updates['podName'] = (newFilters.find((f) => f.id === 'pod_name')?.value as string) || undefined
-      updates['version'] = (newFilters.find((f) => f.id === 'version')?.value as string) || undefined
-      updates['message'] = (newFilters.find((f) => f.id === 'message')?.value as string) || undefined
-
-      setQueryParams(updates)
-    },
-    [columnFilters, setQueryParams]
-  )
-
-  const toggleColumnFilter = useCallback(
-    (id: string, value: string) => {
-      const existingFilter = columnFilters.find((f) => f.id === id)
-      const paramKey = id === 'pod_name' ? 'podName' : id
-
-      if (existingFilter) {
-        setQueryParams({ [paramKey]: undefined })
-      } else {
-        setQueryParams({ [paramKey]: value.trim() })
-      }
-    },
-    [columnFilters, setQueryParams]
-  )
-
-  const clearColumnFilter = useCallback(
-    (filterId: string) => {
-      const paramKey = filterId === 'pod_name' ? 'podName' : filterId
-      setQueryParams({ [paramKey]: undefined })
-    },
-    [setQueryParams]
-  )
-
   const setIsLiveMode = useCallback(
     (isLive: boolean) => {
       if (isLive) {
@@ -160,11 +111,6 @@ export function ServiceLogsProvider({
       }
     },
     [setQueryParams]
-  )
-
-  const isFilterActive = useCallback(
-    (id: string, value: string) => columnFilters.some((f) => f.id === id && f.value === value),
-    [columnFilters]
   )
 
   const downloadLogs = useCallback((logs: NormalizedServiceLog[]) => {
@@ -186,13 +132,6 @@ export function ServiceLogsProvider({
       setIsOpenTimestamp,
       clearDate,
 
-      // Filtering
-      columnFilters,
-      setColumnFilters,
-      toggleColumnFilter,
-      clearColumnFilter,
-      isFilterActive,
-
       // Time format preferences
       updateTimeContextValue,
       setUpdateTimeContext,
@@ -213,11 +152,6 @@ export function ServiceLogsProvider({
       setStartDate,
       setEndDate,
       clearDate,
-      columnFilters,
-      setColumnFilters,
-      toggleColumnFilter,
-      clearColumnFilter,
-      isFilterActive,
       updateTimeContextValue,
       isLiveMode,
       setIsLiveMode,
