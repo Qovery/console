@@ -46,7 +46,7 @@ export function StepSummaryFeature() {
       name: generalData.name,
       description: generalData.description ?? '',
       icon_uri: generalData.icon_uri,
-      timeout_sec: generalData.timeout_sec,
+      timeout_sec: Number(generalData.timeout_sec),
       auto_deploy: generalData.auto_deploy ?? false,
       auto_approve: false,
       provider: 'TERRAFORM',
