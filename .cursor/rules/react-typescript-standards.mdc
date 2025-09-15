@@ -1,0 +1,32 @@
+---
+description: React and TypeScript coding standards for Qovery Console
+globs: ['**/*.tsx', '**/*.ts']
+alwaysApply: false
+---
+
+# React & TypeScript Standards
+
+## Import Rules
+
+- ALWAYS use inline type imports: `import { type MyType, myFunction } from './module'`
+- Respect import order according to `.eslintrc.json`
+- Use `@qovery/*` aliases defined in `tsconfig.base.json`
+- DO NOT import directly from `react` (destructure React)
+- Use `@qovery/shared/util-tests` instead of `@testing-library/react`
+
+## React Components
+
+- Functional components only
+- No explicit `React.FC`
+- Destructure props directly in parameters
+- Use `clsx` or `twMerge` from `@qovery/shared/util-js` for conditional classes
+- Prefer Radix UI components when available
+
+## State Management
+
+- Use React Query for API calls
+
+## Performance
+
+- Use `React.memo()` for expensive components
+- `useCallback` and `useMemo` only when necessary
