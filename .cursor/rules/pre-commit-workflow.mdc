@@ -6,6 +6,55 @@ alwaysApply: false
 
 # Pre-commit Verification Workflow
 
+## Commit Message Format
+
+This project uses **semantic-release** with conventional commit format:
+
+### Format Structure
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Examples
+
+```bash
+# Features
+feat(button): add loading state animation
+feat(auth): implement OAuth2 login flow
+
+# Bug fixes
+fix(modal): prevent background scroll when open
+fix(api): handle network timeout errors
+
+# Other types
+docs(readme): update installation instructions
+style(header): improve responsive layout
+refactor(utils): simplify date formatting function
+test(user-service): add integration tests
+chore(deps): update react to v18.2.0
+```
+
+### Required Types
+
+- **feat**: New feature
+- **fix**: Bug fix
+- **docs**: Documentation changes
+- **style**: Code style changes (formatting, etc.)
+- **refactor**: Code refactoring
+- **test**: Adding or updating tests
+- **chore**: Maintenance tasks, dependency updates
+
+### Scope Guidelines
+
+- Use component name: `button`, `modal`, `header`
+- Use feature area: `auth`, `api`, `routing`
+- Use domain: `user-management`, `billing`
+
 ## Required Checks Before Commit
 
 ### 1. Format Check
