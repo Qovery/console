@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
@@ -20,6 +21,22 @@ function ObservabilityCallout() {
 
   return (
     <div className="relative flex gap-2 overflow-hidden rounded-md p-6 text-neutral-50 [background:linear-gradient(91deg,_#7062F5_0%,_#8F4FD8_99.96%)]">
+      <motion.div
+        className="absolute inset-0 opacity-80"
+        animate={{
+          background: [
+            'linear-gradient(45deg, #7062F5, #8F4FD8, #6366F1, #8B5CF6, #7062F5)',
+            'linear-gradient(45deg, #8F4FD8, #6366F1, #8B5CF6, #7062F5, #8F4FD8)',
+            'linear-gradient(45deg, #6366F1, #8B5CF6, #7062F5, #8F4FD8, #6366F1)',
+            'linear-gradient(45deg, #7062F5, #8F4FD8, #6366F1, #8B5CF6, #7062F5)',
+          ],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Infinity,
+          ease: 'easeInOut',
+        }}
+      />
       <svg
         className="absolute bottom-0 right-0"
         xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +87,7 @@ function ObservabilityCallout() {
                 strokeLinecap="square"
                 strokeWidth="0.579"
                 d="M.855 92.813V1.248"
-              ></path>
+              />
             </svg>
           ))}
         </div>
@@ -83,7 +100,7 @@ function ObservabilityCallout() {
                 strokeLinecap="square"
                 strokeWidth="0.579"
                 d="M.614.868h685.489"
-              ></path>
+              />
               <defs>
                 <linearGradient
                   id="paint0_linear_1104_64197"
@@ -101,6 +118,7 @@ function ObservabilityCallout() {
           ))}
         </div>
       </div>
+
       <div className="relative flex h-full w-full items-center justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <p className="flex items-center gap-2 font-semibold">
@@ -125,7 +143,7 @@ function ObservabilityCallout() {
         <Button
           radius="full"
           size="sm"
-          className="bg-neutral-50 text-neutral-700 hover:bg-neutral-150 focus:bg-neutral-150 active:bg-neutral-150"
+          className="bg-neutral-50 text-neutral-700 hover:bg-neutral-150 focus:bg-neutral-150 active:scale-[0.97] active:bg-neutral-150"
           onClick={() =>
             openModal({
               content: <EnableObservabilityModal />,
