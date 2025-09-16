@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { InvoiceStatusEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -9,6 +10,7 @@ import useInvoices from '../hooks/use-invoices/use-invoices'
 export const InvoiceBanner = () => {
   const navigate = useNavigate()
   const { organizationId = '' } = useParams()
+  const hideInvoiceBanner = useFeatureFlagEnabled('hide_invoice_banner')
   const { roles } = useUserRole()
   const { data: invoices, isLoading } = useInvoices({ organizationId })
   const unpaidInvoices = invoices?.filter((invoice) => invoice.status === InvoiceStatusEnum.NOT_PAID)
@@ -24,7 +26,7 @@ export const InvoiceBanner = () => {
     navigate(SETTINGS_URL(organizationId) + SETTINGS_BILLING_SUMMARY_URL)
   }
 
-  if (unpaidInvoices?.length === 0 || isLoading || !isAdminOrOwnerOfCompany) {
+  if (unpaidInvoices?.length === 0 || isLoading || !isAdminOrOwnerOfCompany || hideInvoiceBanner) {
     return null
   }
 
