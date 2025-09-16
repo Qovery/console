@@ -62,7 +62,7 @@ function PlaceholderInstanceChart() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heading weight="medium">Instances number</Heading>
+            <Heading weight="medium">Instances status</Heading>
             <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-350" />
           </div>
           <div className="flex items-center gap-4">
@@ -86,7 +86,23 @@ function PlaceholderInstanceChart() {
         </div>
       </div>
 
-      <div className="mt-6 flex h-full items-center justify-center rounded border border-neutral-200 bg-neutral-50"></div>
+      <div className="mt-6 flex h-[256px] flex-col items-center justify-between gap-2 bg-neutral-50">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="flex w-full items-center text-xs text-neutral-350">
+            <div className="h-[1px] w-full bg-neutral-200" />
+            <span className="w-5 text-right">{100 - index * 25}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-center justify-between text-xs text-neutral-350">
+        <span>03:00</span>
+        <span>05:00</span>
+        <span>07:00</span>
+        <span>09:00</span>
+        <span>11:00</span>
+        <span>13:00</span>
+        <span className="relative -left-4">15:00</span>
+      </div>
     </Section>
   )
 }
