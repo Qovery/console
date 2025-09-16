@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Environment } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useContext, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
