@@ -78,8 +78,20 @@ export function Container({ children }: ContainerProps) {
     ...(hasMetrics
       ? [
           {
-            icon: <Icon iconName="chart-line" iconStyle="regular" />,
-            name: 'Monitoring',
+            name: (
+              <span className="flex items-center gap-2 text-sm font-medium">
+                <Icon iconName="chart-line" iconStyle="regular" /> Monitoring
+                <Badge
+                  radius="full"
+                  variant="surface"
+                  color="purple"
+                  size="sm"
+                  className="h-4 border-transparent bg-purple-200 px-1 text-[8px] font-bold text-purple-600"
+                >
+                  NEW
+                </Badge>
+              </span>
+            ),
             active:
               location.pathname ===
               APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_MONITORING_URL,
