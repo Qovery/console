@@ -9,7 +9,7 @@ export function EnableObservabilityContent() {
       </h2>
       <div className="flex flex-col leading-6">
         <p className="text-neutral-350 dark:text-neutral-50">
-          Weve just opened the Early Access for our brand-new Observability feature. <br />
+          We’ve just released our brand-new Observability feature, now available for everyone. <br />
           Why is this exciting?
         </p>
         <ul className="list-disc pl-5 text-neutral-350">
