@@ -193,7 +193,7 @@ export function StepSummaryFeature() {
                 <ul className="list-none space-y-2 text-sm text-neutral-400">
                   <li>
                     <strong className="font-medium">Repository:</strong>{' '}
-                    {helmRepositories.find(({ id }) => id === generalData.git_repository?.name)?.name}
+                    {helmRepositories.find(({ id }) => id === generalData.repository)?.name}
                   </li>
                   <li>
                     <strong className="font-medium">Chart name:</strong> {generalData.chart_name}
