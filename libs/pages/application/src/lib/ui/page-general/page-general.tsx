@@ -1,6 +1,7 @@
+import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { PodStatusesCallout, PodsMetrics, ServiceDetails } from '@qovery/domains/services/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { Button, ExternalLink, Icon } from '@qovery/shared/ui'
+import { Button, ExternalLink, Icon, useModal } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
 export interface PageGeneralProps {
@@ -8,17 +9,19 @@ export interface PageGeneralProps {
   environmentId: string
   isCronJob: boolean
   isLifecycleJob: boolean
+  hasMetrics: boolean
 }
 
 function ObservabilityCallout() {
   const [isOpen, setIsOpen] = useLocalStorage('observability-callout-open', true)
+  const { openModal } = useModal()
 
   if (!isOpen) return null
 
   return (
     <div className="relative flex gap-2 overflow-hidden rounded-md p-6 text-neutral-50 [background:linear-gradient(91deg,_#7062F5_0%,_#8F4FD8_99.96%)]">
       <svg
-        className="absolute right-0 top-0"
+        className="absolute bottom-0 right-0"
         xmlns="http://www.w3.org/2000/svg"
         width="936"
         height="96"
@@ -49,15 +52,15 @@ function ObservabilityCallout() {
           </clipPath>
         </defs>
       </svg>
-      <div className="absolute left-0 top-0 h-full w-full opacity-30">
-        <div className="absolute right-0 top-0 flex h-full w-full justify-between gap-0.5 p-0.5">
+      <div className="absolute bottom-0 left-0 h-full w-full opacity-30">
+        <div className="absolute bottom-0 right-0 flex h-full w-full justify-between gap-0.5 p-0.5">
           {Array.from({ length: 10 }).map((_, index) => (
             <svg
               key={index}
               className={index < 4 ? 'opacity-0' : ''}
               xmlns="http://www.w3.org/2000/svg"
               width="2"
-              height="94"
+              height="100%"
               fill="none"
               viewBox="0 0 2 94"
             >
@@ -71,7 +74,7 @@ function ObservabilityCallout() {
             </svg>
           ))}
         </div>
-        <div className="absolute right-0 top-0 flex h-full flex-col justify-between p-0.5">
+        <div className="absolute bottom-0 right-0 flex h-full flex-col justify-between p-0.5">
           {Array.from({ length: 5 }).map((_, index) => (
             <svg key={index} xmlns="http://www.w3.org/2000/svg" width="100%" height="2" fill="none" viewBox="0 0 687 2">
               <path
@@ -123,6 +126,14 @@ function ObservabilityCallout() {
           radius="full"
           size="sm"
           className="bg-neutral-50 text-neutral-700 hover:bg-neutral-150 focus:bg-neutral-150 active:bg-neutral-150"
+          onClick={() =>
+            openModal({
+              content: <EnableObservabilityModal />,
+              options: {
+                width: 680,
+              },
+            })
+          }
         >
           Discover feature
         </Button>
@@ -138,11 +149,11 @@ function ObservabilityCallout() {
   )
 }
 
-export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob }: PageGeneralProps) {
+export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob, hasMetrics }: PageGeneralProps) {
   return (
     <div className="flex grow flex-row">
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
-        {!isCronJob && !isLifecycleJob && <ObservabilityCallout />}
+        {hasMetrics && <ObservabilityCallout />}
         <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
         <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
           {isCronJob && (

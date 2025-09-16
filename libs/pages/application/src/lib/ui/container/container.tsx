@@ -37,8 +37,6 @@ export interface ContainerProps extends PropsWithChildren {
 export function Container({ children }: ContainerProps) {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
-  const isServiceObsEnabled = useFeatureFlagVariantKey('service-obs')
-
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
@@ -47,13 +45,12 @@ export function Container({ children }: ContainerProps) {
 
   const hasMetrics = useMemo(
     () =>
-      (isServiceObsEnabled &&
-        cluster?.metrics_parameters?.enabled &&
+      (cluster?.cloud_provider === 'AWS' &&
         match(service?.serviceType)
           .with('APPLICATION', 'CONTAINER', () => true)
           .otherwise(() => false)) ||
       false,
-    [isServiceObsEnabled, cluster?.metrics_parameters?.enabled, service?.serviceType]
+    [service?.serviceType, cluster?.cloud_provider]
   )
 
   const location = useLocation()
