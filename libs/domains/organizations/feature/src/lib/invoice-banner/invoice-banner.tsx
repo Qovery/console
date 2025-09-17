@@ -13,7 +13,9 @@ export const InvoiceBanner = () => {
   const hideInvoiceBanner = useFeatureFlagEnabled('hide_invoice_banner')
   const { roles } = useUserRole()
   const { data: invoices, isLoading } = useInvoices({ organizationId })
-  const unpaidInvoices = invoices?.filter((invoice) => invoice.status === InvoiceStatusEnum.NOT_PAID)
+  const unpaidInvoices = invoices?.filter(
+    ({ status }) => status === InvoiceStatusEnum.NOT_PAID || status === InvoiceStatusEnum.PAYMENT_DUE
+  )
 
   const isAdminOrOwnerOfCompany = useMemo(
     () =>
