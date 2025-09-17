@@ -120,7 +120,7 @@ export function NetworkRequestDurationChart({
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
-  }, [metrics99, metrics50, useLocalTime, startTimestamp, endTimestamp])
+  }, [metrics99, metrics95, metrics50, useLocalTime, startTimestamp, endTimestamp])
 
   return (
     <LocalChart
