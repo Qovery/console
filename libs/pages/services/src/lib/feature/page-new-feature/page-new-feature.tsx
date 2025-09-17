@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
-import { NavLink, useParams } from 'react-router-dom'
+import { NavLink, type To, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment, useLifecycleTemplates } from '@qovery/domains/environments/feature'
 import { type ServiceType } from '@qovery/domains/services/data-access'
@@ -22,8 +22,9 @@ import {
   SERVICES_TERRAFORM_CREATION_URL,
   SERVICES_URL,
 } from '@qovery/shared/routes'
-import { Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { Badge, Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 import {
   type ServiceTemplateOptionType,
   type ServiceTemplateType,
@@ -38,23 +39,65 @@ function Card({
   description,
   icon,
   link,
+  onClick,
+  disabledCTA,
+  badge,
 }: {
   title: string
   description: string
   icon: ReactElement
-  link: string
+  link?: string
+  onClick?: () => void
+  disabledCTA?: ReactElement
+  badge?: string
 }) {
+  const Wrapper = ({ children }: { children: ReactElement }) => {
+    const className = twMerge(
+      'flex cursor-pointer items-center justify-between gap-5 rounded border border-neutral-250 px-5 py-4 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)]',
+      disabledCTA ? 'border-neutral-200 bg-neutral-100' : 'hover:bg-neutral-100'
+    )
+
+    if (onClick) {
+      return (
+        <div onClick={onClick} className={className}>
+          {children}
+        </div>
+      )
+    }
+
+    return (
+      <NavLink to={link as To} className={className}>
+        {children}
+      </NavLink>
+    )
+  }
+
   return (
-    <NavLink
-      to={link}
-      className="flex items-center gap-5 rounded border border-neutral-250 px-5 py-4 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-neutral-100"
-    >
-      <div>
-        <h3 className="mb-1 text-ssm font-medium">{title}</h3>
-        <p className="max-w-96 text-xs text-neutral-350">{description}</p>
-      </div>
-      {icon}
-    </NavLink>
+    <Wrapper>
+      <>
+        <div className="space-y-2">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-ssm font-medium">{title}</h3>
+              {badge && (
+                <Badge
+                  radius="full"
+                  variant="surface"
+                  color="purple"
+                  size="sm"
+                  className="h-4 border-transparent bg-purple-200 px-1 text-[8px] font-bold text-purple-600"
+                >
+                  {badge}
+                </Badge>
+              )}
+            </div>
+            <p className="max-w-96 text-xs text-neutral-350">{description}</p>
+          </div>
+          {disabledCTA}
+        </div>
+        {icon}
+      </>
+    </Wrapper>
   )
 }
 
@@ -255,18 +298,27 @@ function SectionByTag({
   )
 }
 
-export function PageNewFeature() {
-  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
-  useDocumentTitle('Create new service - Qovery')
+type ServiceBlock = {
+  title: string
+  description: string
+  icon: ReactElement
+  cloud_provider: CloudProviderEnum
+  link?: string
+  onClick?: () => void
+  disabledCTA?: ReactElement
+  badge?: string
+}
 
+export function PageNewFeature() {
+  useDocumentTitle('Create new service - Qovery')
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const { data: environment } = useEnvironment({ environmentId })
   const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
-
-  const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
-
   const cloudProvider = environment?.cloud_provider.provider as CloudProviderEnum
+  const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
+  const { showPylonForm } = useSupportChat()
 
-  const serviceEmpty = [
+  const serviceEmpty: ServiceBlock[] = [
     {
       title: 'Application',
       description: 'Deploy a long running service running from Git or a Container Registry.',
@@ -311,6 +363,20 @@ export function PageNewFeature() {
       icon: <Icon name="TERRAFORM" width={32} height={32} />,
       link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL,
       cloud_provider: cloudProvider,
+    })
+  } else {
+    serviceEmpty.push({
+      title: 'Terraform',
+      description: "Terraform service isn't available for your organization.",
+      icon: <Icon name="TERRAFORM" width={32} height={32} />,
+      onClick: () => showPylonForm('request-access-terraform'),
+      cloud_provider: cloudProvider,
+      disabledCTA: (
+        <p className="cursor-pointer text-xs font-medium text-neutral-400">
+          Contact us to enable it <Icon iconName="chevron-right" className="ml-1 text-2xs" />
+        </p>
+      ),
+      badge: 'NEW',
     })
   }
 
