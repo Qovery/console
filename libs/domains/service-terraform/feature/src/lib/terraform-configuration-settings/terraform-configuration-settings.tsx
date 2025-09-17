@@ -23,7 +23,8 @@ export interface TerraformGeneralData
 }
 
 export const TERRAFORM_VERSIONS = [
-  '1.12.1',
+  '1.13.2',
+  '1.12.2',
   '1.11.4',
   '1.10.5',
   '1.9.8',
