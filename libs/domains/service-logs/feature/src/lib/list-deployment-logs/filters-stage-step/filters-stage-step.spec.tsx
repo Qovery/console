@@ -1,4 +1,5 @@
 import { StateEnum, type Status } from 'qovery-typescript-axios'
+import { type Terraform } from '@qovery/domains/services/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { FiltersStageStep, type FiltersStageStepProps } from './filters-stage-step'
 
@@ -28,6 +29,23 @@ describe('FiltersStageStep', () => {
     renderWithProviders(<FiltersStageStep {...defaultProps} />)
     expect(screen.getByText('Build')).toBeInTheDocument()
     expect(screen.getByText('Deploy')).toBeInTheDocument()
+    expect(screen.queryByText('Executing')).not.toBeInTheDocument()
+  })
+
+  it('renders EXECUTING button for Terraform services', () => {
+    const props = {
+      ...defaultProps,
+      service: {
+        ...defaultProps.service,
+        serviceType: 'TERRAFORM',
+      } as Terraform,
+      serviceStatus: {
+        ...defaultProps.serviceStatus,
+        state: StateEnum.EXECUTING,
+      },
+    }
+    renderWithProviders(<FiltersStageStep {...props} />)
+    expect(screen.getByText('Executing')).toBeInTheDocument()
   })
 
   it('calls toggleColumnFilter with correct type when buttons are clicked', async () => {
