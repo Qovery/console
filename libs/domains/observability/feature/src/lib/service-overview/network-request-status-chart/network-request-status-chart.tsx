@@ -8,7 +8,7 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (serviceId: string, rateInterval: string, ingressName: string) => `
-  sum by(path,status)(rate(nginx_ingress_controller_requests{ingress="${ingressName}"}[${rateInterval}]))
+   sum by(path,status)(nginx:req_rate:5m_by_path_status{ingress="${ingressName}"})
 `
 
 export function NetworkRequestStatusChart({

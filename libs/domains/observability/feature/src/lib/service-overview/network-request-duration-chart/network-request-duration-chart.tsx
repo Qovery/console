@@ -7,7 +7,11 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryDuration50 = (rateInterval: string, ingressName: string) => `
-  histogram_quantile(0.5,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}", status="200", path="/"}[${rateInterval}]))))
+  nginx:request_p50:5m{ingress="${ingressName}"}
+`
+
+const queryDuration95 = (rateInterval: string, ingressName: string) => `
+  nginx:request_p95:5m{ingress="${ingressName}"}
 `
 
 const queryDuration95 = (rateInterval: string, ingressName: string) => `
@@ -15,7 +19,7 @@ const queryDuration95 = (rateInterval: string, ingressName: string) => `
 `
 
 const queryDuration99 = (rateInterval: string, ingressName: string) => `
-   histogram_quantile(0.99,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}", status="200", path="/"}[${rateInterval}]))))
+ nginx:request_p99:5m{ingress="${ingressName}"}
 `
 
 export function NetworkRequestDurationChart({
@@ -46,6 +50,14 @@ export function NetworkRequestDurationChart({
     query: queryDuration50(rateInterval, ingressName),
     boardShortName: 'service_overview',
     metricShortName: 'network_p50',
+  })
+
+  const { data: metrics95, isLoading: isLoadingMetrics95 } = useMetrics({
+    clusterId,
+    startTimestamp,
+    endTimestamp,
+    timeRange,
+    query: queryDuration95(rateInterval, ingressName),
   })
 
   const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
@@ -87,6 +99,15 @@ export function NetworkRequestDurationChart({
       useLocalTime
     )
 
+    // Process network duration 99th percentile metrics
+    processMetricsData(
+      metrics95,
+      timeSeriesMap,
+      () => '95th percentile',
+      (value) => parseFloat(value) * 1000, // Convert to ms
+      useLocalTime
+    )
+
     // Process network duration 0.5th percentile metrics
     processMetricsData(
       metrics50,
@@ -105,7 +126,7 @@ export function NetworkRequestDurationChart({
     <LocalChart
       data={chartData}
       serviceId={serviceId}
-      isLoading={isLoadingMetrics99 || isLoadingMetrics50}
+      isLoading={isLoadingMetrics99 || isLoadingMetrics50 || isLoadingMetrics95}
       isEmpty={chartData.length === 0}
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"

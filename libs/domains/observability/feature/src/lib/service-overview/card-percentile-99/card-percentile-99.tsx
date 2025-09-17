@@ -7,7 +7,7 @@ import NetworkRequestDurationChart from '../network-request-duration-chart/netwo
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (timeRange: string, rateInterval: string, ingressName: string) => `
-  max_over_time(histogram_quantile(0.99, (sum by(le) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}", status="200", path="/"}[${rateInterval}]))))[${timeRange}:${rateInterval}])
+  max_over_time(nginx:request_p99:5m{ingress="${ingressName}"}[${timeRange}])
 `
 
 export function CardPercentile99({

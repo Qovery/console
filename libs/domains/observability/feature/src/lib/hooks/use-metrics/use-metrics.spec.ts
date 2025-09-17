@@ -50,14 +50,6 @@ describe('calculateDynamicRange', () => {
     expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('21600000ms')
   })
 
-  it('should apply offset multiplier', () => {
-    const startTimestamp = '1704067200'
-    const endTimestamp = '1704070800'
-    const offsetMultiplier = 5
-
-    expect(calculateDynamicRange(startTimestamp, endTimestamp, offsetMultiplier)).toBe('60000ms')
-  })
-
   it('should handle edge case: exactly 12 hours', () => {
     const startTimestamp = '1704067200' // Jan 1, 2024 00:00:00
     const endTimestamp = '1704110400' // Jan 1, 2024 12:00:00 (exactly 12 hours)
@@ -72,25 +64,11 @@ describe('calculateDynamicRange', () => {
     expect(calculateDynamicRange(startTimestamp, endTimestamp)).toBe('600000ms')
   })
 
-  it('should handle offsetMultiplier = 0', () => {
+  it('should handle orverriddenMaxPoints', () => {
     const startTimestamp = '1704067200'
     const endTimestamp = '1704070800'
 
-    expect(calculateDynamicRange(startTimestamp, endTimestamp, 0)).toBe('30000ms')
-  })
-
-  it('should handle negative offsetMultiplier', () => {
-    const startTimestamp = '1704067200'
-    const endTimestamp = '1704070800'
-
-    expect(calculateDynamicRange(startTimestamp, endTimestamp, -1)).toBe('30000ms')
-  })
-
-  it('should handle float offsetMultiplier', () => {
-    const startTimestamp = '1704067200'
-    const endTimestamp = '1704070800'
-
-    expect(calculateDynamicRange(startTimestamp, endTimestamp, 1.5)).toBe('60000ms')
+    expect(calculateDynamicRange(startTimestamp, endTimestamp, 500)).toBe('30000ms')
   })
 })
 

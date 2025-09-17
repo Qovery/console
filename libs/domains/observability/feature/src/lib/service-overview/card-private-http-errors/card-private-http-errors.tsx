@@ -7,11 +7,12 @@ import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryErrorRequest = (containerName: string, timeRange: string) => `
-      sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}[${timeRange}]) or vector(0))
+      sum(sum_over_time(beyla:req_inc:5m_by_status{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}[${timeRange}:5m])
+)
 `
 
 const queryTotalRequest = (containerName: string, timeRange: string) => `
-    sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}"}[${timeRange}]) or vector(0))
+    sum(sum_over_time(beyla:req_inc:5m_by_status{k8s_container_name="${containerName}"}[${timeRange}:5m])
 `
 
 export function CardPrivateHTTPErrors({

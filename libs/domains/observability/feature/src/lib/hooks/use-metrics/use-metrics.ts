@@ -202,11 +202,7 @@ export function calculateRateInterval(startTimestamp: string, endTimestamp: stri
  *
  * Returns: "<N>ms"
  */
-export function calculateDynamicRange(
-  startTimestamp: string,
-  endTimestamp: string,
-  overriddenMaxPoints = 150
-): string {
+export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, overriddenMaxPoints = 150): string {
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const durationMs = Math.max(0, endMs - startMs)
@@ -227,13 +223,19 @@ export function calculateDynamicRange(
   ] as const
 
   // Minimal step based on range / maxPoints
+  console.log('PGPG overriddenMaxPoints 2 ', overriddenMaxPoints)
   const rawStep = Math.ceil(durationMs / Math.max(1, overriddenMaxPoints))
+  if (overriddenMaxPoints !== 150) {
+    console.log('PGPG calculateDynamicRange ', overriddenMaxPoints, rawStep)
+  }
 
   // Snap to grid upwards
   const snapped = allowedStepsMs.find((s) => s >= rawStep) ?? allowedStepsMs[allowedStepsMs.length - 1]
+  if (overriddenMaxPoints !== 150) {
+    console.log('PGPG snapped ', overriddenMaxPoints, snapped)
+  }
 
-  // Apply jitter: each unit = 30s
-  const offsetMultiplier =
+  const offsetMultiplier = 0
   const jitter = offsetMultiplier * 30_000
 
   // Clamp jitter to ±20% of snapped
@@ -243,8 +245,10 @@ export function calculateDynamicRange(
   // Final step: keep on grid by snapping up again
   const withJitter = snapped + clamped
   const finalStep = allowedStepsMs.find((s) => s >= withJitter) ?? allowedStepsMs[allowedStepsMs.length - 1]
+  if (overriddenMaxPoints !== 150) {
+    console.log('PGPG finalStep ', overriddenMaxPoints, finalStep)
+  }
 
-  // console.log('PGPG calculateDynamicRange ', overriddenMaxPoints, finalStep)
   return `${finalStep}ms`
 }
 

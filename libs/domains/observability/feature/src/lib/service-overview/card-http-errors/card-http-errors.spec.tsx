@@ -221,7 +221,7 @@ describe('CardHTTPErrors', () => {
     expect(useInstantMetrics).toHaveBeenCalledTimes(2)
     expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
-      query: expect.stringContaining('nginx_ingress_controller_requests'),
+      query: expect.stringContaining('nginx:req_inc:5m_by_status'),
       endTimestamp: expect.any(String),
       boardShortName: 'service_overview',
       metricShortName: 'card_req_all_number',

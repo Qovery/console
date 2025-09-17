@@ -9,17 +9,16 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 
 const query = (ingressName: string, rateInterval: string) => `
 100 *
-sum by (status)(
-  rate(nginx_ingress_controller_requests{
-    ingress="${ingressName}", status=~"499|5.."
-  }[${rateInterval}])
+sum by (status) (
+  nginx:req_rate:5m_by_status{ingress="${ingressName}", status=~"499|5.."}
 )
 /
 ignoring(status) group_left
-sum (
-  rate(nginx_ingress_controller_requests{
-    ingress="${ingressName}"
-  }[${rateInterval}])
+clamp_min(
+  sum(
+    nginx:req_rate:5m{ingress="${ingressName}"}
+  ),
+  1
 )
 `
 
@@ -101,6 +100,7 @@ export function InstanceHTTPErrorsChart({
           fillOpacity={0.6}
           strokeWidth={2}
           isAnimationActive={false}
+          connectNulls={true}
         />
       ))}
     </LocalChart>

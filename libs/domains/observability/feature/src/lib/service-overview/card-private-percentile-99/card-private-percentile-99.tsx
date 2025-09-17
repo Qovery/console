@@ -7,7 +7,7 @@ import PrivateNetworkRequestDurationChart from '../private-network-request-durat
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (timeRange: string, rateInterval: string, containerName: string) => `
-  max_over_time(histogram_quantile(0.99, (sum by(le) (rate(http_server_request_duration_seconds_bucket{k8s_container_name="${containerName}"}[${rateInterval}]))))[${timeRange}:])
+   max_over_time(beyla:http_server_p99:5m{k8s_container_name="${containerName}"}[${timeRange}])
 `
 
 export function CardPrivatePercentile99({

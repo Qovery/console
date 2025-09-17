@@ -7,11 +7,11 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryResponseSize = (containerName: string, rateInterval: string) => `
-   sum by (http_response_status_code) (rate(http_server_response_body_size_bytes_sum{k8s_container_name="${containerName}",  http_request_method="GET"}[${rateInterval}]))
+   beyla:resp_bytes_rate:5m{k8s_container_name="${containerName}"}
 `
 
 const queryRequestSize = (containerName: string, rateInterval: string) => `
-  sum by (http_response_status_code) (rate(http_server_request_body_size_bytes_sum{k8s_container_name="${containerName}",  http_request_method="GET"}[${rateInterval}]))
+  beyla:req_bytes_rate:5m{k8s_container_name="${containerName}"}
 `
 
 export function PrivateNetworkRequestSizeChart({
