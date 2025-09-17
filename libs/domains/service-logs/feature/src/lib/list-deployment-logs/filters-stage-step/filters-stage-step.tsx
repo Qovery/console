@@ -9,10 +9,10 @@ import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type FilterType } from '../list-deployment-logs'
 
-type StepMetricType = { build: ServiceStepMetric[]; deploy: ServiceStepMetric[] }
+type StepMetricType = { build: ServiceStepMetric[]; deploy: ServiceStepMetric[]; executing: ServiceStepMetric[] }
 
 interface StageStepProps {
-  type: Extract<FilterType, 'BUILD' | 'DEPLOY'>
+  type: Extract<FilterType, 'BUILD' | 'DEPLOY' | 'EXECUTING'>
   state: StateEnum
   steps: ServiceStepMetric[]
   toggleColumnFilter: (type: FilterType) => void
@@ -25,6 +25,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
 
   const buildStep = steps.find((s) => s.step_name === 'BUILD')
   const deployStep = steps.find((s) => s.step_name === 'DEPLOYMENT')
+  const executingStep = steps.find((s) => s.step_name === 'EXECUTING')
 
   const status = match({ type, state, buildStep, deployStep })
     .with({ type: 'BUILD' }, () => {
@@ -35,6 +36,10 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
       if (state === 'BUILDING') return 'READY'
       if (state === 'DEPLOYING') return 'DEPLOYING'
       return deployStep?.status
+    })
+    .with({ type: 'EXECUTING' }, () => {
+      if (state === 'EXECUTING') return 'EXECUTING'
+      return executingStep?.status
     })
     .exhaustive()
 
@@ -137,11 +142,12 @@ export function FiltersStageStep({
       match(step.step_name)
         .with('BUILD', 'BUILD_QUEUEING', 'GIT_CLONE', 'REGISTRY_CREATE_REPOSITORY', () => acc.build.push(step))
         .with('DEPLOYMENT', 'DEPLOYMENT_QUEUEING', 'ROUTER_DEPLOYMENT', 'MIRROR_IMAGE', () => acc.deploy.push(step))
+        .with('EXECUTING', () => acc.executing.push(step))
         .exhaustive()
 
       return acc
     },
-    { build: [], deploy: [] } as StepMetricType
+    { build: [], deploy: [], executing: [] } as StepMetricType
   )
 
   return (
@@ -160,11 +166,7 @@ export function FiltersStageStep({
             isFilterActive={isFilterActive}
             toggleColumnFilter={toggleColumnFilter}
           />
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="8" fill="none" viewBox="0 0 16 8">
-            <path fill="#383E50" d="M0 8a4 4 0 000-8v8z"></path>
-            <path fill="#383E50" d="M2 3H14V5H2z"></path>
-            <path fill="#383E50" d="M16 8a4 4 0 110-8v8z"></path>
-          </svg>
+          <Separator />
         </>
       )}
       <StageStep
@@ -174,7 +176,29 @@ export function FiltersStageStep({
         isFilterActive={isFilterActive}
         toggleColumnFilter={toggleColumnFilter}
       />
+      {service?.serviceType === 'TERRAFORM' && (
+        <>
+          <Separator />
+          <StageStep
+            type="EXECUTING"
+            state={state}
+            steps={categorizedSteps.executing}
+            isFilterActive={isFilterActive}
+            toggleColumnFilter={toggleColumnFilter}
+          />
+        </>
+      )}
     </div>
+  )
+}
+
+const Separator = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="8" fill="none" viewBox="0 0 16 8">
+      <path fill="#383E50" d="M0 8a4 4 0 000-8v8z"></path>
+      <path fill="#383E50" d="M2 3H14V5H2z"></path>
+      <path fill="#383E50" d="M16 8a4 4 0 110-8v8z"></path>
+    </svg>
   )
 }
 

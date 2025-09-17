@@ -35,7 +35,7 @@ const { Table } = TablePrimitives
 
 const MemoizedRowDeploymentLogs = memo(RowDeploymentLogs)
 
-export type FilterType = 'ALL' | 'DEPLOY' | 'BUILD'
+export type FilterType = 'ALL' | 'DEPLOY' | 'BUILD' | 'EXECUTING'
 
 // Waiting back-end to provide correct step names from API documentation
 // https://qovery.slack.com/archives/C02NPSG2HBL/p1728485209941179?thread_ts=1727785723.481289&cid=C02NPSG2HBL
@@ -63,6 +63,9 @@ enum EnvironmentEngineStep {
   Restart = 'Restart',
   Restarted = 'Restarted',
   RestartedError = 'RestartedError',
+
+  // Executing steps
+  Executing = 'Executing',
 
   // Pre-check steps
   PreCheck = 'PreCheck',
@@ -111,6 +114,7 @@ const getFilterStep = (step: EnvironmentEngineStep): FilterType =>
       EnvironmentEngineStep.RestartedError,
       () => 'DEPLOY' as const
     )
+    .with(EnvironmentEngineStep.Executing, () => 'EXECUTING' as const)
     // TODO: theses steps are not yet available
     // .with(
     //   EnvironmentEngineStep.PreCheck,
