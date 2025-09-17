@@ -23,7 +23,9 @@ const query = (timeRange: string, containerName: string) => `
     ) > 0
   )
 `
-const queryAutoscalingReached = (timeRange: string, containerName: string) => `
+
+// TODO PG think to use recorder rule
+const queryAutoscalingReached = (timeRange: string, subQueryTimeRange: string, containerName: string) => `
   100 *
   avg_over_time(
   (
@@ -47,7 +49,7 @@ const queryAutoscalingReached = (timeRange: string, containerName: string) => `
         }
       )
     )
-  )[${timeRange}:30s]
+  )[${timeRange}:${subQueryTimeRange}]
 )
 `
 
@@ -55,12 +57,14 @@ export function CardInstanceStatus({
   serviceId,
   clusterId,
   containerName,
+  namespace,
 }: {
   serviceId: string
   clusterId: string
   containerName: string
+  namespace: string
 }) {
-  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, subQueryTimeRange, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: service } = useService({ serviceId })
@@ -71,7 +75,7 @@ export function CardInstanceStatus({
   })
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useInstantMetrics({
     clusterId,
-    query: queryAutoscalingReached(queryTimeRange, containerName),
+    query: queryAutoscalingReached(queryTimeRange, subQueryTimeRange, containerName),
     endTimestamp,
   })
 
@@ -119,7 +123,12 @@ export function CardInstanceStatus({
           </div>
         </div>
         <div>
-          <InstanceStatusChart clusterId={clusterId} serviceId={serviceId} containerName={containerName} />
+          <InstanceStatusChart
+            clusterId={clusterId}
+            serviceId={serviceId}
+            containerName={containerName}
+            namespace={namespace}
+          />
         </div>
       </Section>
       {isModalOpen && (
@@ -130,6 +139,7 @@ export function CardInstanceStatus({
               serviceId={serviceId}
               containerName={containerName}
               isFullscreen
+              namespace={namespace}
             />
           </div>
         </ModalChart>
