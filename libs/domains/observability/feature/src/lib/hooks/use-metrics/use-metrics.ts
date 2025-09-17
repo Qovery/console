@@ -205,7 +205,6 @@ export function calculateRateInterval(startTimestamp: string, endTimestamp: stri
 export function calculateDynamicRange(
   startTimestamp: string,
   endTimestamp: string,
-  offsetMultiplier = 0,
   overriddenMaxPoints = 150
 ): string {
   const startMs = Number(startTimestamp) * 1000
@@ -234,6 +233,7 @@ export function calculateDynamicRange(
   const snapped = allowedStepsMs.find((s) => s >= rawStep) ?? allowedStepsMs[allowedStepsMs.length - 1]
 
   // Apply jitter: each unit = 30s
+  const offsetMultiplier =
   const jitter = offsetMultiplier * 30_000
 
   // Clamp jitter to ±20% of snapped

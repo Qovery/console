@@ -225,7 +225,7 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryHealthyPods(serviceId, namespace),
-    overriddenMaxPoints: 250,
+    overriddenMaxPoints: 500,
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_health',
   })
