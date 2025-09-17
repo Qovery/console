@@ -225,7 +225,7 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryHealthyPods(serviceId, namespace),
-    overriddenMaxPoints: 250,
+    overriddenMaxPoqints: 500,
   })
 
   const {
