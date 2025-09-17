@@ -74,20 +74,46 @@ export const TerraformConfigurationSettings = ({
           <p className="text-sm text-neutral-350">Basic Terraform setup and state management settings.</p>
         </div>
 
-        <Controller
-          name="provider_version.explicit_version"
-          control={methods.control}
-          defaultValue={methods.getValues('provider_version.explicit_version')}
-          render={({ field }) => (
-            <InputSelect
-              label="Terraform version"
-              value={field.value}
-              onChange={field.onChange}
-              options={TERRAFORM_VERSIONS.map((v) => ({ label: v, value: v }))}
-              hint="Select the Terraform version to use for the service"
-            />
-          )}
-        />
+        {isSettings ? (
+          <Controller
+            name="provider_version.explicit_version"
+            control={methods.control}
+            defaultValue={methods.getValues('provider_version.explicit_version')}
+            rules={{
+              required: true,
+              pattern: {
+                value: /^\d+\.\d+\.\d+$/,
+                message: 'Please enter a valid version.',
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                type="text"
+                onChange={field.onChange}
+                value={field.value}
+                label="Terraform version"
+                error={error?.message}
+                hint="Select the Terraform version to use for the service"
+              />
+            )}
+          />
+        ) : (
+          <Controller
+            name="provider_version.explicit_version"
+            control={methods.control}
+            defaultValue={methods.getValues('provider_version.explicit_version')}
+            render={({ field }) => (
+              <InputSelect
+                label="Terraform version"
+                value={field.value}
+                onChange={field.onChange}
+                options={TERRAFORM_VERSIONS.map((v) => ({ label: v, value: v }))}
+                hint="Select the Terraform version to use for the service"
+              />
+            )}
+          />
+        )}
 
         <Controller
           name="state"
