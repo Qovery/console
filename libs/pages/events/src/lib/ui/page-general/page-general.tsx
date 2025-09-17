@@ -84,7 +84,7 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
   },
 ]
 
-const columnsWidth = '18% 11% 10% 15% 10% 20% 16%'
+const columnsWidth = '15% 25% 10% 10% 10% 15% 15%'
 
 export function PageGeneral({
   isLoading,
