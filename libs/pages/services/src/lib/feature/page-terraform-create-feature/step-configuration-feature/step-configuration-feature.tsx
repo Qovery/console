@@ -1,32 +1,18 @@
 import { useEffect } from 'react'
-import { Controller, FormProvider } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { TERRAFORM_VERSIONS, TerraformConfigurationSettings } from '@qovery/domains/service-terraform/feature'
+import { TerraformConfigurationSettings } from '@qovery/domains/service-terraform/feature'
 import {
   SERVICES_TERRAFORM_CREATION_GENERAL_URL,
   SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
 } from '@qovery/shared/routes'
-import {
-  Button,
-  Callout,
-  FunnelFlowBody,
-  Heading,
-  Icon,
-  InputSelect,
-  InputText,
-  RadioGroup,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
 export function StepConfigurationFeature() {
   useDocumentTitle('General - Terraform configuration')
-
   const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
-
-  const generalData = generalForm.getValues()
-
   const navigate = useNavigate()
 
   useEffect(() => {

@@ -1,11 +1,19 @@
-import { type GitProviderEnum, type GitTokenResponse, type TerraformRequest } from 'qovery-typescript-axios'
+import {
+  type ApplicationGitRepository,
+  type GitProviderEnum,
+  type GitTokenResponse,
+  type TerraformRequest,
+} from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { Callout, Heading, Icon, InputSelect, InputText, RadioGroup, Section } from '@qovery/shared/ui'
+import { useParams } from 'react-router-dom'
+import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
+import { Callout, Heading, Icon, InputSelect, InputText, Link, RadioGroup, Section } from '@qovery/shared/ui'
 
 export interface TerraformGeneralData
   extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
   source_provider: 'GIT'
   repository: string
+  git_repository?: ApplicationGitRepository
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
@@ -61,6 +69,8 @@ export const TerraformConfigurationSettings = ({
   methods: UseFormReturn<TerraformGeneralData>
   isSettings?: boolean
 }) => {
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+
   return (
     <div className="space-y-10">
       <Section className="space-y-2">
@@ -74,20 +84,44 @@ export const TerraformConfigurationSettings = ({
           <p className="text-sm text-neutral-350">Basic Terraform setup and state management settings.</p>
         </div>
 
-        <Controller
-          name="provider_version.explicit_version"
-          control={methods.control}
-          defaultValue={methods.getValues('provider_version.explicit_version')}
-          render={({ field }) => (
-            <InputSelect
-              label="Terraform version"
-              value={field.value}
-              onChange={field.onChange}
-              options={TERRAFORM_VERSIONS.map((v) => ({ label: v, value: v }))}
-              hint="Select the Terraform version to use for the service"
-            />
-          )}
-        />
+        {isSettings ? (
+          <Controller
+            name="provider_version.explicit_version"
+            control={methods.control}
+            rules={{
+              required: true,
+              pattern: {
+                value: /^\d+\.\d+\.\d+$/,
+                message: 'Please enter a valid version.',
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                type="text"
+                onChange={field.onChange}
+                value={field.value}
+                label="Terraform version"
+                error={error?.message}
+                hint="Select the Terraform version to use for the service"
+              />
+            )}
+          />
+        ) : (
+          <Controller
+            name="provider_version.explicit_version"
+            control={methods.control}
+            render={({ field }) => (
+              <InputSelect
+                label="Terraform version"
+                value={field.value}
+                onChange={field.onChange}
+                options={TERRAFORM_VERSIONS.map((v) => ({ label: v, value: v }))}
+                hint="Select the Terraform version to use for the service"
+              />
+            )}
+          />
+        )}
 
         <Controller
           name="state"
@@ -183,7 +217,24 @@ export const TerraformConfigurationSettings = ({
                 <Callout.Icon>
                   <Icon iconName="info-circle" iconStyle="regular" />
                 </Callout.Icon>
-                <Callout.Text>You will be able to define the environment variables at the next step.</Callout.Text>
+                <Callout.Text>
+                  {isSettings ? (
+                    <span>
+                      Define environment variables in{' '}
+                      <Link
+                        to={
+                          APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+                          APPLICATION_VARIABLES_URL
+                        }
+                      >
+                        the variables section
+                      </Link>
+                      .
+                    </span>
+                  ) : (
+                    'You will be able to define the environment variables at the next step.'
+                  )}
+                </Callout.Text>
               </Callout.Root>
             )}
           </Callout.Text>

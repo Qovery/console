@@ -9,12 +9,20 @@ import {
   type JobRequest,
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
+  type TerraformRequest,
 } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { useAnnotationsGroups, useLabelsGroups, useOrganization } from '@qovery/domains/organizations/feature'
-import { type Application, type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
+import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
+import {
+  type Application,
+  type Container,
+  type Helm,
+  type Job,
+  type Terraform,
+} from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { type HelmGeneralData } from '@qovery/pages/services'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
@@ -210,6 +218,31 @@ export const handleHelmSubmit = (data: HelmGeneralData, helm: Helm): HelmRequest
   }
 }
 
+export const handleTerraformSubmit = (data: TerraformGeneralData, terraform: Terraform): TerraformRequest => ({
+  ...terraform,
+  name: data.name,
+  description: data.description,
+  terraform_files_source: {
+    git_repository: {
+      url: match(data.is_public_repository)
+        .with(true, () => data.repository)
+        .with(
+          false,
+          undefined,
+          () => data.git_repository?.url ?? terraform.terraform_files_source?.git?.git_repository?.url ?? ''
+        )
+        .exhaustive(),
+      branch: data.branch ?? terraform.terraform_files_source?.git?.git_repository?.branch ?? '',
+      git_token_id: data.git_token_id ?? terraform.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
+      root_path: data.root_path ?? terraform.terraform_files_source?.git?.git_repository?.root_path ?? '',
+    },
+  },
+  terraform_variables_source: {
+    ...terraform.terraform_variables_source,
+    tf_vars: [],
+  },
+})
+
 export function PageSettingsGeneralFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
 
@@ -296,7 +329,7 @@ export function PageSettingsGeneralFeature() {
     }))
     .otherwise(() => undefined)
 
-  const methods = useForm<ApplicationGeneralData | JobGeneralData | HelmGeneralData>({
+  const methods = useForm<ApplicationGeneralData | JobGeneralData | HelmGeneralData | TerraformGeneralData>({
     mode: 'onChange',
     defaultValues: {
       name: service?.name,
@@ -331,6 +364,12 @@ export function PageSettingsGeneralFeature() {
       .with({ serviceType: 'HELM' }, (s) => {
         return {
           ...handleHelmSubmit(data as HelmGeneralData, s),
+          serviceType: s.serviceType,
+        }
+      })
+      .with({ serviceType: 'TERRAFORM' }, (s) => {
+        return {
+          ...handleTerraformSubmit(data as TerraformGeneralData, s),
           serviceType: s.serviceType,
         }
       })
