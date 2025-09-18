@@ -15,6 +15,7 @@ import {
   type Container,
   type Helm,
   type Job,
+  type Terraform,
 } from '@qovery/domains/services/data-access'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ForceRunModalFeature } from '@qovery/shared/console-shared'
@@ -192,7 +193,7 @@ function MenuManageDeployment({
   }
 
   const deployCommitVersion = (
-    service: Application | Job | Helm,
+    service: Application | Job | Helm | Terraform,
     gitRepository: ApplicationGitRepository,
     title: string
   ) => {
@@ -449,10 +450,15 @@ function MenuManageDeployment({
         {match({ service })
           .with(
             { service: { serviceType: 'APPLICATION' } },
+            { service: { serviceType: 'TERRAFORM' } },
             { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobGitSource) }) },
             ({ service }) => {
               const gitRepository = match(service)
                 .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+                .with(
+                  { serviceType: 'TERRAFORM' },
+                  ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
+                )
                 .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
                 .exhaustive()
 
