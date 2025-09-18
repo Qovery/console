@@ -1,6 +1,8 @@
 import { type GitProviderEnum, type GitTokenResponse, type TerraformRequest } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { Callout, Heading, Icon, InputSelect, InputText, RadioGroup, Section } from '@qovery/shared/ui'
+import { useParams } from 'react-router-dom'
+import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
+import { Callout, Heading, Icon, InputSelect, InputText, Link, RadioGroup, Section } from '@qovery/shared/ui'
 
 export interface TerraformGeneralData
   extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
@@ -61,6 +63,8 @@ export const TerraformConfigurationSettings = ({
   methods: UseFormReturn<TerraformGeneralData>
   isSettings?: boolean
 }) => {
+  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+
   return (
     <div className="space-y-10">
       <Section className="space-y-2">
@@ -209,7 +213,24 @@ export const TerraformConfigurationSettings = ({
                 <Callout.Icon>
                   <Icon iconName="info-circle" iconStyle="regular" />
                 </Callout.Icon>
-                <Callout.Text>You will be able to define the environment variables at the next step.</Callout.Text>
+                <Callout.Text>
+                  {isSettings ? (
+                    <span>
+                      Define environment variables in{' '}
+                      <Link
+                        to={
+                          APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+                          APPLICATION_VARIABLES_URL
+                        }
+                      >
+                        the variables section
+                      </Link>
+                      .
+                    </span>
+                  ) : (
+                    'You will be able to define the environment variables at the next step.'
+                  )}
+                </Callout.Text>
               </Callout.Root>
             )}
           </Callout.Text>
