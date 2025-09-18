@@ -224,7 +224,14 @@ export const handleTerraformSubmit = (data: TerraformGeneralData, terraform: Ter
   description: data.description,
   terraform_files_source: {
     git_repository: {
-      url: data.git_repository?.url ?? terraform.terraform_files_source?.git?.git_repository?.url ?? '',
+      url: match(data.is_public_repository)
+        .with(true, () => data.repository)
+        .with(
+          false,
+          undefined,
+          () => data.git_repository?.url ?? terraform.terraform_files_source?.git?.git_repository?.url ?? ''
+        )
+        .exhaustive(),
       branch: data.branch ?? terraform.terraform_files_source?.git?.git_repository?.branch ?? '',
       git_token_id: data.git_token_id ?? terraform.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
       root_path: data.root_path ?? terraform.terraform_files_source?.git?.git_repository?.root_path ?? '',
