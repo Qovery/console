@@ -151,6 +151,8 @@ describe('CardPercentile99', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('histogram_quantile'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_p99_count',
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query

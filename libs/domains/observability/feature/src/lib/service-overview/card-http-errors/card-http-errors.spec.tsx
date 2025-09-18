@@ -223,6 +223,8 @@ describe('CardHTTPErrors', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('nginx_ingress_controller_requests'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_req_all_number',
     })
 
     const calledQuery = useInstantMetrics.mock.calls[0][0].query

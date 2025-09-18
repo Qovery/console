@@ -169,6 +169,8 @@ describe('CardStorage', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kubelet_volume_stats_used_bytes'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_storage_utilization_number',
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query

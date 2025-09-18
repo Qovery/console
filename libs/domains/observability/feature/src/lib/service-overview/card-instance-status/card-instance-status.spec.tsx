@@ -180,6 +180,8 @@ describe('CardInstanceStatus', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_instance_status_error_count',
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query
