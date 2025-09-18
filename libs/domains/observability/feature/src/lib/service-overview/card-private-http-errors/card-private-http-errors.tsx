@@ -24,12 +24,13 @@ export function CardPrivateHTTPErrors({
   clusterId: string
   containerName: string
 }) {
-  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: queryErrorRequest(containerName, queryTimeRange),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_private_req_errors_number',
@@ -38,6 +39,7 @@ export function CardPrivateHTTPErrors({
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(containerName, queryTimeRange),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_private_req_all_number',

@@ -29,12 +29,13 @@ export function CardHTTPErrors({
   containerName: string
   ingressName: string
 }) {
-  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: queryErrorRequest(queryTimeRange, ingressName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_req_errors_number',
@@ -43,6 +44,7 @@ export function CardHTTPErrors({
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(queryTimeRange, ingressName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_req_all_number',

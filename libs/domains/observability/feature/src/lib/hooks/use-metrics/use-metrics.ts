@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
-import { alignEndSec, alignStartSec } from './align-timestamp'
+import { alignEndSec, alignStartSec, resolutionByRetention } from './align-timestamp'
 import { alignedRangeInMinutes } from './grafana-util'
 
 export interface MetricData {
@@ -34,7 +34,6 @@ interface UseMetricsProps {
   endTimestamp?: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
-  overriddenResolution?: string
   overriddenMaxPoints?: number
   boardShortName: 'service_overview'
   metricShortName: string
@@ -54,7 +53,6 @@ export function useMetrics({
   endTimestamp,
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
-  overriddenResolution,
   overriddenMaxPoints,
   boardShortName,
   metricShortName,
@@ -82,13 +80,10 @@ export function useMetrics({
   }, [timeRange, alignedStart, alignedEnd, overriddenMaxPoints])
 
   const maxSourceResolution = useMemo(() => {
-    if (overriddenResolution !== undefined) {
-      return overriddenResolution ?? ('0s' as const)
-    }
     if (!alignedStart || !alignedEnd) return '0s' as const
     const safeStep = step ?? '1m'
     return calculateMaxSourceResolution(alignedStart, alignedEnd, safeStep)
-  }, [alignedStart, alignedEnd, step, overriddenResolution])
+  }, [alignedStart, alignedEnd, step])
 
   const queryResult = useQuery({
     ...observability.metrics({
@@ -262,8 +257,8 @@ export function calculateMaxSourceResolution(
   const rangeMs = Math.max(0, endMs - startMs)
 
   // By step (hysteresis thresholds)
-  const RAW_BOUNDARY = 150_000 // 2m30s
-  const ONE_H_BOUNDARY = 1_800_000 // 30m
+  const RAW_BOUNDARY = 450_000 // 7.5 min
+  const ONE_H_BOUNDARY = 5_400_000 // 90 min
 
   let byStep: '0s' | '5m' | '1h'
   if (stepMs < RAW_BOUNDARY) byStep = '0s'
@@ -279,9 +274,12 @@ export function calculateMaxSourceResolution(
   else if (rangeMs <= SEVEN_D) byRange = '5m'
   else byRange = '1h'
 
+  // constraint on bucket retention
+  const byAge = resolutionByRetention(startTimestamp)
+
   // Pick the coarser
   const order = ['0s', '5m', '1h'] as const
-  return order[Math.max(order.indexOf(byStep), order.indexOf(byRange))]
+  return order[Math.max(order.indexOf(byStep), order.indexOf(byRange), order.indexOf(byAge))]
 }
 
 // Parse duration string into ms

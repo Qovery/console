@@ -240,7 +240,6 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryRestartWithReason(containerName, timeRange),
-    overriddenResolution: '0s', // TODO PG check if necessary
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_restart',
   })

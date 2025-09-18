@@ -14,10 +14,6 @@ const queryDuration95 = (rateInterval: string, ingressName: string) => `
   nginx:request_p95:5m{ingress="${ingressName}"}
 `
 
-const queryDuration95 = (rateInterval: string, ingressName: string) => `
-   histogram_quantile(0.95,(sum by(le, ingress) (rate(nginx_ingress_controller_request_duration_seconds_bucket{ingress="${ingressName}", status="200", path="/"}[${rateInterval}]))))
-`
-
 const queryDuration99 = (rateInterval: string, ingressName: string) => `
  nginx:request_p99:5m{ingress="${ingressName}"}
 `
@@ -52,14 +48,6 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p50',
   })
 
-  const { data: metrics95, isLoading: isLoadingMetrics95 } = useMetrics({
-    clusterId,
-    startTimestamp,
-    endTimestamp,
-    timeRange,
-    query: queryDuration95(rateInterval, ingressName),
-  })
-
   const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
     clusterId,
     startTimestamp,
@@ -70,7 +58,7 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p99',
   })
 
-  const { data: metrics95, isLoading: isLoadingMetrics } = useMetrics({
+  const { data: metrics95, isLoading: isLoadingMetrics95 } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,

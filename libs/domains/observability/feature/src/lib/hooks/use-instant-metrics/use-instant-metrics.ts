@@ -3,14 +3,15 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
-import { alignEndSec, alignStartSec } from '../use-metrics/align-timestamp'
+import { alignEndSec, alignStartSec, resolutionByRetention } from '../use-metrics/align-timestamp'
 import { alignedRangeInMinutes } from '../use-metrics/grafana-util'
 
 interface UseInstantMetricsProps {
   clusterId: string
   query: string
+  startTimestamp: string
   endTimestamp: string
-  boardShortName: string
+  boardShortName: 'service_overview'
   metricShortName: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
@@ -34,24 +35,26 @@ function useLiveUpdateSetting(): boolean {
 export function useInstantMetrics({
   clusterId,
   query,
+  startTimestamp,
   endTimestamp,
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
+  boardShortName,
   metricShortName,
 }: UseInstantMetricsProps) {
   // Get live update setting from context, but allow override
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
 
-  const alignedStart = alignStartSec(endTimestamp)
+  const alignedStart = alignStartSec(startTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
 
   const alignedRange = alignedRangeInMinutes(alignedStart, alignedEnd)
 
   const maxSourceResolution = useMemo(() => {
-    if (!alignedStart || !alignedEnd) return '0s' as const
+    if (!alignedStart || !alignedEnd) return '1h' as const
 
-    return '0s' as const // TODO PG: calculate the maxSourceResolution according to time windows.
+    return resolutionByRetention(alignedStart)
   }, [alignedStart, alignedEnd])
 
   const queryResult = useQuery({
@@ -65,7 +68,7 @@ export function useInstantMetrics({
       step: undefined,
       maxSourceResolution,
       // These params are used to generate charts in Grafana
-      boardShortName: 'service-overview',
+      boardShortName,
       metricShortName,
       traceId: '',
       alignedRange,

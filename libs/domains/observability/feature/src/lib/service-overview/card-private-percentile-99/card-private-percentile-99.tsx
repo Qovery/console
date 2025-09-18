@@ -30,6 +30,7 @@ export function CardPrivatePercentile99({
   const { data: metrics, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: query(queryTimeRange, rateInterval, containerName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_private_p99_count',

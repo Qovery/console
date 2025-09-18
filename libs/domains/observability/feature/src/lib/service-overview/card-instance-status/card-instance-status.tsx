@@ -64,13 +64,14 @@ export function CardInstanceStatus({
   containerName: string
   namespace: string
 }) {
-  const { queryTimeRange, subQueryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, subQueryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: service } = useService({ serviceId })
   const { data: metricsInstanceErrors, isLoading: isLoadingMetricsInstanceErrors } = useInstantMetrics({
     clusterId,
     query: query(queryTimeRange, containerName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_instance_status_error_count',
@@ -78,6 +79,7 @@ export function CardInstanceStatus({
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useInstantMetrics({
     clusterId,
     query: queryAutoscalingReached(queryTimeRange, subQueryTimeRange, containerName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_instance_hpa_limit_count',

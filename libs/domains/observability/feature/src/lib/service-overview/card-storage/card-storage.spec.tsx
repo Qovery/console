@@ -168,6 +168,7 @@ describe('CardStorage', () => {
     expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kubelet_volume_stats_used_bytes'),
+      startTimestamp: expect.any(String),
       endTimestamp: expect.any(String),
       boardShortName: 'service_overview',
       metricShortName: 'card_storage_utilization_number',
