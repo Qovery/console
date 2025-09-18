@@ -1,0 +1,17 @@
+name: Trigger release
+on:
+  push:
+    branches:
+      - staging
+
+# Simple job that just rebases the staging branch into main. This is used to trigger a release.
+jobs:
+  trigger-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebase staging into main
+        run: |
+          git checkout main
+          git rebase staging
+          git push
