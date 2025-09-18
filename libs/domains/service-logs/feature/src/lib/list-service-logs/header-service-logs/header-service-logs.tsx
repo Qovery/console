@@ -1,5 +1,5 @@
 import { subDays } from 'date-fns'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
@@ -7,6 +7,7 @@ import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
 import { Button, DatePicker, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
+import { useDebounce } from '@qovery/shared/util-hooks'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
@@ -22,29 +23,51 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
     serviceId,
     serviceStatus,
     environmentStatus,
-    isOpenTimestamp,
-    setStartDate,
-    setEndDate,
-    setIsOpenTimestamp,
-    clearDate,
     updateTimeContextValue,
     setUpdateTimeContext,
     downloadLogs,
-    isLiveMode,
-    setIsLiveMode,
   } = useServiceLogsContext()
 
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+
+  const [localStartDate, setLocalStartDate] = useState<Date | undefined>(
+    queryParams.startDate ? new Date(queryParams.startDate) : undefined
+  )
+  const [localEndDate, setLocalEndDate] = useState<Date | undefined>(
+    queryParams.endDate ? new Date(queryParams.endDate) : undefined
+  )
+
+  const debouncedStartDate = useDebounce(localStartDate, 300)
+  const debouncedEndDate = useDebounce(localEndDate, 300)
+
+  useMemo(() => {
+    if (debouncedStartDate !== undefined || debouncedEndDate !== undefined) {
+      setQueryParams({
+        startDate: debouncedStartDate?.toISOString(),
+        endDate: debouncedEndDate?.toISOString(),
+      })
+    }
+  }, [debouncedStartDate, debouncedEndDate, setQueryParams])
+
   const { data: service } = useService({ environmentId: environment.id, serviceId })
 
-  const startDate = useMemo(
-    () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
-    [queryParams.startDate]
+  const isLiveMode = useMemo(
+    () => !queryParams.startDate && !queryParams.endDate,
+    [queryParams.startDate, queryParams.endDate]
   )
-  const endDate = useMemo(
-    () => (queryParams.endDate ? new Date(queryParams.endDate) : undefined),
-    [queryParams.endDate]
-  )
+
+  const startDate = localStartDate
+  const endDate = localEndDate
+
+  const clearDate = useCallback(() => {
+    setLocalStartDate(undefined)
+    setLocalEndDate(undefined)
+    setQueryParams({
+      startDate: undefined,
+      endDate: undefined,
+    })
+  }, [setQueryParams])
 
   return (
     <>
@@ -73,49 +96,58 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
           <Icon iconName="arrow-right" />
         </Link>
       </HeaderLogs>
-      <div className="flex h-[60px] w-full items-center justify-between gap-3 border-b border-neutral-500 px-4 py-2.5">
-        <div className="flex w-full items-center gap-3">
-          <Tooltip content={isLiveMode ? 'Live refresh (15s) - Active' : 'Switch to live mode'}>
-            <Button
-              variant="surface"
-              color={isLiveMode ? 'brand' : 'neutral'}
-              size="md"
-              className="gap-1.5"
-              onClick={() => setIsLiveMode(!isLiveMode)}
-              disabled={!startDate || !endDate}
-            >
-              <Icon iconName="circle-play" iconStyle="regular" className="relative top-[1px]" />
-              Live
-            </Button>
-          </Tooltip>
+      <div className="flex h-[60px] w-full items-center justify-between gap-2 border-b border-neutral-500 px-4 py-2.5">
+        <div className="flex w-full items-center gap-2">
+          <Button
+            variant="surface"
+            color={isLiveMode ? 'brand' : 'neutral'}
+            size="md"
+            className="gap-1.5"
+            onClick={() => {
+              if (!isLiveMode) {
+                setQueryParams({ startDate: undefined, endDate: undefined })
+                setLocalStartDate(undefined)
+                setLocalEndDate(undefined)
+              }
+            }}
+            disabled={!startDate || !endDate}
+          >
+            <Icon iconName="circle-play" iconStyle="regular" className="relative top-[1px]" />
+            Live
+          </Button>
           <DatePicker
             onChange={(startDate, endDate) => {
-              setStartDate(startDate)
-              setEndDate(endDate)
-              setIsOpenTimestamp(false)
+              setLocalStartDate(startDate)
+              setLocalEndDate(endDate)
+              setIsOpenDatePicker(false)
             }}
-            isOpen={isOpenTimestamp}
+            isOpen={isOpenDatePicker}
             maxDate={new Date()}
             minDate={subDays(new Date(), 30)}
             defaultDates={startDate && endDate ? [startDate, endDate] : undefined}
             showTimeInput
             useLocalTime
-            onClickOutside={() => setIsOpenTimestamp(false)}
+            onClickOutside={() => setIsOpenDatePicker(false)}
           >
             {!startDate && !endDate ? (
               <Button
-                data-testid="timeframe-button"
                 type="button"
                 variant="surface"
                 color="neutral"
                 className="gap-2"
-                onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+                size="md"
+                onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
               >
                 Timeframe
-                <Icon iconName="clock" iconStyle="regular" />
+                <Icon iconName="clock" iconStyle="regular" className="relative top-[1px]" />
               </Button>
             ) : (
-              <Button type="button" data-testid="timeframe-values" onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}>
+              <Button
+                type="button"
+                size="md"
+                onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
+                className="min-w-[337px]"
+              >
                 from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
                 {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
                 <span
@@ -132,13 +164,10 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
               </Button>
             )}
           </DatePicker>
-          <SearchServiceLogs />
-        </div>
-        <div className="flex gap-3">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="sm" variant="surface" color="neutral" className="gap-1.5">
-                Time format
+              <Button size="md" variant="surface" color="neutral" className="gap-1.5">
+                {updateTimeContextValue.utc ? 'UTC' : 'Local browser time'}
                 <Icon iconName="chevron-down" iconStyle="regular" />
               </Button>
             </DropdownMenu.Trigger>
@@ -175,16 +204,17 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <Button
-            onClick={() => downloadLogs(logs)}
-            size="sm"
-            variant="surface"
-            color="neutral"
-            className="w-7 justify-center"
-          >
-            <Icon iconName="file-arrow-down" iconStyle="regular" />
-          </Button>
+          <SearchServiceLogs />
         </div>
+        <Button
+          onClick={() => downloadLogs(logs)}
+          size="md"
+          variant="surface"
+          color="neutral"
+          className="w-9 justify-center"
+        >
+          <Icon iconName="file-arrow-down" iconStyle="regular" />
+        </Button>
       </div>
     </>
   )

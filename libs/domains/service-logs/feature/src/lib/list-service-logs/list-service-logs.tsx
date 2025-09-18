@@ -3,6 +3,7 @@ import { type Environment, type EnvironmentStatus, type Status } from 'qovery-ty
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
@@ -15,7 +16,7 @@ import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previo
 import { HeaderServiceLogs } from './header-service-logs/header-service-logs'
 import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
-import { ServiceLogsProvider, useServiceLogsContext } from './service-logs-context/service-logs-context'
+import { ServiceLogsProvider, queryParamsServiceLogs } from './service-logs-context/service-logs-context'
 
 const { Table } = TablePrimitives
 
@@ -24,17 +25,19 @@ const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
 export interface ListServiceLogsProps {
   environment: Environment
-  clusterId: string
   serviceStatus: Status
   environmentStatus?: EnvironmentStatus
 }
 
 // Internal component that uses the context
-function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
+function ListServiceLogsContent({ environment }: { environment: Environment }) {
   const { serviceId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
-  const { environment, isLiveMode } = useServiceLogsContext()
+  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const isLiveMode = useMemo(() => {
+    return !queryParams.startDate && !queryParams.endDate
+  }, [queryParams.startDate, queryParams.endDate])
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
@@ -49,8 +52,9 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
     setPauseLogs,
     newLogsAvailable,
     setNewLogsAvailable,
+    isFetched: isLiveLogsFetched,
   } = useServiceLiveLogs({
-    clusterId,
+    clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
     enabled: isLiveMode && serviceEnabled,
   })
@@ -60,11 +64,19 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
     data: historyLogs = [],
     showPreviousLogs,
     setShowPreviousLogs,
+    isFetched: isHistoryLogsFetched,
   } = useServiceHistoryLogs({
-    clusterId,
+    clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
     enabled: !isLiveMode && serviceEnabled,
   })
+
+  useEffect(() => {
+    if (isLiveMode && serviceEnabled) {
+      setNewLogsAvailable(true)
+      setPauseLogs(false)
+    }
+  }, [isLiveMode, serviceEnabled, setNewLogsAvailable, setPauseLogs])
 
   // Use the appropriate logs based on the current mode
   const logs = isLiveMode ? liveLogs : historyLogs
@@ -72,17 +84,6 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
   const hasMultipleContainers = new Set(logs?.map((i) => i.container)).size > 1
 
   const columnHelper = createColumnHelper<NormalizedServiceLog>()
-
-  // const customFilter: FilterFn<NormalizedServiceLog> = (row, columnId, filterValue) => {
-  //   // Always return true for `INFRA` type logs to ensure they are always visible
-  //   // if (row.original.type === 'INFRA') return true
-
-  //   const rowValue = row.getValue(columnId)
-  //   if (typeof rowValue === 'string') {
-  //     return rowValue.toLowerCase().includes(filterValue.toLowerCase())
-  //   }
-  //   return false
-  // }
 
   const columns = useMemo(
     () => [
@@ -113,11 +114,29 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
     .with('RUNNING', 'WARNING', () => true)
     .otherwise(() => false)
 
-  // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
-  if (!logs || logs.length === 0 || (logs.length > 0 && logs[0].message.includes('No pods found'))) {
+  const isLogsFetched = useMemo(
+    () => (isLiveMode ? isLiveLogsFetched : isHistoryLogsFetched),
+    [isLiveMode, isLiveLogsFetched, isHistoryLogsFetched]
+  )
+
+  if (isLogsFetched && logs.length === 0) {
     return (
       <div className="w-full p-1">
-        <div className="h-[calc(100vh-72px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+          <HeaderServiceLogs logs={logs} />
+          <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
+            <div className="flex h-full flex-col items-center justify-center">No logs available</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
+  if (isLogsFetched && logs.length > 0 && logs[0].message.includes('No pods found')) {
+    return (
+      <div className="w-full p-1">
+        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderServiceLogs logs={logs} />
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
@@ -161,7 +180,7 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
               setPauseLogs={setPauseLogs}
             />
           )}
-          <Table.Root className="w-full text-xs">
+          <Table.Root className="w-full border-separate border-spacing-y-0.5 text-xs">
             <Table.Body className="divide-y-0">
               {table.getRowModel().rows.map((row, index) => {
                 const timestamp = row.getValue('timestamp') as string
@@ -169,6 +188,7 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
                   <MemoizedRowServiceLogs
                     key={timestamp + index}
                     hasMultipleContainers={hasMultipleContainers}
+                    highlightedText={queryParams.message}
                     {...row}
                   />
                 )
@@ -202,13 +222,19 @@ function ListServiceLogsContent({ clusterId }: { clusterId: string }) {
             <div className="h-8" />
           )}
         </div>
-        <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} newMessagesAvailable={newLogsAvailable} />
+        {isLiveMode && (
+          <ShowNewLogsButton
+            pauseLogs={pauseLogs}
+            setPauseLogs={setPauseLogs}
+            newMessagesAvailable={newLogsAvailable}
+          />
+        )}
       </div>
     </div>
   )
 }
 
-export function ListServiceLogs({ environment, clusterId, serviceStatus, environmentStatus }: ListServiceLogsProps) {
+export function ListServiceLogs({ environment, serviceStatus, environmentStatus }: ListServiceLogsProps) {
   const { serviceId = '' } = useParams()
 
   return (
@@ -218,7 +244,7 @@ export function ListServiceLogs({ environment, clusterId, serviceStatus, environ
       serviceStatus={serviceStatus}
       environmentStatus={environmentStatus}
     >
-      <ListServiceLogsContent clusterId={clusterId} />
+      <ListServiceLogsContent environment={environment} />
     </ServiceLogsProvider>
   )
 }
