@@ -88,7 +88,6 @@ export const TerraformConfigurationSettings = ({
           <Controller
             name="provider_version.explicit_version"
             control={methods.control}
-            defaultValue={methods.getValues('provider_version.explicit_version')}
             rules={{
               required: true,
               pattern: {
@@ -112,7 +111,6 @@ export const TerraformConfigurationSettings = ({
           <Controller
             name="provider_version.explicit_version"
             control={methods.control}
-            defaultValue={methods.getValues('provider_version.explicit_version')}
             render={({ field }) => (
               <InputSelect
                 label="Terraform version"
