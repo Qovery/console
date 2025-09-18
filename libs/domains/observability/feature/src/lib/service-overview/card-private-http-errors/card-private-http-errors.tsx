@@ -30,12 +30,16 @@ export function CardPrivateHTTPErrors({
     clusterId,
     query: queryErrorRequest(containerName, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_private_req_errors_number',
   })
 
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(containerName, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_private_req_all_number',
   })
 
   const errorRaw = Math.round(metricsErrorRequest?.data?.result[0]?.value[1])

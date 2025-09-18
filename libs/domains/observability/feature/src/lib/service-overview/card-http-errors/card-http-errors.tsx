@@ -32,12 +32,16 @@ export function CardHTTPErrors({
     clusterId,
     query: queryErrorRequest(queryTimeRange, ingressName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_req_errors_number',
   })
 
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(queryTimeRange, ingressName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_req_all_number',
   })
 
   const errorRaw = Math.round(metricsErrorRequest?.data?.result[0]?.value[1])

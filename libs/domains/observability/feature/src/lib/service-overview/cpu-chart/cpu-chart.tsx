@@ -62,6 +62,8 @@ export function CpuChart({
     startTimestamp,
     endTimestamp,
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'cpu',
   })
 
   const { data: limitMetrics, isLoading: isLoadingLimit } = useMetrics({
@@ -70,6 +72,8 @@ export function CpuChart({
     startTimestamp,
     endTimestamp,
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'cpu_limit',
   })
 
   const { data: requestMetrics, isLoading: isLoadingRequest } = useMetrics({
@@ -78,6 +82,8 @@ export function CpuChart({
     startTimestamp,
     endTimestamp,
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'cpu_request',
   })
 
   const chartData = useMemo(() => {

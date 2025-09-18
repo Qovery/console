@@ -36,6 +36,8 @@ export function PrivateNetworkRequestSizeChart({
     endTimestamp,
     timeRange,
     query: queryResponseSize(containerName, rateInterval),
+    boardShortName: 'service_overview',
+    metricShortName: 'private_network_resp_size',
   })
 
   const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
@@ -44,6 +46,8 @@ export function PrivateNetworkRequestSizeChart({
     endTimestamp,
     timeRange,
     query: queryRequestSize(containerName, rateInterval),
+    boardShortName: 'service_overview',
+    metricShortName: 'private_network_req_size',
   })
 
   const chartData = useMemo(() => {

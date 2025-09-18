@@ -43,6 +43,10 @@ export const observability = createQueryKeys('observability', {
     step,
     timeRange,
     maxSourceResolution,
+    boardShortName,
+    metricShortName,
+    traceId,
+    alignedRange,
   }: {
     clusterId: string
     query: string
@@ -53,6 +57,10 @@ export const observability = createQueryKeys('observability', {
     time?: string
     queryRange?: 'query' | 'query_range'
     timeRange?: string
+    boardShortName: string
+    metricShortName: string
+    traceId: string
+    alignedRange: string
   }) => ({
     queryKey: [query, timeRange, startTimestamp, endTimestamp, step],
     async queryFn() {
@@ -69,7 +77,11 @@ export const observability = createQueryKeys('observability', {
         'True',
         maxSourceResolution,
         'thanos',
-        'false'
+        'false',
+        boardShortName,
+        metricShortName,
+        traceId,
+        alignedRange
       )
 
       return response.data.metrics && JSON.parse(response.data.metrics)

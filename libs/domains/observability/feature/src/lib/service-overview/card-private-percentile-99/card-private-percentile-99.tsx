@@ -31,6 +31,8 @@ export function CardPrivatePercentile99({
     clusterId,
     query: query(queryTimeRange, rateInterval, containerName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_private_p99_count',
   })
 
   const value = Math.round(Number(metrics?.data?.result[0]?.value[1]) * 1000) || 0

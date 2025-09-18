@@ -44,6 +44,8 @@ export function DiskChart({
     endTimestamp,
     query: queryDiskReadNvme(serviceId, rateInterval, containerName),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'disk_chart_read_ephemeral',
   })
 
   const { data: metricsReadPersistentStorage, isLoading: isLoadingMetricsReadPersistentStorage } = useMetrics({
@@ -52,6 +54,8 @@ export function DiskChart({
     endTimestamp,
     query: queryDiskReadNonNvme(serviceId, rateInterval, containerName),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'disk_chart_read_persistent',
   })
 
   const { data: metricsWriteEphemeralStorage, isLoading: isLoadingMetricsWriteEphemeralStorage } = useMetrics({
@@ -60,6 +64,8 @@ export function DiskChart({
     endTimestamp,
     query: queryDiskWriteNvme(serviceId, rateInterval, containerName),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'disk_chart_read_ephemeral',
   })
 
   const { data: metricsWritePersistentStorage, isLoading: isLoadingMetricsWritePersistentStorage } = useMetrics({
@@ -68,6 +74,8 @@ export function DiskChart({
     endTimestamp,
     query: queryDiskWriteNonNvme(serviceId, rateInterval, containerName),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'disk_chart_write_persistent',
   })
 
   const chartData = useMemo(() => {

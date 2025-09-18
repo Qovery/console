@@ -29,6 +29,8 @@ export function CardLogErrors({
     clusterId,
     query: query(serviceId, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_log_error_number',
   })
 
   const value = Math.ceil(metrics?.data?.result?.[0]?.value?.[1]) || 0

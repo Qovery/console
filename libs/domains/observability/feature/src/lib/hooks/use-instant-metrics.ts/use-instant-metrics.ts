@@ -4,6 +4,7 @@ import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
 import { alignEndSec, alignStartSec } from '../use-metrics/align-timestamp'
+import { alignedRangeInMinutes } from '../use-metrics/aligned-range'
 
 interface UseInstantMetricsProps {
   clusterId: string
@@ -11,6 +12,8 @@ interface UseInstantMetricsProps {
   endTimestamp: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
+  boardShortName: string
+  metricShortName: string
 }
 
 // Helper hook to safely get live update setting from context
@@ -34,6 +37,7 @@ export function useInstantMetrics({
   endTimestamp,
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
+  metricShortName,
 }: UseInstantMetricsProps) {
   // Get live update setting from context, but allow override
   const contextLiveUpdate = useLiveUpdateSetting()
@@ -41,6 +45,8 @@ export function useInstantMetrics({
 
   const alignedStart = alignStartSec(endTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
+
+  const alignedRange = alignedRangeInMinutes(alignedStart, alignedEnd)
 
   const maxSourceResolution = useMemo(() => {
     if (!alignedStart || !alignedEnd) return '0s' as const
@@ -58,6 +64,10 @@ export function useInstantMetrics({
       time: alignedEnd,
       step: undefined,
       maxSourceResolution,
+      boardShortName: 'service-overview',
+      metricShortName,
+      traceId: '',
+      alignedRange,
     }),
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 30_000 : false, // Refetch every 30 seconds only if live update is enabled

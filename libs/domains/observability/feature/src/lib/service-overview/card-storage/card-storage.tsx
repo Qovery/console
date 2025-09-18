@@ -47,12 +47,16 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
     clusterId,
     query: queryPercentage(serviceId, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_storage_utilization_number',
   })
 
   const { data: metricsMaxStorage, isLoading: isLoadingMetricsMaxStorage } = useInstantMetrics({
     clusterId,
     query: queryMaxStorage(serviceId, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_storage_max_number',
   })
 
   const rawValue = Number(metricsPercentage?.data?.result[0]?.value[1])

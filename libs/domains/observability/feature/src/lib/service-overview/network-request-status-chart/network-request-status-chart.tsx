@@ -35,6 +35,8 @@ export function NetworkRequestStatusChart({
     endTimestamp,
     timeRange,
     query: query(serviceId, rateInterval, ingressName),
+    boardShortName: 'service_overview',
+    metricShortName: 'network_req_status',
   })
 
   const chartData = useMemo(() => {

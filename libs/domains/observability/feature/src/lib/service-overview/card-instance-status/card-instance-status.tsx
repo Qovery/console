@@ -68,11 +68,15 @@ export function CardInstanceStatus({
     clusterId,
     query: query(queryTimeRange, containerName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_instance_status_error_count',
   })
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useInstantMetrics({
     clusterId,
     query: queryAutoscalingReached(queryTimeRange, containerName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_instance_hpa_limit_count',
   })
 
   const instanceErrors = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0

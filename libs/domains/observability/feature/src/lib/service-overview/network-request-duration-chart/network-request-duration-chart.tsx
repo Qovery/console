@@ -44,6 +44,8 @@ export function NetworkRequestDurationChart({
     endTimestamp,
     timeRange,
     query: queryDuration50(serviceId, rateInterval, ingressName),
+    boardShortName: 'service_overview',
+    metricShortName: 'network_p50',
   })
 
   const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
@@ -52,6 +54,8 @@ export function NetworkRequestDurationChart({
     endTimestamp,
     timeRange,
     query: queryDuration99(serviceId, rateInterval, ingressName),
+    boardShortName: 'service_overview',
+    metricShortName: 'network_p99',
   })
 
   const { data: metrics95, isLoading: isLoadingMetrics } = useMetrics({
@@ -60,6 +64,8 @@ export function NetworkRequestDurationChart({
     endTimestamp,
     timeRange,
     query: queryDuration95(serviceId, rateInterval, ingressName),
+    boardShortName: 'service_overview',
+    metricShortName: 'network_p95',
   })
 
   const chartData = useMemo(() => {

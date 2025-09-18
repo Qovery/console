@@ -42,6 +42,8 @@ export function PrivateNetworkRequestDurationChart({
     endTimestamp,
     timeRange,
     query: queryDuration50(containerName, rateInterval),
+    boardShortName: 'service_overview',
+    metricShortName: 'private_network_p50',
   })
 
   const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
@@ -50,6 +52,8 @@ export function PrivateNetworkRequestDurationChart({
     endTimestamp,
     timeRange,
     query: queryDuration99(containerName, rateInterval),
+    boardShortName: 'service_overview',
+    metricShortName: 'private_network_p99',
   })
 
   const { data: metrics95, isLoading: isLoadingMetrics } = useMetrics({
@@ -58,6 +62,8 @@ export function PrivateNetworkRequestDurationChart({
     endTimestamp,
     timeRange,
     query: queryDuration95(containerName, rateInterval),
+    boardShortName: 'service_overview',
+    metricShortName: 'private_network_p95',
   })
 
   const chartData = useMemo(() => {
