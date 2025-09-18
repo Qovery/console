@@ -1,11 +1,17 @@
 import { BuildModeEnum, GitProviderEnum, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { type Application } from '@qovery/domains/services/data-access'
-import { applicationFactoryMock, cronjobFactoryMock, helmFactoryMock } from '@qovery/shared/factories'
+import {
+  applicationFactoryMock,
+  cronjobFactoryMock,
+  helmFactoryMock,
+  terraformFactoryMock,
+} from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import PageSettingsGeneralFeature, {
   handleGitApplicationSubmit,
   handleHelmSubmit,
   handleJobSubmit,
+  handleTerraformSubmit,
 } from './page-settings-general-feature'
 
 describe('PageSettingsGeneralFeature', () => {
@@ -274,6 +280,44 @@ describe('PageSettingsGeneralFeature', () => {
           repository: '000-000',
           chart_name: 'chart',
           chart_version: '1.0.0',
+        },
+      },
+    })
+  })
+
+  it('should update terraform repository service', () => {
+    const terraform = terraformFactoryMock(1)[0]
+    const gitRepoUrl = 'https://github.com/qovery/console.git'
+    const gitBranch = 'staging'
+    const description = 'new description'
+    const name = 'new name'
+    const rootPath = '/'
+    const app = handleTerraformSubmit(
+      {
+        name: name,
+        description: description,
+        git_repository: {
+          provider: 'GITHUB',
+          owner: 'qovery',
+          name: 'console',
+          url: gitRepoUrl,
+        },
+        root_path: rootPath,
+        branch: gitBranch,
+      },
+      terraform
+    )
+
+    expect(app).toStrictEqual({
+      ...terraform,
+      name: name,
+      description: description,
+      terraform_files_source: {
+        git_repository: {
+          url: gitRepoUrl,
+          branch: gitBranch,
+          root_path: rootPath,
+          git_token_id: terraform.terraform_files_source?.git?.git_repository?.git_token_id,
         },
       },
     })

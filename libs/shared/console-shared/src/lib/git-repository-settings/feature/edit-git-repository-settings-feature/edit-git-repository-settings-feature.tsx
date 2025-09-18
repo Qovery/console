@@ -23,6 +23,7 @@ export function EditGitRepositorySettingsFeature({
     .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, (job) => job.source.docker?.git_repository)
     .with({ serviceType: 'APPLICATION' }, (application) => application.git_repository)
     .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, (helm) => helm.source?.git?.git_repository)
+    .with({ serviceType: 'TERRAFORM' }, (terraform) => terraform.terraform_files_source?.git?.git_repository)
     .otherwise(() => undefined)
 
   const { setValue } = useFormContext<{

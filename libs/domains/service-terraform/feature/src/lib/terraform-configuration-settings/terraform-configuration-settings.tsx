@@ -1,4 +1,9 @@
-import { type GitProviderEnum, type GitTokenResponse, type TerraformRequest } from 'qovery-typescript-axios'
+import {
+  type ApplicationGitRepository,
+  type GitProviderEnum,
+  type GitTokenResponse,
+  type TerraformRequest,
+} from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
@@ -8,6 +13,7 @@ export interface TerraformGeneralData
   extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
   source_provider: 'GIT'
   repository: string
+  git_repository?: ApplicationGitRepository
   is_public_repository?: boolean
   provider?: keyof typeof GitProviderEnum
   git_token_id?: GitTokenResponse['id']
