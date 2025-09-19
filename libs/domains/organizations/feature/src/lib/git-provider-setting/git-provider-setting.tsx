@@ -16,6 +16,7 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
     label: `${upperCaseFirstLetter(provider.name)} (${provider.owner})`,
     value: provider.name || '',
     icon: <Icon width={16} height={16} name={provider.name} />,
+    searchText: `${upperCaseFirstLetter(provider.name)} ${provider.owner}`,
   }))
 
   const currentGitTokens = gitTokens.map((token) => ({
@@ -27,6 +28,8 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
     ),
     value: token.id,
     icon: <Icon width={16} height={16} name={token.type} />,
+    // Add searchable text for filtering
+    searchText: `${upperCaseFirstLetter(token.type)} Token ${token.name}`,
   }))
 
   return [...currentAuthProviders, ...currentGitTokens]
@@ -64,6 +67,7 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
           label: 'Public repository (Github, Gitlab, Bitbucket)',
           value: 'PUBLIC',
           icon: <Icon iconName="folder-closed" iconStyle="regular" width={16} height={16} />,
+          searchText: 'Public repository Github Gitlab Bitbucket',
         },
       ]
 
@@ -88,6 +92,14 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
     setValue('repository', '')
     setValue('branch', '')
     clearErrors('repository')
+  }
+
+  // Custom filter function to search through searchText when available, otherwise use label
+  const customFilterOption = (option: any, inputValue: string) => {
+    if (!inputValue) return true
+
+    const searchString = option.data.searchText || (typeof option.data.label === 'string' ? option.data.label : '')
+    return searchString.toLowerCase().includes(inputValue.toLowerCase())
   }
 
   return (
@@ -127,6 +139,7 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
               error={error?.message}
               disabled={disabled}
               isSearchable
+              filterOption={customFilterOption}
             />
           )}
         />
