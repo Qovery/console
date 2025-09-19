@@ -9,20 +9,10 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 
 const query = (containerName: string, rateInterval: string) => `
 100 *
-sum by (http_response_status_code)(
-  rate(http_server_request_duration_seconds_bucket{
-    k8s_container_name="${containerName}", http_response_status_code=~"499|5.."
-  }[${rateInterval}])
-)
-/ ignoring(http_response_status_code) group_left
-clamp_min(
-  sum(
-    rate(http_server_request_duration_seconds_bucket{
-      k8s_container_name="${containerName}"
-    }[${rateInterval}])
-  ),
-  1e-9
-)
+beyla:req_rate:5m_by_status{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}
+/
+ignoring(http_response_status_code) group_left
+clamp_min(beyla:req_rate:5m{k8s_container_name="${containerName}"}, 1)
 `
 
 export function PrivateInstanceHTTPErrorsChart({

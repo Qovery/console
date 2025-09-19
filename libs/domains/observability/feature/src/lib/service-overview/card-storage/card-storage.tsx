@@ -40,12 +40,13 @@ const queryMaxStorage = (serviceId: string, timeRange: string) => `
 `
 
 export function CardStorage({ serviceId, clusterId }: { serviceId: string; clusterId: string }) {
-  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsPercentage, isLoading: isLoadingMetricsPercentage } = useInstantMetrics({
     clusterId,
     query: queryPercentage(serviceId, queryTimeRange),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_storage_utilization_number',
@@ -54,6 +55,7 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
   const { data: metricsMaxStorage, isLoading: isLoadingMetricsMaxStorage } = useInstantMetrics({
     clusterId,
     query: queryMaxStorage(serviceId, queryTimeRange),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_storage_max_number',

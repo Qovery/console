@@ -149,7 +149,8 @@ describe('CardPercentile99', () => {
 
     expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
-      query: expect.stringContaining('histogram_quantile'),
+      query: expect.stringContaining('nginx:request_p99:5m'),
+      startTimestamp: expect.any(String),
       endTimestamp: expect.any(String),
       boardShortName: 'service_overview',
       metricShortName: 'card_p99_count',
@@ -157,7 +158,7 @@ describe('CardPercentile99', () => {
 
     const call = useInstantMetrics.mock.calls[0][0].query
     expect(call).toContain('test-ingress-name')
-    expect(call).toContain('0.99')
+    expect(call).toContain('p99')
   })
 
   it('should always show modal link', () => {

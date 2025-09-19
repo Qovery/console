@@ -7,11 +7,12 @@ import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryErrorRequest = (containerName: string, timeRange: string) => `
-      sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}[${timeRange}]) or vector(0))
+      sum(sum_over_time(beyla:req_inc:5m_by_status{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}[${timeRange}:5m])
+)
 `
 
 const queryTotalRequest = (containerName: string, timeRange: string) => `
-    sum(increase(http_server_request_duration_seconds_count{k8s_container_name="${containerName}"}[${timeRange}]) or vector(0))
+    sum(sum_over_time(beyla:req_inc:5m_by_status{k8s_container_name="${containerName}"}[${timeRange}:5m])
 `
 
 export function CardPrivateHTTPErrors({
@@ -23,12 +24,13 @@ export function CardPrivateHTTPErrors({
   clusterId: string
   containerName: string
 }) {
-  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: queryErrorRequest(containerName, queryTimeRange),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_private_req_errors_number',
@@ -37,6 +39,7 @@ export function CardPrivateHTTPErrors({
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(containerName, queryTimeRange),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_private_req_all_number',

@@ -8,7 +8,7 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (containerName: string, rateInterval: string) => `
-  sum by (http_response_status_code)(rate(http_server_request_duration_seconds_count{k8s_container_name="${containerName}"}[${rateInterval}]))
+   sum by(http_response_status_code)(beyla:req_rate:5m_by_status{k8s_container_name="${containerName}"})
 `
 
 export function PrivateNetworkRequestStatusChart({

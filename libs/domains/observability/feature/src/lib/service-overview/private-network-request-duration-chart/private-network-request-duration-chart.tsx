@@ -7,15 +7,15 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryDuration50 = (containerName: string, rateInterval: string) => `
-  histogram_quantile(0.5, sum by (le, k8s_container_name) (rate(http_server_request_duration_seconds_bucket{k8s_container_name="${containerName}"}[${rateInterval}])))
+  beyla:http_server_p50:5m{k8s_container_name="${containerName}"}
 `
 
 const queryDuration99 = (containerName: string, rateInterval: string) => `
-  histogram_quantile(0.99, sum by (le, k8s_container_name) (rate(http_server_request_duration_seconds_bucket{k8s_container_name="${containerName}"}[${rateInterval}])))
+   beyla:http_server_p99:5m{k8s_container_name="${containerName}"}
 `
 
 const queryDuration95 = (containerName: string, rateInterval: string) => `
- histogram_quantile(0.95, sum by (le, k8s_container_name) (rate(http_server_request_duration_seconds_bucket{k8s_container_name="${containerName}"}[${rateInterval}])))
+  beyla:http_server_p95:5m{k8s_container_name="${containerName}"}
 `
 
 export function PrivateNetworkRequestDurationChart({

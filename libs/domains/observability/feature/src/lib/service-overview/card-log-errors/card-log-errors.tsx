@@ -24,10 +24,11 @@ export function CardLogErrors({
 }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
-  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const { data: metrics, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: query(serviceId, queryTimeRange),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_log_error_number',

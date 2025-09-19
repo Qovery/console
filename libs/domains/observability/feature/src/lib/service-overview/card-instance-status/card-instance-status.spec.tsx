@@ -179,6 +179,7 @@ describe('CardInstanceStatus', () => {
     expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
+      startTimestamp: expect.any(String),
       endTimestamp: expect.any(String),
       boardShortName: 'service_overview',
       metricShortName: 'card_instance_status_error_count',

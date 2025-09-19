@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
-import { alignEndSec, alignStartSec } from './align-timestamp'
+import { alignEndSec, alignStartSec, resolutionByRetention } from './align-timestamp'
 import { alignedRangeInMinutes } from './grafana-util'
 
 export interface MetricData {
@@ -34,8 +34,6 @@ interface UseMetricsProps {
   endTimestamp?: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
-  overriddenStep?: string
-  overriddenResolution?: string
   overriddenMaxPoints?: number
   boardShortName: 'service_overview'
   metricShortName: string
@@ -55,8 +53,6 @@ export function useMetrics({
   endTimestamp,
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
-  overriddenStep,
-  overriddenResolution,
   overriddenMaxPoints,
   boardShortName,
   metricShortName,
@@ -71,9 +67,6 @@ export function useMetrics({
   const alignedRange = alignedRangeInMinutes(alignedStart, alignedEnd)
 
   const step = useMemo(() => {
-    if (overriddenStep !== undefined) {
-      return overriddenStep
-    }
     // Actual scrape_interval = 30s
     // https://prometheus.io/docs/prometheus/latest/configuration/configuration/#duration
     // https://qovery.slack.com/archives/C02NQ0LC8M9/p1753804730631609?thread_ts=1753803872.246399&cid=C02NQ0LC8M9
@@ -81,19 +74,16 @@ export function useMetrics({
     if (timeRange === '15m') return '60000ms' // 1 minute for longer ranges (2x scrape_interval)
     if (timeRange === '30m') return '120000ms' // 2 minutes for longer ranges (4x scrape_interval)
     if (alignedStart && alignedEnd) {
-      return calculateDynamicRange(alignedStart, alignedEnd, 1, overriddenMaxPoints)
+      return calculateDynamicRange(alignedStart, alignedEnd, overriddenMaxPoints)
     }
     return '30000ms' // Default: 30 seconds (match actual scrape_interval)
-  }, [timeRange, alignedStart, alignedEnd, overriddenStep, overriddenMaxPoints])
+  }, [timeRange, alignedStart, alignedEnd, overriddenMaxPoints])
 
   const maxSourceResolution = useMemo(() => {
-    if (overriddenResolution !== undefined) {
-      return overriddenResolution ?? ('0s' as const)
-    }
     if (!alignedStart || !alignedEnd) return '0s' as const
     const safeStep = step ?? '1m'
     return calculateMaxSourceResolution(alignedStart, alignedEnd, safeStep)
-  }, [alignedStart, alignedEnd, step, overriddenResolution])
+  }, [alignedStart, alignedEnd, step])
 
   const queryResult = useQuery({
     ...observability.metrics({
@@ -152,44 +142,8 @@ export function useMetrics({
     ...queryResult,
     isLoading: isLoadingCustom,
     isRefreshing,
+    stepInSecond: promDurationToMs(step) / 1000,
   }
-}
-
-export function calculateDynamicRange(
-  startTimestamp: string,
-  endTimestamp: string,
-  offsetMultiplier = 1,
-  overriddenMaxPoints = 150
-): string {
-  const startMs = Number(startTimestamp) * 1000
-  const endMs = Number(endTimestamp) * 1000
-  const durationMs = endMs - startMs
-
-  // Allowed, quantized step values (in ms) - expanded for longer time ranges
-  const allowedStepsMs = [
-    30000, // 30s - base scrape interval
-    60000, // 1m
-    120000, // 2m
-    300000, // 5m
-    600000, // 10m
-    900000, // 15m
-    1800000, // 30m
-    3600000, // 1h
-    7200000, // 2h
-    10800000, // 3h - added for better 12h+ range optimization
-    21600000, // 6h - added for better 24h+ range optimization
-  ] as const
-
-  // Minimal step to respect the max points target
-  const minimalStepForCapMs = Math.ceil(durationMs / overriddenMaxPoints)
-
-  // Round up to the nearest allowed step
-  const roundedStepMs =
-    allowedStepsMs.find((step) => step >= minimalStepForCapMs) ?? allowedStepsMs[allowedStepsMs.length - 1]
-
-  const finalStepMs = roundedStepMs + offsetMultiplier * 30000
-
-  return `${finalStepMs}ms`
 }
 
 // Grafana-like auto rate interval
@@ -233,51 +187,118 @@ export function calculateRateInterval(startTimestamp: string, endTimestamp: stri
   return msToPromDuration(pickedMs)
 }
 
-// Max source resolution is max resolution in seconds we want to use for data we query for.
-// https://thanos.io/v0.6/components/query/#auto-downsampling
-function calculateMaxSourceResolution(startTimestamp: string, endTimestamp: string, renderedStep: string): string {
+/**
+ * Calculate a Prometheus/Thanos query step.
+ *
+ * Same API as before:
+ *   - startTimestamp, endTimestamp in seconds (string)
+ *   - offsetMultiplier in 30s units (optional)
+ *   - overriddenMaxPoints = target number of points (default 150)
+ *
+ * Returns: "<N>ms"
+ */
+export function calculateDynamicRange(startTimestamp: string, endTimestamp: string, overriddenMaxPoints = 150): string {
+  const startMs = Number(startTimestamp) * 1000
+  const endMs = Number(endTimestamp) * 1000
+  const durationMs = Math.max(0, endMs - startMs)
+
+  // Allowed, quantized step values (ms)
+  const allowedStepsMs = [
+    30_000, // 30s
+    60_000, // 1m
+    120_000, // 2m
+    300_000, // 5m
+    600_000, // 10m
+    900_000, // 15m
+    1_800_000, // 30m
+    3_600_000, // 1h
+    7_200_000, // 2h
+    10_800_000, // 3h
+    21_600_000, // 6h
+  ] as const
+
+  // Minimal step based on range / maxPoints
+  const rawStep = Math.ceil(durationMs / Math.max(1, overriddenMaxPoints))
+
+  // Snap to grid upwards
+  const snapped = allowedStepsMs.find((s) => s >= rawStep) ?? allowedStepsMs[allowedStepsMs.length - 1]
+
+  const offsetMultiplier = 0
+  const jitter = offsetMultiplier * 30_000
+
+  // Clamp jitter to ±20% of snapped
+  const maxJitter = snapped * 0.2
+  const clamped = Math.max(-maxJitter, Math.min(jitter, maxJitter))
+
+  // Final step: keep on grid by snapping up again
+  const withJitter = snapped + clamped
+  const finalStep = allowedStepsMs.find((s) => s >= withJitter) ?? allowedStepsMs[allowedStepsMs.length - 1]
+
+  return `${finalStep}ms`
+}
+
+/**
+ * Calculate Thanos max_source_resolution based on step and range.
+ *
+ * Same API as before:
+ *   - startTimestamp, endTimestamp in seconds (string)
+ *   - renderedStep string ("60000ms", "5m", etc.)
+ *
+ * Returns one of: "0s" | "5m" | "1h"
+ */
+export function calculateMaxSourceResolution(
+  startTimestamp: string,
+  endTimestamp: string,
+  renderedStep: string
+): '0s' | '5m' | '1h' {
+  const stepMs = promDurationToMs(renderedStep)
   const startMs = Number(startTimestamp) * 1000
   const endMs = Number(endTimestamp) * 1000
   const rangeMs = Math.max(0, endMs - startMs)
 
-  function promDurationToMs(d: string): number {
-    const m = d.match(/^(\d+)(ms|s|m|h|d)$/)
-    if (!m) return 60_000 // fallback 1m
-    const n = Number(m[1])
-    switch (m[2]) {
-      case 'ms':
-        return n
-      case 's':
-        return n * 1_000
-      case 'm':
-        return n * 60_000
-      case 'h':
-        return n * 3_600_000
-      case 'd':
-        return n * 86_400_000
-      default:
-        return 60_000
-    }
-  }
-
-  const stepMs = promDurationToMs(renderedStep)
+  // By step (hysteresis thresholds)
+  const RAW_BOUNDARY = 450_000 // 7.5 min
+  const ONE_H_BOUNDARY = 5_400_000 // 90 min
 
   let byStep: '0s' | '5m' | '1h'
-  if (stepMs < 5 * 60_000) byStep = '0s'
-  else if (stepMs < 60 * 60_000) byStep = '5m'
+  if (stepMs < RAW_BOUNDARY) byStep = '0s'
+  else if (stepMs < ONE_H_BOUNDARY) byStep = '5m'
   else byStep = '1h'
 
-  const twelveHoursMs = 12 * 60 * 60_000
-  const sevenDaysMs = 7 * 24 * 60 * 60_000
+  // By range
+  const TWELVE_H = 12 * 3_600_000
+  const SEVEN_D = 7 * 24 * 3_600_000
+
   let byRange: '0s' | '5m' | '1h'
-  if (rangeMs < twelveHoursMs) byRange = '0s'
-  else if (rangeMs <= sevenDaysMs) byRange = '5m'
+  if (rangeMs < TWELVE_H) byRange = '0s'
+  else if (rangeMs <= SEVEN_D) byRange = '5m'
   else byRange = '1h'
 
-  function coarserOf(a: '0s' | '5m' | '1h', b: '0s' | '5m' | '1h'): '0s' | '5m' | '1h' {
-    const order = ['0s', '5m', '1h'] as const
-    return order[Math.max(order.indexOf(a), order.indexOf(b))]
-  }
+  // constraint on bucket retention
+  const byAge = resolutionByRetention(startTimestamp)
 
-  return coarserOf(byStep, byRange)
+  // Pick the coarser
+  const order = ['0s', '5m', '1h'] as const
+  return order[Math.max(order.indexOf(byStep), order.indexOf(byRange), order.indexOf(byAge))]
+}
+
+// Parse duration string into ms
+function promDurationToMs(d: string): number {
+  const m = d.match(/^(\d+)(ms|s|m|h|d)$/)
+  if (!m) return 60_000
+  const n = Number(m[1])
+  switch (m[2]) {
+    case 'ms':
+      return n
+    case 's':
+      return n * 1000
+    case 'm':
+      return n * 60_000
+    case 'h':
+      return n * 3_600_000
+    case 'd':
+      return n * 86_400_000
+    default:
+      return 60_000
+  }
 }
