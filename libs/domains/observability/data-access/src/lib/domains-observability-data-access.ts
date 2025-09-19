@@ -43,11 +43,20 @@ export const observability = createQueryKeys('observability', {
     step,
     timeRange,
     maxSourceResolution,
+    // These params are used to generate charts in Grafana
+    boardShortName,
+    metricShortName,
+    traceId,
+    alignedRange,
   }: {
     clusterId: string
     query: string
-    step?: string
     maxSourceResolution: string
+    boardShortName: string
+    metricShortName: string
+    traceId: string
+    alignedRange: string
+    step?: string
     startTimestamp?: string
     endTimestamp?: string
     time?: string
@@ -69,7 +78,11 @@ export const observability = createQueryKeys('observability', {
         'True',
         maxSourceResolution,
         'thanos',
-        'false'
+        'false',
+        boardShortName,
+        metricShortName,
+        traceId,
+        alignedRange
       )
 
       return response.data.metrics && JSON.parse(response.data.metrics)

@@ -57,6 +57,8 @@ export function MemoryChart({
     endTimestamp,
     query: queryMemoryUsage(containerName),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'memory',
   })
 
   const { data: metricsLimit, isLoading: isLoadingMetricsLimit } = useMetrics({
@@ -65,6 +67,8 @@ export function MemoryChart({
     endTimestamp,
     query: queryMemoryLimit(containerName),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'memory_limit',
   })
 
   const { data: metricsRequest, isLoading: isLoadingMetricsRequest } = useMetrics({
@@ -73,6 +77,8 @@ export function MemoryChart({
     endTimestamp,
     query: queryMemoryRequest(containerName),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'memory_request',
   })
 
   const chartData = useMemo(() => {

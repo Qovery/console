@@ -3,7 +3,7 @@ import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { CardMetricButton } from '../card-metric/card-metric'
 import { InstanceStatusChart } from '../instance-status-chart/instance-status-chart'
 import { ModalChart } from '../modal-chart/modal-chart'
@@ -68,11 +68,15 @@ export function CardInstanceStatus({
     clusterId,
     query: query(queryTimeRange, containerName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_instance_status_error_count',
   })
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useInstantMetrics({
     clusterId,
     query: queryAutoscalingReached(queryTimeRange, containerName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_instance_hpa_limit_count',
   })
 
   const instanceErrors = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0

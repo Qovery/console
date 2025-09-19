@@ -269,6 +269,8 @@ export function InstanceStatusChart({
     query: queryHealthyPods(serviceId),
     overriddenStep: customStep,
     overriddenMaxPoints: 250,
+    boardShortName: 'service_overview',
+    metricShortName: 'instance_status_health',
   })
 
   const { data: metricsRestartsWithReason, isLoading: isLoadingMetricsRestartsWithReason } = useMetrics({
@@ -279,6 +281,8 @@ export function InstanceStatusChart({
     query: queryRestartWithReason(containerName, timeRange),
     overriddenStep: intervalForEvent, // TODO PG check if necessary
     overriddenResolution: '0s', // TODO PG check if necessary
+    boardShortName: 'service_overview',
+    metricShortName: 'instance_status_restart',
   })
 
   const { data: metricsK8sEvent, isLoading: isLoadingMetricsK8sEvent } = useMetrics({
@@ -287,6 +291,8 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryK8sEvent(serviceId, dynamicRange),
+    boardShortName: 'service_overview',
+    metricShortName: 'instance_status_k8s_event',
   })
 
   const { data: metricsHpaMinReplicas, isLoading: isLoadingHpaMinReplicas } = useMetrics({
@@ -297,6 +303,8 @@ export function InstanceStatusChart({
     query: queryMinReplicas(containerName),
     overriddenStep: customStep,
     overriddenMaxPoints: 75,
+    boardShortName: 'service_overview',
+    metricShortName: 'instance_status_hpa_min',
   })
 
   const { data: metricsHpaMaxReplicas, isLoading: isLoadingHpaMaxReplicas } = useMetrics({
@@ -307,6 +315,8 @@ export function InstanceStatusChart({
     query: queryMaxReplicas(containerName),
     overriddenStep: customStep,
     overriddenMaxPoints: 75,
+    boardShortName: 'service_overview',
+    metricShortName: 'instance_status_hpa_max',
   })
 
   const { data: metricsHpaMaxLimitReached, isLoading: isLoadingHpaMaxLimitReached } = useMetrics({
@@ -314,6 +324,8 @@ export function InstanceStatusChart({
     startTimestamp,
     endTimestamp,
     query: queryMaxLimitReached(serviceId, rateInterval),
+    boardShortName: 'service_overview',
+    metricShortName: 'instance_status_hpa_limit_reached',
   })
 
   const chartData = useMemo(() => {

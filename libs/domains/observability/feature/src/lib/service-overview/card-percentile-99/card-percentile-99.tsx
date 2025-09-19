@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { calculateRateInterval } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import ModalChart from '../modal-chart/modal-chart'
@@ -33,6 +33,8 @@ export function CardPercentile99({
     clusterId,
     query: query(queryTimeRange, rateInterval, ingressName),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_p99_count',
   })
 
   const value = Math.round(Number(metrics?.data?.result[0]?.value[1]) * 1000) || 0

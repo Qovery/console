@@ -1,9 +1,9 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardPercentile99 } from './card-percentile-99'
 
-jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics
 >
@@ -151,6 +151,8 @@ describe('CardPercentile99', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('histogram_quantile'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_p99_count',
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query

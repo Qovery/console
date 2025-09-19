@@ -1,9 +1,9 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardInstanceStatus } from './card-instance-status'
 
-jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics
 >
@@ -180,6 +180,8 @@ describe('CardInstanceStatus', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_instance_status_error_count',
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query

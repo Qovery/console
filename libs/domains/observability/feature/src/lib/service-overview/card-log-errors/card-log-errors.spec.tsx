@@ -1,5 +1,5 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardLogErrors } from './card-log-errors'
 
@@ -10,7 +10,7 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({ pathname: '/test' }),
 }))
 
-jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics
 >
@@ -165,6 +165,8 @@ describe('CardLogErrors', () => {
       query:
         'sum(increase(promtail_custom_q_log_errors_total{qovery_com_service_id="test-service-id"}[1h]) or vector(0))',
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_log_error_number',
     })
   })
 })

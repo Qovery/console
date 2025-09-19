@@ -47,6 +47,8 @@ export function PrivateInstanceHTTPErrorsChart({
     endTimestamp,
     query: query(containerName, rateInterval),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'private_http_errors',
   })
 
   const chartData = useMemo(() => {

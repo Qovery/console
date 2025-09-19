@@ -1,9 +1,9 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardHTTPErrors } from './card-http-errors'
 
-jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics
 >
@@ -223,6 +223,8 @@ describe('CardHTTPErrors', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('nginx_ingress_controller_requests'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_req_all_number',
     })
 
     const calledQuery = useInstantMetrics.mock.calls[0][0].query

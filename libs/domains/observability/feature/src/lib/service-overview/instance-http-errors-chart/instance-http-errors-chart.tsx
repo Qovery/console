@@ -46,6 +46,8 @@ export function InstanceHTTPErrorsChart({
     endTimestamp,
     query: query(ingressName, rateInterval),
     timeRange,
+    boardShortName: 'service_overview',
+    metricShortName: 'http_errors',
   })
 
   const chartData = useMemo(() => {

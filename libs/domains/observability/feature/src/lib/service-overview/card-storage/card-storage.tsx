@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { PersistentStorageChart } from '../persistent-storage-chart/persistent-storage-chart'
@@ -47,12 +47,16 @@ export function CardStorage({ serviceId, clusterId }: { serviceId: string; clust
     clusterId,
     query: queryPercentage(serviceId, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_storage_utilization_number',
   })
 
   const { data: metricsMaxStorage, isLoading: isLoadingMetricsMaxStorage } = useInstantMetrics({
     clusterId,
     query: queryMaxStorage(serviceId, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_storage_max_number',
   })
 
   const rawValue = Number(metricsPercentage?.data?.result[0]?.value[1])

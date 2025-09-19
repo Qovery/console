@@ -1,9 +1,9 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import * as useInstantMetricsImport from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import * as useInstantMetricsImport from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardStorage } from './card-storage'
 
-jest.mock('../../hooks/use-instant-metrics.ts/use-instant-metrics')
+jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics
 >
@@ -169,6 +169,8 @@ describe('CardStorage', () => {
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kubelet_volume_stats_used_bytes'),
       endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_storage_utilization_number',
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query

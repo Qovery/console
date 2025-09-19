@@ -33,6 +33,8 @@ export function PrivateNetworkRequestStatusChart({
     endTimestamp,
     timeRange,
     query: query(containerName, rateInterval),
+    boardShortName: 'service_overview',
+    metricShortName: 'private_network_count',
   })
 
   const chartData = useMemo(() => {

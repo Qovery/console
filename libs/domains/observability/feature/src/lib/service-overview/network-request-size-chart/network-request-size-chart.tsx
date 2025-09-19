@@ -38,6 +38,8 @@ export function NetworkRequestSizeChart({
     endTimestamp,
     timeRange,
     query: queryResponseSize(rateInterval, ingressName),
+    boardShortName: 'service_overview',
+    metricShortName: 'network_resp_size',
   })
 
   const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
@@ -46,6 +48,8 @@ export function NetworkRequestSizeChart({
     endTimestamp,
     timeRange,
     query: queryRequestSize(rateInterval, ingressName),
+    boardShortName: 'service_overview',
+    metricShortName: 'network_req_size',
   })
 
   const chartData = useMemo(() => {

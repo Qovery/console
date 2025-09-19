@@ -4,6 +4,7 @@ import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
 import { alignEndSec, alignStartSec } from './align-timestamp'
+import { alignedRangeInMinutes } from './grafana-util'
 
 export interface MetricData {
   metric: {
@@ -36,6 +37,8 @@ interface UseMetricsProps {
   overriddenStep?: string
   overriddenResolution?: string
   overriddenMaxPoints?: number
+  boardShortName: 'service_overview'
+  metricShortName: string
 }
 
 function useLiveUpdateSetting(): boolean {
@@ -55,6 +58,8 @@ export function useMetrics({
   overriddenStep,
   overriddenResolution,
   overriddenMaxPoints,
+  boardShortName,
+  metricShortName,
 }: UseMetricsProps) {
   // Get context and live update setting, but allow override
   const context = useServiceOverviewContext()
@@ -63,6 +68,7 @@ export function useMetrics({
 
   const alignedStart = alignStartSec(startTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
+  const alignedRange = alignedRangeInMinutes(alignedStart, alignedEnd)
 
   const step = useMemo(() => {
     if (overriddenStep !== undefined) {
@@ -99,6 +105,11 @@ export function useMetrics({
       timeRange,
       step,
       maxSourceResolution,
+      // These params are used to generate charts in Grafana
+      boardShortName,
+      metricShortName,
+      traceId: 'na',
+      alignedRange,
     }),
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 30_000 : false, // Refetch every 30 seconds only if live update is enabled

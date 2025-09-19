@@ -59,6 +59,8 @@ export function PersistentStorageChart({ clusterId, serviceId }: { clusterId: st
     endTimestamp,
     timeRange,
     query: finalQuery,
+    boardShortName: 'service_overview',
+    metricShortName: 'persistent_storage_utilisation',
   })
 
   const chartData = useMemo(() => {

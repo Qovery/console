@@ -4,11 +4,14 @@ import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
 import { alignEndSec, alignStartSec } from '../use-metrics/align-timestamp'
+import { alignedRangeInMinutes } from '../use-metrics/grafana-util'
 
 interface UseInstantMetricsProps {
   clusterId: string
   query: string
   endTimestamp: string
+  boardShortName: string
+  metricShortName: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
 }
@@ -34,6 +37,7 @@ export function useInstantMetrics({
   endTimestamp,
   timeRange,
   isLiveUpdateEnabled: overrideLiveUpdate,
+  metricShortName,
 }: UseInstantMetricsProps) {
   // Get live update setting from context, but allow override
   const contextLiveUpdate = useLiveUpdateSetting()
@@ -41,6 +45,8 @@ export function useInstantMetrics({
 
   const alignedStart = alignStartSec(endTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
+
+  const alignedRange = alignedRangeInMinutes(alignedStart, alignedEnd)
 
   const maxSourceResolution = useMemo(() => {
     if (!alignedStart || !alignedEnd) return '0s' as const
@@ -58,6 +64,11 @@ export function useInstantMetrics({
       time: alignedEnd,
       step: undefined,
       maxSourceResolution,
+      // These params are used to generate charts in Grafana
+      boardShortName: 'service-overview',
+      metricShortName,
+      traceId: '',
+      alignedRange,
     }),
     keepPreviousData: true,
     refetchInterval: finalLiveUpdateEnabled ? 30_000 : false, // Refetch every 30 seconds only if live update is enabled

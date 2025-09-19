@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { pluralize } from '@qovery/shared/util-js'
-import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { PrivateInstanceHTTPErrorsChart } from '../instance-private-http-errors-chart/instance-private-http-errors-chart'
 import { ModalChart } from '../modal-chart/modal-chart'
@@ -30,12 +30,16 @@ export function CardPrivateHTTPErrors({
     clusterId,
     query: queryErrorRequest(containerName, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_private_req_errors_number',
   })
 
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(containerName, queryTimeRange),
     endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_private_req_all_number',
   })
 
   const errorRaw = Math.round(metricsErrorRequest?.data?.result[0]?.value[1])
