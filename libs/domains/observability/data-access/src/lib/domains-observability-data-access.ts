@@ -43,6 +43,7 @@ export const observability = createQueryKeys('observability', {
     step,
     timeRange,
     maxSourceResolution,
+    // These params are used to generate charts in Grafana
     boardShortName,
     metricShortName,
     traceId,
