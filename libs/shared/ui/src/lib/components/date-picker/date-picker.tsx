@@ -173,8 +173,12 @@ export function DatePicker({
       {children}
       {isOpen && (
         <div className={`date-picker absolute z-10 mt-2.5 ${isOpen ? 'date-picker--open' : ''}`}>
-          <div className="relative -ml-2 mt-2 inline-flex rounded bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)]">
-            <Icon iconName="caret-up" iconStyle="solid" className="absolute -top-[6px] left-3 text-white shadow-lg" />
+          <div className="relative -ml-2 mt-2 inline-flex rounded bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)] dark:bg-neutral-550">
+            <Icon
+              iconName="caret-up"
+              iconStyle="solid"
+              className="absolute -top-[6px] left-3 text-white shadow-lg dark:text-neutral-550"
+            />
             <div className="relative flex flex-col p-5">
               <DatePickerLib
                 selected={startDate}
@@ -194,7 +198,7 @@ export function DatePicker({
                 <div className="mt-3 space-y-4">
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <p className="text-sm font-medium text-neutral-400">Start</p>
+                      <p className="text-sm font-medium text-neutral-400 dark:text-neutral-50">Start</p>
                       {(startDateError || startTimeError) && (
                         <span className="text-xs text-red-500">{startDateError || startTimeError}</span>
                       )}
@@ -220,7 +224,7 @@ export function DatePicker({
                   </div>
                   <div>
                     <div className="mb-2 flex items-center justify-between">
-                      <p className="text-sm font-medium text-neutral-400">End</p>
+                      <p className="text-sm font-medium text-neutral-400 dark:text-neutral-50">End</p>
                       {(endDateError || endTimeError) && (
                         <span className="text-xs text-red-500">{endDateError || endTimeError}</span>
                       )}
