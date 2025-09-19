@@ -10,10 +10,10 @@ interface UseInstantMetricsProps {
   clusterId: string
   query: string
   endTimestamp: string
-  timeRange?: TimeRangeOption
-  isLiveUpdateEnabled?: boolean
   boardShortName: string
   metricShortName: string
+  timeRange?: TimeRangeOption
+  isLiveUpdateEnabled?: boolean
 }
 
 // Helper hook to safely get live update setting from context
