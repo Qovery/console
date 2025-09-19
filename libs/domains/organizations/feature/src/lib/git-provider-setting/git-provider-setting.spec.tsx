@@ -55,8 +55,29 @@ describe('GitProviderSetting', () => {
 
     expect(result).toHaveLength(3)
     expect(result[0].label).toBe('Github (user1)')
+    expect(result[0].searchText).toBe('Github user1')
     expect(result[1].label).toBe('Gitlab (user2)')
+    expect(result[1].searchText).toBe('Gitlab user2')
     const { container } = render(result[2].label)
     expect(container).toHaveTextContent('Github Token (token1)')
+    expect(result[2].searchText).toBe('Github Token token1')
+  })
+
+  it('should include searchText for all provider types for better search functionality', () => {
+    const authProviders = [
+      { name: GitProviderEnum.BITBUCKET, owner: 'bitbucket-user' },
+    ]
+
+    const gitTokens: GitTokenResponse[] = [
+      { name: 'my-bitbucket-token', type: GitProviderEnum.BITBUCKET, id: '456', created_at: '', associated_services_count: 0 },
+    ]
+
+    const result = mergeProviders(authProviders, gitTokens)
+
+    expect(result).toHaveLength(2)
+    // Auth provider should have searchText
+    expect(result[0].searchText).toBe('Bitbucket bitbucket-user')
+    // Git token should have searchText that includes the token name for search
+    expect(result[1].searchText).toBe('Bitbucket Token my-bitbucket-token')
   })
 })

@@ -43,7 +43,7 @@ export interface InputSelectProps {
   autoFocus?: boolean
   placeholder?: string
   menuPlacement?: MenuPlacement
-  filterOption?: 'fuzzy' | 'startsWith'
+  filterOption?: 'fuzzy' | 'startsWith' | ((option: any, inputValue: string) => boolean)
   isCreatable?: boolean
   isLoading?: boolean
   minInputLength?: number
@@ -278,15 +278,17 @@ export function InputSelect({
       }),
     },
     defaultMenuIsOpen: isFilter ? true : undefined,
-    filterOption: match(filterOption)
-      .with('fuzzy', () => undefined)
-      .with(
-        'startsWith',
-        () =>
-          ({ value }: Value, inputValue: string) =>
-            value?.startsWith(inputValue.toLowerCase()) ?? false
-      )
-      .exhaustive(),
+    filterOption: typeof filterOption === 'function' 
+      ? filterOption 
+      : match(filterOption)
+          .with('fuzzy', () => undefined)
+          .with(
+            'startsWith',
+            () =>
+              ({ value }: Value, inputValue: string) =>
+                value?.startsWith(inputValue.toLowerCase()) ?? false
+          )
+          .exhaustive(),
   }
 
   const SelectComponent = isCreatable ? CreatableSelect : Select
