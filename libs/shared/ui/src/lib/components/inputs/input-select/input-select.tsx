@@ -278,17 +278,18 @@ export function InputSelect({
       }),
     },
     defaultMenuIsOpen: isFilter ? true : undefined,
-    filterOption: typeof filterOption === 'function' 
-      ? filterOption 
-      : match(filterOption)
-          .with('fuzzy', () => undefined)
-          .with(
-            'startsWith',
-            () =>
-              ({ value }: Value, inputValue: string) =>
-                value?.startsWith(inputValue.toLowerCase()) ?? false
-          )
-          .exhaustive(),
+    filterOption:
+      typeof filterOption === 'function'
+        ? filterOption
+        : match(filterOption)
+            .with('fuzzy', () => undefined)
+            .with(
+              'startsWith',
+              () =>
+                ({ value }: Value, inputValue: string) =>
+                  value?.startsWith(inputValue.toLowerCase()) ?? false
+            )
+            .exhaustive(),
   }
 
   const SelectComponent = isCreatable ? CreatableSelect : Select

@@ -64,12 +64,16 @@ describe('GitProviderSetting', () => {
   })
 
   it('should include searchText for all provider types for better search functionality', () => {
-    const authProviders = [
-      { name: GitProviderEnum.BITBUCKET, owner: 'bitbucket-user' },
-    ]
+    const authProviders = [{ name: GitProviderEnum.BITBUCKET, owner: 'bitbucket-user' }]
 
     const gitTokens: GitTokenResponse[] = [
-      { name: 'my-bitbucket-token', type: GitProviderEnum.BITBUCKET, id: '456', created_at: '', associated_services_count: 0 },
+      {
+        name: 'my-bitbucket-token',
+        type: GitProviderEnum.BITBUCKET,
+        id: '456',
+        created_at: '',
+        associated_services_count: 0,
+      },
     ]
 
     const result = mergeProviders(authProviders, gitTokens)

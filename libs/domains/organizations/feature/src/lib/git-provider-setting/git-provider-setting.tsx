@@ -97,7 +97,7 @@ export function GitProviderSetting({ disabled }: GitProviderSettingProps) {
   // Custom filter function to search through searchText when available, otherwise use label
   const customFilterOption = (option: any, inputValue: string) => {
     if (!inputValue) return true
-    
+
     const searchString = option.data.searchText || (typeof option.data.label === 'string' ? option.data.label : '')
     return searchString.toLowerCase().includes(inputValue.toLowerCase())
   }
