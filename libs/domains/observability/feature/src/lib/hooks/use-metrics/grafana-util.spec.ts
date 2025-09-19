@@ -1,4 +1,4 @@
-import { alignedRangeInMinutes } from './aligned-range'
+import { alignedRangeInMinutes } from './grafana-util'
 
 describe('alignedRangeInMinutes', () => {
   it('should return padded 1 minute for 3 minutes duration (rounds down)', () => {

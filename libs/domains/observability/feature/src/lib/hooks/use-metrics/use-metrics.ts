@@ -4,7 +4,7 @@ import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
 import { alignEndSec, alignStartSec } from './align-timestamp'
-import { alignedRangeInMinutes } from './aligned-range'
+import { alignedRangeInMinutes } from './grafana-util'
 
 export interface MetricData {
   metric: {
@@ -68,7 +68,6 @@ export function useMetrics({
 
   const alignedStart = alignStartSec(startTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
-
   const alignedRange = alignedRangeInMinutes(alignedStart, alignedEnd)
 
   const step = useMemo(() => {
@@ -96,8 +95,6 @@ export function useMetrics({
     return calculateMaxSourceResolution(alignedStart, alignedEnd, safeStep)
   }, [alignedStart, alignedEnd, step, overriddenResolution])
 
-  const traceId = 'na'
-
   const queryResult = useQuery({
     ...observability.metrics({
       clusterId,
@@ -108,9 +105,10 @@ export function useMetrics({
       timeRange,
       step,
       maxSourceResolution,
+      // These params are used to generate charts in Grafana
       boardShortName,
       metricShortName,
-      traceId,
+      traceId: 'na',
       alignedRange,
     }),
     keepPreviousData: true,

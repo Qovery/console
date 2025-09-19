@@ -4,7 +4,7 @@ import { observability } from '@qovery/domains/observability/data-access'
 import { useServiceOverviewContext } from '../../service-overview/util-filter/service-overview-context'
 import { type TimeRangeOption } from '../../service-overview/util-filter/time-range'
 import { alignEndSec, alignStartSec } from '../use-metrics/align-timestamp'
-import { alignedRangeInMinutes } from '../use-metrics/aligned-range'
+import { alignedRangeInMinutes } from '../use-metrics/grafana-util'
 
 interface UseInstantMetricsProps {
   clusterId: string
@@ -64,6 +64,7 @@ export function useInstantMetrics({
       time: alignedEnd,
       step: undefined,
       maxSourceResolution,
+      // These params are used to generate charts in Grafana
       boardShortName: 'service-overview',
       metricShortName,
       traceId: '',

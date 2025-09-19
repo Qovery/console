@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { ModalChart } from '../modal-chart/modal-chart'
 import { PersistentStorageChart } from '../persistent-storage-chart/persistent-storage-chart'

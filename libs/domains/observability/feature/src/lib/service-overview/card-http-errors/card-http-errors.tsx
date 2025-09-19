@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { pluralize } from '@qovery/shared/util-js'
-import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { InstanceHTTPErrorsChart } from '../instance-http-errors-chart/instance-http-errors-chart'
 import { ModalChart } from '../modal-chart/modal-chart'

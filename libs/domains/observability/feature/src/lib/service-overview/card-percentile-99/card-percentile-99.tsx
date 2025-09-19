@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useInstantMetrics } from '../../hooks/use-instant-metrics.ts/use-instant-metrics'
+import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
 import { calculateRateInterval } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import ModalChart from '../modal-chart/modal-chart'

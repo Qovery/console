@@ -1,3 +1,6 @@
+// Grafana settings
+// Helpers to generate charts in Grafana
+
 const DURATION_TO_MINUTES: Record<string, number> = {
   '1m': 1,
   '5m': 5,
