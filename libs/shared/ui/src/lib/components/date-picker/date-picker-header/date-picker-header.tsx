@@ -38,7 +38,7 @@ export function DatePickerHeader({
 
   return (
     <div className="mb-5 flex justify-between">
-      <div className="text-sm font-medium text-neutral-400">
+      <div className="text-sm font-medium text-neutral-400 dark:text-neutral-50">
         <span className="mr-1">{months[getMonth(date)]}</span>
         <span>{getYear(date)}</span>
       </div>
