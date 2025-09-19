@@ -7,3 +7,17 @@
 .sl-row:has(+ .sl-expanded:hover) {
   background-color: theme('colors.neutral.550');
 }
+
+// Animation for new rows appearing
+.sl-row-appear {
+  animation: rowAppear 1s ease-out;
+}
+
+@keyframes rowAppear {
+  0% {
+    background-color: theme('colors.neutral.500');
+  }
+  100% {
+    background-color: transparent;
+  }
+}
