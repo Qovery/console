@@ -1,10 +1,8 @@
-import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useQueryParams } from 'use-query-params'
-import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
 import { useServiceHistoryLogs } from '../hooks/use-service-history-logs/use-service-history-logs'
@@ -35,6 +33,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   const refScrollSection = useRef<HTMLDivElement>(null)
 
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
+
   const isLiveMode = useMemo(() => {
     return !queryParams.startDate && !queryParams.endDate
   }, [queryParams.startDate, queryParams.endDate])
@@ -78,29 +77,9 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     }
   }, [isLiveMode, serviceEnabled, setNewLogsAvailable, setPauseLogs])
 
-  // Use the appropriate logs based on the current mode
   const logs = isLiveMode ? liveLogs : historyLogs
 
   const hasMultipleContainers = new Set(logs?.map((i) => i.container)).size > 1
-
-  const columnHelper = createColumnHelper<NormalizedServiceLog>()
-
-  const columns = useMemo(
-    () => [
-      columnHelper.accessor('instance', {}),
-      columnHelper.accessor('timestamp', {}),
-      ...(hasMultipleContainers ? [columnHelper.accessor('container', {})] : []),
-      columnHelper.accessor('exporter', {}),
-      columnHelper.accessor('message', {}),
-    ],
-    [columnHelper, hasMultipleContainers]
-  )
-
-  const table = useReactTable({
-    data: logs,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
 
   // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
   useEffect(() => {
@@ -153,7 +132,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1 pb-0">
+    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
         <HeaderServiceLogs logs={logs} />
         <div
@@ -182,14 +161,14 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
           )}
           <Table.Root className="w-full border-separate border-spacing-y-0.5 text-xs">
             <Table.Body className="divide-y-0">
-              {table.getRowModel().rows.map((row, index) => {
-                const timestamp = row.getValue('timestamp') as string
+              {logs.map((log, index) => {
+                const timestamp = log.timestamp
                 return (
                   <MemoizedRowServiceLogs
                     key={timestamp + index}
+                    log={log}
                     hasMultipleContainers={hasMultipleContainers}
                     highlightedText={queryParams.message}
-                    {...row}
                   />
                 )
               })}

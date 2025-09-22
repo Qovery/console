@@ -11,6 +11,7 @@ export interface LogFilters {
   version?: string
   container?: string
   namespace?: string
+  search?: string
 }
 
 export function buildLokiQuery(filters: LogFilters): string {
@@ -39,7 +40,9 @@ export function buildLokiQuery(filters: LogFilters): string {
   let query = `{${labels.join(', ')}}`
 
   if (filters.message) {
-    query += ` |= '${filters.message}'`
+    query += ` |= "${filters.message}"`
+  } else if (filters.search) {
+    query += ` |= "${filters.search}"`
   }
 
   return query

@@ -1,4 +1,3 @@
-import { type Row } from '@tanstack/react-table'
 import { useState } from 'react'
 import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
@@ -21,17 +20,13 @@ const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 const { Table } = TablePrimitives
 
-export interface RowServiceLogsProps extends Row<NormalizedServiceLog> {
+export interface RowServiceLogsProps {
+  log: NormalizedServiceLog
   hasMultipleContainers: boolean
   highlightedText?: string | null
 }
 
-export function RowServiceLogs({
-  hasMultipleContainers,
-  getVisibleCells,
-  original,
-  highlightedText,
-}: RowServiceLogsProps) {
+export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: RowServiceLogsProps) {
   const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -39,7 +34,7 @@ export function RowServiceLogs({
   const { utc } = updateTimeContextValue
 
   const getColorByPod = usePodColor()
-  const timestamp = Number(original.timestamp)
+  const timestamp = Number(log.timestamp)
 
   const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
     if (!searchTerm || !message.includes(searchTerm)) {
@@ -84,7 +79,7 @@ export function RowServiceLogs({
           <span className="flex h-3 w-3 items-center justify-center">
             <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
           </span>
-          <Tooltip content={original.instance} delayDuration={300}>
+          <Tooltip content={log.instance} delayDuration={300}>
             <Button
               type="button"
               variant="surface"
@@ -93,14 +88,14 @@ export function RowServiceLogs({
               className="h-5 gap-1.5 px-1.5 font-code"
               onClick={(e) => {
                 e.stopPropagation()
-                setQueryParams({ instance: original.instance })
+                setQueryParams({ instance: log.instance })
               }}
             >
               <span
                 className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                style={{ backgroundColor: getColorByPod(original.instance ?? '') }}
+                style={{ backgroundColor: getColorByPod(log.instance ?? '') }}
               />
-              {original.instance?.substring(original.instance?.length - 5)}
+              {log.instance?.substring(log.instance?.length - 5)}
             </Button>
           </Tooltip>
         </Table.Cell>
@@ -111,7 +106,7 @@ export function RowServiceLogs({
         </Table.Cell>
         {hasMultipleContainers && (
           <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap px-1.5">
-            <Tooltip content={original.container} delayDuration={300}>
+            <Tooltip content={log.container} delayDuration={300}>
               <Button
                 type="button"
                 variant="surface"
@@ -120,32 +115,32 @@ export function RowServiceLogs({
                 className="gap-1.5 whitespace-nowrap font-code"
                 onClick={(e) => {
                   e.stopPropagation()
-                  setQueryParams({ container: original.container })
+                  setQueryParams({ container: log.container })
                 }}
               >
-                {original.container}
+                {log.container}
               </Button>
             </Tooltip>
           </Table.Cell>
         )}
         <Table.Cell className="h-min min-h-7 w-full pb-1 pl-1.5 pr-4 pt-[0.4rem] align-top font-code font-bold">
-          {renderHighlightedMessage(original.message, highlightedText)}
+          {renderHighlightedMessage(log.message, highlightedText)}
         </Table.Cell>
       </Table.Row>
       {isExpanded && (
         <Table.Row className="sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']">
-          <Table.Cell className="py-4 pl-1" colSpan={getVisibleCells().length}>
+          <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
             <div className="w-full rounded border border-neutral-500 bg-neutral-550 px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
                 <Dt className="col-span-2 select-none font-code">Instance</Dt>
-                <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">{original.instance}</Dd>
+                <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">{log.instance}</Dd>
                 <Dt className="col-span-2 mt-2 select-none font-code">Container</Dt>
-                <Dd className="mt-2 flex gap-1 text-sm leading-3 dark:font-medium">{original.container}</Dd>
-                {original.version && (
+                <Dd className="mt-2 flex gap-1 text-sm leading-3 dark:font-medium">{log.container}</Dd>
+                {log.version && (
                   <>
                     <Dt className="col-span-2 mt-2 select-none font-code">Version</Dt>
                     <Dd className="mt-2 flex select-none gap-1 text-sm leading-3 dark:font-medium">
-                      <Tooltip content={original.version} delayDuration={300}>
+                      <Tooltip content={log.version} delayDuration={300}>
                         <Button
                           type="button"
                           variant="surface"
@@ -154,11 +149,11 @@ export function RowServiceLogs({
                           className="gap-1.5"
                           onClick={(e) => {
                             e.stopPropagation()
-                            setQueryParams({ version: original.version })
+                            setQueryParams({ version: log.version })
                           }}
                         >
                           <Icon iconName="code-commit" iconStyle="regular" />
-                          {original.version.substring(0, 7)}
+                          {log.version.substring(0, 7)}
                         </Button>
                       </Tooltip>
                     </Dd>
