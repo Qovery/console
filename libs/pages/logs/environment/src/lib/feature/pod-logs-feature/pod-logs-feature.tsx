@@ -31,12 +31,7 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
 
   return (
     <div className="h-full w-full bg-neutral-900">
-      <ListServiceLogs
-        environment={environment}
-        clusterId={environment.cluster_id}
-        serviceStatus={serviceStatus}
-        environmentStatus={environmentStatus}
-      />
+      <ListServiceLogs environment={environment} serviceStatus={serviceStatus} environmentStatus={environmentStatus} />
       {service && environment && (
         <WebSocketListenerMemo
           organizationId={environment.organization.id}

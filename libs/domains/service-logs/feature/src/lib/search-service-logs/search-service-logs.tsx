@@ -1,31 +1,35 @@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from 'cmdk'
-import { type ComponentPropsWithoutRef, useRef, useState } from 'react'
+import { type ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState } from 'react'
 import { useQueryParams } from 'use-query-params'
 import { Icon } from '@qovery/shared/ui'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 const defaultFilters = [
   {
-    value: 'severity:',
-    label: 'severity:',
-  },
-  {
     value: 'level:',
     label: 'level:',
-  },
-  {
-    value: 'service:',
-    label: 'service:',
   },
   {
     value: 'instance:',
     label: 'instance:',
   },
+  {
+    value: 'container:',
+    label: 'container:',
+  },
+  {
+    value: 'version:',
+    label: 'version:',
+  },
+  {
+    value: 'message:',
+    label: 'message:',
+  },
 ]
 
 const detailFilters = [
   {
-    key: 'severity',
+    key: 'level',
     options: [
       {
         label: 'error',
@@ -38,23 +42,6 @@ const detailFilters = [
       {
         label: 'info',
         value: 'info',
-      },
-    ],
-  },
-  {
-    key: 'service',
-    options: [
-      {
-        label: 'API Service',
-        value: 'api',
-      },
-      {
-        label: 'Database',
-        value: 'database',
-      },
-      {
-        label: 'Cache',
-        value: 'cache',
       },
     ],
   },
@@ -88,14 +75,81 @@ function Item({ value, label, setValue, setIsOpen }: ItemProps) {
   )
 }
 
+interface ConfirmItemProps extends ComponentPropsWithoutRef<typeof CommandItem> {
+  onConfirm: () => void
+}
+
+function ConfirmItem({ onConfirm }: ConfirmItemProps) {
+  return (
+    <CommandItem
+      className="flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 pl-2.5 transition-colors hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
+      value="confirm-search"
+      onSelect={onConfirm}
+    >
+      <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="relative top-[1px]" />
+      Confirm search
+    </CommandItem>
+  )
+}
+
+function buildValue(queryParams: { [key: string]: string | null | undefined }) {
+  let value = ''
+
+  if (queryParams['level']) {
+    value += `level:${queryParams['level']} `
+  }
+  if (queryParams['instance']) {
+    value += `instance:${queryParams['instance']} `
+  }
+  if (queryParams['container']) {
+    value += `container:${queryParams['container']} `
+  }
+  if (queryParams['version']) {
+    value += `version:${queryParams['version']} `
+  }
+  if (queryParams['message']) {
+    value += `message:${queryParams['message']} `
+  }
+
+  return value.trim()
+}
+
+function buildQueryParams(value: string) {
+  const filterRegex = /(\w+):([^\s]*)/g
+  const matches = value.match(filterRegex)
+
+  if (!matches) return {}
+
+  const queryParams: { [key: string]: string } = {}
+
+  matches.forEach((match) => {
+    const parts = match.split(':')
+    const filterKey = parts[0]
+    const filterValue = parts[1] || ''
+
+    const isValidFilter = defaultFilters.some((filter) => filter.value.replace(':', '') === filterKey)
+
+    if (isValidFilter && filterValue) {
+      queryParams[filterKey] = filterValue
+    }
+  })
+
+  return queryParams
+}
+
 export function SearchServiceLogs() {
-  const [value, setValue] = useState('')
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const [value, setValue] = useState<string>(buildValue(queryParams))
   const [isOpen, setIsOpen] = useState(false)
   const [cursorPosition, setCursorPosition] = useState(0)
   const [scrollLeft, setScrollLeft] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  // Sync the input value with query params only when query params change
+  const queryParamsValue = useMemo(() => buildValue(queryParams), [queryParams])
+  useEffect(() => {
+    setValue(queryParamsValue)
+  }, [queryParamsValue])
 
   const getContextualSuggestions = () => {
     const beforeCursor = value.substring(0, cursorPosition)
@@ -144,6 +198,30 @@ export function SearchServiceLogs() {
 
     const pos = cursorPos ?? newValue.length
     setCursorPosition(pos)
+  }
+
+  const clearInput = () => {
+    setQueryParams({
+      level: undefined,
+      instance: undefined,
+      container: undefined,
+      version: undefined,
+      message: undefined,
+    })
+    setValue('')
+    setIsOpen(false)
+  }
+
+  const confirmSearch = () => {
+    inputRef.current?.blur()
+
+    if (value?.length > 0) {
+      const builtQueryParams = buildQueryParams(value)
+      setQueryParams(builtQueryParams)
+      setIsOpen(false)
+    } else {
+      clearInput()
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -198,7 +276,7 @@ export function SearchServiceLogs() {
                 const target = e.target as HTMLInputElement
                 handleInputChange(value, target.selectionStart ?? undefined)
               }}
-              onFocus={() => setIsOpen(true)}
+              onClick={() => setIsOpen(true)}
               onBlur={() => setTimeout(() => setIsOpen(false), 200)}
               style={{
                 wordSpacing: 'var(--word-gap)',
@@ -222,6 +300,8 @@ export function SearchServiceLogs() {
           <CommandList className="absolute left-0 right-0 top-full z-10 mt-2 max-h-60 overflow-auto rounded-md border border-neutral-400 bg-neutral-600 p-1.5 text-sm shadow-lg">
             <CommandEmpty>No logs found.</CommandEmpty>
             <CommandGroup>
+              <ConfirmItem onConfirm={confirmSearch} />
+
               {/* Contextual suggestions */}
               {hasContextualSuggestions() &&
                 getContextualSuggestions().map((option) => (

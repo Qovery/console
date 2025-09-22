@@ -23,9 +23,15 @@ const { Table } = TablePrimitives
 
 export interface RowServiceLogsProps extends Row<NormalizedServiceLog> {
   hasMultipleContainers: boolean
+  highlightedText?: string | null
 }
 
-export function RowServiceLogs({ hasMultipleContainers, getVisibleCells, original }: RowServiceLogsProps) {
+export function RowServiceLogs({
+  hasMultipleContainers,
+  getVisibleCells,
+  original,
+  highlightedText,
+}: RowServiceLogsProps) {
   const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -35,23 +41,56 @@ export function RowServiceLogs({ hasMultipleContainers, getVisibleCells, origina
   const getColorByPod = usePodColor()
   const timestamp = Number(original.timestamp)
 
+  const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
+    if (!searchTerm || !message.includes(searchTerm)) {
+      return (
+        <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
+          {message}
+        </Ansi>
+      )
+    }
+
+    const parts = message.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
+
+    return (
+      <span className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
+        {parts.map((part, index) => {
+          if (part.toLowerCase() === searchTerm.toLowerCase()) {
+            return (
+              <mark
+                key={index}
+                style={{
+                  color: '#000',
+                  background: 'rgb(255, 153, 0)',
+                }}
+              >
+                {part}
+              </mark>
+            )
+          }
+          return <Ansi key={index}>{part}</Ansi>
+        })}
+      </span>
+    )
+  }
+
   return (
     <>
       <Table.Row
         onClick={() => setIsExpanded(!isExpanded)}
-        className="sl-row relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:top-1 before:block before:h-[calc(100%-4px)] before:w-1 before:bg-neutral-500 before:content-['']"
+        className="sl-row sl-row-appear relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']"
       >
-        <Table.Cell className="flex h-min min-h-9 select-none items-center gap-2 whitespace-nowrap pr-1.5">
+        <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap pr-1.5">
           <span className="flex h-3 w-3 items-center justify-center">
             <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
           </span>
-          <Tooltip content={original.instance}>
+          <Tooltip content={original.instance} delayDuration={300}>
             <Button
               type="button"
               variant="surface"
               color="neutral"
               size="xs"
-              className="gap-1.5 font-code"
+              className="h-5 gap-1.5 px-1.5 font-code"
               onClick={(e) => {
                 e.stopPropagation()
                 setQueryParams({ instance: original.instance })
@@ -65,14 +104,14 @@ export function RowServiceLogs({ hasMultipleContainers, getVisibleCells, origina
             </Button>
           </Tooltip>
         </Table.Cell>
-        <Table.Cell className="h-min min-h-9 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
+        <Table.Cell className="h-min min-h-7 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
           <span title={dateUTCString(timestamp)} className="inline-block whitespace-nowrap">
             {dateFullFormat(timestamp, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>
         {hasMultipleContainers && (
-          <Table.Cell className="flex h-min min-h-9 select-none items-center gap-2 whitespace-nowrap px-1.5">
-            <Tooltip content={original.container}>
+          <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap px-1.5">
+            <Tooltip content={original.container} delayDuration={300}>
               <Button
                 type="button"
                 variant="surface"
@@ -89,14 +128,12 @@ export function RowServiceLogs({ hasMultipleContainers, getVisibleCells, origina
             </Tooltip>
           </Table.Cell>
         )}
-        <Table.Cell className="h-min min-h-9 w-full pb-1 pl-1.5 pr-3 pt-2.5 align-top font-code font-bold">
-          <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral-50">
-            {original.message}
-          </Ansi>
+        <Table.Cell className="h-min min-h-7 w-full pb-1 pl-1.5 pr-4 pt-[0.4rem] align-top font-code font-bold">
+          {renderHighlightedMessage(original.message, highlightedText)}
         </Table.Cell>
       </Table.Row>
       {isExpanded && (
-        <Table.Row className="sl-expanded relative text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']">
+        <Table.Row className="sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']">
           <Table.Cell className="py-4 pl-1" colSpan={getVisibleCells().length}>
             <div className="w-full rounded border border-neutral-500 bg-neutral-550 px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
@@ -108,7 +145,7 @@ export function RowServiceLogs({ hasMultipleContainers, getVisibleCells, origina
                   <>
                     <Dt className="col-span-2 mt-2 select-none font-code">Version</Dt>
                     <Dd className="mt-2 flex select-none gap-1 text-sm leading-3 dark:font-medium">
-                      <Tooltip content={original.version}>
+                      <Tooltip content={original.version} delayDuration={300}>
                         <Button
                           type="button"
                           variant="surface"

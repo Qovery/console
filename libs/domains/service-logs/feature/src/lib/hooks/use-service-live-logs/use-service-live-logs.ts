@@ -29,6 +29,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
 
   const [newLogsAvailable, setNewLogsAvailable] = useState(false)
   const [pauseLogs, setPauseLogs] = useState(false)
+  const [isFetched, setIsFetched] = useState(false)
 
   const [enabledNginx, setEnabledNginx] = useState(false)
   const [debouncedLogs, setDebouncedLogs] = useState<NormalizedServiceLog[]>([])
@@ -72,11 +73,20 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     ) => {
       setNewLogsAvailable(true)
       const normalizedLog = normalizeWebSocketLog(log)
+      setIsFetched(true)
+
       serviceLogsBuffer.current.push(normalizedLog)
       scheduleFlush()
     },
-    [scheduleFlush]
+    [scheduleFlush, setIsFetched]
   )
+
+  const onCloseHandler = useCallback((_: QueryClient) => {
+    setDebouncedLogs([])
+    serviceLogsBuffer.current = []
+    setNewLogsAvailable(false)
+    setIsFetched(false)
+  }, [])
 
   const dynamicQuery = useMemo(() => {
     if (!serviceId) return ''
@@ -111,6 +121,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     },
     enabled: Boolean(clusterId) && Boolean(serviceId) && enabled && Boolean(dynamicQuery),
     onMessage: onLogHandler,
+    onClose: onCloseHandler,
   })
 
   const pausedDataLogs = useMemo(() => debouncedLogs, [pauseLogs])
@@ -123,6 +134,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     newLogsAvailable,
     enabledNginx,
     setEnabledNginx,
+    isFetched,
   }
 }
 

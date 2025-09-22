@@ -14,7 +14,6 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   const [showPreviousLogs, setShowPreviousLogs] = useState(false)
-
   const [enabledNginx, setEnabledNginx] = useState(false)
 
   const startDate = useMemo(
@@ -40,7 +39,11 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   )
 
   // Fetch service logs using useQuery instead of websocket
-  const { data: serviceLogsData = [] } = useQuery({
+  const {
+    data: serviceLogsData = [],
+    isFetched,
+    isLoading,
+  } = useQuery({
     ...serviceLogs.serviceLogs({
       clusterId,
       serviceId,
@@ -66,6 +69,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     setShowPreviousLogs,
     enabledNginx,
     setEnabledNginx,
+    isFetched: isFetched && !isLoading,
   }
 }
 
