@@ -1,7 +1,7 @@
 import download from 'downloadjs'
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { StringParam, useQueryParams } from 'use-query-params'
+import { DateTimeParam, StringParam } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 
 interface UpdateTimeContextProps {
@@ -27,13 +27,14 @@ interface ServiceLogsContextType {
 }
 
 export const queryParamsServiceLogs = {
-  startDate: StringParam,
-  endDate: StringParam,
+  startDate: DateTimeParam,
+  endDate: DateTimeParam,
   instance: StringParam,
   container: StringParam,
   version: StringParam,
   message: StringParam,
   level: StringParam,
+  search: StringParam,
 }
 
 export const ServiceLogsContext = createContext<ServiceLogsContextType | undefined>(undefined)
@@ -52,35 +53,10 @@ export function ServiceLogsProvider({
   serviceStatus,
   environmentStatus,
 }: ServiceLogsProviderProps) {
-  // const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
-
-  // Loading
-  // const [logsIsLoading, setLogsIsLoading] = useState(false)
-
   // Time format preferences
   const [updateTimeContextValue, setUpdateTimeContext] = useState<UpdateTimeContextProps>({
     utc: false,
   })
-
-  // Live/Historical mode toggle (default to live mode when no dates)
-  // const isLiveMode = useMemo(
-  //   () => !queryParams.startDate && !queryParams.endDate,
-  //   [queryParams.startDate, queryParams.endDate]
-  // )
-
-  // const setIsLiveMode = useCallback(
-  //   (isLive: boolean) => {
-  //     if (isLive) {
-  //       // Reset dates to enable live mode
-  //       setQueryParams({ startDate: undefined, endDate: undefined })
-  //     } else {
-  //       // Set current time as default when switching to historical mode
-  //       const now = new Date().toISOString()
-  //       setQueryParams({ startDate: now, endDate: now })
-  //     }
-  //   },
-  //   [setQueryParams]
-  // )
 
   const downloadLogs = useCallback((logs: NormalizedServiceLog[]) => {
     download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')

@@ -1,5 +1,6 @@
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from 'cmdk'
 import { type ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState } from 'react'
+import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
 import { Icon } from '@qovery/shared/ui'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
@@ -92,7 +93,7 @@ function ConfirmItem({ onConfirm }: ConfirmItemProps) {
   )
 }
 
-function buildValue(queryParams: { [key: string]: string | null | undefined }) {
+function buildValue(queryParams: DecodedValueMap<typeof queryParamsServiceLogs>) {
   let value = ''
 
   if (queryParams['level']) {
@@ -110,6 +111,9 @@ function buildValue(queryParams: { [key: string]: string | null | undefined }) {
   if (queryParams['message']) {
     value += `message:${queryParams['message']} `
   }
+  if (queryParams['search']) {
+    value += `${queryParams['search']} `
+  }
 
   return value.trim()
 }
@@ -117,22 +121,26 @@ function buildValue(queryParams: { [key: string]: string | null | undefined }) {
 function buildQueryParams(value: string) {
   const filterRegex = /(\w+):([^\s]*)/g
   const matches = value.match(filterRegex)
-
-  if (!matches) return {}
-
   const queryParams: { [key: string]: string } = {}
 
-  matches.forEach((match) => {
-    const parts = match.split(':')
-    const filterKey = parts[0]
-    const filterValue = parts[1] || ''
+  if (matches) {
+    matches.forEach((match) => {
+      const parts = match.split(':')
+      const filterKey = parts[0]
+      const filterValue = parts[1] || ''
 
-    const isValidFilter = defaultFilters.some((filter) => filter.value.replace(':', '') === filterKey)
+      const isValidFilter = defaultFilters.some((filter) => filter.value.replace(':', '') === filterKey)
 
-    if (isValidFilter && filterValue) {
-      queryParams[filterKey] = filterValue
-    }
-  })
+      if (isValidFilter && filterValue) {
+        queryParams[filterKey] = filterValue
+      }
+    })
+  }
+
+  const textWithoutFilters = value.replace(filterRegex, '').trim()
+  if (textWithoutFilters) {
+    queryParams['search'] = textWithoutFilters
+  }
 
   return queryParams
 }
@@ -207,6 +215,7 @@ export function SearchServiceLogs() {
       container: undefined,
       version: undefined,
       message: undefined,
+      search: undefined,
     })
     setValue('')
     setIsOpen(false)

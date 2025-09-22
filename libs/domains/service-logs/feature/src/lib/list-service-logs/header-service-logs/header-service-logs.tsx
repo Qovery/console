@@ -5,9 +5,8 @@ import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Button, DatePicker, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { Button, DatePicker, DropdownMenu, Icon, Link } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
-import { useDebounce } from '@qovery/shared/util-hooks'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
@@ -31,25 +30,6 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
-  const [localStartDate, setLocalStartDate] = useState<Date | undefined>(
-    queryParams.startDate ? new Date(queryParams.startDate) : undefined
-  )
-  const [localEndDate, setLocalEndDate] = useState<Date | undefined>(
-    queryParams.endDate ? new Date(queryParams.endDate) : undefined
-  )
-
-  const debouncedStartDate = useDebounce(localStartDate, 300)
-  const debouncedEndDate = useDebounce(localEndDate, 300)
-
-  useMemo(() => {
-    if (debouncedStartDate !== undefined || debouncedEndDate !== undefined) {
-      setQueryParams({
-        startDate: debouncedStartDate?.toISOString(),
-        endDate: debouncedEndDate?.toISOString(),
-      })
-    }
-  }, [debouncedStartDate, debouncedEndDate, setQueryParams])
-
   const { data: service } = useService({ environmentId: environment.id, serviceId })
 
   const isLiveMode = useMemo(
@@ -57,12 +37,10 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
     [queryParams.startDate, queryParams.endDate]
   )
 
-  const startDate = localStartDate
-  const endDate = localEndDate
+  const startDate = queryParams.startDate ? new Date(queryParams.startDate) : undefined
+  const endDate = queryParams.endDate ? new Date(queryParams.endDate) : undefined
 
   const clearDate = useCallback(() => {
-    setLocalStartDate(undefined)
-    setLocalEndDate(undefined)
     setQueryParams({
       startDate: undefined,
       endDate: undefined,
@@ -106,8 +84,6 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
             onClick={() => {
               if (!isLiveMode) {
                 setQueryParams({ startDate: undefined, endDate: undefined })
-                setLocalStartDate(undefined)
-                setLocalEndDate(undefined)
               }
             }}
             disabled={!startDate || !endDate}
@@ -117,8 +93,10 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
           </Button>
           <DatePicker
             onChange={(startDate, endDate) => {
-              setLocalStartDate(startDate)
-              setLocalEndDate(endDate)
+              setQueryParams({
+                startDate,
+                endDate,
+              })
               setIsOpenDatePicker(false)
             }}
             isOpen={isOpenDatePicker}
@@ -167,7 +145,7 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <Button size="md" variant="surface" color="neutral" className="gap-1.5">
-                {updateTimeContextValue.utc ? 'UTC' : 'Local browser time'}
+                {updateTimeContextValue.utc ? 'UTC' : 'Browser time'}
                 <Icon iconName="chevron-down" iconStyle="regular" />
               </Button>
             </DropdownMenu.Trigger>
@@ -185,7 +163,7 @@ export function HeaderServiceLogs({ logs }: HeaderServiceLogsProps) {
                   iconStyle="regular"
                   className={`text-green-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
                 />
-                Local browser time
+                Browser time
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 className="gap-2"
