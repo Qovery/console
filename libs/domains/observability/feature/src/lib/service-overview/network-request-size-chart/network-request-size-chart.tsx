@@ -17,12 +17,10 @@ const queryRequestSize = (ingressName: string) => `
 export function NetworkRequestSizeChart({
   clusterId,
   serviceId,
-  containerName,
   ingressName,
 }: {
   clusterId: string
   serviceId: string
-  containerName: string
   ingressName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()

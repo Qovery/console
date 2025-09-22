@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryResponseSize = (containerName: string, rateInterval: string) => `
+const queryResponseSize = (containerName: string) => `
    beyla:resp_bytes_rate:5m{k8s_container_name="${containerName}"}
 `
 
-const queryRequestSize = (containerName: string, rateInterval: string) => `
+const queryRequestSize = (containerName: string) => `
   beyla:req_bytes_rate:5m{k8s_container_name="${containerName}"}
 `
 
@@ -25,17 +25,12 @@ export function PrivateNetworkRequestSizeChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryResponseSize(containerName, rateInterval),
+    query: queryResponseSize(containerName),
     boardShortName: 'service_overview',
     metricShortName: 'private_network_resp_size',
   })
@@ -45,7 +40,7 @@ export function PrivateNetworkRequestSizeChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryRequestSize(containerName, rateInterval),
+    query: queryRequestSize(containerName),
     boardShortName: 'service_overview',
     metricShortName: 'private_network_req_size',
   })

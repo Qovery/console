@@ -1,20 +1,20 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryDuration50 = (containerName: string, rateInterval: string) => `
+const queryDuration50 = (containerName: string) => `
   beyla:http_server_p50:5m{k8s_container_name="${containerName}"}
 `
 
-const queryDuration99 = (containerName: string, rateInterval: string) => `
+const queryDuration99 = (containerName: string) => `
    beyla:http_server_p99:5m{k8s_container_name="${containerName}"}
 `
 
-const queryDuration95 = (containerName: string, rateInterval: string) => `
+const queryDuration95 = (containerName: string) => `
   beyla:http_server_p95:5m{k8s_container_name="${containerName}"}
 `
 
@@ -31,17 +31,12 @@ export function PrivateNetworkRequestDurationChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration50(containerName, rateInterval),
+    query: queryDuration50(containerName),
     boardShortName: 'service_overview',
     metricShortName: 'private_network_p50',
   })
@@ -51,7 +46,7 @@ export function PrivateNetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration99(containerName, rateInterval),
+    query: queryDuration99(containerName),
     boardShortName: 'service_overview',
     metricShortName: 'private_network_p99',
   })
@@ -61,7 +56,7 @@ export function PrivateNetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration95(containerName, rateInterval),
+    query: queryDuration95(containerName),
     boardShortName: 'service_overview',
     metricShortName: 'private_network_p95',
   })

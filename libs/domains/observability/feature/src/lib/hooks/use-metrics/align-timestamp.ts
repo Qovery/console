@@ -14,8 +14,6 @@ export const resolutionByRetention = (startTimestamp: string) => {
   const nowMs = Date.now()
   const ageMs = Math.max(0, nowMs - startMs)
 
-  console.log('ageMs', ageMs)
-
   let byAge: '0s' | '5m' | '1h'
   if (ageMs > THANOS_RAW_RETENTION) {
     if (ageMs > THANOS_5M_RETENTION) {

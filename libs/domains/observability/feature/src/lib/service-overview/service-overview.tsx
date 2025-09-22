@@ -4,8 +4,8 @@ import { useService } from '@qovery/domains/services/feature'
 import { Button, Callout, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useContainerName } from '../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
-import useIngressName from '../hooks/use-ingress-name/use-ingress-name'
-import useNamespace from '../hooks/use-namespace/use-namespace'
+import { useIngressName } from '../hooks/use-ingress-name/use-ingress-name'
+import { useNamespace } from '../hooks/use-namespace/use-namespace'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
@@ -19,9 +19,9 @@ import { MemoryChart } from './memory-chart/memory-chart'
 import { NetworkRequestDurationChart } from './network-request-duration-chart/network-request-duration-chart'
 import { NetworkRequestSizeChart } from './network-request-size-chart/network-request-size-chart'
 import { NetworkRequestStatusChart } from './network-request-status-chart/network-request-status-chart'
-import PrivateNetworkRequestDurationChart from './private-network-request-duration-chart/private-network-request-duration-chart'
-import PrivateNetworkRequestSizeChart from './private-network-request-size-chart/private-network-request-size-chart'
-import PrivateNetworkRequestStatusChart from './private-network-request-status-chart/private-network-request-status-chart'
+import { PrivateNetworkRequestDurationChart } from './private-network-request-duration-chart/private-network-request-duration-chart'
+import { PrivateNetworkRequestSizeChart } from './private-network-request-size-chart/private-network-request-size-chart'
+import { PrivateNetworkRequestStatusChart } from './private-network-request-status-chart/private-network-request-status-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
 
@@ -229,7 +229,6 @@ function ServiceOverviewContent() {
                 <NetworkRequestStatusChart
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
-                  containerName={containerName}
                   ingressName={ingressName}
                 />
               </div>
@@ -245,7 +244,6 @@ function ServiceOverviewContent() {
                 <NetworkRequestSizeChart
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
-                  containerName={containerName}
                   ingressName={ingressName}
                 />
               </div>

@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 import { Area } from 'recharts'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (ingressName: string, rateInterval: string) => `
+const query = (ingressName: string) => `
 100 *
 sum by (status) (
   nginx:req_rate:5m_by_status{ingress="${ingressName}", status=~"499|5.."}
@@ -34,16 +34,11 @@ export function InstanceHTTPErrorsChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metricsHttpStatusErrorRatio, isLoading: isLoadingHttpStatusErrorRatio } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: query(ingressName, rateInterval),
+    query: query(ingressName),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'http_errors',

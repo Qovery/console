@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (containerName: string, rateInterval: string) => `
+const query = (containerName: string) => `
    sum by(http_response_status_code)(beyla:req_rate:5m_by_status{k8s_container_name="${containerName}"})
 `
 
@@ -22,17 +22,12 @@ export function PrivateNetworkRequestStatusChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: query(containerName, rateInterval),
+    query: query(containerName),
     boardShortName: 'service_overview',
     metricShortName: 'private_network_count',
   })

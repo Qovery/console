@@ -1,20 +1,20 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryDuration50 = (rateInterval: string, ingressName: string) => `
+const queryDuration50 = (ingressName: string) => `
   nginx:request_p50:5m{ingress="${ingressName}"}
 `
 
-const queryDuration95 = (rateInterval: string, ingressName: string) => `
+const queryDuration95 = (ingressName: string) => `
   nginx:request_p95:5m{ingress="${ingressName}"}
 `
 
-const queryDuration99 = (rateInterval: string, ingressName: string) => `
+const queryDuration99 = (ingressName: string) => `
  nginx:request_p99:5m{ingress="${ingressName}"}
 `
 
@@ -33,17 +33,12 @@ export function NetworkRequestDurationChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration50(rateInterval, ingressName),
+    query: queryDuration50(ingressName),
     boardShortName: 'service_overview',
     metricShortName: 'network_p50',
   })
@@ -53,7 +48,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration99(rateInterval, ingressName),
+    query: queryDuration99(ingressName),
     boardShortName: 'service_overview',
     metricShortName: 'network_p99',
   })
@@ -63,7 +58,7 @@ export function NetworkRequestDurationChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryDuration95(rateInterval, ingressName),
+    query: queryDuration95(ingressName),
     boardShortName: 'service_overview',
     metricShortName: 'network_p95',
   })

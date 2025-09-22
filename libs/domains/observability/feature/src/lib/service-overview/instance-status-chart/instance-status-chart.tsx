@@ -203,8 +203,8 @@ export function InstanceStatusChart({
   clusterId: string
   serviceId: string
   containerName: string
-  isFullscreen?: boolean
   namespace: string
+  isFullscreen?: boolean
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, timeRange } = useServiceOverviewContext()
 

@@ -234,6 +234,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
       : timeRange
 
+  // Calculate the average over queryTimeRange with a sub-sampling every 5m or 1m
   const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60
   const subQueryTimeRange =
     isAnyChartZoomed && startTimestamp && endTimestamp
@@ -303,6 +304,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       lastDropdownTimeRange,
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
+      subQueryTimeRange,
     ]
   )
 

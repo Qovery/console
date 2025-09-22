@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 import { Area } from 'recharts'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (containerName: string, rateInterval: string) => `
+const query = (containerName: string) => `
 100 *
 beyla:req_rate:5m_by_status{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}
 /
@@ -26,16 +26,11 @@ export function PrivateInstanceHTTPErrorsChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metricsHttpStatusErrorRatio, isLoading: isLoadingHttpStatusErrorRatio } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: query(containerName, rateInterval),
+    query: query(containerName),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'private_http_errors',
