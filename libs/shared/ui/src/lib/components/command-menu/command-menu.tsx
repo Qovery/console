@@ -44,7 +44,7 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
     <CmdK.List
       ref={ref}
       className={twMerge(
-        'max-h-[480px] min-h-[400px] overflow-auto overscroll-y-contain transition-all duration-100 [&>[cmdk-list-sizer]]:mx-2 [&>[cmdk-list-sizer]]:my-3',
+        'max-h-[480px] min-h-[94px] overflow-auto overscroll-y-contain transition-all duration-100 [&>[cmdk-list-sizer]]:mx-2 [&>[cmdk-list-sizer]]:my-3',
         className
       )}
       style={{
