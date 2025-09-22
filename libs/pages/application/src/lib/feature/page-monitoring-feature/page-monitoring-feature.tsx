@@ -59,7 +59,7 @@ export function PageMonitoringFeature() {
               <span className="font-semibold text-neutral-400">Starting from $299/month</span>
             </div>
           </div>
-          <div className="relative left-3 flex h-full w-full items-center 2xl:left-0">
+          <div className="relative left-4 flex h-full w-full items-center 2xl:left-0">
             <EnableObservabilityVideo />
           </div>
         </div>
