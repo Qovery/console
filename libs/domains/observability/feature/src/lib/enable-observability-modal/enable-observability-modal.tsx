@@ -4,12 +4,10 @@ import { useSupportChat } from '@qovery/shared/util-hooks'
 export function EnableObservabilityContent() {
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">
-        Observability early access is here!
-      </h2>
+      <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">Observability is here!</h2>
       <div className="flex flex-col leading-6">
         <p className="text-neutral-350 dark:text-neutral-50">
-          We’ve just released our brand-new Observability feature, now available for everyone. <br />
+          We've just released our brand-new Observability feature, now available for everyone. <br />
           Why is this exciting?
         </p>
         <ul className="list-disc pl-5 text-neutral-350">

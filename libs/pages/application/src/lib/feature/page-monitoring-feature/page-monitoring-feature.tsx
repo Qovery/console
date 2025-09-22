@@ -22,7 +22,7 @@ export function PageMonitoringFeature() {
 
   const { data: environment } = useEnvironment({ environmentId })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
-  const { data: service } = useService({ environmentId, serviceId: applicationId })
+  const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId: applicationId })
   const { data: cluster, isFetched: isClusterFetched } = useCluster({
     organizationId: environment?.organization.id ?? '',
     clusterId: environment?.cluster_id ?? '',
@@ -46,7 +46,7 @@ export function PageMonitoringFeature() {
     [serviceStatus?.state]
   )
 
-  if (!isClusterFetched) return null
+  if (!isClusterFetched || !isServiceFetched) return null
 
   if (!hasMetrics)
     return (
