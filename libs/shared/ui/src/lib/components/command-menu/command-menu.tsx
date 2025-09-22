@@ -47,6 +47,9 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
         'max-h-[480px] min-h-[400px] overflow-auto overscroll-y-contain transition-all duration-100 [&>[cmdk-list-sizer]]:mx-2 [&>[cmdk-list-sizer]]:my-3',
         className
       )}
+      style={{
+        height: 'min(400px, var(--cmdk-list-height))',
+      }}
       {...props}
     />
   )
