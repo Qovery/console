@@ -1,10 +1,11 @@
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Callout, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useContainerName } from '../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
-import useIngressName from '../hooks/use-ingress-name/use-ingress-name'
+import { useIngressName } from '../hooks/use-ingress-name/use-ingress-name'
+import { useNamespace } from '../hooks/use-namespace/use-namespace'
 import { CardHTTPErrors } from './card-http-errors/card-http-errors'
 import { CardInstanceStatus } from './card-instance-status/card-instance-status'
 import { CardLogErrors } from './card-log-errors/card-log-errors'
@@ -18,9 +19,9 @@ import { MemoryChart } from './memory-chart/memory-chart'
 import { NetworkRequestDurationChart } from './network-request-duration-chart/network-request-duration-chart'
 import { NetworkRequestSizeChart } from './network-request-size-chart/network-request-size-chart'
 import { NetworkRequestStatusChart } from './network-request-status-chart/network-request-status-chart'
-import PrivateNetworkRequestDurationChart from './private-network-request-duration-chart/private-network-request-duration-chart'
-import PrivateNetworkRequestSizeChart from './private-network-request-size-chart/private-network-request-size-chart'
-import PrivateNetworkRequestStatusChart from './private-network-request-status-chart/private-network-request-status-chart'
+import { PrivateNetworkRequestDurationChart } from './private-network-request-duration-chart/private-network-request-duration-chart'
+import { PrivateNetworkRequestSizeChart } from './private-network-request-size-chart/private-network-request-size-chart'
+import { PrivateNetworkRequestStatusChart } from './private-network-request-status-chart/private-network-request-status-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
 
@@ -57,13 +58,18 @@ function ServiceOverviewContent() {
     resourceType: hasStorage ? 'statefulset' : 'deployment',
   })
 
+  const { data: namespace, isFetched: isFetchedNamespace } = useNamespace({
+    clusterId: environment?.cluster_id ?? '',
+    serviceId: applicationId,
+  })
+
   const { data: ingressName = '' } = useIngressName({
     clusterId: environment?.cluster_id ?? '',
     serviceId: applicationId,
     enabled: hasPublicPort,
   })
 
-  if (!containerName && isFetchedContainerName) {
+  if ((!containerName && isFetchedContainerName) || (!namespace && isFetchedNamespace)) {
     return (
       <div className="h-full w-full p-5">
         <Callout.Root color="yellow" className="max-w-lg">
@@ -91,7 +97,12 @@ function ServiceOverviewContent() {
     )
   }
 
-  if (!environment || !service || !containerName) return null
+  if (!environment || !service || !containerName || !namespace)
+    return (
+      <div className="flex h-full w-full items-center justify-center p-5">
+        <Chart.Loader />
+      </div>
+    )
 
   return (
     <div className="isolate">
@@ -154,6 +165,7 @@ function ServiceOverviewContent() {
               clusterId={environment.cluster_id}
               serviceId={applicationId}
               containerName={containerName}
+              namespace={namespace}
             />
             <div className="flex h-full flex-col gap-3">
               <CardLogErrors
@@ -222,7 +234,6 @@ function ServiceOverviewContent() {
                 <NetworkRequestStatusChart
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
-                  containerName={containerName}
                   ingressName={ingressName}
                 />
               </div>
@@ -238,7 +249,6 @@ function ServiceOverviewContent() {
                 <NetworkRequestSizeChart
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
-                  containerName={containerName}
                   ingressName={ingressName}
                 />
               </div>

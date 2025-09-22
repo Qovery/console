@@ -1,13 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
-import { calculateRateInterval } from '../../hooks/use-metrics/use-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import ModalChart from '../modal-chart/modal-chart'
 import PrivateNetworkRequestDurationChart from '../private-network-request-duration-chart/private-network-request-duration-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const query = (timeRange: string, rateInterval: string, containerName: string) => `
-  max_over_time(histogram_quantile(0.99, (sum by(le) (rate(http_server_request_duration_seconds_bucket{k8s_container_name="${containerName}"}[${rateInterval}]))))[${timeRange}:])
+const query = (timeRange: string, containerName: string) => `
+   max_over_time(beyla:http_server_p99:5m{k8s_container_name="${containerName}"}[${timeRange}])
 `
 
 export function CardPrivatePercentile99({
@@ -22,14 +21,10 @@ export function CardPrivatePercentile99({
   const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metrics, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
-    query: query(queryTimeRange, rateInterval, containerName),
+    query: query(queryTimeRange, containerName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_private_p99_count',

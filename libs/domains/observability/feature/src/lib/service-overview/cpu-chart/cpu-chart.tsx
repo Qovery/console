@@ -9,15 +9,15 @@ import { convertPodName } from '../util-chart/convert-pod-name'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryCpuUsage = (serviceId: string, rateInterval: string, containerName: string) => `
+const queryCpuUsage = (rateInterval: string, containerName: string) => `
   sum by (pod) (rate(container_cpu_usage_seconds_total{container="${containerName}"}[${rateInterval}]))
 `
 
-const queryCpuLimit = (serviceId: string, containerName: string) => `
+const queryCpuLimit = (containerName: string) => `
   sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",container="${containerName}"}))
 `
 
-const queryCpuRequest = (serviceId: string, containerName: string) => `
+const queryCpuRequest = (containerName: string) => `
   sum (bottomk(1, kube_pod_container_resource_requests{resource="cpu",container="${containerName}"}))
 `
 
@@ -58,7 +58,7 @@ export function CpuChart({
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
-    query: queryCpuUsage(serviceId, rateInterval, containerName),
+    query: queryCpuUsage(rateInterval, containerName),
     startTimestamp,
     endTimestamp,
     timeRange,
@@ -68,7 +68,7 @@ export function CpuChart({
 
   const { data: limitMetrics, isLoading: isLoadingLimit } = useMetrics({
     clusterId,
-    query: queryCpuLimit(serviceId, containerName),
+    query: queryCpuLimit(containerName),
     startTimestamp,
     endTimestamp,
     timeRange,
@@ -78,7 +78,7 @@ export function CpuChart({
 
   const { data: requestMetrics, isLoading: isLoadingRequest } = useMetrics({
     clusterId,
-    query: queryCpuRequest(serviceId, containerName),
+    query: queryCpuRequest(containerName),
     startTimestamp,
     endTimestamp,
     timeRange,

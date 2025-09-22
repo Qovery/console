@@ -164,6 +164,7 @@ describe('CardLogErrors', () => {
       clusterId: 'test-cluster-id',
       query:
         'sum(increase(promtail_custom_q_log_errors_total{qovery_com_service_id="test-service-id"}[1h]) or vector(0))',
+      startTimestamp: expect.any(String),
       endTimestamp: expect.any(String),
       boardShortName: 'service_overview',
       metricShortName: 'card_log_error_number',

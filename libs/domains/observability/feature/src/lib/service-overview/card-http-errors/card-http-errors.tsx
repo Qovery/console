@@ -7,11 +7,15 @@ import { ModalChart } from '../modal-chart/modal-chart'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const queryErrorRequest = (timeRange: string, ingressName: string) => `
-    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}", status=~"499|5.."}[${timeRange}]) or vector(0))
+   sum(sum_over_time(
+    (nginx:req_inc:5m_by_status{ingress="${ingressName}", status=~"499|5.."})[${timeRange}:5m]
+  ))
 `
 
 const queryTotalRequest = (timeRange: string, ingressName: string) => `
-    sum(increase(nginx_ingress_controller_requests{ingress="${ingressName}"}[${timeRange}]) or vector(0))
+  sum_over_time(
+    (nginx:req_inc:5m{ingress="${ingressName}"})[${timeRange}:5m]
+  )
 `
 
 export function CardHTTPErrors({
@@ -25,12 +29,13 @@ export function CardHTTPErrors({
   containerName: string
   ingressName: string
 }) {
-  const { queryTimeRange, endTimestamp } = useServiceOverviewContext()
+  const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: metricsErrorRequest, isLoading: isLoadingMetrics } = useInstantMetrics({
     clusterId,
     query: queryErrorRequest(queryTimeRange, ingressName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_req_errors_number',
@@ -39,6 +44,7 @@ export function CardHTTPErrors({
   const { data: metricsTotalRequest, isLoading: isLoadingMetricsTotalRequest } = useInstantMetrics({
     clusterId,
     query: queryTotalRequest(queryTimeRange, ingressName),
+    startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_req_all_number',

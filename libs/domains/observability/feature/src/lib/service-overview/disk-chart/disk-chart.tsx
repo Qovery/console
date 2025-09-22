@@ -1,24 +1,24 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryDiskReadNvme = (serviceId: string, rateInterval: string, containerName: string) => `
+const queryDiskReadNvme = (containerName: string) => `
   sum by (device) (rate(container_fs_reads_bytes_total{container="${containerName}", device=~"/dev/nvme0.*"}[1m]))
 `
 
-const queryDiskReadNonNvme = (serviceId: string, rateInterval: string, containerName: string) => `
+const queryDiskReadNonNvme = (containerName: string) => `
   sum by (device) (rate(container_fs_reads_bytes_total{container="${containerName}", device!~"/dev/nvme0.*", device!=""}[1m]))
 `
 
-const queryDiskWriteNvme = (serviceId: string, rateInterval: string, containerName: string) => `
+const queryDiskWriteNvme = (containerName: string) => `
   sum by (device) (rate(container_fs_writes_bytes_total{container="${containerName}", device=~"/dev/nvme0.*"}[1m]))
 `
 
-const queryDiskWriteNonNvme = (serviceId: string, rateInterval: string, containerName: string) => `
+const queryDiskWriteNonNvme = (containerName: string) => `
   sum by (device) (rate(container_fs_writes_bytes_total{container=${containerName}"", device!~"/dev/nvme0.*", device!=""}[1m]))
 `
 
@@ -33,16 +33,11 @@ export function DiskChart({
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metricsReadEphemeralStorage, isLoading: isLoadingMetricsReadEphemeralStorage } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskReadNvme(serviceId, rateInterval, containerName),
+    query: queryDiskReadNvme(containerName),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_read_ephemeral',
@@ -52,7 +47,7 @@ export function DiskChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskReadNonNvme(serviceId, rateInterval, containerName),
+    query: queryDiskReadNonNvme(containerName),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_read_persistent',
@@ -62,7 +57,7 @@ export function DiskChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskWriteNvme(serviceId, rateInterval, containerName),
+    query: queryDiskWriteNvme(containerName),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_read_ephemeral',
@@ -72,7 +67,7 @@ export function DiskChart({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryDiskWriteNonNvme(serviceId, rateInterval, containerName),
+    query: queryDiskWriteNonNvme(containerName),
     timeRange,
     boardShortName: 'service_overview',
     metricShortName: 'disk_chart_write_persistent',

@@ -17,6 +17,7 @@ interface ServiceOverviewContextType {
   startTimestamp: string
   endTimestamp: string
   queryTimeRange: string
+  subQueryTimeRange: string
 
   // Handlers
   handleTimeRangeChange: (range: TimeRangeOption) => void
@@ -233,6 +234,15 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
       : timeRange
 
+  // Calculate the average over queryTimeRange with a sub-sampling every 5m or 1m
+  const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60
+  const subQueryTimeRange =
+    isAnyChartZoomed && startTimestamp && endTimestamp
+      ? parseInt(endTimestamp) - parseInt(startTimestamp) > THREE_DAYS_IN_SECONDS
+        ? '5m'
+        : '1m'
+      : '1m'
+
   const value = useMemo<ServiceOverviewContextType>(
     () => ({
       useLocalTime,
@@ -246,6 +256,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       startTimestamp,
       endTimestamp,
       queryTimeRange,
+      subQueryTimeRange,
       handleTimeRangeChange,
       handleZoomTimeRangeChange,
       resetChartZoom,
@@ -293,6 +304,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       lastDropdownTimeRange,
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
+      subQueryTimeRange,
     ]
   )
 

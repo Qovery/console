@@ -7,12 +7,12 @@ import { formatTimestamp } from '../util-chart/format-timestamp'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryHealthyPods = (serviceId: string) => `
-  sum by (condition) (kube_pod_status_ready{condition=~"true|false"}
-* on(namespace,pod) group_left(label_qovery_com_service_id)
-  max by(namespace,pod,label_qovery_com_service_id)(
-    kube_pod_labels{label_qovery_com_service_id="${serviceId}"}
-  ))
+const queryHealthyPods = (serviceId: string, namespace: string) => `
+sum by (condition) (
+  kube_pod_status_ready{condition=~"true|false", namespace="${namespace}"}
+  and on (namespace, pod)
+  kube_pod_labels{namespace="${namespace}", label_qovery_com_service_id="${serviceId}"}
+)
 `
 
 const queryRestartWithReason = (containerName: string, timeRange: string) => `
@@ -57,7 +57,7 @@ const queryMaxReplicas = (containerName: string) => `
 `
 
 const queryMaxLimitReached = (serviceId: string, rateInterval: string) => `
-  sum by (label_qovery_com_service_id) (
+  sum by (pod) (
   increase(
     kube_horizontalpodautoscaler_status_condition{
       condition="ScalingLimited",
@@ -198,10 +198,12 @@ export function InstanceStatusChart({
   serviceId,
   containerName,
   isFullscreen,
+  namespace,
 }: {
   clusterId: string
   serviceId: string
   containerName: string
+  namespace: string
   isFullscreen?: boolean
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, hideEvents, timeRange } = useServiceOverviewContext()
@@ -217,70 +219,27 @@ export function InstanceStatusChart({
     [startTimestamp, endTimestamp]
   )
 
-  const intervalForEvent = useMemo(() => {
-    const startMs = Number(startTimestamp) * 1000
-    const endMs = Number(endTimestamp) * 1000
-    const durationMs = endMs - startMs
-
-    if (durationMs < 24 * 60 * 60 * 1000) {
-      return '1m'
-    } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
-      return '10m'
-    } else {
-      return '6h'
-    }
-  }, [startTimestamp, endTimestamp])
-
-  const intervalForEventInSec = useMemo(() => {
-    const startMs = Number(startTimestamp) * 1000
-    const endMs = Number(endTimestamp) * 1000
-    const durationMs = endMs - startMs
-
-    if (durationMs < 24 * 60 * 60 * 1000) {
-      return 60
-    } else if (durationMs <= 7 * 24 * 60 * 60 * 1000) {
-      return 10 * 60
-    } else {
-      return 6 * 60 * 60
-    }
-  }, [startTimestamp, endTimestamp])
-
-  // Custom step calculation for instance status chart to get more details
-  const customStep = useMemo(() => {
-    const startMs = Number(startTimestamp) * 1000
-    const endMs = Number(endTimestamp) * 1000
-    const durationMs = endMs - startMs
-    const durationHours = durationMs / (1000 * 60 * 60)
-
-    // Optimized for Prometheus 30s interval with more detail
-    if (durationHours <= 0.25) return '30000ms' // 15min: 30s (Prometheus interval)
-    if (durationHours <= 1) return '60000ms' // 1h: 1min
-    if (durationHours <= 6) return '120000ms' // 6h: 2min
-    if (durationHours <= 24) return '300000ms' // 24h: 5min (more detail than default)
-    if (durationHours <= 72) return '600000ms' // 3d: 10min
-    return '1800000ms' // 7d+: 30min
-  }, [startTimestamp, endTimestamp])
-
   const { data: metricsHealthy, isLoading: isLoadingHealthy } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryHealthyPods(serviceId),
-    overriddenStep: customStep,
-    overriddenMaxPoints: 250,
+    query: queryHealthyPods(serviceId, namespace),
+    overriddenMaxPoints: 500,
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_health',
   })
 
-  const { data: metricsRestartsWithReason, isLoading: isLoadingMetricsRestartsWithReason } = useMetrics({
+  const {
+    data: metricsRestartsWithReason,
+    isLoading: isLoadingMetricsRestartsWithReason,
+    stepInSecond: metricsRestartsWithReasonStepInSec,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
     query: queryRestartWithReason(containerName, timeRange),
-    overriddenStep: intervalForEvent, // TODO PG check if necessary
-    overriddenResolution: '0s', // TODO PG check if necessary
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_restart',
   })
@@ -301,8 +260,7 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryMinReplicas(containerName),
-    overriddenStep: customStep,
-    overriddenMaxPoints: 75,
+    overriddenMaxPoints: 50,
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_hpa_min',
   })
@@ -313,8 +271,7 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryMaxReplicas(containerName),
-    overriddenStep: customStep,
-    overriddenMaxPoints: 75,
+    overriddenMaxPoints: 50,
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_hpa_max',
   })
@@ -409,8 +366,11 @@ export function InstanceStatusChart({
             const numValue = Math.floor(parseFloat(value))
             const currentTime = timestamp
 
-            if (numValue > 0 && (numValue !== prevValue || currentTime - prevTime > 3 * intervalForEventInSec)) {
-              if (currentTime - prevTime > 3 * intervalForEventInSec) {
+            if (
+              numValue > 0 &&
+              (numValue !== prevValue || currentTime - prevTime > 3 * metricsRestartsWithReasonStepInSec)
+            ) {
+              if (currentTime - prevTime > 3 * metricsRestartsWithReasonStepInSec) {
                 prevValue = 0
               }
 
@@ -489,7 +449,7 @@ export function InstanceStatusChart({
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
 
     return referenceLines
-  }, [metricsK8sEvent, metricsHpaMaxLimitReached, metricsRestartsWithReason, intervalForEventInSec])
+  }, [metricsK8sEvent, metricsHpaMaxLimitReached, metricsRestartsWithReason])
 
   const isLoading = useMemo(
     () =>
@@ -549,7 +509,7 @@ export function InstanceStatusChart({
         type="linear"
         stroke="var(--color-neutral-300)"
         strokeWidth={2}
-        connectNulls={false}
+        connectNulls={true}
         dot={false}
         isAnimationActive={false}
       />
@@ -559,7 +519,7 @@ export function InstanceStatusChart({
         type="linear"
         stroke="var(--color-red-500)"
         strokeWidth={2}
-        connectNulls={false}
+        connectNulls={true}
         dot={false}
         isAnimationActive={false}
       />

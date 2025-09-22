@@ -1,43 +1,36 @@
 import { useMemo } from 'react'
 import { Line } from 'recharts'
-import { calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const queryResponseSize = (rateInterval: string, ingressName: string) => `
-  sum by (path) (rate(nginx_ingress_controller_response_size_sum{ingress="${ingressName}"}[${rateInterval}]))
+const queryResponseSize = (ingressName: string) => `
+  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"})
 `
 
-const queryRequestSize = (rateInterval: string, ingressName: string) => `
-  sum by (path) (rate(nginx_ingress_controller_request_size_sum{ingress="${ingressName}"}[${rateInterval}]))
+const queryRequestSize = (ingressName: string) => `
+   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"})
 `
 
 export function NetworkRequestSizeChart({
   clusterId,
   serviceId,
-  containerName,
   ingressName,
 }: {
   clusterId: string
   serviceId: string
-  containerName: string
   ingressName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
-
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
 
   const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryResponseSize(rateInterval, ingressName),
+    query: queryResponseSize(ingressName),
     boardShortName: 'service_overview',
     metricShortName: 'network_resp_size',
   })
@@ -47,7 +40,7 @@ export function NetworkRequestSizeChart({
     startTimestamp,
     endTimestamp,
     timeRange,
-    query: queryRequestSize(rateInterval, ingressName),
+    query: queryRequestSize(ingressName),
     boardShortName: 'service_overview',
     metricShortName: 'network_req_size',
   })
