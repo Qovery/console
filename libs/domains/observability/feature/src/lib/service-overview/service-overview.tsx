@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Callout, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useContainerName } from '../hooks/use-container-name/use-container-name'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useIngressName } from '../hooks/use-ingress-name/use-ingress-name'
@@ -97,7 +97,12 @@ function ServiceOverviewContent() {
     )
   }
 
-  if (!environment || !service || !containerName || !namespace) return null
+  if (!environment || !service || !containerName || !namespace)
+    return (
+      <div className="flex h-full w-full items-center justify-center p-5">
+        <Chart.Loader />
+      </div>
+    )
 
   return (
     <div className="isolate">
