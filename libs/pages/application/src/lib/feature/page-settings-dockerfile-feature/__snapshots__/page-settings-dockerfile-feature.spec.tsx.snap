@@ -27,7 +27,7 @@ exports[`PageSettingsDockerfileFeature should match snapshot 1`] = `
                 The Dockerfile allows to package your application with the right CLIs/Libraries and as well define the command to run during its execution. The Dockerfile can be stored in your git repository or on the Qovery control plane (Raw).
               </p>
               <button
-                class="inline-flex shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-6 px-2 rounded bg-brand-50 border border-brand-500 text-brand-500 hover:[&:not(:active):not(:disabled)]:bg-white w-fit items-center gap-1"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-xs h-6 px-2 rounded bg-brand-50 border border-brand-500 text-brand-500 hover:[&:not(:active):not(:disabled)]:bg-white w-fit items-center gap-1"
               >
                 <i
                   aria-hidden="true"
@@ -246,7 +246,7 @@ exports[`PageSettingsDockerfileFeature should match snapshot 1`] = `
               class="flex justify-end"
             >
               <button
-                class="inline-flex items-center shrink-0 font-medium transition focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
                 type="submit"
               >
                 Save
