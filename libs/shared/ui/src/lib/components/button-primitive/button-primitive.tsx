@@ -96,6 +96,9 @@ const _buttonVariants = cva(
           'border-brand-500',
           'text-brand-500',
           'hover:[&:not(:active):not(:disabled)]:bg-white',
+          'dark:border-brand-400',
+          'dark:text-brand-400',
+          'dark:disabled:bg-transparent',
         ],
       },
       {

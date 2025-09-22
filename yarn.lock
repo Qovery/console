@@ -21611,6 +21611,8 @@ __metadata:
   checksum: 89753d44125bd9512568e9fa32691e518605b1800bff90a3c8ef77e3aaa39574fb5511a92c54826bcedd2fc66339805952836154edbb8007620cc22d101547bc
   languageName: node
   linkType: hard
+  languageName: node
+  linkType: hard
 
 "qovery-ws-typescript-axios@npm:^0.1.334":
   version: 0.1.334

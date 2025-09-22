@@ -1,9 +1,8 @@
 import { type ServiceInfraLogResponseDto } from 'qovery-ws-typescript-axios'
-import { useContext } from 'react'
 import { Ansi, Badge, TablePrimitives } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { type LogType } from '../../hooks/use-service-logs/use-service-logs'
-import { UpdateTimeContext } from '../../update-time-context/update-time-context'
+import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 
 const { Table } = TablePrimitives
 
@@ -16,7 +15,8 @@ export interface RowInfraLogsProps {
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
 export function RowInfraLogs({ data, enabled, hasMultipleContainers }: RowInfraLogsProps) {
-  const { utc } = useContext(UpdateTimeContext)
+  const { updateTimeContextValue } = useServiceLogsContext()
+  const { utc } = updateTimeContextValue
 
   if (!enabled) return null
 

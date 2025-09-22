@@ -4,30 +4,30 @@ import { useSearchParams } from 'react-router-dom'
 import { serviceLogs } from '@qovery/domains/service-logs/data-access'
 import { useDebounce } from '@qovery/shared/util-hooks'
 
-export interface UseServiceHistoryLogsProps {
+export interface UseServiceLiveLogsProps {
+  organizationId: string
   clusterId: string
+  projectId: string
+  environmentId: string
   serviceId: string
-  startDate?: Date
-  endDate?: Date
   enabled?: boolean
 }
 
 export type LogType = 'INFRA' | 'SERVICE'
 
-// Type for formatted service logs
-// type FormattedServiceLog = ServiceLogResponseDto & { type: LogType; id: number }
-
 const POD_NAME_KEY = 'pod_name'
 const DEBOUNCE_TIME = 400
 const OFFSET = 20
 
-export function useServiceHistoryLogs({
+// This hook simplifies the process of fetching and managing service logs data
+export function useServiceLiveLogs({
+  organizationId,
   clusterId,
+  projectId,
+  environmentId,
   serviceId,
-  startDate,
-  endDate,
   enabled = false,
-}: UseServiceHistoryLogsProps) {
+}: UseServiceLiveLogsProps) {
   const logCounter = useRef(0)
   const [searchParams] = useSearchParams()
 
@@ -45,10 +45,8 @@ export function useServiceHistoryLogs({
     ...serviceLogs.serviceLogs({
       clusterId,
       serviceId,
-      startDate,
-      endDate,
     }),
-    enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(startDate) && Boolean(endDate) && enabled,
+    enabled,
   })
 
   // const data = useMemo(() => {
@@ -77,7 +75,6 @@ export function useServiceHistoryLogs({
   const pausedDataLogs = useMemo(() => debouncedLogs, [pauseLogs])
 
   // console.log('debouncedLogs', debouncedLogs)
-  console.log('history logs', debouncedLogs)
 
   return {
     data: pauseLogs ? pausedDataLogs : debouncedLogs,
@@ -92,4 +89,4 @@ export function useServiceHistoryLogs({
   }
 }
 
-export default useServiceHistoryLogs
+export default useServiceLiveLogs

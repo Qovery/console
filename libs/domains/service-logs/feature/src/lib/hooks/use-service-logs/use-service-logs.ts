@@ -107,6 +107,7 @@ export function useServiceLogs({
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      // query: `{qovery_com_service_id="${serviceId}"}`, // si query les filtre ne fonctionne plus
       infra_component_type: 'NGINX',
     },
     enabled:
