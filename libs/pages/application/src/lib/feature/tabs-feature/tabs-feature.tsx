@@ -28,6 +28,7 @@ function ContentRightEnvVariable({
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', () => APIVariableScopeEnum.JOB)
     .with('HELM', () => APIVariableScopeEnum.HELM)
+    .with('TERRAFORM', () => APIVariableScopeEnum.TERRAFORM)
     .otherwise(() => undefined)
 
   const { openModal, closeModal } = useModal()
