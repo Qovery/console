@@ -48,7 +48,8 @@ const CommandList = forwardRef<ElementRef<typeof CmdK.List>, CommandListProps>(f
         className
       )}
       style={{
-        height: 'min(400px, var(--cmdk-list-height))',
+        minHeight: '400px',
+        height: 'max(400px, var(--cmdk-list-height))',
       }}
       {...props}
     />
