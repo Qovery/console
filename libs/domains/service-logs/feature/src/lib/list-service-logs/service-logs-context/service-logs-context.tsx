@@ -1,4 +1,3 @@
-import { type ColumnFiltersState } from '@tanstack/react-table'
 import download from 'downloadjs'
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
@@ -17,22 +16,11 @@ interface ServiceLogsContextType {
   serviceStatus: Status
   environmentStatus?: EnvironmentStatus
 
-  // Date/Time management
-  isOpenTimestamp: boolean
-  setStartDate: (date?: Date) => void
-  setEndDate: (date?: Date) => void
-  setIsOpenTimestamp: (open: boolean) => void
-  clearDate: () => void
-
   // Time format preferences
   updateTimeContextValue: UpdateTimeContextProps
   setUpdateTimeContext: (
     value: UpdateTimeContextProps | ((prev: UpdateTimeContextProps) => UpdateTimeContextProps)
   ) => void
-
-  // Live/Historical mode toggle
-  isLiveMode: boolean
-  setIsLiveMode: (isLive: boolean) => void
 
   // Actions
   downloadLogs: (logs: NormalizedServiceLog[]) => void
@@ -64,10 +52,10 @@ export function ServiceLogsProvider({
   serviceStatus,
   environmentStatus,
 }: ServiceLogsProviderProps) {
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  // const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
-  // Date/Time states
-  const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
+  // Loading
+  // const [logsIsLoading, setLogsIsLoading] = useState(false)
 
   // Time format preferences
   const [updateTimeContextValue, setUpdateTimeContext] = useState<UpdateTimeContextProps>({
@@ -75,43 +63,24 @@ export function ServiceLogsProvider({
   })
 
   // Live/Historical mode toggle (default to live mode when no dates)
-  const isLiveMode = !queryParams.startDate && !queryParams.endDate
+  // const isLiveMode = useMemo(
+  //   () => !queryParams.startDate && !queryParams.endDate,
+  //   [queryParams.startDate, queryParams.endDate]
+  // )
 
-  // Actions
-  const setStartDate = useCallback(
-    (date?: Date) => {
-      setQueryParams({ startDate: date?.toISOString() })
-    },
-    [setQueryParams]
-  )
-
-  const setEndDate = useCallback(
-    (date?: Date) => {
-      setQueryParams({ endDate: date?.toISOString() })
-    },
-    [setQueryParams]
-  )
-
-  const clearDate = useCallback(() => {
-    setQueryParams({
-      startDate: undefined,
-      endDate: undefined,
-    })
-  }, [setQueryParams])
-
-  const setIsLiveMode = useCallback(
-    (isLive: boolean) => {
-      if (isLive) {
-        // Reset dates to enable live mode
-        setQueryParams({ startDate: undefined, endDate: undefined })
-      } else {
-        // Set current time as default when switching to historical mode
-        const now = new Date().toISOString()
-        setQueryParams({ startDate: now, endDate: now })
-      }
-    },
-    [setQueryParams]
-  )
+  // const setIsLiveMode = useCallback(
+  //   (isLive: boolean) => {
+  //     if (isLive) {
+  //       // Reset dates to enable live mode
+  //       setQueryParams({ startDate: undefined, endDate: undefined })
+  //     } else {
+  //       // Set current time as default when switching to historical mode
+  //       const now = new Date().toISOString()
+  //       setQueryParams({ startDate: now, endDate: now })
+  //     }
+  //   },
+  //   [setQueryParams]
+  // )
 
   const downloadLogs = useCallback((logs: NormalizedServiceLog[]) => {
     download(JSON.stringify(logs), `data-${Date.now()}.json`, 'text/json;charset=utf-8')
@@ -125,38 +94,14 @@ export function ServiceLogsProvider({
       serviceStatus,
       environmentStatus,
 
-      // Date/Time management
-      isOpenTimestamp,
-      setStartDate,
-      setEndDate,
-      setIsOpenTimestamp,
-      clearDate,
-
       // Time format preferences
       updateTimeContextValue,
       setUpdateTimeContext,
 
-      // Live/Historical mode toggle
-      isLiveMode,
-      setIsLiveMode,
-
       // Actions
       downloadLogs,
     }),
-    [
-      environment,
-      serviceId,
-      serviceStatus,
-      environmentStatus,
-      isOpenTimestamp,
-      setStartDate,
-      setEndDate,
-      clearDate,
-      updateTimeContextValue,
-      isLiveMode,
-      setIsLiveMode,
-      downloadLogs,
-    ]
+    [environment, serviceId, serviceStatus, environmentStatus, updateTimeContextValue, downloadLogs]
   )
 
   return <ServiceLogsContext.Provider value={value}>{children}</ServiceLogsContext.Provider>
