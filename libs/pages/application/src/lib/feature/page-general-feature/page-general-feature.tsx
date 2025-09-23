@@ -16,16 +16,15 @@ export function PageGeneralFeature() {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
-  const hasMetrics =
-    useMemo(
-      () =>
-        cluster?.cloud_provider === 'AWS' &&
-        cluster?.metrics_parameters?.enabled &&
-        match(service?.serviceType)
-          .with('APPLICATION', 'CONTAINER', () => true)
-          .otherwise(() => false),
-      [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
-    ) ?? false
+  const hasNoMetrics = useMemo(
+    () =>
+      cluster?.cloud_provider === 'AWS' &&
+      !cluster?.metrics_parameters?.enabled &&
+      match(service?.serviceType)
+        .with('APPLICATION', 'CONTAINER', () => true)
+        .otherwise(() => false),
+    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
+  )
 
   return (
     <>
@@ -35,7 +34,7 @@ export function PageGeneralFeature() {
           environmentId={environmentId}
           isCronJob={service?.serviceType === 'JOB' && service.job_type === 'CRON'}
           isLifecycleJob={service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE'}
-          hasMetrics={hasMetrics}
+          hasNoMetrics={hasNoMetrics}
         />
       )}
       {service && environment && (

@@ -10,7 +10,7 @@ export interface PageGeneralProps {
   environmentId: string
   isCronJob: boolean
   isLifecycleJob: boolean
-  hasMetrics: boolean
+  hasNoMetrics: boolean
 }
 
 function ObservabilityCallout() {
@@ -167,11 +167,11 @@ function ObservabilityCallout() {
   )
 }
 
-export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob, hasMetrics }: PageGeneralProps) {
+export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJob, hasNoMetrics }: PageGeneralProps) {
   return (
     <div className="flex grow flex-row">
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
-        {!hasMetrics && <ObservabilityCallout />}
+        {hasNoMetrics && <ObservabilityCallout />}
         <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
         <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
           {isCronJob && (
