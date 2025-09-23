@@ -1,23 +1,26 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { ServiceOverview } from '@qovery/domains/observability/feature'
+import {
+  EnableObservabilityButtonContactUs,
+  EnableObservabilityContent,
+  EnableObservabilityVideo,
+  ServiceOverview,
+} from '@qovery/domains/observability/feature'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
-import { Icon } from '@qovery/shared/ui'
+import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { PlaceholderMonitoring } from './placeholder-monitoring'
 
 export function PageMonitoringFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
 
-  const isServiceObsEnabled = useFeatureFlagVariantKey('service-obs')
-
   const { data: environment } = useEnvironment({ environmentId })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
-  const { data: service } = useService({ environmentId, serviceId: applicationId })
-  const { data: cluster } = useCluster({
+  const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId: applicationId })
+  const { data: cluster, isFetched: isClusterFetched } = useCluster({
     organizationId: environment?.organization.id ?? '',
     clusterId: environment?.cluster_id ?? '',
   })
@@ -26,13 +29,13 @@ export function PageMonitoringFeature() {
 
   const hasMetrics = useMemo(
     () =>
-      (isServiceObsEnabled &&
+      (cluster?.cloud_provider === 'AWS' &&
         cluster?.metrics_parameters?.enabled &&
         match(service?.serviceType)
           .with('APPLICATION', 'CONTAINER', () => true)
           .otherwise(() => false)) ||
       false,
-    [isServiceObsEnabled, cluster?.metrics_parameters?.enabled, service?.serviceType]
+    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
   )
 
   const noMetricsAvailable = useMemo(
@@ -40,7 +43,30 @@ export function PageMonitoringFeature() {
     [serviceStatus?.state]
   )
 
-  if (!hasMetrics) return null
+  if (!isClusterFetched || !isServiceFetched) return null
+
+  if (!hasMetrics)
+    return (
+      <div className="flex flex-col">
+        <div className="grid gap-32 p-8 pb-10 md:grid-cols-2">
+          <div className="flex flex-col gap-8 md:min-w-[540px] 2xl:mt-10">
+            <EnableObservabilityContent />
+            <div className="flex items-center gap-4">
+              <EnableObservabilityButtonContactUs size="lg" />
+              <span className="font-semibold text-neutral-400">Starting from $299/month</span>
+            </div>
+          </div>
+          <div className="relative left-4 flex h-full w-full items-center 2xl:left-0">
+            <EnableObservabilityVideo />
+          </div>
+        </div>
+        <Section className="relative h-full w-full gap-4 border-t border-neutral-250 p-8 pt-10">
+          <Heading weight="medium">Service health check</Heading>
+          <PlaceholderMonitoring />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
+        </Section>
+      </div>
+    )
 
   return noMetricsAvailable ? (
     <div className="px-10 py-7">
