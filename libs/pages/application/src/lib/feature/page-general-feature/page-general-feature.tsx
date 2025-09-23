@@ -16,16 +16,15 @@ export function PageGeneralFeature() {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
-  const hasMetrics =
-    useMemo(() => {
-      return (
-        cluster?.cloud_provider === 'AWS' &&
-        !cluster?.metrics_parameters?.enabled &&
-        match(service?.serviceType)
-          .with('APPLICATION', 'CONTAINER', () => true)
-          .otherwise(() => false)
-      )
-    }, [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]) ?? false
+  const hasMetrics = useMemo(
+    () =>
+      cluster?.cloud_provider === 'AWS' &&
+      cluster?.metrics_parameters?.enabled &&
+      match(service?.serviceType)
+        .with('APPLICATION', 'CONTAINER', () => true)
+        .otherwise(() => false),
+    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
+  )
 
   return (
     <>
