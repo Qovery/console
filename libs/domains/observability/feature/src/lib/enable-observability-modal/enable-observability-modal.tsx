@@ -5,19 +5,31 @@ export function EnableObservabilityContent() {
   return (
     <div className="flex flex-col gap-3">
       <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">Observability is here!</h2>
-      <div className="flex flex-col leading-6">
+      <div className="flex flex-col">
         <p className="text-neutral-350 dark:text-neutral-50">
           We've just released our brand-new Observability feature, now available for everyone. <br />
           Why is this exciting?
         </p>
-        <ul className="list-disc pl-5 text-neutral-350">
-          <li>1-click setup, Dev + Ops friendly.</li>
-          <li>Low-opinionated, streamlined customization.</li>
-          <li>No maintenance needed (Qovery is managed within your infrastructure).</li>
-          <li>Data stays in the customer infrastructure.</li>
-          <li>Correlated Infra + App coverage for easy troubleshooting.</li>
-          <li>Strong MTTR (Mean time to repair) reduction.</li>
-          <li>Designed for use by Software Engineers (troubleshoot & recover apps directly)</li>
+        <ul className="list-disc pl-5 leading-relaxed text-neutral-350">
+          <li>
+            <strong>1-click setup</strong>: Dev + Ops friendly
+          </li>
+          <li>
+            <strong>Zero maintenance</strong>: Qovery manages it for you within your infrastructure
+          </li>
+          <li>
+            <strong>Your data stays in your infrastructure</strong>
+          </li>
+          <li>
+            <strong>Correlated infrastructure and application events</strong>: troubleshoot with ease
+          </li>
+          <li>
+            <strong>Faster recovery</strong>: strong MTTR (Mean Time to Repair) reduction
+          </li>
+          <li>
+            <strong>Built to be used by Software Engineers</strong>: troubleshoot and recover directly from your
+            application
+          </li>
         </ul>
       </div>
     </div>
