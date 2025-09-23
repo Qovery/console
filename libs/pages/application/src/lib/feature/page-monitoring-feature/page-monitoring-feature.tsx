@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -18,8 +17,6 @@ import { PlaceholderMonitoring } from './placeholder-monitoring'
 export function PageMonitoringFeature() {
   const { applicationId = '', environmentId = '' } = useParams()
 
-  const isServiceObsEnabled = useFeatureFlagVariantKey('service-obs')
-
   const { data: environment } = useEnvironment({ environmentId })
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId: applicationId })
   const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId: applicationId })
@@ -32,13 +29,13 @@ export function PageMonitoringFeature() {
 
   const hasMetrics = useMemo(
     () =>
-      (isServiceObsEnabled &&
+      (cluster?.cloud_provider === 'AWS' &&
         cluster?.metrics_parameters?.enabled &&
         match(service?.serviceType)
           .with('APPLICATION', 'CONTAINER', () => true)
           .otherwise(() => false)) ||
       false,
-    [isServiceObsEnabled, cluster?.metrics_parameters?.enabled, service?.serviceType]
+    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
   )
 
   const noMetricsAvailable = useMemo(
