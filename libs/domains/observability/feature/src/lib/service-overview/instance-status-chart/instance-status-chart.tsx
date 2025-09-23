@@ -260,7 +260,7 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryMinReplicas(containerName),
-    overriddenMaxPoints: 50,
+    overriddenMaxPoints: 500,
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_hpa_min',
   })
@@ -271,7 +271,7 @@ export function InstanceStatusChart({
     endTimestamp,
     timeRange,
     query: queryMaxReplicas(containerName),
-    overriddenMaxPoints: 50,
+    overriddenMaxPoints: 500,
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_hpa_max',
   })
