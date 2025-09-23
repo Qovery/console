@@ -171,7 +171,7 @@ export function PageGeneral({ serviceId, environmentId, isCronJob, isLifecycleJo
   return (
     <div className="flex grow flex-row">
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 overflow-y-auto px-10 py-7">
-        {hasMetrics && <ObservabilityCallout />}
+        {!hasMetrics && <ObservabilityCallout />}
         <PodStatusesCallout environmentId={environmentId} serviceId={serviceId} />
         <PodsMetrics environmentId={environmentId} serviceId={serviceId}>
           {isCronJob && (
