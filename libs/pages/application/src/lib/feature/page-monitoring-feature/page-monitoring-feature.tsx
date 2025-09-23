@@ -48,8 +48,8 @@ export function PageMonitoringFeature() {
   if (!hasMetrics)
     return (
       <div className="flex flex-col">
-        <div className="grid gap-32 p-8 pb-10 md:grid-cols-2">
-          <div className="flex flex-col gap-8 md:min-w-[540px] 2xl:mt-10">
+        <div className="mx-auto grid max-w-[1920px] gap-32 p-8 pb-10 md:grid-cols-2">
+          <div className="flex flex-col gap-8 md:min-w-[540px]">
             <EnableObservabilityContent />
             <div className="flex items-center gap-4">
               <EnableObservabilityButtonContactUs size="lg" />
