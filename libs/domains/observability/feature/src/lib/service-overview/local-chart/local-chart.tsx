@@ -22,7 +22,7 @@ import { Tooltip as TooltipChart, type UnitType } from './tooltip'
 import { useChartEvents } from './use-chart-events'
 
 export interface ReferenceLineEvent {
-  type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe'
+  type: 'metric' | 'event' | 'exit-code' | 'k8s-event' | 'probe' | 'hpa-area'
   timestamp: number
   reason: string
   icon: IconName
@@ -200,7 +200,7 @@ export const ChartContent = memo(function ChartContent({
             )
           }
         />
-        {!hideEvents && referenceLineData?.map((event) => createAlignedReferenceLine(event))}
+        {!hideEvents && referenceLineData?.filter((e) => e.type !== 'hpa-area').map(createAlignedReferenceLine)}
         {children}
         <YAxis
           tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
