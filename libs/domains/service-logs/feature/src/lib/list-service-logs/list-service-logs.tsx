@@ -10,7 +10,7 @@ import { useServiceLiveLogs } from '../hooks/use-service-live-logs/use-service-l
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs-placeholder'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
-import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
+import ShowPreviousLogsButton from '../show-previous-logs-button/show-previous-logs-button'
 import { HeaderServiceLogs } from './header-service-logs/header-service-logs'
 import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
@@ -46,7 +46,6 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   // Live logs hook - only enabled when in live mode
   const {
     data: liveLogs = [],
-    enabledNginx,
     pauseLogs,
     setPauseLogs,
     newLogsAvailable,
@@ -61,9 +60,10 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   // Historical logs hook - only enabled when in historical mode
   const {
     data: historyLogs = [],
-    showPreviousLogs,
-    setShowPreviousLogs,
     isFetched: isHistoryLogsFetched,
+    loadPreviousLogs,
+    hasMoreLogs,
+    isPaginationLoading,
   } = useServiceHistoryLogs({
     clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
@@ -83,11 +83,12 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
 
   // `useEffect` used to scroll to the bottom of the logs when new logs are added or when the pauseLogs state changes
   useEffect(() => {
+    if (!isLiveMode) return
     const section = refScrollSection.current
     if (!section) return
 
     !pauseLogs && section.scroll(0, section.scrollHeight)
-  }, [logs, pauseLogs])
+  }, [logs, pauseLogs, isLiveMode])
 
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
@@ -152,10 +153,19 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
             }
           }}
         >
-          {showPreviousLogs && setShowPreviousLogs && (
+          {/* {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
+            <button
+              onClick={loadPreviousLogs}
+              disabled={!hasMoreLogs || isPaginationLoading}
+              className="mb-2 rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:bg-gray-500"
+            >
+              {isPaginationLoading ? 'Loading...' : 'Load previous logs'}
+            </button>
+          )} */}
+          {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
             <ShowPreviousLogsButton
-              showPreviousLogs={showPreviousLogs}
-              setShowPreviousLogs={setShowPreviousLogs}
+              showPreviousLogs={!hasMoreLogs}
+              setShowPreviousLogs={loadPreviousLogs}
               setPauseLogs={setPauseLogs}
             />
           )}

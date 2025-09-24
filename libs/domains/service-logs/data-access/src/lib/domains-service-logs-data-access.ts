@@ -126,7 +126,7 @@ export function normalizeServiceLog(log: ServiceLog): NormalizedServiceLog {
     instance: log.pod,
     container: log.container,
     exporter: log.exporter,
-    level: log.level,
+    level: log.level ?? 'UNKNOWN',
     version: log.app, // API uses 'app' field for version
   }
 }
@@ -137,6 +137,7 @@ export function normalizeWebSocketLog(log: {
   message?: string
   pod_name?: string
   container_name?: string
+  severity_text?: string
   version?: string
 }): NormalizedServiceLog {
   return {
@@ -145,7 +146,7 @@ export function normalizeWebSocketLog(log: {
     instance: log.pod_name,
     container: log.container_name,
     exporter: undefined, // WebSocket logs don't have exporter
-    level: undefined, // WebSocket logs don't have level in the main object
+    level: log.severity_text ?? 'UNKNOWN',
     version: log.version,
   }
 }
@@ -158,6 +159,8 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     endDate,
     timeRange,
     filters,
+    limit,
+    direction,
   }: {
     clusterId: string
     serviceId: string
@@ -165,8 +168,10 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     endDate?: Date
     timeRange?: string
     filters?: Omit<LogFilters, 'serviceId'>
+    limit?: number
+    direction?: 'forward' | 'backward'
   }) => ({
-    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters],
+    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters, limit, direction],
     async queryFn() {
       // Convert Date objects to nanosecond Unix epoch format for Loki API
       // https://grafana.com/docs/loki/latest/reference/loki-http-api/#timestamps
@@ -181,11 +186,11 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
         query,
         startTimestamp,
         endTimestamp,
+        limit?.toString(),
         undefined,
         undefined,
         undefined,
-        undefined,
-        'forward'
+        direction || 'forward'
       )
 
       if (response.data.response) {
