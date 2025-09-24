@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryParams } from 'use-query-params'
-import { normalizeServiceLog, serviceLogs } from '@qovery/domains/service-logs/data-access'
+import { type ServiceLog, normalizeServiceLog, serviceLogs } from '@qovery/domains/service-logs/data-access'
 import { queryParamsServiceLogs } from '../../list-service-logs/service-logs-context/service-logs-context'
 
 export interface UseServiceHistoryLogsProps {
@@ -10,11 +10,15 @@ export interface UseServiceHistoryLogsProps {
   enabled?: boolean
 }
 
+const LOGS_PER_BATCH = 200
+
 export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }: UseServiceHistoryLogsProps) {
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
-  const [showPreviousLogs, setShowPreviousLogs] = useState(false)
-  const [enabledNginx, setEnabledNginx] = useState(false)
+  const [accumulatedLogs, setAccumulatedLogs] = useState<ServiceLog[]>([])
+  const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null)
+  const [hasMoreLogs, setHasMoreLogs] = useState(true)
+  const [isPaginationLoading, setIsPaginationLoading] = useState(false)
 
   const startDate = useMemo(
     () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
@@ -26,7 +30,13 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     [queryParams.endDate]
   )
 
-  // Build filters from query parameters
+  useEffect(() => {
+    if (endDate && !currentEndDate) {
+      setCurrentEndDate(endDate)
+      setAccumulatedLogs([])
+    }
+  }, [endDate, currentEndDate])
+
   const filters = useMemo(
     () => ({
       level: queryParams.level || undefined,
@@ -38,38 +48,84 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     [queryParams.level, queryParams.instance, queryParams.container, queryParams.message, queryParams.version]
   )
 
-  // Fetch service logs using useQuery instead of websocket
-  const {
-    data: serviceLogsData = [],
-    isFetched,
-    isLoading,
-  } = useQuery({
+  const { data: logs = [], isFetched } = useQuery({
+    keepPreviousData: true,
     ...serviceLogs.serviceLogs({
       clusterId,
       serviceId,
       startDate,
-      endDate,
+      endDate: currentEndDate ?? undefined,
       filters,
+      direction: 'backward',
+      limit: LOGS_PER_BATCH,
     }),
-    enabled:
-      Boolean(clusterId) &&
-      Boolean(serviceId) &&
-      Boolean(queryParams.startDate) &&
-      Boolean(queryParams.endDate) &&
-      enabled,
+    enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(currentEndDate) && enabled,
   })
 
-  const logs = useMemo(() => {
-    return serviceLogsData.map(normalizeServiceLog)
-  }, [serviceLogsData])
+  // Accumulate logs when new data arrives
+  useEffect(() => {
+    if (isFetched && logs.length > 0) {
+      setAccumulatedLogs((prev) => {
+        const existingTimestamps = new Set(prev.map((log) => log.timestamp))
+        const newLogs = logs.filter((log) => !existingTimestamps.has(log.timestamp))
+        return [...newLogs, ...prev]
+      })
+      setIsPaginationLoading(false)
+    }
+  }, [isFetched, logs])
+
+  // Check if we have no more logs to load
+  useEffect(() => {
+    if (isFetched && logs.length === 0 && isPaginationLoading) {
+      setHasMoreLogs(false)
+      setIsPaginationLoading(false)
+    }
+  }, [isFetched, logs.length, isPaginationLoading])
+
+  const loadPreviousLogs = useCallback(async () => {
+    if (accumulatedLogs.length === 0 || !hasMoreLogs || isPaginationLoading) return
+    setIsPaginationLoading(true)
+
+    try {
+      const timestampValue = accumulatedLogs[0]?.timestamp
+      if (!timestampValue) return
+
+      const timestampNum = typeof timestampValue === 'string' ? parseInt(timestampValue, 10) : timestampValue
+
+      // Use the oldest log timestamp as the new end date (minus 1ms to avoid duplicates)
+      const newEndDate = new Date(timestampNum - 1)
+      setCurrentEndDate(newEndDate)
+    } catch (error) {
+      setIsPaginationLoading(false)
+      console.error('Error in loadPreviousLogs:', error)
+    }
+  }, [accumulatedLogs, hasMoreLogs, isPaginationLoading])
+
+  const normalizedLogs = useMemo(() => {
+    return accumulatedLogs.map(normalizeServiceLog)
+  }, [accumulatedLogs])
+
+  // Reset when query params change significantly
+  useEffect(() => {
+    setCurrentEndDate(endDate || null)
+    setHasMoreLogs(true)
+    setAccumulatedLogs([])
+    setIsPaginationLoading(false)
+  }, [clusterId, serviceId, startDate, endDate])
+
+  // Set hasMoreLogs appropriately when we first get data
+  useEffect(() => {
+    if (isFetched && logs.length > 0 && accumulatedLogs.length === logs.length) {
+      setHasMoreLogs(logs.length === LOGS_PER_BATCH)
+    }
+  }, [isFetched, logs.length, accumulatedLogs.length])
 
   return {
-    data: logs,
-    showPreviousLogs,
-    setShowPreviousLogs,
-    enabledNginx,
-    setEnabledNginx,
-    isFetched: isFetched && !isLoading,
+    data: normalizedLogs,
+    isFetched,
+    loadPreviousLogs,
+    hasMoreLogs,
+    isPaginationLoading,
   }
 }
 

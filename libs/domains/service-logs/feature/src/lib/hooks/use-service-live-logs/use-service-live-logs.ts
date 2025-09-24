@@ -72,7 +72,9 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       }
     ) => {
       setNewLogsAvailable(true)
+      console.log('log', log)
       const normalizedLog = normalizeWebSocketLog(log)
+      console.log('normalizedLog', normalizedLog)
       setIsFetched(true)
 
       serviceLogsBuffer.current.push(normalizedLog)
