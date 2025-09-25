@@ -132,9 +132,9 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
           </Button>
         </div>
         {hasPermissionError && (
-          <Callout.Root color="red" className="mb-6">
+          <Callout.Root color="yellow" className="mb-8">
             <Callout.Icon>
-              <Icon iconName="triangle-exclamation" className="text-red-600" />
+              <Icon iconName="circle-info" iconStyle="regular" />
             </Callout.Icon>
             <Callout.Text>
               <Callout.TextHeading>Permission denied</Callout.TextHeading>

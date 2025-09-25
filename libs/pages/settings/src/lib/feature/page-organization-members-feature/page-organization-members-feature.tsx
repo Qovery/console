@@ -16,6 +16,7 @@ import { membersMock } from '@qovery/shared/factories'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
+import { type SerializedError } from '@qovery/shared/utils'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
@@ -36,7 +37,7 @@ export function PageOrganizationMembersFeature() {
   })
   const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
 
-  const hasPermissionError = membersError?.response?.status === 403
+  const hasPermissionError = (membersError as SerializedError)?.response?.status === 403
   const { mutateAsync: editMemberRole } = useEditMemberRole()
   const { mutateAsync: deleteMember } = useDeleteMember()
   const { mutateAsync: deleteInviteMember } = useDeleteInviteMember()
