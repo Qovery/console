@@ -47,6 +47,7 @@ function ServiceOverviewContent() {
 
   const hasOnlyPrivatePorts =
     !hasPublicPort &&
+    environment?.cloud_provider?.provider === 'AWS' &&
     ((service?.serviceType === 'APPLICATION' && (service?.ports || []).some((port) => !port.publicly_accessible)) ||
       (service?.serviceType === 'CONTAINER' && (service?.ports || []).some((port) => !port.publicly_accessible)))
 

@@ -18,7 +18,7 @@ export function PageGeneralFeature() {
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
   const hasNoMetrics = useMemo(
     () =>
-      cluster?.cloud_provider === 'AWS' &&
+      (cluster?.cloud_provider === 'AWS' || cluster?.cloud_provider === 'SCW') &&
       !cluster?.metrics_parameters?.enabled &&
       match(service?.serviceType)
         .with('APPLICATION', 'CONTAINER', () => true)
