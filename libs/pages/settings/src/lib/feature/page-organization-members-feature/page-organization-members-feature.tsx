@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { EnvironmentModeEnum, type InviteMemberRequest, type Member } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   useAvailableRoles,
@@ -13,7 +13,7 @@ import {
   useTransferOwnershipMemberRole,
 } from '@qovery/domains/organizations/feature'
 import { membersMock } from '@qovery/shared/factories'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useModal, useModalConfirmation, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
@@ -26,11 +26,13 @@ export function PageOrganizationMembersFeature() {
 
   useDocumentTitle('Members - Organization settings')
 
-  const { data: members = membersDataMock, isFetched: isFetchedMembers } = useMembers({ organizationId })
+  const { data: members = membersDataMock, isFetched: isFetchedMembers, error: membersError } = useMembers({ organizationId })
   const { data: inviteMembers = [] } = useInviteMembers({
     organizationId,
   })
   const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
+  
+  const [hasPermissionError, setHasPermissionError] = useState(false)
   const { mutateAsync: editMemberRole } = useEditMemberRole()
   const { mutateAsync: deleteMember } = useDeleteMember()
   const { mutateAsync: deleteInviteMember } = useDeleteInviteMember()
@@ -43,6 +45,18 @@ export function PageOrganizationMembersFeature() {
   const [loadingUpdateRole, setLoadingUpdateRole] = useState({ userId: '', loading: false })
 
   const { openModalConfirmation } = useModalConfirmation()
+
+  // Handle permission errors
+  useEffect(() => {
+    if (membersError && membersError.response?.status === 403) {
+      setHasPermissionError(true)
+      toastError(
+        membersError,
+        'Permission denied',
+        'You do not have permission to view organization members'
+      )
+    }
+  }, [membersError])
 
   const onClickEditMemberRole = async (userId: string, roleId: string) => {
     const data = { user_id: userId, role_id: roleId }
@@ -105,6 +119,7 @@ export function PageOrganizationMembersFeature() {
       inviteMembers={inviteMembers}
       availableRoles={availableRoles}
       loadingUpdateRole={loadingUpdateRole}
+      hasPermissionError={hasPermissionError}
       editMemberRole={onClickEditMemberRole}
       transferOwnership={onClickTransferOwnership}
       deleteMember={onClickDeleteMember}
