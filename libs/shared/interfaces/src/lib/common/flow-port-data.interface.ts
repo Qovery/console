@@ -6,6 +6,8 @@ export interface PortData {
   is_public: boolean
   protocol: PortProtocolEnum
   name: string
+  public_path?: string
+  public_path_rewrite?: string
 }
 
 export type ProbeExtended = Probe & {

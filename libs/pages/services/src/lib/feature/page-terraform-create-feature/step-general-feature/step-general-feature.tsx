@@ -70,6 +70,9 @@ export function StepGeneralFeature() {
                   icon_uri: 'app://qovery-console/terraform',
                   timeout_sec: 60,
                   auto_approve: false,
+                  backend: {
+                    kubernetes: {},
+                  },
                   terraform_variables_source: {
                     tf_var_file_paths: [],
                   },

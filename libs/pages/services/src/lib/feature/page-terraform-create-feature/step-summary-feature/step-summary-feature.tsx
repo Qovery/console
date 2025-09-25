@@ -50,6 +50,9 @@ export function StepSummaryFeature() {
       auto_deploy: generalData.auto_deploy ?? false,
       auto_approve: false,
       provider: 'TERRAFORM',
+      backend: {
+        kubernetes: {},
+      },
       terraform_files_source: {
         git_repository: {
           url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),

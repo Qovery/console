@@ -36,12 +36,16 @@ export function handleSubmit<
     publicly_accessible,
     protocol,
     name,
+    public_path,
+    public_path_rewrite,
   }: {
     internal_port: string | undefined
     external_port: string | undefined
     publicly_accessible: boolean
     protocol: PortProtocolEnum | undefined
     name: string | undefined
+    public_path: string | undefined
+    public_path_rewrite: string | undefined
   },
   service: T,
   currentPort?: ServicePort
@@ -69,6 +73,8 @@ export function handleSubmit<
     publicly_accessible,
     protocol: currentProtocol,
     name: name,
+    public_path: public_path,
+    public_path_rewrite: public_path_rewrite,
   }
 
   if (currentPort) {
@@ -155,6 +161,8 @@ export function CrudModalFeature({ service, onClose, port, isLastPublicPort }: C
       publicly_accessible: port ? port.publicly_accessible : false,
       protocol: port ? port.protocol : undefined,
       name: port ? port.name : undefined,
+      public_path: port ? port.public_path : undefined,
+      public_path_rewrite: port ? port.public_path_rewrite : undefined,
     },
     mode: 'onChange',
   })

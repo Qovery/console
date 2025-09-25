@@ -35,6 +35,8 @@ describe('CrudModalFeature', () => {
         publicly_accessible: false,
         name: 'p520',
         protocol: PortProtocolEnum.HTTP,
+        public_path: undefined,
+        public_path_rewrite: undefined,
       },
       application
     )
@@ -50,6 +52,8 @@ describe('CrudModalFeature', () => {
         publicly_accessible: false,
         name: 'p520',
         protocol: PortProtocolEnum.HTTP,
+        public_path: undefined,
+        public_path_rewrite: undefined,
       },
       application,
       application.ports?.[0]
@@ -96,6 +100,8 @@ describe('CrudModalFeature', () => {
             "internal_port": 52,
             "name": "p520",
             "protocol": "HTTP",
+            "public_path": undefined,
+            "public_path_rewrite": undefined,
             "publicly_accessible": false,
           },
         ],
@@ -132,6 +138,8 @@ describe('CrudModalFeature', () => {
         publicly_accessible: false,
         name: 'p520',
         protocol: PortProtocolEnum.TCP,
+        public_path: undefined,
+        public_path_rewrite: undefined,
       },
       application,
       application.ports?.[0]
@@ -184,6 +192,8 @@ describe('CrudModalFeature', () => {
             "internal_port": 52,
             "name": "p520",
             "protocol": "TCP",
+            "public_path": undefined,
+            "public_path_rewrite": undefined,
             "publicly_accessible": false,
           },
         ],
@@ -220,6 +230,8 @@ describe('CrudModalFeature', () => {
         publicly_accessible: false,
         name: 'p520',
         protocol: PortProtocolEnum.HTTP,
+        public_path: undefined,
+        public_path_rewrite: undefined,
       },
       application,
       application.ports?.[0]
@@ -272,6 +284,8 @@ describe('CrudModalFeature', () => {
             "internal_port": 52,
             "name": "p520",
             "protocol": "HTTP",
+            "public_path": undefined,
+            "public_path_rewrite": undefined,
             "publicly_accessible": false,
           },
         ],
