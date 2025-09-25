@@ -53,15 +53,15 @@ export function PageMonitoringFeature() {
           <PlaceholderMonitoring />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
         </Section>
-        <div className="absolute left-1/2 top-1/2 flex h-max min-w-[880px] -translate-x-1/2 -translate-y-1/2 items-center gap-10 rounded border border-neutral-250 bg-white p-6 shadow-lg xl:top-[78%] xl:min-w-[1000px]">
-          <div className="flex flex-col gap-8">
+        <div className="absolute left-1/2 top-1/2 flex h-max min-w-[860px] -translate-x-1/2 -translate-y-1/2 items-center gap-10 rounded border border-neutral-250 bg-white p-6 shadow-lg xl:top-[74%] xl:min-w-[1200px]">
+          <div className="flex w-1/2 flex-col gap-8">
             <EnableObservabilityContent className="text-sm leading-normal" />
             <div className="flex items-center gap-4">
               <EnableObservabilityButtonContactUs />
               <span className="text-sm font-semibold text-neutral-400">Starting from $299/month</span>
             </div>
           </div>
-          <div className="relative left-4 flex h-full w-full items-center 2xl:left-0">
+          <div className="relative left-4 flex h-full w-1/2 items-center 2xl:left-0">
             <EnableObservabilityVideo />
           </div>
         </div>
