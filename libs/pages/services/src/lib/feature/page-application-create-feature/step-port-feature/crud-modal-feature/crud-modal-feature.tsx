@@ -34,6 +34,8 @@ export function CrudModalFeature({
       publicly_accessible: port ? (port as PortData).is_public : false,
       protocol: port ? port.protocol : PortProtocolEnum.HTTP,
       name: port ? port.name : '',
+      public_path: port ? port.public_path : undefined,
+      public_path_rewrite: port ? port.public_path_rewrite : undefined,
     },
     mode: 'onChange',
   })
