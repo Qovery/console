@@ -4,7 +4,7 @@ import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'reac
 import { twMerge } from '@qovery/shared/util-js'
 import { buttonVariants } from '../button-primitive/button-primitive'
 
-const toolbarButtonVariants = cva([], {
+const toolbarButtonVariants = cva(['active:scale-100'], {
   variants: {
     variant: {
       outline: [],
