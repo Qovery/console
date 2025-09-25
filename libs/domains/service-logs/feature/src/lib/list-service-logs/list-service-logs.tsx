@@ -63,7 +63,6 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     isFetched: isHistoryLogsFetched,
     loadPreviousLogs,
     hasMoreLogs,
-    isPaginationLoading,
   } = useServiceHistoryLogs({
     clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
@@ -137,7 +136,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
         <HeaderServiceLogs logs={logs} />
         <div
-          className="h-[calc(100vh-160px)] w-full overflow-y-scroll pb-3"
+          className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
           ref={refScrollSection}
           onWheel={(event) => {
             if (!liveLogs) return
@@ -153,15 +152,6 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
             }
           }}
         >
-          {/* {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
-            <button
-              onClick={loadPreviousLogs}
-              disabled={!hasMoreLogs || isPaginationLoading}
-              className="mb-2 rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:bg-gray-500"
-            >
-              {isPaginationLoading ? 'Loading...' : 'Load previous logs'}
-            </button>
-          )} */}
           {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
             <ShowPreviousLogsButton
               showPreviousLogs={!hasMoreLogs}

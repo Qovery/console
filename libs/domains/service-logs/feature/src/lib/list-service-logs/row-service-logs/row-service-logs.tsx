@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useState } from 'react'
 import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
@@ -13,6 +14,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 import { queryParamsServiceLogs, useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
@@ -73,7 +75,16 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
     <>
       <Table.Row
         onClick={() => setIsExpanded(!isExpanded)}
-        className="sl-row sl-row-appear relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']"
+        className={twMerge(
+          clsx(
+            'sl-row sl-row-appear relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-[""]',
+            {
+              'before:bg-sky-500': log.level === 'INFO',
+              'before:bg-yellow-500': log.level === 'WARNING',
+              'bg-red-500/10 before:bg-red-500 hover:before:bg-red-400': log.level === 'ERROR',
+            }
+          )
+        )}
       >
         <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap pr-1.5">
           <span className="flex h-3 w-3 items-center justify-center">
@@ -128,9 +139,18 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
         </Table.Cell>
       </Table.Row>
       {isExpanded && (
-        <Table.Row className="sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-['']">
+        <Table.Row
+          className={twMerge(
+            clsx(
+              'sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:content-[""]',
+              {
+                'bg-red-500/10': log.level === 'ERROR',
+              }
+            )
+          )}
+        >
           <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
-            <div className="w-full rounded border border-neutral-500 bg-neutral-550 px-4 py-2">
+            <div className="w-full rounded border border-neutral-400 bg-transparent px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
                 <Dt className="col-span-2 select-none font-code">Instance</Dt>
                 <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">{log.instance}</Dd>
