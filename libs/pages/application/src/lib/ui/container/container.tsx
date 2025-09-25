@@ -44,7 +44,7 @@ export function Container({ children }: ContainerProps) {
 
   const hasMetrics = useMemo(
     () =>
-      (cluster?.cloud_provider === 'AWS' &&
+      ((cluster?.cloud_provider === 'AWS' || cluster?.cloud_provider === 'SCW') &&
         match(service?.serviceType)
           .with('APPLICATION', 'CONTAINER', () => true)
           .otherwise(() => false)) ||

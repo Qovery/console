@@ -1,16 +1,17 @@
 import { Button, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
+import { twMerge } from '@qovery/shared/util-js'
 
-export function EnableObservabilityContent() {
+export function EnableObservabilityContent({ className }: { className?: string }) {
   return (
     <div className="flex flex-col gap-3">
       <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">Observability is here!</h2>
-      <div className="flex flex-col">
-        <p className="text-neutral-350 dark:text-neutral-50">
+      <div className={twMerge('flex flex-col leading-relaxed', className)}>
+        <p className="leading-normal text-neutral-350 dark:text-neutral-50">
           We've just released our brand-new Observability feature, now available for everyone. <br />
           Why is this exciting?
         </p>
-        <ul className="list-disc pl-5 leading-relaxed text-neutral-350">
+        <ul className="list-disc pl-5 text-neutral-350">
           <li>
             <strong>1-click setup</strong>: Dev + Ops friendly
           </li>
@@ -51,20 +52,14 @@ export function EnableObservabilityVideo() {
   )
 }
 
-export function EnableObservabilityButtonContactUs({
-  callback,
-  size = 'md',
-}: {
-  callback?: () => void
-  size?: 'md' | 'lg'
-}) {
+export function EnableObservabilityButtonContactUs({ callback }: { callback?: () => void }) {
   const { showPylonForm } = useSupportChat()
 
   return (
     <Button
       color="brand"
       variant="solid"
-      size={size}
+      size="md"
       onClick={() => {
         callback?.()
         showPylonForm('request-access-observability')
@@ -88,7 +83,7 @@ export function EnableObservabilityModal() {
       </div>
       <div className="fixed bottom-0 left-0 right-0 flex items-center justify-end gap-4 rounded-b border-t border-neutral-200 bg-white p-4 text-sm font-medium text-neutral-400 shadow-[0_-6px_12px_-6px_rgba(16,30,54,0.06)]">
         <span>Starting from $299/month</span>
-        <EnableObservabilityButtonContactUs size="lg" callback={() => closeModal()} />
+        <EnableObservabilityButtonContactUs callback={() => closeModal()} />
       </div>
     </div>
   )
