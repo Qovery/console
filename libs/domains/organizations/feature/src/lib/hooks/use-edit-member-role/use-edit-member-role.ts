@@ -7,6 +7,7 @@ export function useEditMemberRole() {
 
   return useMutation(mutations.editMemberRole, {
     onSuccess(_, { organizationId }) {
+      console.log('🚀 ~ onSuccess ~ organizationId:', organizationId)
       queryClient.invalidateQueries({
         queryKey: queries.organizations.members({ organizationId }).queryKey,
       })
