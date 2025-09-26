@@ -87,6 +87,8 @@ export interface ServiceLog extends StreamLabels {
   message: string
 }
 
+export type SeverityType = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL' | 'UNKNOWN'
+
 // Common normalized log interface for both live and history logs
 export interface NormalizedServiceLog {
   timestamp: string
@@ -94,7 +96,7 @@ export interface NormalizedServiceLog {
   instance?: string
   container?: string
   exporter?: string
-  level?: string
+  level?: SeverityType
   version?: string
 }
 
@@ -126,7 +128,7 @@ export function normalizeServiceLog(log: ServiceLog): NormalizedServiceLog {
     instance: log.pod,
     container: log.container,
     exporter: log.exporter,
-    level: log.level ?? 'UNKNOWN',
+    level: (log.level?.toUpperCase() ?? 'UNKNOWN') as SeverityType,
     version: log.app, // API uses 'app' field for version
   }
 }
@@ -137,7 +139,7 @@ export function normalizeWebSocketLog(log: {
   message?: string
   pod_name?: string
   container_name?: string
-  severity_text?: string
+  severity_text?: SeverityType
   version?: string
 }): NormalizedServiceLog {
   return {
@@ -146,7 +148,7 @@ export function normalizeWebSocketLog(log: {
     instance: log.pod_name,
     container: log.container_name,
     exporter: undefined, // WebSocket logs don't have exporter
-    level: log.severity_text ?? 'UNKNOWN',
+    level: (log.severity_text?.toUpperCase() ?? 'UNKNOWN') as SeverityType,
     version: log.version,
   }
 }
