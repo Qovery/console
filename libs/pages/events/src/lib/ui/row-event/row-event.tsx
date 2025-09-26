@@ -95,6 +95,8 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.WEBHOOK]: () => customLink(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
       [OrganizationEventTargetType.CONTAINER_REGISTRY]: () =>
         customLink(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
+      [OrganizationEventTargetType.ENTERPRISE_CONNECTION]: () =>
+        customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
     }
 
     if (event_type !== OrganizationEventType.DELETE) {
