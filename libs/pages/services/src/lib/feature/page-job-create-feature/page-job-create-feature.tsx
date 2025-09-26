@@ -57,7 +57,6 @@ export interface JobContainerCreateContextInterface {
 
 export const JobContainerCreateContext = createContext<JobContainerCreateContextInterface | undefined>(undefined)
 
-// this is to avoid to set initial value twice https://stackoverflow.com/questions/49949099/react-createcontext-point-of-defaultvalue
 export const useJobContainerCreateContext = () => {
   const applicationContainerCreateContext = useContext(JobContainerCreateContext)
   if (!applicationContainerCreateContext)
@@ -65,14 +64,62 @@ export const useJobContainerCreateContext = () => {
   return applicationContainerCreateContext
 }
 
-export const steps = (jobType: JobType) => [
-  { title: 'Create new job' },
-  { title: 'Dockerfile' },
-  { title: jobType === ServiceTypeEnum.CRON_JOB ? 'Job configuration' : 'Triggers' },
-  { title: 'Set resources' },
-  { title: 'Set variable environments' },
-  { title: 'Ready to install' },
-]
+export const steps = (jobType: JobType, hasIntroduction: boolean = false, hasDockerfile: boolean = true) => {
+  const baseSteps = [
+    { title: 'Create new job' },
+    ...(hasDockerfile ? [{ title: 'Dockerfile' }] : []),
+    { title: jobType === ServiceTypeEnum.CRON_JOB ? 'Job configuration' : 'Triggers' },
+    { title: 'Set resources' },
+    { title: 'Set variable environments' },
+    { title: 'Ready to install' },
+  ]
+
+  if (hasIntroduction) {
+    return [{ title: 'Introduction' }, ...baseSteps]
+  }
+
+  return baseSteps
+}
+
+export const getStepNumber = (
+  stepName: string,
+  jobType: JobType,
+  serviceType?: keyof typeof ServiceTypeEnum,
+  hasIntroduction: boolean = false
+): number => {
+  const hasDockerfile = serviceType === 'APPLICATION' && jobType !== ServiceTypeEnum.CRON_JOB
+  const allSteps = steps(jobType, hasIntroduction, hasDockerfile)
+
+  let stepIndex = -1
+
+  switch (stepName) {
+    case 'introduction':
+      stepIndex = allSteps.findIndex((step) => step.title === 'Introduction')
+      break
+    case 'general':
+      stepIndex = allSteps.findIndex((step) => step.title === 'Create new job')
+      break
+    case 'dockerfile':
+      stepIndex = allSteps.findIndex((step) => step.title === 'Dockerfile')
+      break
+    case 'configure':
+      stepIndex = allSteps.findIndex(
+        (step) => step.title.includes('configuration') || step.title.includes('Triggers')
+      )
+      break
+    case 'resources':
+      stepIndex = allSteps.findIndex((step) => step.title === 'Set resources')
+      break
+    case 'variables':
+      stepIndex = allSteps.findIndex((step) => step.title === 'Set variable environments')
+      break
+    case 'summary':
+      stepIndex = allSteps.findIndex((step) => step.title === 'Ready to install')
+      break
+  }
+
+  return stepIndex >= 0 ? stepIndex + 1 : 1
+}
 
 export const findTemplateData = (slug?: string, option?: string) => {
   return serviceTemplates.flatMap((template) => {
@@ -93,7 +140,6 @@ export function PageJobCreateFeature() {
   const location = useLocation()
   const templateData = findTemplateData(slug, option)
 
-  // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
   const [jobType, setJobType] = useState<JobType>(ServiceTypeEnum.CRON_JOB)
@@ -138,6 +184,9 @@ export function PageJobCreateFeature() {
 
   const displayIntroductionView = jobType === ServiceTypeEnum.LIFECYCLE_JOB && !getLocalStorageStepIntroduction()
 
+  const hasDockerfile = generalData?.serviceType === 'APPLICATION' && jobType !== ServiceTypeEnum.CRON_JOB
+  const totalSteps = steps(jobType, displayIntroductionView, hasDockerfile)
+
   const funnel = (
     <FunnelFlow
       onExit={() => {
@@ -146,9 +195,9 @@ export function PageJobCreateFeature() {
           navigate(link)
         }
       }}
-      totalSteps={steps(jobType).length}
+      totalSteps={totalSteps.length}
       currentStep={currentStep}
-      currentTitle={steps(jobType)[currentStep - 1].title}
+      currentTitle={totalSteps[currentStep - 1]?.title || 'Loading...'}
     >
       <Routes>
         {ROUTER_SERVICE_JOB_CREATION.map((route) => (
