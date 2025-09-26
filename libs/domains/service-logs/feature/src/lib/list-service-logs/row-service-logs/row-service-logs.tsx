@@ -81,7 +81,8 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
             {
               'before:bg-sky-500': log.level === 'INFO',
               'before:bg-yellow-500': log.level === 'WARNING',
-              'bg-red-500/10 before:bg-red-500 hover:before:bg-red-400': log.level === 'ERROR',
+              'bg-red-500/10 before:bg-red-500 hover:before:bg-red-400':
+                log.level === 'ERROR' || log.level === 'CRITICAL',
             }
           )
         )}
@@ -144,7 +145,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
             clsx(
               'sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:content-[""]',
               {
-                'bg-red-500/10': log.level === 'ERROR',
+                'bg-red-500/10': log.level === 'ERROR' || log.level === 'CRITICAL',
               }
             )
           )}

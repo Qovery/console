@@ -2,7 +2,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { type ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
-import { Icon } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 const defaultFilters = [
@@ -271,12 +271,20 @@ export function SearchServiceLogs() {
       }
     >
       <Command shouldFilter={false}>
-        <div className="relative flex h-9 w-full items-center gap-2 text-sm text-white">
-          <div className="relative -left-1 h-full w-full overflow-hidden pr-1">
+        <div className="relative flex h-9 w-full items-center gap-2 overflow-hidden text-sm text-white">
+          <div className="h-full w-full pr-1">
+            <div
+              className="pointer-events-none absolute left-0 top-0 z-0 flex h-9 w-fit items-center border border-transparent px-10 text-sm text-transparent"
+              style={{
+                gap: '7px',
+                transform: `translateX(-${scrollLeft}px)`,
+              }}
+              dangerouslySetInnerHTML={{ __html: highlightFilters(value) }}
+            />
             <CommandInput
               ref={inputRef}
-              placeholder="Search logs..."
-              className="relative left-1 z-10 h-full w-full overflow-x-auto rounded border border-neutral-400 bg-transparent pl-10 outline-none transition-colors placeholder:text-neutral-250 hover:border-neutral-350 focus:border-neutral-350"
+              placeholder="Search logs…"
+              className="absolute h-full w-full overflow-x-auto rounded border border-neutral-400 bg-transparent pl-11 outline-none transition-colors placeholder:text-neutral-250 hover:border-neutral-350 focus:border-neutral-350"
               value={value}
               onValueChange={handleInputChange}
               onKeyDown={handleKeyDown}
@@ -292,16 +300,16 @@ export function SearchServiceLogs() {
                 background: '0 0',
               }}
             />
-            <div
-              className="pointer-events-none absolute left-1 top-0 z-0 flex h-9 w-fit items-center border border-transparent px-10 text-sm text-transparent"
-              style={{
-                gap: '7px',
-                transform: `translateX(-${scrollLeft}px)`,
-              }}
-              dangerouslySetInnerHTML={{ __html: highlightFilters(value) }}
-            />
+            {value.length > 0 && (
+              <button
+                className="absolute bottom-[1px] right-[1px] flex h-[34px] w-6 items-center justify-start rounded-r border-transparent bg-neutral-600 text-neutral-50 before:absolute before:-left-7 before:top-0 before:block before:h-full before:w-7 before:bg-gradient-to-r before:from-transparent before:to-neutral-600 before:content-[''] hover:text-neutral-250"
+                onClick={clearInput}
+              >
+                <Icon iconName="xmark" className="relative top-[1px]" />
+              </button>
+            )}
           </div>
-          <div className="absolute left-0 flex h-full w-9 items-center justify-center bg-neutral-600">
+          <div className="absolute bottom-[1px] left-[1px] flex h-[34px] w-7 items-center justify-end rounded-l bg-neutral-600">
             <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
           </div>
         </div>
