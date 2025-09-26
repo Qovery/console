@@ -29,7 +29,7 @@ export function PageMonitoringFeature() {
 
   const hasMetrics = useMemo(
     () =>
-      ((cluster?.cloud_provider === 'AWS' || cluster?.cloud_provider === 'SCW') &&
+      ((cluster?.cloud_provider === 'AWS' || cluster?.cloud_provider === 'SCW' || cluster?.cloud_provider === 'GCP') &&
         cluster?.metrics_parameters?.enabled &&
         match(service?.serviceType)
           .with('APPLICATION', 'CONTAINER', () => true)
