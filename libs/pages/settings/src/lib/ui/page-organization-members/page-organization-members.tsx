@@ -7,7 +7,7 @@ import {
 import { useEffect, useState } from 'react'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { MemberRoleEnum } from '@qovery/shared/enums'
-import { Button, Heading, Icon, Section, Table, type TableFilterProps } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Section, Table, type TableFilterProps } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import RowMember from './row-member/row-member'
 
@@ -22,6 +22,7 @@ export interface PageOrganizationMembersProps {
   members?: Member[]
   inviteMembers?: InviteMember[]
   availableRoles?: OrganizationAvailableRole[]
+  hasPermissionError?: boolean
   userId?: string
   onAddMember?: () => void
 }
@@ -59,6 +60,7 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
     deleteMember,
     transferOwnership,
     userId,
+    hasPermissionError,
     onAddMember,
     resendInvite,
   } = props
@@ -129,6 +131,19 @@ export function PageOrganizationMembers(props: PageOrganizationMembersProps) {
             <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
+        {hasPermissionError && (
+          <Callout.Root color="yellow" className="mb-8">
+            <Callout.Icon>
+              <Icon iconName="circle-info" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Permission denied</Callout.TextHeading>
+              <Callout.TextDescription>
+                You do not have the permission to view other members. Please contact your organization administrator.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
         <Table
           className="rounded border border-neutral-200"
           classNameHead="rounded-t"

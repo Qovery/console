@@ -8,6 +8,9 @@ export interface UseMembersProps {
 export function useMembers({ organizationId }: UseMembersProps) {
   return useQuery({
     ...queries.organizations.members({ organizationId }),
+    meta: {
+      notifyOnError: true,
+    },
   })
 }
 

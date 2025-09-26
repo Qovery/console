@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { EnvironmentModeEnum, type InviteMemberRequest, type Member } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   useAvailableRoles,
@@ -16,21 +16,30 @@ import { membersMock } from '@qovery/shared/factories'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
+import { type SerializedError } from '@qovery/shared/utils'
 import PageOrganizationMembers from '../../ui/page-organization-members/page-organization-members'
 import CreateModalFeature from './create-modal-feature/create-modal-feature'
 
 export const membersDataMock = membersMock(5)
 
 export function PageOrganizationMembersFeature() {
-  const { organizationId = '' } = useParams()
-
   useDocumentTitle('Members - Organization settings')
+  const { organizationId = '' } = useParams()
+  const hasPreviousRequestFailed = useRef<boolean>(false)
 
-  const { data: members = membersDataMock, isFetched: isFetchedMembers } = useMembers({ organizationId })
+  const {
+    data: members = membersDataMock,
+    isFetched: isFetchedMembers,
+    error: membersError,
+    isSuccess: isSuccessMembers,
+  } = useMembers({ organizationId })
   const { data: inviteMembers = [] } = useInviteMembers({
     organizationId,
   })
   const { data: availableRoles = [] } = useAvailableRoles({ organizationId })
+
+  const hasPermissionError = (membersError as SerializedError)?.response?.status === 403
+  const shouldShowPermissionError = hasPermissionError || hasPreviousRequestFailed.current
   const { mutateAsync: editMemberRole } = useEditMemberRole()
   const { mutateAsync: deleteMember } = useDeleteMember()
   const { mutateAsync: deleteInviteMember } = useDeleteInviteMember()
@@ -97,6 +106,16 @@ export function PageOrganizationMembersFeature() {
     }
   }
 
+  useEffect(() => {
+    if (isSuccessMembers) {
+      hasPreviousRequestFailed.current = false
+    }
+
+    if (hasPermissionError) {
+      hasPreviousRequestFailed.current = true
+    }
+  }, [hasPermissionError, isSuccessMembers])
+
   return (
     <PageOrganizationMembers
       userId={user?.sub}
@@ -105,6 +124,7 @@ export function PageOrganizationMembersFeature() {
       inviteMembers={inviteMembers}
       availableRoles={availableRoles}
       loadingUpdateRole={loadingUpdateRole}
+      hasPermissionError={shouldShowPermissionError}
       editMemberRole={onClickEditMemberRole}
       transferOwnership={onClickTransferOwnership}
       deleteMember={onClickDeleteMember}
