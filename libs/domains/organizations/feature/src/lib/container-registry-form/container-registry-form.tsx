@@ -193,12 +193,24 @@ export function ContainerRegistryForm({
               match(watchKind)
                 .with('GENERIC_CR', () =>
                   // eslint-disable-next-line no-useless-escape
-                  input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                  !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                    ? 'URL must be valid and start with «http(s)://»'
+                    : undefined
+                )
+                .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () =>
+                  !input?.match(
+                    // eslint-disable-next-line no-useless-escape
+                    /^https:\/\/containers\.[\w.-]+\.ghe\.com$/
+                  )
+                    ? 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
+                    : undefined
                 )
                 .otherwise(() =>
                   // eslint-disable-next-line no-useless-escape
-                  input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
-                ) !== null || 'URL must be valid and start with «http(s)://»',
+                  !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                    ? 'URL must be valid and start with «http(s)://»'
+                    : undefined
+                ),
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -230,7 +242,7 @@ export function ContainerRegistryForm({
                 .with(ContainerRegistryKindEnum.AZURE_CR, () => 'Expected format: https://<registry_name>.azurecr.io')
                 .with(
                   ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
-                  () => 'Expected format: https://<github_enterprise_subdomain>.ghe.com'
+                  () => 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
                 )
                 .exhaustive()}
               disabled={
