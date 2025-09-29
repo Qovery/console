@@ -8,7 +8,7 @@ export function containerRegistryKindToIcon(
   return match(registryKind)
     .with('DOCKER_HUB', () => IconEnum.DOCKER)
     .with('SCALEWAY_CR', () => IconEnum.SCW)
-    .with('GITHUB_CR', () => IconEnum.GITHUB)
+    .with('GITHUB_CR', 'GITHUB_ENTERPRISE_CR', () => IconEnum.GITHUB)
     .with('GITLAB_CR', () => IconEnum.GITLAB)
     .with('GENERIC_CR', () => IconEnum.GENERIC_REGISTRY)
     .with('ECR', 'PUBLIC_ECR', () => IconEnum.AWS)
