@@ -162,7 +162,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
                   error={error?.message}
                   options={[
                     {
-                      label: 'GitHub.com',
+                      label: 'GitHub',
                       value: 'PUBLIC',
                       icon: <Icon name="GITHUB" width="16px" height="16px" />,
                     },
