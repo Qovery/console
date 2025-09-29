@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { GitProviderEnum, type GitTokenRequest, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
@@ -14,7 +13,6 @@ export interface GitTokenCreateEditModalProps {
 }
 
 export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onClose }: GitTokenCreateEditModalProps) {
-  const isGitlabSelfHostedFFEnabled = useFeatureFlagVariantKey('gitlab-self-hosted')
   const { enableAlertClickOutside } = useModal()
   const methods = useForm({
     mode: 'onChange',
@@ -30,6 +28,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           ? 'GITLAB'
           : 'SELF_HOSTED'
         : 'GITLAB',
+      subtype: 'PUBLIC',
       git_api_url: gitToken?.git_api_url ?? '',
     },
   })
@@ -40,13 +39,14 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
   const { mutateAsync: createGitToken, isLoading: isLoadingCreateGitToken } = useCreateGitToken()
   const gitType = methods.watch('type')
   const hosting = methods.watch('hosting')
+  const subtype = methods.watch('subtype')
 
   const onSubmit = methods.handleSubmit(async (values) => {
     try {
-      const { hosting, ...data } = values
+      const { hosting, subtype, ...data } = values
       const gitTokenRequest: GitTokenRequest = {
         ...data,
-        git_api_url: hosting === 'SELF_HOSTED' ? data.git_api_url : undefined,
+        git_api_url: hosting === 'SELF_HOSTED' || subtype === 'ENTERPRISE' ? data.git_api_url : undefined,
       }
 
       if (isEdit) {
@@ -145,7 +145,65 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
             </div>
           )}
         />
-        {gitType === GitProviderEnum.GITLAB && isGitlabSelfHostedFFEnabled && (
+
+        {/* GITHUB */}
+        {gitType === GitProviderEnum.GITHUB && (
+          <Controller
+            name="subtype"
+            control={methods.control}
+            render={({ field, fieldState: { error } }) => (
+              <div className="mb-5">
+                <InputSelect
+                  label="GitHub hosting strategy"
+                  onChange={(event) => {
+                    field.onChange(event)
+                  }}
+                  value={field.value}
+                  error={error?.message}
+                  options={[
+                    {
+                      label: 'GitHub.com',
+                      value: 'PUBLIC',
+                      icon: <Icon name="GITHUB" width="16px" height="16px" />,
+                    },
+                    {
+                      label: 'GitHub Enterprise',
+                      value: 'ENTERPRISE',
+                      icon: <Icon name="GITHUB" width="16px" height="16px" />,
+                    },
+                  ]}
+                />
+              </div>
+            )}
+          />
+        )}
+        {gitType === GitProviderEnum.GITHUB && subtype === 'ENTERPRISE' && (
+          <Controller
+            name="git_api_url"
+            control={methods.control}
+            rules={{
+              required: 'Please enter a correct URL.',
+              pattern: {
+                value: /^https:\/\/[\w.-]+\.ghe\.com$/,
+                message: 'Please enter a valid GitHub Enterprise URL in the format https://<subdomain>.ghe.com',
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                className="mb-5"
+                label="GitHub Enterprise URL"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                hint="This is the URL of your GitHub Enterprise instance. It should be in the format https://<github_enterprise_subdomain>.ghe.com"
+              />
+            )}
+          />
+        )}
+
+        {/* GITLAB */}
+        {gitType === GitProviderEnum.GITLAB && (
           <Controller
             name="hosting"
             control={methods.control}

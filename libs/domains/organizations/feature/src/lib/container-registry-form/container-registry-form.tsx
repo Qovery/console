@@ -80,6 +80,7 @@ export function ContainerRegistryForm({
   const defaultRegistryUrls = {
     [ContainerRegistryKindEnum.GITLAB_CR]: 'https://registry.gitlab.com',
     [ContainerRegistryKindEnum.GITHUB_CR]: 'https://ghcr.io',
+    [ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR]: 'https://containers.<github_enterprise_subdomain>.ghe.com',
     [ContainerRegistryKindEnum.DOCKER_HUB]: 'https://docker.io',
     [ContainerRegistryKindEnum.GENERIC_CR]: '',
     [ContainerRegistryKindEnum.ECR]: '',
@@ -225,7 +226,7 @@ export function ContainerRegistryForm({
                 .with(ContainerRegistryKindEnum.AZURE_CR, () => 'Expected format: https://<registry_name>.azurecr.io')
                 .with(
                   ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
-                  () => 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
+                  () => 'Expected format: https://<github_enterprise_subdomain>.ghe.com'
                 )
                 .exhaustive()}
               disabled={
