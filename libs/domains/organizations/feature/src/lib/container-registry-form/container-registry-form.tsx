@@ -80,7 +80,7 @@ export function ContainerRegistryForm({
   const defaultRegistryUrls = {
     [ContainerRegistryKindEnum.GITLAB_CR]: 'https://registry.gitlab.com',
     [ContainerRegistryKindEnum.GITHUB_CR]: 'https://ghcr.io',
-    [ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR]: 'https://containers.<github_enterprise_subdomain>.ghe.com',
+    [ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR]: '',
     [ContainerRegistryKindEnum.DOCKER_HUB]: 'https://docker.io',
     [ContainerRegistryKindEnum.GENERIC_CR]: '',
     [ContainerRegistryKindEnum.ECR]: '',
@@ -165,6 +165,10 @@ export function ContainerRegistryForm({
               methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
               methods.resetField('config')
               field.onChange(value)
+              // GitHub Enterprise doesn't support anonymous login, so we set the login type to ACCOUNT
+              if (value === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR) {
+                methods.setValue('config.login_type', 'ACCOUNT')
+              }
             }}
             value={field.value}
             label="Type"
@@ -249,6 +253,7 @@ export function ContainerRegistryForm({
         .with(
           ContainerRegistryKindEnum.DOCKER_HUB,
           ContainerRegistryKindEnum.GITHUB_CR,
+          ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
           ContainerRegistryKindEnum.GITLAB_CR,
           ContainerRegistryKindEnum.GENERIC_CR,
           () => true
@@ -269,7 +274,7 @@ export function ContainerRegistryForm({
                 }}
                 value={field.value}
                 label="Login type"
-                disabled={cluster?.is_demo}
+                disabled={cluster?.is_demo || watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR} // GitHub Enterprise doesn't support anonymous login
                 error={error?.message}
                 options={[
                   {
