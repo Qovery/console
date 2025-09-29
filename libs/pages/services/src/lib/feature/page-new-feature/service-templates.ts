@@ -239,6 +239,18 @@ export const serviceTemplates: ServiceTemplateType[] = [
   },
   {
     tag: 'IAC',
+    slug: 'terraform',
+    title: 'Terraform',
+    template_id: TemplateIds.TERRAFORM,
+    description: 'Terraform is an open-source infrastructure as code software tool.',
+    icon: Terraform,
+    icon_uri: 'app://qovery-console/terraform',
+    type: 'LIFECYCLE_JOB',
+    dockerfile:
+      'https://raw.githubusercontent.com/Qovery/lifecycle-job-examples/main/examples/aws-lambda-with-serverless/Dockerfile',
+  },
+  {
+    tag: 'IAC',
     slug: 'cloudformation',
     title: 'CloudFormation',
     template_id: TemplateIds.CLOUDFORMATION,
