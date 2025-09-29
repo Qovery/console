@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { Area, Line, ReferenceLine } from 'recharts'
-import { calculateDynamicRange, calculateRateInterval, useMetrics } from '../../hooks/use-metrics/use-metrics'
+import { Area, Line, ReferenceArea, ReferenceLine } from 'recharts'
+import { Label } from 'recharts'
+import { calculateDynamicRange, useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart, type ReferenceLineEvent } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
 import { formatTimestamp } from '../util-chart/format-timestamp'
@@ -56,32 +57,18 @@ const queryMaxReplicas = (containerName: string) => `
   max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_max_replicas{horizontalpodautoscaler="${containerName}"})
 `
 
-const queryMaxLimitReached = (serviceId: string, rateInterval: string) => `
-  sum by (pod) (
-  increase(
-    kube_horizontalpodautoscaler_status_condition{
-      condition="ScalingLimited",
-      status="true"
-    }[${rateInterval}]
-  )
-  *
-  on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
-  (
-    max by (namespace, horizontalpodautoscaler)(
-      kube_horizontalpodautoscaler_status_current_replicas
-    )
-    == bool on (namespace, horizontalpodautoscaler)
-    max by (namespace, horizontalpodautoscaler)(
-      kube_horizontalpodautoscaler_spec_max_replicas
-    )
-  )
-  *
-  on (namespace, horizontalpodautoscaler) group_left(label_qovery_com_service_id)
-  max by (namespace, horizontalpodautoscaler, label_qovery_com_service_id)(
-    kube_horizontalpodautoscaler_labels{
-      label_qovery_com_service_id="${serviceId}"
-    }
-  ) > 0
+const queryMaxLimitReached = (containerName: string) => `
+ (
+  kube_horizontalpodautoscaler_status_condition{
+    condition="ScalingLimited", status="true",
+    horizontalpodautoscaler="${containerName}"
+  }
+)
+and on (namespace, horizontalpodautoscaler)
+(
+  kube_horizontalpodautoscaler_status_desired_replicas
+  >= bool
+  kube_horizontalpodautoscaler_spec_max_replicas
 )
 `
 
@@ -214,11 +201,6 @@ export function InstanceStatusChart({
     [startTimestamp, endTimestamp]
   )
 
-  const rateInterval = useMemo(
-    () => calculateRateInterval(startTimestamp, endTimestamp),
-    [startTimestamp, endTimestamp]
-  )
-
   const { data: metricsHealthy, isLoading: isLoadingHealthy } = useMetrics({
     clusterId,
     startTimestamp,
@@ -276,14 +258,50 @@ export function InstanceStatusChart({
     metricShortName: 'instance_status_hpa_max',
   })
 
-  const { data: metricsHpaMaxLimitReached, isLoading: isLoadingHpaMaxLimitReached } = useMetrics({
+  const {
+    data: metricsHpaMaxLimitReached,
+    isLoading: isLoadingHpaMaxLimitReached,
+    stepInSecond: metricsHpaMaxLimitStepInSec,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
-    query: queryMaxLimitReached(serviceId, rateInterval),
+    query: queryMaxLimitReached(containerName),
     boardShortName: 'service_overview',
     metricShortName: 'instance_status_hpa_limit_reached',
+    overriddenMaxPoints: 500,
   })
+
+  const referenceAreaData = useMemo(() => {
+    if (!metricsHpaMaxLimitReached?.data?.result) return []
+
+    const areas: Array<{
+      x1: number
+      x2: number
+      midMs: number
+      durationMs: number
+      key: string
+      label: string
+    }> = []
+
+    metricsHpaMaxLimitReached.data.result.forEach(
+      (series: { metric: Record<string, string>; values: [number, string][] }, idx: number) => {
+        const built = buildReferenceAreas(
+          series.values,
+          { minDurationSec: 60, prefix: `hpa-max-metricsHpaMaxLimitStepInSec${idx}` },
+          metricsHpaMaxLimitStepInSec
+        )
+        built.forEach((a) => {
+          areas.push({
+            ...a,
+            label: `ScalingLimited (${formatDuration(a.durationMs)})`,
+          })
+        })
+      }
+    )
+
+    return areas
+  }, [metricsHpaMaxLimitReached, metricsHpaMaxLimitStepInSec])
 
   const chartData = useMemo(() => {
     const timeSeriesMap = new Map<
@@ -421,35 +439,38 @@ export function InstanceStatusChart({
     }
 
     // Add hpa max limit reached lines
-    if (metricsHpaMaxLimitReached?.data?.result) {
-      metricsHpaMaxLimitReached.data.result.forEach(
-        (series: { metric: { pod: string }; values: [number, string][] }) => {
-          series.values.forEach(([timestamp, value]: [number, string]) => {
-            const numValue = parseFloat(value)
-            if (numValue > 0) {
-              const key = `${series.metric.pod}-${timestamp}`
-              referenceLines.push({
-                type: 'exit-code',
-                timestamp: timestamp * 1000,
-                reason: 'ScalingLimited',
-                description:
-                  'Auto scaling reached the maximum number of replicas. You can increase it in the settings.',
-                color: 'var(--color-red-500)',
-                icon: 'exclamation',
-                pod: series.metric.pod,
-                key,
-              })
-            }
-          })
-        }
-      )
+    if (referenceAreaData) {
+      referenceAreaData.forEach((a) => {
+        const { fullTimeString: startStr } = formatTimestamp(a.x1, useLocalTime)
+        const { fullTimeString: endStr } = formatTimestamp(a.x2, useLocalTime)
+
+        // ici
+        const evt = {
+          type: 'hpa-area',
+          timestamp: a.midMs,
+          reason: 'ScalingLimited',
+          description: `Autoscaling capped at max replicas from ${startStr} to ${endStr} (${formatDuration(a.durationMs)}).`,
+          icon: 'exclamation',
+          color: 'var(--color-red-500)',
+          key: `${a.key}-event`,
+        } satisfies ReferenceLineEvent
+
+        referenceLines.push(evt)
+      })
     }
 
     // Sort by timestamp ascending
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
 
     return referenceLines
-  }, [metricsK8sEvent, metricsHpaMaxLimitReached, metricsRestartsWithReason])
+  }, [
+    metricsK8sEvent,
+    metricsHpaMaxLimitReached,
+    metricsRestartsWithReason,
+    metricsRestartsWithReasonStepInSec,
+    referenceAreaData,
+    useLocalTime,
+  ])
 
   const isLoading = useMemo(
     () =>
@@ -481,6 +502,46 @@ export function InstanceStatusChart({
       referenceLineData={referenceLineData}
       isFullscreen={isFullscreen}
     >
+      {!hideEvents &&
+        referenceAreaData.map((a) => (
+          <ReferenceArea
+            key={a.key}
+            x1={a.x1}
+            x2={a.x2}
+            fill="var(--color-yellow-500)"
+            fillOpacity={0.2}
+            stroke="none"
+            ifOverflow="extendDomain"
+            label={
+              <Label
+                value={a.label}
+                position="insideTopLeft" // insideTop | insideTopLeft | insideTopRight
+                fill="var(--color-red-500)"
+                fontSize={12}
+                fontWeight="bold"
+                dx={8}
+                dy={8}
+              />
+            }
+          />
+        ))}
+
+      {!hideEvents &&
+        referenceAreaData.map((a) => (
+          <ReferenceLine
+            key={`${a.key}-label`}
+            x={a.midMs}
+            stroke="transparent"
+            label={{
+              value: a.label, // e.g. "ScalingLimited (25m00s)"
+              position: 'top',
+              fill: 'var(--color.red.500)',
+              fontSize: 12,
+              fontWeight: 'bold',
+            }}
+          />
+        ))}
+
       <Area
         key="true"
         dataKey="Instance healthy"
@@ -607,6 +668,109 @@ export function InstanceStatusChart({
       )}
     </LocalChart>
   )
+}
+
+function buildReferenceAreas(
+  values: Array<[number, string]>,
+  opts: { minGapFactor?: number; minDurationSec?: number; joinGapSteps?: number; prefix?: string } = {},
+  query_step_sec: number
+) {
+  // Normalize & guard
+  if (!values || values.length === 0) return []
+
+  // Sort defensively (Recharts / store should already be sorted, but let's be safe)
+  const vals = [...values].sort((a, b) => a[0] - b[0])
+
+  const stepSec = Math.max(1, Math.floor(query_step_sec)) // at least 1s
+  const minGapSec = Math.max(stepSec + 1, Math.floor(stepSec * (opts.minGapFactor ?? 2)))
+  const joinGapSec = Math.max(0, (opts.joinGapSteps ?? 1) * stepSec)
+
+  type Area = { x1: number; x2: number; midMs: number; durationMs: number; key: string }
+  const areas: Area[] = []
+
+  let openStart: number | null = null // start of current ON area (sec)
+  let offRunStart: number | null = null // start of a potential short OFF run (sec) inside an ON area
+  let prevTs = vals[0][0] // previous sample ts (sec)
+
+  const pushArea = (startSec: number, endSec: number) => {
+    const durationSec = Math.max(0, endSec - startSec)
+    if (opts.minDurationSec && durationSec < opts.minDurationSec) return
+
+    const x1 = startSec * 1000
+    const x2 = endSec * 1000
+    const midMs = Math.round((x1 + x2) / 2)
+
+    areas.push({
+      x1,
+      x2,
+      midMs,
+      durationMs: x2 - x1,
+      key: `${opts.prefix ?? 'hpa-max'}-${startSec}-${endSec}`,
+    })
+  }
+
+  for (let i = 0; i < vals.length; i++) {
+    const tsSec = vals[i][0]
+    const v = parseFloat(vals[i][1])
+    const on = Number.isFinite(v) && v > 0
+
+    // If there is a large sampling hole while an area is open → close the area.
+    if (openStart !== null && tsSec - prevTs > minGapSec) {
+      // close at the last "known good" boundary
+      pushArea(openStart, prevTs + stepSec)
+      openStart = null
+      offRunStart = null
+    }
+
+    if (openStart === null) {
+      // We are currently OFF
+      if (on) {
+        // OFF → ON : start a new area
+        openStart = tsSec
+        offRunStart = null
+      }
+    } else {
+      // We are currently ON (area open)
+      if (on) {
+        // back ON → cancel any short OFF run that was in progress
+        offRunStart = null
+      } else {
+        // we saw an OFF sample
+        if (offRunStart === null) {
+          // start of an OFF run inside an ON area
+          offRunStart = tsSec
+        }
+
+        // If this OFF run is long enough, we close the area at the previous ON boundary
+        if (tsSec - offRunStart >= joinGapSec) {
+          // close at the last ON sample + step
+          pushArea(openStart, prevTs + stepSec)
+          openStart = null
+          offRunStart = null
+        }
+      }
+    }
+
+    prevTs = tsSec
+  }
+
+  // Close trailing area (if still open). If we ended during a short OFF run, we still consider it ON.
+  if (openStart !== null) {
+    pushArea(openStart, prevTs + stepSec)
+  }
+
+  return areas
+}
+
+function formatDuration(ms: number) {
+  // Very small helper to display "7m32s", "1h05m", etc.
+  const s = Math.floor(ms / 1000)
+  const h = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  const sec = s % 60
+  if (h) return `${h}h${String(m).padStart(2, '0')}m`
+  if (m) return `${m}m${String(sec).padStart(2, '0')}s`
+  return `${sec}s`
 }
 
 export default InstanceStatusChart
