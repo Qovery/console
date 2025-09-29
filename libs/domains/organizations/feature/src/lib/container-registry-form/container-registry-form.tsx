@@ -223,6 +223,10 @@ export function ContainerRegistryForm({
                   () => 'Expected format: https://<region>-docker.pkg.dev'
                 )
                 .with(ContainerRegistryKindEnum.AZURE_CR, () => 'Expected format: https://<registry_name>.azurecr.io')
+                .with(
+                  ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
+                  () => 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
+                )
                 .exhaustive()}
               disabled={
                 isClusterManaged ||
