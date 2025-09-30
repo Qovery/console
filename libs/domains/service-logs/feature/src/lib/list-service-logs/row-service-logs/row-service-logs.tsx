@@ -4,6 +4,7 @@ import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import {
   Ansi,
+  Badge,
   Button,
   DescriptionDetails as Dd,
   DescriptionListRoot as Dl,
@@ -31,6 +32,8 @@ export interface RowServiceLogsProps {
 export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: RowServiceLogsProps) {
   const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [isExpanded, setIsExpanded] = useState(false)
+
+  const isNginx = log.instance?.includes('nginx')
 
   const { updateTimeContextValue } = useServiceLogsContext()
   const { utc } = updateTimeContextValue
@@ -74,7 +77,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
   return (
     <>
       <Table.Row
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => !isNginx && setIsExpanded(!isExpanded)}
         className={twMerge(
           clsx(
             'sl-row sl-row-appear relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-[""]',
@@ -88,28 +91,36 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
         )}
       >
         <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap pr-1.5">
-          <span className="flex h-3 w-3 items-center justify-center">
-            <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
-          </span>
-          <Tooltip content={log.instance} delayDuration={300}>
-            <Button
-              type="button"
-              variant="surface"
-              color="neutral"
-              size="xs"
-              className="h-5 gap-1.5 px-1.5 font-code"
-              onClick={(e) => {
-                e.stopPropagation()
-                setQueryParams({ instance: log.instance })
-              }}
-            >
-              <span
-                className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
-                style={{ backgroundColor: getColorByPod(log.instance ?? '') }}
-              />
-              {log.instance?.substring(log.instance?.length - 5)}
-            </Button>
-          </Tooltip>
+          {!isNginx && (
+            <span className="flex h-3 w-3 items-center justify-center">
+              <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
+            </span>
+          )}
+          {isNginx ? (
+            <Badge variant="outline" color="neutral" className="ml-5 h-5 gap-1.5 rounded px-1.5 font-code">
+              NGINX
+            </Badge>
+          ) : (
+            <Tooltip content={log.instance} delayDuration={300}>
+              <Button
+                type="button"
+                variant="surface"
+                color="neutral"
+                size="xs"
+                className="h-5 gap-1.5 px-1.5 font-code"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setQueryParams({ instance: log.instance })
+                }}
+              >
+                <span
+                  className="block h-1.5 w-1.5 min-w-1.5 rounded-sm"
+                  style={{ backgroundColor: getColorByPod(log.instance ?? '') }}
+                />
+                {log.instance?.substring(log.instance?.length - 5)}
+              </Button>
+            </Tooltip>
+          )}
         </Table.Cell>
         <Table.Cell className="h-min min-h-7 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-300">
           <span title={dateUTCString(timestamp)} className="inline-block whitespace-nowrap">

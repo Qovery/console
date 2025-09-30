@@ -48,7 +48,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     [queryParams.level, queryParams.instance, queryParams.container, queryParams.message, queryParams.version]
   )
 
-  const { data: logs = [], isFetched } = useQuery({
+  const { data: logs = [], isFetched: isFetchedLogs } = useQuery({
     keepPreviousData: true,
     ...serviceLogs.serviceLogs({
       clusterId,
@@ -61,6 +61,23 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     }),
     enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(currentEndDate) && enabled,
   })
+
+  const { data: nginxLogs = [], isFetched: isNginxFetched } = useQuery({
+    keepPreviousData: true,
+    ...serviceLogs.serviceLogs({
+      clusterId,
+      serviceId,
+      startDate,
+      endDate: currentEndDate ?? undefined,
+      filters,
+      direction: 'backward',
+      limit: LOGS_PER_BATCH,
+      isNginx: Boolean(queryParams.nginx) ?? false,
+    }),
+    enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(currentEndDate) && enabled,
+  })
+
+  const isFetched = isFetchedLogs && isNginxFetched
 
   // Accumulate logs when new data arrives
   useEffect(() => {

@@ -102,7 +102,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs logs={logs} />
+          <HeaderServiceLogs isFetched={isLogsFetched} logs={logs} />
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">No logs available</div>
           </div>
@@ -116,7 +116,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs logs={logs} />
+          <HeaderServiceLogs isFetched={isLogsFetched} logs={logs} />
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <ServiceLogsPlaceholder
@@ -134,7 +134,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
-        <HeaderServiceLogs logs={logs} />
+        <HeaderServiceLogs isFetched={isLogsFetched} logs={logs} />
         <div
           className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
           ref={refScrollSection}
@@ -196,7 +196,8 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
             </Table.Body>
           </Table.Root>
           {isLiveMode ? (
-            isServiceProgressing && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
+            isServiceProgressing &&
+            isLogsFetched && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
           ) : (
             <div className="h-8" />
           )}

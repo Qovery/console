@@ -74,6 +74,25 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     ) => {
       setNewLogsAvailable(true)
       const normalizedLog = normalizeWebSocketLog(log)
+      serviceLogsBuffer.current.push(normalizedLog)
+      scheduleFlush()
+    },
+    [scheduleFlush]
+  )
+
+  const onLogHandlerNginx = useCallback(
+    (
+      _: QueryClient,
+      log: {
+        created_at?: number
+        message?: string
+        pod_name?: string
+        container_name?: string
+        version?: string
+      }
+    ) => {
+      setNewLogsAvailable(true)
+      const normalizedLog = normalizeWebSocketLog(log)
 
       serviceLogsBuffer.current.push(normalizedLog)
       scheduleFlush()
@@ -108,6 +127,30 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     queryParams.version,
   ])
 
+  const dynamicQueryNginx = useMemo(() => {
+    if (!serviceId) return ''
+
+    return buildLokiQuery(
+      {
+        serviceId,
+        level: queryParams.level || undefined,
+        instance: queryParams.instance || undefined,
+        container: queryParams.container || undefined,
+        message: queryParams.message || undefined,
+        version: queryParams.version || undefined,
+      },
+      Boolean(queryParams.nginx)
+    )
+  }, [
+    serviceId,
+    queryParams.level,
+    queryParams.instance,
+    queryParams.container,
+    queryParams.message,
+    queryParams.version,
+    queryParams.nginx,
+  ])
+
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/service/logs',
     urlSearchParams: {
@@ -119,12 +162,32 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       query: dynamicQuery,
       limit: LIMIT.toString(),
     },
-    enabled: Boolean(clusterId) && Boolean(serviceId) && enabled && Boolean(dynamicQuery),
+    enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQuery) && enabled,
     onMessage: onLogHandler,
     onClose: onCloseHandler,
   })
 
-  const pausedDataLogs = useMemo(() => debouncedLogs, [debouncedLogs])
+  useReactQueryWsSubscription({
+    url: QOVERY_WS + '/service/logs',
+    urlSearchParams: {
+      organization: organizationId,
+      project: projectId,
+      environment: environmentId,
+      service: serviceId,
+      cluster: clusterId,
+      query: dynamicQueryNginx,
+      limit: LIMIT.toString(),
+    },
+    enabled:
+      Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQueryNginx) && Boolean(queryParams.nginx) && enabled,
+    onMessage: onLogHandlerNginx,
+    onClose: onCloseHandler,
+  })
+
+  const pausedDataLogs = useMemo(
+    () => debouncedLogs.sort((a, b) => Number(a?.timestamp) - Number(b?.timestamp)),
+    [debouncedLogs]
+  )
 
   return {
     data: pauseLogs ? pausedDataLogs : debouncedLogs,

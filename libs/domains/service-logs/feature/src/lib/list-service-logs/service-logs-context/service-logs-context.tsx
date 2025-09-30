@@ -1,7 +1,7 @@
 import download from 'downloadjs'
 import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { DateTimeParam, StringParam } from 'use-query-params'
+import { BooleanParam, DateTimeParam, StringParam } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 
 interface UpdateTimeContextProps {
@@ -35,6 +35,7 @@ export const queryParamsServiceLogs = {
   message: StringParam,
   level: StringParam,
   search: StringParam,
+  nginx: BooleanParam,
 }
 
 export const ServiceLogsContext = createContext<ServiceLogsContextType | undefined>(undefined)

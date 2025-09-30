@@ -2,29 +2,39 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { type ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
-import { Button, Icon } from '@qovery/shared/ui'
+import { Icon } from '@qovery/shared/ui'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 const defaultFilters = [
   {
     value: 'level:',
     label: 'level:',
+    description: '[debug, info, warn, error]',
   },
   {
     value: 'instance:',
     label: 'instance:',
+    description: '[instance id]',
   },
   {
     value: 'container:',
     label: 'container:',
+    description: '[container name]',
   },
   {
     value: 'version:',
     label: 'version:',
+    description: '[version name]',
   },
   {
     value: 'message:',
     label: 'message:',
+    description: '[message]',
+  },
+  {
+    value: 'nginx:true',
+    label: 'nginx:',
+    description: '[activate nginx logs]',
   },
 ]
 
@@ -49,9 +59,9 @@ const detailFilters = [
 ]
 const highlightFilters = (text: string) => {
   if (!text) return `<span>${text}</span>`
-  const filterRegex = /(\w+:[^\s]*)/g
+  const filterRegex = /(\w+[:][^\s]*)/g
   return text.replace(filterRegex, (match) => {
-    return `<span class="bg-neutral-500 whitespace-nowrap rounded -ml-[5px] pl-1.5 pr-1">${match}</span>`
+    return `<span class="bg-neutral-500 whitespace-nowrap rounded p-1">${match}</span>`
   })
 }
 
@@ -59,12 +69,13 @@ interface ItemProps extends ComponentPropsWithoutRef<typeof CommandItem> {
   label: string
   setValue: (value: string) => void
   setIsOpen: (isOpen: boolean) => void
+  description?: string
 }
 
-function Item({ value, label, setValue, setIsOpen }: ItemProps) {
+function Item({ value, label, setValue, setIsOpen, description }: ItemProps) {
   return (
     <CommandItem
-      className="flex h-10 cursor-pointer items-center rounded-sm p-1.5 transition-colors hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
+      className="flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 transition-colors hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
       value={value}
       onSelect={(currentValue) => {
         setValue(currentValue)
@@ -72,6 +83,7 @@ function Item({ value, label, setValue, setIsOpen }: ItemProps) {
       }}
     >
       <span className="whitespace-nowrap rounded-[4px] bg-neutral-500 p-1 pt-0.5">{label}</span>
+      {description && <span className="text-xs text-neutral-300">{description}</span>}
     </CommandItem>
   )
 }
@@ -96,56 +108,73 @@ function ConfirmItem({ onConfirm }: ConfirmItemProps) {
 function buildValue(queryParams: DecodedValueMap<typeof queryParamsServiceLogs>) {
   let value = ''
 
-  if (queryParams['level']) {
-    value += `level:${queryParams['level']} `
+  if (queryParams.level) {
+    value += `level:${queryParams.level} `
   }
-  if (queryParams['instance']) {
-    value += `instance:${queryParams['instance']} `
+  if (queryParams.instance) {
+    value += `instance:${queryParams.instance} `
   }
-  if (queryParams['container']) {
-    value += `container:${queryParams['container']} `
+  if (queryParams.container) {
+    value += `container:${queryParams.container} `
   }
-  if (queryParams['version']) {
-    value += `version:${queryParams['version']} `
+  if (queryParams.version) {
+    value += `version:${queryParams.version} `
   }
-  if (queryParams['message']) {
-    value += `message:${queryParams['message']} `
+  if (queryParams.message) {
+    value += `message:${queryParams.message} `
   }
-  if (queryParams['search']) {
-    value += `${queryParams['search']} `
+  if (queryParams.nginx) {
+    value += `nginx:true `
+  }
+  if (queryParams.search) {
+    value += `${queryParams.search} `
   }
 
   return value.trim()
 }
 
 function buildQueryParams(value: string) {
-  const filterRegex = /(\w+):([^\s]*)/g
+  const filterRegex = /(\w+)[:]([^\s]*)/g
   const matches = value.match(filterRegex)
-  const queryParams: { [key: string]: string } = {}
+  const queryParams: DecodedValueMap<typeof queryParamsServiceLogs> = {
+    startDate: undefined,
+    endDate: undefined,
+    level: undefined,
+    instance: undefined,
+    container: undefined,
+    version: undefined,
+    message: undefined,
+    nginx: undefined,
+    search: undefined,
+  }
 
   if (matches) {
     matches.forEach((match) => {
-      const parts = match.split(':')
+      const parts = match.split(/[:]/)
       const filterKey = parts[0]
       const filterValue = parts[1] || ''
 
-      const isValidFilter = defaultFilters.some((filter) => filter.value.replace(':', '') === filterKey)
+      const isValidFilter = defaultFilters.some((filter) => filter.value.replace(/[:]/, '') === filterKey)
 
       if (isValidFilter && filterValue) {
-        queryParams[filterKey] = filterValue
+        const typedQueryParams = queryParams as Record<string, string | boolean | undefined>
+        typedQueryParams[filterKey] = filterValue
+      }
+      if (filterKey === 'nginx') {
+        queryParams.nginx = true
       }
     })
   }
 
   const textWithoutFilters = value.replace(filterRegex, '').trim()
   if (textWithoutFilters) {
-    queryParams['search'] = textWithoutFilters
+    queryParams.search = textWithoutFilters
   }
 
   return queryParams
 }
 
-export function SearchServiceLogs() {
+export function SearchServiceLogs({ isFetched }: { isFetched: boolean }) {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [value, setValue] = useState<string>(buildValue(queryParams))
   const [isOpen, setIsOpen] = useState(false)
@@ -162,7 +191,7 @@ export function SearchServiceLogs() {
   const getContextualSuggestions = () => {
     const beforeCursor = value.substring(0, cursorPosition)
 
-    const filterMatch = beforeCursor.match(/(\w+):\s*([^\s]*)$/)
+    const filterMatch = beforeCursor.match(/(\w+)[:]\s*([^\s]*)$/)
     if (!filterMatch) return []
 
     const filterKey = filterMatch[1]
@@ -182,14 +211,14 @@ export function SearchServiceLogs() {
   }
 
   const getExistingFilterValues = (filterKey: string) => {
-    const filterRegex = new RegExp(`${filterKey}:\\s*([^\\s]+)`, 'g')
+    const filterRegex = new RegExp(`${filterKey}[:]\\s*([^\\s]+)`, 'g')
     const matches = value.match(filterRegex)
 
     if (!matches) return []
 
     return matches
       .map((match) => {
-        const valuePart = match.split(':')[1]?.trim()
+        const valuePart = match.split(/[:]/)[1]?.trim()
         return valuePart || ''
       })
       .filter(Boolean)
@@ -197,7 +226,7 @@ export function SearchServiceLogs() {
 
   const hasContextualSuggestions = () => {
     const beforeCursor = value.substring(0, cursorPosition)
-    return /(\w+):\s*[^\s]*$/.test(beforeCursor)
+    return /(\w+)[:]\s*[^\s]*$/.test(beforeCursor)
   }
 
   const handleInputChange = (newValue: string, cursorPos?: number) => {
@@ -215,6 +244,7 @@ export function SearchServiceLogs() {
       container: undefined,
       version: undefined,
       message: undefined,
+      nginx: undefined,
       search: undefined,
     })
     setValue('')
@@ -248,35 +278,29 @@ export function SearchServiceLogs() {
 
   const insertFilterValue = (filterValue: string) => {
     const beforeCursor = value.substring(0, cursorPosition)
-    const filterMatch = beforeCursor.match(/(\w+):\s*([^\s]*)$/)
+    const filterMatch = beforeCursor.match(/(\w+)[:]\s*([^\s]*)$/)
 
     if (filterMatch) {
       const filterKey = filterMatch[1]
-      const beforeFilter = beforeCursor.substring(0, beforeCursor.indexOf(filterKey + ':'))
+      const separator = filterKey === 'nginx' ? '=' : ':'
+      const beforeFilter = beforeCursor.substring(0, beforeCursor.indexOf(filterKey + separator))
       const afterCursor = value.substring(cursorPosition)
 
-      const newValue = beforeFilter + filterKey + ':' + filterValue + afterCursor
+      const newValue = beforeFilter + filterKey + separator + filterValue + afterCursor
       setValue(newValue)
       setIsOpen(false)
     }
   }
 
   return (
-    <div
-      className="relative w-full"
-      style={
-        {
-          '--word-gap': value ? '8px' : '0px',
-        } as React.CSSProperties
-      }
-    >
+    <div className="relative w-full">
       <Command shouldFilter={false}>
         <div className="relative flex h-9 w-full items-center gap-2 overflow-hidden text-sm text-white">
           <div className="h-full w-full pr-1">
             <div
               className="pointer-events-none absolute left-0 top-0 z-0 flex h-9 w-fit items-center border border-transparent px-10 text-sm text-transparent"
               style={{
-                gap: '7px',
+                gap: value ? '0.25rem' : '0px',
                 transform: `translateX(-${scrollLeft}px)`,
               }}
               dangerouslySetInnerHTML={{ __html: highlightFilters(value) }}
@@ -296,7 +320,7 @@ export function SearchServiceLogs() {
               onClick={() => setIsOpen(true)}
               onBlur={() => setTimeout(() => setIsOpen(false), 200)}
               style={{
-                wordSpacing: 'var(--word-gap)',
+                wordSpacing: value ? '0.5rem' : 0,
                 background: '0 0',
               }}
             />
@@ -310,15 +334,17 @@ export function SearchServiceLogs() {
             )}
           </div>
           <div className="absolute bottom-[1px] left-[1px] flex h-[34px] w-7 items-center justify-end rounded-l bg-neutral-600">
-            <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
+            {isFetched ? (
+              <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
+            ) : (
+              <Icon iconName="loader" iconStyle="regular" className="ml-0.5 mt-[1px] animate-spin text-neutral-250" />
+            )}
           </div>
         </div>
         {isOpen && (
           <CommandList className="absolute left-0 right-0 top-full z-10 mt-2 max-h-60 overflow-auto rounded-md border border-neutral-400 bg-neutral-600 p-1.5 text-sm shadow-lg">
             <CommandEmpty>No logs found.</CommandEmpty>
             <CommandGroup>
-              <ConfirmItem onConfirm={confirmSearch} />
-
               {/* Contextual suggestions */}
               {hasContextualSuggestions() &&
                 getContextualSuggestions().map((option) => (
@@ -340,10 +366,12 @@ export function SearchServiceLogs() {
                       key={filter.value}
                       value={filter.value}
                       label={filter.label}
+                      description={filter.description}
                       setValue={setValue}
                       setIsOpen={setIsOpen}
                     />
                   ))}
+              <ConfirmItem onConfirm={confirmSearch} />
             </CommandGroup>
           </CommandList>
         )}

@@ -14,8 +14,12 @@ export interface LogFilters {
   search?: string
 }
 
-export function buildLokiQuery(filters: LogFilters): string {
-  const labels: string[] = [`qovery_com_service_id="${filters.serviceId}"`]
+export function buildLokiQuery(filters: LogFilters, isNginx = false): string {
+  const labels: string[] = isNginx
+    ? [
+        `{app="ingress-nginx"} | level=~"error|warn" or (qovery_com_associated_service_id="${filters.serviceId}" and level!~"error|warn")`,
+      ]
+    : [`qovery_com_service_id="${filters.serviceId}"`]
 
   if (filters.level) {
     labels.push(`level="${filters.level}"`)
@@ -37,7 +41,7 @@ export function buildLokiQuery(filters: LogFilters): string {
     labels.push(`app="${filters.version}"`)
   }
 
-  let query = `{${labels.join(', ')}}`
+  let query = isNginx ? `(${labels.join(', ')})` : `{${labels.join(', ')}}`
 
   if (filters.message) {
     query += ` |= "${filters.message}"`
@@ -163,6 +167,7 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     filters,
     limit,
     direction,
+    isNginx = false,
   }: {
     clusterId: string
     serviceId: string
@@ -172,15 +177,16 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
     filters?: Omit<LogFilters, 'serviceId'>
     limit?: number
     direction?: 'forward' | 'backward'
+    isNginx?: boolean
   }) => ({
-    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters, limit, direction],
+    queryKey: [clusterId, timeRange, startDate, endDate, serviceId, filters, limit, direction, isNginx],
     async queryFn() {
       // Convert Date objects to nanosecond Unix epoch format for Loki API
       // https://grafana.com/docs/loki/latest/reference/loki-http-api/#timestamps
       const startTimestamp = startDate ? (startDate.getTime() * 1000000).toString() : undefined
       const endTimestamp = endDate ? (endDate.getTime() * 1000000).toString() : undefined
 
-      const query = buildLokiQuery({ serviceId, ...filters })
+      const query = buildLokiQuery({ serviceId, ...filters }, isNginx)
 
       const response = await clusterApi.getClusterLogs(
         clusterId,
