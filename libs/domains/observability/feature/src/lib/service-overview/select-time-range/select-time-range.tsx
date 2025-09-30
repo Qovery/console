@@ -21,6 +21,8 @@ export function SelectTimeRange() {
     resetChartZoom,
     setIsDatePickerOpen,
     lastDropdownTimeRange,
+    isLiveUpdateEnabled,
+    setIsLiveUpdateEnabled,
   } = useServiceOverviewContext()
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
@@ -54,7 +56,7 @@ export function SelectTimeRange() {
             type="button"
             variant="surface"
             color="neutral"
-            className="rounded-r-none border-r-0"
+            className="rounded-r-none border-r-0 active:scale-100"
             size="md"
             onClick={() => {
               setIsOpenTimestamp(!isOpenTimestamp)
@@ -69,6 +71,7 @@ export function SelectTimeRange() {
             variant="surface"
             color="neutral"
             size="md"
+            className="active:scale-100"
             onClick={() => {
               setIsOpenTimestamp(!isOpenTimestamp)
               setIsDatePickerOpen(!isOpenTimestamp)
@@ -97,7 +100,12 @@ export function SelectTimeRange() {
           inputClassName="rounded-l-none"
           items={timeRangeOptions}
           defaultValue={timeRange}
-          onChange={(e) => handleTimeRangeChange(e as TimeRangeOption)}
+          onChange={(e) => {
+            if (isLiveUpdateEnabled && e !== '15m' && e !== '5m' && e !== '30m' && e !== '1h') {
+              setIsLiveUpdateEnabled(false)
+            }
+            handleTimeRangeChange(e as TimeRangeOption)
+          }}
         />
       )}
     </div>

@@ -299,7 +299,7 @@ export const ChartLegendContent = ({
                 size="xs"
                 radius="full"
                 className={clsx(
-                  "relative z-0 cursor-pointer gap-2 transition-colors duration-100 before:absolute before:bottom-0 before:left-[-8px] before:right-[-8px] before:top-0 before:-z-[1] before:content-['']",
+                  "relative z-0 cursor-pointer gap-2 transition-colors duration-100 before:absolute before:bottom-0 before:left-[-8px] before:right-[-8px] before:top-0 before:-z-[1] before:content-[''] active:scale-100",
                   isActive && '!border-neutral-300 hover:!bg-neutral-150'
                 )}
                 onClick={(e) => handleClick(item, index, e)}
