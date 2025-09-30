@@ -298,6 +298,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-5"
+              type="password"
               label="Token value"
               name={field.name}
               onChange={field.onChange}
