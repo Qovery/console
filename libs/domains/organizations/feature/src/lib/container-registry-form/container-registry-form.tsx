@@ -318,15 +318,32 @@ export function ContainerRegistryForm({
                     onChange={field.onChange}
                     value={field.value}
                     label={match(watchKind)
-                      .with(ContainerRegistryKindEnum.GITHUB_CR, () => 'Container registry prefix')
-                      .otherwise(() => 'Username')}
-                    hint={match(watchKind)
                       .with(
                         ContainerRegistryKindEnum.GITHUB_CR,
-                        () =>
-                          'The prefix is the part of the URL before the repository name. For example, in ghcr.io/qovery/my-app, the prefix is qovery'
+                        ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
+                        () => 'Container registry prefix'
                       )
-                      .otherwise(() => undefined)}
+                      .otherwise(() => 'Username')}
+                    hint={
+                      <span>
+                        {match(watchKind)
+                          .with(ContainerRegistryKindEnum.GITHUB_CR, () => (
+                            <>
+                              The prefix is the part of the URL before the repository name.For example, in{' '}
+                              <code className="rounded bg-neutral-100 px-1">ghcr.io/qovery/my-app</code>, the prefix is{' '}
+                              <code className="rounded bg-neutral-100 px-1">qovery</code>
+                            </>
+                          ))
+                          .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () => (
+                            <>
+                              The prefix is the part of the URL before the repository name. For example, in{' '}
+                              <code className="rounded bg-neutral-100 px-1">host.ghe.com/qovery/my-app</code>, the
+                              prefix is <code className="rounded bg-neutral-100 px-1">qovery</code>
+                            </>
+                          ))
+                          .otherwise(() => undefined)}
+                      </span>
+                    }
                     error={error?.message}
                   />
                 )}
@@ -337,7 +354,8 @@ export function ContainerRegistryForm({
                   <hr />
                   <span className="text-sm text-neutral-350">
                     {watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                    watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                    watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+                    watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
                       ? 'Confirm your personal access token'
                       : 'Confirm your password'}
                   </span>
@@ -350,7 +368,8 @@ export function ContainerRegistryForm({
                   rules={{
                     required:
                       watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                      watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                      watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+                      watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
                         ? 'Please enter a personal access token.'
                         : 'Please enter a password.',
                   }}
@@ -364,7 +383,8 @@ export function ContainerRegistryForm({
                         value={field.value}
                         label={
                           watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                          watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                          watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+                          watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
                             ? 'Personal Access Token'
                             : 'Password'
                         }
