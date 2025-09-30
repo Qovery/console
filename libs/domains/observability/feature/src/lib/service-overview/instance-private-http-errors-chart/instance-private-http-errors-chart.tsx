@@ -9,7 +9,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 
 const query = (containerName: string) => `
 100 *
-beyla:req_rate:5m_by_status{k8s_container_name="${containerName}", http_response_status_code=~"499|5.."}
+beyla:req_rate:5m_by_status{k8s_container_name="${containerName}", http_response_status_code=~"5.."}
 /
 ignoring(http_response_status_code) group_left
 clamp_min(beyla:req_rate:5m{k8s_container_name="${containerName}"}, 1)

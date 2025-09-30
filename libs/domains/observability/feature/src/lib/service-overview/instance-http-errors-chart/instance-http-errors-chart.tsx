@@ -10,7 +10,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 const query = (ingressName: string) => `
 100 *
 sum by (status) (
-  nginx:req_rate:5m_by_status{ingress="${ingressName}", status=~"499|5.."}
+  nginx:req_rate:5m_by_status{ingress="${ingressName}", status=~"5.."}
 )
 /
 ignoring(status) group_left

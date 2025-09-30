@@ -8,7 +8,7 @@ import { useServiceOverviewContext } from '../util-filter/service-overview-conte
 
 const queryErrorRequest = (timeRange: string, ingressName: string) => `
    sum(sum_over_time(
-    (nginx:req_inc:5m_by_status{ingress="${ingressName}", status=~"499|5.."})[${timeRange}:5m]
+    (nginx:req_inc:5m_by_status{ingress="${ingressName}", status=~"5.."})[${timeRange}:5m]
   ))
 `
 

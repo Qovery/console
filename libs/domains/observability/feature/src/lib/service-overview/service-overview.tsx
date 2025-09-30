@@ -39,6 +39,8 @@ function ServiceOverviewContent() {
     setExpandCharts,
     isLiveUpdateEnabled,
     setIsLiveUpdateEnabled,
+    handleTimeRangeChange,
+    timeRange,
   } = useServiceOverviewContext()
 
   const hasPublicPort =
@@ -109,13 +111,28 @@ function ServiceOverviewContent() {
     <div className="isolate">
       <div className="sticky top-16 z-10 flex h-[68px] w-full items-center justify-between gap-3 border-b border-neutral-250 bg-white px-8">
         <div className="flex gap-3">
-          <Tooltip content="Live refresh (15s)">
+          <Tooltip
+            content={
+              <span>
+                Live refresh (15s) <br />
+                Only for time ranges ≤ 1h
+              </span>
+            }
+          >
             <Button
               variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
               color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
               size="md"
               className={clsx('gap-1.5', isLiveUpdateEnabled && 'border border-transparent')}
-              onClick={() => setIsLiveUpdateEnabled(!isLiveUpdateEnabled)}
+              onClick={() => {
+                // If timeRange is '30m' or greater, set to '15m' when enabling live update
+                if (!isLiveUpdateEnabled) {
+                  if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
+                    handleTimeRangeChange('15m')
+                  }
+                }
+                setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
+              }}
             >
               <Icon
                 iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'}
