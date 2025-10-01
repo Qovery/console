@@ -81,7 +81,7 @@ describe('SidebarPodStatuses', () => {
     expect(container.querySelector('svg')).toBeInTheDocument()
   })
 
-  it('shows error state when pods have errors', () => {
+  it('shows error state when instances have errors', () => {
     const useMetricsMock = useMetrics as jest.Mock
     const useRunningStatusMock = useRunningStatus as jest.Mock
 
@@ -96,7 +96,7 @@ describe('SidebarPodStatuses', () => {
 
     renderWithProviders(<SidebarPodStatuses {...defaultProps} />)
 
-    expect(screen.getByText('Pods were not successful')).toBeInTheDocument()
+    expect(screen.getByText('Instances are running with errors')).toBeInTheDocument()
     expect(screen.getByText('1 failing')).toBeInTheDocument()
   })
 
@@ -194,7 +194,7 @@ describe('SidebarPodStatuses', () => {
     const toggleButton = screen.getByRole('button')
     await userEvent.click(toggleButton)
 
-    expect(screen.getByText('No pods')).toBeInTheDocument()
+    expect(screen.getByText('No instances')).toBeInTheDocument()
   })
 
   it('displays correct status for completed job', async () => {
