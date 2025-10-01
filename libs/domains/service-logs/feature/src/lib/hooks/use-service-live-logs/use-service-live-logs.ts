@@ -124,6 +124,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       container: queryParams.container || undefined,
       message: queryParams.message || undefined,
       version: queryParams.version || undefined,
+      search: queryParams.search || undefined,
     })
   }, [
     serviceId,
@@ -132,6 +133,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     queryParams.container,
     queryParams.message,
     queryParams.version,
+    queryParams.search,
   ])
 
   const dynamicQueryNginx = useMemo(() => {
@@ -144,6 +146,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         instance: queryParams.instance || undefined,
         container: queryParams.container || undefined,
         message: queryParams.message || undefined,
+        search: queryParams.search || undefined,
         version: queryParams.version || undefined,
       },
       Boolean(queryParams.nginx)
@@ -154,6 +157,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     queryParams.instance,
     queryParams.container,
     queryParams.message,
+    queryParams.search,
     queryParams.version,
     queryParams.nginx,
   ])

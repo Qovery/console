@@ -43,9 +43,17 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       instance: queryParams.instance || undefined,
       container: queryParams.container || undefined,
       message: queryParams.message || undefined,
+      search: queryParams.search || undefined,
       version: queryParams.version || undefined,
     }),
-    [queryParams.level, queryParams.instance, queryParams.container, queryParams.message, queryParams.version]
+    [
+      queryParams.level,
+      queryParams.instance,
+      queryParams.container,
+      queryParams.message,
+      queryParams.search,
+      queryParams.version,
+    ]
   )
 
   const {

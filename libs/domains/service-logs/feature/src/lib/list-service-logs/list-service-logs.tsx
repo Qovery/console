@@ -161,7 +161,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
                     key={timestamp + index}
                     log={log}
                     hasMultipleContainers={hasMultipleContainers}
-                    highlightedText={queryParams.message}
+                    highlightedText={queryParams.message || queryParams.search}
                   />
                 )
               })}

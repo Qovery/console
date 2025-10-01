@@ -15,7 +15,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queryParamsServiceLogs, useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
@@ -74,23 +74,32 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
     )
   }
 
+  const levelLowercase = log.level?.toLowerCase()
+  const isErrorOrCritical = log.level === 'ERROR' || log.level === 'CRITICAL'
+
   return (
     <>
       <Table.Row
         onClick={() => !isNginx && setIsExpanded(!isExpanded)}
         className={twMerge(
-          clsx(
-            'sl-row sl-row-appear relative mt-0.5 cursor-pointer text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:bg-neutral-500 before:content-[""]',
-            {
-              'before:bg-sky-500': log.level === 'INFO',
-              'before:bg-yellow-500': log.level === 'WARNING',
-              'bg-red-500/10 before:bg-red-500 hover:before:bg-red-400':
-                log.level === 'ERROR' || log.level === 'CRITICAL',
-            }
-          )
+          clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer text-xs', {
+            'bg-red-500/10': isErrorOrCritical,
+          })
         )}
       >
         <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap pr-1.5">
+          <Tooltip content={upperCaseFirstLetter(log.level)}>
+            <span
+              className={twMerge(
+                clsx('absolute left-0.5 top-0 block h-full w-1 bg-neutral-500', {
+                  'bg-sky-500': log.level === 'INFO',
+                  'bg-yellow-500': log.level === 'WARNING',
+                  'bg-red-500 hover:bg-red-400 group-hover:bg-red-400': isErrorOrCritical,
+                  'bg-red-400': isExpanded && isErrorOrCritical,
+                })
+              )}
+            />
+          </Tooltip>
           {!isNginx && (
             <span className="flex h-3 w-3 items-center justify-center">
               <Icon className="text-neutral-300" iconName={isExpanded ? 'chevron-down' : 'chevron-right'} />
@@ -157,7 +166,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
             clsx(
               'sl-expanded relative -top-0.5 h-[calc(100%+2px)] text-xs before:absolute before:left-0.5 before:block before:h-full before:w-1 before:content-[""]',
               {
-                'bg-red-500/10': log.level === 'ERROR' || log.level === 'CRITICAL',
+                'bg-red-500/10': isErrorOrCritical,
               }
             )
           )}
@@ -165,8 +174,38 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
           <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
             <div className="w-full rounded border border-neutral-400 bg-transparent px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
-                <Dt className="col-span-2 flex select-none items-center font-code">Instance</Dt>
-                <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">
+                {log.level && (
+                  <>
+                    <Dt className="col-span-2 flex select-none items-center font-code">Level</Dt>
+                    <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">
+                      <Button
+                        type="button"
+                        variant="surface"
+                        color="neutral"
+                        size="xs"
+                        className="gap-1.5"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setQueryParams({ level: levelLowercase })
+                        }}
+                      >
+                        {levelLowercase}
+                      </Button>
+                    </Dd>
+                  </>
+                )}
+                <Dt
+                  className={clsx('col-span-2 flex select-none items-center font-code', {
+                    'mt-2': log.level,
+                  })}
+                >
+                  Instance
+                </Dt>
+                <Dd
+                  className={clsx('flex gap-1 text-sm leading-3 dark:font-medium', {
+                    'mt-2': log.level,
+                  })}
+                >
                   <Button
                     type="button"
                     variant="surface"

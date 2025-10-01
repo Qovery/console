@@ -43,10 +43,8 @@ export function buildLokiQuery(filters: LogFilters, isNginx = false): string {
 
   let query = isNginx ? `(${labels.join(', ')})` : `{${labels.join(', ')}}`
 
-  if (filters.message) {
-    query += ` |= "${filters.message}"`
-  } else if (filters.search) {
-    query += ` |= "${filters.search}"`
+  if (filters.message || filters.search) {
+    query += ` |= "${filters.message ? filters.message : ''}${filters.search ? ` ${filters.search}` : ''}"`
   }
 
   return query
