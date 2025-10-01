@@ -55,7 +55,7 @@ export function ImageName({
       { kind: 'GCP_ARTIFACT_REGISTRY' },
       { kind: 'DOCKER_HUB' },
       { kind: 'GENERIC_CR' },
-      (r) => true
+      () => true
     )
     .with({ kind: 'GITHUB_CR' }, { kind: 'GITHUB_ENTERPRISE_CR' }, (r) => r.config && Object.keys(r.config).length > 0)
     .otherwise(() => false)
