@@ -30,6 +30,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
   const [newLogsAvailable, setNewLogsAvailable] = useState(false)
   const [pauseLogs, setPauseLogs] = useState(false)
   const [isFetched, setIsFetched] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const [enabledNginx, setEnabledNginx] = useState(false)
   const [debouncedLogs, setDebouncedLogs] = useState<NormalizedServiceLog[]>([])
@@ -39,6 +40,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       setDebouncedLogs((prev) => [...prev, ...serviceLogsBuffer.current])
       serviceLogsBuffer.current = []
       setIsFetched(true)
+      setIsLoading(false)
     }
   }, [])
 
@@ -105,6 +107,11 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     serviceLogsBuffer.current = []
     setNewLogsAvailable(false)
     setIsFetched(false)
+    setIsLoading(false)
+  }, [])
+
+  const onOpenHandler = useCallback(() => {
+    setIsLoading(true)
   }, [])
 
   const dynamicQuery = useMemo(() => {
@@ -165,6 +172,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQuery) && enabled,
     onMessage: onLogHandler,
     onClose: onCloseHandler,
+    onOpen: onOpenHandler,
   })
 
   useReactQueryWsSubscription({
@@ -182,6 +190,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQueryNginx) && Boolean(queryParams.nginx) && enabled,
     onMessage: onLogHandlerNginx,
     onClose: onCloseHandler,
+    onOpen: onOpenHandler,
   })
 
   const pausedDataLogs = useMemo(
@@ -198,6 +207,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     enabledNginx,
     setEnabledNginx,
     isFetched,
+    isLoading,
   }
 }
 

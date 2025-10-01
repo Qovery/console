@@ -127,7 +127,8 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
             {dateFullFormat(timestamp, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>
-        {hasMultipleContainers && (
+        {hasMultipleContainers && isNginx && <Table.Cell className="flex h-0 w-0 p-0"></Table.Cell>}
+        {hasMultipleContainers && !isNginx && (
           <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap px-1.5">
             <Tooltip content={log.container} delayDuration={300}>
               <Button

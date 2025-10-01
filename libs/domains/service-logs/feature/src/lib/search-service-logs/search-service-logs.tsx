@@ -1,4 +1,4 @@
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from 'cmdk'
+import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from 'cmdk'
 import { type ComponentPropsWithoutRef, useEffect, useMemo, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
@@ -9,7 +9,7 @@ const defaultFilters = [
   {
     value: 'level:',
     label: 'level:',
-    description: '[debug, info, warn, error]',
+    description: '[debug, info, warning, error]',
   },
   {
     value: 'instance:',
@@ -29,7 +29,7 @@ const defaultFilters = [
   {
     value: 'message:',
     label: 'message:',
-    description: '[message]',
+    description: '[what you want to search for]',
   },
   {
     value: 'nginx:true',
@@ -75,7 +75,7 @@ interface ItemProps extends ComponentPropsWithoutRef<typeof CommandItem> {
 function Item({ value, label, setValue, setIsOpen, description }: ItemProps) {
   return (
     <CommandItem
-      className="flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 transition-colors hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
+      className="group flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
       value={value}
       onSelect={(currentValue) => {
         setValue(currentValue)
@@ -83,7 +83,9 @@ function Item({ value, label, setValue, setIsOpen, description }: ItemProps) {
       }}
     >
       <span className="whitespace-nowrap rounded-[4px] bg-neutral-500 p-1 pt-0.5">{label}</span>
-      {description && <span className="text-xs text-neutral-300">{description}</span>}
+      {description && (
+        <span className="hidden text-xs text-neutral-300 group-data-[selected=true]:inline">{description}</span>
+      )}
     </CommandItem>
   )
 }
@@ -174,7 +176,7 @@ function buildQueryParams(value: string) {
   return queryParams
 }
 
-export function SearchServiceLogs({ isFetched }: { isFetched: boolean }) {
+export function SearchServiceLogs({ isLoading }: { isLoading: boolean }) {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [value, setValue] = useState<string>(buildValue(queryParams))
   const [isOpen, setIsOpen] = useState(false)
@@ -256,7 +258,11 @@ export function SearchServiceLogs({ isFetched }: { isFetched: boolean }) {
 
     if (value?.length > 0) {
       const builtQueryParams = buildQueryParams(value)
-      setQueryParams(builtQueryParams)
+      setQueryParams({
+        ...builtQueryParams,
+        startDate: queryParams.startDate,
+        endDate: queryParams.endDate,
+      })
       setIsOpen(false)
     } else {
       clearInput()
@@ -290,6 +296,35 @@ export function SearchServiceLogs({ isFetched }: { isFetched: boolean }) {
       setValue(newValue)
       setIsOpen(false)
     }
+  }
+
+  const insertFilter = (filterValue: string) => {
+    const beforeCursor = value.substring(0, cursorPosition)
+    const afterCursor = value.substring(cursorPosition)
+
+    // Find the last space to determine where the current word starts
+    const lastSpaceIndex = beforeCursor.lastIndexOf(' ')
+
+    // Remove the current word and add the new filter
+    const beforeCurrentWord = lastSpaceIndex >= 0 ? beforeCursor.substring(0, lastSpaceIndex + 1) : ''
+
+    // Add space before if there's already content and no space at the end
+    const prefix = beforeCurrentWord && !beforeCurrentWord.endsWith(' ') ? ' ' : ''
+
+    const newValue = beforeCurrentWord + prefix + filterValue + afterCursor
+    const newCursorPosition = (beforeCurrentWord + prefix + filterValue).length
+
+    setValue(newValue)
+    setCursorPosition(newCursorPosition)
+    setIsOpen(true)
+
+    // Position the cursor in the input
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+        inputRef.current.setSelectionRange(newCursorPosition, newCursorPosition)
+      }
+    }, 0)
   }
 
   return (
@@ -333,17 +368,16 @@ export function SearchServiceLogs({ isFetched }: { isFetched: boolean }) {
               </button>
             )}
           </div>
-          <div className="absolute bottom-[1px] left-[1px] flex h-[34px] w-7 items-center justify-end rounded-l bg-neutral-600">
-            {isFetched ? (
-              <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
-            ) : (
+          <div className="absolute bottom-[1px] left-[1px] flex h-[34px] w-7 items-center justify-end rounded-l bg-neutral-600 after:absolute after:-right-[12px] after:top-0 after:block after:h-full after:w-3 after:bg-neutral-600 after:content-['']">
+            {isLoading ? (
               <Icon iconName="loader" iconStyle="regular" className="ml-0.5 mt-[1px] animate-spin text-neutral-250" />
+            ) : (
+              <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
             )}
           </div>
         </div>
         {isOpen && (
           <CommandList className="absolute left-0 right-0 top-full z-10 mt-2 max-h-60 overflow-auto rounded-md border border-neutral-400 bg-neutral-600 p-1.5 text-sm shadow-lg">
-            <CommandEmpty>No logs found.</CommandEmpty>
             <CommandGroup>
               {/* Contextual suggestions */}
               {hasContextualSuggestions() &&
@@ -360,14 +394,20 @@ export function SearchServiceLogs({ isFetched }: { isFetched: boolean }) {
               {/* Default filters */}
               {!hasContextualSuggestions() &&
                 defaultFilters
-                  .filter((filter) => filter.label.toLowerCase().includes(value.toLowerCase()))
+                  .filter((filter) => {
+                    // Get the current word being typed (text after the last space before cursor)
+                    const beforeCursor = value.substring(0, cursorPosition)
+                    const lastSpaceIndex = beforeCursor.lastIndexOf(' ')
+                    const currentWord = lastSpaceIndex >= 0 ? beforeCursor.substring(lastSpaceIndex + 1) : beforeCursor
+                    return filter.label.toLowerCase().includes(currentWord.toLowerCase())
+                  })
                   .map((filter) => (
                     <Item
                       key={filter.value}
                       value={filter.value}
                       label={filter.label}
                       description={filter.description}
-                      setValue={setValue}
+                      setValue={insertFilter}
                       setIsOpen={setIsOpen}
                     />
                   ))}

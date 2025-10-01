@@ -48,7 +48,11 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     [queryParams.level, queryParams.instance, queryParams.container, queryParams.message, queryParams.version]
   )
 
-  const { data: logs = [], isFetched: isFetchedLogs } = useQuery({
+  const {
+    data: logs = [],
+    isFetched: isFetchedLogs,
+    isLoading: isLoadingLogs,
+  } = useQuery({
     keepPreviousData: true,
     ...serviceLogs.serviceLogs({
       clusterId,
@@ -62,7 +66,11 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(currentEndDate) && enabled,
   })
 
-  const { data: nginxLogs = [], isFetched: isNginxFetched } = useQuery({
+  const {
+    data: nginxLogs = [],
+    isFetched: isNginxFetched,
+    isLoading: isNginxLoading,
+  } = useQuery({
     keepPreviousData: true,
     ...serviceLogs.serviceLogs({
       clusterId,
@@ -77,7 +85,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(currentEndDate) && enabled,
   })
 
-  const isFetched = isFetchedLogs && isNginxFetched
+  const isFetched = isFetchedLogs || isNginxFetched
 
   // Accumulate logs when new data arrives
   useEffect(() => {
@@ -85,11 +93,12 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       setAccumulatedLogs((prev) => {
         const existingTimestamps = new Set(prev.map((log) => log.timestamp))
         const newLogs = logs.filter((log) => !existingTimestamps.has(log.timestamp))
-        return [...newLogs, ...prev]
+        const newNginxLogs = nginxLogs.filter((log) => !existingTimestamps.has(log.timestamp))
+        return [...newLogs, ...newNginxLogs, ...prev]
       })
       setIsPaginationLoading(false)
     }
-  }, [isFetched, logs])
+  }, [isFetched, logs, nginxLogs])
 
   // Check if we have no more logs to load
   useEffect(() => {
@@ -128,7 +137,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     setHasMoreLogs(true)
     setAccumulatedLogs([])
     setIsPaginationLoading(false)
-  }, [clusterId, serviceId, startDate, endDate])
+  }, [clusterId, serviceId, startDate, endDate, queryParams])
 
   // Set hasMoreLogs appropriately when we first get data
   useEffect(() => {
@@ -140,6 +149,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   return {
     data: normalizedLogs,
     isFetched,
+    isLoading: isLoadingLogs || isNginxLoading,
     loadPreviousLogs,
     hasMoreLogs,
     isPaginationLoading,

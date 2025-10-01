@@ -14,10 +14,10 @@ import { queryParamsServiceLogs } from '../service-logs-context/service-logs-con
 
 export interface HeaderServiceLogsProps {
   logs: NormalizedServiceLog[]
-  isFetched: boolean
+  isLoading: boolean
 }
 
-export function HeaderServiceLogs({ logs, isFetched }: HeaderServiceLogsProps) {
+export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
   const {
     environment,
     serviceId,
@@ -183,7 +183,7 @@ export function HeaderServiceLogs({ logs, isFetched }: HeaderServiceLogsProps) {
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <SearchServiceLogs isFetched={isFetched} />
+          <SearchServiceLogs isLoading={isLoading} />
         </div>
         <Button
           onClick={() => downloadLogs(logs)}

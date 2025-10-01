@@ -12,13 +12,13 @@ import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import ShowPreviousLogsButton from '../show-previous-logs-button/show-previous-logs-button'
 import { HeaderServiceLogs } from './header-service-logs/header-service-logs'
-import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
+// import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
 import { ServiceLogsProvider, queryParamsServiceLogs } from './service-logs-context/service-logs-context'
 
 const { Table } = TablePrimitives
 
-const MemoizedRowInfraLogs = memo(RowInfraLogs)
+// const MemoizedRowInfraLogs = memo(RowInfraLogs)
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
 export interface ListServiceLogsProps {
@@ -51,6 +51,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     newLogsAvailable,
     setNewLogsAvailable,
     isFetched: isLiveLogsFetched,
+    isLoading: isLiveLogsLoading,
   } = useServiceLiveLogs({
     clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
@@ -63,6 +64,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     isFetched: isHistoryLogsFetched,
     loadPreviousLogs,
     hasMoreLogs,
+    isLoading: isHistoryLogsLoading,
   } = useServiceHistoryLogs({
     clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
@@ -98,11 +100,16 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     [isLiveMode, isLiveLogsFetched, isHistoryLogsFetched]
   )
 
+  const isLogsLoading = useMemo(
+    () => (isLiveMode ? isLiveLogsLoading : isHistoryLogsLoading),
+    [isLiveMode, isLiveLogsLoading, isHistoryLogsLoading]
+  )
+
   if (isLogsFetched && logs.length === 0) {
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs isFetched={isLogsFetched} logs={logs} />
+          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">No logs available</div>
           </div>
@@ -116,7 +123,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs isFetched={isLogsFetched} logs={logs} />
+          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <ServiceLogsPlaceholder
@@ -134,7 +141,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
-        <HeaderServiceLogs isFetched={isLogsFetched} logs={logs} />
+        <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
         <div
           className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
           ref={refScrollSection}
@@ -172,27 +179,6 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
                   />
                 )
               })}
-              {/*
-                // if (row.original.type === 'INFRA') {
-                //   return (
-                //     <MemoizedRowInfraLogs
-                //       key={row.id}
-                //       data={row.original}
-                //       hasMultipleContainers={hasMultipleContainers}
-                //       enabled={enabledNginx}
-                //     />
-                //   )
-                // } else {
-                //   return (
-                  //   <MemoizedRowServiceLogs
-                  //     key={row.id}
-                  //     hasMultipleContainers={hasMultipleContainers}
-                  //     toggleColumnFilter={toggleColumnFilter}
-                  //     isFilterActive={isFilterActive}
-                  //     {...row}
-                  //   />
-                  // )
-                // } */}
             </Table.Body>
           </Table.Root>
           {isLiveMode ? (
