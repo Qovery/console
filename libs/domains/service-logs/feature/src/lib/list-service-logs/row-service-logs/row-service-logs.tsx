@@ -165,10 +165,38 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
           <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
             <div className="w-full rounded border border-neutral-400 bg-transparent px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
-                <Dt className="col-span-2 select-none font-code">Instance</Dt>
-                <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">{log.instance}</Dd>
-                <Dt className="col-span-2 mt-2 select-none font-code">Container</Dt>
-                <Dd className="mt-2 flex gap-1 text-sm leading-3 dark:font-medium">{log.container}</Dd>
+                <Dt className="col-span-2 flex select-none items-center font-code">Instance</Dt>
+                <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">
+                  <Button
+                    type="button"
+                    variant="surface"
+                    color="neutral"
+                    size="xs"
+                    className="gap-1.5"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setQueryParams({ instance: log.instance })
+                    }}
+                  >
+                    {log.instance}
+                  </Button>
+                </Dd>
+                <Dt className="col-span-2 mt-2 flex select-none items-center font-code">Container</Dt>
+                <Dd className="mt-2 flex gap-1 text-sm leading-3 dark:font-medium">
+                  <Button
+                    type="button"
+                    variant="surface"
+                    color="neutral"
+                    size="xs"
+                    className="gap-1.5"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setQueryParams({ container: log.container })
+                    }}
+                  >
+                    {log.container}
+                  </Button>
+                </Dd>
                 {log.version && (
                   <>
                     <Dt className="col-span-2 mt-2 select-none font-code">Version</Dt>

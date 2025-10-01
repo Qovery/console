@@ -128,7 +128,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   }, [accumulatedLogs, hasMoreLogs, isPaginationLoading])
 
   const normalizedLogs = useMemo(() => {
-    return accumulatedLogs.map(normalizeServiceLog)
+    return accumulatedLogs.map(normalizeServiceLog).sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
   }, [accumulatedLogs])
 
   // Reset when query params change significantly

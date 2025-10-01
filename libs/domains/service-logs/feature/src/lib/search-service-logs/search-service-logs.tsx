@@ -68,7 +68,7 @@ const highlightFilters = (text: string) => {
 interface ItemProps extends ComponentPropsWithoutRef<typeof CommandItem> {
   label: string
   setValue: (value: string) => void
-  setIsOpen: (isOpen: boolean) => void
+  setIsOpen?: (isOpen: boolean) => void
   description?: string
 }
 
@@ -79,7 +79,7 @@ function Item({ value, label, setValue, setIsOpen, description }: ItemProps) {
       value={value}
       onSelect={(currentValue) => {
         setValue(currentValue)
-        setIsOpen(false)
+        setIsOpen?.(false)
       }}
     >
       <span className="whitespace-nowrap rounded-[4px] bg-neutral-500 p-1 pt-0.5">{label}</span>
@@ -314,11 +314,10 @@ export function SearchServiceLogs({ isLoading }: { isLoading: boolean }) {
     const newValue = beforeCurrentWord + prefix + filterValue + afterCursor
     const newCursorPosition = (beforeCurrentWord + prefix + filterValue).length
 
-    setValue(newValue)
-    setCursorPosition(newCursorPosition)
-    setIsOpen(true)
+    // Use handleInputChange to properly update value and cursor position
+    handleInputChange(newValue, newCursorPosition)
 
-    // Position the cursor in the input
+    // Position the cursor in the input after state update
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.focus()
@@ -408,7 +407,6 @@ export function SearchServiceLogs({ isLoading }: { isLoading: boolean }) {
                       label={filter.label}
                       description={filter.description}
                       setValue={insertFilter}
-                      setIsOpen={setIsOpen}
                     />
                   ))}
               <ConfirmItem onConfirm={confirmSearch} />
