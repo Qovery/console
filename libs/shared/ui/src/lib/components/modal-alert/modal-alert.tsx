@@ -43,7 +43,7 @@ export function ModalAlert(props: ModalAlertProps) {
                   setModalAlertOpen(!props.isOpen)
                 }}
               >
-                Yes
+                Discard
               </Button>
             </div>
           </div>

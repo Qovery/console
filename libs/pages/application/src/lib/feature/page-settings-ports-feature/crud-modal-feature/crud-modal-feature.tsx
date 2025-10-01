@@ -73,8 +73,8 @@ export function handleSubmit<
     publicly_accessible,
     protocol: currentProtocol,
     name: name,
-    public_path: public_path,
-    public_path_rewrite: public_path_rewrite,
+    ...(public_path && public_path !== '' ? { public_path: public_path } : {}),
+    ...(public_path_rewrite && public_path_rewrite !== '' ? { public_path_rewrite: public_path_rewrite } : {}),
   }
 
   if (currentPort) {
