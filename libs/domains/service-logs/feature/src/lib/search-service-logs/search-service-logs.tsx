@@ -378,6 +378,7 @@ export function SearchServiceLogs({ isLoading }: { isLoading: boolean }) {
         {isOpen && (
           <CommandList className="absolute left-0 right-0 top-full z-10 mt-2 max-h-60 overflow-auto rounded-md border border-neutral-400 bg-neutral-600 p-1.5 text-sm shadow-lg">
             <CommandGroup>
+              <ConfirmItem onConfirm={confirmSearch} />
               {/* Contextual suggestions */}
               {hasContextualSuggestions() &&
                 getContextualSuggestions().map((option) => (
@@ -409,7 +410,6 @@ export function SearchServiceLogs({ isLoading }: { isLoading: boolean }) {
                       setValue={insertFilter}
                     />
                   ))}
-              <ConfirmItem onConfirm={confirmSearch} />
             </CommandGroup>
           </CommandList>
         )}

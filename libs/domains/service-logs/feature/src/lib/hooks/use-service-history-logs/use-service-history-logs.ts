@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { subMinutes } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryParams } from 'use-query-params'
 import { type ServiceLog, normalizeServiceLog, serviceLogs } from '@qovery/domains/service-logs/data-access'
@@ -13,7 +14,7 @@ export interface UseServiceHistoryLogsProps {
 const LOGS_PER_BATCH = 200
 
 export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }: UseServiceHistoryLogsProps) {
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
 
   const [accumulatedLogs, setAccumulatedLogs] = useState<ServiceLog[]>([])
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null)
@@ -41,19 +42,11 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     () => ({
       level: queryParams.level || undefined,
       instance: queryParams.instance || undefined,
-      container: queryParams.container || undefined,
       message: queryParams.message || undefined,
       search: queryParams.search || undefined,
       version: queryParams.version || undefined,
     }),
-    [
-      queryParams.level,
-      queryParams.instance,
-      queryParams.container,
-      queryParams.message,
-      queryParams.search,
-      queryParams.version,
-    ]
+    [queryParams.level, queryParams.instance, queryParams.message, queryParams.search, queryParams.version]
   )
 
   const {
@@ -129,6 +122,11 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       // Use the oldest log timestamp as the new end date (minus 1ms to avoid duplicates)
       const newEndDate = new Date(timestampNum - 1)
       setCurrentEndDate(newEndDate)
+
+      // XXX: This is a workaround to avoid the pagination loading state from being stuck
+      setTimeout(() => {
+        setIsPaginationLoading(false)
+      }, 10000)
     } catch (error) {
       setIsPaginationLoading(false)
       console.error('Error in loadPreviousLogs:', error)
@@ -157,10 +155,9 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   return {
     data: normalizedLogs,
     isFetched,
-    isLoading: isLoadingLogs || isNginxLoading,
+    isLoading: isLoadingLogs || isNginxLoading || isPaginationLoading,
     loadPreviousLogs,
     hasMoreLogs,
-    isPaginationLoading,
   }
 }
 

@@ -88,7 +88,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
         )}
       >
         <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap pr-1.5">
-          <Tooltip content={upperCaseFirstLetter(log.level)}>
+          <Tooltip content={upperCaseFirstLetter(log.level)} disabled={!log.level || log.level === 'UNKNOWN'}>
             <span
               className={twMerge(
                 clsx('absolute left-0.5 top-0 block h-full w-1 bg-neutral-500', {
@@ -174,10 +174,10 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
           <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
             <div className="w-full rounded border border-neutral-400 bg-transparent px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
-                {log.level && (
+                {log.level && log.level !== 'UNKNOWN' && (
                   <>
-                    <Dt className="col-span-2 flex select-none items-center font-code">Level</Dt>
-                    <Dd className="flex gap-1 text-sm leading-3 dark:font-medium">
+                    <Dt className="col-span-2 flex select-none items-center font-code text-xs">Level</Dt>
+                    <Dd className="flex gap-1 text-xs leading-3">
                       <Button
                         type="button"
                         variant="surface"
@@ -195,14 +195,14 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                   </>
                 )}
                 <Dt
-                  className={clsx('col-span-2 flex select-none items-center font-code', {
+                  className={clsx('col-span-2 flex select-none items-center font-code text-xs', {
                     'mt-2': log.level,
                   })}
                 >
                   Instance
                 </Dt>
                 <Dd
-                  className={clsx('flex gap-1 text-sm leading-3 dark:font-medium', {
+                  className={clsx('flex gap-1 text-xs leading-3', {
                     'mt-2': log.level,
                   })}
                 >
@@ -220,8 +220,8 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                     {log.instance}
                   </Button>
                 </Dd>
-                <Dt className="col-span-2 mt-2 flex select-none items-center font-code">Container</Dt>
-                <Dd className="mt-2 flex gap-1 text-sm leading-3 dark:font-medium">
+                <Dt className="col-span-2 mt-2 flex select-none items-center font-code text-xs">Container</Dt>
+                <Dd className="mt-2 flex gap-1 text-xs leading-3">
                   <Button
                     type="button"
                     variant="surface"
@@ -238,8 +238,8 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                 </Dd>
                 {log.version && (
                   <>
-                    <Dt className="col-span-2 mt-2 select-none font-code">Version</Dt>
-                    <Dd className="mt-2 flex select-none gap-1 text-sm leading-3 dark:font-medium">
+                    <Dt className="col-span-2 mt-2 flex select-none items-center font-code text-xs">Version</Dt>
+                    <Dd className="mt-2 flex select-none gap-1 text-xs leading-3">
                       <Tooltip content={log.version} delayDuration={300}>
                         <Button
                           type="button"

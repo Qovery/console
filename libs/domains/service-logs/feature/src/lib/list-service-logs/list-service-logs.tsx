@@ -104,7 +104,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
   if (
     (isLogsFetched && logs.length > 0 && logs[0].message.includes('No pods found')) ||
     (isLogsFetched && logs.length === 0) ||
-    !isLogsFetched
+    (!isLogsFetched && !isLogsLoading)
   ) {
     return (
       <div className="w-full p-1">
