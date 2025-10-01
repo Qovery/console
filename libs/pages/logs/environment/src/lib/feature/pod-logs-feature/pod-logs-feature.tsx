@@ -6,6 +6,7 @@ import {
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
 import { useParams } from 'react-router-dom'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { ListServiceLogs } from '@qovery/domains/service-logs/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -24,6 +25,10 @@ export interface PodLogsFeatureProps {
 export function PodLogsFeature({ environment, deploymentStages, environmentStatus }: PodLogsFeatureProps) {
   const { serviceId = '' } = useParams()
   const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: cluster } = useCluster({
+    organizationId: environment.organization.id,
+    clusterId: environment.cluster_id,
+  })
 
   useDocumentTitle(`Service logs ${service ? `- ${service?.name}` : '- Loading...'}`)
 
@@ -31,7 +36,12 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
 
   return (
     <div className="h-full w-full bg-neutral-900">
-      <ListServiceLogs environment={environment} serviceStatus={serviceStatus} environmentStatus={environmentStatus} />
+      <ListServiceLogs
+        cluster={cluster}
+        environment={environment}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+      />
       {service && environment && (
         <WebSocketListenerMemo
           organizationId={environment.organization.id}

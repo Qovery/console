@@ -1,4 +1,4 @@
-import { type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
+import { type Cluster, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -10,27 +10,22 @@ import { useServiceLiveLogs } from '../hooks/use-service-live-logs/use-service-l
 import { ProgressIndicator } from '../progress-indicator/progress-indicator'
 import { ServiceLogsPlaceholder } from '../service-logs-placeholder/service-logs-placeholder'
 import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
-import ShowPreviousLogsButton from '../show-previous-logs-button/show-previous-logs-button'
+import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { HeaderServiceLogs } from './header-service-logs/header-service-logs'
-// import { RowInfraLogs } from './row-infra-logs/row-infra-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
 import { ServiceLogsProvider, queryParamsServiceLogs } from './service-logs-context/service-logs-context'
 
 const { Table } = TablePrimitives
 
-// const MemoizedRowInfraLogs = memo(RowInfraLogs)
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
-export interface ListServiceLogsProps {
-  environment: Environment
-  serviceStatus: Status
-  environmentStatus?: EnvironmentStatus
-}
-
-// Internal component that uses the context
-function ListServiceLogsContent({ environment }: { environment: Environment }) {
+function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; environment: Environment }) {
   const { serviceId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
+
+  const hasMetricsEnabled = useMemo(() => {
+    return cluster?.metrics_parameters?.enabled ?? false
+  }, [cluster?.metrics_parameters?.enabled])
 
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
@@ -105,25 +100,16 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
     [isLiveMode, isLiveLogsLoading, isHistoryLogsLoading]
   )
 
-  if (isLogsFetched && logs.length === 0) {
-    return (
-      <div className="w-full p-1">
-        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
-          <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
-            <div className="flex h-full flex-col items-center justify-center">No logs available</div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
-  if (isLogsFetched && logs.length > 0 && logs[0].message.includes('No pods found')) {
+  if (
+    (isLogsFetched && logs.length > 0 && logs[0].message.includes('No pods found')) ||
+    (isLogsFetched && logs.length === 0) ||
+    !isLogsFetched
+  ) {
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
+          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} metricsEnabled={hasMetricsEnabled} />
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <ServiceLogsPlaceholder
@@ -141,7 +127,7 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
-        <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
+        <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} metricsEnabled={hasMetricsEnabled} />
         <div
           className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
           ref={refScrollSection}
@@ -200,7 +186,14 @@ function ListServiceLogsContent({ environment }: { environment: Environment }) {
   )
 }
 
-export function ListServiceLogs({ environment, serviceStatus, environmentStatus }: ListServiceLogsProps) {
+export interface ListServiceLogsProps {
+  environment: Environment
+  serviceStatus: Status
+  cluster?: Cluster
+  environmentStatus?: EnvironmentStatus
+}
+
+export function ListServiceLogs({ cluster, environment, serviceStatus, environmentStatus }: ListServiceLogsProps) {
   const { serviceId = '' } = useParams()
 
   return (
@@ -210,7 +203,7 @@ export function ListServiceLogs({ environment, serviceStatus, environmentStatus 
       serviceStatus={serviceStatus}
       environmentStatus={environmentStatus}
     >
-      <ListServiceLogsContent environment={environment} />
+      <ListServiceLogsContent cluster={cluster} environment={environment} />
     </ServiceLogsProvider>
   )
 }

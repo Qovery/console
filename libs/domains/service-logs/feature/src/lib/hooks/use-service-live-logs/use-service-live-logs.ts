@@ -106,7 +106,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
     setDebouncedLogs([])
     serviceLogsBuffer.current = []
     setNewLogsAvailable(false)
-    setIsFetched(false)
+    setIsFetched(true)
     setIsLoading(false)
   }, [])
 
