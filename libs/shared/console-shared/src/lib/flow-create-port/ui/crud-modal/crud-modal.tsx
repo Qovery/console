@@ -45,7 +45,7 @@ export function CrudModal({
 
   const watchProtocol = watch('protocol')
   const watchPublicly = watch('publicly_accessible') || false
-  const watchAdvancedSettings = watch('advanced_settings') || false
+  const watchRewritePublicPath = watch('rewrite_public_path') || false
   const watchInternalPort = watch('internal_port') || false
   const watchExternalPort = watch('external_port') || ''
 
@@ -249,7 +249,7 @@ export function CrudModal({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 py-2">
                 <Controller
-                  name="advanced_settings"
+                  name="rewrite_public_path"
                   control={control}
                   render={({ field }) => (
                     <>
@@ -258,12 +258,16 @@ export function CrudModal({
                         id={field.name}
                         checked={field.value}
                         onCheckedChange={(checked) => {
+                          if (!checked) {
+                            setValue('public_path', '')
+                            setValue('public_path_rewrite', '')
+                          }
+
                           field.onChange(checked)
                         }}
-                        title="Advanced settings"
                       />
-                      <label htmlFor="advanced_settings" className="text-sm font-medium text-neutral-400">
-                        Advanced settings
+                      <label htmlFor="rewrite_public_path" className="text-sm font-medium text-neutral-400">
+                        Rewrite public URL
                       </label>
                     </>
                   )}
@@ -280,7 +284,7 @@ export function CrudModal({
               </Link>
             </div>
 
-            {watchAdvancedSettings && (
+            {watchRewritePublicPath && (
               <>
                 <Controller
                   name="public_path"

@@ -161,7 +161,7 @@ export function CrudModalFeature({ service, onClose, port, isLastPublicPort }: C
       publicly_accessible: port ? port.publicly_accessible : false,
       protocol: port ? port.protocol : undefined,
       name: port ? port.name : undefined,
-      advanced_settings: port ? port.public_path_rewrite !== null || port.public_path !== '/' : false,
+      rewrite_public_path: port ? port.public_path_rewrite !== null || port.public_path !== '/' : false,
       public_path: port ? port.public_path : undefined,
       public_path_rewrite: port ? port.public_path_rewrite : undefined,
     },
