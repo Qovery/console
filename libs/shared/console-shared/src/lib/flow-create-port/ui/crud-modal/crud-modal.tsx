@@ -2,7 +2,17 @@ import { CloudProviderEnum, type KubernetesEnum, PortProtocolEnum } from 'qovery
 import { type FormEvent } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { Callout, Checkbox, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
+import {
+  Callout,
+  Checkbox,
+  Icon,
+  InputSelect,
+  InputText,
+  InputToggle,
+  Link,
+  ModalCrud,
+  Tooltip,
+} from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   kubernetes?: KubernetesEnum
@@ -35,6 +45,7 @@ export function CrudModal({
 
   const watchProtocol = watch('protocol')
   const watchPublicly = watch('publicly_accessible') || false
+  const watchAdvancedSettings = watch('advanced_settings') || false
   const watchInternalPort = watch('internal_port') || false
   const watchExternalPort = watch('external_port') || ''
 
@@ -231,6 +242,78 @@ export function CrudModal({
               )}
             />
             <p className="mb-5 ml-3 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
+          </div>
+
+          <div className="space-y-4">
+            <hr />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 py-2">
+                <Controller
+                  name="advanced_settings"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <Checkbox
+                        name={field.name}
+                        id={field.name}
+                        checked={field.value}
+                        onCheckedChange={(checked) => {
+                          field.onChange(checked)
+                        }}
+                        title="Advanced settings"
+                      />
+                      <label htmlFor="advanced_settings" className="text-sm font-medium text-neutral-400">
+                        Advanced settings
+                      </label>
+                    </>
+                  )}
+                />
+              </div>
+              <Link
+                to="https://kubernetes.github.io/ingress-nginx/examples/rewrite/"
+                color="brand"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Documentation
+                <Icon iconName="file-lines" iconStyle="regular" />
+              </Link>
+            </div>
+
+            {watchAdvancedSettings && (
+              <>
+                <Controller
+                  name="public_path"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      className="mb-1"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Public path"
+                      error={error?.message}
+                      hint="Path prefix on the public URL that will route traffic to this port."
+                    />
+                  )}
+                />
+                <Controller
+                  name="public_path_rewrite"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      className="mb-1"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Public path rewrite"
+                      error={error?.message}
+                      hint="Rewrite the incoming path before forwarding to your container (NGINX ingress rewrite rule)."
+                    />
+                  )}
+                />
+              </>
+            )}
           </div>
         </>
       )}
