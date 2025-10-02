@@ -21,7 +21,7 @@ export function VariableListActionBar({ selectedRows = [], resetRowSelection }: 
     openModalConfirmation({
       title: `Delete ${deletableVariables.length} ${pluralize(deletableVariables.length, 'variable')}`,
       name: 'these variables',
-      isDelete: true,
+      confirmationMethod: 'action',
       action: async () => {
         try {
           await Promise.allSettled(deletableVariables.map(({ id }) => deleteVariable({ variableId: id })))

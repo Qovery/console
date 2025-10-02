@@ -16,7 +16,8 @@ export interface ModalConfirmationProps extends PropsWithChildren {
   placeholder?: string
   ctaButton?: string
   ctaButtonDisabled?: boolean
-  isDelete?: boolean
+  confirmationMethod?: 'name' | 'action'
+  confirmationAction?: string
 }
 
 export function ModalConfirmation({
@@ -25,11 +26,12 @@ export function ModalConfirmation({
   name,
   callback,
   warning,
-  isDelete = false,
-  placeholder = isDelete ? 'Enter "delete"' : 'Enter the current name',
   ctaButton = 'Confirm',
   ctaButtonDisabled,
   children,
+  confirmationMethod = 'name',
+  confirmationAction = 'delete',
+  placeholder = confirmationMethod === 'action' ? `Enter "${confirmationAction}"` : 'Enter the current name',
 }: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
@@ -49,7 +51,7 @@ export function ModalConfirmation({
     <div className="p-6">
       <h2 className="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
       <div className="mb-6 text-sm text-neutral-350 dark:text-neutral-50">
-        {isDelete ? (
+        {confirmationMethod === 'action' ? (
           description ? (
             description
           ) : (
@@ -77,10 +79,13 @@ export function ModalConfirmation({
           name="name"
           control={control}
           rules={{
-            required: isDelete ? 'Please enter "delete".' : 'Please enter a name.',
+            required:
+              confirmationMethod === 'action' ? `Please enter "${confirmationAction}".` : 'Please enter a name.',
             validate: (value) =>
-              (isDelete ? value === 'delete' : value === name) ||
-              (isDelete ? 'Please confirm by entering "delete".' : 'Please enter the right name.'),
+              (confirmationMethod === 'action' ? value === confirmationAction : value === name) ||
+              (confirmationMethod === 'action'
+                ? `Please confirm by entering "${confirmationAction}".`
+                : 'Please enter the right name.'),
           }}
           defaultValue=""
           render={({ field, fieldState: { error } }) => (
@@ -107,7 +112,12 @@ export function ModalConfirmation({
           <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
             Cancel
           </Button>
-          <Button type="submit" size="lg" color={isDelete ? 'red' : 'brand'} disabled={ctaButtonDisabled}>
+          <Button
+            type="submit"
+            size="lg"
+            color={confirmationMethod === 'action' ? 'red' : 'brand'}
+            disabled={ctaButtonDisabled}
+          >
             {ctaButton}
           </Button>
         </div>

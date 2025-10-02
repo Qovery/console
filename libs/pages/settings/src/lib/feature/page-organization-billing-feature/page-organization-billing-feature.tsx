@@ -29,7 +29,7 @@ export function PageOrganizationBillingFeature() {
     openModalConfirmation({
       title: 'Delete credit card',
       name: creditCard.last_digit,
-      isDelete: true,
+      confirmationMethod: 'action',
       action: async () => {
         await deleteCreditCard({ organizationId, creditCardId: creditCard.id })
       },

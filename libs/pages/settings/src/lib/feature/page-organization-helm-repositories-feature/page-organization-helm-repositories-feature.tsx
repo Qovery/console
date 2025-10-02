@@ -53,7 +53,7 @@ export function PageOrganizationHelmRepositoriesFeature() {
       onDelete={(repository: HelmRepositoryResponse) => {
         openModalConfirmation({
           title: 'Delete helm repository',
-          isDelete: true,
+          confirmationMethod: 'action',
           name: repository?.name,
           action: async () => {
             try {

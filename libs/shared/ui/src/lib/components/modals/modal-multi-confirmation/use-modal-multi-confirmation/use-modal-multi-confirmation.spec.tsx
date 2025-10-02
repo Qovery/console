@@ -70,7 +70,7 @@ describe('useModalMultiConfirmation', () => {
       description: 'my-description',
       checks: [],
       action: action,
-      isDelete: true,
+      confirmationMethod: 'action',
     }
     const { result } = renderHook(useModalMultiConfirmation, { wrapper: ModalProvider })
 

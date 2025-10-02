@@ -10,8 +10,9 @@ export interface UseModalConfirmationProps {
   name?: string
   mode?: keyof typeof EnvironmentModeEnum | string | undefined
   warning?: ReactNode
-  isDelete?: boolean
   placeholder?: string
+  confirmationMethod?: 'name' | 'action'
+  confirmationAction?: string
 }
 
 export function useModalConfirmation() {
@@ -20,7 +21,7 @@ export function useModalConfirmation() {
 
   useEffect(() => {
     if (
-      modalConfirmation?.isDelete ||
+      modalConfirmation?.confirmationMethod === 'action' ||
       modalConfirmation?.mode === EnvironmentModeEnum.PRODUCTION ||
       modalConfirmation?.mode === EnvironmentModeEnum.STAGING
     ) {
@@ -33,7 +34,8 @@ export function useModalConfirmation() {
             warning={modalConfirmation.warning}
             callback={modalConfirmation.action}
             placeholder={modalConfirmation.placeholder}
-            isDelete={modalConfirmation?.isDelete}
+            confirmationMethod={modalConfirmation?.confirmationMethod}
+            confirmationAction={modalConfirmation?.confirmationAction}
           />
         ),
       })

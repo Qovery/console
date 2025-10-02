@@ -31,7 +31,7 @@ export function PageSettingsStorageFeature() {
               openModalConfirmation({
                 title: 'Delete storage',
                 name: storage.mount_point,
-                isDelete: true,
+                confirmationMethod: 'action',
                 action: async () => {
                   const request = {
                     storage: service.storage?.filter((s) => s.id !== storage.id),

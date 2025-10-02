@@ -194,7 +194,7 @@ const PageOrganizationCredentials = () => {
         </p>
       ),
       name: credential.name,
-      isDelete: true,
+      confirmationMethod: 'action',
       action: () =>
         deleteCloudProviderCredential({
           organizationId,
