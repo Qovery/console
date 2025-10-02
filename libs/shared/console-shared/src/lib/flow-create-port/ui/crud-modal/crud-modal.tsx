@@ -90,7 +90,7 @@ export function CrudModal({
   useEffect(() => {
     if (watchRewritePublicPath) {
       const parent = modalRef.current?.parentElement
-      if (parent) {
+      if (parent && parent.scrollTo) {
         parent.scrollTo({
           top: parent.scrollHeight,
           behavior: 'smooth',
