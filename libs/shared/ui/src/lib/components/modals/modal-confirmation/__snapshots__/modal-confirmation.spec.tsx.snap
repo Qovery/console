@@ -84,6 +84,18 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
       class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
     >
       my description
+      <span
+        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+        data-state="closed"
+        data-testid="copy-cta"
+      >
+        staging
+         
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-copy "
+        />
+      </span>
     </div>
     <form>
       <div
@@ -101,7 +113,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
             class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
             data-testid="input-value"
             name="name"
-            placeholder="Enter "delete""
+            placeholder="Enter the current name"
             type="text"
             value=""
           />
@@ -117,7 +129,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-red-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
           type="submit"
         >
           Confirm
@@ -141,11 +153,18 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
     <div
       class="mb-6 text-sm text-neutral-350 dark:text-neutral-50"
     >
-      To confirm the deletion of 
-      <strong>
+      <span
+        class="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+        data-state="closed"
+        data-testid="copy-cta"
+      >
         staging
-      </strong>
-      , please type "delete"
+         
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-copy "
+        />
+      </span>
     </div>
     <form>
       <div
@@ -163,7 +182,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
             class="absolute left-0 top-0 h-full w-full rounded px-2 text-sm text-neutral-400 placeholder:text-neutral-350 dark:bg-transparent dark:text-neutral-50 dark:placeholder:text-neutral-350"
             data-testid="input-value"
             name="name"
-            placeholder="Enter "delete""
+            placeholder="Enter the current name"
             type="text"
             value=""
           />
@@ -179,7 +198,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-red-500 text-sm h-11 px-5 rounded bg-red-500 active:bg-red-600 hover:bg-red-400 text-white disabled:text-red-300 disabled:bg-red-100"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-neutral-500 text-sm h-11 px-5 rounded bg-brand-500 active:bg-brand-600 hover:bg-brand-400 text-white disabled:text-brand-300 disabled:bg-brand-100"
           type="submit"
         >
           Confirm
