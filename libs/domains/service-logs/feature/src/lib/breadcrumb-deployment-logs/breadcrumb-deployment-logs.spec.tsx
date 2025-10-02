@@ -25,6 +25,7 @@ const mockProps: BreadcrumbDeploymentLogsProps = {
       containers: [],
       jobs: [],
       helms: [],
+      terraforms: [],
     },
     {
       name: 'Stage 2',
@@ -33,6 +34,7 @@ const mockProps: BreadcrumbDeploymentLogsProps = {
       containers: [],
       jobs: [],
       helms: [],
+      terraforms: [],
     },
   ],
 }
