@@ -30,7 +30,7 @@ export function PageOrganizationWebhooksFeature() {
   const onDelete = (webhook: OrganizationWebhookResponse) => {
     openModalConfirmation({
       title: 'Delete webhook',
-      isDelete: true,
+      confirmationMethod: 'action',
       name: webhook.target_url || '',
       action: () => {
         try {

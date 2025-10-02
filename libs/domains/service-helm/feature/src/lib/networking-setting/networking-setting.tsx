@@ -90,7 +90,7 @@ export function NetworkingSetting({
         })
       : openModalConfirmation({
           title: 'Delete Port',
-          isDelete: true,
+          confirmationMethod: 'action',
           action: () => {
             onUpdatePorts(ports.filter((p) => p !== port))
           },

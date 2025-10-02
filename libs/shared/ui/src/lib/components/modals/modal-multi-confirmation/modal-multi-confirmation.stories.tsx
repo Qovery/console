@@ -48,6 +48,6 @@ export const Delete = Template.bind({})
 Delete.args = {
   title: 'Delete environment',
   warning: 'Please confirm the deletion by checking the box below:',
-  isDelete: true,
+  confirmationMethod: 'action',
   checks: ['This checkbox needs to be checked'],
 }

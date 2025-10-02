@@ -136,7 +136,7 @@ export function VariableList({
     openModalConfirmation({
       title: 'Delete variable',
       name: variable.key,
-      isDelete: true,
+      confirmationMethod: 'action',
       action: async () => {
         await deleteVariable({ variableId: variable.id })
         onDeleteVariable?.(variable)

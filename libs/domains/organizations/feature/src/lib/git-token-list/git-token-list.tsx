@@ -126,7 +126,7 @@ export function GitTokenList() {
                           To confirm the deletion of <strong>{gitToken?.name}</strong>, please type "delete"
                         </p>
                       ),
-                      isDelete: true,
+                      confirmationMethod: 'action',
                       name: gitToken?.name,
                       action: () => deleteToken({ organizationId, gitTokenId: gitToken.id }),
                     })

@@ -63,7 +63,7 @@ export function BlockContentDelete(props: BlockContentDeleteProps) {
                     mode: modalConfirmation?.mode,
                     name: modalConfirmation?.name,
                     action: () => callback && callback(),
-                    isDelete: true,
+                    confirmationMethod: 'action',
                   })
             }}
             color="red"

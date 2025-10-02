@@ -198,7 +198,7 @@ export function PageSettingsDeploymentPipeline(props: PageSettingsDeploymentPipe
                                   onSelect={() =>
                                     openModalConfirmation({
                                       title: 'Delete this stage',
-                                      isDelete: true,
+                                      confirmationMethod: 'action',
                                       name,
                                       action: () => deleteEnvironmentDeploymentStage({ stageId: stageId }),
                                     })

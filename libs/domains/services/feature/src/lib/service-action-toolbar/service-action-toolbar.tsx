@@ -2,11 +2,13 @@ import {
   type ApplicationGitRepository,
   type ContainerSource,
   type Environment,
+  EnvironmentModeEnum,
   type HelmSourceRepositoryResponse,
   ServiceDeploymentStatusEnum,
   StateEnum,
   type Status,
 } from 'qovery-typescript-axios'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import {
@@ -41,9 +43,11 @@ import {
 } from '@qovery/shared/routes'
 import {
   ActionToolbar,
+  Checkbox,
   DropdownMenu,
   Icon,
   Link,
+  ModalCrud,
   Skeleton,
   Tooltip,
   useModal,
@@ -54,7 +58,6 @@ import {
   isCancelBuildAvailable,
   isDeleteAvailable,
   isDeployAvailable,
-  isDryRunAvailable,
   isRedeployAvailable,
   isRestartAvailable,
   isStopAvailable,
@@ -78,6 +81,80 @@ import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
+
+const ForceUnlockModal = ({ environment, service }: { environment: Environment; service: AnyService }) => {
+  const { closeModal } = useModal()
+  const { mutate: deployService } = useDeployService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
+
+  const methods = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      acknowledge: false,
+    },
+  })
+
+  const onSubmit = methods.handleSubmit(() => {
+    if (service.serviceType !== 'TERRAFORM') return
+
+    deployService({
+      serviceId: service.id,
+      serviceType: service.serviceType,
+      request: { action: 'FORCE_UNLOCK' },
+    })
+    closeModal()
+  })
+
+  return (
+    <FormProvider {...methods}>
+      <ModalCrud
+        title="Force unlock"
+        description={
+          <div className="flex flex-col gap-1">
+            <span>This will manually release the Terraform state lock.</span>
+            <span>
+              Use only if a previous job crashed or left the state blocked. If the state is not locked, nothing will
+              happen.
+            </span>
+          </div>
+        }
+        onClose={closeModal}
+        onSubmit={onSubmit}
+        submitLabel="Force unlock"
+      >
+        <Controller
+          name="acknowledge"
+          rules={{
+            required: true,
+          }}
+          control={methods.control}
+          render={({ field }) => (
+            <div className="flex gap-3">
+              <Checkbox
+                id={field.name}
+                className="h-4 w-4 min-w-4"
+                name={field.name}
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+              <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
+                <span className="font-medium text-neutral-400">
+                  No other Terraform job is executing before continuing
+                </span>
+                <span className="text-neutral-350">
+                  Unlocking while another deployment is running may corrupt the Terraform state.
+                </span>
+              </label>
+            </div>
+          )}
+        />
+      </ModalCrud>
+    </FormProvider>
+  )
+}
 
 function MenuManageDeployment({
   deploymentStatus,
@@ -131,10 +208,50 @@ function MenuManageDeployment({
     displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
-  const mutationDryRun = () => {
+  const mutationTerraformAction = (action: 'plan' | 'plan_and_apply' | 'destroy' | 'force_unlock') => {
     match(service)
       .with({ serviceType: 'TERRAFORM' }, (service) => {
-        deployService({ serviceId: service.id, serviceType: service.serviceType, request: { dry_run: true } })
+        match(action)
+          .with('plan', () => {
+            deployService({ serviceId: service.id, serviceType: service.serviceType, request: { action: 'PLAN' } })
+          })
+          .with('plan_and_apply', () => {
+            deployService({
+              serviceId: service.id,
+              serviceType: service.serviceType,
+              request: { action: 'PLAN_AND_APPLY' },
+            })
+          })
+          .with('destroy', () => {
+            openModalConfirmation({
+              mode: EnvironmentModeEnum.PRODUCTION,
+              title: 'Run destroy',
+              description: (
+                <div className="flex flex-col gap-1">
+                  <span>
+                    This will run the <code className="rounded bg-neutral-200 px-1 font-mono">terraform destroy</code>{' '}
+                    command, terminating all resources managed by your Terraform project while keeping the Qovery
+                    service.
+                  </span>
+                  <span>To confirm, type "destroy". This action cannot be undone.</span>
+                </div>
+              ),
+              confirmationMethod: 'action',
+              confirmationAction: 'destroy',
+              action: () =>
+                deployService({
+                  serviceId: service.id,
+                  serviceType: service.serviceType,
+                  request: { action: 'DESTROY' },
+                }),
+            })
+          })
+          .with('force_unlock', () => {
+            openModal({
+              content: <ForceUnlockModal environment={environment} service={service} />,
+            })
+          })
+          .exhaustive()
       })
       .otherwise(() => null)
   }
@@ -356,97 +473,133 @@ function MenuManageDeployment({
             {state === StateEnum.DELETE_QUEUED || state === StateEnum.DELETING ? 'Cancel delete' : 'Cancel deployment'}
           </DropdownMenu.Item>
         )}
-        {isDryRunAvailable(service.serviceType, state) && (
-          <DropdownMenu.Item icon={<Icon iconName="play" iconStyle="regular" />} onSelect={mutationDryRun}>
-            Run plan
-          </DropdownMenu.Item>
-        )}
-        {isDeployAvailable(state) && (
-          <DropdownMenu.Item
-            icon={<Icon iconName="play" />}
-            onSelect={mutationDeploy}
-            className="relative"
-            color={displayYellowColor ? 'yellow' : 'brand'}
-          >
-            Deploy
-            {tooltipServiceNeedUpdate}
-          </DropdownMenu.Item>
-        )}
-        {isRedeployAvailable(state) && (
-          <DropdownMenu.Item
-            icon={<Icon iconName="rotate-right" />}
-            onSelect={
-              // Don't display modal only if:
-              // - Service needs to be updated
-              // - Service don't have a runningState RUNNING or ERROR
-              serviceNeedUpdate ||
-              !runningState ||
-              !(runningState.state === 'RUNNING' || runningState.state === 'ERROR')
-                ? mutationRedeploy
-                : () =>
-                    openModal({
-                      content: (
-                        <RedeployModal
-                          organizationId={environment.organization.id}
-                          projectId={environment.project.id}
-                          service={service}
-                        />
-                      ),
-                    })
-            }
-            className="relative"
-            color={displayYellowColor ? 'yellow' : 'brand'}
-          >
-            Redeploy
-          </DropdownMenu.Item>
-        )}
-        {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
-          <DropdownMenu.Item
-            icon={<Icon iconName="rotate-right" />}
-            onSelect={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
-          >
-            Restart Service
-          </DropdownMenu.Item>
-        )}
-        {service.serviceType === 'JOB' &&
-          match(state)
-            .with(
-              'DEPLOYING',
-              'RESTARTING',
-              'BUILDING',
-              'DELETING',
-              'CANCELING',
-              'STOPPING',
-              'DEPLOYMENT_QUEUED',
-              'DELETE_QUEUED',
-              'STOP_QUEUED',
-              'RESTART_QUEUED',
-              () => null
+
+        {match(service)
+          .with({ serviceType: 'TERRAFORM' }, () => {
+            if (isCancelBuildAvailable(state)) return null
+
+            return (
+              <>
+                <DropdownMenu.Item
+                  icon={<Icon iconName="circle-play" iconStyle="regular" />}
+                  onSelect={() => mutationTerraformAction('plan')}
+                >
+                  Plan
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  icon={<Icon iconName="circle-play" iconStyle="regular" />}
+                  onSelect={() => mutationTerraformAction('plan_and_apply')}
+                >
+                  Plan and apply
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  icon={<Icon iconName="fire" iconStyle="regular" />}
+                  onSelect={() => mutationTerraformAction('destroy')}
+                >
+                  Destroy
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Item
+                  icon={<Icon iconName="lock-keyhole-open" iconStyle="regular" />}
+                  onSelect={() => mutationTerraformAction('force_unlock')}
+                >
+                  Force unlock
+                </DropdownMenu.Item>
+              </>
             )
-            .otherwise(() => (
-              <DropdownMenu.Item
-                icon={<Icon iconName="play" />}
-                onSelect={() =>
-                  openModal({
-                    content: (
-                      <ForceRunModalFeature
-                        organizationId={environment.organization.id}
-                        projectId={environment.project.id}
-                        service={service}
-                      />
-                    ),
-                  })
-                }
-              >
-                Force Run
-              </DropdownMenu.Item>
-            ))}
-        {isStopAvailable(state) && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
-            Stop
-            {tooltipService('Stop compute resources *but* keep the data')}
-          </DropdownMenu.Item>
-        )}
+          })
+          .otherwise(() => (
+            <>
+              {isDeployAvailable(state) && (
+                <DropdownMenu.Item
+                  icon={<Icon iconName="play" />}
+                  onSelect={mutationDeploy}
+                  className="relative"
+                  color={displayYellowColor ? 'yellow' : 'brand'}
+                >
+                  Deploy
+                  {tooltipServiceNeedUpdate}
+                </DropdownMenu.Item>
+              )}
+              {isRedeployAvailable(state) && (
+                <DropdownMenu.Item
+                  icon={<Icon iconName="rotate-right" />}
+                  onSelect={
+                    // Don't display modal only if:
+                    // - Service needs to be updated
+                    // - Service don't have a runningState RUNNING or ERROR
+                    serviceNeedUpdate ||
+                    !runningState ||
+                    !(runningState.state === 'RUNNING' || runningState.state === 'ERROR')
+                      ? mutationRedeploy
+                      : () =>
+                          openModal({
+                            content: (
+                              <RedeployModal
+                                organizationId={environment.organization.id}
+                                projectId={environment.project.id}
+                                service={service}
+                              />
+                            ),
+                          })
+                  }
+                  className="relative"
+                  color={displayYellowColor ? 'yellow' : 'brand'}
+                >
+                  Redeploy
+                </DropdownMenu.Item>
+              )}
+              {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
+                <DropdownMenu.Item
+                  icon={<Icon iconName="rotate-right" />}
+                  onSelect={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
+                >
+                  Restart Service
+                </DropdownMenu.Item>
+              )}
+              {service.serviceType === 'JOB' &&
+                match(state)
+                  .with(
+                    'DEPLOYING',
+                    'RESTARTING',
+                    'BUILDING',
+                    'DELETING',
+                    'CANCELING',
+                    'STOPPING',
+                    'DEPLOYMENT_QUEUED',
+                    'DELETE_QUEUED',
+                    'STOP_QUEUED',
+                    'RESTART_QUEUED',
+                    () => null
+                  )
+                  .otherwise(() => (
+                    <DropdownMenu.Item
+                      icon={<Icon iconName="play" />}
+                      onSelect={() =>
+                        openModal({
+                          content: (
+                            <ForceRunModalFeature
+                              organizationId={environment.organization.id}
+                              projectId={environment.project.id}
+                              service={service}
+                            />
+                          ),
+                        })
+                      }
+                    >
+                      Force Run
+                    </DropdownMenu.Item>
+                  ))}
+              {isStopAvailable(state) && (
+                <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
+                  Stop
+                  {tooltipService('Stop compute resources *but* keep the data')}
+                </DropdownMenu.Item>
+              )}
+            </>
+          ))}
+
+        {/* Deploy another version */}
         {match({ service })
           .with(
             { service: { serviceType: 'APPLICATION' } },
@@ -572,7 +725,6 @@ function MenuManageDeployment({
             }
           )
           .with({ service: { serviceType: 'DATABASE' } }, () => null)
-          .with({ service: { serviceType: 'TERRAFORM' } }, () => null)
           .exhaustive()}
         {match(service)
           .with({ serviceType: 'HELM', values_override: P.when(isHelmGitValuesOverride) }, (service) => {

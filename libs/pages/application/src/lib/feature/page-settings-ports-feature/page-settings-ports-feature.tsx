@@ -162,7 +162,7 @@ export function SettingsPortsFeature({
             })
           : openModalConfirmation({
               title: 'Delete port',
-              isDelete: true,
+              confirmationMethod: 'action',
               name: `Port: ${(port as PortData).application_port || (port as ServicePort).internal_port}`,
               warning,
               action: callback,

@@ -47,5 +47,5 @@ export const Delete = Template.bind({})
 Delete.args = {
   title: 'Delete environment',
   name: 'staging',
-  isDelete: true,
+  confirmationMethod: 'action',
 }

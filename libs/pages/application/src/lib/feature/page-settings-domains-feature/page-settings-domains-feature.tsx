@@ -64,7 +64,7 @@ export function PageSettingsDomainsFeature() {
         onDelete={(customDomain) => {
           openModalConfirmation({
             title: 'Delete custom domain',
-            isDelete: true,
+            confirmationMethod: 'action',
             name: customDomain.domain,
             warning: (
               <>

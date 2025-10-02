@@ -53,7 +53,7 @@ const RegistryRow = ({ registry }: { registry: ContainerRegistryResponse }) => {
   const onDelete = (registry: ContainerRegistryResponse) => {
     openModalConfirmation({
       title: 'Delete container registry',
-      isDelete: true,
+      confirmationMethod: 'action',
       name: registry?.name,
       action: async () => {
         try {
