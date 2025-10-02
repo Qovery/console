@@ -1,5 +1,5 @@
 import { CloudProviderEnum, type KubernetesEnum, PortProtocolEnum } from 'qovery-typescript-axios'
-import { type FormEvent } from 'react'
+import { type FormEvent, useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
@@ -41,6 +41,7 @@ export function CrudModal({
   isDemo,
   isLastPublicPort,
 }: CrudModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null)
   const { control, watch, setValue, getFieldState } = useFormContext()
 
   const watchProtocol = watch('protocol')
@@ -85,6 +86,19 @@ export function CrudModal({
         .otherwise(() => false)
     )
 
+  // Auto-scroll to the bottom of the modal when the rewrite public URL checkbox is enabled
+  useEffect(() => {
+    if (watchRewritePublicPath) {
+      const parent = modalRef.current?.parentElement
+      if (parent) {
+        parent.scrollTo({
+          top: parent.scrollHeight,
+          behavior: 'smooth',
+        })
+      }
+    }
+  }, [watchRewritePublicPath])
+
   return (
     <ModalCrud
       title={isEdit ? 'Edit port' : 'Set port'}
@@ -104,6 +118,7 @@ export function CrudModal({
           </p>
         </>
       }
+      forwardRef={modalRef}
     >
       <Controller
         name="internal_port"
@@ -274,7 +289,7 @@ export function CrudModal({
                 />
               </div>
               <Link
-                to="https://kubernetes.github.io/ingress-nginx/examples/rewrite/"
+                to="https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target"
                 color="brand"
                 target="_blank"
                 rel="noopener noreferrer"
