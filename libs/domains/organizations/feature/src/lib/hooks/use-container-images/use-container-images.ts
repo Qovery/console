@@ -6,13 +6,21 @@ export interface UseContainerImagesProps {
   containerRegistryId: string
   search: string
   enabled?: boolean
+  retry?: boolean
 }
 
-export function useContainerImages({ organizationId, containerRegistryId, search, enabled }: UseContainerImagesProps) {
+export function useContainerImages({
+  organizationId,
+  containerRegistryId,
+  search,
+  enabled,
+  retry = true,
+}: UseContainerImagesProps) {
   return useQuery({
     ...queries.organizations.containerImages({ organizationId, containerRegistryId, search }),
     enabled,
     keepPreviousData: true,
+    retry,
   })
 }
 

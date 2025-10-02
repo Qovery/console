@@ -45,6 +45,7 @@ export function ImageName({
     containerRegistryId,
     search: debouncedImageName || watchImageName,
     enabled: (debouncedImageName || watchImageName).length > 2,
+    retry: false,
   })
 
   // XXX: Available only for this kind of registry: https://qovery.atlassian.net/browse/FRT-1307?focusedCommentId=13219
@@ -56,7 +57,7 @@ export function ImageName({
       { kind: 'GENERIC_CR' },
       () => true
     )
-    .with({ kind: 'GITHUB_CR' }, (r) => r.config && Object.keys(r.config).length > 0)
+    .with({ kind: 'GITHUB_CR' }, { kind: 'GITHUB_ENTERPRISE_CR' }, (r) => r.config && Object.keys(r.config).length > 0)
     .otherwise(() => false)
 
   // Refetch when debounced value changes
@@ -120,7 +121,7 @@ export function ImageName({
           isLoading={isFetching || searchParams !== debouncedImageName}
           formatCreateLabel={(inputValue) => `Select "${inputValue.toLowerCase()}" - not found in registry`}
           isValidNewOption={isValidNewOption}
-          filterOption="startsWith"
+          filterOption="fuzzy"
           isCreatable
           isSearchable
         />
