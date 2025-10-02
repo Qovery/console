@@ -80,6 +80,7 @@ export function ContainerRegistryForm({
   const defaultRegistryUrls = {
     [ContainerRegistryKindEnum.GITLAB_CR]: 'https://registry.gitlab.com',
     [ContainerRegistryKindEnum.GITHUB_CR]: 'https://ghcr.io',
+    [ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR]: '',
     [ContainerRegistryKindEnum.DOCKER_HUB]: 'https://docker.io',
     [ContainerRegistryKindEnum.GENERIC_CR]: '',
     [ContainerRegistryKindEnum.ECR]: '',
@@ -164,6 +165,10 @@ export function ContainerRegistryForm({
               methods.setValue('url', defaultRegistryUrls[value as keyof typeof defaultRegistryUrls])
               methods.resetField('config')
               field.onChange(value)
+              // GitHub Enterprise doesn't support anonymous login, so we set the login type to ACCOUNT
+              if (value === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR) {
+                methods.setValue('config.login_type', 'ACCOUNT')
+              }
             }}
             value={field.value}
             label="Type"
@@ -188,12 +193,24 @@ export function ContainerRegistryForm({
               match(watchKind)
                 .with('GENERIC_CR', () =>
                   // eslint-disable-next-line no-useless-escape
-                  input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                  !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                    ? 'URL must be valid and start with «http(s)://»'
+                    : undefined
+                )
+                .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () =>
+                  !input?.match(
+                    // eslint-disable-next-line no-useless-escape
+                    /^https:\/\/containers\.[\w.-]+\.ghe\.com$/
+                  )
+                    ? 'Expected format: https://containers.<github_enterprise_subdomain>.ghe.com'
+                    : undefined
                 )
                 .otherwise(() =>
                   // eslint-disable-next-line no-useless-escape
-                  input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
-                ) !== null || 'URL must be valid and start with «http(s)://»',
+                  !input?.match(/^(http(s)?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:?#[\]@!\$&'\(\)\*\+,;=.]+$/gm)
+                    ? 'URL must be valid and start with «http(s)://»'
+                    : undefined
+                ),
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
@@ -248,6 +265,7 @@ export function ContainerRegistryForm({
         .with(
           ContainerRegistryKindEnum.DOCKER_HUB,
           ContainerRegistryKindEnum.GITHUB_CR,
+          ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
           ContainerRegistryKindEnum.GITLAB_CR,
           ContainerRegistryKindEnum.GENERIC_CR,
           () => true
@@ -268,7 +286,7 @@ export function ContainerRegistryForm({
                 }}
                 value={field.value}
                 label="Login type"
-                disabled={cluster?.is_demo}
+                disabled={cluster?.is_demo || watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR} // GitHub Enterprise doesn't support anonymous login
                 error={error?.message}
                 options={[
                   {
@@ -300,15 +318,32 @@ export function ContainerRegistryForm({
                     onChange={field.onChange}
                     value={field.value}
                     label={match(watchKind)
-                      .with(ContainerRegistryKindEnum.GITHUB_CR, () => 'Container registry prefix')
-                      .otherwise(() => 'Username')}
-                    hint={match(watchKind)
                       .with(
                         ContainerRegistryKindEnum.GITHUB_CR,
-                        () =>
-                          'The prefix is the part of the URL before the repository name. For example, in ghcr.io/qovery/my-app, the prefix is qovery'
+                        ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR,
+                        () => 'Container registry prefix'
                       )
-                      .otherwise(() => undefined)}
+                      .otherwise(() => 'Username')}
+                    hint={
+                      <span>
+                        {match(watchKind)
+                          .with(ContainerRegistryKindEnum.GITHUB_CR, () => (
+                            <>
+                              The prefix is the part of the URL before the repository name.For example, in{' '}
+                              <code className="rounded bg-neutral-100 px-1">ghcr.io/qovery/my-app</code>, the prefix is{' '}
+                              <code className="rounded bg-neutral-100 px-1">qovery</code>
+                            </>
+                          ))
+                          .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () => (
+                            <>
+                              The prefix is the part of the URL before the repository name. For example, in{' '}
+                              <code className="rounded bg-neutral-100 px-1">host.ghe.com/qovery/my-app</code>, the
+                              prefix is <code className="rounded bg-neutral-100 px-1">qovery</code>
+                            </>
+                          ))
+                          .otherwise(() => undefined)}
+                      </span>
+                    }
                     error={error?.message}
                   />
                 )}
@@ -319,7 +354,8 @@ export function ContainerRegistryForm({
                   <hr />
                   <span className="text-sm text-neutral-350">
                     {watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                    watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                    watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+                    watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
                       ? 'Confirm your personal access token'
                       : 'Confirm your password'}
                   </span>
@@ -332,7 +368,8 @@ export function ContainerRegistryForm({
                   rules={{
                     required:
                       watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                      watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                      watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+                      watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
                         ? 'Please enter a personal access token.'
                         : 'Please enter a password.',
                   }}
@@ -346,7 +383,8 @@ export function ContainerRegistryForm({
                         value={field.value}
                         label={
                           watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
-                          watchKind === ContainerRegistryKindEnum.GITLAB_CR
+                          watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
+                          watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
                             ? 'Personal Access Token'
                             : 'Password'
                         }

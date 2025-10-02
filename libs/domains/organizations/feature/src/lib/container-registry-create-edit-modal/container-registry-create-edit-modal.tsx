@@ -50,7 +50,10 @@ export function ContainerRegistryCreateEditModal({
         azure_tenant_id: registry?.config?.azure_tenant_id,
         azure_subscription_id: registry?.config?.azure_subscription_id,
         azure_application_id: registry?.config?.azure_application_id,
-        login_type: registry?.config?.username ? 'ACCOUNT' : 'ANONYMOUS',
+        login_type:
+          registry?.config?.username || registry?.kind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
+            ? 'ACCOUNT'
+            : 'ANONYMOUS',
       },
     },
   })

@@ -13,6 +13,7 @@ export function useAvailableContainerRegistries() {
         'DOCKER_HUB',
         'GENERIC_CR',
         'GITHUB_CR',
+        'GITHUB_ENTERPRISE_CR',
         'GITLAB_CR',
         'PUBLIC_ECR',
         'DOCR',
