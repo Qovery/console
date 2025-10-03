@@ -5,11 +5,11 @@ import { match } from 'ts-pattern'
 import {
   Callout,
   Checkbox,
+  ExternalLink,
   Icon,
   InputSelect,
   InputText,
   InputToggle,
-  Link,
   ModalCrud,
   Tooltip,
 } from '@qovery/shared/ui'
@@ -288,15 +288,9 @@ export function CrudModal({
                   )}
                 />
               </div>
-              <Link
-                to="https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target"
-                color="brand"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <ExternalLink href="https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target">
                 Documentation
-                <Icon iconName="file-lines" iconStyle="regular" />
-              </Link>
+              </ExternalLink>
             </div>
 
             {watchRewritePublicPath && (
