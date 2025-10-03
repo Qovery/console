@@ -86,9 +86,6 @@ export function SelectTimeRange() {
                 event.stopPropagation()
                 handleTimeRangeChange(lastDropdownTimeRange)
                 setQueryTimeRange(lastDropdownTimeRange)
-                // Clear the startDate and endDate from URL when switching back to preset time ranges
-                // setEndDate('')
-                // setStartDate('')
               }}
             >
               <Icon iconName="xmark" />
