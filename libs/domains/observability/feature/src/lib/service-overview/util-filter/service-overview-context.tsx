@@ -1,4 +1,5 @@
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { BooleanParam, type QueryParamConfig, StringParam, useQueryParam } from 'use-query-params'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
@@ -39,10 +40,6 @@ interface ServiceOverviewContextType {
   expandCharts: boolean
   setExpandCharts: (value: boolean) => void
 
-  // Calendar
-  hasCalendarValue: boolean
-  setHasCalendarValue: (value: boolean) => void
-
   // Live update toggle
   isLiveUpdateEnabled: boolean
   setIsLiveUpdateEnabled: (value: boolean) => void
@@ -61,67 +58,32 @@ interface ServiceOverviewContextType {
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
 
+// TODO: Remove dupplicate timetamp and date values when migrating to new date-picker
+// TODO: Session storage navigation cross-service synchronization
 export function ServiceOverviewProvider({ children }: PropsWithChildren) {
-  const [useLocalTime, setUseLocalTime] = useState(false)
-  const [timeRange, setTimeRange] = useState<TimeRangeOption>('1h')
+  const [useLocalTime = false, setUseLocalTime] = useQueryParam('useLocalTime', BooleanParam)
+  const [timeRange = '1h', setTimeRange] = useQueryParam<TimeRangeOption>(
+    'timeRange',
+    StringParam as QueryParamConfig<TimeRangeOption, TimeRangeOption>
+  )
+  const now = new Date()
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
+  const [startDate = oneHourAgo.toISOString(), setStartDate] = useQueryParam('startDate', StringParam)
+  const [endDate = now.toISOString(), setEndDate] = useQueryParam('endDate', StringParam)
 
-  useEffect(() => {
-    const style = document.createElement('style')
-    style.innerHTML = `
-      /* Event sidebar hover synchronization */
-      /* When hovering over a sidebar event, highlight the corresponding reference line */
-      [data-event-key]:hover {
-        background-color: var(--color-neutral-150);
-      }
-
-      .recharts-reference-line-line {
-        cursor: pointer;
-      }
-
-      .recharts-reference-line-line.active {
-        opacity: 1 !important;
-      }
-
-      /* ReferenceLine labels - hidden by default, visible only when active */
-      .recharts-reference-line .recharts-text.recharts-label {
-        opacity: 0;
-      }
-
-      /* Show label when the line has active class */
-      .recharts-reference-line-line.active ~ .recharts-text.recharts-label {
-        opacity: 1;
-      }
-    `
-    document.head.appendChild(style)
-
-    return () => {
-      document.head.removeChild(style)
-    }
-  }, [])
+  // Actions
+  const [hideEvents = false, setHideEvents] = useQueryParam('hideEvents', BooleanParam)
+  const [expandCharts = false, setExpandCharts] = useQueryParam('expandCharts', BooleanParam)
+  const [isLiveUpdateEnabled = false, setIsLiveUpdateEnabled] = useQueryParam('isLiveUpdateEnabled', BooleanParam)
 
   // Track the last time range selected from dropdown (not from zoom)
   const [lastDropdownTimeRange, setLastDropdownTimeRange] = useState<TimeRangeOption>('1h')
-
-  const now = new Date()
-  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
-
-  const [startDate, setStartDate] = useState(oneHourAgo.toISOString())
-  const [endDate, setEndDate] = useState(now.toISOString())
-
-  // Live update toggle - disabled by default
-  const [isLiveUpdateEnabled, setIsLiveUpdateEnabled] = useState(false)
 
   // Date picker state - used to pause live updates while open
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
 
   // Zoom reset functionality
   const [zoomResetFunctions, setZoomResetFunctions] = useState<(() => void)[]>([])
-
-  // Actions
-  const [hideEvents, setHideEvents] = useState(false)
-  const [expandCharts, setExpandCharts] = useState(false)
-
-  const [hasCalendarValue, setHasCalendarValue] = useState(false)
 
   const registerZoomReset = useCallback((resetFn: () => void) => {
     setZoomResetFunctions((prev) => [...prev, resetFn])
@@ -166,15 +128,33 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     setStartDate(startDateISO)
     setEndDate(endDateISO)
-    setHasCalendarValue(true) // Show custom date range in the UI
+    setTimeRange('custom')
   }, [])
+
+  const startTimestamp = startDate && convertDatetoTimestamp(startDate).toString()
+  const endTimestamp = endDate && convertDatetoTimestamp(endDate).toString()
+
+  // Calculate the effective duration for Prometheus queries (accounts for zoom)
+  const queryTimeRange =
+    isAnyChartZoomed && startTimestamp && endTimestamp
+      ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
+      : timeRange
+
+  // Calculate the average over queryTimeRange with a sub-sampling every 5m or 1m
+  const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60
+  const subQueryTimeRange =
+    isAnyChartZoomed && startTimestamp && endTimestamp
+      ? parseInt(endTimestamp) - parseInt(startTimestamp) > THREE_DAYS_IN_SECONDS
+        ? '5m'
+        : '1m'
+      : '1m'
 
   // Update every 30 seconds to match actual scrape_interval
   // use-metrics.tsx: refetchInterval: 30_000ms
   useEffect(() => {
     const isLiveRange = ['5m', '15m', '30m'].includes(timeRange)
 
-    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed || isDatePickerOpen || hasCalendarValue) return
+    if (!isLiveRange || !isLiveUpdateEnabled || isAnyChartZoomed || isDatePickerOpen) return
 
     const roundDateToStep = (date: Date, stepSeconds: number): Date => {
       const timestamp = Math.floor(date.getTime() / 1000)
@@ -223,38 +203,58 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
 
     const interval = setInterval(updateDates, 30_000) // Update every 30 seconds to match actual scrape_interval
     return () => clearInterval(interval)
-  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen, hasCalendarValue])
+  }, [timeRange, isLiveUpdateEnabled, isAnyChartZoomed, isDatePickerOpen])
 
-  const startTimestamp = convertDatetoTimestamp(startDate).toString()
-  const endTimestamp = convertDatetoTimestamp(endDate).toString()
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.innerHTML = `
+      /* Event sidebar hover synchronization */
+      /* When hovering over a sidebar event, highlight the corresponding reference line */
+      [data-event-key]:hover {
+        background-color: var(--color-neutral-150);
+      }
 
-  // Calculate the effective duration for Prometheus queries (accounts for zoom)
-  const queryTimeRange =
-    isAnyChartZoomed && startTimestamp && endTimestamp
-      ? `${Math.floor((parseInt(endTimestamp) - parseInt(startTimestamp)) / 60)}m`
-      : timeRange
+      .recharts-reference-line-line {
+        cursor: pointer;
+      }
 
-  // Calculate the average over queryTimeRange with a sub-sampling every 5m or 1m
-  const THREE_DAYS_IN_SECONDS = 3 * 24 * 60 * 60
-  const subQueryTimeRange =
-    isAnyChartZoomed && startTimestamp && endTimestamp
-      ? parseInt(endTimestamp) - parseInt(startTimestamp) > THREE_DAYS_IN_SECONDS
-        ? '5m'
-        : '1m'
-      : '1m'
+      .recharts-reference-line-line.active {
+        opacity: 1 !important;
+      }
+
+      /* ReferenceLine labels - hidden by default, visible only when active */
+      .recharts-reference-line .recharts-text.recharts-label {
+        opacity: 0;
+      }
+
+      /* Show label when the line has active class */
+      .recharts-reference-line-line.active ~ .recharts-text.recharts-label {
+        opacity: 1;
+      }
+    `
+    document.head.appendChild(style)
+
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
 
   const value = useMemo<ServiceOverviewContextType>(
     () => ({
-      useLocalTime,
+      useLocalTime: useLocalTime ?? false,
+      hideEvents: hideEvents ?? false,
+      expandCharts: expandCharts ?? false,
+      startDate: startDate ?? '',
+      endDate: endDate ?? '',
+      startTimestamp: startTimestamp ?? '',
+      endTimestamp: endTimestamp ?? '',
+      isLiveUpdateEnabled: isLiveUpdateEnabled ?? false,
+      setIsLiveUpdateEnabled,
       setUseLocalTime,
       timeRange,
       setTimeRange,
-      startDate,
       setStartDate,
-      endDate,
       setEndDate,
-      startTimestamp,
-      endTimestamp,
       queryTimeRange,
       subQueryTimeRange,
       handleTimeRangeChange,
@@ -264,13 +264,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       isAnyChartZoomed,
       setIsAnyChartZoomed,
       setHideEvents,
-      hideEvents,
-      expandCharts,
       setExpandCharts,
-      hasCalendarValue,
-      setHasCalendarValue,
-      isLiveUpdateEnabled,
-      setIsLiveUpdateEnabled,
       isDatePickerOpen,
       setIsDatePickerOpen,
       lastDropdownTimeRange,
@@ -279,11 +273,19 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
     }),
     [
       useLocalTime,
-      timeRange,
+      hideEvents,
+      expandCharts,
       startDate,
       endDate,
       startTimestamp,
       endTimestamp,
+      isLiveUpdateEnabled,
+      setIsLiveUpdateEnabled,
+      setUseLocalTime,
+      timeRange,
+      setTimeRange,
+      setStartDate,
+      setEndDate,
       queryTimeRange,
       handleTimeRangeChange,
       handleZoomTimeRangeChange,
@@ -292,13 +294,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       isAnyChartZoomed,
       setIsAnyChartZoomed,
       setHideEvents,
-      hideEvents,
-      expandCharts,
       setExpandCharts,
-      hasCalendarValue,
-      setHasCalendarValue,
-      isLiveUpdateEnabled,
-      setIsLiveUpdateEnabled,
       isDatePickerOpen,
       setIsDatePickerOpen,
       lastDropdownTimeRange,

@@ -1,6 +1,6 @@
 import { subDays, subHours, subMinutes } from 'date-fns'
 
-export type TimeRangeOption = '5m' | '15m' | '30m' | '1h' | '3h' | '6h' | '12h' | '24h' | '2d' | '7d' | '30d'
+export type TimeRangeOption = '5m' | '15m' | '30m' | '1h' | '3h' | '6h' | '12h' | '24h' | '2d' | '7d' | '30d' | 'custom'
 
 export const timeRangeOptions = [
   { label: 'Last 5 minutes', value: '5m' },
