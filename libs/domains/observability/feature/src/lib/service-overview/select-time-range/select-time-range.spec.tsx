@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom'
-import { render, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useQueryParam } from 'use-query-params'
+import { render, screen } from '@qovery/shared/util-tests'
 import { SelectTimeRange } from './select-time-range'
 
 const mockUseServiceOverviewContext = jest.fn()
@@ -60,8 +61,7 @@ const defaultContext = {
 describe('SelectTimeRange', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    const { useQueryParam } = require('use-query-params')
-    useQueryParam.mockReturnValue(['1h', jest.fn()])
+    ;(useQueryParam as jest.Mock).mockReturnValue(['1h', jest.fn()])
     mockUseServiceOverviewContext.mockReturnValue(defaultContext)
   })
 
