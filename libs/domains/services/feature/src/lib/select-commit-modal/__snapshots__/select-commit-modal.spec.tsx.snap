@@ -43,7 +43,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       tabindex="0"
     >
       <div
-        class="relative overflow-y-auto pr-[1px] max-h-[440px]"
+        class="relative overflow-y-auto pr-[1px] max-h-[50vh] pb-[60px]"
         data-testid="scroll-shadow-wrapper"
       >
         <div
@@ -62,7 +62,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             />
             Commit
              on 
-            Jan 01, 0123
+            Dec 31, 0122
           </div>
           <div
             class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"
@@ -164,7 +164,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
             />
             Commit
              on 
-            Jan 01, 0456
+            Dec 31, 0455
           </div>
           <div
             class="border-l border-neutral-250 pb-5 pl-5 pt-3 dark:border-neutral-350"
@@ -274,7 +274,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex justify-end gap-3"
+      class="absolute bottom-0 left-0 flex w-full justify-end gap-3 bg-white p-5"
     >
       <button
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-11 px-5 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"

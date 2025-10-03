@@ -85,7 +85,7 @@ export function SelectCommitModal({
 
       {isLoading || Object.keys(filterCommits).length > 0 ? (
         <RadioGroup.Root onValueChange={setTargetCommitId}>
-          <ScrollShadowWrapper className="max-h-[440px]">
+          <ScrollShadowWrapper className="max-h-[50vh] pb-[60px]">
             {Object.entries(filterCommits).map(([date, commits]) => (
               <div key={date} className="pl-2">
                 <div className="relative pl-5 text-sm font-medium text-neutral-350">
@@ -184,7 +184,7 @@ export function SelectCommitModal({
           <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
         </div>
       )}
-      <div className="flex justify-end gap-3">
+      <div className="absolute bottom-0 left-0 flex w-full justify-end gap-3 bg-white p-5">
         <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
           Cancel
         </Button>
