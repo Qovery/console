@@ -184,7 +184,7 @@ export function SelectCommitModal({
           <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
         </div>
       )}
-      <div className="absolute bottom-0 left-0 flex w-full justify-end gap-3 bg-white p-5">
+      <div className="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-white p-5">
         <Button variant="outline" color="neutral" size="lg" onClick={() => onCancel()}>
           Cancel
         </Button>
