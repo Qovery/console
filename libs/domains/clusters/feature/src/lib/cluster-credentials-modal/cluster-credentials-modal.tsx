@@ -302,7 +302,7 @@ export function ClusterCredentialsModal({
         </p>
       ),
       name: credential?.name,
-      isDelete: true,
+      confirmationMethod: 'action',
       action: async () => {
         if (credential?.id) {
           try {

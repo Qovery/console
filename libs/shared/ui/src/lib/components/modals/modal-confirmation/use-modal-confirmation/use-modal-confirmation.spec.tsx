@@ -71,7 +71,7 @@ it('should run action with delete props (display modal)', () => {
     description: 'my-description',
     name: 'test',
     action: action,
-    isDelete: true,
+    confirmationMethod: 'action',
   }
   const { result } = renderHook(useModalConfirmation, { wrapper: ModalProvider })
 

@@ -160,7 +160,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                         onClick={() => {
                           openModalConfirmation({
                             title: 'Delete labels group',
-                            isDelete: true,
+                            confirmationMethod: 'action',
                             name: labelsGroup.name,
                             action: () => {
                               try {
@@ -274,7 +274,7 @@ export function PageOrganizationLabelsAnnotationsFeature() {
                         onClick={() => {
                           openModalConfirmation({
                             title: 'Delete annotations group',
-                            isDelete: true,
+                            confirmationMethod: 'action',
                             name: annotationsGroup.name,
                             action: () => {
                               try {

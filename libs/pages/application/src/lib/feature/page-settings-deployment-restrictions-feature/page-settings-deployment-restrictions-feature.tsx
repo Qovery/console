@@ -115,7 +115,7 @@ function PageSettingsDeploymentRestrictionsFeatureInner({
     openModalConfirmation({
       title: 'Delete Restriction',
       name: `${deploymentRestriction.mode}/${deploymentRestriction.type}/${deploymentRestriction.value}`,
-      isDelete: true,
+      confirmationMethod: 'action',
       action() {
         deleteRestriction({
           serviceId,

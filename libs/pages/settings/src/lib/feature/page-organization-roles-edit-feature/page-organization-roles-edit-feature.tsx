@@ -188,7 +188,7 @@ export function PageOrganizationRolesEditFeature() {
         onDeleteRole={(customRole: OrganizationCustomRole) => {
           openModalConfirmation({
             title: 'Delete custom role',
-            isDelete: true,
+            confirmationMethod: 'action',
             name: customRole?.name,
             action: async () => {
               try {

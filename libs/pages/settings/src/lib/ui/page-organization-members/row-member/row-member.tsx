@@ -159,7 +159,7 @@ export function RowMember(props: RowMemberProps) {
               onClick: () => {
                 openModalConfirmation({
                   title: 'Confirm to remove this member',
-                  isDelete: true,
+                  confirmationMethod: 'action',
                   name: (member as Member).name,
                   action: () => deleteMember && deleteMember(member.id),
                 })
@@ -203,7 +203,7 @@ export function RowMember(props: RowMemberProps) {
               onClick: () => {
                 openModalConfirmation({
                   title: 'Confirm to remove this invite',
-                  isDelete: true,
+                  confirmationMethod: 'action',
                   name: (member as InviteMember).email,
                   action: () => deleteInviteMember && deleteInviteMember(member.id),
                 })

@@ -56,7 +56,7 @@ export function PageSettingsNetworkFeature() {
       onDelete={(route: ClusterRoutingTableResultsInner) => {
         openModalConfirmation({
           title: 'Delete Network',
-          isDelete: true,
+          confirmationMethod: 'action',
           name: route.target,
           action: () => {
             if (clusterRoutingTable && clusterRoutingTable.length > 0) {

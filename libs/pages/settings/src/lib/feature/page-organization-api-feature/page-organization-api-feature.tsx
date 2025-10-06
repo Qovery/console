@@ -27,7 +27,7 @@ export function PageOrganizationApiFeature() {
       onDelete={(token: OrganizationApiToken) => {
         openModalConfirmation({
           title: 'Delete API token',
-          isDelete: true,
+          confirmationMethod: 'action',
           name: token?.name,
           action: () => {
             try {

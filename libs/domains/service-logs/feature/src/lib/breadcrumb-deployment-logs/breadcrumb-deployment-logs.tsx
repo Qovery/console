@@ -11,16 +11,17 @@ export function mergeServices(
   databases?: Status[],
   containers?: Status[],
   jobs?: Status[],
-  helms?: Status[]
+  helms?: Status[],
+  terraforms?: Status[]
 ) {
-  return (
-    (applications &&
-      databases &&
-      containers &&
-      jobs &&
-      helms && [...applications, ...databases, ...containers, ...jobs, ...helms]) ||
-    []
-  )
+  return [
+    ...(applications || []),
+    ...(databases || []),
+    ...(containers || []),
+    ...(jobs || []),
+    ...(helms || []),
+    ...(terraforms || []),
+  ]
 }
 export interface BreadcrumbDeploymentLogsProps {
   serviceId: string
@@ -50,7 +51,8 @@ export function BreadcrumbDeploymentLogs({
         stage.databases,
         stage.containers,
         stage.jobs,
-        stage.helms
+        stage.helms,
+        stage.terraforms
       )
       if (mergedServices.some((service) => service.id === serviceId)) {
         return i + 1
@@ -65,7 +67,14 @@ export function BreadcrumbDeploymentLogs({
     () =>
       statusStages.map((stage) => ({
         ...stage,
-        mergedServices: mergeServices(stage.applications, stage.databases, stage.containers, stage.jobs, stage.helms),
+        mergedServices: mergeServices(
+          stage.applications,
+          stage.databases,
+          stage.containers,
+          stage.jobs,
+          stage.helms,
+          stage.terraforms
+        ),
       })),
     [statusStages]
   )

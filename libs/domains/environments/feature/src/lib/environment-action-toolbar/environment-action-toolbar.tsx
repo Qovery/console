@@ -256,7 +256,7 @@ function MenuOtherActions({ state, environment }: { state: StateEnum; environmen
     openModalConfirmation({
       title: 'Delete environment',
       name: environment.name,
-      isDelete: true,
+      confirmationMethod: 'action',
       action: () => deleteEnvironment({ environmentId: environment.id }),
     })
   }
