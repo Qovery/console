@@ -1,5 +1,6 @@
 import { subDays } from 'date-fns'
 import { useState } from 'react'
+import { StringParam, useQueryParam } from 'use-query-params'
 import { Button, DatePicker, Icon, InputSelectSmall } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
@@ -15,8 +16,6 @@ export function SelectTimeRange() {
     startTimestamp,
     handleTimeRangeChange,
     timeRange,
-    setHasCalendarValue,
-    hasCalendarValue,
     useLocalTime,
     resetChartZoom,
     setIsDatePickerOpen,
@@ -24,6 +23,7 @@ export function SelectTimeRange() {
     isLiveUpdateEnabled,
     setIsLiveUpdateEnabled,
   } = useServiceOverviewContext()
+  const [queryTimeRange, setQueryTimeRange] = useQueryParam('timeRange', StringParam)
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
   const startDateValid = startTimestamp && !isNaN(new Date(startTimestamp).getTime())
@@ -38,7 +38,7 @@ export function SelectTimeRange() {
           setEndDate(endDate.toISOString())
           setIsOpenTimestamp(false)
           setIsDatePickerOpen(false)
-          setHasCalendarValue(true)
+          setQueryTimeRange('custom')
         }}
         isOpen={isOpenTimestamp}
         maxDate={new Date()}
@@ -51,7 +51,7 @@ export function SelectTimeRange() {
           setIsDatePickerOpen(!isOpenTimestamp)
         }}
       >
-        {!hasCalendarValue ? (
+        {queryTimeRange !== 'custom' ? (
           <Button
             type="button"
             variant="surface"
@@ -84,8 +84,8 @@ export function SelectTimeRange() {
               role="button"
               onClick={(event) => {
                 event.stopPropagation()
-                setHasCalendarValue(false)
                 handleTimeRangeChange(lastDropdownTimeRange)
+                setQueryTimeRange(lastDropdownTimeRange)
               }}
             >
               <Icon iconName="xmark" />
@@ -93,7 +93,7 @@ export function SelectTimeRange() {
           </Button>
         )}
       </DatePicker>
-      {!hasCalendarValue && (
+      {queryTimeRange !== 'custom' && (
         <InputSelectSmall
           name="time-range"
           className="w-[180px]"

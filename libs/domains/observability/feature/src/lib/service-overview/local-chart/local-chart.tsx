@@ -69,7 +69,6 @@ export const ChartContent = memo(function ChartContent({
     handleZoomTimeRangeChange,
     registerZoomReset,
     setIsAnyChartZoomed,
-    setHasCalendarValue,
     handleTimeRangeChange,
     lastDropdownTimeRange,
     isAnyChartRefreshing,
@@ -92,7 +91,6 @@ export const ChartContent = memo(function ChartContent({
     onResetRegister: registerZoomReset,
     onZoomStateChange: setIsAnyChartZoomed,
     onDoubleClick: () => {
-      setHasCalendarValue(false)
       handleTimeRangeChange(lastDropdownTimeRange)
     },
     disabled: isLoading || isEmpty,

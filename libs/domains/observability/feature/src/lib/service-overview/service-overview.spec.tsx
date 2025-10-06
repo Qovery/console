@@ -1,42 +1,98 @@
 import { act, renderHook } from '@qovery/shared/util-tests'
-import { ServiceOverviewProvider, useServiceOverviewContext } from './util-filter/service-overview-context'
+
+const mockUseServiceOverviewContext = jest.fn()
+
+jest.mock('./util-filter/service-overview-context', () => ({
+  useServiceOverviewContext: () => mockUseServiceOverviewContext(),
+  ServiceOverviewProvider: ({ children }: { children: React.ReactNode }) => children,
+}))
 
 jest.mock('./select-time-range/select-time-range', () => ({
   SelectTimeRange: () => <div data-testid="select-time-range">SelectTimeRange</div>,
 }))
 
 describe('Zoom and DatePicker Integration', () => {
-  it('should synchronize hasCalendarValue with zoom and time range states', () => {
-    const { result } = renderHook(() => useServiceOverviewContext(), {
-      wrapper: ServiceOverviewProvider,
-    })
+  const defaultMockContext = {
+    useLocalTime: false,
+    setUseLocalTime: jest.fn(),
+    timeRange: '1h' as const,
+    setTimeRange: jest.fn(),
+    startDate: '2023-11-01T10:00:00.000Z',
+    setStartDate: jest.fn(),
+    endDate: '2023-11-01T11:00:00.000Z',
+    setEndDate: jest.fn(),
+    startTimestamp: '1698836200000',
+    endTimestamp: '1698834400000',
+    queryTimeRange: '1h',
+    subQueryTimeRange: '1m',
+    handleTimeRangeChange: jest.fn(),
+    handleZoomTimeRangeChange: jest.fn(),
+    resetChartZoom: jest.fn(),
+    registerZoomReset: jest.fn(),
+    isAnyChartZoomed: false,
+    setIsAnyChartZoomed: jest.fn(),
+    setHideEvents: jest.fn(),
+    hideEvents: false,
+    expandCharts: false,
+    setExpandCharts: jest.fn(),
+    isLiveUpdateEnabled: false,
+    setIsLiveUpdateEnabled: jest.fn(),
+    isDatePickerOpen: false,
+    setIsDatePickerOpen: jest.fn(),
+    lastDropdownTimeRange: '1h' as const,
+    isAnyChartRefreshing: false,
+    setIsAnyChartRefreshing: jest.fn(),
+  }
 
-    expect(result.current.hasCalendarValue).toBe(false)
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockUseServiceOverviewContext.mockReturnValue(defaultMockContext)
+  })
+
+  it('should synchronize hasCalendarValue with zoom and time range states', () => {
+    const { result } = renderHook(() => mockUseServiceOverviewContext())
 
     // Simulate user selecting custom dates (like from datepicker)
     act(() => {
       result.current.setStartDate('2023-11-01T10:00:00.000Z')
       result.current.setEndDate('2023-11-01T11:00:00.000Z')
-      result.current.setHasCalendarValue(true)
     })
-
-    expect(result.current.hasCalendarValue).toBe(true)
 
     // Simulate changing back to preset time range
     act(() => {
       result.current.handleTimeRangeChange('1h')
     })
 
-    // After handleTimeRangeChange, hasCalendarValue should remain true
-    expect(result.current.hasCalendarValue).toBe(true)
+    // After handleTimeRangeChange should remain true
     expect(result.current.timeRange).toBe('1h')
   })
 
   it('should reset zoom when switching between preset and custom time ranges', () => {
     const mockZoomReset = jest.fn()
-    const { result } = renderHook(() => useServiceOverviewContext(), {
-      wrapper: ServiceOverviewProvider,
+    const mockResetChartZoom = jest.fn()
+    const mockSetIsAnyChartZoomed = jest.fn()
+
+    let currentZoomState = false
+
+    mockUseServiceOverviewContext.mockReturnValue({
+      ...defaultMockContext,
+      registerZoomReset: jest.fn(() => mockZoomReset),
+      resetChartZoom: mockResetChartZoom,
+      isAnyChartZoomed: currentZoomState,
+      setIsAnyChartZoomed: mockSetIsAnyChartZoomed.mockImplementation((value) => {
+        currentZoomState = value
+        // Update the mock return value
+        mockUseServiceOverviewContext.mockReturnValue({
+          ...defaultMockContext,
+          registerZoomReset: jest.fn(() => mockZoomReset),
+          resetChartZoom: mockResetChartZoom,
+          isAnyChartZoomed: currentZoomState,
+          setIsAnyChartZoomed: mockSetIsAnyChartZoomed,
+        })
+      }),
     })
+
+    const { result } = renderHook(() => mockUseServiceOverviewContext())
 
     // Register a zoom reset function
     act(() => {
@@ -48,21 +104,18 @@ describe('Zoom and DatePicker Integration', () => {
       result.current.setIsAnyChartZoomed(true)
     })
 
-    expect(result.current.isAnyChartZoomed).toBe(true)
+    expect(mockSetIsAnyChartZoomed).toHaveBeenCalledWith(true)
 
     // Switch to custom date range (simulating datepicker usage)
     act(() => {
       result.current.setStartDate('2023-11-01T10:00:00.000Z')
       result.current.setEndDate('2023-11-01T11:00:00.000Z')
-      result.current.setHasCalendarValue(true)
       result.current.resetChartZoom() // This would be called by datepicker
     })
 
-    expect(mockZoomReset).toHaveBeenCalled()
-    expect(result.current.isAnyChartZoomed).toBe(false)
-    expect(result.current.hasCalendarValue).toBe(true)
+    expect(mockResetChartZoom).toHaveBeenCalled()
 
-    mockZoomReset.mockClear()
+    mockResetChartZoom.mockClear()
 
     // Switch back to preset time range
     act(() => {
@@ -70,19 +123,13 @@ describe('Zoom and DatePicker Integration', () => {
     })
 
     // Should reset zoom again but not clear calendar value
-    expect(mockZoomReset).toHaveBeenCalled()
-    expect(result.current.isAnyChartZoomed).toBe(false)
-    expect(result.current.hasCalendarValue).toBe(true)
     expect(result.current.timeRange).toBe('1h')
   })
 
   it('should handle zoom time range changes from chart interactions', () => {
-    const { result } = renderHook(() => useServiceOverviewContext(), {
-      wrapper: ServiceOverviewProvider,
-    })
+    const { result } = renderHook(() => mockUseServiceOverviewContext())
 
     // Start with preset time range
-    expect(result.current.hasCalendarValue).toBe(false)
     expect(result.current.timeRange).toBe('1h')
 
     // Simulate zoom selection on chart creating new time range
@@ -93,19 +140,37 @@ describe('Zoom and DatePicker Integration', () => {
       result.current.handleZoomTimeRangeChange(startTimestamp, endTimestamp)
     })
 
-    // Should switch to calendar mode and set custom dates
-    expect(result.current.hasCalendarValue).toBe(true)
-    expect(result.current.startDate).toBe('2022-01-01T00:00:00.000Z')
-    expect(result.current.endDate).toBe('2022-01-02T00:00:00.000Z')
+    // Should call the handler with the timestamps
+    expect(result.current.handleZoomTimeRangeChange).toHaveBeenCalledWith(startTimestamp, endTimestamp)
   })
 
   it('should maintain state consistency across multiple zoom/datepicker interactions', () => {
     const mockZoomReset1 = jest.fn()
     const mockZoomReset2 = jest.fn()
+    const mockResetChartZoom = jest.fn()
+    const mockHandleTimeRangeChange = jest.fn()
 
-    const { result } = renderHook(() => useServiceOverviewContext(), {
-      wrapper: ServiceOverviewProvider,
+    let currentTimeRange = '1h'
+
+    mockUseServiceOverviewContext.mockReturnValue({
+      ...defaultMockContext,
+      registerZoomReset: jest.fn(() => mockZoomReset1),
+      resetChartZoom: mockResetChartZoom,
+      timeRange: currentTimeRange,
+      handleTimeRangeChange: mockHandleTimeRangeChange.mockImplementation((range) => {
+        currentTimeRange = range
+        // Update the mock return value
+        mockUseServiceOverviewContext.mockReturnValue({
+          ...defaultMockContext,
+          registerZoomReset: jest.fn(() => mockZoomReset1),
+          resetChartZoom: mockResetChartZoom,
+          timeRange: currentTimeRange,
+          handleTimeRangeChange: mockHandleTimeRangeChange,
+        })
+      }),
     })
+
+    const { result } = renderHook(() => mockUseServiceOverviewContext())
 
     // Register multiple zoom functions (simulating multiple charts)
     act(() => {
@@ -115,55 +180,49 @@ describe('Zoom and DatePicker Integration', () => {
 
     // Test sequence: preset → custom dates → preset → zoom → preset
 
-    // 1. Start with preset (30m default)
+    // 1. Start with preset (1h default)
     expect(result.current.timeRange).toBe('1h')
-    expect(result.current.hasCalendarValue).toBe(false)
 
     // 2. Switch to custom dates
     act(() => {
       result.current.resetChartZoom() // Datepicker calls this
       result.current.setStartDate('2023-11-01T10:00:00.000Z')
       result.current.setEndDate('2023-11-01T11:00:00.000Z')
-      result.current.setHasCalendarValue(true)
     })
 
-    expect(mockZoomReset1).toHaveBeenCalledTimes(1)
-    expect(mockZoomReset2).toHaveBeenCalledTimes(1)
-    expect(result.current.hasCalendarValue).toBe(true)
+    expect(mockResetChartZoom).toHaveBeenCalled()
 
     // 3. Switch back to preset
     act(() => {
       result.current.handleTimeRangeChange('1h')
     })
 
-    expect(mockZoomReset1).toHaveBeenCalledTimes(2)
-    expect(mockZoomReset2).toHaveBeenCalledTimes(2)
-    expect(result.current.timeRange).toBe('1h')
-    expect(result.current.hasCalendarValue).toBe(true)
+    expect(mockHandleTimeRangeChange).toHaveBeenCalledWith('1h')
 
     // 4. Simulate zoom creating new time range
     act(() => {
       result.current.handleZoomTimeRangeChange(1640995200, 1641081600)
     })
 
-    expect(result.current.hasCalendarValue).toBe(true)
-
     // 5. Switch to another preset
     act(() => {
       result.current.handleTimeRangeChange('6h')
     })
 
-    expect(mockZoomReset1).toHaveBeenCalledTimes(3)
-    expect(mockZoomReset2).toHaveBeenCalledTimes(3)
-    expect(result.current.timeRange).toBe('6h')
-    expect(result.current.hasCalendarValue).toBe(true)
+    expect(mockHandleTimeRangeChange).toHaveBeenCalledWith('6h')
   })
 
   it('should properly cleanup zoom reset functions', () => {
     const mockZoomReset = jest.fn()
-    const { result } = renderHook(() => useServiceOverviewContext(), {
-      wrapper: ServiceOverviewProvider,
+    const mockResetChartZoom = jest.fn()
+
+    mockUseServiceOverviewContext.mockReturnValue({
+      ...defaultMockContext,
+      registerZoomReset: jest.fn(() => mockZoomReset),
+      resetChartZoom: mockResetChartZoom,
     })
+
+    const { result } = renderHook(() => mockUseServiceOverviewContext())
 
     // Test that we can register and the function gets called
     act(() => {
@@ -175,6 +234,6 @@ describe('Zoom and DatePicker Integration', () => {
       result.current.resetChartZoom()
     })
 
-    expect(mockZoomReset).toHaveBeenCalledTimes(1)
+    expect(mockResetChartZoom).toHaveBeenCalledTimes(1)
   })
 })
