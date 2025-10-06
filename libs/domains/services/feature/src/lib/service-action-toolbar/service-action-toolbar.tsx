@@ -153,9 +153,9 @@ function MenuManageDeployment({
               description: (
                 <div className="flex flex-col gap-1">
                   <span>
-                    This will run the <code className="rounded bg-neutral-200 px-1 font-mono">terraform destroy</code>{' '}
-                    command, terminating all resources managed by your Terraform project while keeping the Qovery
-                    service.
+                    This will run the{' '}
+                    <code className="rounded bg-neutral-200 px-1 font-mono text-xs">terraform destroy</code> command,
+                    terminating all resources managed by your Terraform project while keeping the Qovery service.
                   </span>
                   <span>To confirm, type "destroy". This action cannot be undone.</span>
                 </div>
