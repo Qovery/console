@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { ActionToolbar } from '../action-toolbar/action-toolbar'
 import { DropdownMenu } from '../dropdown-menu/dropdown-menu'
 import Icon from '../icon/icon'

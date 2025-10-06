@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { Button } from '../button/button'
 import { Icon } from '../icon/icon'
 import Truncate from '../truncate/truncate'

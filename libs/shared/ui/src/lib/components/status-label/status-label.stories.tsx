@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { StateEnum } from 'qovery-typescript-axios'
 import { StatusLabel, type StatusLabelProps } from './status-label'
 

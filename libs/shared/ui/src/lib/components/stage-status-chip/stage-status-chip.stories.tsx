@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { StageStatusEnum } from 'qovery-typescript-axios'
 import { StageStatusChip, type StageStatusChipProps } from './stage-status-chip'
 

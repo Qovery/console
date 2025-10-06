@@ -1,12 +1,12 @@
-import { type ComponentMeta, type ComponentStory } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import Pagination from './pagination'
 
 export default {
   component: Pagination,
   title: 'Pagination',
-} as ComponentMeta<typeof Pagination>
+} as Meta<typeof Pagination>
 
-const Template: ComponentStory<typeof Pagination> = (args) => <Pagination {...args} />
+const Template: StoryFn<typeof Pagination> = (args) => <Pagination {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

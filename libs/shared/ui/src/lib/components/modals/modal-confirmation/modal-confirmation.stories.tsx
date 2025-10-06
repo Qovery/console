@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import Button from '../../button/button'
 import Modal from '../../modal/modal'
 import { ModalConfirmation, type ModalConfirmationProps } from '../modal-confirmation/modal-confirmation'
@@ -8,7 +8,7 @@ export default {
   title: 'Modals/Confirmation',
 } as Meta
 
-const Template: Story<ModalConfirmationProps> = (args) => (
+const Template: StoryFn<ModalConfirmationProps> = (args) => (
   <div className="relative">
     <Modal
       defaultOpen={true}

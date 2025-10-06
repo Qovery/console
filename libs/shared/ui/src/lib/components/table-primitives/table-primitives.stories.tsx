@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { Table } from './table-primitives'
 
 const Story: Meta<typeof Table.Root> = {

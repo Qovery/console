@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { useXTerm } from 'react-xtermjs'
 import Button from '../button/button'
 

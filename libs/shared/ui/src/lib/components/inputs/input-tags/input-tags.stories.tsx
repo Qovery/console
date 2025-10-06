@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { InputTags, type InputTagsProps } from './input-tags'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Inputs/InputTags',
 } as Meta
 
-const Template: Story<InputTagsProps> = (args) => <InputTags {...args} />
+const Template: StoryFn<InputTagsProps> = (args) => <InputTags {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

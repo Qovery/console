@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { IconEnum } from '@qovery/shared/enums'
 import { LegacyAvatar, type LegacyAvatarProps } from './legacy-avatar'
 
@@ -7,7 +7,7 @@ export default {
   title: 'LegacyAvatar',
 } as Meta
 
-const Template: Story<LegacyAvatarProps> = (args) => <LegacyAvatar {...args}></LegacyAvatar>
+const Template: StoryFn<LegacyAvatarProps> = (args) => <LegacyAvatar {...args}></LegacyAvatar>
 
 export const Primary = Template.bind({})
 Primary.args = {

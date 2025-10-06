@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import InputCreditCard, { type InputCreditCardProps } from './input-credit-card'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Inputs/InputCreditCard',
 } as Meta
 
-const Template: Story<InputCreditCardProps> = (args) => <InputCreditCard {...args} />
+const Template: StoryFn<InputCreditCardProps> = (args) => <InputCreditCard {...args} />
 
 const defaultProps: InputCreditCardProps = {
   name: 'firstName',

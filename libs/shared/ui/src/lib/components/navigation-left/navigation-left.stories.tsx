@@ -1,4 +1,4 @@
-import { type Meta } from '@storybook/react'
+import { type Meta } from '@storybook/react-webpack5'
 import { NavigationLeft } from './navigation-left'
 
 const Story: Meta<typeof NavigationLeft> = {
