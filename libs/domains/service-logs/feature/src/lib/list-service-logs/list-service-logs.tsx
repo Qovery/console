@@ -113,6 +113,8 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <ServiceLogsPlaceholder
+                type={isLiveMode ? 'live' : 'history'}
+                isFetched={isLogsFetched}
                 serviceName={service?.name}
                 itemsLength={logs.length}
                 databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}

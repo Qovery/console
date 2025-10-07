@@ -26,12 +26,20 @@ export function LoaderPlaceholder({
 }
 
 export interface ServiceLogsPlaceholderProps {
+  type: 'live' | 'history'
+  isFetched?: boolean
   serviceName?: string
   databaseMode?: DatabaseModeEnum
   itemsLength?: number
 }
 
-export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength }: ServiceLogsPlaceholderProps) {
+export function ServiceLogsPlaceholder({
+  type = 'live',
+  isFetched = false,
+  serviceName,
+  databaseMode,
+  itemsLength,
+}: ServiceLogsPlaceholderProps) {
   const { organizationId, projectId, environmentId, serviceId } = useParams()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { state: deploymentState } = deploymentStatus ?? {}
@@ -45,18 +53,19 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
     return () => clearTimeout(timer)
   }, [])
 
-  return match({ databaseMode, itemsLength, deploymentState })
+  return match({ databaseMode, itemsLength, deploymentState, type })
     .with(
       {
         databaseMode: P.not(DatabaseModeEnum.MANAGED),
         itemsLength: 0,
         deploymentState: P.when((state) => state !== 'READY' && state !== 'STOPPED'),
+        type: 'live',
       },
       () => (
         <>
           <LoaderPlaceholder
             title={showPlaceholder ? 'Processing is taking more than 10s' : 'Service logs are loading…'}
-            description={showPlaceholder && 'No logs available, please check the service configuration.'}
+            description={showPlaceholder && 'No logs available, please check the service configuration or your query.'}
           />
           {effectiveType !== undefined && effectiveType !== '4g' && (
             <p className="mt-0.5 text-center text-sm text-neutral-350">Your connection is slow</p>
@@ -92,16 +101,21 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
           <LoaderPlaceholder />
         )
     )
-    .otherwise(() => (
-      <>
-        <p className="mb-1 text-neutral-50">No logs are available for {serviceName}.</p>
-        {databaseMode === DatabaseModeEnum.MANAGED && (
-          <p className="text-sm text-neutral-300">
-            Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider console.
-          </p>
-        )}
-      </>
-    ))
+    .otherwise(() =>
+      isFetched ? (
+        <>
+          <p className="mb-1 text-neutral-50">No logs are available for {serviceName}.</p>
+          {databaseMode === DatabaseModeEnum.MANAGED && (
+            <p className="text-sm text-neutral-300">
+              Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider
+              console.
+            </p>
+          )}
+        </>
+      ) : (
+        <LoaderPlaceholder />
+      )
+    )
 }
 
 export default ServiceLogsPlaceholder

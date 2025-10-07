@@ -89,7 +89,7 @@ export interface ServiceLog extends StreamLabels {
   message: string
 }
 
-export type SeverityType = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL' | 'UNKNOWN'
+export type SeverityType = 'debug' | 'info' | 'warning' | 'error' | 'critical' | 'unknown'
 
 // Common normalized log interface for both live and history logs
 export interface NormalizedServiceLog {
@@ -218,6 +218,17 @@ export const serviceLogs = createQueryKeys('serviceLogs', {
       }
 
       return []
+    },
+  }),
+  serviceLabel: ({ path, clusterId, serviceId }: { path: string; clusterId: string; serviceId: string }) => ({
+    queryKey: [path, clusterId, serviceId],
+    async queryFn(): Promise<string[]> {
+      const response = await clusterApi.getClusterLogs(
+        clusterId,
+        `/loki/api/v1/label/${path}/values`,
+        `{qovery_com_service_id="${serviceId}"}`
+      )
+      return response.data.response ? (JSON.parse(response.data.response).data as string[]) : []
     },
   }),
 })

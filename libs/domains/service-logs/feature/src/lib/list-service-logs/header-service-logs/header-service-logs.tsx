@@ -184,7 +184,7 @@ export function HeaderServiceLogs({ logs, isLoading, metricsEnabled }: HeaderSer
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <SearchServiceLogs isLoading={isLoading} />
+          <SearchServiceLogs clusterId={environment.cluster_id} serviceId={serviceId} isLoading={isLoading} />
         </div>
         <Button
           onClick={() => downloadLogs(logs)}

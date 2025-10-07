@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { subMinutes } from 'date-fns'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryParams } from 'use-query-params'
 import { type ServiceLog, normalizeServiceLog, serviceLogs } from '@qovery/domains/service-logs/data-access'
@@ -14,7 +13,7 @@ export interface UseServiceHistoryLogsProps {
 const LOGS_PER_BATCH = 200
 
 export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }: UseServiceHistoryLogsProps) {
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   const [accumulatedLogs, setAccumulatedLogs] = useState<ServiceLog[]>([])
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null)
