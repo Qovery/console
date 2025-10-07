@@ -8,35 +8,35 @@ import { StepMore } from '../../ui/step-more/step-more'
 
 const dataQuestions: Value[] = [
   {
-    label: 'easily spin up testing/dev/QA environments',
+    label: 'Spin up testing/dev/QA environments',
     value: 'i-want-to-easily-spin-up-testing-dev-qa-environments',
   },
   {
-    label: 'SIMPLIFY my deployment pipeline',
+    label: 'Simplify my deployment pipeline',
     value: 'i-want-to-simplify-my-deployment-pipeline',
   },
   {
-    label: 'AUTOMATE my deployment pipeline',
+    label: 'Automate my deployment pipeline',
     value: 'i-want-to-automate-my-deployment-pipeline',
   },
   {
-    label: 'easily deploy my new project',
+    label: 'Deploy my new project',
     value: 'i-want-to-easily-deploy-my-new-project',
   },
   {
-    label: 'easily migrate my apps from Heroku',
+    label: 'Migrate my apps from Heroku',
     value: 'i-want-to-easily-migrate-my-apps-from-heroku',
   },
   {
-    label: 'find a better alternative to Heroku',
+    label: 'Find a better alternative to Heroku',
     value: 'i-want-to-find-a-better-alternative-to-heroku',
   },
   {
-    label: 'easily spin up and manage my Kubernetes cluster',
+    label: 'Spin up and manage my Kubernetes cluster',
     value: 'i-want-to-easily-spin-up-and-manage-my-kubernetes-cluster',
   },
   {
-    label: 'easily deploy my apps on my Kubernetes cluster',
+    label: 'Deploy my apps on my Kubernetes cluster',
     value: 'i-want-to-easily-deploy-my-apps-on-my-kubernetes-cluster',
   },
   {
