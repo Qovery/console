@@ -34,6 +34,9 @@ export function CardLogErrors({
     metricShortName: 'card_log_error_number',
   })
 
+  const startDate = new Date(parseInt(startTimestamp, 10) * 1000).toISOString()
+  const endDate = new Date(parseInt(endTimestamp, 10) * 1000).toISOString()
+
   const value = Math.ceil(metrics?.data?.result?.[0]?.value?.[1]) || 0
 
   const title = `${value} log ${pluralize(value, 'error', 'errors')}`
@@ -46,9 +49,13 @@ export function CardLogErrors({
       isLoading={isLoadingMetrics}
       icon="scroll"
       onClick={() =>
-        navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId), {
-          state: { prevUrl: pathname },
-        })
+        navigate(
+          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+            SERVICE_LOGS_URL(serviceId, undefined, startDate, endDate),
+          {
+            state: { prevUrl: pathname },
+          }
+        )
       }
     />
   )

@@ -11,8 +11,14 @@ export const ENVIRONMENT_LOGS_URL = (
 
 export const ENVIRONMENT_STAGES_URL = (versionId?: string) => (versionId ? `/stages/${versionId}` : '/stages')
 
-export const SERVICE_LOGS_URL = (serviceId = ':serviceId', podName = '') =>
-  `/${serviceId}/service-logs${podName ? `?pod_name=${podName}` : ''}`
+export const SERVICE_LOGS_URL = (serviceId = ':serviceId', instance = '', startDate?: string, endDate?: string) => {
+  const params = new URLSearchParams()
+  if (instance) params.append('instance', instance)
+  if (startDate) params.append('startDate', startDate)
+  if (endDate) params.append('endDate', endDate)
+  const queryString = params.toString()
+  return `/${serviceId}/service-logs${queryString ? `?${queryString}` : ''}`
+}
 
 export const DEPLOYMENT_LOGS_VERSION_URL = (serviceId = ':serviceId', versionId = ':versionId') =>
   `/${serviceId}/deployment-logs/${versionId}`
