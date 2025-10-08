@@ -7,6 +7,7 @@ import {
   ServiceDeploymentStatusEnum,
   StateEnum,
   type Status,
+  TerraformDeployRequestActionEnum,
 } from 'qovery-typescript-axios'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
@@ -132,18 +133,24 @@ function MenuManageDeployment({
     displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
   const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
-  const mutationTerraformAction = (action: 'plan' | 'plan_and_apply' | 'destroy' | 'force_unlock') => {
+  const mutationTerraformAction = (
+    action: 'plan' | 'plan_and_apply' | 'destroy' | 'force_unlock' | 'migrate_state'
+  ) => {
     match(service)
       .with({ serviceType: 'TERRAFORM' }, (service) => {
         match(action)
           .with('plan', () => {
-            deployService({ serviceId: service.id, serviceType: service.serviceType, request: { action: 'PLAN' } })
+            deployService({
+              serviceId: service.id,
+              serviceType: service.serviceType,
+              request: { action: TerraformDeployRequestActionEnum.PLAN },
+            })
           })
           .with('plan_and_apply', () => {
             deployService({
               serviceId: service.id,
               serviceType: service.serviceType,
-              request: { action: 'PLAN_AND_APPLY' },
+              request: { action: TerraformDeployRequestActionEnum.PLAN_AND_APPLY },
             })
           })
           .with('destroy', () => {
@@ -166,13 +173,20 @@ function MenuManageDeployment({
                 deployService({
                   serviceId: service.id,
                   serviceType: service.serviceType,
-                  request: { action: 'DESTROY' },
+                  request: { action: TerraformDeployRequestActionEnum.DESTROY },
                 }),
             })
           })
           .with('force_unlock', () => {
             openModal({
               content: <ForceUnlockModal environment={environment} service={service} />,
+            })
+          })
+          .with('migrate_state', () => {
+            deployService({
+              serviceId: service.id,
+              serviceType: service.serviceType,
+              request: { action: TerraformDeployRequestActionEnum.MIGRATE_STATE },
             })
           })
           .exhaustive()
@@ -428,6 +442,12 @@ function MenuManageDeployment({
                   onSelect={() => mutationTerraformAction('force_unlock')}
                 >
                   Force unlock
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  icon={<Icon iconName="file-export" iconStyle="regular" />}
+                  onSelect={() => mutationTerraformAction('migrate_state')}
+                >
+                  Migrate state
                 </DropdownMenu.Item>
               </>
             )
