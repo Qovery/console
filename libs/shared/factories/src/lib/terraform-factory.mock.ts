@@ -47,7 +47,9 @@ export const terraformFactoryMock = (howMany: number): Terraform[] =>
       cpu_milli: 500,
       ram_mib: 512,
       storage_gib: 1,
+      gpu: 0,
     },
     use_cluster_credentials: true,
     serviceType: 'TERRAFORM',
+    action_extra_arguments: {},
   }))

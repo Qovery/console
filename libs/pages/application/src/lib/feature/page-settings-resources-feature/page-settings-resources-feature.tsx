@@ -94,6 +94,7 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
               cpu_milli: Number(data['cpu']),
               ram_mib: Number(data['memory']),
               storage_gib: Number(data['storage_gib']),
+              gpu: Number(data['gpu']),
             },
           },
         })
