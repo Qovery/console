@@ -1,9 +1,8 @@
 import clsx from 'clsx'
-import TerraformIcon from 'devicon/icons/terraform/terraform-original.svg'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
-import { type ReactElement, cloneElement, useState } from 'react'
+import { type ReactElement, cloneElement, useMemo, useState } from 'react'
 import { NavLink, type To, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useEnvironment, useLifecycleTemplates } from '@qovery/domains/environments/feature'
@@ -109,7 +108,7 @@ const servicePath = (type: ServiceType, parentSlug: string, slug: string) =>
     .with('HELM', () => SERVICES_HELM_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
     .with('TERRAFORM', () => undefined) // TODO [QOV-821] double check that
-    .exhaustive()
+    .otherwise(() => undefined)
 
 interface CardOptionProps extends ServiceTemplateOptionType {
   parentSlug: string
@@ -318,67 +317,71 @@ export function PageNewFeature() {
   const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
   const { showPylonForm } = useSupportChat()
 
-  const serviceEmpty: ServiceBlock[] = [
-    {
-      title: 'Application',
-      description: 'Deploy a long running service running from Git or a Container Registry.',
-      icon: <Icon name="APPLICATION" width={32} height={32} />,
-      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL,
-      cloud_provider: cloudProvider,
-    },
-    {
-      title: 'Database',
-      description: 'Easy and fastest way to deploy the most popular databases.',
-      icon: <Icon name="DATABASE" width={32} height={32} />,
-      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DATABASE_CREATION_URL,
-      cloud_provider: cloudProvider,
-    },
-    {
-      title: 'Lifecycle Job',
-      description: 'Execute any type of script coming from Git or a Container Registry.',
-      icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
-      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_CREATION_URL,
-      cloud_provider: cloudProvider,
-    },
-    {
-      title: 'Cron Job',
-      description: 'Execute any type of script at a regular basis.',
-      icon: <Icon name="CRON_JOB" width={32} height={32} />,
-      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_CRONJOB_CREATION_URL,
-      cloud_provider: cloudProvider,
-    },
-    {
-      title: 'Helm',
-      description: 'Deploy a Helm Chart on your Kubernetes cluster.',
-      icon: <Icon name="HELM" width={32} height={32} />,
-      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_HELM_CREATION_URL,
-      cloud_provider: cloudProvider,
-    },
-  ]
-
-  if (isTerraformFeatureFlag) {
-    serviceEmpty.push({
-      title: 'Terraform',
-      description: 'Deploy a Terraform configuration on your Kubernetes cluster.',
-      icon: <Icon name="TERRAFORM" width={32} height={32} />,
-      link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL,
-      cloud_provider: cloudProvider,
-    })
-  } else {
-    serviceEmpty.push({
-      title: 'Terraform',
-      description: "Terraform service isn't available for your organization.",
-      icon: <Icon name="TERRAFORM" width={32} height={32} />,
-      onClick: () => showPylonForm('request-access-terraform'),
-      cloud_provider: cloudProvider,
-      disabledCTA: (
-        <p className="cursor-pointer text-xs font-medium text-neutral-400">
-          Contact us to enable it <Icon iconName="chevron-right" className="ml-1 text-2xs" />
-        </p>
-      ),
-      badge: 'NEW',
-    })
-  }
+  const serviceEmpty: ServiceBlock[] = useMemo(
+    () => [
+      {
+        title: 'Application',
+        description: 'Deploy a long running service running from Git or a Container Registry.',
+        icon: <Icon name="APPLICATION" width={32} height={32} />,
+        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_APPLICATION_CREATION_URL,
+        cloud_provider: cloudProvider,
+      },
+      {
+        title: 'Database',
+        description: 'Easy and fastest way to deploy the most popular databases.',
+        icon: <Icon name="DATABASE" width={32} height={32} />,
+        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_DATABASE_CREATION_URL,
+        cloud_provider: cloudProvider,
+      },
+      {
+        title: 'Lifecycle Job',
+        description: 'Execute any type of script coming from Git or a Container Registry.',
+        icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
+        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_LIFECYCLE_CREATION_URL,
+        cloud_provider: cloudProvider,
+      },
+      {
+        title: 'Cron Job',
+        description: 'Execute any type of script at a regular basis.',
+        icon: <Icon name="CRON_JOB" width={32} height={32} />,
+        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_CRONJOB_CREATION_URL,
+        cloud_provider: cloudProvider,
+      },
+      {
+        title: 'Helm',
+        description: 'Deploy a Helm Chart on your Kubernetes cluster.',
+        icon: <Icon name="HELM" width={32} height={32} />,
+        link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_HELM_CREATION_URL,
+        cloud_provider: cloudProvider,
+      },
+      ...(isTerraformFeatureFlag
+        ? [
+            {
+              title: 'Terraform',
+              description: 'Deploy a Terraform configuration on your Kubernetes cluster.',
+              icon: <Icon name="TERRAFORM" width={32} height={32} />,
+              link: SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_TERRAFORM_CREATION_URL,
+              cloud_provider: cloudProvider,
+            },
+          ]
+        : [
+            {
+              title: 'Terraform',
+              description: "Terraform service isn't available for your organization.",
+              icon: <Icon name="TERRAFORM" width={32} height={32} />,
+              onClick: () => showPylonForm('request-access-terraform'),
+              cloud_provider: cloudProvider,
+              disabledCTA: (
+                <p className="cursor-pointer text-xs font-medium text-neutral-400">
+                  Contact us to enable it <Icon iconName="chevron-right" className="ml-1 text-2xs" />
+                </p>
+              ),
+              badge: 'NEW',
+            },
+          ]),
+    ],
+    [cloudProvider, organizationId, projectId, environmentId, isTerraformFeatureFlag, showPylonForm]
+  )
 
   const [searchInput, setSearchInput] = useState('')
 
@@ -404,15 +407,6 @@ export function PageNewFeature() {
         {[
           ...serviceEmpty,
           ...[
-            {
-              title: 'Terraform',
-              description: 'Terraform is an open-source infrastructure as code software tool.',
-              icon: <img className="select-none" width={32} height={32} src={TerraformIcon} alt="Terraform" />,
-              link:
-                SERVICES_URL(organizationId, projectId, environmentId) +
-                SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL('terraform', 'current'),
-              cloud_provider: cloudProvider,
-            },
             {
               title: 'CloudFormation',
               description:
@@ -515,6 +509,7 @@ export function PageNewFeature() {
           </>
         ) : [...serviceEmpty, ...serviceTemplates]
             .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+            .filter((c) => !('tag' in c && 'slug' in c && c.tag === 'IAC' && c.slug === 'terraform'))
             .filter(filterService).length > 0 ? (
           <Section>
             <Heading className="mb-1">Search results</Heading>
@@ -522,6 +517,7 @@ export function PageNewFeature() {
             <div className="grid grid-cols-3 gap-4">
               {[...serviceEmpty, ...serviceTemplates]
                 .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+                .filter((c) => !('tag' in c && 'slug' in c && c.tag === 'IAC' && c.slug === 'terraform'))
                 .filter(filterService)
                 .map((service) => (
                   <CardService key={service.title} availableTemplates={availableTemplates} {...service} />
