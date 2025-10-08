@@ -85,8 +85,10 @@ export function StepGeneralFeature() {
                     cpu_milli: 500,
                     ram_mib: 256,
                     storage_gib: 1000,
+                    gpu: 0,
                   },
                   use_cluster_credentials: true,
+                  action_extra_arguments: {},
                 }}
               />
             </Section>

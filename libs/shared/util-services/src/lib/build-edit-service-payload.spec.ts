@@ -81,10 +81,12 @@ describe('testing payload refactoring', () => {
       ],
       maximum_cpu: 10,
       maximum_memory: 10,
+      maximum_gpu: 0,
       name: 'hello-2',
       description: 'test',
       entrypoint: '/',
       cpu: 3000,
+      gpu: 0,
       auto_preview: false,
       auto_deploy: false,
       tag: '1',
@@ -185,6 +187,7 @@ describe('testing payload refactoring', () => {
       description: '',
       cpu: 500,
       memory: 512,
+      gpu: 0,
       auto_preview: true,
       max_duration_seconds: 300,
       port: null,
@@ -215,6 +218,7 @@ describe('testing payload refactoring', () => {
       healthchecks: {},
       maximum_cpu: 10,
       maximum_memory: 10,
+      maximum_gpu: 0,
     }
 
     expect(buildEditServicePayload({ service: job })).toEqual({

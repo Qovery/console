@@ -73,6 +73,7 @@ export function StepSummaryFeature() {
         cpu_milli: generalData.job_resources.cpu_milli,
         ram_mib: generalData.job_resources.ram_mib,
         storage_gib: generalData.job_resources.storage_gib,
+        gpu: generalData.job_resources.gpu,
       },
       use_cluster_credentials: generalData.use_cluster_credentials,
     }
