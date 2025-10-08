@@ -548,6 +548,7 @@ export function KarpenterInstanceFilterModal({
   const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
     region: clusterRegion,
     enabled: true,
+    withGpu: true,
   })
 
   if (cloudProviderInstanceTypesKarpenter) {

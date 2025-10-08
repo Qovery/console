@@ -120,6 +120,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
       | {
           cloudProvider: Extract<CloudVendorEnum, 'AWS'>
           region: string
+          withGpu: boolean
         }
       | {
           cloudProvider: Extract<CloudVendorEnum, 'SCW'>
@@ -139,7 +140,9 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
     queryKey: [args.cloudProvider],
     async queryFn() {
       const response = await match(args)
-        .with({ cloudProvider: 'AWS' }, ({ region }) => cloudProviderApi.listAWSEKSInstanceType(region, false, false))
+        .with({ cloudProvider: 'AWS' }, ({ region, withGpu }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, false, withGpu)
+        )
         .with({ cloudProvider: 'AZURE' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'SCW' }, () => Promise.resolve({ data: { results: [] } }))
