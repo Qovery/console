@@ -48,7 +48,6 @@ export function StepSummaryFeature() {
       icon_uri: generalData.icon_uri,
       timeout_sec: Number(generalData.timeout_sec),
       auto_deploy: generalData.auto_deploy ?? false,
-      auto_approve: false,
       provider: 'TERRAFORM',
       backend: {
         kubernetes: {},

@@ -4,6 +4,7 @@ import {
   type ClusterInstanceAttributes,
   type ClusterInstanceTypeResponseListResultsInner,
   CpuArchitectureEnum,
+  ListAWSEKSInstanceTypeGpuEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -34,6 +35,7 @@ export interface KarpenterInstanceFilterModalProps {
   onClose: () => void
   defaultValues?: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>
   cluster?: Cluster
+  gpuFilter?: ListAWSEKSInstanceTypeGpuEnum
 }
 
 export interface KarpenterInstanceFormProps {
@@ -543,12 +545,13 @@ export function KarpenterInstanceFilterModal({
   onChange,
   onClose,
   cluster,
+  gpuFilter = ListAWSEKSInstanceTypeGpuEnum.EXCLUDE,
 }: Omit<KarpenterInstanceFilterModalProps, 'cloudProviderInstanceTypes'>) {
   // Get instance types only available for AWS
   const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
     region: clusterRegion,
     enabled: true,
-    withGpu: true,
+    gpuFilter,
   })
 
   if (cloudProviderInstanceTypesKarpenter) {

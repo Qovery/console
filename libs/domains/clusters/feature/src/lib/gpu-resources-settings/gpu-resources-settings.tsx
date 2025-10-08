@@ -60,6 +60,7 @@ export const GpuResourcesSettings = ({ cluster }: GpuResourcesSettingsProps) => 
                     ...values,
                   })
                 }}
+                gpuFilter="ONLY"
               />
             ),
           })

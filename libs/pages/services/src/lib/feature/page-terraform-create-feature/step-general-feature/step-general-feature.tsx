@@ -69,7 +69,6 @@ export function StepGeneralFeature() {
                   auto_deploy: false,
                   icon_uri: 'app://qovery-console/terraform',
                   timeout_sec: 60,
-                  auto_approve: false,
                   backend: {
                     kubernetes: {},
                   },
