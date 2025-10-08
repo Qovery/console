@@ -1,4 +1,4 @@
-import { type Environment } from 'qovery-typescript-axios'
+import { type Environment, TerraformDeployRequestActionEnum } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Checkbox, ModalCrud, useModal } from '@qovery/shared/ui'
@@ -25,7 +25,7 @@ export const ForceUnlockModal = ({ environment, service }: { environment: Enviro
     deployService({
       serviceId: service.id,
       serviceType: service.serviceType,
-      request: { action: 'FORCE_UNLOCK' },
+      request: { action: TerraformDeployRequestActionEnum.FORCE_UNLOCK },
     })
     closeModal()
   })
