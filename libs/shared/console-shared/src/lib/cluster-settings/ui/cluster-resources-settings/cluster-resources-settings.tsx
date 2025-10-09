@@ -60,7 +60,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
   const isKarpenter = Boolean(props.cluster?.features?.find((f) => f.id === 'KARPENTER'))
 
-  const [isGpuEnabled, setIsGpuEnabled] = useState(false)
+  const [isGpuEnabled, setIsGpuEnabled] = useState(!!watchKarpenter?.qovery_node_pools?.gpu_override)
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(props.cloudProvider || CloudVendorEnum.AWS)
@@ -143,6 +143,13 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
       })
     }
   }, [props.fromDetail, props.isProduction, props.cloudProvider, cloudProviderInstanceTypesKarpenter, setValue])
+
+  const handleGpuEnabledChange = (value: boolean) => {
+    setIsGpuEnabled(value)
+    if (!value) {
+      setValue('karpenter.qovery_node_pools.gpu_override', undefined)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-10">
@@ -411,7 +418,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
 
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
-              <InputToggle value={isGpuEnabled} onChange={() => setIsGpuEnabled(!isGpuEnabled)} name="gpu_enabled" />
+              <InputToggle value={isGpuEnabled} onChange={handleGpuEnabledChange} name="gpu_enabled" />
               <label className="text-sm" htmlFor="gpu_enabled">
                 Enable GPU nodepools configuration
               </label>

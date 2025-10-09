@@ -262,7 +262,11 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                           type="gpu"
                           cluster={cluster}
                           onChange={(data) => {
-                            setValue('karpenter.qovery_node_pools.gpu_override', data.gpu_override)
+                            console.log('🚀 ~ data:', data)
+                            setValue('karpenter.qovery_node_pools.gpu_override', {
+                              ...watchGpu,
+                              limits: data.gpu_override?.limits,
+                            })
                           }}
                           defaultValues={watchGpu}
                         />
@@ -279,16 +283,18 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                   {watchGpu?.limits?.enabled ? (
                     <span>
                       {watchGpu.limits.max_cpu_in_vcpu && (
-                        <span>vCPU limit: {watchStable?.limits?.max_cpu_in_vcpu} vCPU; </span>
+                        <span>vCPU limit: {watchGpu?.limits?.max_cpu_in_vcpu} vCPU; </span>
                       )}
-                      {/* TODO [QOV-167] GPU limit */}
-                      {/* {watchGpu.limits.max_gpu_in_units && (
-                        <span>GPU limit: {watchStable?.limits?.max_gpu_in_units} GPU; </span>
-                      )} */}
                       {watchGpu.limits.max_memory_in_gibibytes && (
                         <>
                           <br />
-                          <span>Memory limit: {watchStable?.limits?.max_memory_in_gibibytes} GiB</span>
+                          <span>Memory limit: {watchGpu?.limits?.max_memory_in_gibibytes} GiB</span>
+                        </>
+                      )}
+                      {watchGpu.limits.max_gpu && (
+                        <>
+                          <br />
+                          <span>GPU limit: {watchGpu?.limits?.max_gpu} GPU</span>
                         </>
                       )}
                     </span>

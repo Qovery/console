@@ -90,10 +90,9 @@ function LimitsFields({ type }: { type: NodepoolModalProps['type'] }) {
               />
             )}
           />
-          {/* TODO [QOV-167] Field ? */}
           {type === 'gpu' && (
             <Controller
-              name={`${name}.max_gpu_in_units`}
+              name={`${name}.max_gpu`}
               control={control}
               render={({ field }) => (
                 <InputText
@@ -121,6 +120,7 @@ export interface NodepoolModalProps {
 
 const CPU_MIN = 6
 const MEMORY_MIN = 10
+const GPU_MIN = 0
 
 export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
   const { closeModal } = useModal()
@@ -146,20 +146,23 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             })),
         },
       },
-      // TODO [QOV-167] Add gpu override
+      gpu_override: {
+        limits: defaultValues?.limits,
+      },
     },
   })
 
   const watchConsolidation = methods.watch('stable_override.consolidation.enabled')
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    const payload = match(type)
+    const payload: Omit<KarpenterNodePool, 'requirements'> = match(type)
       .with('default', () => ({
         default_override: {
           limits: {
             enabled: data.default_override?.limits?.enabled ?? false,
             max_cpu_in_vcpu: data.default_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
             max_memory_in_gibibytes: data.default_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
+            max_gpu: data.default_override?.limits?.max_gpu ?? GPU_MIN,
           },
         },
       }))
@@ -169,6 +172,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             enabled: data.stable_override?.limits?.enabled ?? false,
             max_cpu_in_vcpu: data.stable_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
             max_memory_in_gibibytes: data.stable_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
+            max_gpu: data.stable_override?.limits?.max_gpu ?? GPU_MIN,
           },
           consolidation: {
             enabled: data.stable_override?.consolidation?.enabled ?? false,
@@ -182,7 +186,16 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
           },
         },
       }))
-      .with('gpu', () => ({})) // TODO [QOV-167] Add gpu override
+      .with('gpu', () => ({
+        gpu_override: {
+          limits: {
+            enabled: data.gpu_override?.limits?.enabled ?? false,
+            max_cpu_in_vcpu: data.gpu_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
+            max_memory_in_gibibytes: data.gpu_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
+            max_gpu: data.gpu_override?.limits?.max_gpu ?? GPU_MIN,
+          },
+        },
+      }))
       .exhaustive()
 
     onChange(payload)

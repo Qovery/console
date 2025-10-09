@@ -14,7 +14,6 @@ export const GpuResourcesSettings = ({ cluster }: GpuResourcesSettingsProps) => 
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
 
   const watchKarpenter = watch('karpenter')
-  const watchKarpenterEnabled = watch('karpenter.enabled')
 
   return (
     <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
@@ -32,7 +31,7 @@ export const GpuResourcesSettings = ({ cluster }: GpuResourcesSettingsProps) => 
         </p>
         <KarpenterInstanceTypePreview
           defaultServiceArchitecture={watchKarpenter?.default_service_architecture ?? 'AMD64'}
-          requirements={watchKarpenter?.qovery_node_pools?.requirements}
+          requirements={watchKarpenter?.qovery_node_pools?.gpu_override?.requirements}
         />
       </div>
       <Button
@@ -53,11 +52,16 @@ export const GpuResourcesSettings = ({ cluster }: GpuResourcesSettingsProps) => 
                 defaultValues={watchKarpenter}
                 onClose={closeModal}
                 onChange={(values) => {
+                  if (!watchKarpenter?.qovery_node_pools) {
+                    return
+                  }
+
                   setValue('karpenter', {
-                    enabled: watchKarpenterEnabled,
-                    spot_enabled: watchKarpenter?.spot_enabled ?? false,
-                    disk_size_in_gib: watchKarpenter?.disk_size_in_gib ?? 50,
-                    ...values,
+                    ...watchKarpenter,
+                    qovery_node_pools: {
+                      ...watchKarpenter?.qovery_node_pools,
+                      gpu_override: values.qovery_node_pools,
+                    },
                   })
                 }}
                 gpuFilter="ONLY"
