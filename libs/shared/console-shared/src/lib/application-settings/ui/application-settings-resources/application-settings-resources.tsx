@@ -117,9 +117,9 @@ export function ApplicationSettingsResources({
       </>
     ))
 
-  const hintGPU = !canSetGPU ? (
+  const hintGPU = (
     <>
-      No GPU available on this cluster for now.{' '}
+      {!canSetGPU && 'No GPU available on this cluster for now. '}
       {clusterId && (
         <Link
           to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
@@ -129,7 +129,7 @@ export function ApplicationSettingsResources({
         </Link>
       )}
     </>
-  ) : null
+  )
 
   return (
     <>
