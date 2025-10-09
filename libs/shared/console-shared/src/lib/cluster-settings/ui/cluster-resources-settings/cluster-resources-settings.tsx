@@ -428,6 +428,29 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             {isGpuEnabled && (
               <BlockContent title="GPU nodepools configuration" className="mb-0" classNameContent="p-0">
                 <GpuResourcesSettings cluster={props.cluster} />
+                {props.fromDetail && (
+                  <div className="flex border-t border-neutral-250 p-4">
+                    <Controller
+                      name="karpenter.qovery_node_pools.gpu_override.disk_size_in_gib"
+                      control={control}
+                      rules={{
+                        required: 'Please enter a disk size',
+                      }}
+                      render={({ field, fieldState: { error } }) => (
+                        <InputText
+                          label="GPU nodepool disk size (GB)"
+                          type="number"
+                          name={field.name}
+                          error={error?.message}
+                          onChange={field.onChange}
+                          value={field.value}
+                          className="w-full"
+                          hint="Storage allocated to your GPU nodepool to store files, application images etc.."
+                        />
+                      )}
+                    />
+                  </div>
+                )}
                 {watchKarpenterEnabled && props.cluster && (
                   <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" />
                 )}
