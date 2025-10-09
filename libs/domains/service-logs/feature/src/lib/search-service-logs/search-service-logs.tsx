@@ -6,7 +6,7 @@ import { useServiceInstances } from '../hooks/use-service-instances/use-service-
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
-const VALID_FILTER_KEYS = ['level', 'instance', 'version', 'message', 'nginx']
+const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'search']
 
 function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServiceLogs>): Option[] {
   const options: Option[] = []
@@ -115,15 +115,19 @@ export function SearchServiceLogs({
   )
 
   const defaultFilters = [
-    {
-      value: 'level:',
-      label: 'level:',
-      description: levels.length > 0 ? `[${levels.join(', ')}]` : undefined,
-      subOptions: levels.map((level) => ({
-        value: `level:${level}`,
-        label: level,
-      })),
-    },
+    ...(levels.length > 0
+      ? [
+          {
+            value: 'level:',
+            label: 'level:',
+            description: levels.length > 0 ? `[${levels.join(', ')}]` : undefined,
+            subOptions: levels.map((level) => ({
+              value: `level:${level}`,
+              label: level,
+            })),
+          },
+        ]
+      : []),
     {
       value: 'instance:',
       label: 'instance:',
@@ -132,11 +136,6 @@ export function SearchServiceLogs({
         value: `instance:${instance}`,
         label: instance,
       })),
-    },
-    {
-      value: 'version:',
-      label: 'version:',
-      description: '[version name]',
     },
     {
       value: 'message:',
@@ -151,7 +150,7 @@ export function SearchServiceLogs({
   ]
 
   return (
-    <div className="relative z-10 w-full">
+    <div className="relative w-full">
       {isFetchedLevels && isFetchedInstances && (
         <MultipleSelector
           placeholder="Search logs…"

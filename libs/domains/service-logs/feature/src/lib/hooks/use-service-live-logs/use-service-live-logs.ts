@@ -96,7 +96,8 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       setNewLogsAvailable(true)
       const normalizedLog = normalizeWebSocketLog(log)
 
-      serviceLogsBuffer.current.push(normalizedLog)
+      // Temporary fix to show NGINX logs as warning to avoid UI issues
+      serviceLogsBuffer.current.push({ ...normalizedLog, level: 'warning' })
       scheduleFlush()
     },
     [scheduleFlush]

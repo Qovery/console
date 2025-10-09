@@ -75,7 +75,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
   }
 
   const levelLowercase = log.level?.toLowerCase()
-  const isErrorOrCritical = log.level === 'error' || log.level === 'critical'
+  const isErrorOrCritical = levelLowercase === 'error' || levelLowercase === 'critical'
 
   return (
     <>
@@ -88,12 +88,12 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
         )}
       >
         <Table.Cell className="flex h-min min-h-7 select-none items-center gap-2 whitespace-nowrap pr-1.5">
-          <Tooltip content={log.level?.toLowerCase()} disabled={!log.level || log.level === 'unknown'}>
+          <Tooltip content={levelLowercase} disabled={!log.level || levelLowercase === 'unknown'}>
             <span
               className={twMerge(
                 clsx('absolute left-0.5 top-0 block h-full w-1 bg-neutral-500', {
-                  'bg-sky-500': log.level === 'info',
-                  'bg-yellow-500': log.level === 'warning',
+                  'bg-sky-500': levelLowercase === 'info',
+                  'bg-yellow-500': levelLowercase === 'warning',
                   'bg-red-500 hover:bg-red-400 group-hover:bg-red-400': isErrorOrCritical,
                   'bg-red-400': isExpanded && isErrorOrCritical,
                 })
@@ -174,7 +174,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
           <Table.Cell className="py-4 pl-1" colSpan={hasMultipleContainers ? 5 : 4}>
             <div className="w-full rounded border border-neutral-400 bg-transparent px-4 py-2">
               <Dl className="grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0 text-xs">
-                {log.level && log.level !== 'warning' && (
+                {log.level && levelLowercase !== 'warning' && (
                   <>
                     <Dt className="col-span-2 flex select-none items-center font-code text-xs">Level</Dt>
                     <Dd className="flex gap-1 text-xs leading-3">
@@ -211,7 +211,6 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                     variant="surface"
                     color="neutral"
                     size="xs"
-                    className="gap-1.5"
                     onClick={(e) => {
                       e.stopPropagation()
                       setQueryParams({ instance: log.instance })
@@ -227,7 +226,6 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                     variant="surface"
                     color="neutral"
                     size="xs"
-                    className="gap-1.5"
                     onClick={(e) => {
                       e.stopPropagation()
                       setQueryParams({ container: log.container })
@@ -240,22 +238,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                   <>
                     <Dt className="col-span-2 mt-2 flex select-none items-center font-code text-xs">Version</Dt>
                     <Dd className="mt-2 flex select-none gap-1 text-xs leading-3">
-                      <Tooltip content={log.version} delayDuration={300}>
-                        <Button
-                          type="button"
-                          variant="surface"
-                          color="neutral"
-                          size="xs"
-                          className="gap-1.5"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setQueryParams({ version: log.version })
-                          }}
-                        >
-                          <Icon iconName="code-commit" iconStyle="regular" />
-                          {log.version.substring(0, 7)}
-                        </Button>
-                      </Tooltip>
+                      <span className="ml-2">{log.version}</span>
                     </Dd>
                   </>
                 )}

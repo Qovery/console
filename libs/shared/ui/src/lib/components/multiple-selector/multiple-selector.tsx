@@ -6,7 +6,6 @@ import { useDebounce } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { Button } from '../button/button'
 import Icon from '../icon/icon'
-import { LoaderSpinner } from '../loader-spinner/loader-spinner'
 
 // Inspired by https://github.com/origin-space/originui/blob/main/app/search/multiselect.tsx
 
@@ -223,6 +222,8 @@ export const MultipleSelector = ({
   const [options, setOptions] = useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy))
   const [inputValue, setInputValue] = useState('')
   const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
+
+  const containerElement = useRef(null)
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
     if (
@@ -644,7 +645,7 @@ export const MultipleSelector = ({
         <div
           className={twMerge(
             clsx(
-              'z-9999 absolute top-2 w-full overflow-hidden',
+              'absolute top-2 z-[9999] w-full overflow-hidden',
               'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
               !open && 'hidden'
             )
@@ -653,7 +654,7 @@ export const MultipleSelector = ({
         >
           {open && !isLoading && (
             <CommandList
-              className="max-h-none overflow-hidden rounded-md  border border-neutral-400 bg-neutral-600 text-sm text-neutral-50 shadow-lg"
+              className="max-h-none overflow-hidden rounded-md border border-neutral-400 bg-neutral-600 text-sm text-neutral-50 shadow-lg"
               onMouseLeave={() => {
                 setOnScrollbar(false)
               }}
@@ -678,6 +679,7 @@ export const MultipleSelector = ({
                           onSelect={() => {
                             onChange?.(selected)
                             handleFreeTextInput()
+                            setOpen(false)
                             inputRef.current?.focus()
                           }}
                         >
@@ -717,7 +719,6 @@ export const MultipleSelector = ({
                                     const newOptions = [...selected, option]
                                     setSelected(newOptions)
                                     onChange?.(newOptions)
-                                    setOpen(false)
                                     inputRef.current?.focus()
                                   }
                                 }}
@@ -750,7 +751,6 @@ export const MultipleSelector = ({
                                         const newOptions = [...selected, subOption]
                                         setSelected(newOptions)
                                         onChange?.(newOptions)
-                                        setOpen(false)
                                         inputRef.current?.focus()
                                       }}
                                       className={clsx(
