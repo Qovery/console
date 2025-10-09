@@ -425,7 +425,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
               className="items-center"
               small
             />
-
             {isGpuEnabled && (
               <BlockContent title="GPU nodepools configuration" className="mb-0" classNameContent="p-0">
                 <GpuResourcesSettings cluster={props.cluster} />

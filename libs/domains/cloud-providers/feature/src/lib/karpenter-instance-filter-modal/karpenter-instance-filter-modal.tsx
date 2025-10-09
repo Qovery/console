@@ -52,9 +52,14 @@ function KarpenterInstanceForm({
   onChange,
   onClose,
   cluster,
+  gpuFilter,
 }: Omit<KarpenterInstanceFilterModalProps, 'clusterRegion'>) {
+  const requirements =
+    gpuFilter === ListAWSEKSInstanceTypeGpuEnum.ONLY
+      ? defaultValues?.qovery_node_pools?.gpu_override?.requirements || []
+      : defaultValues?.qovery_node_pools?.requirements || []
   const _defaultValues = defaultValues
-    ? filterInstancesByKarpenterRequirements(cloudProviderInstanceTypes, defaultValues)
+    ? filterInstancesByKarpenterRequirements(cloudProviderInstanceTypes, requirements)
     : cloudProviderInstanceTypes
 
   const [dataFiltered, setDataFiltered] = useState<ClusterInstanceTypeResponseListResultsInner[]>(_defaultValues)
@@ -562,6 +567,7 @@ export function KarpenterInstanceFilterModal({
         onChange={onChange}
         onClose={onClose}
         cluster={cluster}
+        gpuFilter={gpuFilter}
       />
     )
   } else {
