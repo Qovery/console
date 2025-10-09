@@ -1,51 +1,65 @@
+import { TablePrimitives } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { ServiceLogsProvider } from '../service-logs-context/service-logs-context'
 import RowServiceLogs from './row-service-logs'
 
+const { Table } = TablePrimitives
+
 describe('RowServiceLogs', () => {
-  const mockProps = {
-    original: {
-      id: 1,
-      type: 'SERVICE',
-      created_at: '2023-04-01T12:00:00Z',
-      message: 'Test log message',
-      pod_name: 'test-pod-12345',
-      container_name: 'test-container',
-      version: '1.0.0',
-    },
-    podNameColor: new Map([['test-pod-12345', '#ff0000']]),
-    hasMultipleContainers: false,
-    getVisibleCells: jest.fn(() => []),
-    toggleExpanded: jest.fn(),
-    getIsExpanded: jest.fn(() => false),
-    isFilterActive: jest.fn(),
+  const mockLog = {
+    timestamp: '1680350400000',
+    message: 'Test log message',
+    instance: 'test-pod-12345',
+    container: 'test-container',
+    version: '1.0.0',
+    level: 'INFO' as const,
+  }
+
+  const mockEnvironment = {
+    id: 'env-1',
+    organization: { id: 'org-1' },
+    project: { id: 'proj-1' },
+  }
+
+  const mockServiceStatus = {
+    execution_id: 'exec-1',
+  }
+
+  const renderRowServiceLogs = (log = mockLog, hasMultipleContainers = false, highlightedText?: string) => {
+    return renderWithProviders(
+      <ServiceLogsProvider environment={mockEnvironment} serviceId="service-1" serviceStatus={mockServiceStatus}>
+        {/* Necessary to remove DOM warning */}
+        <Table.Root>
+          <Table.Body>
+            <RowServiceLogs log={log} hasMultipleContainers={hasMultipleContainers} highlightedText={highlightedText} />
+          </Table.Body>
+        </Table.Root>
+      </ServiceLogsProvider>
+    )
   }
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<RowServiceLogs {...mockProps} />)
+    const { baseElement } = renderRowServiceLogs()
     expect(baseElement).toBeTruthy()
   })
 
   it('renders basic row content', () => {
-    renderWithProviders(<RowServiceLogs {...mockProps} />)
+    renderRowServiceLogs()
 
     expect(screen.getByText('12345')).toBeInTheDocument()
     expect(screen.getByText('Test log message')).toBeInTheDocument()
   })
 
   it('toggles expanded state on click', async () => {
-    const { userEvent } = renderWithProviders(<RowServiceLogs {...mockProps} />)
+    const { userEvent } = renderRowServiceLogs()
 
     await userEvent.click(screen.getByText('Test log message'))
-    expect(mockProps.toggleExpanded).toHaveBeenCalledWith(true)
+    expect(screen.getByText('Instance')).toBeInTheDocument()
+    expect(screen.getByText('Container')).toBeInTheDocument()
   })
 
   it('renders cell has more than two container', () => {
-    const helmProps = {
-      ...mockProps,
-      hasMultipleContainers: true,
-    }
-
-    renderWithProviders(<RowServiceLogs {...helmProps} />)
+    renderRowServiceLogs(mockLog, true)
 
     expect(screen.getAllByText('test-container')).toHaveLength(1)
   })

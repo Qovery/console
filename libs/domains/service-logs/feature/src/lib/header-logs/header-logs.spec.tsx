@@ -36,6 +36,13 @@ describe('HeaderLogs', () => {
         id: 'service-1',
         name: 'Test Service',
         serviceType: 'APPLICATION',
+        environment: {
+          id: 'env-1',
+          name: 'Environment 1',
+          cloud_provider: 'AWS',
+          mode: 'PRODUCTION',
+          cluster_id: 'cluster-1',
+        },
       },
     })
     useLinks.mockReturnValue({
