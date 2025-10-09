@@ -2,6 +2,7 @@ import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
@@ -27,6 +28,13 @@ export function ApplicationSettingsResources({
   const { organizationId = '', environmentId = '', applicationId = '' } = useParams()
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId: applicationId })
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId })
+  const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
+  const canSetGPU = Boolean(
+    typeof clusterFeatureKarpenter?.value_object?.value === 'object' &&
+      'qovery_node_pools' in clusterFeatureKarpenter.value_object.value &&
+      clusterFeatureKarpenter.value_object.value.qovery_node_pools.gpu_override
+  )
 
   const clusterId = environment?.cluster_id
   const environmentMode = environment?.mode
@@ -63,7 +71,7 @@ export function ApplicationSettingsResources({
         {service && (
           <>
             {'maximum_cpu' in service &&
-              `Maximum value allowed based on the selected cluster instance type: ${service.maximum_cpu} milli vCPU.`}
+              `Maximum value allowed based on the selected cluster instance type: ${service.maximum_cpu} milli vCPU. `}
             {clusterId && (
               <Link
                 to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
@@ -108,6 +116,20 @@ export function ApplicationSettingsResources({
         )}
       </>
     ))
+
+  const hintGPU = !canSetGPU ? (
+    <>
+      No GPU available on this cluster for now.{' '}
+      {clusterId && (
+        <Link
+          to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
+          size="xs"
+        >
+          Edit GPU nodepools configuration
+        </Link>
+      )}
+    </>
+  ) : null
 
   return (
     <>
@@ -169,6 +191,30 @@ export function ApplicationSettingsResources({
             />
           )}
         />
+        <Controller
+          name="gpu"
+          control={control}
+          rules={{
+            pattern: {
+              value: /^[0-9]+$/,
+              message: 'Please enter a number.',
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              dataTestId="input-memory-memory"
+              type="number"
+              name={field.name}
+              label="GPU (units)"
+              value={field.value}
+              onChange={field.onChange}
+              disabled={!canSetGPU}
+              hint={hintGPU}
+              error={error?.message}
+            />
+          )}
+        />
+
         {service?.serviceType === 'TERRAFORM' && (
           <Controller
             name="storage_gib"
