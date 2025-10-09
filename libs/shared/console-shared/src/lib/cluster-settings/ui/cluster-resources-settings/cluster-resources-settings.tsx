@@ -417,12 +417,15 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
           </BlockContent>
 
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <InputToggle value={isGpuEnabled} onChange={handleGpuEnabledChange} name="gpu_enabled" />
-              <label className="text-sm" htmlFor="gpu_enabled">
-                Enable GPU nodepools configuration
-              </label>
-            </div>
+            <InputToggle
+              value={isGpuEnabled}
+              onChange={handleGpuEnabledChange}
+              name="gpu_enabled"
+              title="Enable GPU nodepools configuration"
+              className="items-center"
+              small
+            />
+
             {isGpuEnabled && (
               <BlockContent title="GPU nodepools configuration" className="mb-0" classNameContent="p-0">
                 <GpuResourcesSettings cluster={props.cluster} />
