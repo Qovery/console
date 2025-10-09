@@ -77,7 +77,14 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
   const watchDefault = watch('karpenter.qovery_node_pools.default_override')
   const watchGpu = watch('karpenter.qovery_node_pools.gpu_override')
 
-  const { start, end } = formatTimeRange(watchStable?.consolidation?.start_time, watchStable?.consolidation?.duration)
+  const { start: startStable, end: endStable } = formatTimeRange(
+    watchStable?.consolidation?.start_time,
+    watchStable?.consolidation?.duration
+  )
+  const { start: startGpu, end: endGpu } = formatTimeRange(
+    watchGpu?.consolidation?.start_time,
+    watchGpu?.consolidation?.duration
+  )
 
   return (
     <div>
@@ -145,7 +152,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                             </Tooltip>
                           </span>
                           <span>
-                            {start} to {end}
+                            {startStable} to {endStable}
                           </span>
                         </span>
                       ) : (
@@ -262,10 +269,10 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                           type="gpu"
                           cluster={cluster}
                           onChange={(data) => {
-                            console.log('🚀 ~ data:', data)
                             setValue('karpenter.qovery_node_pools.gpu_override', {
                               ...watchGpu,
                               limits: data.gpu_override?.limits,
+                              consolidation: data.gpu_override?.consolidation,
                             })
                           }}
                           defaultValues={watchGpu}
@@ -278,6 +285,28 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                 </Button>
               </div>
               <div className="flex justify-between gap-4">
+                <div className="flex w-1/2 flex-col gap-1">
+                  <span className="text-neutral-350">Consolidation</span>
+                  <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
+                    {watchGpu?.consolidation?.enabled ? (
+                      <span className="flex flex-col justify-center">
+                        <span className="flex gap-1.5">
+                          {formatWeekdays(watchGpu?.consolidation?.days)},
+                          <Tooltip content={`Schedule (${cluster.region})`}>
+                            <span className="text-sm">
+                              <Icon iconName="circle-info" iconStyle="regular" />
+                            </span>
+                          </Tooltip>
+                        </span>
+                        <span>
+                          {startGpu} to {endGpu}
+                        </span>
+                      </span>
+                    ) : (
+                      <span>Disabled</span>
+                    )}
+                  </div>
+                </div>
                 <div className="flex w-1/2 flex-col gap-1">
                   <span className="text-neutral-350">Resources limit</span>
                   {watchGpu?.limits?.enabled ? (

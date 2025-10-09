@@ -11,14 +11,11 @@ import { P, match } from 'ts-pattern'
 import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
-function LimitsFields({ type }: { type: NodepoolModalProps['type'] }) {
+type OverridePrefix = 'stable_override' | 'default_override' | 'gpu_override'
+
+function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
   const { control, watch } = useFormContext()
 
-  const prefix = match(type)
-    .with('default', () => 'default_override')
-    .with('stable', () => 'stable_override')
-    .with('gpu', () => 'gpu_override')
-    .exhaustive()
   const name = `${prefix}.limits`
   const watchLimitsEnabled = watch(`${name}.enabled`)
 
@@ -40,7 +37,7 @@ function LimitsFields({ type }: { type: NodepoolModalProps['type'] }) {
               />
               <Tooltip
                 classNameContent="w-80"
-                content={`This section is dedicated to configuring the ${type === 'gpu' ? 'CPU, GPU and memory' : 'CPU and memory'} limits for the Nodepool. Nodes can be deployed within these limits, ensuring that their total resources do not exceed the defined maximum. This configuration helps prevent unlimited resource allocation, avoiding excessive costs.`}
+                content={`This section is dedicated to configuring the ${prefix === 'gpu_override' ? 'CPU, GPU and memory' : 'CPU and memory'} limits for the Nodepool. Nodes can be deployed within these limits, ensuring that their total resources do not exceed the defined maximum. This configuration helps prevent unlimited resource allocation, avoiding excessive costs.`}
               >
                 <span className="text-neutral-400">
                   <Icon iconName="circle-info" iconStyle="regular" />
@@ -90,7 +87,7 @@ function LimitsFields({ type }: { type: NodepoolModalProps['type'] }) {
               />
             )}
           />
-          {type === 'gpu' && (
+          {prefix === 'gpu_override' && (
             <Controller
               name={`${name}.max_gpu`}
               control={control}
@@ -152,7 +149,14 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
     },
   })
 
-  const watchConsolidation = methods.watch('stable_override.consolidation.enabled')
+  const prefix: OverridePrefix = match(type)
+    .with('default', () => 'default_override' as const)
+    .with('stable', () => 'stable_override' as const)
+    .with('gpu', () => 'gpu_override' as const)
+    .exhaustive()
+  const watchConsolidation = methods.watch(
+    `${prefix === 'default_override' ? 'stable_override' : prefix}.consolidation.enabled`
+  )
 
   const onSubmit = methods.handleSubmit(async (data) => {
     const payload: Omit<KarpenterNodePool, 'requirements'> = match(type)
@@ -194,6 +198,16 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             max_memory_in_gibibytes: data.gpu_override?.limits?.max_memory_in_gibibytes ?? MEMORY_MIN,
             max_gpu: data.gpu_override?.limits?.max_gpu ?? GPU_MIN,
           },
+          consolidation: {
+            enabled: data.gpu_override?.consolidation?.enabled ?? false,
+            days: data.gpu_override?.consolidation?.days ?? [],
+            start_time: data.gpu_override?.consolidation?.start_time
+              ? `PT${data.gpu_override.consolidation.start_time}`
+              : '',
+            duration: data.gpu_override?.consolidation?.duration
+              ? `PT${data.gpu_override.consolidation.duration.toUpperCase()}`
+              : '',
+          },
         },
       }))
       .exhaustive()
@@ -233,10 +247,10 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
         submitLabel="Confirm"
       >
         <div className="mb-6 flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
-          <LimitsFields type={type} />
+          <LimitsFields prefix={prefix} />
         </div>
-        {match(type)
-          .with('default', () => (
+        {match(prefix)
+          .with('default_override', () => (
             <div className="flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
               <div className="flex gap-3">
                 <Tooltip content="Consolidation cannot be disabled on this NodePool">
@@ -253,10 +267,10 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               </div>
             </div>
           ))
-          .with('stable', () => (
+          .with('stable_override', 'gpu_override', (prefix) => (
             <div className="flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
               <Controller
-                name="stable_override.consolidation.enabled"
+                name={`${prefix}.consolidation.enabled`}
                 control={methods.control}
                 render={({ field }) => (
                   <div className="flex gap-2">
@@ -285,7 +299,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                     <Callout.Text>Some downtime may occur during this process.</Callout.Text>
                   </Callout.Root>
                   <Controller
-                    name="stable_override.consolidation.start_time"
+                    name={`${prefix}.consolidation.start_time`}
                     control={methods.control}
                     rules={{ required: 'Please enter a start time.' }}
                     render={({ field, fieldState: { error } }) => (
@@ -300,7 +314,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                     )}
                   />
                   <Controller
-                    name="stable_override.consolidation.duration"
+                    name={`${prefix}.consolidation.duration`}
                     control={methods.control}
                     rules={{
                       required: 'Please enter a duration.',
@@ -367,7 +381,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
                     )}
                   />
                   <Controller
-                    name="stable_override.consolidation.days"
+                    name={`${prefix}.consolidation.days`}
                     control={methods.control}
                     rules={{ required: 'Please select at least one day.' }}
                     render={({ field, fieldState: { error } }) => (
@@ -386,7 +400,6 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               )}
             </div>
           ))
-          .with('gpu', () => null)
           .exhaustive()}
       </ModalCrud>
     </FormProvider>
