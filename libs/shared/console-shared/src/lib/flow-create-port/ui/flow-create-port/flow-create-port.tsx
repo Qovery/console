@@ -59,15 +59,15 @@ export function FlowCreatePort({
               ports.map((customPort) => (
                 <div
                   key={`${customPort.protocol}-${customPort.name}-${customPort.external_port}`}
-                  className="flex w-full items-center justify-between gap-3 border-b border-neutral-250 px-5 py-4 last:border-0"
+                  className="grid w-full grid-cols-[auto_80px] items-center gap-4 border-b border-neutral-250 px-5 py-4 last:border-0"
                   data-testid="form-row"
                 >
-                  <div className="flex flex-row">
+                  <div className="grid w-full grid-cols-[20px_1fr] gap-4">
                     {healthchecks &&
                       (isMatchingHealthCheck(customPort, livenessType) ||
                       isMatchingHealthCheck(customPort, readinessType) ? (
                         <Tooltip side="top" content="A health check is running on this port">
-                          <div className="mr-4 inline-flex items-center">
+                          <div className="inline-flex items-center">
                             <Icon
                               name={IconAwesomeEnum.SHIELD_CHECK}
                               className="flex w-5 justify-center text-green-500 hover:text-green-700"
@@ -82,7 +82,7 @@ export function FlowCreatePort({
                         Application Port:{' '}
                         {(customPort as PortData).application_port || (customPort as ServicePort).internal_port}
                       </span>
-                      <p className="mt-1 flex gap-3 text-neutral-350">
+                      <p className="mt-1 flex flex-wrap gap-x-3 text-neutral-350">
                         <span>
                           Public:{' '}
                           {(customPort as PortData).is_public || (customPort as ServicePort).publicly_accessible
@@ -99,6 +99,12 @@ export function FlowCreatePort({
                             External Port:{' '}
                             {(customPort as ServicePort).external_port || (customPort as PortData).external_port}
                           </span>
+                        )}
+                        {(customPort as PortData).public_path && (
+                          <span>Public Path: {(customPort as PortData).public_path}</span>
+                        )}
+                        {(customPort as PortData).public_path_rewrite && (
+                          <span>Rewrite Public Path: {(customPort as PortData).public_path_rewrite}</span>
                         )}
                       </p>
                     </div>

@@ -20,6 +20,7 @@ export interface ModalCrudProps {
   deleteButtonLabel?: string
   howItWorks?: ReactNode
   customLoader?: ReactNode
+  forwardRef?: React.RefObject<HTMLDivElement>
 }
 
 export function ModalCrud(props: ModalCrudProps) {
@@ -37,6 +38,7 @@ export function ModalCrud(props: ModalCrudProps) {
     deleteButtonLabel,
     howItWorks = null,
     customLoader = null,
+    forwardRef,
   } = props
   const { formState, trigger } = useFormContext()
 
@@ -45,7 +47,7 @@ export function ModalCrud(props: ModalCrudProps) {
   }, [trigger, isEdit])
 
   return (
-    <div className="p-5">
+    <div className="p-5" ref={forwardRef}>
       <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">{title}</h2>
       {description && <p className="mt-2 text-sm text-neutral-350 dark:text-neutral-50">{description}</p>}
       {forServiceName && (

@@ -45,8 +45,8 @@ describe('ModalRoot', () => {
     await waitFor(jest.fn())
     getByTestId(baseElement, 'modal-alert')
 
-    const yesButton = getByRole(baseElement, 'button', { name: 'Yes' })
-    fireEvent.click(yesButton)
+    const discardButton = getByRole(baseElement, 'button', { name: 'Discard' })
+    fireEvent.click(discardButton)
 
     await waitFor(jest.fn())
     overlay = queryByTestId(baseElement, 'overlay')

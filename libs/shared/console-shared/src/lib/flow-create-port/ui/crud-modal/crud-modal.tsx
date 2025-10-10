@@ -1,8 +1,18 @@
 import { CloudProviderEnum, type KubernetesEnum, PortProtocolEnum } from 'qovery-typescript-axios'
-import { type FormEvent } from 'react'
+import { type FormEvent, useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { Callout, Checkbox, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip } from '@qovery/shared/ui'
+import {
+  Callout,
+  Checkbox,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputToggle,
+  ModalCrud,
+  Tooltip,
+} from '@qovery/shared/ui'
 
 export interface CrudModalProps {
   kubernetes?: KubernetesEnum
@@ -31,10 +41,12 @@ export function CrudModal({
   isDemo,
   isLastPublicPort,
 }: CrudModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null)
   const { control, watch, setValue, getFieldState } = useFormContext()
 
   const watchProtocol = watch('protocol')
   const watchPublicly = watch('publicly_accessible') || false
+  const watchRewritePublicPath = watch('rewrite_public_path') || false
   const watchInternalPort = watch('internal_port') || false
   const watchExternalPort = watch('external_port') || ''
 
@@ -74,6 +86,19 @@ export function CrudModal({
         .otherwise(() => false)
     )
 
+  // Auto-scroll to the bottom of the modal when the rewrite public URL checkbox is enabled
+  useEffect(() => {
+    if (watchRewritePublicPath) {
+      const parent = modalRef.current?.parentElement
+      if (parent && parent.scrollTo) {
+        parent.scrollTo({
+          top: parent.scrollHeight,
+          behavior: 'smooth',
+        })
+      }
+    }
+  }, [watchRewritePublicPath])
+
   return (
     <ModalCrud
       title={isEdit ? 'Edit port' : 'Set port'}
@@ -93,6 +118,7 @@ export function CrudModal({
           </p>
         </>
       }
+      forwardRef={modalRef}
     >
       <Controller
         name="internal_port"
@@ -231,6 +257,76 @@ export function CrudModal({
               )}
             />
             <p className="mb-5 ml-3 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application port from the internet. Default value is p<port_number>`}</p>
+          </div>
+
+          <div className="space-y-4">
+            <hr />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 py-2">
+                <Controller
+                  name="rewrite_public_path"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <Checkbox
+                        name={field.name}
+                        id={field.name}
+                        checked={field.value}
+                        onCheckedChange={(checked) => {
+                          if (!checked) {
+                            setValue('public_path', '')
+                            setValue('public_path_rewrite', '')
+                          }
+
+                          field.onChange(checked)
+                        }}
+                      />
+                      <label htmlFor="rewrite_public_path" className="text-sm font-medium text-neutral-400">
+                        Rewrite public URL
+                      </label>
+                    </>
+                  )}
+                />
+              </div>
+              <ExternalLink href="https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target">
+                Documentation
+              </ExternalLink>
+            </div>
+
+            {watchRewritePublicPath && (
+              <>
+                <Controller
+                  name="public_path"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      className="mb-1"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Public path"
+                      error={error?.message}
+                      hint="Path prefix on the public URL that will route traffic to this port."
+                    />
+                  )}
+                />
+                <Controller
+                  name="public_path_rewrite"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      className="mb-1"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Public path rewrite"
+                      error={error?.message}
+                      hint="Rewrite the incoming path before forwarding to your container (NGINX ingress rewrite rule)."
+                    />
+                  )}
+                />
+              </>
+            )}
           </div>
         </>
       )}
