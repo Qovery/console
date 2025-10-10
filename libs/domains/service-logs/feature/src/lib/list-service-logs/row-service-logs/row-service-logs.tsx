@@ -221,24 +221,13 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                 </Dd>
                 <Dt className="col-span-2 mt-2 flex select-none items-center font-code text-xs">Container</Dt>
                 <Dd className="mt-2 flex gap-1 text-xs leading-3">
-                  <Button
-                    type="button"
-                    variant="surface"
-                    color="neutral"
-                    size="xs"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setQueryParams({ container: log.container })
-                    }}
-                  >
-                    {log.container}
-                  </Button>
+                  <span className="flex h-5 items-center px-2">{log.container}</span>
                 </Dd>
                 {log.version && (
                   <>
                     <Dt className="col-span-2 mt-2 flex select-none items-center font-code text-xs">Version</Dt>
                     <Dd className="mt-2 flex select-none gap-1 text-xs leading-3">
-                      <span className="ml-2">{log.version}</span>
+                      <span className="flex h-5 items-center px-2">{log.version}</span>
                     </Dd>
                   </>
                 )}

@@ -130,52 +130,64 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
         <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} metricsEnabled={hasMetricsEnabled} />
-        <div
-          className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
-          ref={refScrollSection}
-          onWheel={(event) => {
-            if (!liveLogs) return
-
-            const section = refScrollSection.current
-            if (!section) return
-
-            const hasScrollableContent = section.clientHeight !== section.scrollHeight
-
-            if (!pauseLogs && hasScrollableContent && event.deltaY < 0) {
-              setPauseLogs(true)
-              setNewLogsAvailable(false)
-            }
-          }}
-        >
-          {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
-            <ShowPreviousLogsButton
-              showPreviousLogs={!hasMoreLogs}
-              setShowPreviousLogs={loadPreviousLogs}
-              setPauseLogs={setPauseLogs}
+        {isLogsLoading && isLiveMode ? (
+          <div className="flex h-full flex-col items-center justify-center pb-[68px]">
+            <ServiceLogsPlaceholder
+              type="live"
+              isFetched={isLogsFetched}
+              serviceName={service?.name}
+              itemsLength={logs.length}
+              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
             />
-          )}
-          <Table.Root className="w-full border-separate border-spacing-y-0.5 text-xs">
-            <Table.Body className="divide-y-0">
-              {logs.map((log, index) => {
-                const timestamp = log.timestamp
-                return (
-                  <MemoizedRowServiceLogs
-                    key={timestamp + index}
-                    log={log}
-                    hasMultipleContainers={hasMultipleContainers}
-                    highlightedText={queryParams.message || queryParams.search}
-                  />
-                )
-              })}
-            </Table.Body>
-          </Table.Root>
-          {isLiveMode ? (
-            isServiceProgressing &&
-            isLogsFetched && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
-          ) : (
-            <div className="h-8" />
-          )}
-        </div>
+          </div>
+        ) : (
+          <div
+            className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
+            ref={refScrollSection}
+            onWheel={(event) => {
+              if (!liveLogs) return
+
+              const section = refScrollSection.current
+              if (!section) return
+
+              const hasScrollableContent = section.clientHeight !== section.scrollHeight
+
+              if (!pauseLogs && hasScrollableContent && event.deltaY < 0) {
+                setPauseLogs(true)
+                setNewLogsAvailable(false)
+              }
+            }}
+          >
+            {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
+              <ShowPreviousLogsButton
+                showPreviousLogs={!hasMoreLogs}
+                setShowPreviousLogs={loadPreviousLogs}
+                setPauseLogs={setPauseLogs}
+              />
+            )}
+            <Table.Root className="w-full border-separate border-spacing-y-0.5 text-xs">
+              <Table.Body className="divide-y-0">
+                {logs.map((log, index) => {
+                  const timestamp = log.timestamp
+                  return (
+                    <MemoizedRowServiceLogs
+                      key={timestamp + index}
+                      log={log}
+                      hasMultipleContainers={hasMultipleContainers}
+                      highlightedText={queryParams.message || queryParams.search}
+                    />
+                  )
+                })}
+              </Table.Body>
+            </Table.Root>
+            {isLiveMode ? (
+              isServiceProgressing &&
+              isLogsFetched && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
+            ) : (
+              <div className="h-8" />
+            )}
+          </div>
+        )}
         {isLiveMode && (
           <ShowNewLogsButton
             pauseLogs={pauseLogs}

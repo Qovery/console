@@ -627,12 +627,14 @@ export const MultipleSelector = ({
               onClick={() => {
                 setSelected(selected.filter((s) => s.fixed))
                 onChange?.(selected.filter((s) => s.fixed))
+                setInputValue('')
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault()
                   setSelected(selected.filter((s) => s.fixed))
                   onChange?.(selected.filter((s) => s.fixed))
+                  setInputValue('')
                 }
               }}
               aria-label="Clear all"
