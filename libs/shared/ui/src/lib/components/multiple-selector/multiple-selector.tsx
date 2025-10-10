@@ -8,6 +8,7 @@ import { Button } from '../button/button'
 import Icon from '../icon/icon'
 
 // Inspired by https://github.com/origin-space/originui/blob/main/app/search/multiselect.tsx
+// Missing light mode support, should be updated during navigation migration
 
 export interface Option {
   value: string
@@ -156,15 +157,13 @@ interface ItemProps extends ComponentPropsWithoutRef<typeof CommandItem> {
   description?: string
 }
 
-const Item = ({ value, description, onSelect, className, children, ...props }: ItemProps) => {
+const Item = ({ description, className, children, ...props }: ItemProps) => {
   return (
     <CommandItem
       className={twMerge(
         'group flex h-10 cursor-pointer items-center gap-2 p-1.5 hover:bg-neutral-400 data-[selected=true]:bg-neutral-400',
         className
       )}
-      value={value}
-      onSelect={onSelect}
       {...props}
     >
       <span className="whitespace-nowrap rounded-[4px] bg-neutral-500 p-1 pt-0.5">{children}</span>
@@ -222,8 +221,6 @@ export const MultipleSelector = ({
   const [options, setOptions] = useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy))
   const [inputValue, setInputValue] = useState('')
   const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
-
-  const containerElement = useRef(null)
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
     if (
@@ -306,10 +303,14 @@ export const MultipleSelector = ({
           }
         }
         // Handle free text input - create option on Space
-        if (freeTextInput && e.key === ' ') {
-          e.preventDefault()
-          e.stopPropagation()
-          handleFreeTextInput()
+        if (freeTextInput && e.key === 'Enter') {
+          const selectedItemValue = e.currentTarget.querySelector('[data-selected="true"]')
+
+          // Only handle free text input if no item is selected in the dropdown
+          if (!selectedItemValue) {
+            handleFreeTextInput()
+          }
+          // Otherwise, let the event propagate to trigger the item's onSelect
         }
         // This is not a default behavior of the <input /> field
         if (e.key === 'Escape') {
@@ -465,7 +466,6 @@ export const MultipleSelector = ({
 
   const selectables = useMemo<GroupOption>(() => removePickedOption(options, selected), [options, selected])
 
-  /** Avoid Creatable Selector freezing or lagging when paste a long string. */
   const commandFilter = useCallback(() => {
     if (commandProps?.filter) {
       return commandProps.filter
@@ -474,13 +474,10 @@ export const MultipleSelector = ({
     if (freeTextInput) {
       return (value: string, search: string) => {
         if (value === 'confirm-search') {
-          return 1
+          return 2
         }
 
-        if (!search.includes(':')) {
-          return value.toLowerCase().includes(search.toLowerCase()) ? 1 : -1
-        }
-        return value.toLowerCase().split(':')[0] === search.toLowerCase().split(':')[0] ? 1 : -1
+        return value.toLowerCase().includes(search.toLowerCase()) ? 1 : -1
       }
     }
 
@@ -624,20 +621,24 @@ export const MultipleSelector = ({
         </div>
         {selected.length > 0 && (
           <div className="absolute right-0 top-0 flex h-[34px] w-6 items-center justify-center rounded-r bg-neutral-600 before:absolute before:-left-7 before:top-0 before:block before:h-full before:w-7 before:bg-gradient-to-r before:from-transparent before:to-neutral-600 before:content-['']">
-            <Button
+            <button
               type="button"
-              variant="plain"
-              color="neutral"
-              size="xs"
-              className="hover:[&:not(:disabled)]:text-neutral-50a h-5 w-5 justify-center p-0 text-neutral-50 hover:focus:border-transparent focus-visible:text-neutral-50"
+              className="flex h-5 w-5 items-center justify-center rounded border border-transparent p-0 text-xs text-neutral-250 hover:text-neutral-50 focus:border-neutral-250 focus:text-neutral-50 focus:outline-none"
               onClick={() => {
                 setSelected(selected.filter((s) => s.fixed))
                 onChange?.(selected.filter((s) => s.fixed))
               }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setSelected(selected.filter((s) => s.fixed))
+                  onChange?.(selected.filter((s) => s.fixed))
+                }
+              }}
               aria-label="Clear all"
             >
               <Icon iconName="xmark" iconStyle="regular" />
-            </Button>
+            </button>
           </div>
         )}
       </div>
@@ -669,24 +670,26 @@ export const MultipleSelector = ({
                 {EmptyItem()}
                 {CreatableItem()}
                 {!selectFirstItem && <CommandItem value="-" className="hidden" />}
+                {freeTextInput && (
+                  <CommandGroup heading="" className="px-0 py-1 pb-0">
+                    <CommandItem
+                      value="confirm-search"
+                      className="flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 pl-2.5 transition-colors hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
+                      onSelect={() => {
+                        onChange?.(selected)
+                        handleFreeTextInput()
+                        setOpen(false)
+                        inputRef.current?.focus()
+                      }}
+                    >
+                      <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="relative top-[1px]" />
+                      Confirm search
+                    </CommandItem>
+                  </CommandGroup>
+                )}
                 {Object.entries(selectables).map(([key, dropdowns]) => (
                   <ScrollArea key={key} className="*:max-h-48 sm:*:max-h-80">
                     <CommandGroup heading={key} className="px-0 py-1">
-                      {freeTextInput && (
-                        <CommandItem
-                          value="confirm-search"
-                          className="flex h-10 cursor-pointer items-center gap-2 rounded-sm p-1.5 pl-2.5 transition-colors hover:bg-neutral-400 data-[selected=true]:bg-neutral-400"
-                          onSelect={() => {
-                            onChange?.(selected)
-                            handleFreeTextInput()
-                            setOpen(false)
-                            inputRef.current?.focus()
-                          }}
-                        >
-                          <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="relative top-[1px]" />
-                          Confirm search
-                        </CommandItem>
-                      )}
                       {dropdowns.map((option) => {
                         return (
                           <div key={option.value}>
@@ -696,6 +699,7 @@ export const MultipleSelector = ({
                                 description={option.description}
                                 disabled={option.disable}
                                 onMouseDown={(e) => {
+                                  console.log('onMouseDown', option.value)
                                   e.preventDefault()
                                   e.stopPropagation()
                                 }}
@@ -714,13 +718,13 @@ export const MultipleSelector = ({
                                     setInputValue(option.value)
                                     inputRef.current?.focus()
                                     return
-                                  } else {
-                                    setInputValue('')
-                                    const newOptions = [...selected, option]
-                                    setSelected(newOptions)
-                                    onChange?.(newOptions)
-                                    inputRef.current?.focus()
                                   }
+
+                                  setInputValue('')
+                                  const newOptions = [...selected, option]
+                                  setSelected(newOptions)
+                                  onChange?.(newOptions)
+                                  inputRef.current?.focus()
                                 }}
                                 className={clsx(option.disable && 'pointer-events-none cursor-not-allowed opacity-50')}
                               >

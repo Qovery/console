@@ -3,6 +3,17 @@ import { ClustersApi } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
 
+/**
+ * Data-access layer for service logs
+ *
+ * Contains API-specific transformation functions that handle:
+ * - Building Loki query strings (buildLokiQuery)
+ * - Formatting raw API responses (formatLogs)
+ * - Normalizing different log formats (normalizeServiceLog, normalizeWebSocketLog)
+ *
+ * These transformations are kept in data-access as they're tightly coupled to the API structure
+ */
+
 export interface LogFilters {
   serviceId: string
   level?: string
