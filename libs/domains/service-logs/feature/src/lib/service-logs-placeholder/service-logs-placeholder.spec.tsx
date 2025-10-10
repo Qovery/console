@@ -62,6 +62,6 @@ describe('ServiceLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByText(/Managed Databases are managed by your cloud providers/)).toBeInTheDocument()
+    expect(screen.getByText(/Managed databases are handled by your cloud provider/)).toBeInTheDocument()
   })
 })
