@@ -60,7 +60,10 @@ export const GpuResourcesSettings = ({ cluster }: GpuResourcesSettingsProps) => 
                     ...watchKarpenter,
                     qovery_node_pools: {
                       ...watchKarpenter?.qovery_node_pools,
-                      gpu_override: values.qovery_node_pools,
+                      gpu_override: {
+                        ...watchKarpenter?.qovery_node_pools?.gpu_override,
+                        requirements: values.qovery_node_pools.requirements,
+                      },
                     },
                   })
                 }}

@@ -1,5 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { CloudVendorEnum, type Cluster, type CpuArchitectureEnum, KubernetesEnum } from 'qovery-typescript-axios'
+import {
+  CloudVendorEnum,
+  type Cluster,
+  type CpuArchitectureEnum,
+  KubernetesEnum,
+  ListAWSEKSInstanceTypeGpuEnum,
+} from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -94,6 +100,11 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
     region: props.clusterRegion || '',
     enabled: !props.fromDetail,
   })
+  const { data: cloudProviderInstanceTypesGpu } = useCloudProviderInstanceTypesKarpenter({
+    region: props.clusterRegion || '',
+    enabled: true,
+    gpuFilter: ListAWSEKSInstanceTypeGpuEnum.ONLY,
+  })
 
   const instanceTypeOptions = listInstanceTypeFormatter(cloudProviderInstanceTypes ?? [])
 
@@ -145,10 +156,22 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   }, [props.fromDetail, props.isProduction, props.cloudProvider, cloudProviderInstanceTypesKarpenter, setValue])
 
   const handleGpuEnabledChange = (value: boolean) => {
-    setIsGpuEnabled(value)
+    // If GPU is disabled, remove the gpu override value
     if (!value) {
       setValue('karpenter.qovery_node_pools.gpu_override', undefined)
     }
+    // If GPU is enabled, set the default disk size to 100GB and the requirements of the GPU instance types
+    else {
+      setValue('karpenter.qovery_node_pools.gpu_override', {
+        ...watchKarpenter?.qovery_node_pools?.gpu_override,
+        disk_size_in_gib: 100,
+      })
+      setValue(
+        'karpenter.qovery_node_pools.gpu_override.requirements',
+        convertToKarpenterRequirements(cloudProviderInstanceTypesGpu ?? [])
+      )
+    }
+    setIsGpuEnabled(value)
   }
 
   return (
