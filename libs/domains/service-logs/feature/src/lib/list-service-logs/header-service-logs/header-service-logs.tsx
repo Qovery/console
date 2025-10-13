@@ -15,10 +15,9 @@ import { queryParamsServiceLogs } from '../service-logs-context/service-logs-con
 export interface HeaderServiceLogsProps {
   logs: NormalizedServiceLog[]
   isLoading: boolean
-  metricsEnabled: boolean
 }
 
-export function HeaderServiceLogs({ logs, isLoading, metricsEnabled }: HeaderServiceLogsProps) {
+export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
   const {
     environment,
     serviceId,
@@ -103,7 +102,7 @@ export function HeaderServiceLogs({ logs, isLoading, metricsEnabled }: HeaderSer
             }}
             isOpen={isOpenDatePicker}
             maxDate={new Date()}
-            minDate={!metricsEnabled ? subDays(new Date(), 1) : subDays(new Date(), 30)}
+            minDate={subDays(new Date(), 30)}
             defaultDates={startDate && endDate ? [startDate, endDate] : undefined}
             showTimeInput
             useLocalTime

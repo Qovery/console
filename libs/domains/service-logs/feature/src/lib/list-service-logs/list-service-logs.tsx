@@ -1,8 +1,10 @@
+import { differenceInHours } from 'date-fns'
 import { type Cluster, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useQueryParams } from 'use-query-params'
+import { EnableObservabilityButtonContactUs } from '@qovery/domains/observability/feature'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
 import { useServiceHistoryLogs } from '../hooks/use-service-history-logs/use-service-history-logs'
@@ -19,15 +21,68 @@ const { Table } = TablePrimitives
 
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
-function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; environment: Environment }) {
+function Placeholder({
+  hasMetricsEnabled,
+  type,
+  isLogsFetched,
+  serviceName,
+  itemsLength,
+  databaseMode,
+}: {
+  hasMetricsEnabled: boolean
+  type: 'live' | 'history'
+  isLogsFetched: boolean
+  serviceName?: string
+  itemsLength?: number
+  databaseMode?: 'MANAGED' | 'CONTAINER'
+}) {
+  if (!hasMetricsEnabled) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 text-center">
+        <div>
+          <p className="text-neutral-50">No logs found for your request.</p>
+          <p className="text-sm text-neutral-300">Want to search on a larger time period? Try it with Observe</p>
+        </div>
+        <div className="max-w-max">
+          <EnableObservabilityButtonContactUs text="Unlock Observe" />
+        </div>
+      </div>
+    )
+  } else {
+    return (
+      <ServiceLogsPlaceholder
+        type={type}
+        isFetched={isLogsFetched}
+        serviceName={serviceName}
+        itemsLength={itemsLength}
+        databaseMode={databaseMode}
+      />
+    )
+  }
+}
+
+function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; environment: Environment }) {
   const { serviceId } = useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
 
-  const hasMetricsEnabled = useMemo(() => {
-    return cluster?.metrics_parameters?.enabled ?? false
-  }, [cluster?.metrics_parameters?.enabled])
-
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
+
+  const hasMetricsEnabled =
+    useMemo(() => {
+      const isMetricsEnabled = cluster.metrics_parameters?.enabled ?? false
+
+      if (isMetricsEnabled) return true
+
+      if (!isMetricsEnabled || !queryParams.startDate || !queryParams.endDate) {
+        return false
+      }
+
+      const startDate = new Date(queryParams.startDate)
+      const endDate = new Date(queryParams.endDate)
+      const hoursRange = differenceInHours(endDate, startDate)
+
+      return hoursRange < 24
+    }, [cluster?.metrics_parameters?.enabled, queryParams.startDate, queryParams.endDate]) ?? true
 
   const isLiveMode = useMemo(() => {
     return !queryParams.startDate && !queryParams.endDate
@@ -95,10 +150,9 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
     [isLiveMode, isLiveLogsFetched, isHistoryLogsFetched]
   )
 
-  const isLogsLoading = useMemo(
-    () => (isLiveMode ? isLiveLogsLoading : isHistoryLogsLoading),
-    [isLiveMode, isLiveLogsLoading, isHistoryLogsLoading]
-  )
+  const isLogsLoading = useMemo(() => {
+    return isLiveMode ? isLiveLogsLoading : isHistoryLogsLoading
+  }, [isLiveMode, isLiveLogsLoading, isHistoryLogsLoading])
 
   // Temporary solution with `includes` to handle the case where only one log with the message 'No pods found' is received.
   if (
@@ -109,12 +163,13 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
     return (
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
-          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} metricsEnabled={hasMetricsEnabled} />
+          <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
           <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
-              <ServiceLogsPlaceholder
+              <Placeholder
+                hasMetricsEnabled={hasMetricsEnabled}
                 type={isLiveMode ? 'live' : 'history'}
-                isFetched={isLogsFetched}
+                isLogsFetched={isLogsFetched}
                 serviceName={service?.name}
                 itemsLength={logs.length}
                 databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
@@ -129,12 +184,13 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
   return (
     <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
       <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
-        <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} metricsEnabled={hasMetricsEnabled} />
+        <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
         {isLogsLoading && isLiveMode ? (
           <div className="flex h-full flex-col items-center justify-center pb-[68px]">
-            <ServiceLogsPlaceholder
+            <Placeholder
+              hasMetricsEnabled={hasMetricsEnabled}
               type="live"
-              isFetched={isLogsFetched}
+              isLogsFetched={isLogsFetched}
               serviceName={service?.name}
               itemsLength={logs.length}
               databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
@@ -203,7 +259,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster?: Cluster; e
 export interface ListServiceLogsProps {
   environment: Environment
   serviceStatus: Status
-  cluster?: Cluster
+  cluster: Cluster
   environmentStatus?: EnvironmentStatus
 }
 

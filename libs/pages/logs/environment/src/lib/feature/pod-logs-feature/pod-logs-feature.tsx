@@ -34,6 +34,8 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
 
   const serviceStatus = getServiceStatusesById(deploymentStages, serviceId) as Status
 
+  if (!cluster) return null
+
   return (
     <div className="h-full w-full bg-neutral-900">
       <ListServiceLogs
