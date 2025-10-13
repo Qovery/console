@@ -102,6 +102,12 @@ function MenuManageDeployment({
     environmentId: environment.id,
   })
 
+  const { mutate: uninstallService } = useUninstallService({
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+  })
+
   const { mutate: restartService } = useRestartService({
     organizationId: environment.organization.id,
     projectId: environment.project.id,
@@ -170,10 +176,9 @@ function MenuManageDeployment({
               confirmationMethod: 'action',
               confirmationAction: 'destroy',
               action: () =>
-                deployService({
+                uninstallService({
                   serviceId: service.id,
                   serviceType: service.serviceType,
-                  request: { action: TerraformDeployRequestActionEnum.DESTROY },
                 }),
             })
           })
