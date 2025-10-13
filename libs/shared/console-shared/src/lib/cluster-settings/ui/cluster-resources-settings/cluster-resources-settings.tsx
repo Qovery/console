@@ -450,7 +450,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
             {isGpuEnabled && (
               <BlockContent title="GPU nodepools configuration" className="mb-0" classNameContent="p-0">
-                <GpuResourcesSettings cluster={props.cluster} />
+                <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
                 {props.fromDetail && (
                   <div className="flex border-t border-neutral-250 p-4">
                     <Controller

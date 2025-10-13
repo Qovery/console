@@ -7,9 +7,10 @@ import { Button, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 
 export interface GpuResourcesSettingsProps {
   cluster?: Cluster
+  clusterRegion?: string
 }
 
-export const GpuResourcesSettings = ({ cluster }: GpuResourcesSettingsProps) => {
+export const GpuResourcesSettings = ({ cluster, clusterRegion = '' }: GpuResourcesSettingsProps) => {
   const { openModal, closeModal } = useModal()
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
 
@@ -48,7 +49,7 @@ export const GpuResourcesSettings = ({ cluster }: GpuResourcesSettingsProps) => 
             content: (
               <KarpenterInstanceFilterModal
                 cluster={cluster}
-                clusterRegion={cluster?.region ?? ''}
+                clusterRegion={clusterRegion}
                 defaultValues={watchKarpenter}
                 onClose={closeModal}
                 onChange={(values) => {
