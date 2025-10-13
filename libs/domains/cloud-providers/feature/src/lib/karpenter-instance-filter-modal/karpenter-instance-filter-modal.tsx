@@ -299,26 +299,28 @@ function KarpenterInstanceForm({
                   />
                 </div>
               </div>
-              <Controller
-                name="default_service_architecture"
-                control={methods.control}
-                render={({ field }) => (
-                  <InputSelect
-                    label="Select build default"
-                    options={Object.keys(CpuArchitectureEnum).map((value) => ({ label: value, value }))}
-                    onChange={(value) => {
-                      field.onChange(value)
-                      if (cluster) {
-                        const clusterArchitecture = getDefaultArchitecture()
-                        setShowArchitectureWarning(value !== clusterArchitecture)
-                      }
-                    }}
-                    value={field.value}
-                    disabled={!watchAMD64 || !watchARM64}
-                    hint="Applications will be built and deployed on this architecture"
-                  />
-                )}
-              />
+              {gpuFilter !== ListAWSEKSInstanceTypeGpuEnum.ONLY && (
+                <Controller
+                  name="default_service_architecture"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputSelect
+                      label="Select build default"
+                      options={Object.keys(CpuArchitectureEnum).map((value) => ({ label: value, value }))}
+                      onChange={(value) => {
+                        field.onChange(value)
+                        if (cluster) {
+                          const clusterArchitecture = getDefaultArchitecture()
+                          setShowArchitectureWarning(value !== clusterArchitecture)
+                        }
+                      }}
+                      value={field.value}
+                      disabled={!watchAMD64 || !watchARM64}
+                      hint="Applications will be built and deployed on this architecture"
+                    />
+                  )}
+                />
+              )}
               {showArchitectureWarning && (
                 <Callout.Root color="yellow">
                   <Callout.Icon>
