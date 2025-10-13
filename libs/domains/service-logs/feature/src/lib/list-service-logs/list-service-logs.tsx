@@ -29,14 +29,14 @@ function Placeholder({
   itemsLength,
   databaseMode,
 }: {
-  hasMetricsEnabled: boolean
+  hasMetricsEnabled?: boolean
   type: 'live' | 'history'
   isLogsFetched: boolean
   serviceName?: string
   itemsLength?: number
   databaseMode?: 'MANAGED' | 'CONTAINER'
 }) {
-  if (!hasMetricsEnabled) {
+  if (isLogsFetched && Boolean(hasMetricsEnabled) === false) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <div>
@@ -67,10 +67,15 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
 
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
+  const isLiveMode = useMemo(() => {
+    return !queryParams.startDate && !queryParams.endDate
+  }, [queryParams.startDate, queryParams.endDate])
+
   const hasMetricsEnabled =
     useMemo(() => {
-      const isMetricsEnabled = cluster.metrics_parameters?.enabled ?? false
+      if (isLiveMode) return true
 
+      const isMetricsEnabled = cluster.metrics_parameters?.enabled ?? false
       if (isMetricsEnabled) return true
 
       if (!isMetricsEnabled || !queryParams.startDate || !queryParams.endDate) {
@@ -82,11 +87,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       const hoursRange = differenceInHours(endDate, startDate)
 
       return hoursRange < 24
-    }, [cluster?.metrics_parameters?.enabled, queryParams.startDate, queryParams.endDate]) ?? true
-
-  const isLiveMode = useMemo(() => {
-    return !queryParams.startDate && !queryParams.endDate
-  }, [queryParams.startDate, queryParams.endDate])
+    }, [cluster?.metrics_parameters?.enabled, queryParams.startDate, queryParams.endDate, isLiveMode]) ?? true
 
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
@@ -158,6 +159,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   if (
     (isLogsFetched && logs.length > 0 && logs[0].message.includes('No pods found')) ||
     (isLogsFetched && logs.length === 0) ||
+    hasMetricsEnabled === false ||
     (!isLogsFetched && !isLogsLoading)
   ) {
     return (
