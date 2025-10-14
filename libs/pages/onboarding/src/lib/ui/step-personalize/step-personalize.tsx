@@ -80,14 +80,6 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           render={({ field, fieldState: { error } }) => {
             const isUsingFreeEmail = isFreeEmail(field.value)
             const emailDomain = field.value?.includes('@') ? '@' + field.value.split('@')[1] : ''
-            const hintMessage = isUsingFreeEmail ? (
-              <span>
-                Using a professional email instead of <span className="font-medium">{emailDomain}</span> will help you
-                validate the following step more quickly.
-              </span>
-            ) : (
-              'Use a professional email to quickly validate the following step.'
-            )
 
             return (
               <InputText
@@ -98,7 +90,14 @@ export function StepPersonalize(props: StepPersonalizeProps) {
                 onChange={field.onChange}
                 value={field.value}
                 error={error?.message}
-                hint={!error ? hintMessage : undefined}
+                hint={
+                  !error && isUsingFreeEmail ? (
+                    <span>
+                      Using a professional email instead of <span className="font-medium">{emailDomain}</span> will help
+                      you validate the following step more quickly.
+                    </span>
+                  ) : undefined
+                }
               />
             )
           }}
