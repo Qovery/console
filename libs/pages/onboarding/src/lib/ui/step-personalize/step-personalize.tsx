@@ -84,7 +84,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
             return (
               <InputText
                 className="mb-3"
-                label="Email"
+                label="Work email"
                 type="email"
                 name={field.name}
                 onChange={field.onChange}
