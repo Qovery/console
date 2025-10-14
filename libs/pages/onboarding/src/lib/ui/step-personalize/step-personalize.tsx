@@ -1,24 +1,36 @@
-import { type TypeOfUseEnum } from 'qovery-typescript-axios'
-import { type Control, Controller } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, Icon, InputSelect, InputText } from '@qovery/shared/ui'
+
+const FREE_EMAIL_DOMAINS = [
+  'gmail.com',
+  'yahoo.com',
+  'outlook.com',
+  'hotmail.com',
+  'hotmail.fr',
+  'protonmail.com',
+  'zoho.com',
+  'aol.com',
+  'icloud.com',
+  'gmx.com',
+]
+
+const isFreeEmail = (email: string): boolean => {
+  if (!email || !email.includes('@')) return false
+  const domain = email.split('@')[1]?.toLowerCase()
+  return domain ? FREE_EMAIL_DOMAINS.includes(domain) : false
+}
 
 export interface StepPersonalizeProps {
   dataTypes: Array<Value>
   dataCloudProviders: Array<Value>
   onSubmit: () => void
-  control: Control<{
-    first_name: string
-    last_name: string
-    user_email: string
-    type_of_use: TypeOfUseEnum
-    infrastructure_hosting: string
-  }>
   authLogout: () => void
 }
 
 export function StepPersonalize(props: StepPersonalizeProps) {
-  const { dataTypes, onSubmit, control, authLogout, dataCloudProviders } = props
+  const { dataTypes, onSubmit, authLogout, dataCloudProviders } = props
+  const { control, formState } = useFormContext()
 
   return (
     <div className="pb-10">
@@ -58,18 +70,38 @@ export function StepPersonalize(props: StepPersonalizeProps) {
         <Controller
           name="user_email"
           control={control}
-          rules={{ required: 'Please enter your email.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              className="mb-3"
-              label="Email"
-              type="email"
-              name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
+          rules={{
+            required: 'Please enter your email.',
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: 'Please enter a valid email address.',
+            },
+          }}
+          render={({ field, fieldState: { error } }) => {
+            const isUsingFreeEmail = isFreeEmail(field.value)
+            const emailDomain = field.value?.includes('@') ? '@' + field.value.split('@')[1] : ''
+            const hintMessage = isUsingFreeEmail ? (
+              <span>
+                Using a professional email instead of <span className="font-medium">{emailDomain}</span> will help you
+                validate the following step more quickly.
+              </span>
+            ) : (
+              'Use a professional email to quickly validate the following step.'
+            )
+
+            return (
+              <InputText
+                className="mb-3"
+                label="Email"
+                type="email"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                error={error?.message}
+                hint={!error ? hintMessage : undefined}
+              />
+            )
+          }}
         />
         <Controller
           name="type_of_use"
@@ -112,7 +144,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
             <Icon name="icon-solid-arrow-left" />
             Disconnect
           </Button>
-          <Button type="submit" size="lg">
+          <Button type="submit" size="lg" disabled={!formState.isValid}>
             Continue
           </Button>
         </div>
