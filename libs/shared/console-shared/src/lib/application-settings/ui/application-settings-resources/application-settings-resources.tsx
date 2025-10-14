@@ -68,6 +68,7 @@ export function ApplicationSettingsResources({
         {service && (
           <>
             {'maximum_cpu' in service &&
+              !isKarpenterCluster &&
               `Maximum value allowed based on the selected cluster instance type: ${service.maximum_cpu} milli vCPU. `}
             {clusterId && (
               <Link
@@ -100,6 +101,7 @@ export function ApplicationSettingsResources({
         {service && (
           <>
             {'maximum_memory' in service &&
+              !isKarpenterCluster &&
               `Maximum value allowed based on the selected cluster instance type: ${service.maximum_memory} MiB. `}
             {clusterId && (
               <Link
@@ -114,15 +116,15 @@ export function ApplicationSettingsResources({
       </>
     ))
 
-  const hintGPU = (
+  const hintGPU = service && (
     <>
-      {!canSetGPU && 'No GPU available on this cluster for now. '}
+      {!canSetGPU && 'GPUs not allowed on this cluster. '}
       {clusterId && (
         <Link
           to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL}
           size="xs"
         >
-          Edit GPU nodepools configuration
+          {canSetGPU ? 'Edit node' : 'Enable it here'}
         </Link>
       )}
     </>
