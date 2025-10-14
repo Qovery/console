@@ -84,7 +84,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               10
                milli vCPU.
                
-              Maximum value allowed based on the selected cluster instance type: 10 milli vCPU.
+              Maximum value allowed based on the selected cluster instance type: 10 milli vCPU. 
             </p>
           </div>
           <div
@@ -154,6 +154,44 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
                MiB.
                
               Maximum value allowed based on the selected cluster instance type: 10 MiB. 
+            </p>
+          </div>
+          <div
+            class=""
+            data-testid="input-memory-memory-wrapper"
+          >
+            <div
+              class="relative"
+            >
+              <div
+                aria-label="input-container"
+                class="input input--disabled input--disabled !border-neutral-250   "
+              >
+                <div
+                  class="pointer-events-none"
+                >
+                  <label
+                    class="translate-y-2 text-sm"
+                    for="GPU (units)"
+                  >
+                    GPU (units)
+                  </label>
+                  <input
+                    class="input__value "
+                    data-testid="input-memory-memory"
+                    disabled=""
+                    id="GPU (units)"
+                    name="gpu"
+                    type="number"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <p
+              class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+            >
+              No GPU available on this cluster for now. 
             </p>
           </div>
         </section>

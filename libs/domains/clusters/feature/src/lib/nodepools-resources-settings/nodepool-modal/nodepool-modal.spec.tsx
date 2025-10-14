@@ -1,19 +1,22 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { NodepoolModal } from './nodepool-modal'
+import { NodepoolModal, type NodepoolModalProps } from './nodepool-modal'
 
 const mockCluster = {
   region: 'us-east-1',
 }
 
-const defaultProps = {
+const defaultProps: NodepoolModalProps = {
   type: 'stable' as const,
   cluster: mockCluster as Cluster,
   onChange: jest.fn(),
   defaultValues: {
     limits: {
       enabled: true,
+      max_cpu_in_vcpu: 8,
+      max_memory_in_gibibytes: 16,
+      max_gpu: 0,
     },
   },
 }
@@ -113,6 +116,7 @@ describe('NodepoolModal', () => {
             enabled: true,
             max_cpu_in_vcpu: '8',
             max_memory_in_gibibytes: '16',
+            max_gpu: 0,
           },
           consolidation: {
             enabled: true,
