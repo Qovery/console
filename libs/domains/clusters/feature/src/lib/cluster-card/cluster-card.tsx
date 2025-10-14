@@ -11,6 +11,7 @@ import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
 import { ClusterRunningStatusBadge } from '../cluster-running-status-badge/cluster-running-status-badge'
 import { ClusterType } from '../cluster-type/cluster-type'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
+import { hasGpuInstance } from '../utils/has-gpu-instance'
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
@@ -158,6 +159,11 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
             {cluster.version && (
               <Badge color="neutral" variant="surface">
                 {cluster.version}
+              </Badge>
+            )}
+            {hasGpuInstance(cluster) && (
+              <Badge color="neutral" variant="surface">
+                GPU pool
               </Badge>
             )}
           </>

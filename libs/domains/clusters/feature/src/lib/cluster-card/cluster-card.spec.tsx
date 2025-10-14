@@ -1,4 +1,4 @@
-import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterFeatureResponseValueObject, type ClusterStatus } from 'qovery-typescript-axios'
 import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -152,6 +152,24 @@ describe('ClusterCard', () => {
     )
 
     expect(screen.queryByText('Production')).not.toBeInTheDocument()
+  })
+
+  it('should display "GPU pool" badge for clusters with GPU pool', () => {
+    const nonProductionCluster = {
+      ...mockCluster,
+      features: [
+        {
+          id: 'KARPENTER',
+          value_object: { value: { qovery_node_pools: { gpu_override: true } } },
+        } as unknown as ClusterFeatureResponseValueObject,
+      ],
+    } as Cluster
+
+    renderWithProviders(
+      <ClusterCard cluster={nonProductionCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
+    )
+
+    expect(screen.queryByText('GPU pool')).toBeInTheDocument()
   })
 
   it('should initialize socket connection with correct params', () => {
