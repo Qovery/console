@@ -38,3 +38,4 @@ export * from './lib/hooks/use-update-karpenter-private-fargate/use-update-karpe
 export * from './lib/hooks/use-cluster-running-status/use-cluster-running-status'
 export * from './lib/hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 export * from './lib/gpu-resources-settings/gpu-resources-settings'
+export * from './lib/utils/has-gpu-instance'

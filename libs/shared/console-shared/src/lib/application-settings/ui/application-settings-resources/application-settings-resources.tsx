@@ -2,7 +2,7 @@ import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { useCluster } from '@qovery/domains/clusters/feature'
+import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import { useRunningStatus } from '@qovery/domains/services/feature'
@@ -31,11 +31,7 @@ export function ApplicationSettingsResources({
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId })
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
-  const canSetGPU = Boolean(
-    typeof clusterFeatureKarpenter?.value_object?.value === 'object' &&
-      'qovery_node_pools' in clusterFeatureKarpenter.value_object.value &&
-      clusterFeatureKarpenter.value_object.value.qovery_node_pools.gpu_override
-  )
+  const canSetGPU = hasGpuInstance(cluster)
 
   const clusterId = environment?.cluster_id
   const environmentMode = environment?.mode
