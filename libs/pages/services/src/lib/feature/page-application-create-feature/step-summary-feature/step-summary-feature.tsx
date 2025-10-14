@@ -96,7 +96,8 @@ export function StepSummaryFeature() {
       else setLoadingCreate(true)
 
       const memory = Number(resourcesData['memory'])
-      const cpu = resourcesData['cpu']
+      const cpu = Number(resourcesData['cpu'])
+      const gpu = Number(resourcesData['gpu'])
       const variableImportRequest = prepareVariableImportRequest(variablesData)
 
       if (generalData.serviceType === 'APPLICATION') {
@@ -112,8 +113,9 @@ export function StepSummaryFeature() {
               protocol: port.protocol,
               name: port.name || `p${port.application_port}`,
             })) || [],
-          cpu: cpu,
-          memory: memory,
+          cpu,
+          memory,
+          gpu,
           min_running_instances: resourcesData.min_running_instances,
           max_running_instances: resourcesData.max_running_instances,
           build_mode: BuildModeEnum.DOCKER,
@@ -186,8 +188,9 @@ export function StepSummaryFeature() {
               protocol: port.protocol,
               name: port.name || `p${port.application_port}`,
             })) || [],
-          cpu: cpu,
-          memory: memory,
+          cpu,
+          memory,
+          gpu,
           min_running_instances: resourcesData.min_running_instances,
           max_running_instances: resourcesData.max_running_instances,
           tag: generalData.image_tag || '',

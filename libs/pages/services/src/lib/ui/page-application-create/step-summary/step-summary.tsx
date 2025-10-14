@@ -169,6 +169,9 @@ export function StepSummary({
                 <strong className="font-medium">Instances:</strong> {resourcesData.min_running_instances} -{' '}
                 {resourcesData.max_running_instances}
               </li>
+              <li>
+                <strong className="font-medium">GPU:</strong> {resourcesData.gpu}
+              </li>
             </ul>
           </Section>
 

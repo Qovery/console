@@ -30,6 +30,7 @@ export function ApplicationSettingsResources({
   const { data: environment } = useEnvironment({ environmentId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId })
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
+  const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
   const canSetGPU = Boolean(
     typeof clusterFeatureKarpenter?.value_object?.value === 'object' &&
       'qovery_node_pools' in clusterFeatureKarpenter.value_object.value &&
@@ -191,29 +192,31 @@ export function ApplicationSettingsResources({
             />
           )}
         />
-        <Controller
-          name="gpu"
-          control={control}
-          rules={{
-            pattern: {
-              value: /^[0-9]+$/,
-              message: 'Please enter a number.',
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              dataTestId="input-memory-memory"
-              type="number"
-              name={field.name}
-              label="GPU (units)"
-              value={field.value}
-              onChange={field.onChange}
-              disabled={!canSetGPU}
-              hint={hintGPU}
-              error={error?.message}
-            />
-          )}
-        />
+        {isKarpenterCluster && (
+          <Controller
+            name="gpu"
+            control={control}
+            rules={{
+              pattern: {
+                value: /^[0-9]+$/,
+                message: 'Please enter a number.',
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-gpu"
+                type="number"
+                name={field.name}
+                label="GPU (units)"
+                value={field.value}
+                onChange={field.onChange}
+                disabled={!canSetGPU}
+                hint={hintGPU}
+                error={error?.message}
+              />
+            )}
+          />
+        )}
 
         {service?.serviceType === 'TERRAFORM' && (
           <Controller
@@ -224,7 +227,7 @@ export function ApplicationSettingsResources({
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText
-                dataTestId="input-memory-memory"
+                dataTestId="input-storage"
                 type="number"
                 name={field.name}
                 label="Storage (GiB)"

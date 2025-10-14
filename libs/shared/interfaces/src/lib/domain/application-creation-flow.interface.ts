@@ -41,6 +41,7 @@ export interface ApplicationGeneralData {
 export interface ApplicationResourcesData {
   memory: number
   cpu: number
+  gpu: number
   min_running_instances: number
   max_running_instances: number
 }
