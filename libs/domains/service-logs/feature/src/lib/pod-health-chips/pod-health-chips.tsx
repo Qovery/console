@@ -4,7 +4,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { Button, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function PodHealthChips({ service }: { service: AnyService }) {
@@ -138,7 +138,9 @@ export function PodHealthChips({ service }: { service: AnyService }) {
                 sideOffset={0}
               >
                 <div className="space-y-2">
-                  <p className="text-sm">2 instances {label}:</p>
+                  <p className="text-sm">
+                    {count} {pluralize(count, 'instance', 'instances')} {label}:
+                  </p>
                   <div className="flex gap-1">
                     {podsInStatus.map((pod, index) => (
                       <Tooltip key={pod.podName + index} content={pod.podName} side="bottom">

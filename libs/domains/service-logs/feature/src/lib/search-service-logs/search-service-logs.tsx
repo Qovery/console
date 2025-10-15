@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { MultipleSelector, type Option } from '@qovery/shared/ui'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
@@ -39,9 +40,7 @@ function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServic
 function buildQueryParams(value: string) {
   const filterRegex = /(\w+)[:]([^\s]*)/g
   const matches = value.match(filterRegex)
-  const queryParams: DecodedValueMap<typeof queryParamsServiceLogs> = {
-    startDate: undefined,
-    endDate: undefined,
+  const queryParams: Omit<DecodedValueMap<typeof queryParamsServiceLogs>, 'startDate' | 'endDate'> = {
     level: undefined,
     instance: undefined,
     container: undefined,
@@ -78,6 +77,7 @@ function buildQueryParams(value: string) {
 }
 
 export function SearchServiceLogs({
+  service,
   clusterId,
   serviceId,
   isLoading,
@@ -85,9 +85,12 @@ export function SearchServiceLogs({
   clusterId: string
   serviceId: string
   isLoading: boolean
+  service?: AnyService
 }) {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [options, setOptions] = useState<Option[]>(buildValueOptions(queryParams))
+
+  const serviceType = service?.serviceType
 
   const { data: levels = [], isFetched: isFetchedLevels } = useServiceLevels({
     clusterId,
@@ -137,6 +140,15 @@ export function SearchServiceLogs({
         label: instance,
       })),
     },
+    ...(serviceType === 'HELM'
+      ? [
+          {
+            value: 'container:',
+            label: 'container:',
+            description: '[container name]',
+          },
+        ]
+      : []),
     {
       value: 'message:',
       label: 'message:',

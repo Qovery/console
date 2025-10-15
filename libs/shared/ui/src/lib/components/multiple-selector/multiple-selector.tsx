@@ -4,7 +4,6 @@ import { Command, CommandGroup, CommandItem, CommandList, Command as CommandPrim
 import { type ComponentPropsWithoutRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { Button } from '../button/button'
 import Icon from '../icon/icon'
 
 // Inspired by https://github.com/origin-space/originui/blob/main/app/search/multiselect.tsx
@@ -525,7 +524,7 @@ export const MultipleSelector = ({
               <Icon iconName="magnifying-glass" iconStyle="regular" className="ml-0.5 mt-[1px] text-neutral-250" />
             )}
           </div>
-          <div className="flex w-full items-center gap-1 overflow-scroll">
+          <div className="flex w-full items-center gap-1 overflow-x-auto">
             {selected.map((option) => {
               return (
                 <span

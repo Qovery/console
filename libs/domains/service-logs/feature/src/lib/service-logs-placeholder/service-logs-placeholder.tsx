@@ -80,7 +80,7 @@ export function ServiceLogsPlaceholder({
             <LoaderPlaceholder
               title={showPlaceholder ? 'Processing is taking more than 10s' : 'Service logs are loading…'}
               description={
-                showPlaceholder && 'No logs available, please check the service configuration or your query.'
+                showPlaceholder && 'No logs available, please check the service configuration or your query filters.'
               }
             />
             {effectiveType !== undefined && effectiveType !== '4g' && (

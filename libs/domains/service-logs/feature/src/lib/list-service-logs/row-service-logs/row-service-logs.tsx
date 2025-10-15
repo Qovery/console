@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   Ansi,
   Badge,
@@ -27,11 +28,14 @@ export interface RowServiceLogsProps {
   log: NormalizedServiceLog
   hasMultipleContainers: boolean
   highlightedText?: string | null
+  service?: AnyService
 }
 
-export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: RowServiceLogsProps) {
+export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, service }: RowServiceLogsProps) {
   const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [isExpanded, setIsExpanded] = useState(false)
+
+  const serviceType = service?.serviceType
 
   const isNginx = log.instance?.includes('nginx')
 
@@ -221,7 +225,22 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText }: 
                 </Dd>
                 <Dt className="col-span-2 mt-2 flex select-none items-center font-code text-xs">Container</Dt>
                 <Dd className="mt-2 flex gap-1 text-xs leading-3">
-                  <span className="flex h-5 items-center px-2">{log.container}</span>
+                  {hasMultipleContainers || serviceType === 'HELM' ? (
+                    <Button
+                      type="button"
+                      variant="surface"
+                      color="neutral"
+                      size="xs"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setQueryParams({ container: log.container })
+                      }}
+                    >
+                      {log.container}
+                    </Button>
+                  ) : (
+                    <span className="flex h-5 items-center px-2">{log.container}</span>
+                  )}
                 </Dd>
                 {log.version && (
                   <>

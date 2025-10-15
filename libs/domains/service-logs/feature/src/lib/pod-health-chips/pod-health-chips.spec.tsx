@@ -94,6 +94,6 @@ describe('PodHealthChips', () => {
     const { userEvent } = renderWithProviders(<PodHealthChips service={baseService} />)
     const chip = screen.getByText('1')
     await userEvent.hover(chip)
-    expect(await screen.findByText(/instances running/i)).toBeInTheDocument()
+    expect(await screen.findByText(/1 instance running/i)).toBeInTheDocument()
   })
 })

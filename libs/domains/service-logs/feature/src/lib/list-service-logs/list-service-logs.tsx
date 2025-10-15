@@ -166,7 +166,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       <div className="w-full p-1">
         <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
           <HeaderServiceLogs isLoading={isLogsLoading} logs={logs} />
-          <div className="h-[calc(100vh-170px)] border-r border-neutral-500 bg-neutral-600">
+          <div className="h-[calc(100vh-176px)] border-r border-neutral-500 bg-neutral-600">
             <div className="flex h-full flex-col items-center justify-center">
               <Placeholder
                 hasMetricsEnabled={hasMetricsEnabled}
@@ -230,6 +230,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
                   return (
                     <MemoizedRowServiceLogs
                       key={timestamp + index}
+                      service={service}
                       log={log}
                       hasMultipleContainers={hasMultipleContainers}
                       highlightedText={queryParams.message || queryParams.search}
