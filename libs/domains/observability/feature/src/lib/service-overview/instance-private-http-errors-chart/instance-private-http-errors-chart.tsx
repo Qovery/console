@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
-import { Area } from 'recharts'
+import { useMemo, useState } from 'react'
+import { Area, type LegendPayload } from 'recharts'
+import { Chart } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
@@ -12,7 +13,7 @@ const query = (containerName: string) => `
 beyla:req_rate:5m_by_status{k8s_container_name="${containerName}", http_response_status_code=~"5.."}
 /
 ignoring(http_response_status_code) group_left
-clamp_min(beyla:req_rate:5m{k8s_container_name="${containerName}"}, 1)
+clamp_min(beyla:req_rate:5m{k8s_container_name="${containerName}"}, 1) > 0
 `
 
 export function PrivateInstanceHTTPErrorsChart({
@@ -25,6 +26,24 @@ export function PrivateInstanceHTTPErrorsChart({
   containerName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
+
+  const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
+
+  const onClick = (value: LegendPayload) => {
+    if (!value?.dataKey) return
+    const key = value.dataKey as string
+    const newKeys = new Set(legendSelectedKeys)
+    if (newKeys.has(key)) {
+      newKeys.delete(key)
+    } else {
+      newKeys.add(key)
+    }
+    setLegendSelectedKeys(newKeys)
+  }
+
+  const handleResetLegend = () => {
+    setLegendSelectedKeys(new Set())
+  }
 
   const { data: metricsHttpStatusErrorRatio, isLoading: isLoadingHttpStatusErrorRatio } = useMetrics({
     clusterId,
@@ -74,6 +93,7 @@ export function PrivateInstanceHTTPErrorsChart({
       unit="%"
       serviceId={serviceId}
       isFullscreen
+      handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
       {seriesNames.map((name) => (
         <Area
@@ -86,8 +106,26 @@ export function PrivateInstanceHTTPErrorsChart({
           fillOpacity={0.6}
           strokeWidth={2}
           isAnimationActive={false}
+          hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? true : false}
         />
       ))}
+      {!isLoadingHttpStatusErrorRatio && chartData.length > 0 && (
+        <Chart.Legend
+          name="instance-private-http-errors"
+          className="w-[calc(100%-0.5rem)] pb-1 pt-2"
+          onClick={onClick}
+          content={(props) => (
+            <Chart.LegendContent
+              selectedKeys={legendSelectedKeys}
+              formatter={(value) => {
+                const { status } = JSON.parse(value)
+                return `status: "${status}"` as string
+              }}
+              {...props}
+            />
+          )}
+        />
+      )}
     </LocalChart>
   )
 }

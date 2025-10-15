@@ -98,7 +98,7 @@ export function useMetrics({
       // These params are used to generate charts in Grafana
       boardShortName,
       metricShortName,
-      traceId: 'na',
+      traceId: context.traceId,
       alignedRange,
     }),
     keepPreviousData: true,

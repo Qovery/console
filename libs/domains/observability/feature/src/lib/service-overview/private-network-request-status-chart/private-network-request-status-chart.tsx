@@ -9,7 +9,7 @@ import { processMetricsData } from '../util-chart/process-metrics-data'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
 const query = (containerName: string) => `
-   sum by(http_response_status_code)(beyla:req_rate:5m_by_status{k8s_container_name="${containerName}"})
+   sum by(http_response_status_code)(beyla:req_rate:5m_by_status{k8s_container_name="${containerName}"}) > 0
 `
 
 export function PrivateNetworkRequestStatusChart({
