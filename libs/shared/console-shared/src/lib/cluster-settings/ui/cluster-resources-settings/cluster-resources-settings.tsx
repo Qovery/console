@@ -461,6 +461,43 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   className="overflow-hidden"
                 >
                   <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
+                  <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
+                    <Controller
+                      name="karpenter.qovery_node_pools.gpu_override.spot_enabled"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          <InputToggle
+                            value={field.value}
+                            onChange={field.onChange}
+                            className="items-center"
+                            title="Enable spot instances on your GPU nodepools"
+                            small
+                          />
+                          {props.isProduction && field.value && (
+                            <Callout.Root color="yellow">
+                              <Callout.Icon>
+                                <Icon iconName="info-circle" iconStyle="regular" />
+                              </Callout.Icon>
+                              <Callout.Text>
+                                <Callout.TextDescription>
+                                  Activating spot instances on a production cluster may lead to potential downtime for
+                                  applications deployed to the GPU node pool. However, you can specify in the advanced
+                                  settings to force the use of on-demand instances for your service to avoid this.{' '}
+                                  <ExternalLink
+                                    size="sm"
+                                    href="https://hub.qovery.com/docs/using-qovery/configuration/clusters/aws-with-karpenter/#assigning-specific-instances-to-services"
+                                  >
+                                    See documentation
+                                  </ExternalLink>
+                                </Callout.TextDescription>
+                              </Callout.Text>
+                            </Callout.Root>
+                          )}
+                        </>
+                      )}
+                    />
+                  </div>
                   {props.fromDetail && (
                     <div className="flex border-t border-neutral-250 p-4">
                       <Controller
