@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
-import { Line } from 'recharts'
+import { useMemo, useState } from 'react'
+import { type LegendPayload, Line } from 'recharts'
+import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
@@ -21,17 +22,33 @@ const queryDuration99 = (ingressName: string) => `
 export function NetworkRequestDurationChart({
   clusterId,
   serviceId,
-  containerName,
   isFullscreen,
   ingressName,
 }: {
   clusterId: string
   serviceId: string
-  containerName: string
   isFullscreen?: boolean
   ingressName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
+
+  const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
+
+  const onClick = (value: LegendPayload) => {
+    if (!value?.dataKey) return
+    const key = value.dataKey as string
+    const newKeys = new Set(legendSelectedKeys)
+    if (newKeys.has(key)) {
+      newKeys.delete(key)
+    } else {
+      newKeys.add(key)
+    }
+    setLegendSelectedKeys(newKeys)
+  }
+
+  const handleResetLegend = () => {
+    setLegendSelectedKeys(new Set())
+  }
 
   const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
     clusterId,
@@ -105,15 +122,18 @@ export function NetworkRequestDurationChart({
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metrics99, metrics95, metrics50, useLocalTime, startTimestamp, endTimestamp])
 
+  const isLoadingMetrics = isLoadingMetrics99 || isLoadingMetrics50 || isLoadingMetrics95
+
   return (
     <LocalChart
       data={chartData}
       serviceId={serviceId}
-      isLoading={isLoadingMetrics99 || isLoadingMetrics50 || isLoadingMetrics95}
+      isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"
       unit="ms"
+      handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
       <Line
         key="50th-percentile"
@@ -124,6 +144,7 @@ export function NetworkRequestDurationChart({
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('50th percentile') ? true : false}
       />
       <Line
         key="95th-percentile"
@@ -134,6 +155,7 @@ export function NetworkRequestDurationChart({
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('95th percentile') ? true : false}
       />
       <Line
         key="99th-percentile"
@@ -144,7 +166,16 @@ export function NetworkRequestDurationChart({
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('99th percentile') ? true : false}
       />
+      {!isLoadingMetrics && chartData.length > 0 && (
+        <Chart.Legend
+          name="network-request-duration"
+          className="w-[calc(100%-0.5rem)] pb-1 pt-2"
+          onClick={onClick}
+          content={(props) => <Chart.LegendContent selectedKeys={legendSelectedKeys} {...props} />}
+        />
+      )}
     </LocalChart>
   )
 }

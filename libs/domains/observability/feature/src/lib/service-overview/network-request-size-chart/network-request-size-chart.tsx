@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
-import { Line } from 'recharts'
+import { useMemo, useState } from 'react'
+import { type LegendPayload, Line } from 'recharts'
+import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
 import { addTimeRangePadding } from '../util-chart/add-time-range-padding'
@@ -24,6 +25,24 @@ export function NetworkRequestSizeChart({
   ingressName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
+
+  const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
+
+  const onClick = (value: LegendPayload) => {
+    if (!value?.dataKey) return
+    const key = value.dataKey as string
+    const newKeys = new Set(legendSelectedKeys)
+    if (newKeys.has(key)) {
+      newKeys.delete(key)
+    } else {
+      newKeys.add(key)
+    }
+    setLegendSelectedKeys(newKeys)
+  }
+
+  const handleResetLegend = () => {
+    setLegendSelectedKeys(new Set())
+  }
 
   const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
     clusterId,
@@ -78,15 +97,18 @@ export function NetworkRequestSizeChart({
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metricsResponseSize, metricsRequestSize, useLocalTime, startTimestamp, endTimestamp])
 
+  const isLoadingMetrics = isLoadingMetricsResponseSize || isLoadingMetricsRequestSize
+
   return (
     <LocalChart
       data={chartData}
-      isLoading={isLoadingMetricsResponseSize || isLoadingMetricsRequestSize}
+      isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
       label="Network request size (bytes/s)"
       description="Large sizes can increase latency and bandwidth costs"
       unit="bytes"
       serviceId={serviceId}
+      handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
       <Line
         key="response-size"
@@ -97,6 +119,7 @@ export function NetworkRequestSizeChart({
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Response size') ? true : false}
       />
       <Line
         key="request-size"
@@ -107,7 +130,16 @@ export function NetworkRequestSizeChart({
         dot={false}
         connectNulls={false}
         isAnimationActive={false}
+        hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has('Request size') ? true : false}
       />
+      {!isLoadingMetrics && chartData.length > 0 && (
+        <Chart.Legend
+          name="network-request-size"
+          className="w-[calc(100%-0.5rem)] pb-1 pt-2"
+          onClick={onClick}
+          content={(props) => <Chart.LegendContent selectedKeys={legendSelectedKeys} {...props} />}
+        />
+      )}
     </LocalChart>
   )
 }
