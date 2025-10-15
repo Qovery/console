@@ -53,16 +53,18 @@ function prepareJobRequest({
   annotationsGroup: OrganizationAnnotationsGroupResponse[]
   dockerfileData?: DockerfileSettingsData
 }): JobRequest {
-  const memory = Number(resourcesData['memory'])
-  const cpu = resourcesData['cpu']
+  const memory = Number(resourcesData.memory)
+  const cpu = Number(resourcesData.cpu)
+  const gpu = Number(resourcesData.gpu)
 
   const jobRequest: JobRequest = {
     name: generalData.name,
     port: Number(configureData.port),
     description: generalData.description || '',
     icon_uri: generalData.icon_uri,
-    cpu: cpu,
-    memory: memory,
+    cpu,
+    gpu,
+    memory,
     max_nb_restart: Number(configureData.nb_restarts) || 0,
     max_duration_seconds: Number(configureData.max_duration) || 0,
     auto_preview: false,

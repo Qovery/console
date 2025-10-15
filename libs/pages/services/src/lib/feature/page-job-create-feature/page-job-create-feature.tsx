@@ -112,6 +112,7 @@ export function PageJobCreateFeature() {
   const [resourcesData, setResourcesData] = useState<JobResourcesData | undefined>({
     memory: 512,
     cpu: 500,
+    gpu: 0,
   })
 
   const [variableData, setVariableData] = useState<FlowVariableData | undefined>({

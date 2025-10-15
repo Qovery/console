@@ -63,6 +63,7 @@ export function TemplateFormSync({
         ...(resourcesData ?? {}),
         cpu: template.resources.cpu_milli,
         memory: template.resources.ram_mib,
+        gpu: 0,
       }))
 
       // Job config
