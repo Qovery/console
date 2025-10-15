@@ -1,5 +1,6 @@
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { BooleanParam, type QueryParamConfig, StringParam, useQueryParam } from 'use-query-params'
+import { v4 as uuidv4 } from 'uuid'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
@@ -54,6 +55,9 @@ interface ServiceOverviewContextType {
   // Chart refreshing state
   isAnyChartRefreshing: boolean
   setIsAnyChartRefreshing: (isRefreshing: boolean) => void
+
+  // Trace ID
+  traceId: string
 }
 
 const ServiceOverviewContext = createContext<ServiceOverviewContextType | undefined>(undefined)
@@ -70,6 +74,9 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
   const [startDate = oneHourAgo.toISOString(), setStartDate] = useQueryParam('startDate', StringParam)
   const [endDate = now.toISOString(), setEndDate] = useQueryParam('endDate', StringParam)
+
+  // Trace ID for tracing requests
+  const traceId = uuidv4()
 
   // Actions
   const [hideEvents = false, setHideEvents] = useQueryParam('hideEvents', BooleanParam)
@@ -270,6 +277,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       lastDropdownTimeRange,
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
+      traceId,
     }),
     [
       useLocalTime,
@@ -301,6 +309,7 @@ export function ServiceOverviewProvider({ children }: PropsWithChildren) {
       isAnyChartRefreshing,
       setIsAnyChartRefreshing,
       subQueryTimeRange,
+      traceId,
     ]
   )
 
