@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useContext } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -67,13 +67,14 @@ export function FormUser(props: FormUserProps) {
   const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
-  const { handleSubmit, control } = useForm<{
+  const methods = useForm<{
     first_name: string
     last_name: string
     user_email: string
     type_of_use: TypeOfUseEnum
     infrastructure_hosting: string
   }>({
+    mode: 'onChange',
     defaultValues: {
       first_name: userSignUp?.first_name ? userSignUp.first_name : user?.name?.split(' ')[0],
       last_name: userSignUp?.last_name ? userSignUp.last_name : user?.name?.split(' ')[1],
@@ -84,7 +85,7 @@ export function FormUser(props: FormUserProps) {
   })
   const { organization_name, project_name, setContextValue } = useContext(ContextOnboarding)
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = methods.handleSubmit(async (data) => {
     if (data) {
       const checkIfCompany = data['type_of_use'] === TypeOfUseEnum.WORK
 
@@ -123,13 +124,14 @@ export function FormUser(props: FormUserProps) {
   })
 
   return (
-    <StepPersonalize
-      dataTypes={dataTypes}
-      dataCloudProviders={dataCloudProviders}
-      onSubmit={onSubmit}
-      control={control}
-      authLogout={authLogout}
-    />
+    <FormProvider {...methods}>
+      <StepPersonalize
+        dataTypes={dataTypes}
+        dataCloudProviders={dataCloudProviders}
+        onSubmit={onSubmit}
+        authLogout={authLogout}
+      />
+    </FormProvider>
   )
 }
 
