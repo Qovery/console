@@ -214,7 +214,6 @@ function ServiceOverviewContent() {
                 <CardPercentile99
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
-                  containerName={containerName}
                   ingressName={ingressName}
                 />
               )}
@@ -259,7 +258,6 @@ function ServiceOverviewContent() {
                 <NetworkRequestDurationChart
                   clusterId={environment.cluster_id}
                   serviceId={applicationId}
-                  containerName={containerName}
                   ingressName={ingressName}
                 />
               </div>

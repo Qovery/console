@@ -1,5 +1,6 @@
-import { useMemo } from 'react'
-import { Line } from 'recharts'
+import { useMemo, useState } from 'react'
+import { type LegendPayload, Line } from 'recharts'
+import { Chart } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../local-chart/local-chart'
@@ -21,6 +22,24 @@ export function PrivateNetworkRequestStatusChart({
   containerName: string
 }) {
   const { startTimestamp, endTimestamp, useLocalTime, timeRange } = useServiceOverviewContext()
+
+  const [legendSelectedKeys, setLegendSelectedKeys] = useState<Set<string>>(new Set())
+
+  const onClick = (value: LegendPayload) => {
+    if (!value?.dataKey) return
+    const key = value.dataKey as string
+    const newKeys = new Set(legendSelectedKeys)
+    if (newKeys.has(key)) {
+      newKeys.delete(key)
+    } else {
+      newKeys.add(key)
+    }
+    setLegendSelectedKeys(newKeys)
+  }
+
+  const handleResetLegend = () => {
+    setLegendSelectedKeys(new Set())
+  }
 
   const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
     clusterId,
@@ -72,6 +91,7 @@ export function PrivateNetworkRequestStatusChart({
       description="Sudden drops or spikes may signal service instability"
       unit="req/s"
       serviceId={serviceId}
+      handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
       {seriesNames.map((name) => (
         <Line
@@ -83,8 +103,17 @@ export function PrivateNetworkRequestStatusChart({
           dot={false}
           connectNulls={false}
           isAnimationActive={false}
+          hide={legendSelectedKeys.size > 0 && !legendSelectedKeys.has(name) ? true : false}
         />
       ))}
+      {!isLoadingMetrics && chartData.length > 0 && (
+        <Chart.Legend
+          name="private-network-request-status"
+          className="w-[calc(100%-0.5rem)] pb-1 pt-2"
+          onClick={onClick}
+          content={(props) => <Chart.LegendContent selectedKeys={legendSelectedKeys} {...props} />}
+        />
+      )}
     </LocalChart>
   )
 }

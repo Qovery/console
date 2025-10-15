@@ -12,12 +12,10 @@ const query = (timeRange: string, ingressName: string) => `
 export function CardPercentile99({
   serviceId,
   clusterId,
-  containerName,
   ingressName,
 }: {
   serviceId: string
   clusterId: string
-  containerName: string
   ingressName: string
 }) {
   const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
@@ -55,7 +53,6 @@ export function CardPercentile99({
             <NetworkRequestDurationChart
               clusterId={clusterId}
               serviceId={serviceId}
-              containerName={containerName}
               isFullscreen
               ingressName={ingressName}
             />
