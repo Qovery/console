@@ -439,47 +439,58 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
             />
           </BlockContent>
 
-          <div className="flex flex-col gap-4">
-            <InputToggle
-              value={isGpuEnabled}
-              onChange={handleGpuEnabledChange}
-              name="gpu_enabled"
-              title="Enable GPU nodepools configuration"
-              className="items-center"
-              small
-            />
-            {isGpuEnabled && (
-              <BlockContent title="GPU nodepools configuration" className="mb-0" classNameContent="p-0">
-                <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
-                {props.fromDetail && (
-                  <div className="flex border-t border-neutral-250 p-4">
-                    <Controller
-                      name="karpenter.qovery_node_pools.gpu_override.disk_size_in_gib"
-                      control={control}
-                      rules={{
-                        required: 'Please enter a disk size',
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputText
-                          label="GPU nodepool disk size (GB)"
-                          type="number"
-                          name={field.name}
-                          error={error?.message}
-                          onChange={field.onChange}
-                          value={field.value}
-                          className="w-full"
-                          hint="Storage allocated to your GPU nodepool to store files, application images etc.."
-                        />
-                      )}
-                    />
-                  </div>
-                )}
-                {watchKarpenterEnabled && props.cluster && (
-                  <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" />
-                )}
-              </BlockContent>
-            )}
-          </div>
+          <BlockContent title="GPU nodepools configuration" className="mb-0" classNameContent="p-0">
+            <div className="flex p-4">
+              <InputToggle
+                value={isGpuEnabled}
+                onChange={handleGpuEnabledChange}
+                name="gpu_enabled"
+                title="Enable GPU nodepools"
+                className="items-center"
+                small
+              />
+            </div>
+
+            <AnimatePresence>
+              {isGpuEnabled && (
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: 'auto' }}
+                  exit={{ height: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="overflow-hidden"
+                >
+                  <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
+                  {props.fromDetail && (
+                    <div className="flex border-t border-neutral-250 p-4">
+                      <Controller
+                        name="karpenter.qovery_node_pools.gpu_override.disk_size_in_gib"
+                        control={control}
+                        rules={{
+                          required: 'Please enter a disk size',
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputText
+                            label="GPU nodepool disk size (GB)"
+                            type="number"
+                            name={field.name}
+                            error={error?.message}
+                            onChange={field.onChange}
+                            value={field.value}
+                            className="w-full"
+                            hint="Storage allocated to your GPU nodepool to store files, application images etc.."
+                          />
+                        )}
+                      />
+                    </div>
+                  )}
+                  {watchKarpenterEnabled && props.cluster && (
+                    <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" />
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </BlockContent>
         </>
       )}
 
