@@ -1,3 +1,5 @@
+import clsx from 'clsx'
+import { useEffect, useState } from 'react'
 import { Button, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -38,6 +40,17 @@ export function EnableObservabilityContent({ className }: { className?: string }
 }
 
 export function EnableObservabilityVideo() {
+  const [showIframe, setShowIframe] = useState(false)
+
+  // Hack to avoid having small glitch when the modal is opened
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowIframe(true)
+    }, 200)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <div className="relative box-content aspect-video max-h-[80svh] w-full">
       <iframe
@@ -46,7 +59,11 @@ export function EnableObservabilityVideo() {
         title="Monitor application performance in real time"
         allow="clipboard-write"
         allowFullScreen
-        className="absolute left-0 top-0 h-full w-full"
+        className={clsx(
+          'absolute left-0 top-0 h-full w-full',
+          showIframe ? 'animate-[fadein_0.12s_ease-in-out_forwards' : 'rounded bg-neutral-100',
+          !showIframe && 'invisible'
+        )}
       />
     </div>
   )
