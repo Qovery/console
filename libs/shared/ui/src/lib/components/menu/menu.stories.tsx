@@ -1,4 +1,4 @@
-import { type Meta, type StoryObj } from '@storybook/react'
+import { type Meta, type StoryObj } from '@storybook/react-webpack5'
 import Button from '../button/button'
 import Icon from '../icon/icon'
 import { Menu, MenuAlign, type MenuData, MenuDirection } from './menu'

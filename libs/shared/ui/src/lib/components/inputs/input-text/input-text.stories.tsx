@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import CopyToClipboardButtonIcon from '../../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import { InputText, type InputTextProps } from './input-text'
 
@@ -7,7 +7,7 @@ export default {
   title: 'Inputs/InputText',
 } as Meta
 
-const Template: Story<InputTextProps> = (args) => <InputText {...args} />
+const Template: StoryFn<InputTextProps> = (args) => <InputText {...args} />
 
 const defaultProps: InputTextProps = {
   label: 'First name',

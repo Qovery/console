@@ -23,7 +23,7 @@ const configValues = {
         },
         { glob: '**/*', input: '../../libs/shared/ui/src/lib/assets', output: '/assets' },
       ],
-      styles: ['./src/styles.scss'],
+      styles: ['libs/shared/ui/src/lib/styles/main.scss'],
       postcssConfig: './postcss.config.js',
     },
     production: {

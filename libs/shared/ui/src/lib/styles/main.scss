@@ -1,8 +1,9 @@
-$fa-font-path: '/assets/fonts/font-awesome';
-@import '~@awesome.me/kit-c4457d1be4/icons/scss/fontawesome.scss';
-@import '~@awesome.me/kit-c4457d1be4/icons/scss/solid.scss';
-@import '~@awesome.me/kit-c4457d1be4/icons/scss/regular.scss';
-@import '~@awesome.me/kit-c4457d1be4/icons/scss/brands.scss';
+@use 'sass:meta';
+@use 'base/variable';
+@import '@awesome.me/kit-c4457d1be4/icons/css/fontawesome.css';
+@import '@awesome.me/kit-c4457d1be4/icons/css/solid.css';
+@import '@awesome.me/kit-c4457d1be4/icons/css/regular.css';
+@import '@awesome.me/kit-c4457d1be4/icons/css/brands.css';
 
 @tailwind components;
 @tailwind base;
@@ -108,20 +109,19 @@ $fa-font-path: '/assets/fonts/font-awesome';
   --color-r-scl: hsl(330.4 81.2% 60.4%);
 }
 
-@import 'base/variable';
-@import 'base/fonts';
-@import 'base/icons';
+@include meta.load-css('base/fonts');
+@include meta.load-css('base/icons');
 
-@import 'object/typography';
-@import 'object/animation';
-@import 'object/link';
-@import 'object/code-ansi';
+@include meta.load-css('object/typography');
+@include meta.load-css('object/animation');
+@include meta.load-css('object/link');
+@include meta.load-css('object/code-ansi');
 
-@import 'components/input';
-@import 'components/menu';
-@import 'components/modal';
-@import 'components/select';
-@import 'components/date-picker';
+@include meta.load-css('components/input');
+@include meta.load-css('components/menu');
+@include meta.load-css('components/modal');
+@include meta.load-css('components/select');
+@include meta.load-css('components/date-picker');
 
 body {
   overflow-x: hidden;

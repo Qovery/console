@@ -1,4 +1,4 @@
-import { type Meta } from '@storybook/react'
+import { type Meta } from '@storybook/react-webpack5'
 import { IconEnum } from '@qovery/shared/enums'
 import Button from '../button/button'
 import Icon from '../icon/icon'

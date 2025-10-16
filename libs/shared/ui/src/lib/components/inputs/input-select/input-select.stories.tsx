@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { IconEnum } from '@qovery/shared/enums'
 import { type Value } from '@qovery/shared/interfaces'
 import { Icon } from '../../icon/icon'
@@ -29,7 +29,7 @@ const options: Value[] = [
   },
 ]
 
-const Template: Story<InputSelectProps> = (args) => <InputSelect {...args} />
+const Template: StoryFn<InputSelectProps> = (args) => <InputSelect {...args} />
 
 export const Single = Template.bind({})
 Single.args = {

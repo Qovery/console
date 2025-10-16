@@ -1,12 +1,12 @@
-import { type ComponentMeta, type ComponentStory } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { StickyActionFormToaster } from './sticky-action-form-toaster'
 
 export default {
   component: StickyActionFormToaster,
   title: 'StickyActionFormToaster',
-} as ComponentMeta<typeof StickyActionFormToaster>
+} as Meta<typeof StickyActionFormToaster>
 
-const Template: ComponentStory<typeof StickyActionFormToaster> = (args) => <StickyActionFormToaster {...args} />
+const Template: StoryFn<typeof StickyActionFormToaster> = (args) => <StickyActionFormToaster {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

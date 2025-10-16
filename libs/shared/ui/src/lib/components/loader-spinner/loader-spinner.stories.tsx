@@ -1,4 +1,4 @@
-import { type ComponentMeta, type ComponentStory } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { LoaderSpinner } from './loader-spinner'
 
 export default {
@@ -10,9 +10,9 @@ export default {
       control: { type: 'select' },
     },
   },
-} as ComponentMeta<typeof LoaderSpinner>
+} as Meta<typeof LoaderSpinner>
 
-const Template: ComponentStory<typeof LoaderSpinner> = (args) => <LoaderSpinner {...args} />
+const Template: StoryFn<typeof LoaderSpinner> = (args) => <LoaderSpinner {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

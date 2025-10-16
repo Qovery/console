@@ -1,7 +1,9 @@
+@use '../base/variable';
+
 .input {
   @apply relative min-h-[52px] cursor-pointer rounded border border-neutral-250 bg-white px-3 py-2 dark:bg-neutral-500;
   transition:
-    120ms all $timing-cubic,
+    120ms all variable.$timing-cubic,
     0 outline;
 
   label {
@@ -127,7 +129,7 @@
 
 .input__button {
   @apply relative flex h-full min-h-[52px] w-full cursor-pointer flex-col rounded border px-4 py-2 outline-none focus-visible:outline-none;
-  transition: 120ms all $timing-cubic;
+  transition: 120ms all variable.$timing-cubic;
 
   &:hover,
   &:focus,

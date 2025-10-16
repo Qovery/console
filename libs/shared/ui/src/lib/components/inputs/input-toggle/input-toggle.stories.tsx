@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { InputToggle, type InputToggleProps } from './input-toggle'
 
 export default {
@@ -6,6 +6,6 @@ export default {
   title: 'Inputs/InputToggle',
 } as Meta
 
-const Template: Story<InputToggleProps> = (args) => <InputToggle {...args} />
+const Template: StoryFn<InputToggleProps> = (args) => <InputToggle {...args} />
 
 export const Primary = Template.bind({})

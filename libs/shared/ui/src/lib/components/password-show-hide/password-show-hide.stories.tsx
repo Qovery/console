@@ -1,4 +1,4 @@
-import { type ComponentMeta, type ComponentStory } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { PasswordShowHide } from './password-show-hide'
 
 export default {
@@ -9,9 +9,9 @@ export default {
       control: { type: 'text' },
     },
   },
-} as ComponentMeta<typeof PasswordShowHide>
+} as Meta<typeof PasswordShowHide>
 
-const Template: ComponentStory<typeof PasswordShowHide> = (args) => <PasswordShowHide {...args} />
+const Template: StoryFn<typeof PasswordShowHide> = (args) => <PasswordShowHide {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

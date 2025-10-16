@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { Accordion } from './accordion'
 
 const Story: Meta<typeof Accordion.Root> = {

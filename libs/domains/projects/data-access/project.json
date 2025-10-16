@@ -4,6 +4,6 @@
   "sourceRoot": "libs/domains/projects/data-access/src",
   "projectType": "library",
   "tags": ["scope:domain", "type:data-access", "slice:projects"],
-  "// targets": "to see all targets run: nx show project data-access --web",
+  "// targets": "to see all targets run: nx show project domains-projects-data-access --web",
   "targets": {}
 }

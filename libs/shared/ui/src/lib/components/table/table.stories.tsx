@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { type Environment } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { environmentFactoryMock } from '@qovery/shared/factories'
@@ -20,7 +20,7 @@ const addRow = (data: Environment[]): Environment[] => {
   return newData
 }
 
-const Template: Story<TableProps> = (args) => {
+const Template: StoryFn<TableProps> = (args) => {
   const [data, setData] = useState<Environment[]>(environmentData)
   const [filter, setFilter] = useState<TableFilterProps[]>([])
 
@@ -95,7 +95,7 @@ Primary.args = {
   columnsWidth: '33% 33% 33% 100%',
 }
 
-const TemplateExpand: Story<TableProps> = (args) => {
+const TemplateExpand: StoryFn<TableProps> = (args) => {
   const [data, setData] = useState<Environment[]>(environmentData)
   const [filter, setFilter] = useState<TableFilterProps[]>([])
 

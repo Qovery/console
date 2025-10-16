@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import IconFlag, { type IconFlagProps } from './icon-flag'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'IconFlag',
 } as Meta
 
-const Template: Story<IconFlagProps> = (props: IconFlagProps) => (
+const Template: StoryFn<IconFlagProps> = (props: IconFlagProps) => (
   <IconFlag code={props.code} className={props.className} />
 )
 

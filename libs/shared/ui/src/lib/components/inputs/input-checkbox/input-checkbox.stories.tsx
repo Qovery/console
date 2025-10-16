@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { InputCheckbox, type InputCheckboxProps } from './input-checkbox'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Inputs/InputCheckbox',
 } as Meta
 
-const Template: Story<InputCheckboxProps> = (args) => <InputCheckbox {...args} />
+const Template: StoryFn<InputCheckboxProps> = (args) => <InputCheckbox {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

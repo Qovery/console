@@ -1,7 +1,9 @@
+@use '../base/variable';
+
 .code-ansi {
   a {
     display: inline-block;
-    transition: 0.25s color $timing-cubic;
+    transition: 0.25s color variable.$timing-cubic;
     color: theme('colors.sky.500');
 
     &:hover {

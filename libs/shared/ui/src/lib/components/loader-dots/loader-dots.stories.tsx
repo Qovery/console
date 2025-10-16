@@ -1,13 +1,13 @@
-import { type ComponentMeta, type ComponentStory } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { LoaderDots } from './loader-dots'
 
 export default {
   component: LoaderDots,
   title: 'LoaderDots',
   argTypes: {},
-} as ComponentMeta<typeof LoaderDots>
+} as Meta<typeof LoaderDots>
 
-const Template: ComponentStory<typeof LoaderDots> = (args) => <LoaderDots {...args} />
+const Template: StoryFn<typeof LoaderDots> = (args) => <LoaderDots {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

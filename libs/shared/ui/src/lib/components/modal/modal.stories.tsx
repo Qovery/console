@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import Button from '../button/button'
 import Modal, { type ModalContentProps, type ModalProps } from './modal'
 
@@ -23,7 +23,7 @@ const Content = (props: ModalContentProps) => {
   )
 }
 
-const Template: Story<ModalProps> = (...args) => (
+const Template: StoryFn<ModalProps> = (...args) => (
   <div className="relative">
     <Modal
       trigger={

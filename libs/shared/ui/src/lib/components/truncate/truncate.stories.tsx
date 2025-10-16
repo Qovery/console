@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { Truncate, type TruncateProps } from './truncate'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Truncate',
 } as Meta
 
-const Template: Story<TruncateProps> = (args) => <Truncate {...args} />
+const Template: StoryFn<TruncateProps> = (args) => <Truncate {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

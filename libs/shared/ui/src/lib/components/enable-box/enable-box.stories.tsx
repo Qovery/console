@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { EnableBox, type EnableBoxProps } from './enable-box'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'EnableBox',
 } as Meta
 
-const Template: Story<EnableBoxProps> = (args) => (
+const Template: StoryFn<EnableBoxProps> = (args) => (
   <EnableBox {...args}>
     <ul>
       <li>Any</li>

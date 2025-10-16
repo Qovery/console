@@ -1,5 +1,7 @@
+@use '../base/variable';
+
 .link {
-  transition: 0.25s color $timing-cubic;
+  transition: 0.25s color variable.$timing-cubic;
   @apply inline-block align-bottom;
 
   &.text-sm {
@@ -25,5 +27,5 @@
 }
 
 .link-transition {
-  transition: 0.25s color $timing-cubic;
+  transition: 0.25s color variable.$timing-cubic;
 }

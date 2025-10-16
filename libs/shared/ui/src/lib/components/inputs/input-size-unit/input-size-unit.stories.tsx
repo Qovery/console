@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { InputSizeUnit, type InputSizeUnitProps } from './input-size-unit'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Inputs/InputSizeUnit',
 } as Meta
 
-const Template: Story<InputSizeUnitProps> = (args) => <InputSizeUnit {...args} />
+const Template: StoryFn<InputSizeUnitProps> = (args) => <InputSizeUnit {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

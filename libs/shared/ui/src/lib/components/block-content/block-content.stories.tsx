@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import ModalProvider from '../modal/modal-root'
 import { BlockContent, type BlockContentProps } from './block-content'
 
@@ -7,7 +7,7 @@ export default {
   title: 'Composed Components/BlockContent',
 } as Meta
 
-const Template: Story<BlockContentProps> = (args) => (
+const Template: StoryFn<BlockContentProps> = (args) => (
   <ModalProvider>
     <BlockContent {...args} />
   </ModalProvider>
