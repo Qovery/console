@@ -61,9 +61,9 @@ export function EnableObservabilityVideo() {
         allowFullScreen
         className={clsx(
           'absolute left-0 top-0 h-full w-full',
-          showIframe ? 'animate-[fadein_0.12s_ease-in-out_forwards]' : 'rounded bg-neutral-100'
+          showIframe ? 'animate-[fadein_0.12s_ease-in-out_forwards' : 'rounded bg-neutral-100',
+          !showIframe && 'invisible'
         )}
-        style={showIframe ? undefined : { visibility: 'hidden' }}
       />
     </div>
   )
