@@ -122,7 +122,7 @@ function MenuManageDeployment({ cluster, clusterStatus }: { cluster: Cluster; cl
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
-    cluster.cloud_provider !== 'GCP' &&
+    cluster.cloud_provider !== 'GCP' && cluster.cloud_provider !== 'AZURE' &&
       isStopAvailable(clusterStatus.status) &&
       cluster.kubernetes !== 'PARTIALLY_MANAGED' && (
         <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
