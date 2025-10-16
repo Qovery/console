@@ -18,7 +18,7 @@ export interface SidebarPodStatusesProps extends PropsWithChildren {
   service?: AnyService
 }
 
-const PADDING_SIDEBAR_CLOSE = '93px'
+const PADDING_SIDEBAR_CLOSE = '111px'
 const PADDING_SIDEBAR_OPEN = '47px'
 
 export function SidebarPodStatuses({ organizationId, projectId, service, children }: SidebarPodStatusesProps) {
@@ -176,7 +176,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                 clsx(
                   'absolute top-1 flex h-9 items-center justify-center gap-1.5 rounded-l-full border border-r-0 border-neutral-500 bg-neutral-600 pl-2 pr-1 text-xs transition-colors group-hover:bg-neutral-500',
                   {
-                    '-left-[80px]': !open,
+                    '-left-[105.5px]': !open,
                     '-left-9 w-9 pl-3 pr-2': open,
                   }
                 )
@@ -185,7 +185,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
               {!open && (
                 <>
                   <DonutChart width={21} height={21} items={segments} innerRadius={7} outerRadius={10} />
-                  {service.serviceType === 'JOB' ? 'Jobs' : 'Pods'}
+                  {service.serviceType === 'JOB' ? 'Jobs' : 'Instances'}
                 </>
               )}{' '}
               <Icon iconName={!open ? 'angle-left' : 'angle-right'} />
@@ -219,14 +219,19 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                               podsFiltered.some((pod) => pod.state === 'ERROR'),
                               podsFiltered.some((pod) => pod.state === 'STARTING'),
                             ])
-                              .with([P.number.gt(0), false, false], () => 'Pods are running')
-                              .with([P.number.gt(0), false, true], () => 'Pods are starting')
-                              .otherwise(() => 'Pods were not successful')}
+                              .with(
+                                [P.number.gt(0), false, false],
+                                [P.number.lt(1), false, false],
+                                () => 'Instances are running'
+                              )
+                              .with([P.number.gt(0), true, false], () => 'Instances are running with errors')
+                              .with([P.number.gt(0), false, true], () => 'Instances are starting')
+                              .otherwise(() => 'Instances were not successful')}
                           </>
                         )}
                       </p>
                     ) : (
-                      <p className="text-sm font-medium text-neutral-250">No pods</p>
+                      <p className="text-sm font-medium text-neutral-250">No instances</p>
                     )}
                     <div className="flex flex-wrap justify-center gap-2 text-sm">
                       {Object.entries(podStatusCount).map(
@@ -245,6 +250,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                   service.serviceType === 'JOB' ? (
                     // Display list of errors for jobs
                     podsFiltered
+                      .filter((pod) => pod.state !== 'RUNNING')
                       .sort((a, b) => new Date(b.started_at ?? '').getTime() - new Date(a.started_at ?? '').getTime())
                       .map((pod) => {
                         return (
@@ -306,20 +312,22 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                   ) : (
                     // Group similar errors for services
                     Object.entries(
-                      podsFiltered.reduce(
-                        (acc, pod) => {
-                          const errorKey = `${pod.state_reason}:${pod.state_message}`
-                          if (!acc[errorKey]) {
-                            acc[errorKey] = {
-                              error: { reason: pod.state_reason || '', message: pod.state_message || '' },
-                              pods: [],
+                      podsFiltered
+                        .filter((pod) => pod.state !== 'RUNNING')
+                        .reduce(
+                          (acc, pod) => {
+                            const errorKey = `${pod.state_reason}:${pod.state_message}`
+                            if (!acc[errorKey]) {
+                              acc[errorKey] = {
+                                error: { reason: pod.state_reason || '', message: pod.state_message || '' },
+                                pods: [],
+                              }
                             }
-                          }
-                          acc[errorKey].pods.push(pod)
-                          return acc
-                        },
-                        {} as Record<string, { error: { reason: string; message: string }; pods: Pod[] }>
-                      )
+                            acc[errorKey].pods.push(pod)
+                            return acc
+                          },
+                          {} as Record<string, { error: { reason: string; message: string }; pods: Pod[] }>
+                        )
                     ).map(([errorKey, { error, pods }]) => (
                       <div
                         key={errorKey}
@@ -371,8 +379,8 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                       </>
                     ) : (
                       <>
-                        <p className="font-medium">No pods available</p>
-                        <span>You do not currently have any pods available</span>
+                        <p className="font-medium">No instances available</p>
+                        <span>You do not currently have any instances available</span>
                       </>
                     )}
                   </div>

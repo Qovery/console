@@ -144,11 +144,17 @@ describe('CardLogErrors', () => {
     await userEvent.click(button)
 
     expect(mockedNavigate).toHaveBeenCalledWith(
-      '/organization/test-org-id/project/test-project-id/environment/test-env-id/logs/test-service-id/service-logs',
+      expect.stringContaining(
+        '/organization/test-org-id/project/test-project-id/environment/test-env-id/logs/test-service-id/service-logs?startDate='
+      ),
       {
         state: { prevUrl: '/test' },
       }
     )
+
+    const navigateUrl = mockedNavigate.mock.calls[0][0]
+    expect(navigateUrl).toMatch(/startDate=[\d-]+T[\d:.%A-Z]+/)
+    expect(navigateUrl).toMatch(/endDate=[\d-]+T[\d:.%A-Z]+/)
   })
 
   it('should call useInstantMetrics with correct parameters', () => {

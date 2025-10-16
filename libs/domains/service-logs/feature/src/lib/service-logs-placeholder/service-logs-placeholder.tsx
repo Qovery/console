@@ -26,43 +26,69 @@ export function LoaderPlaceholder({
 }
 
 export interface ServiceLogsPlaceholderProps {
+  type: 'live' | 'history'
+  isFetched?: boolean
   serviceName?: string
   databaseMode?: DatabaseModeEnum
   itemsLength?: number
 }
 
-export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength }: ServiceLogsPlaceholderProps) {
+export function ServiceLogsPlaceholder({
+  type = 'live',
+  isFetched = false,
+  serviceName,
+  databaseMode,
+  itemsLength,
+}: ServiceLogsPlaceholderProps) {
   const { organizationId, projectId, environmentId, serviceId } = useParams()
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { state: deploymentState } = deploymentStatus ?? {}
   const [showPlaceholder, setShowPlaceholder] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
   const { effectiveType } = useNetworkState()
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPlaceholder(true)
     }, 10000)
-    return () => clearTimeout(timer)
+    const loadingTimer = setTimeout(() => {
+      setIsLoading(false)
+    }, 2000)
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(loadingTimer)
+      setIsLoading(true)
+    }
   }, [])
 
-  return match({ databaseMode, itemsLength, deploymentState })
+  return match({ databaseMode, itemsLength, deploymentState, type })
     .with(
       {
-        databaseMode: P.not(DatabaseModeEnum.MANAGED),
+        databaseMode: P.when((mode) => mode !== DatabaseModeEnum.MANAGED),
         itemsLength: 0,
         deploymentState: P.when((state) => state !== 'READY' && state !== 'STOPPED'),
+        type: 'live',
       },
-      () => (
-        <>
-          <LoaderPlaceholder
-            title={showPlaceholder ? 'Processing is taking more than 10s' : 'Service logs are loading…'}
-            description={showPlaceholder && 'No logs available, please check the service configuration.'}
-          />
-          {effectiveType !== undefined && effectiveType !== '4g' && (
-            <p className="mt-0.5 text-center text-sm text-neutral-350">Your connection is slow</p>
-          )}
-        </>
-      )
+      () => {
+        if (!showPlaceholder) {
+          return <LoaderPlaceholder />
+        }
+
+        return (
+          <>
+            <LoaderPlaceholder
+              title={showPlaceholder ? 'Processing is taking more than 10s' : 'Service logs are loading…'}
+              description={
+                showPlaceholder && 'No logs available, please check the service configuration or your query filters.'
+              }
+            />
+            {effectiveType !== undefined && effectiveType !== '4g' && (
+              <p className="mt-0.5 text-center text-sm text-neutral-350">Your connection is slow</p>
+            )}
+          </>
+        )
+      }
     )
     .with(
       {
@@ -92,16 +118,23 @@ export function ServiceLogsPlaceholder({ serviceName, databaseMode, itemsLength 
           <LoaderPlaceholder />
         )
     )
-    .otherwise(() => (
-      <>
-        <p className="mb-1 text-neutral-50">No logs are available for {serviceName}.</p>
-        {databaseMode === DatabaseModeEnum.MANAGED && (
-          <p className="text-sm text-neutral-300">
-            Managed Databases are managed by your cloud providers. Logs can be found within your cloud provider console.
-          </p>
-        )}
-      </>
-    ))
+    .otherwise(() => {
+      if (!isLoading || isFetched) {
+        return (
+          <>
+            <p className="mb-1 text-neutral-50">No logs are available for {serviceName}.</p>
+            {databaseMode === DatabaseModeEnum.MANAGED && (
+              <p className="text-sm text-neutral-300">
+                Managed databases are handled by your cloud provider. Logs are accessible in your cloud provider
+                console.
+              </p>
+            )}
+          </>
+        )
+      }
+
+      return <LoaderPlaceholder />
+    })
 }
 
 export default ServiceLogsPlaceholder

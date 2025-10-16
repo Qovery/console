@@ -48,7 +48,15 @@ describe('ListServiceLogs', () => {
         serviceStatus={{
           execution_id: 'exec-1',
         }}
-        clusterId="000"
+        cluster={{
+          id: 'cluster-1',
+          name: 'cluster-1',
+          organization: { id: 'org-1' },
+          project: { id: 'proj-1' },
+          metrics_parameters: {
+            enabled: true,
+          },
+        }}
       />
     )
     expect(baseElement).toBeTruthy()

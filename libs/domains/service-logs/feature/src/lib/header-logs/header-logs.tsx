@@ -4,7 +4,8 @@ import {
   type EnvironmentStatus,
   type Status,
 } from 'qovery-typescript-axios'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
+import { useQueryParams } from 'use-query-params'
 import {
   ServiceActionToolbar,
   ServiceAvatar,
@@ -15,6 +16,8 @@ import {
 import { ActionTriggerStatusChip, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { pluralize, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
+import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
 
 export interface HeaderLogsProps extends PropsWithChildren {
   type: 'DEPLOYMENT' | 'SERVICE'
@@ -50,13 +53,24 @@ export function HeaderLogs({
   deploymentHistory,
   children,
 }: HeaderLogsProps) {
+  const [queryParams] = useQueryParams(queryParamsServiceLogs)
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: links = [] } = useLinks({ serviceId: serviceId, serviceType: service?.serviceType })
   const filteredLinks = links.filter((link) => !(link.is_default && link.is_qovery_domain))
 
+  const isHistoricalServiceLogs = useMemo(
+    () => !!queryParams.startDate || !!queryParams.endDate,
+    [queryParams.startDate, queryParams.endDate]
+  )
+
   if (!service) return null
 
   const totalDurationSec = serviceStatus?.steps?.total_computing_duration_sec ?? 0
+
+  const isNotDeployedOrStopped =
+    serviceStatus?.status_details?.status === 'ERROR' ||
+    serviceStatus?.status_details?.status === 'NEVER' ||
+    serviceStatus?.state === 'STOPPED'
 
   return (
     <div
@@ -117,23 +131,38 @@ export function HeaderLogs({
               </span>
             </>
           )}
-          <ServiceLinksPopover
-            organizationId={environment.organization.id}
-            projectId={environment.project.id}
-            environmentId={environment.id}
-            serviceId={serviceId}
-            align="start"
-          >
-            <Button variant="surface" color="neutral" radius="full">
-              <Tooltip content="Links">
-                <div className="flex items-center gap-1">
-                  <Icon iconName="link" iconStyle="regular" />
-                  {filteredLinks.length} {pluralize(filteredLinks.length, 'link', 'links')}
-                  <Icon iconName="angle-down" />
-                </div>
-              </Tooltip>
-            </Button>
-          </ServiceLinksPopover>
+          {!isNotDeployedOrStopped && (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+                <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+              </svg>
+              <ServiceLinksPopover
+                organizationId={environment.organization.id}
+                projectId={environment.project.id}
+                environmentId={environment.id}
+                serviceId={serviceId}
+                align="start"
+              >
+                <Button variant="surface" color="neutral" radius="full" className="relative top-[1px]">
+                  <Tooltip content="Links">
+                    <div className="flex items-center gap-1">
+                      <Icon iconName="link" iconStyle="regular" />
+                      {filteredLinks.length} {pluralize(filteredLinks.length, 'link', 'links')}
+                      <Icon iconName="angle-down" />
+                    </div>
+                  </Tooltip>
+                </Button>
+              </ServiceLinksPopover>
+              {type === 'SERVICE' && !isHistoricalServiceLogs && (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+                    <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>
+                  </svg>
+                  <PodHealthChips service={service} />
+                </>
+              )}
+            </>
+          )}
         </div>
         <EndCurve />
       </div>

@@ -52,7 +52,13 @@ export function EnableObservabilityVideo() {
   )
 }
 
-export function EnableObservabilityButtonContactUs({ callback }: { callback?: () => void }) {
+export function EnableObservabilityButtonContactUs({
+  callback,
+  text = 'Contact us',
+}: {
+  callback?: () => void
+  text?: string
+}) {
   const { showPylonForm } = useSupportChat()
 
   return (
@@ -65,7 +71,7 @@ export function EnableObservabilityButtonContactUs({ callback }: { callback?: ()
         showPylonForm('request-access-observability')
       }}
     >
-      Contact us
+      {text}
     </Button>
   )
 }

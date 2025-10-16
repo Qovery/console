@@ -104,3 +104,19 @@
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   animation-fill-mode: forwards;
 }
+
+.dark {
+  .react-datepicker {
+    background-color: theme('colors.neutral.550');
+    color: theme('colors.neutral.50');
+  }
+  .react-datepicker__day-name {
+    color: theme('colors.neutral.50');
+  }
+  .react-datepicker__day {
+    color: theme('colors.neutral.50');
+  }
+  .react-datepicker__day--disabled {
+    color: theme('colors.neutral.250');
+  }
+}
