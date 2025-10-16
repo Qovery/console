@@ -170,7 +170,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
     .with(
       { serviceType: ServiceTypeEnum.CONTAINER },
       { serviceType: ServiceTypeEnum.APPLICATION },
-      ({ cpu, memory, min_running_instances, max_running_instances }) => (
+      ({ cpu, memory, min_running_instances, max_running_instances, gpu }) => (
         <>
           <ResourceUnit
             value={
@@ -182,6 +182,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           />
           <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'mCPU' })} description="vCPU (max)" />
           <ResourceUnit value={memory && formatMetric({ current: memory, unit: 'MiB' })} description="Memory (max)" />
+          <ResourceUnit value={gpu && formatMetric({ current: gpu, unit: 'GPU' })} description="GPU (max)" />
         </>
       )
     )
@@ -198,7 +199,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
       </>
     ))
     .with({ serviceType: ServiceTypeEnum.JOB }, (job) => {
-      const { cpu, memory, max_duration_seconds, max_nb_restart, port } = job
+      const { cpu, memory, max_duration_seconds, max_nb_restart, port, gpu } = job
       return (
         <>
           {match(job)
@@ -223,6 +224,7 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
           <ResourceUnit value={max_duration_seconds && `${max_duration_seconds} s`} description="Duration (max)" />
           <ResourceUnit value={cpu && formatMetric({ current: cpu, unit: 'mCPU' })} description="vCPU (max)" />
           <ResourceUnit value={memory && formatMetric({ current: memory, unit: 'MiB' })} description="Memory (max)" />
+          <ResourceUnit value={gpu && formatMetric({ current: gpu, unit: 'GPU' })} description="GPU (max)" />
           <ResourceUnit value={port} description="Port" />
         </>
       )

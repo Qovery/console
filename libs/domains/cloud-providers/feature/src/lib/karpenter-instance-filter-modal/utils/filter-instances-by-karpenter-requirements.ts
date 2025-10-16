@@ -1,18 +1,18 @@
-import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
-import { type KarpenterData } from '@qovery/shared/interfaces'
+import {
+  type ClusterInstanceTypeResponseListResultsInner,
+  type KarpenterNodePoolRequirement,
+} from 'qovery-typescript-axios'
 
 export function filterInstancesByKarpenterRequirements(
   allInstances: ClusterInstanceTypeResponseListResultsInner[],
-  karpenterData: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>
+  requirements: KarpenterNodePoolRequirement[] = []
 ): ClusterInstanceTypeResponseListResultsInner[] {
-  const karpenterRequirements = karpenterData.qovery_node_pools?.requirements || []
-
   return allInstances.filter((instance) => {
     const instanceSize = instance.attributes?.instance_size || ''
     const InstanceFamily = instance.attributes?.instance_family || ''
     const instanceArchitecture = instance.architecture || ''
 
-    return karpenterRequirements.every((requirement) => {
+    return requirements.every((requirement) => {
       if (requirement.key === 'InstanceSize') {
         return requirement.values.includes(instanceSize)
       }
@@ -30,5 +30,3 @@ export function filterInstancesByKarpenterRequirements(
     })
   })
 }
-
-export default filterInstancesByKarpenterRequirements

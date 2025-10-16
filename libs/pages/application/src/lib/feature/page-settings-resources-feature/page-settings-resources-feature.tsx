@@ -39,6 +39,9 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
       cpu: match(service)
         .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources.cpu_milli)
         .otherwise((s) => s.cpu || 0),
+      gpu: match(service)
+        .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources.gpu)
+        .otherwise((s) => s.gpu || 0),
       ...defaultInstances,
     },
   })
@@ -46,7 +49,8 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
   const onSubmit = methods.handleSubmit((data: FieldValues) => {
     const request = {
       memory: Number(data['memory']),
-      cpu: data['cpu'],
+      cpu: Number(data['cpu']),
+      gpu: Number(data['gpu']),
     }
 
     let requestWithInstances = {}

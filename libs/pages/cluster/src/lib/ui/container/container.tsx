@@ -6,6 +6,7 @@ import {
   ClusterActionToolbar,
   ClusterAvatar,
   ClusterType,
+  hasGpuInstance,
   useCluster,
   useClusterRunningStatusSocket,
   useClusterStatus,
@@ -78,16 +79,21 @@ export function Container({ children }: PropsWithChildren) {
                 </Badge>
               )}
             </Skeleton>
-            <Skeleton width={120} height={22} show={!cluster}>
-              {cluster?.instance_type &&
-                cluster.kubernetes !== 'PARTIALLY_MANAGED' &&
-                cluster?.instance_type !== 'KARPENTER' && (
+            {cluster?.instance_type &&
+              cluster.kubernetes !== 'PARTIALLY_MANAGED' &&
+              cluster?.instance_type !== 'KARPENTER' && (
+                <Skeleton width={120} height={22} show={!cluster}>
                   <Badge color="neutral" variant="surface">
                     {cluster?.instance_type?.toLowerCase().replace('_', '.')}
                   </Badge>
-                )}
-            </Skeleton>
+                </Skeleton>
+              )}
           </>
+        )}
+        {hasGpuInstance(cluster) && (
+          <Badge color="neutral" variant="surface">
+            GPU pool
+          </Badge>
         )}
       </div>
     </div>

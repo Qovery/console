@@ -86,7 +86,7 @@ describe('NodepoolsResourcesSettings', () => {
   describe('Component', () => {
     it('should display default values from cluster configuration', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} />, {
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="default" />, {
           defaultValues: {
             karpenter: {
               qovery_node_pools: {

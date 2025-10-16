@@ -8,6 +8,7 @@ import {
   type CloudVendorEnum,
   type GcpCredentialsRequest,
   type KubernetesEnum,
+  ListAWSEKSInstanceTypeGpuEnum,
   type ScalewayCredentialsRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
@@ -120,6 +121,7 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
       | {
           cloudProvider: Extract<CloudVendorEnum, 'AWS'>
           region: string
+          gpuFilter: ListAWSEKSInstanceTypeGpuEnum
         }
       | {
           cloudProvider: Extract<CloudVendorEnum, 'SCW'>
@@ -136,10 +138,12 @@ export const cloudProviders = createQueryKeys('cloudProviders', {
           cloudProvider: Extract<CloudVendorEnum, 'ON_PREMISE'>
         }
   ) => ({
-    queryKey: [args.cloudProvider],
+    queryKey: [args.cloudProvider, 'region' in args ? args.region : '', 'gpuFilter' in args ? args.gpuFilter : ''],
     async queryFn() {
       const response = await match(args)
-        .with({ cloudProvider: 'AWS' }, ({ region }) => cloudProviderApi.listAWSEKSInstanceType(region, false, false))
+        .with({ cloudProvider: 'AWS' }, ({ region, gpuFilter = ListAWSEKSInstanceTypeGpuEnum.EXCLUDE }) =>
+          cloudProviderApi.listAWSEKSInstanceType(region, true, undefined, gpuFilter)
+        )
         .with({ cloudProvider: 'AZURE' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'GCP' }, () => Promise.resolve({ data: { results: [] } }))
         .with({ cloudProvider: 'SCW' }, () => Promise.resolve({ data: { results: [] } }))

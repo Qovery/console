@@ -68,6 +68,7 @@ export function PageApplicationCreateFeature() {
   const [resourcesData, setResourcesData] = useState<ApplicationResourcesData | undefined>({
     memory: 512,
     cpu: 500,
+    gpu: 0,
     min_running_instances: 1,
     max_running_instances: 2,
   })

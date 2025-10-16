@@ -156,7 +156,6 @@ function MenuManageDeployment({
             deployService({
               serviceId: service.id,
               serviceType: service.serviceType,
-              request: { action: TerraformDeployRequestActionEnum.PLAN_AND_APPLY },
             })
           })
           .with('destroy', () => {

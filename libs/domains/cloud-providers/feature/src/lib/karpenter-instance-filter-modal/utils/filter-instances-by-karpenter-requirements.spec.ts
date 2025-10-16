@@ -31,7 +31,7 @@ describe('filterInstancesByKarpenterRequirements', () => {
     ]
     const karpenterData = createKarpenterData([{ key: 'InstanceSize', values: ['small', 'medium'] }])
 
-    const result = filterInstancesByKarpenterRequirements(instances, karpenterData)
+    const result = filterInstancesByKarpenterRequirements(instances, karpenterData.qovery_node_pools.requirements)
     expect(result).toHaveLength(2)
     expect(result.some((instance) => instance.attributes?.instance_size === 'small')).toBeTruthy()
     expect(result.some((instance) => instance.attributes?.instance_size === 'medium')).toBeTruthy()
@@ -42,7 +42,7 @@ describe('filterInstancesByKarpenterRequirements', () => {
     const instances = [createMockInstance('AMD64', 't3', 'small'), createMockInstance('ARM64', 'c6g', 'medium')]
     const karpenterData = createKarpenterData([{ key: 'Arch', values: ['ARM64'] }])
 
-    const result = filterInstancesByKarpenterRequirements(instances, karpenterData)
+    const result = filterInstancesByKarpenterRequirements(instances, karpenterData.qovery_node_pools.requirements)
     expect(result).toHaveLength(1)
     expect(result[0].architecture).toBe('ARM64')
   })
@@ -55,7 +55,7 @@ describe('filterInstancesByKarpenterRequirements', () => {
     ]
     const karpenterData = createKarpenterData([{ key: 'InstanceFamily', values: ['t3', 'm5'] }])
 
-    const result = filterInstancesByKarpenterRequirements(instances, karpenterData)
+    const result = filterInstancesByKarpenterRequirements(instances, karpenterData.qovery_node_pools.requirements)
     expect(result).toHaveLength(2)
     // Verify that each expected family is present in the results
     expect(result.some((instance) => instance.attributes?.instance_family === 't3')).toBeTruthy()
@@ -77,7 +77,7 @@ describe('filterInstancesByKarpenterRequirements', () => {
       { key: 'InstanceSize', values: ['small'] },
     ])
 
-    const result = filterInstancesByKarpenterRequirements(instances, karpenterData)
+    const result = filterInstancesByKarpenterRequirements(instances, karpenterData.qovery_node_pools.requirements)
     expect(result).toHaveLength(1)
     const matchedInstance = result[0]
     expect(matchedInstance.architecture).toBe('ARM64')

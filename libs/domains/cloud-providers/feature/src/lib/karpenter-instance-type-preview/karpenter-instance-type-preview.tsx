@@ -3,8 +3,9 @@ import { pluralize, twMerge } from '@qovery/shared/util-js'
 import sortInstanceSizes from '../karpenter-instance-filter-modal/utils/sort-instance-sizes'
 
 export interface KarpenterInstanceTypePreviewProps {
-  defaultServiceArchitecture: CpuArchitectureEnum
+  defaultServiceArchitecture?: CpuArchitectureEnum
   requirements?: KarpenterNodePoolRequirement[]
+  prefix?: string
   className?: string
 }
 
@@ -25,6 +26,7 @@ function TruncatedList({ values, maxDisplay = 10 }: { values: string[]; maxDispl
 export function KarpenterInstanceTypePreview({
   defaultServiceArchitecture,
   requirements,
+  prefix,
   className,
 }: KarpenterInstanceTypePreviewProps) {
   const architectures = requirements?.find((a) => a.key === 'Arch')
@@ -33,7 +35,7 @@ export function KarpenterInstanceTypePreview({
 
   return (
     <div className={twMerge('flex flex-col gap-1 text-sm text-neutral-400', className)}>
-      {architectures && architectures?.values.length > 0 && (
+      {defaultServiceArchitecture && architectures && architectures?.values.length > 0 && (
         <p className="font-normal">
           <span className="font-medium">
             {pluralize(architectures?.values.length, 'Architecture', 'Architectures')}:{' '}
@@ -41,19 +43,27 @@ export function KarpenterInstanceTypePreview({
           {architectures?.values.join(', ').toUpperCase()}
         </p>
       )}
-      <p className="font-normal">
-        <span className="font-medium">Default build architecture: </span>
-        {defaultServiceArchitecture}
-      </p>
+      {defaultServiceArchitecture && (
+        <p className="font-normal">
+          <span className="font-medium">Default build architecture: </span>
+          {defaultServiceArchitecture}
+        </p>
+      )}
       {families && families?.values.length > 0 && (
         <p className="font-normal">
-          <span className="font-medium">{pluralize(families?.values.length, 'Family', 'Families')}: </span>
+          <span className="font-medium">
+            {prefix ? `${prefix} ` : ''}
+            {pluralize(families?.values.length, 'Family', 'Families')}:{' '}
+          </span>
           <TruncatedList values={families?.values.sort((a, b) => a.localeCompare(b))} />
         </p>
       )}
       {sizes && sizes?.values.length > 0 && (
         <p className="font-normal">
-          <span className="font-medium">{pluralize(sizes?.values.length, 'Size', 'Sizes')}: </span>
+          <span className="font-medium">
+            {prefix ? `${prefix} ` : ''}
+            {pluralize(sizes?.values.length, 'Size', 'Sizes')}:{' '}
+          </span>
           <TruncatedList values={sortInstanceSizes(sizes?.values)} maxDisplay={8} />
         </p>
       )}

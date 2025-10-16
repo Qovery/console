@@ -84,7 +84,7 @@ exports[`PageSettingsResources should render warning box and icon for cpu 1`] = 
               10
                milli vCPU.
                
-              Maximum value allowed based on the selected cluster instance type: 10 milli vCPU.
+              Maximum value allowed based on the selected cluster instance type: 10 milli vCPU. 
             </p>
           </div>
           <div

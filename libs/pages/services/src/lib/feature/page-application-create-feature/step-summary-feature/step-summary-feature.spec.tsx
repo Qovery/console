@@ -31,6 +31,7 @@ const mockContext: Required<ApplicationContainerCreateContextInterface> = {
   resourcesData: {
     memory: 512,
     cpu: 500,
+    gpu: 1,
     min_running_instances: 1,
     max_running_instances: 12,
   },
@@ -124,6 +125,7 @@ describe('PageApplicationPostFeature', () => {
         ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP', name: 'p80' }],
         cpu: 500,
         memory: 512,
+        gpu: 1,
         min_running_instances: 1,
         max_running_instances: 12,
         git_repository: {
@@ -184,6 +186,7 @@ describe('PageApplicationPostFeature', () => {
         ports: [{ internal_port: 80, external_port: 443, publicly_accessible: true, protocol: 'HTTP', name: 'p80' }],
         cpu: 500,
         memory: 512,
+        gpu: 1,
         min_running_instances: 1,
         max_running_instances: 12,
         arguments: ['test'],

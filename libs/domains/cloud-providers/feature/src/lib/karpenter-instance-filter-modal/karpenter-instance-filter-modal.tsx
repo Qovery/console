@@ -4,6 +4,7 @@ import {
   type ClusterInstanceAttributes,
   type ClusterInstanceTypeResponseListResultsInner,
   CpuArchitectureEnum,
+  ListAWSEKSInstanceTypeGpuEnum,
 } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -34,6 +35,7 @@ export interface KarpenterInstanceFilterModalProps {
   onClose: () => void
   defaultValues?: Omit<KarpenterData, 'disk_size_in_gib' | 'enabled' | 'spot_enabled'>
   cluster?: Cluster
+  gpuFilter?: ListAWSEKSInstanceTypeGpuEnum
 }
 
 export interface KarpenterInstanceFormProps {
@@ -50,9 +52,14 @@ function KarpenterInstanceForm({
   onChange,
   onClose,
   cluster,
+  gpuFilter,
 }: Omit<KarpenterInstanceFilterModalProps, 'clusterRegion'>) {
+  const requirements =
+    gpuFilter === ListAWSEKSInstanceTypeGpuEnum.ONLY
+      ? defaultValues?.qovery_node_pools?.gpu_override?.requirements || []
+      : defaultValues?.qovery_node_pools?.requirements || []
   const _defaultValues = defaultValues
-    ? filterInstancesByKarpenterRequirements(cloudProviderInstanceTypes, defaultValues)
+    ? filterInstancesByKarpenterRequirements(cloudProviderInstanceTypes, requirements)
     : cloudProviderInstanceTypes
 
   const [dataFiltered, setDataFiltered] = useState<ClusterInstanceTypeResponseListResultsInner[]>(_defaultValues)
@@ -292,26 +299,28 @@ function KarpenterInstanceForm({
                   />
                 </div>
               </div>
-              <Controller
-                name="default_service_architecture"
-                control={methods.control}
-                render={({ field }) => (
-                  <InputSelect
-                    label="Select build default"
-                    options={Object.keys(CpuArchitectureEnum).map((value) => ({ label: value, value }))}
-                    onChange={(value) => {
-                      field.onChange(value)
-                      if (cluster) {
-                        const clusterArchitecture = getDefaultArchitecture()
-                        setShowArchitectureWarning(value !== clusterArchitecture)
-                      }
-                    }}
-                    value={field.value}
-                    disabled={!watchAMD64 || !watchARM64}
-                    hint="Applications will be built and deployed on this architecture"
-                  />
-                )}
-              />
+              {gpuFilter !== ListAWSEKSInstanceTypeGpuEnum.ONLY && (
+                <Controller
+                  name="default_service_architecture"
+                  control={methods.control}
+                  render={({ field }) => (
+                    <InputSelect
+                      label="Select build default"
+                      options={Object.keys(CpuArchitectureEnum).map((value) => ({ label: value, value }))}
+                      onChange={(value) => {
+                        field.onChange(value)
+                        if (cluster) {
+                          const clusterArchitecture = getDefaultArchitecture()
+                          setShowArchitectureWarning(value !== clusterArchitecture)
+                        }
+                      }}
+                      value={field.value}
+                      disabled={!watchAMD64 || !watchARM64}
+                      hint="Applications will be built and deployed on this architecture"
+                    />
+                  )}
+                />
+              )}
               {showArchitectureWarning && (
                 <Callout.Root color="yellow">
                   <Callout.Icon>
@@ -543,11 +552,13 @@ export function KarpenterInstanceFilterModal({
   onChange,
   onClose,
   cluster,
+  gpuFilter = ListAWSEKSInstanceTypeGpuEnum.EXCLUDE,
 }: Omit<KarpenterInstanceFilterModalProps, 'cloudProviderInstanceTypes'>) {
   // Get instance types only available for AWS
   const { data: cloudProviderInstanceTypesKarpenter } = useCloudProviderInstanceTypesKarpenter({
     region: clusterRegion,
     enabled: true,
+    gpuFilter,
   })
 
   if (cloudProviderInstanceTypesKarpenter) {
@@ -558,6 +569,7 @@ export function KarpenterInstanceFilterModal({
         onChange={onChange}
         onClose={onClose}
         cluster={cluster}
+        gpuFilter={gpuFilter}
       />
     )
   } else {

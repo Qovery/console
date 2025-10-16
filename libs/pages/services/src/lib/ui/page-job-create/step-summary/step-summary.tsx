@@ -321,6 +321,9 @@ export function StepSummary(props: StepSummaryProps) {
               <li>
                 <strong className="font-medium">Memory:</strong> {props.resourcesData.memory} MB
               </li>
+              <li>
+                <strong className="font-medium">GPU:</strong> {props.resourcesData.gpu}
+              </li>
             </ul>
           </Section>
           <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">

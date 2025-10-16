@@ -206,6 +206,23 @@ export function StepSummary(props: StepSummaryProps) {
                         {CONTROL_PLANE_LABELS[props.resourcesData.scw_control_plane]}
                       </li>
                     )}
+                    <li>
+                      <strong className="font-medium">GPU nodepool enabled: </strong>
+                      {props.resourcesData.karpenter?.qovery_node_pools?.gpu_override ? 'true' : 'false'}
+                    </li>
+                    {props.resourcesData.karpenter?.qovery_node_pools?.gpu_override && (
+                      <li>
+                        <KarpenterInstanceTypePreview
+                          className="gap-2"
+                          prefix="GPU"
+                          requirements={props.resourcesData.karpenter.qovery_node_pools?.gpu_override?.requirements}
+                        />
+                      </li>
+                    )}
+                    <li>
+                      <strong className="font-medium">GPU nodepool spot instances: </strong>
+                      {props.resourcesData.karpenter?.qovery_node_pools?.gpu_override?.spot_enabled ? 'true' : 'false'}
+                    </li>
                   </ul>
                 </div>
                 <Button type="button" variant="plain" size="md" onClick={props.goToResources}>
