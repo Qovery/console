@@ -69,6 +69,35 @@ export function PodHealthChips({ service }: { service: AnyService }) {
     return groups
   }, [pods])
 
+  const getStatusChipClassNames = (
+    color: 'green' | 'purple' | 'yellow' | 'red' | 'neutral',
+    isOpen: boolean
+  ): string => {
+    switch (color) {
+      case 'green':
+        return isOpen
+          ? 'border-green-500/20 bg-green-500/10 text-green-500'
+          : 'bg-green-500/10 text-green-500 hover:border-green-500/20 focus:border-green-500/20 active:border-green-500/20'
+      case 'purple':
+        return isOpen
+          ? 'border-purple-400/20 bg-purple-400/10 text-[#CB1D63]'
+          : 'bg-purple-400/10 text-[#CB1D63] hover:border-purple-400/20 focus:border-purple-400/20 active:border-purple-400/20'
+      case 'yellow':
+        return isOpen
+          ? 'border-yellow-400/20 bg-yellow-400/10 text-yellow-500'
+          : 'bg-yellow-400/10 text-yellow-500 hover:border-yellow-400/20 focus:border-yellow-400/20 active:border-yellow-400/20'
+      case 'red':
+        return isOpen
+          ? 'border-red-500/20 bg-red-500/10 text-red-500'
+          : 'bg-red-500/10 text-red-500 hover:border-red-500/20 focus:border-red-500/20 active:border-red-500/20'
+      case 'neutral':
+      default:
+        return isOpen
+          ? 'border-neutral-300/20 bg-neutral-300/10 text-neutral-300'
+          : 'bg-neutral-300/10 text-neutral-300 hover:border-neutral-300/20 focus:border-neutral-300/20 active:border-neutral-300/20'
+    }
+  }
+
   // Function to display status chips with counts
   const renderStatusChips = () => {
     const statusConfig: { status: string; label: string; color: 'green' | 'purple' | 'yellow' | 'red' | 'neutral' }[] =
@@ -99,31 +128,7 @@ export function PodHealthChips({ service }: { service: AnyService }) {
                     type="button"
                     className={twMerge(
                       'inline-flex h-5 w-6 items-center justify-center rounded-full border border-transparent text-ssm font-medium outline-none transition-colors duration-75',
-                      (() => {
-                        switch (color) {
-                          case 'green':
-                            return open
-                              ? 'border-green-500/20 bg-green-500/10 text-green-500'
-                              : 'bg-green-500/10 text-green-500 hover:border-green-500/20 focus:border-green-500/20 active:border-green-500/20'
-                          case 'purple':
-                            return open
-                              ? 'border-purple-400/20 bg-purple-400/10 text-[#CB1D63]'
-                              : 'bg-purple-400/10 text-[#CB1D63] hover:border-purple-400/20 focus:border-purple-400/20 active:border-purple-400/20'
-                          case 'yellow':
-                            return open
-                              ? 'border-yellow-400/20 bg-yellow-400/10 text-yellow-500'
-                              : 'bg-yellow-400/10 text-yellow-500 hover:border-yellow-400/20 focus:border-yellow-400/20 active:border-yellow-400/20'
-                          case 'red':
-                            return open
-                              ? 'border-red-500/20 bg-red-500/10 text-red-500'
-                              : 'bg-red-500/10 text-red-500 hover:border-red-500/20 focus:border-red-500/20 active:border-red-500/20'
-                          case 'neutral':
-                          default:
-                            return open
-                              ? 'border-neutral-300/20 bg-neutral-300/10 text-neutral-300'
-                              : 'bg-neutral-300/10 text-neutral-300 hover:border-neutral-300/20 focus:border-neutral-300/20 active:border-neutral-300/20'
-                        }
-                      })()
+                      getStatusChipClassNames(color, open)
                     )}
                   >
                     {count}

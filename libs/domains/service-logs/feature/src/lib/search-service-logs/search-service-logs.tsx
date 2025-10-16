@@ -13,25 +13,32 @@ function buildValueOptions(queryParams: DecodedValueMap<typeof queryParamsServic
   const options: Option[] = []
 
   if (queryParams.level) {
-    options.push({ value: `level:${queryParams.level}`, label: `level:${queryParams.level}` })
+    const value = `level:${queryParams.level}`
+    options.push({ value, label: value })
   }
   if (queryParams.instance) {
-    options.push({ value: `instance:${queryParams.instance}`, label: `instance:${queryParams.instance}` })
+    const value = `instance:${queryParams.instance}`
+    options.push({ value, label: value })
   }
   if (queryParams.container) {
-    options.push({ value: `container:${queryParams.container}`, label: `container:${queryParams.container}` })
+    const value = `container:${queryParams.container}`
+    options.push({ value, label: value })
   }
   if (queryParams.version) {
-    options.push({ value: `version:${queryParams.version}`, label: `version:${queryParams.version}` })
+    const value = `version:${queryParams.version}`
+    options.push({ value, label: value })
   }
   if (queryParams.message) {
-    options.push({ value: `message:${queryParams.message}`, label: `message:${queryParams.message}` })
+    const value = `message:${queryParams.message}`
+    options.push({ value, label: value })
   }
   if (queryParams.nginx) {
-    options.push({ value: 'nginx:true', label: 'nginx:true' })
+    const value = 'nginx:true'
+    options.push({ value, label: value })
   }
   if (queryParams.search) {
-    options.push({ value: queryParams.search, label: queryParams.search })
+    const value = queryParams.search
+    options.push({ value, label: value })
   }
 
   return options
