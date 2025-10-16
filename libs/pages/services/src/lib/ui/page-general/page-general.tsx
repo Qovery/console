@@ -23,6 +23,8 @@ export function PageGeneral() {
     return false
   }, [cluster?.metrics_parameters?.enabled, cluster?.cloud_provider])
 
+  console.log('!hasMetrics', !hasMetrics)
+
   return (
     environment && (
       <>
