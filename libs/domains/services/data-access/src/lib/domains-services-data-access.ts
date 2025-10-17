@@ -12,7 +12,6 @@ import {
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
-  type CheckedCustomDomainResponse,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
@@ -78,7 +77,12 @@ import {
   type JobResponse as _Job,
   type TerraformResponse as _Terraform,
 } from 'qovery-typescript-axios'
-import { type ApplicationStatusDto, type DatabaseStatusDto, type ServiceMetricsDto } from 'qovery-ws-typescript-axios'
+import {
+  type ApplicationStatusDto,
+  type DatabaseStatusDto,
+  type ServiceMetricsDto,
+  type TerraformStatusDto,
+} from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
 
@@ -213,7 +217,7 @@ export const services = createQueryKeys('services', {
     // NOTE: Value is set by WebSocket
     queryFn() {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      return new Promise<ApplicationStatusDto | DatabaseStatusDto | null>(() => {})
+      return new Promise<ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto | null>(() => {})
     },
   }),
   checkRunningStatusClosed: (clusterId: string, environmentId: string) => ({
