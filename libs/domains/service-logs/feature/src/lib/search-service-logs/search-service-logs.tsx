@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { type DecodedValueMap } from 'serialize-query-params'
 import { useQueryParams } from 'use-query-params'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { MultipleSelector, type Option } from '@qovery/shared/ui'
+import { Kbd, MultipleSelector, type MultipleSelectorRef, type Option } from '@qovery/shared/ui'
+import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
@@ -96,6 +97,8 @@ export function SearchServiceLogs({
 }) {
   const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
   const [options, setOptions] = useState<Option[]>(buildValueOptions(queryParams))
+  const searchRef = useRef<MultipleSelectorRef>(null)
+  const metaKey = useFormatHotkeys('meta')
 
   const serviceType = service?.serviceType
 
@@ -115,6 +118,21 @@ export function SearchServiceLogs({
   useEffect(() => {
     setOptions(buildValueOptions(queryParams))
   }, [queryParams])
+
+  // Add keyboard shortcut for Cmd/Ctrl+F to focus the search
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'f') {
+        event.preventDefault()
+        searchRef.current?.focus()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   const handleChange = useCallback(
     (options: Option[]) => {
@@ -171,14 +189,23 @@ export function SearchServiceLogs({
   return (
     <div className="relative w-full">
       {isFetchedLevels && isFetchedInstances && (
-        <MultipleSelector
-          placeholder="Search logs…"
-          value={options}
-          defaultOptions={defaultFilters}
-          isLoading={isLoading}
-          freeTextInput
-          onChange={handleChange}
-        />
+        <>
+          <MultipleSelector
+            ref={searchRef}
+            placeholder="Search logs…"
+            value={options}
+            defaultOptions={defaultFilters}
+            isLoading={isLoading}
+            freeTextInput
+            onChange={handleChange}
+          />
+          {options.length === 0 && searchRef.current?.input?.value?.length === 0 && (
+            <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-1">
+              <Kbd className="w-4 items-center justify-center pt-[1px]">{metaKey}</Kbd>
+              <Kbd className="w-4 items-center justify-center text-2xs">F</Kbd>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
