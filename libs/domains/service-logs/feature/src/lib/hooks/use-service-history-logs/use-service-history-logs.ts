@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useQueryParams } from 'use-query-params'
 import { type ServiceLog, normalizeServiceLog, serviceLogs } from '@qovery/domains/service-logs/data-access'
+import { queries } from '@qovery/state/util-queries'
 import { queryParamsServiceLogs } from '../../list-service-logs/service-logs-context/service-logs-context'
 
 export interface UseServiceHistoryLogsProps {
@@ -13,6 +14,7 @@ export interface UseServiceHistoryLogsProps {
 const LOGS_PER_BATCH = 200
 
 export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }: UseServiceHistoryLogsProps) {
+  const queryClient = useQueryClient()
   const [queryParams] = useQueryParams(queryParamsServiceLogs)
 
   const [accumulatedLogs, setAccumulatedLogs] = useState<ServiceLog[]>([])
@@ -51,7 +53,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   const {
     data: logs = [],
     isFetched: isFetchedLogs,
-    isLoading: isLoadingLogs,
+    isFetching: isLoadingLogs,
   } = useQuery({
     keepPreviousData: true,
     ...serviceLogs.serviceLogs({
@@ -69,7 +71,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   const {
     data: nginxLogs = [],
     isFetched: isNginxFetched,
-    isLoading: isNginxLoading,
+    isFetching: isNginxLoading,
   } = useQuery({
     keepPreviousData: true,
     ...serviceLogs.serviceLogs({
@@ -142,7 +144,11 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     setHasMoreLogs(true)
     setAccumulatedLogs([])
     setIsPaginationLoading(false)
-  }, [clusterId, serviceId, startDate, endDate, queryParams])
+    // Invalidate all service logs queries
+    queryClient.invalidateQueries({
+      queryKey: queries.serviceLogs.serviceLogs._def,
+    })
+  }, [clusterId, serviceId, startDate, endDate, queryParams, filters, queryClient])
 
   // Set hasMoreLogs appropriately when we first get data
   useEffect(() => {

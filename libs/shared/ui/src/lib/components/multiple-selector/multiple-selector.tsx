@@ -725,7 +725,6 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                                   description={option.description}
                                   disabled={option.disable}
                                   onMouseDown={(e) => {
-                                    console.log('onMouseDown', option.value)
                                     e.preventDefault()
                                     e.stopPropagation()
                                   }}
