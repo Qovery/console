@@ -557,12 +557,13 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                     key={option.value}
                     className={twMerge(
                       clsx(
-                        'relative inline-flex h-7 cursor-default items-center whitespace-nowrap rounded bg-neutral-500 p-1 pe-6 text-sm text-neutral-50 transition-colors hover:bg-neutral-400 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+                        'relative inline-flex h-7 cursor-default items-center whitespace-nowrap rounded bg-neutral-500 py-1 pe-6 pl-2 text-sm text-neutral-50 transition-colors hover:bg-neutral-400 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
                         badgeClassName
                       )
                     )}
                     data-fixed={option.fixed}
                     data-disabled={disabled || undefined}
+                    aria-label="Edit"
                     onKeyDown={(e) => {
                       if (disabled) return
 
@@ -584,7 +585,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                   >
                     {option.label}
                     <button
-                      className="outline-hidden absolute right-0 top-[3px] flex size-6 items-center justify-center border border-transparent p-0 text-neutral-50 outline-none transition-colors hover:text-neutral-200"
+                      className="outline-hidden absolute right-[0.5px] flex h-7 w-6 cursor-pointer items-center justify-center border border-transparent p-0 text-neutral-50 outline-none transition-colors hover:text-neutral-200"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           handleUnselect(option)
@@ -601,7 +602,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
                       }}
                       aria-label="Remove"
                     >
-                      <Icon iconName="xmark" iconStyle="regular" />
+                      <Icon iconName="xmark" iconStyle="regular" className="relative top-[1.5px]" />
                     </button>
                   </span>
                 )
