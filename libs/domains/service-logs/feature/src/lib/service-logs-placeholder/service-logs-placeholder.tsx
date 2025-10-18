@@ -54,7 +54,7 @@ export function ServiceLogsPlaceholder({
     }, 10000)
     const loadingTimer = setTimeout(() => {
       setIsLoading(false)
-    }, 2000)
+    }, 4000)
     return () => {
       clearTimeout(timer)
       clearTimeout(loadingTimer)
@@ -119,7 +119,7 @@ export function ServiceLogsPlaceholder({
         )
     )
     .otherwise(() => {
-      if (!isLoading || isFetched) {
+      if (!isLoading && isFetched) {
         return (
           <>
             <p className="mb-1 text-neutral-50">No logs are available for {serviceName}.</p>

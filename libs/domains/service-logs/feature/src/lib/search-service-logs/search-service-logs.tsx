@@ -123,8 +123,10 @@ export function SearchServiceLogs({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'f') {
-        event.preventDefault()
-        searchRef.current?.focus()
+        if (document.activeElement !== searchRef.current?.input) {
+          event.preventDefault()
+          searchRef.current?.focus()
+        }
       }
     }
 

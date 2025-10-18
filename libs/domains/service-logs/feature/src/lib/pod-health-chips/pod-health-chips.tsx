@@ -8,11 +8,7 @@ import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function PodHealthChips({ service }: { service: AnyService }) {
-  const [open, setOpen] = useState(false)
-
-  const handleMouseEnter = () => setOpen(true)
-
-  const handleMouseLeave = () => setOpen(false)
+  const [openStatus, setOpenStatus] = useState<string | null>(null)
 
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
     environmentId: service?.environment.id,
@@ -120,15 +116,17 @@ export function PodHealthChips({ service }: { service: AnyService }) {
           const count = podsInStatus.length
           if (count === 0) return null
 
+          const isOpen = openStatus === status
+
           return (
-            <Popover.Root key={status} open={open} onOpenChange={setOpen}>
-              <Popover.Trigger onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <Popover.Root key={status} open={isOpen} onOpenChange={(open) => setOpenStatus(open ? status : null)}>
+              <Popover.Trigger onMouseEnter={() => setOpenStatus(status)} onMouseLeave={() => setOpenStatus(null)}>
                 <div className="-mx-2 p-2">
                   <button
                     type="button"
                     className={twMerge(
                       'inline-flex h-5 w-6 items-center justify-center rounded-full border border-transparent text-ssm font-medium outline-none transition-colors duration-75',
-                      getStatusChipClassNames(color, open)
+                      getStatusChipClassNames(color, isOpen)
                     )}
                   >
                     {count}
@@ -138,15 +136,15 @@ export function PodHealthChips({ service }: { service: AnyService }) {
               <Popover.Content
                 className="w-60 p-3"
                 onOpenAutoFocus={(e) => e.preventDefault()}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+                onMouseEnter={() => setOpenStatus(status)}
+                onMouseLeave={() => setOpenStatus(null)}
                 sideOffset={0}
               >
                 <div className="space-y-2">
                   <p className="text-sm">
                     {count} {pluralize(count, 'instance', 'instances')} {label}:
                   </p>
-                  <div className="flex gap-1">
+                  <div className="flex flex-wrap gap-1">
                     {podsInStatus.map((pod, index) => (
                       <Tooltip key={pod.podName + index} content={pod.podName} side="bottom">
                         <Popover.Close>
