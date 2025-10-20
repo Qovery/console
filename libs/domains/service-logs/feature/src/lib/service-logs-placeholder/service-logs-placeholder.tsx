@@ -91,11 +91,11 @@ export function ServiceLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col gap-1">
           <p className="text-neutral-50">
-            {hasFilters ? 'No logs found for the selected filters.' : `No logs are available for ${serviceName}.`}
+            {hasFilters ? 'No logs found for the selected filters' : `No logs are available for ${serviceName}`}
           </p>
           {databaseMode === DatabaseModeEnum.MANAGED && (
             <p className="text-sm text-neutral-350">
-              Managed databases are handled by your cloud provider. Logs are accessible in your cloud provider console.
+              Managed databases are handled by your cloud provider. Logs are accessible in your cloud provider console
             </p>
           )}
         </div>
@@ -146,11 +146,14 @@ export function ServiceLogsPlaceholder({
           <div className="flex flex-col items-center justify-center gap-4 text-center">
             <div className="flex flex-col gap-0.5">
               {hasFilters ? (
-                <p className="text-neutral-50">No logs found for the selected filters.</p>
+                <div className="flex flex-col gap-0.5">
+                  <p className="text-neutral-50">No logs found for the selected filters for now</p>
+                  <p className="text-sm text-neutral-350">Live logs will show up here once they're available</p>
+                </div>
               ) : (
                 <div className="flex flex-col gap-0.5">
-                  <p className="text-neutral-50">No logs are available for {serviceName}.</p>
-                  <p className="text-sm text-neutral-350">Please check the service configuration.</p>
+                  <p className="text-neutral-50">No logs are available for {serviceName}</p>
+                  <p className="text-sm text-neutral-350">Please check the service configuration</p>
                 </div>
               )}
             </div>
