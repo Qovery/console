@@ -2,6 +2,7 @@ import { type Healthcheck, type ServicePort } from 'qovery-typescript-axios'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { type PortData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, EmptyState, Heading, Icon, IconAwesomeEnum, Section, Tooltip } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { isMatchingHealthCheck } from '../../utils/port-healthcheck'
 
 export interface FlowCreatePortProps {
@@ -62,7 +63,9 @@ export function FlowCreatePort({
                   className="grid w-full grid-cols-[auto_80px] items-center gap-4 border-b border-neutral-250 px-5 py-4 last:border-0"
                   data-testid="form-row"
                 >
-                  <div className="grid w-full grid-cols-[20px_1fr] gap-4">
+                  <div
+                    className={twMerge('grid w-full gap-4', healthchecks ? 'grid-cols-[20px_1fr]' : 'grid-cols-[1fr]')}
+                  >
                     {healthchecks &&
                       (isMatchingHealthCheck(customPort, livenessType) ||
                       isMatchingHealthCheck(customPort, readinessType) ? (

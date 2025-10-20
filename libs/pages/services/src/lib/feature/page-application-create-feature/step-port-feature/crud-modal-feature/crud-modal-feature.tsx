@@ -49,6 +49,8 @@ export function CrudModalFeature({
       is_public: data['publicly_accessible'] || false,
       protocol: data['protocol'] || PortProtocolEnum.HTTP,
       name: data['name'] || `p${data['internal_port']}`,
+      public_path: data['public_path'],
+      public_path_rewrite: data['public_path_rewrite'],
     }
 
     const fakeLoading = () => {
