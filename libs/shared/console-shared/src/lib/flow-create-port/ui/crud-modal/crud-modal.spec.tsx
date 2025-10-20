@@ -88,7 +88,7 @@ describe('CrudModal', () => {
   })
 
   it('should warn when port is used as healthcheck', async () => {
-    render(
+    const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(
         <CrudModal {...props} currentProtocol={PortProtocolEnum.HTTP} isMatchingHealthCheck={true} />,
         {
@@ -103,7 +103,15 @@ describe('CrudModal', () => {
     )
     // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(await screen.findByRole('button', { name: /create/i })).toBeInTheDocument()
-    screen.getByText('The health check will be updated to use the new port value.')
+    const warningText = 'The health check will be updated to use the new port value.'
+    // Initial state: no warning
+    expect(screen.queryByText(warningText)).not.toBeInTheDocument()
+    // Find the port input and update its value
+    const portInput = screen.getByTestId('internal-port')
+    await userEvent.clear(portInput)
+    await userEvent.type(portInput, '100')
+    // New state: warning
+    expect(screen.queryByText(warningText)).toBeInTheDocument()
   })
 
   it('should warn when port is used as healthcheck and protocol change', async () => {

@@ -341,8 +341,8 @@ export function CrudModal({
           </Callout.Text>
         </Callout.Root>
       )}
-      {isMatchingHealthCheck && currentProtocol === watchProtocol && (
-        <Callout.Root className="mt-4" color="yellow">
+      {isMatchingHealthCheck && currentProtocol === watchProtocol && getFieldState('internal_port').isDirty && (
+        <Callout.Root className="mt-4" color="neutral">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
