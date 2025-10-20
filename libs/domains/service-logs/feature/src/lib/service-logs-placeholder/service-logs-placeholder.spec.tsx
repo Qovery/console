@@ -1,6 +1,6 @@
 import { DatabaseModeEnum, StateEnum } from 'qovery-typescript-axios'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceLogsPlaceholder } from './service-logs-placeholder'
 
 jest.mock('@qovery/domains/services/feature', () => ({
@@ -28,7 +28,7 @@ describe('ServiceLogsPlaceholder', () => {
     expect(screen.getByText('Service logs are loading…')).toBeInTheDocument()
   })
 
-  it('renders no logs message when fetched', () => {
+  it('renders no logs message when fetched', async () => {
     mockUseDeploymentStatus.mockReturnValue({
       data: { state: StateEnum.READY, execution_id: 'exec-123' },
     })
@@ -43,11 +43,17 @@ describe('ServiceLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByText(/No logs are available for/)).toBeInTheDocument()
-    expect(screen.getByText(/my-app/)).toBeInTheDocument()
+    // Wait for the expected content to appear
+    await waitFor(
+      () => {
+        expect(screen.getByText(/No logs are available for/)).toBeInTheDocument()
+        expect(screen.getByText(/my-app/)).toBeInTheDocument()
+      },
+      { timeout: 10000 }
+    )
   })
 
-  it('renders managed database message', () => {
+  it('renders managed database message', async () => {
     mockUseDeploymentStatus.mockReturnValue({
       data: { state: StateEnum.READY, execution_id: 'exec-123' },
     })
@@ -62,6 +68,12 @@ describe('ServiceLogsPlaceholder', () => {
       />
     )
 
-    expect(screen.getByText(/Managed databases are handled by your cloud provider/)).toBeInTheDocument()
+    // Wait for the expected content to appear
+    await waitFor(
+      () => {
+        expect(screen.getByText(/Managed databases are handled by your cloud provider/)).toBeInTheDocument()
+      },
+      { timeout: 10000 }
+    )
   })
 })
