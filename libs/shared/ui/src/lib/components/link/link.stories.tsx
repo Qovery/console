@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { IconAwesomeEnum } from '../icon/icon-awesome.enum'
 import { Link, type LinkProps } from './link'
 

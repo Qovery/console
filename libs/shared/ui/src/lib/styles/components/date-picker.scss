@@ -100,7 +100,7 @@
 }
 
 .date-picker--open {
-  animation-duration: $menuTiming;
+  animation-duration: 0.6s;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   animation-fill-mode: forwards;
 }

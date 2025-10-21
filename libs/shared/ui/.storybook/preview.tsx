@@ -10,6 +10,7 @@ const preview: Preview = {
       defaultValue: false, // Enable dark mode by default on all stories
     },
   },
+
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/']}>
@@ -26,6 +27,8 @@ const preview: Preview = {
       defaultTheme: 'light',
     }),
   ],
+
+  tags: ['autodocs'],
 }
 
 export default preview

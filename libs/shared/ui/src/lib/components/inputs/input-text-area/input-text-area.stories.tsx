@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { InputTextArea, type InputTextAreaProps } from './input-text-area'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Inputs/InputTextArea',
 } as Meta
 
-const Template: Story<InputTextAreaProps> = (args) => <InputTextArea {...args} />
+const Template: StoryFn<InputTextAreaProps> = (args) => <InputTextArea {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

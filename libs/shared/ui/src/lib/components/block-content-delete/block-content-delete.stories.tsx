@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import ModalProvider from '../modal/modal-root'
 import { BlockContentDelete, type BlockContentDeleteProps } from './block-content-delete'
@@ -8,7 +8,7 @@ export default {
   title: 'Composed Components/BlockContentDelete',
 } as Meta
 
-const Template: Story<BlockContentDeleteProps> = (args) => (
+const Template: StoryFn<BlockContentDeleteProps> = (args) => (
   <ModalProvider>
     <BlockContentDelete {...args} />
   </ModalProvider>

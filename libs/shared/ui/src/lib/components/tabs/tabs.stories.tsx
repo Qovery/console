@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import Icon from '../icon/icon'
 import { Tabs, type TabsProps } from './tabs'
 
@@ -7,7 +7,7 @@ export default {
   title: 'Tabs',
 } as Meta
 
-const Template: Story<TabsProps> = (args) => <Tabs {...args} />
+const Template: StoryFn<TabsProps> = (args) => <Tabs {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

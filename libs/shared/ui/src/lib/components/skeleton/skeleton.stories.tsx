@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import Button from '../button/button'
 import { Skeleton, type SkeletonProps } from './skeleton'
 
@@ -7,7 +7,7 @@ export default {
   title: 'Skeleton',
 } as Meta
 
-const Template: Story<SkeletonProps> = (args) => (
+const Template: StoryFn<SkeletonProps> = (args) => (
   <Skeleton {...args}>
     <Button type="button" size="lg">
       Not hidden by Skeleton

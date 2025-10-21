@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { Command } from './command-menu'
 
 const Story: Meta<typeof Command.Dialog> = {

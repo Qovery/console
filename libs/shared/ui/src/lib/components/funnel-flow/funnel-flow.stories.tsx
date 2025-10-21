@@ -1,4 +1,4 @@
-import { type ComponentMeta, type ComponentStory } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import FunnelFlowBody from '../funnel-flow-body/funnel-flow-body'
 import InputSelect from '../inputs/input-select/input-select'
 import { FunnelFlow } from './funnel-flow'
@@ -6,7 +6,7 @@ import { FunnelFlow } from './funnel-flow'
 export default {
   component: FunnelFlow,
   title: 'FunnelFlow/FunnelFlow',
-} as ComponentMeta<typeof FunnelFlow>
+} as Meta<typeof FunnelFlow>
 
 const children = (
   <FunnelFlowBody>
@@ -94,7 +94,7 @@ const children = (
   </FunnelFlowBody>
 )
 
-const Template: ComponentStory<typeof FunnelFlow> = (args) => <FunnelFlow {...args} />
+const Template: StoryFn<typeof FunnelFlow> = (args) => <FunnelFlow {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

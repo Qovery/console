@@ -1,4 +1,6 @@
+@use '../base/variable';
+
 // Transition
 .transition-timing {
-  transition-timing-function: $timing-cubic;
+  transition-timing-function: variable.$timing-cubic;
 }

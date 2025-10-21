@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import TagCommit, { type TagCommitProps } from './tag-commit'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Tag/TagCommit',
 } as Meta
 
-const Template: Story<TagCommitProps> = (args) => <TagCommit {...args} />
+const Template: StoryFn<TagCommitProps> = (args) => <TagCommit {...args} />
 
 export const Primary = Template.bind({})
 

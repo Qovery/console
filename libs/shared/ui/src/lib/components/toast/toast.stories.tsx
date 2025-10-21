@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { ToastEnum, toast } from '../../utils/toast'
 import Button from '../button/button'
 import { ToastBehavior, type ToastProps } from './toast'
@@ -14,7 +14,7 @@ export default {
   },
 } as Meta
 
-const Template: Story<ToastProps> = (args) => {
+const Template: StoryFn<ToastProps> = (args) => {
   return (
     <div>
       <Button

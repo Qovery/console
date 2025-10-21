@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { StateEnum, StepMetricStatusEnum } from 'qovery-typescript-axios'
 import { RunningState } from '@qovery/shared/enums'
 import { StatusChip, type StatusChipProps } from './status-chip'

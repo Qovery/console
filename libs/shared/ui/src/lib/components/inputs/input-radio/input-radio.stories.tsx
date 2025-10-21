@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { InputRadio, type InputRadioProps } from './input-radio'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Inputs/InputRadio',
 } as Meta
 
-const Template: Story<InputRadioProps> = (args) => <InputRadio {...args} />
+const Template: StoryFn<InputRadioProps> = (args) => <InputRadio {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

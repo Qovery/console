@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { InputSelectSmall, type InputSelectSmallProps } from './input-select-small'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Inputs/InputSelectSmall',
 } as Meta
 
-const Template: Story<InputSelectSmallProps> = (args) => <InputSelectSmall {...args} />
+const Template: StoryFn<InputSelectSmallProps> = (args) => <InputSelectSmall {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

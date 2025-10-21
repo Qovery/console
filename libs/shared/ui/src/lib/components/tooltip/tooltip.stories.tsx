@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { Tooltip, type TooltipProps } from './tooltip'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'Tooltip',
 } as Meta
 
-const Template: Story<TooltipProps> = (args) => (
+const Template: StoryFn<TooltipProps> = (args) => (
   <Tooltip {...args}>
     <span>hello</span>
   </Tooltip>

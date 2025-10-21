@@ -5,7 +5,7 @@ const config: StorybookConfig = {
 
   // '@nx/react/plugins/storybook' is provided by NX
   // eslint-disable-next-line storybook/no-uninstalled-addons
-  addons: ['@storybook/addon-essentials', '@storybook/addon-themes', '@nx/react/plugins/storybook'],
+  addons: ['@storybook/addon-themes', '@nx/react/plugins/storybook', '@storybook/addon-docs'],
 
   framework: {
     name: '@storybook/react-webpack5',
@@ -22,10 +22,6 @@ const config: StorybookConfig = {
     // https://storybook.js.org/docs/api/main-config-typescript#reactdocgen
     // https://github.com/storybookjs/storybook/issues/26496
     reactDocgen: 'react-docgen-typescript',
-  },
-
-  docs: {
-    autodocs: true,
   },
 }
 

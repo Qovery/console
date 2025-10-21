@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import Icon from '../../icon/icon'
 import { ButtonIconAction, type ButtonIconActionProps } from './button-icon-action'
 
@@ -7,7 +7,7 @@ export default {
   title: 'Buttons/ButtonIconAction',
 } as Meta
 
-const Template: Story<ButtonIconActionProps> = (args) => <ButtonIconAction {...args}></ButtonIconAction>
+const Template: StoryFn<ButtonIconActionProps> = (args) => <ButtonIconAction {...args}></ButtonIconAction>
 
 export const Primary = Template.bind({})
 Primary.args = {

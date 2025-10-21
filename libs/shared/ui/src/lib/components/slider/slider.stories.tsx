@@ -1,4 +1,4 @@
-import { type Meta, type Story } from '@storybook/react'
+import type { Meta, StoryFn } from '@storybook/react-webpack5'
 import { Slider, type SliderProps } from './slider'
 
 export default {
@@ -6,7 +6,7 @@ export default {
   title: 'inputs/Slider',
 } as Meta
 
-const Template: Story<SliderProps> = (args) => <Slider {...args} />
+const Template: StoryFn<SliderProps> = (args) => <Slider {...args} />
 
 export const Primary = Template.bind({})
 Primary.args = {

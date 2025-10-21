@@ -1,4 +1,4 @@
-import type { Meta } from '@storybook/react'
+import type { Meta } from '@storybook/react-webpack5'
 import { Heading } from '../heading/heading'
 import { Section } from './section'
 
