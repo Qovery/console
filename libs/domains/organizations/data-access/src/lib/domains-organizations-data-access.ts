@@ -760,4 +760,8 @@ export const mutations = {
     const response = await membersApi.postAcceptInviteMember(organizationId, inviteId)
     return response.data
   },
+  async changePlan({ organizationId, plan }: { organizationId: string; plan: string }) {
+    const response = await billingApi.changePlan(organizationId, { plan })
+    return response.data
+  },
 }
