@@ -13,6 +13,7 @@ import {
   APPLICATION_SETTINGS_PORT_URL,
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
+  APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
@@ -439,6 +440,13 @@ const mapping = {
       {
         link: 'https://hub.qovery.com/docs/using-qovery/configuration/helm/#delete-a-helm',
         label: 'How to delete my helm?',
+      },
+    ],
+  '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/terraform-arguments':
+    [
+      {
+        link: 'https://developer.hashicorp.com/terraform/cli/commands',
+        label: 'Terraform CLI documentation',
       },
     ],
   '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/general': [
@@ -999,6 +1007,9 @@ export function useContextualDocLinks() {
     CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL
   )
   const clusterSettingsDangerZoneURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_DANGER_ZONE_URL)
+  const terraformArgumentsURL = useMatch(
+    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL
+  )
 
   const matchingPattern =
     onBoardingPersonalizeURL ??
@@ -1083,7 +1094,8 @@ export function useContextualDocLinks() {
     clusterSettingsImageRegistryURL ??
     clusterSettingsNetworkURL ??
     clusterSettingsAdvancedSettingsURL ??
-    clusterSettingsDangerZoneURL
+    clusterSettingsDangerZoneURL ??
+    terraformArgumentsURL
   const patternPath = matchingPattern?.pattern.path
   if (patternPath && patternPath in mapping) {
     return mapping[patternPath as keyof typeof mapping]

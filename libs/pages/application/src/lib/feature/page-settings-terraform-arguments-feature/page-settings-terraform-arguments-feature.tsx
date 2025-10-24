@@ -3,47 +3,65 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
-import { type Terraform } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
+import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { Button, Heading, InputText, Section } from '@qovery/shared/ui'
 
 const DELIMETER = ' '
 const commands = [
   {
     name: 'init',
-    description: 'Initialize the Terraform working directory and download required providers.',
+    description: 'Prepare your working directory for other commands.',
+    hint: (
+      <div>
+        Example:{' '}
+        <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-lock=false -upgrade</code>.
+        Arguments are separated by a space.
+      </div>
+    ),
+  },
+  {
+    name: 'validate',
+    description: 'Check whether the configuration is valid.',
+    hint: (
+      <div>
+        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-json</code> or{' '}
+        <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-no-color</code>. Arguments are
+        separated by a space.
+      </div>
+    ),
   },
   {
     name: 'plan',
-    description: 'Generate an execution plan for the changes to be made to the infrastructure.',
+    description: 'Show changes required by the current configuration.',
+    hint: (
+      <div>
+        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-refresh=false</code>.
+        Arguments are separated by a space.
+      </div>
+    ),
   },
   {
     name: 'apply',
-    description: 'Apply the changes to the infrastructure.',
+    description: 'Create or update infrastructure.',
+    hint: (
+      <div>
+        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-auto-approve</code>.
+        Arguments are separated by a space.
+      </div>
+    ),
   },
   {
     name: 'destroy',
-    description: 'Destroy the infrastructure.',
+    description: 'Destroy previously-created infrastructure.',
+    hint: (
+      <div>
+        Example: <code className="rounded bg-neutral-150 px-1 py-0.5 text-2xs text-neutral-350">-target</code>.
+        Arguments are separated by a space.
+      </div>
+    ),
   },
 ]
-
-const transform = (service: Terraform) => {
-  console.log('🚀 ~ transform ~ service:', service)
-  console.log(
-    'commands',
-    commands.map((command) => command.name)
-  )
-
-  const map = new Map<string, string[]>()
-  commands.forEach((command) => {
-    map.set(command.name, service.action_extra_arguments?.[command.name] ?? [])
-  })
-
-  console.log('MAP', map)
-
-  // Transform the map to an object
-  return Object.fromEntries(map.entries())
-}
 
 export function PageSettingsTerraformArgumentsFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -57,7 +75,7 @@ export function PageSettingsTerraformArgumentsFeature() {
   const methods = useForm<TerraformGeneralData>({
     mode: 'onChange',
     defaultValues: match(service)
-      .with({ serviceType: 'TERRAFORM' }, (s) => ({ ...s, state: 'kubernetes', action_extra_arguments: transform(s) }))
+      .with({ serviceType: 'TERRAFORM' }, (s) => ({ ...s, state: 'kubernetes' }))
       .otherwise(() => ({})),
   })
 
@@ -98,12 +116,13 @@ export function PageSettingsTerraformArgumentsFeature() {
           <Section className="space-y-2">
             <Heading level={1}>Terraform arguments</Heading>
             <p className="text-sm text-neutral-350">Configure the arguments passed to each Terraform command.</p>
+            <NeedHelp />
           </Section>
 
           <Section className="gap-4">
             <div className="space-y-1">
               <Heading level={2}>Commands</Heading>
-              <p className="text-sm text-neutral-350">Specify any custom arguments to Terraform command.</p>
+              <p className="text-sm text-neutral-350">Specify additional arguments for each Terraform command.</p>
             </div>
 
             {commands.map((command) => (
@@ -118,10 +137,10 @@ export function PageSettingsTerraformArgumentsFeature() {
                   render={({ field }) => (
                     <InputText
                       name={field.name}
-                      value={field.value.join(DELIMETER)}
-                      onChange={(e) => field.onChange(e.target.value.split(DELIMETER))}
+                      value={field.value?.join(DELIMETER)}
+                      onChange={(e) => field.onChange(e.target.value.split(DELIMETER).filter((arg) => arg !== ''))}
                       label={`Arguments for ${command.name}`}
-                      hint="Expected format: -backend-config=path=terraform.tfstate"
+                      hint={command.hint}
                     />
                   )}
                 />
