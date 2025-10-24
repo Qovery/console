@@ -62,7 +62,26 @@ export function OnboardingProject() {
           },
         })
 
-        // Create initial project
+        console.log('Organization created successfully:', organization.id)
+
+        // Refresh token to get updated permissions for the new organization
+        // Use ignoreCache instead of cacheMode for better compatibility
+        try {
+          await getAccessTokenSilently({ ignoreCache: true })
+          console.log('Token refreshed successfully with new organization permissions')
+        } catch (tokenError) {
+          console.warn('Token refresh with ignoreCache failed, trying cacheMode off:', tokenError)
+          try {
+            await getAccessTokenSilently({ cacheMode: 'off' })
+            console.log('Token refreshed successfully with cacheMode off')
+          } catch (e) {
+            console.error('All token refresh attempts failed:', e)
+            // If we cannot refresh the token, we cannot proceed
+            throw new Error('Unable to refresh authentication token for new organization')
+          }
+        }
+
+        // Create initial project with the refreshed token
         const project = await createProject({
           organizationId: organization.id,
           projectRequest: {
@@ -71,15 +90,6 @@ export function OnboardingProject() {
         })
 
         console.log('Project created successfully:', project.id)
-
-        // Refresh token after both operations complete
-        // This ensures updated permissions are reflected before navigation
-        try {
-          await getAccessTokenSilently({ cacheMode: 'off' })
-          console.log('Token refreshed successfully after project creation')
-        } catch (tokenError) {
-          console.warn('Token refresh failed after project creation:', tokenError)
-        }
 
         // Redirect to the project page
         navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
