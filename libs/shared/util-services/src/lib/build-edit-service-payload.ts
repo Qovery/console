@@ -91,8 +91,52 @@ export function buildEditServicePayload(props: responseToRequestProps) {
 TODO: all this following functions should be removed after the API refactoring and we need to clean it after the Services migration to React Query
 https://www.notion.so/qovery/API-improvements-b54ba305c2ee4e549eb002278c532c7f?pvs=4#7d71ea23b5fa44ca80c15a0c32ebd8da
 */
-function refactoTerraform({ service, request = {} }: terraformProps) {
-  return { ...service, ...request }
+function refactoTerraform({ service, request = {} }: terraformProps): TerraformRequest {
+  console.log('🚀 ~ refactoTerraform ~ service:', service)
+  console.log('🚀 ~ refactoTerraform ~ request:', request)
+
+  // TODO [QOV-1250] Remove this comment once we're sure changes are working as expected
+
+  // const payload: TerraformRequest & { serviceType: 'TERRAFORM' } = {
+  //   ...service,
+  //   ...data,
+  //   serviceType: 'TERRAFORM',
+  //   description: service.description ?? '',
+  //   terraform_files_source: {
+  //     git_repository: {
+  //       url: service.terraform_files_source?.git?.git_repository?.url ?? '',
+  //       branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
+  //       git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
+  //     },
+  //   },
+  //   provider: 'TERRAFORM' as TerraformRequestProviderEnum,
+  //   timeout_sec: Number(service.timeout_sec),
+  //   terraform_variables_source: {
+  //     tf_vars: [],
+  //     tf_var_file_paths: [],
+  //   },
+  // }
+
+  return {
+    ...service,
+    ...request,
+    description: request.description ?? service.description ?? '',
+    terraform_files_source: {
+      git_repository: {
+        url: service.terraform_files_source?.git?.git_repository?.url ?? '',
+        branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
+        git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
+      },
+    },
+    timeout_sec: Number(request.timeout_sec ?? service.timeout_sec),
+    terraform_variables_source: {
+      tf_vars: [],
+      tf_var_file_paths:
+        request.terraform_variables_source?.tf_var_file_paths ??
+        service.terraform_variables_source?.tf_var_file_paths ??
+        [],
+    },
+  }
 }
 
 function refactoApplication({ service: application, request = {} }: applicationProps): ApplicationEditRequest {

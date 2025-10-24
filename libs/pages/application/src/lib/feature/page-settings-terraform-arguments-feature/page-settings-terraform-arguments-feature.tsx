@@ -1,11 +1,9 @@
-import { type TerraformRequest, type TerraformRequestProviderEnum } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
-import { match } from 'ts-pattern'
-import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
 import { Button, Heading, InputText, Section } from '@qovery/shared/ui'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 const DELIMETER = ' '
 const commands = [
@@ -72,35 +70,34 @@ export function PageSettingsTerraformArgumentsFeature() {
     environmentId,
   })
 
-  const methods = useForm<TerraformGeneralData>({
+  const defaultValues = Object.fromEntries(
+    commands.map((command) => [
+      command.name,
+      service && 'action_extra_arguments' in service ? service.action_extra_arguments?.[command.name] ?? [] : [],
+    ])
+  )
+
+  const methods = useForm<Record<string, string[]>>({
     mode: 'onChange',
-    defaultValues: match(service)
-      .with({ serviceType: 'TERRAFORM' }, (s) => ({ ...s, state: 'kubernetes' }))
-      .otherwise(() => ({})),
+    defaultValues,
   })
 
   const onSubmit = methods.handleSubmit((data) => {
     if (!service || !data) return
 
     if (service.serviceType === 'TERRAFORM') {
-      const payload: TerraformRequest & { serviceType: 'TERRAFORM' } = {
-        ...service,
-        ...data,
-        serviceType: 'TERRAFORM',
-        terraform_files_source: {
-          git_repository: {
-            url: service.terraform_files_source?.git?.git_repository?.url ?? '',
-            branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
-            git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
+      const payload = buildEditServicePayload({
+        service,
+        request: {
+          action_extra_arguments: {
+            init: data['init'] ?? [],
+            validate: data['validate'] ?? [],
+            plan: data['plan'] ?? [],
+            apply: data['apply'] ?? [],
+            destroy: data['destroy'] ?? [],
           },
         },
-        provider: 'TERRAFORM' as TerraformRequestProviderEnum,
-        timeout_sec: Number(data.timeout_sec),
-        terraform_variables_source: {
-          tf_vars: [],
-          tf_var_file_paths: [],
-        },
-      }
+      })
 
       editService({
         serviceId: service.id,
@@ -132,7 +129,7 @@ export function PageSettingsTerraformArgumentsFeature() {
                   <p className="text-sm text-neutral-350">{command.description}</p>
                 </div>
                 <Controller
-                  name={`action_extra_arguments.${command.name}`}
+                  name={`${command.name}`}
                   control={methods.control}
                   render={({ field }) => (
                     <InputText
