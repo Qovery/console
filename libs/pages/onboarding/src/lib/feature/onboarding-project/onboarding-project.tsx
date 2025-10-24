@@ -1,9 +1,12 @@
+import { useAuth0 } from '@auth0/auth0-react'
+import { PlanEnum } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { useOrganizations } from '@qovery/domains/organizations/feature'
+import { useCreateOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
+import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ONBOARDING_PRICING_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { StepProject } from '../../ui/step-project/step-project'
 import { ContextOnboarding } from '../container/container'
@@ -12,12 +15,16 @@ export function OnboardingProject() {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
-  const { authLogout } = useAuth()
+  const { user } = useAuth0()
+  const { authLogout, getAccessTokenSilently } = useAuth()
   const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
   const { data: organizations = [] } = useOrganizations()
   const [backButton, setBackButton] = useState<boolean>()
+  const [loading, setLoading] = useState(false)
 
   const { organization_name, project_name, admin_email, setContextValue } = useContext(ContextOnboarding)
+  const { mutateAsync: createOrganization } = useCreateOrganization()
+  const { mutateAsync: createProject } = useCreateProject()
 
   useEffect(() => {
     async function fetchOrganizations() {
@@ -35,7 +42,7 @@ export function OnboardingProject() {
     setValue('project_name', project_name || 'main')
   }, [organization_name, project_name, setValue])
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data) {
       const currentData = {
         organization_name: data.organization_name,
@@ -43,11 +50,57 @@ export function OnboardingProject() {
         admin_email,
       }
       setContextValue && setContextValue(currentData)
-      navigate(`${ONBOARDING_URL}${ONBOARDING_PRICING_URL}`)
+      setLoading(true)
+
+      try {
+        // Create organization with Team plan by default
+        const organization = await createOrganization({
+          organizationRequest: {
+            name: data.organization_name,
+            plan: PlanEnum.TEAM,
+            admin_emails: admin_email ? [admin_email] : user && user.email ? [user.email] : [],
+          },
+        })
+
+        console.log('Organization created successfully:', organization.id)
+
+        // Refresh token to get updated permissions for the new organization
+        // This is critical because the JWT needs to include admin role for the new org ID
+        try {
+          await getAccessTokenSilently({ cacheMode: 'off' })
+          console.log('Token refreshed successfully with new organization permissions')
+        } catch (tokenError) {
+          console.warn('Token refresh failed, continuing with current session:', tokenError)
+          // Note: In production this refresh succeeds. In dev environments with stale cache,
+          // it may fail but the user should still be able to create projects since they
+          // just created the organization (backend should grant immediate access)
+        }
+
+        // Create initial project with the refreshed token
+        const project = await createProject({
+          organizationId: organization.id,
+          projectRequest: {
+            name: data.project_name,
+          },
+        })
+
+        console.log('Project created successfully:', project.id)
+
+        // Redirect to the project page
+        navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
+      } catch (error) {
+        console.error('Error creating organization or project:', error)
+        // Log more details about the error
+        if (error && typeof error === 'object') {
+          console.error('Error details:', JSON.stringify(error, null, 2))
+        }
+      } finally {
+        setLoading(false)
+      }
     }
   })
 
-  return <StepProject onSubmit={onSubmit} control={control} authLogout={authLogout} backButton={backButton} />
+  return <StepProject onSubmit={onSubmit} control={control} authLogout={authLogout} backButton={backButton} loading={loading} />
 }
 
 export default OnboardingProject

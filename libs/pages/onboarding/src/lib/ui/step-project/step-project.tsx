@@ -11,10 +11,11 @@ export interface StepProjectProps {
   }>
   authLogout: () => void
   backButton?: boolean
+  loading?: boolean
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control, authLogout, backButton } = props
+  const { onSubmit, control, authLogout, backButton, loading } = props
   const navigate = useNavigate()
 
   return (
@@ -27,7 +28,7 @@ export function StepProject(props: StepProjectProps) {
       </h1>
       <p className="mb-10 text-sm text-neutral-400">
         You will now create your Organization and a first project within it. Both the Organization and Project name can
-        be edited afterwards.
+        be edited afterwards. Your organization will be created with the Team plan by default.
       </p>
       <form onSubmit={onSubmit}>
         <Controller
@@ -95,8 +96,8 @@ export function StepProject(props: StepProjectProps) {
               Back
             </Button>
           )}
-          <Button type="submit" size="lg">
-            Continue
+          <Button type="submit" size="lg" loading={loading} disabled={loading}>
+            {loading ? 'Creating Organization...' : 'Continue'}
           </Button>
         </div>
       </form>
