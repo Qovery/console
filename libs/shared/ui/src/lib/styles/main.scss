@@ -1,5 +1,6 @@
 @use 'sass:meta';
 @use 'base/variable';
+@use 'base/themes';
 @import '@awesome.me/kit-c4457d1be4/icons/css/fontawesome.css';
 @import '@awesome.me/kit-c4457d1be4/icons/css/solid.css';
 @import '@awesome.me/kit-c4457d1be4/icons/css/regular.css';
@@ -9,6 +10,7 @@
 @tailwind base;
 @tailwind utilities;
 
+// Old colors variables
 :root {
   --color-neutral-50: theme('colors.neutral.50');
   --color-neutral-100: theme('colors.neutral.100');
