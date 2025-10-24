@@ -26,7 +26,7 @@ describe('SearchServiceLogs', () => {
       <SearchServiceLogs clusterId="cluster-1" serviceId="service-1" isLoading={false} />
     )
 
-    expect(container.querySelector('input[placeholder="Search logs…"]')).toBeInTheDocument()
+    expect(container.querySelector('input[placeholder="Search logs and filter by message…"]')).toBeInTheDocument()
   })
 
   it('does not render until data is fetched', () => {

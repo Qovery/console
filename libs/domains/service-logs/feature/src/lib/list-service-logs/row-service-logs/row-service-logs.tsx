@@ -37,7 +37,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
 
   const serviceType = service?.serviceType
 
-  const isNginx = log.instance?.includes('nginx')
+  const isNginx = log.app?.includes('ingress-nginx')
 
   const { updateTimeContextValue } = useServiceLogsContext()
   const { utc } = updateTimeContextValue

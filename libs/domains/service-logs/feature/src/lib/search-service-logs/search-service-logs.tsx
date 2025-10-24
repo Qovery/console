@@ -177,11 +177,6 @@ export function SearchServiceLogs({
         ]
       : []),
     {
-      value: 'message:',
-      label: 'message:',
-      description: '[what you want to search for]',
-    },
-    {
       value: 'nginx:true',
       label: 'nginx:true',
       description: '[activate nginx logs]',
@@ -194,7 +189,7 @@ export function SearchServiceLogs({
         <>
           <MultipleSelector
             ref={searchRef}
-            placeholder="Search logs…"
+            placeholder="Search logs and filter by message…"
             value={options}
             defaultOptions={defaultFilters}
             isLoading={isLoading}
