@@ -97,11 +97,17 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
               }
             }}
           >
-            <Icon
-              iconName={isLiveMode ? 'circle-stop' : 'circle-play'}
-              iconStyle="regular"
-              className="relative top-[1px]"
-            />
+            <span className="relative block h-3.5 w-3.5">
+              {isLiveMode ? (
+                <Icon iconName="loader" iconStyle="regular" className="absolute left-0 animate-spin" />
+              ) : (
+                <Icon
+                  iconName={isLiveMode ? 'circle-stop' : 'circle-play'}
+                  iconStyle="regular"
+                  className="absolute left-0 top-[1px]"
+                />
+              )}
+            </span>
             Live
           </Button>
           <DatePicker

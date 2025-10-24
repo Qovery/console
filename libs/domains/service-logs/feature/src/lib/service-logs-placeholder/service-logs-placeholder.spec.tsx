@@ -66,7 +66,7 @@ describe('ServiceLogsPlaceholder', () => {
         />
       )
 
-      expect(screen.getByText('No logs are available for my-db')).toBeInTheDocument()
+      expect(screen.getByText('No logs are available for your service my-db')).toBeInTheDocument()
       expect(
         screen.getByText(
           'Managed databases are handled by your cloud provider. Logs are accessible in your cloud provider console'
@@ -114,7 +114,7 @@ describe('ServiceLogsPlaceholder', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('No logs are available for my-app')).toBeInTheDocument()
+        expect(screen.getByText('No logs are available for your service my-app')).toBeInTheDocument()
         expect(screen.getByText('Please check the service configuration')).toBeInTheDocument()
       })
     })
@@ -230,7 +230,7 @@ describe('ServiceLogsPlaceholder', () => {
       })
 
       await waitFor(() => {
-        expect(screen.getByText('No logs are available for my-app')).toBeInTheDocument()
+        expect(screen.getByText('No logs are available for your service my-app')).toBeInTheDocument()
       })
     })
   })
