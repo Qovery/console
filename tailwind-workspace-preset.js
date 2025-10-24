@@ -254,6 +254,105 @@ module.exports = {
         },
         zink: colorsZinc,
         neutral: colorsZinc,
+        background: {
+          default: '--background-1',
+          secondary: '--background-2',
+          overlay: '--background-overlay',
+        },
+        surface: {
+          neutral: {
+            default: 'var(--neutral-1)',
+            subtle: 'var(--neutral-2)',
+            component: 'var(--neutral-3)',
+            componentHover: 'var(--neutral-4)',
+            componentActive: 'var(--neutral-5)',
+            solid: 'var(--neutral-9)',
+            invert: 'var(--neutral-12)',
+          },
+          brand: {
+            solid: 'var(--brand-9)',
+            component: 'var(--brand-3)',
+            subtle: 'var(--brand-2)',
+          },
+          negative: {
+            solid: 'var(--negative-9)',
+            component: 'var(--negative-3)',
+            subtle: 'var(--negative-2)',
+          },
+          positive: {
+            solid: 'var(--positive-9)',
+            component: 'var(--positive-3)',
+            subtle: 'var(--positive-2)',
+          },
+          warning: {
+            solid: 'var(--warning-9)',
+            component: 'var(--warning-3)',
+            subtle: 'var(--warning-2)',
+          },
+          info: {
+            solid: 'var(--info-9)',
+            component: 'var(--info-3)',
+            subtle: 'var(--info-2)',
+          },
+          accent1: {
+            solid: 'var(--accent-9)',
+            component: 'var(--accent-3)',
+          },
+        },
+        text: {
+          neutral: {
+            default: 'var(--neutral-12)',
+            subtle: 'var(--neutral-11)',
+            disabled: 'var(--neutral-10)',
+            contrasted: 'var(--contrast)',
+          },
+          neutralInvert: {
+            contrasted: 'var(--contrast-inverted)',
+            default: 'var(--neutral-1)',
+          },
+          brand: { base: 'var(--brand-11)' },
+          info: { primary: 'var(--info-11)' },
+          positive: { primary: 'var(--positive-11)' },
+          negative: { primary: 'var(--negative-11)' },
+          warning: { primary: 'var(--warning-11)' },
+          accent1: { primary: 'var(--accent-11)' },
+        },
+        border: {
+          neutral: {
+            default: 'var(--neutral-6)',
+            component: 'var(--neutral-7)',
+            strong: 'var(--neutral-9)',
+          },
+          brand: {
+            strong: 'var(--brand-9)',
+            component: 'var(--brand-a7)',
+            subtle: 'var(--brand-6)',
+          },
+          info: {
+            strong: 'var(--info-9)',
+            component: 'var(--info-a7)',
+            subtle: 'var(--info-6)',
+          },
+          positive: {
+            strong: 'var(--positive-9)',
+            component: 'var(--positive-a7)',
+            subtle: 'var(--positive-6)',
+          },
+          negative: {
+            strong: 'var(--negative-9)',
+            component: 'var(--negative-a7)',
+            subtle: 'var(--negative-6)',
+          },
+          warning: {
+            strong: 'var(--warning-9)',
+            component: 'var(--warning-a7)',
+            subtle: 'var(--warning-6)',
+          },
+          accent1: {
+            strong: 'var(--accent-9)',
+            subtle: 'var(--accent-6)',
+          },
+        },
       },
       animation: {
         'action-bar-fade-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards actionBarFadeIn',
