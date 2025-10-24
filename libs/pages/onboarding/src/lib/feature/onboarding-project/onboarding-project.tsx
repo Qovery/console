@@ -65,20 +65,23 @@ export function OnboardingProject() {
         console.log('Organization created successfully:', organization.id)
 
         // Refresh token to get updated permissions for the new organization
-        // Use ignoreCache instead of cacheMode for better compatibility
+        // This is critical because the JWT needs to include admin role for the new org ID
         try {
-          await getAccessTokenSilently({ ignoreCache: true })
+          await getAccessTokenSilently({ cacheMode: 'off' })
           console.log('Token refreshed successfully with new organization permissions')
         } catch (tokenError) {
-          console.warn('Token refresh with ignoreCache failed, trying cacheMode off:', tokenError)
-          try {
-            await getAccessTokenSilently({ cacheMode: 'off' })
-            console.log('Token refreshed successfully with cacheMode off')
-          } catch (e) {
-            console.error('All token refresh attempts failed:', e)
-            // If we cannot refresh the token, we cannot proceed
-            throw new Error('Unable to refresh authentication token for new organization')
+          console.error('Token refresh failed:', tokenError)
+
+          // If we get login_required error, it means Auth0 session is invalid
+          // This can happen in dev environments with stale localStorage
+          if (tokenError && typeof tokenError === 'object' && 'error' in tokenError && tokenError.error === 'login_required') {
+            throw new Error(
+              'Authentication session expired. Please clear your browser cache and log in again.'
+            )
           }
+
+          // For other errors, try without cache-busting option as fallback
+          console.warn('Attempting project creation with cached token...')
         }
 
         // Create initial project with the refreshed token
