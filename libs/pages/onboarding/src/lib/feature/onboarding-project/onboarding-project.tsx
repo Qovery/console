@@ -63,9 +63,20 @@ export function OnboardingProject() {
         })
 
         // Refresh token needed after created an organization
-        // Store the token to ensure Auth0 cache is properly updated
-        const token = await getAccessTokenSilently({ cacheMode: 'off' })
-        console.log('Token refreshed after organization creation:', token ? 'Success' : 'Failed')
+        // Try to refresh the token, but if it fails (login_required), continue anyway
+        try {
+          await getAccessTokenSilently({ cacheMode: 'off' })
+          console.log('Token refreshed successfully after organization creation')
+        } catch (tokenError) {
+          console.warn('Token refresh failed, but continuing with project creation:', tokenError)
+          // If token refresh fails, try without cache mode off
+          try {
+            await getAccessTokenSilently()
+            console.log('Token retrieved from cache successfully')
+          } catch (e) {
+            console.error('Failed to get token even from cache:', e)
+          }
+        }
 
         // Create initial project
         const project = await createProject({
