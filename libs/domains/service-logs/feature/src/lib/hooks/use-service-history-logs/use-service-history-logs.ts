@@ -21,6 +21,8 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
   const [currentEndDate, setCurrentEndDate] = useState<Date | null>(null)
   const [hasMoreLogs, setHasMoreLogs] = useState(true)
   const [isPaginationLoading, setIsPaginationLoading] = useState(false)
+  // Counter to force re-accumulation when reset occurs (handles React Query cache returning same data reference)
+  const [resetCounter, setResetCounter] = useState(0)
 
   const startDate = useMemo(
     () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
@@ -91,7 +93,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
 
   // Accumulate logs when new data arrives
   useEffect(() => {
-    if (isFetched && logs.length > 0) {
+    if (isFetched && (logs.length > 0 || nginxLogs.length > 0)) {
       setAccumulatedLogs((prev) => {
         const existingTimestamps = new Set(prev.map((log) => log.timestamp))
         const newLogs = logs.filter((log) => !existingTimestamps.has(log.timestamp))
@@ -100,7 +102,7 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
       })
       setIsPaginationLoading(false)
     }
-  }, [isFetched, logs, nginxLogs])
+  }, [isFetched, logs, nginxLogs, resetCounter])
 
   // Check if we have no more logs to load
   useEffect(() => {
@@ -144,11 +146,14 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     setHasMoreLogs(true)
     setAccumulatedLogs([])
     setIsPaginationLoading(false)
+    // Increment counter to trigger re-accumulation of cached logs
+    setResetCounter((prev) => prev + 1)
+
     // Invalidate all service logs queries
     queryClient.invalidateQueries({
       queryKey: queries.serviceLogs.serviceLogs._def,
     })
-  }, [clusterId, serviceId, startDate, endDate, queryParams, filters, queryClient])
+  }, [clusterId, serviceId, startDate, endDate, filters, queryClient])
 
   // Set hasMoreLogs appropriately when we first get data
   useEffect(() => {

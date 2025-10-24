@@ -1,4 +1,5 @@
-import { subDays } from 'date-fns'
+import clsx from 'clsx'
+import { subDays, subHours } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useQueryParams } from 'use-query-params'
@@ -81,15 +82,28 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
             variant="surface"
             color={isLiveMode ? 'brand' : 'neutral'}
             size="md"
-            className="gap-1.5"
+            className={clsx('gap-1.5 pl-2.5', {
+              'bg-brand-500/10 hover:!bg-brand-500/20 focus:!bg-brand-500/20': isLiveMode,
+            })}
             onClick={() => {
               if (!isLiveMode) {
                 setQueryParams({ startDate: undefined, endDate: undefined })
+              } else {
+                const now = new Date()
+                setQueryParams({
+                  startDate: subHours(now, 1),
+                  endDate: now,
+                })
               }
             }}
-            disabled={!startDate || !endDate}
           >
-            <Icon iconName="circle-play" iconStyle="regular" className="relative top-[1px]" />
+            <span className="relative block h-3.5 w-3.5">
+              {isLiveMode ? (
+                <Icon iconName="loader" iconStyle="regular" className="absolute left-0 animate-spin" />
+              ) : (
+                <Icon iconName="circle-play" iconStyle="regular" className="absolute left-0 top-[1px]" />
+              )}
+            </span>
             Live
           </Button>
           <DatePicker

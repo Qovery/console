@@ -1,4 +1,5 @@
 import {
+  DatabaseModeEnum,
   type DeploymentHistoryEnvironmentV2,
   type Environment,
   type EnvironmentStatus,
@@ -62,6 +63,10 @@ export function HeaderLogs({
     () => !!queryParams.startDate || !!queryParams.endDate,
     [queryParams.startDate, queryParams.endDate]
   )
+
+  const isManagedDatabase = useMemo(() => {
+    return service?.serviceType === 'DATABASE' && service?.mode === DatabaseModeEnum.MANAGED
+  }, [service])
 
   if (!service) return null
 
@@ -131,7 +136,7 @@ export function HeaderLogs({
               </span>
             </>
           )}
-          {!isNotDeployedOrStopped && (
+          {!isNotDeployedOrStopped && !isManagedDatabase && filteredLinks.length > 0 && (
             <>
               <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                 <circle cx="2.5" cy="2.955" r="2.5" fill="#383E50"></circle>

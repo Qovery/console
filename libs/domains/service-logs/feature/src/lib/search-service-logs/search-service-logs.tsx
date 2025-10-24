@@ -192,7 +192,6 @@ export function SearchServiceLogs({
             placeholder="Search logs and filter by message…"
             value={options}
             defaultOptions={defaultFilters}
-            isLoading={isLoading}
             freeTextInput
             onChange={handleChange}
           />
