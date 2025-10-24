@@ -101,11 +101,7 @@ export function HeaderServiceLogs({ logs, isLoading }: HeaderServiceLogsProps) {
               {isLiveMode ? (
                 <Icon iconName="loader" iconStyle="regular" className="absolute left-0 animate-spin" />
               ) : (
-                <Icon
-                  iconName={isLiveMode ? 'circle-stop' : 'circle-play'}
-                  iconStyle="regular"
-                  className="absolute left-0 top-[1px]"
-                />
+                <Icon iconName="circle-play" iconStyle="regular" className="absolute left-0 top-[1px]" />
               )}
             </span>
             Live
