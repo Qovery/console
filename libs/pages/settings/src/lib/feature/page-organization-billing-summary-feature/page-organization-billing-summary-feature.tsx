@@ -1,8 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { useCreditCards, useCurrentCost } from '@qovery/domains/organizations/feature'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import { useModal } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import PageOrganizationBillingSummary from '../../ui/page-organization-billing-summary/page-organization-billing-summary'
+import PlanSelectionModalFeature from './plan-selection-modal-feature/plan-selection-modal-feature'
 import PromoCodeModalFeature from './promo-code-modal-feature/promo-code-modal-feature'
 import ShowUsageModalFeature from './show-usage-modal-feature/show-usage-modal-feature'
 
@@ -16,6 +18,7 @@ export function PageOrganizationBillingSummaryFeature() {
   const { data: creditCards = [], isLoading: isLoadingCreditCards } = useCreditCards({ organizationId })
   const { data: currentCost } = useCurrentCost({ organizationId })
   const { showChat } = useSupportChat()
+  const { isQoveryAdminUser } = useUserRole()
 
   const openPromoCodeModal = () => {
     openModal({
@@ -29,6 +32,26 @@ export function PageOrganizationBillingSummaryFeature() {
     })
   }
 
+  const openPlanSelectionModal = () => {
+    openModal({
+      content: (
+        <PlanSelectionModalFeature
+          closeModal={closeModal}
+          organizationId={organizationId}
+          currentPlan={currentCost?.plan}
+        />
+      ),
+    })
+  }
+
+  const handleChangePlanClick = () => {
+    if (isQoveryAdminUser) {
+      openPlanSelectionModal()
+    } else {
+      showChat()
+    }
+  }
+
   return (
     <PageOrganizationBillingSummary
       currentCost={currentCost}
@@ -36,7 +59,7 @@ export function PageOrganizationBillingSummaryFeature() {
       creditCardLoading={isLoadingCreditCards}
       onPromoCodeClick={openPromoCodeModal}
       onShowUsageClick={openShowUsageModal}
-      openIntercom={showChat}
+      onChangePlanClick={handleChangePlanClick}
     />
   )
 }

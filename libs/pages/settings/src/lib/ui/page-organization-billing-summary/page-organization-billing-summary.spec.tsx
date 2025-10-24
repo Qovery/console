@@ -15,7 +15,7 @@ const props: PageOrganizationBillingSummaryProps = {
   },
   onPromoCodeClick: jest.fn(),
   onShowUsageClick: jest.fn(),
-  openIntercom: jest.fn(),
+  onChangePlanClick: jest.fn(),
 }
 
 describe('PageOrganizationBillingSummary', () => {
@@ -46,12 +46,12 @@ describe('PageOrganizationBillingSummary', () => {
     expect(props.onShowUsageClick).toHaveBeenCalled()
   })
 
-  it('should say call intercom on click on upgrade', async () => {
+  it('should call onChangePlanClick on click on change plan', async () => {
     const { userEvent } = renderWithProviders(<PageOrganizationBillingSummary {...props} />)
-    const button = screen.getByText(/upgrade plan/i)
+    const button = screen.getByText('Change plan')
     await userEvent.click(button)
 
-    expect(props.openIntercom).toHaveBeenCalled()
+    expect(props.onChangePlanClick).toHaveBeenCalled()
   })
 
   it('should say call onPromoCodeClick on click on add promo code', async () => {

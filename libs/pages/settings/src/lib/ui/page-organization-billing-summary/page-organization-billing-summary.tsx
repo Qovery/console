@@ -13,7 +13,7 @@ export interface PageOrganizationBillingSummaryProps {
   creditCardLoading?: boolean
   onPromoCodeClick?: () => void
   onShowUsageClick?: () => void
-  openIntercom?: () => void
+  onChangePlanClick?: () => void
 }
 
 // This function is used to get the billing recurrence word to display based on the renewal date.
@@ -50,8 +50,8 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
             <Button variant="surface" color="neutral" size="md" onClick={props.onPromoCodeClick}>
               Promo code
             </Button>
-            <Button size="md" onClick={props.openIntercom}>
-              Upgrade plan
+            <Button size="md" onClick={props.onChangePlanClick}>
+              Change plan
             </Button>
           </div>
         </div>
