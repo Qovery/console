@@ -111,6 +111,7 @@ export interface NormalizedServiceLog {
   exporter?: string
   level?: SeverityType
   version?: string
+  app?: string
 }
 
 function formatLogs(logs: LogStream[]): ServiceLog[] {
@@ -142,6 +143,7 @@ export function normalizeServiceLog(log: ServiceLog): NormalizedServiceLog {
     container: log.container,
     exporter: log.exporter,
     level: (log.level?.toUpperCase() ?? 'UNKNOWN') as SeverityType,
+    app: log.app,
     version: log.app, // API uses 'app' field for version
   }
 }
@@ -154,6 +156,9 @@ export function normalizeWebSocketLog(log: {
   container_name?: string
   severity_text?: SeverityType
   version?: string
+  labels?: {
+    app?: string
+  }
 }): NormalizedServiceLog {
   return {
     timestamp: log.created_at?.toString() || '',
@@ -163,6 +168,7 @@ export function normalizeWebSocketLog(log: {
     exporter: undefined, // WebSocket logs don't have exporter
     level: (log.severity_text?.toUpperCase() ?? 'UNKNOWN') as SeverityType,
     version: log.version,
+    app: log.labels?.app,
   }
 }
 
