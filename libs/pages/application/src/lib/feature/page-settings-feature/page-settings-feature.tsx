@@ -15,6 +15,7 @@ import {
   APPLICATION_SETTINGS_PORT_URL,
   APPLICATION_SETTINGS_RESOURCES_URL,
   APPLICATION_SETTINGS_STORAGE_URL,
+  APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
   APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL,
@@ -136,6 +137,13 @@ export function PageSettingsFeature() {
     url: pathSettings + APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL,
   }
 
+  const terraformArgumentsSetting = {
+    title: 'Terraform arguments',
+    iconName: 'play-circle' as const,
+    iconStyle: 'regular' as const,
+    url: pathSettings + APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
+  }
+
   const links = match(service)
     .returnType<NavigationLeftLinkProps[]>()
     .with({ serviceType: 'APPLICATION' }, () => [
@@ -171,6 +179,7 @@ export function PageSettingsFeature() {
     .with({ serviceType: 'TERRAFORM' }, () => [
       generalSettings,
       terraformConfigurationSetting,
+      terraformArgumentsSetting,
       resourcesSettings,
       deploymentRestrictionsSettings,
       advancedSettings,
