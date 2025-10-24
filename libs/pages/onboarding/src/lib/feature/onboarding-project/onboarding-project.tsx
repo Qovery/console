@@ -63,7 +63,9 @@ export function OnboardingProject() {
         })
 
         // Refresh token needed after created an organization
-        await getAccessTokenSilently({ cacheMode: 'off' })
+        // Store the token to ensure Auth0 cache is properly updated
+        const token = await getAccessTokenSilently({ cacheMode: 'off' })
+        console.log('Token refreshed after organization creation:', token ? 'Success' : 'Failed')
 
         // Create initial project
         const project = await createProject({
@@ -73,10 +75,16 @@ export function OnboardingProject() {
           },
         })
 
+        console.log('Project created successfully:', project.id)
+
         // Redirect to the project page
         navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
       } catch (error) {
         console.error('Error creating organization or project:', error)
+        // Log more details about the error
+        if (error && typeof error === 'object') {
+          console.error('Error details:', JSON.stringify(error, null, 2))
+        }
       } finally {
         setLoading(false)
       }
