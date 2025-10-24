@@ -73,12 +73,10 @@ export function OnboardingProject() {
           },
         })
 
-        if (project) {
-          // Redirect to the project page
-          navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
-        }
+        // Redirect to the project page
+        navigate(ENVIRONMENTS_URL(organization.id, project.id) + ENVIRONMENTS_GENERAL_URL)
       } catch (error) {
-        console.error(error)
+        console.error('Error creating organization or project:', error)
       } finally {
         setLoading(false)
       }
