@@ -10,14 +10,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import type {
-  ApplicationGitRepository,
-  ContainerResponse,
-  Database,
-  Environment,
-  HelmSourceRepositoryResponse,
-  Status,
+import {
+  type ApplicationGitRepository,
+  type ContainerResponse,
+  type Database,
+  type Environment,
+  type HelmSourceRepositoryResponse,
+  type Status,
 } from 'qovery-typescript-axios'
+import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
@@ -420,7 +421,6 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         filterFn: 'arrIncludesSome',
         size: 15,
         cell: (info) => {
-          const value = info.getValue()
           const service = info.row.original
           const link = match(service)
             .with(
@@ -428,6 +428,31 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
               ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
             )
             .otherwise(({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL)
+
+          const value = match(service.runningStatus.triggered_action)
+            .with(
+              { sub_action: ServiceSubActionDto.TERRAFORM_PLAN_ONLY },
+              () => 'Plan ' + info.getValue()?.toLowerCase()
+            )
+            .with(
+              { sub_action: ServiceSubActionDto.TERRAFORM_PLAN_AND_APPLY },
+              () => 'Apply ' + info.getValue()?.toLowerCase()
+            )
+            .with(
+              { sub_action: ServiceSubActionDto.TERRAFORM_MIGRATE_STATE },
+              () => 'Migrate state ' + info.getValue()?.toLowerCase()
+            )
+            .with(
+              { sub_action: ServiceSubActionDto.TERRAFORM_FORCE_UNLOCK_STATE },
+              () => 'Force unlock ' + info.getValue()?.toLowerCase()
+            )
+            .with(
+              { sub_action: ServiceSubActionDto.TERRAFORM_DESTROY },
+              () => 'Destroy ' + info.getValue()?.toLocaleString()
+            )
+            .with({ sub_action: ServiceSubActionDto.NONE }, () => info.getValue())
+            .with(undefined, () => info.getValue())
+            .exhaustive()
 
           if (checkRunningStatusClosed) {
             return (

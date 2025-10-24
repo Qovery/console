@@ -5679,8 +5679,8 @@ __metadata:
     prettier: ^3.2.5
     prettier-plugin-tailwindcss: ^0.5.14
     pretty-quick: ^4.0.0
-    qovery-typescript-axios: ^1.1.719
-    qovery-ws-typescript-axios: ^0.1.334
+    qovery-typescript-axios: ^1.1.721
+    qovery-ws-typescript-axios: ^0.1.420
     react: 18.3.1
     react-country-flag: ^3.0.2
     react-datepicker: ^4.12.0
@@ -10933,17 +10933,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.8.2":
-  version: 1.8.2
-  resolution: "axios@npm:1.8.2"
-  dependencies:
-    follow-redirects: ^1.15.6
-    form-data: ^4.0.0
-    proxy-from-env: ^1.1.0
-  checksum: c47a43b79a058aa9e53a65bec9ade35c9f6e76a3999c795a79a2d205fb5f803fd4245497a0209a9727cbbe4f558791dd852ad2c168c5fc030259c11598ed8fd7
-  languageName: node
-  linkType: hard
-
 "axobject-query@npm:^4.1.0":
   version: 4.1.0
   resolution: "axobject-query@npm:4.1.0"
@@ -16073,7 +16062,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^4.0.0, form-data@npm:^4.0.4":
+"form-data@npm:^4.0.4":
   version: 4.0.4
   resolution: "form-data@npm:4.0.4"
   dependencies:
@@ -24596,21 +24585,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:^1.1.719":
-  version: 1.1.719
-  resolution: "qovery-typescript-axios@npm:1.1.719"
+"qovery-typescript-axios@npm:^1.1.721":
+  version: 1.1.722
+  resolution: "qovery-typescript-axios@npm:1.1.722"
   dependencies:
     axios: 1.12.2
-  checksum: 09e42a526767dc8b72b7bc8aba0de93df2174e587c3591b45d686dea301a47c2a0f785eb04c8ee2782f5de15ea7db70ae5e44a6779e90b8910afd64deee50ffe
+  checksum: 832fa7dde5f1034eaeb99a6e0349aade49bdfbfb87944a2bb63194dc2a616640882cfe51fe5b4d56b30b75693cd3c92b52415842a825faf09060044a522650a0
   languageName: node
   linkType: hard
 
-"qovery-ws-typescript-axios@npm:^0.1.334":
-  version: 0.1.334
-  resolution: "qovery-ws-typescript-axios@npm:0.1.334"
+"qovery-ws-typescript-axios@npm:^0.1.420":
+  version: 0.1.421
+  resolution: "qovery-ws-typescript-axios@npm:0.1.421"
   dependencies:
-    axios: 1.8.2
-  checksum: 68856a862161a259fa86aebadc2c50825736129ee9fa11fc12eec4ed388ba711b72299ec8fe73651b7cc36c6bfc21586efe025afca94aaa24933a76759622a4c
+    axios: 1.12.2
+  checksum: d88ce8ff41d759f5629282099b8c1d265f19c3aa4fbced1c732c6daeca285ca3d1dfcd27d9bd0582a5271928441999e825610d7c53068c58befdaf62abca7b96
   languageName: node
   linkType: hard
 

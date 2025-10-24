@@ -20,6 +20,7 @@ import {
   EnvironmentsApi,
   LifecycleTemplateMainCallsApi,
 } from 'qovery-typescript-axios'
+import { type ServiceActionDetailsDto } from 'qovery-ws-typescript-axios'
 import { type RunningState } from '@qovery/shared/enums'
 
 const environmentsApi = new EnvironmentsApi()
@@ -55,8 +56,10 @@ export const environments = createQueryKeys('environments', {
   runningStatus: (environmentId: string) => ({
     queryKey: [environmentId],
     queryFn() {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      return new Promise<{ state: RunningState } | null>(() => {})
+      return new Promise<{ state: RunningState; triggered_action: ServiceActionDetailsDto | undefined } | null>(
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {}
+      )
     },
   }),
   // NOTE: Value is set by WebSocket

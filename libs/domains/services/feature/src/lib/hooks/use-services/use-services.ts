@@ -1,4 +1,5 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
+import { TerraformStatusDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { P, match } from 'ts-pattern'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -45,6 +46,7 @@ export function useServices({ environmentId }: UseServicesProps) {
 
         const runningStatusOverride = match({ runningStatus, isManagedDb })
           .with({ runningStatus: P.any, isManagedDb: true }, () => ({
+            triggered_action: undefined,
             ...deploymentStatus,
             state: match(deploymentStatus?.state)
               .with('DEPLOYED', () => 'RUNNING' as const)
@@ -56,8 +58,10 @@ export function useServices({ environmentId }: UseServicesProps) {
           .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
             state: undefined,
             stateLabel: undefined,
+            triggered_action: undefined,
           }))
           .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
+            triggered_action: undefined, // will be unpacked from runningStatus if present
             ...runningStatus,
             stateLabel: runningStatusLabel,
           }))

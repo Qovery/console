@@ -1,5 +1,10 @@
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
-import { type ServiceStatusDto } from 'qovery-ws-typescript-axios'
+import {
+  type ApplicationStatusDto,
+  type DatabaseStatusDto,
+  type ServiceStatusDto,
+  type TerraformStatusDto,
+} from 'qovery-ws-typescript-axios'
 import { v7 as uuidv7 } from 'uuid'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -90,7 +95,7 @@ export function useStatusWebSockets({
         // NOTE: we have to force this reset change because of the way the socket works.
         // You can have information about an service (eg. if it's stopping)
         queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
-        const services = [
+        const services: (ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
           ...env.applications,
           ...env.containers,
           ...env.databases,
