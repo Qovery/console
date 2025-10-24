@@ -1,0 +1,200 @@
+:root[data-theme='light'] {
+  /* Background */
+  --background-1: hsla(0, 0%, 100%, 1);
+  --background-2: hsla(270, 20%, 98%, 1);
+  --background-overlay: hsla(0, 0%, 0%, 0.8);
+
+  /* Neutral */
+  --neutral-1: hsla(300, 100%, 100%, 1);
+  --neutral-2: hsla(270, 20%, 98%, 1);
+  --neutral-3: hsla(285, 14%, 95%, 1);
+  --neutral-4: hsla(276, 12%, 92%, 1);
+  --neutral-5: hsla(274, 12%, 89%, 1);
+  --neutral-6: hsla(263, 11%, 86%, 1);
+  --neutral-7: hsla(258, 11%, 82%, 1);
+  --neutral-8: hsla(249, 10%, 75%, 1);
+  --neutral-9: hsla(249, 6%, 57%, 1);
+  --neutral-10: hsla(250, 5%, 53%, 1);
+  --neutral-11: hsla(252, 5%, 41%, 1);
+  --neutral-12: hsla(257, 10%, 14%, 1);
+
+  --field: hsla(300, 100%, 100%, 1);
+  --contrast: hsla(300, 100%, 100%, 1);
+  --contrast-inverted: hsla(257, 10%, 14%, 1);
+
+  /* Brand */
+  --brand-1: hsla(240, 100%, 100%, 1);
+  --brand-2: hsla(233, 100%, 98%, 1);
+  --brand-3: hsla(233, 100%, 97%, 1);
+  --brand-4: hsla(236, 100%, 95%, 1);
+  --brand-5: hsla(237, 100%, 92%, 1);
+  --brand-6: hsla(239, 100%, 90%, 1);
+  --brand-7: hsla(239, 100%, 85%, 1);
+  --brand-8: hsla(243, 100%, 79%, 1);
+  --brand-9: hsla(256, 100%, 59%, 1);
+  --brand-10: hsla(256, 78%, 51%, 1);
+  --brand-11: hsla(254, 86%, 57%, 1);
+  --brand-12: hsla(252, 64%, 29%, 1);
+
+  /* Positive */
+  --positive-1: hsla(140, 60%, 99%, 1);
+  --positive-2: hsla(137, 47%, 97%, 1);
+  --positive-3: hsla(139, 47%, 93%, 1);
+  --positive-4: hsla(140, 49%, 89%, 1);
+  --positive-5: hsla(142, 44%, 84%, 1);
+  --positive-6: hsla(144, 41%, 77%, 1);
+  --positive-7: hsla(146, 40%, 68%, 1);
+  --positive-8: hsla(151, 40%, 54%, 1);
+  --positive-9: hsla(151, 55%, 42%, 1);
+  --positive-10: hsla(152, 56%, 39%, 1);
+  --positive-11: hsla(154, 60%, 32%, 1);
+  --positive-12: hsla(155, 40%, 16%, 1);
+
+  /* Warning */
+  --warning-1: hsla(40, 60%, 99%, 1);
+  --warning-2: hsla(51, 91%, 95%, 1);
+  --warning-3: hsla(52, 100%, 88%, 1);
+  --warning-4: hsla(50, 100%, 81%, 1);
+  --warning-5: hsla(50, 94%, 73%, 1);
+  --warning-6: hsla(46, 84%, 70%, 1);
+  --warning-7: hsla(42, 75%, 65%, 1);
+  --warning-8: hsla(38, 75%, 55%, 1);
+  --warning-9: hsla(42, 100%, 62%, 1);
+  --warning-10: hsla(42, 100%, 55%, 1);
+  --warning-11: hsla(35, 100%, 34%, 1);
+  --warning-12: hsla(24, 40%, 22%, 1);
+
+  /* Negative */
+  --negative-1: hsla(0, 100%, 99%, 1);
+  --negative-2: hsla(8, 100%, 98%, 1);
+  --negative-3: hsla(10, 92%, 95%, 1);
+  --negative-4: hsla(12, 100%, 91%, 1);
+  --negative-5: hsla(11, 100%, 88%, 1);
+  --negative-6: hsla(11, 95%, 84%, 1);
+  --negative-7: hsla(10, 82%, 78%, 1);
+  --negative-8: hsla(10, 75%, 70%, 1);
+  --negative-9: hsla(10, 78%, 54%, 1);
+  --negative-10: hsla(10, 73%, 51%, 1);
+  --negative-11: hsla(10, 82%, 45%, 1);
+  --negative-12: hsla(8, 50%, 24%, 1);
+
+  /* Info */
+  --info-1: hsla(210, 100%, 99%, 1);
+  --info-2: hsla(207, 100%, 98%, 1);
+  --info-3: hsla(205, 92%, 95%, 1);
+  --info-4: hsla(203, 100%, 92%, 1);
+  --info-5: hsla(206, 100%, 88%, 1);
+  --info-6: hsla(207, 93%, 83%, 1);
+  --info-7: hsla(207, 85%, 76%, 1);
+  --info-8: hsla(206, 82%, 65%, 1);
+  --info-9: hsla(206, 100%, 50%, 1);
+  --info-10: hsla(207, 96%, 48%, 1);
+  --info-11: hsla(208, 88%, 43%, 1);
+  --info-12: hsla(216, 71%, 23%, 1);
+
+  /* Accent */
+  --accent-3: hsla(341, 100%, 96%, 1);
+  --accent-6: hsla(338, 69%, 85%, 1);
+  --accent-9: hsla(336, 80%, 58%, 1);
+  --accent-11: hsla(336, 75%, 45%, 1);
+}
+
+:root[data-theme='dark'] {
+  /* Background */
+  --background-1: hsla(270, 6%, 3%, 1);
+  --background-2: hsla(270, 6%, 7%, 1);
+
+  /* Neutral */
+  --neutral-1: hsla(270, 6%, 7%, 1);
+  --neutral-2: hsla(270, 4%, 10%, 1);
+  --neutral-3: hsla(260, 4%, 14%, 1);
+  --neutral-4: hsla(270, 5%, 17%, 1);
+  --neutral-5: hsla(264, 5%, 20%, 1);
+  --neutral-6: hsla(270, 5%, 24%, 1);
+  --neutral-7: hsla(257, 5%, 29%, 1);
+  --neutral-8: hsla(258, 5%, 39%, 1);
+  --neutral-9: hsla(251, 5%, 45%, 1);
+  --neutral-10: hsla(251, 4%, 50%, 1);
+  --neutral-11: hsla(258, 7%, 72%, 1);
+  --neutral-12: hsla(240, 6%, 94%, 1);
+
+  --field: hsla(270, 4%, 10%, 1);
+  --contrast: hsla(300, 100%, 100%, 1);
+  --contrast-inverted: hsla(257, 10%, 14%, 1);
+
+  /* Brand */
+  --brand-1: hsla(257, 33%, 8%, 1);
+  --brand-2: hsla(254, 29%, 12%, 1);
+  --brand-3: hsla(258, 41%, 19%, 1);
+  --brand-4: hsla(260, 47%, 25%, 1);
+  --brand-5: hsla(259, 43%, 29%, 1);
+  --brand-6: hsla(258, 39%, 34%, 1);
+  --brand-7: hsla(258, 36%, 41%, 1);
+  --brand-8: hsla(258, 37%, 51%, 1);
+  --brand-9: hsla(256, 100%, 79%, 1);
+  --brand-10: hsla(256, 81%, 75%, 1);
+  --brand-11: hsla(258, 100%, 82%, 1);
+  --brand-12: hsla(252, 100%, 93%, 1);
+
+  /* Positive */
+  --positive-1: hsla(154, 20%, 7%, 1);
+  --positive-2: hsla(153, 20%, 9%, 1);
+  --positive-3: hsla(152, 41%, 13%, 1);
+  --positive-4: hsla(154, 55%, 15%, 1);
+  --positive-5: hsla(154, 52%, 19%, 1);
+  --positive-6: hsla(153, 46%, 23%, 1);
+  --positive-7: hsla(152, 44%, 28%, 1);
+  --positive-8: hsla(151, 45%, 34%, 1);
+  --positive-9: hsla(151, 55%, 42%, 1);
+  --positive-10: hsla(151, 55%, 45%, 1);
+  --positive-11: hsla(151, 65%, 54%, 1);
+  --positive-12: hsla(144, 70%, 82%, 1);
+
+  /* Warning */
+  --warning-1: hsla(36, 29%, 7%, 1);
+  --warning-2: hsla(39, 32%, 9%, 1);
+  --warning-3: hsla(36, 71%, 11%, 1);
+  --warning-4: hsla(37, 100%, 12%, 1);
+  --warning-5: hsla(37, 100%, 15%, 1);
+  --warning-6: hsla(39, 90%, 19%, 1);
+  --warning-7: hsla(37, 64%, 27%, 1);
+  --warning-8: hsla(36, 60%, 35%, 1);
+  --warning-9: hsla(42, 100%, 62%, 1);
+  --warning-10: hsla(50, 100%, 52%, 1);
+  --warning-11: hsla(46, 100%, 54%, 1);
+  --warning-12: hsla(41, 100%, 85%, 1);
+
+  /* Negative */
+  --negative-1: hsla(0, 17%, 8%, 1);
+  --negative-2: hsla(10, 24%, 10%, 1);
+  --negative-3: hsla(5, 48%, 15%, 1);
+  --negative-4: hsla(4, 64%, 19%, 1);
+  --negative-5: hsla(5, 62%, 23%, 1);
+  --negative-6: hsla(7, 55%, 28%, 1);
+  --negative-7: hsla(9, 49%, 35%, 1);
+  --negative-8: hsla(10, 50%, 45%, 1);
+  --negative-9: hsla(10, 78%, 54%, 1);
+  --negative-10: hsla(11, 82%, 59%, 1);
+  --negative-11: hsla(12, 100%, 75%, 1);
+  --negative-12: hsla(10, 86%, 89%, 1);
+
+  /* Info */
+  --info-1: hsla(215, 42%, 9%, 1);
+  --info-2: hsla(218, 39%, 11%, 1);
+  --info-3: hsla(212, 69%, 16%, 1);
+  --info-4: hsla(209, 100%, 19%, 1);
+  --info-5: hsla(207, 100%, 23%, 1);
+  --info-6: hsla(209, 79%, 30%, 1);
+  --info-7: hsla(211, 66%, 37%, 1);
+  --info-8: hsla(211, 65%, 45%, 1);
+  --info-9: hsla(206, 100%, 50%, 1);
+  --info-10: hsla(210, 100%, 62%, 1);
+  --info-11: hsla(210, 100%, 72%, 1);
+  --info-12: hsla(205, 100%, 88%, 1);
+
+  /* Accent */
+  --accent-3: hsla(333, 45%, 15%, 1);
+  --accent-6: hsla(333, 49%, 29%, 1);
+  --accent-9: hsla(336, 80%, 58%, 1);
+  --accent-11: hsla(345, 100%, 79%, 1);
+}
