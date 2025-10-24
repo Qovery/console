@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -44,6 +45,17 @@ export function PageMonitoringFeature() {
   )
 
   if (!isClusterFetched || !isServiceFetched) return null
+
+  posthog.capture('service-monitoring', {
+    metrics_enabled: hasMetrics,
+    service: {
+      organization_id: environment?.organization.id ?? '',
+      project_id: environment?.project.id ?? '',
+      environment_id: environmentId,
+      service_id: applicationId,
+      service_name: service?.name ?? '',
+    },
+  })
 
   if (!hasMetrics)
     return (
