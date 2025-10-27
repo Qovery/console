@@ -35,6 +35,7 @@ import {
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
+import { isClusterFeatureEnabled } from '@qovery/shared/util-js'
 import { listInstanceTypeFormatter } from '../../feature/cluster-resources-settings-feature/utils/list-instance-type-formatter'
 import { ButtonPopoverSubnets } from './button-popover-subnets/button-popover-subnets'
 import KarpenterImage from './karpenter-image.svg'
@@ -137,7 +138,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   ])
 
   const hasExistingVPC = Boolean(props.cluster?.features?.find((f) => f.id === 'EXISTING_VPC')?.value_object?.value)
-  const hasStaticIP = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')?.value_object?.value
+  const staticIpFeature = props.cluster?.features?.find((f) => f.id === 'STATIC_IP')
+  const hasStaticIP = staticIpFeature ? isClusterFeatureEnabled(staticIpFeature) : false
 
   useEffect(() => {
     if (!props.fromDetail && props.isProduction && props.cloudProvider === 'AWS') {

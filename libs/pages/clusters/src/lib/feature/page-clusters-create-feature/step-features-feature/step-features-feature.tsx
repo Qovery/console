@@ -11,6 +11,7 @@ import {
 } from '@qovery/shared/routes'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { getClusterFeatureValue } from '@qovery/shared/util-js'
 import StepFeatures from '../../../ui/page-clusters-create/step-features/step-features'
 import { steps, useClusterContainerCreateContext } from '../page-clusters-create-feature'
 
@@ -120,7 +121,7 @@ export function StepFeaturesFeature() {
     // https://qovery.atlassian.net/browse/FRT-1002
     if (features && Object.keys(featuresData?.features ?? {}).length === 0) {
       const staticIp = features.find(({ id }) => id === 'STATIC_IP')
-      if (staticIp && staticIp.value_object?.value === false) {
+      if (staticIp && getClusterFeatureValue(staticIp) === false) {
         methods.setValue('features.STATIC_IP.value', true)
       }
     }

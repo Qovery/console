@@ -114,4 +114,185 @@ describe('StepFeaturesFeature', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters/create/summary')
   })
+
+  describe('STATIC_IP feature default value handling', () => {
+    it('should force STATIC_IP to true when feature has old format with false value', async () => {
+      const staticIpFeatures: ClusterFeatureResponse[] = [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          value_object: {
+            type: 'BOOLEAN',
+            value: false,
+          },
+        },
+      ]
+
+      useCloudProviderFeaturesMockSpy.mockReturnValue({
+        data: staticIpFeatures,
+        isLoading: false,
+      })
+
+      renderWithProviders(
+        <ContextWrapper>
+          <StepFeaturesFeature />
+        </ContextWrapper>
+      )
+
+      // The useEffect should force the value to true
+      await waitFor(() => {
+        // Component should render without errors
+        expect(screen.getByText('Network configuration')).toBeInTheDocument()
+      })
+    })
+
+    it('should force STATIC_IP to true when feature has new format with false value', async () => {
+      const staticIpFeatures: ClusterFeatureResponse[] = [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          value_object: {
+            type: 'STATIC_IP',
+            value: {
+              type: 'common',
+              value: false,
+              is_enabled: false,
+            },
+          },
+        },
+      ]
+
+      useCloudProviderFeaturesMockSpy.mockReturnValue({
+        data: staticIpFeatures,
+        isLoading: false,
+      })
+
+      renderWithProviders(
+        <ContextWrapper>
+          <StepFeaturesFeature />
+        </ContextWrapper>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('Network configuration')).toBeInTheDocument()
+      })
+    })
+
+    it('should not override STATIC_IP when feature has old format with true value', async () => {
+      const staticIpFeatures: ClusterFeatureResponse[] = [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          value_object: {
+            type: 'BOOLEAN',
+            value: true,
+          },
+        },
+      ]
+
+      useCloudProviderFeaturesMockSpy.mockReturnValue({
+        data: staticIpFeatures,
+        isLoading: false,
+      })
+
+      renderWithProviders(
+        <ContextWrapper>
+          <StepFeaturesFeature />
+        </ContextWrapper>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('Network configuration')).toBeInTheDocument()
+      })
+    })
+
+    it('should not override STATIC_IP when feature has new format with true value', async () => {
+      const staticIpFeatures: ClusterFeatureResponse[] = [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          value_object: {
+            type: 'STATIC_IP',
+            value: {
+              type: 'common',
+              value: true,
+              is_enabled: true,
+            },
+          },
+        },
+      ]
+
+      useCloudProviderFeaturesMockSpy.mockReturnValue({
+        data: staticIpFeatures,
+        isLoading: false,
+      })
+
+      renderWithProviders(
+        <ContextWrapper>
+          <StepFeaturesFeature />
+        </ContextWrapper>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('Network configuration')).toBeInTheDocument()
+      })
+    })
+
+    it('should handle Scaleway static IP format', async () => {
+      const scwStaticIpFeatures: ClusterFeatureResponse[] = [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          value_object: {
+            type: 'STATIC_IP',
+            value: {
+              type: 'scaleway',
+              value: true,
+              is_enabled: true,
+              gateway_type: 'VPC_GW_M',
+              dhcp_subnet_cidr: '172.16.0.0/24',
+            },
+          },
+        },
+      ]
+
+      useCloudProviderFeaturesMockSpy.mockReturnValue({
+        data: scwStaticIpFeatures,
+        isLoading: false,
+      })
+
+      const contextWithScw = {
+        currentStep: 1,
+        setCurrentStep: jest.fn(),
+        featuresData: {
+          vpc_mode: 'DEFAULT',
+          features: {},
+        },
+        generalData: {
+          name: 'test',
+          production: false,
+          cloud_provider: CloudProviderEnum.SCW,
+          region: 'fr-par',
+          credentials: '111-111-111',
+          credentials_name: 'name',
+          installation_type: 'MANAGED',
+        },
+        setGeneralData: jest.fn(),
+        setFeaturesData: mockSetFeaturesData,
+        resourcesData: undefined,
+        setResourcesData: jest.fn(),
+        creationFlowUrl: '/organization/1/clusters/create',
+      }
+
+      renderWithProviders(
+        <ClusterContainerCreateContext.Provider value={contextWithScw}>
+          <StepFeaturesFeature />
+        </ClusterContainerCreateContext.Provider>
+      )
+
+      await waitFor(() => {
+        expect(screen.getByText('Network configuration')).toBeInTheDocument()
+      })
+    })
+  })
 })

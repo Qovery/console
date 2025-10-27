@@ -154,4 +154,122 @@ describe('ClusterResourcesSettings', () => {
 
     screen.getByText('Changing these parameters might cause a downtime on your service.')
   })
+
+  describe('STATIC_IP feature backward compatibility', () => {
+    it('should handle cluster with old format STATIC_IP (boolean true)', () => {
+      const propsWithOldStaticIp: ClusterResourcesSettingsProps = {
+        ...props,
+        cluster: {
+          id: 'test-cluster',
+          features: [
+            {
+              id: 'STATIC_IP',
+              value_object: {
+                type: 'BOOLEAN',
+                value: true,
+              },
+            },
+          ],
+        } as any,
+      }
+
+      renderWithProviders(
+        wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...propsWithOldStaticIp} />, {
+          defaultValues,
+        })
+      )
+
+      // Component should render without errors
+      expect(screen.getByText('Resources configuration')).toBeInTheDocument()
+    })
+
+    it('should handle cluster with old format STATIC_IP (boolean false)', () => {
+      const propsWithOldStaticIp: ClusterResourcesSettingsProps = {
+        ...props,
+        cluster: {
+          id: 'test-cluster',
+          features: [
+            {
+              id: 'STATIC_IP',
+              value_object: {
+                type: 'BOOLEAN',
+                value: false,
+              },
+            },
+          ],
+        } as any,
+      }
+
+      renderWithProviders(
+        wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...propsWithOldStaticIp} />, {
+          defaultValues,
+        })
+      )
+
+      expect(screen.getByText('Resources configuration')).toBeInTheDocument()
+    })
+
+    it('should handle cluster with new format STATIC_IP (common)', () => {
+      const propsWithNewStaticIp: ClusterResourcesSettingsProps = {
+        ...props,
+        cluster: {
+          id: 'test-cluster',
+          features: [
+            {
+              id: 'STATIC_IP',
+              value_object: {
+                type: 'STATIC_IP',
+                value: {
+                  type: 'common',
+                  value: true,
+                  is_enabled: true,
+                },
+              },
+            },
+          ],
+        } as any,
+      }
+
+      renderWithProviders(
+        wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...propsWithNewStaticIp} />, {
+          defaultValues,
+        })
+      )
+
+      expect(screen.getByText('Resources configuration')).toBeInTheDocument()
+    })
+
+    it('should handle cluster with new format STATIC_IP (scaleway)', () => {
+      const propsWithScalewayStaticIp: ClusterResourcesSettingsProps = {
+        ...props,
+        cloudProvider: CloudProviderEnum.SCW,
+        cluster: {
+          id: 'test-cluster',
+          features: [
+            {
+              id: 'STATIC_IP',
+              value_object: {
+                type: 'STATIC_IP',
+                value: {
+                  type: 'scaleway',
+                  value: true,
+                  is_enabled: true,
+                  gateway_type: 'VPC_GW_M',
+                  dhcp_subnet_cidr: '172.16.0.0/24',
+                },
+              },
+            },
+          ],
+        } as any,
+      }
+
+      renderWithProviders(
+        wrapWithReactHookForm<ClusterResourcesData>(<ClusterResourcesSettings {...propsWithScalewayStaticIp} />, {
+          defaultValues,
+        })
+      )
+
+      expect(screen.getByText('Resources configuration')).toBeInTheDocument()
+    })
+  })
 })

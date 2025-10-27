@@ -2,6 +2,7 @@ import { type CloudVendorEnum, type ClusterFeatureResponse } from 'qovery-typesc
 import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
+import { getClusterFeatureValue, isClusterFeatureEnabled } from '@qovery/shared/util-js'
 
 export interface CardClusterFeatureProps extends PropsWithChildren {
   feature: ClusterFeatureResponse
@@ -73,7 +74,7 @@ export function CardClusterFeature({
                 disabled
                 small
                 className="relative top-[2px]"
-                value={getValue(Boolean(feature?.value_object?.value) || false)}
+                value={getValue(isClusterFeatureEnabled(feature))}
               />
             </span>
           </Tooltip>
@@ -99,13 +100,13 @@ export function CardClusterFeature({
             )}
           </h4>
           <p className="max-w-lg text-xs text-neutral-350">{feature.description}</p>
-          {typeof feature.value_object?.value === 'string' && (
+          {typeof getClusterFeatureValue(feature) === 'string' && (
             <div onClick={(e) => e.stopPropagation()}>
               {control ? (
                 <Controller
                   name={`features.${feature.id}.extendedValue`}
                   control={control}
-                  defaultValue={feature.value_object?.value}
+                  defaultValue={getClusterFeatureValue(feature)}
                   render={({ field }) => (
                     <InputSelect
                       className="mt-2"
@@ -133,7 +134,7 @@ export function CardClusterFeature({
                       value: value,
                     })) || []
                   }
-                  value={feature.value_object.value}
+                  value={getClusterFeatureValue(feature) as string}
                   label="VPC Subnet address"
                   disabled
                 />
