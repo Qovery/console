@@ -1,15 +1,6 @@
 import { type PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
-import {
-  type Control,
-  Controller,
-  FormProvider,
-  type UseFieldArrayRemove,
-  useFieldArray,
-  useFormContext,
-} from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useParseTerraformVariablesFromGitRepo } from '@qovery/domains/organizations/feature'
-import { FieldVariableSuggestion } from '@qovery/domains/variables/feature'
+import { Controller, FormProvider, useFormContext } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import {
   SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
@@ -25,182 +16,44 @@ import {
   InputToggle,
   Popover,
   Section,
-  Skeleton,
   Tooltip,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl, twMerge } from '@qovery/shared/util-js'
-import { type TerraformInputVariablesData, useTerraformCreateContext } from '../page-terraform-create-feature'
-
-const VarRow = ({
-  index,
-  control,
-  remove,
-}: {
-  index: number
-  control: Control<TerraformInputVariablesData>
-  remove: UseFieldArrayRemove
-}) => {
-  const { environmentId = '' } = useParams()
-
-  return (
-    <li key={index} className="mb-3 last:mb-0">
-      <div className="grid grid-cols-[6fr_6fr_32px_39px] items-center gap-x-3">
-        <Controller
-          name={`tf_vars.${index}.key`}
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputTextSmall name={field.name} value={field.value} onChange={field.onChange} error={error?.message} />
-          )}
-        />
-
-        <Controller
-          name={`tf_vars.${index}.value`}
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <FieldVariableSuggestion
-              value={field.value}
-              environmentId={environmentId}
-              onChange={field.onChange}
-              inputProps={{
-                className: 'w-full',
-                name: field.name,
-                onChange: field.onChange,
-                value: field.value,
-                error: error?.message,
-              }}
-            />
-          )}
-        />
-
-        <Controller
-          name={`tf_vars.${index}.secret`}
-          control={control}
-          render={({ field }) => (
-            <div className="flex items-center justify-center">
-              <InputToggle value={field.value} onChange={field.onChange} forceAlignTop small />
-            </div>
-          )}
-        />
-
-        <div>
-          <Button size="md" className="h-[36px]" onClick={() => remove(index)} variant="plain">
-            <Icon iconName="trash-can" iconStyle="regular" />
-          </Button>
-        </div>
-      </div>
-    </li>
-  )
-}
-
-const TerraformVariables = () => {
-  const { organizationId = '' } = useParams()
-  const { generalForm, inputVariablesForm } = useTerraformCreateContext()
-
-  const {
-    fields: tfVars,
-    append: tfVarsAppend,
-    remove: tfVarsRemove,
-  } = useFieldArray({
-    control: inputVariablesForm.control,
-    name: 'tf_vars',
-  })
-
-  const generalData = generalForm.getValues()
-
-  const { data: variablesResponse, isLoading } = useParseTerraformVariablesFromGitRepo({
-    organizationId,
-    repository: {
-      provider: generalData.provider ?? 'GITHUB',
-      url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
-      branch: generalData.branch,
-      root_path: generalData.root_path,
-      git_token_id: generalData.git_token_id,
-    },
-  })
-
-  useEffect(() => {
-    if (variablesResponse && !inputVariablesForm.formState.isDirty) {
-      const payload =
-        variablesResponse?.results?.map((variable) => ({
-          key: variable.key,
-          value: variable.default ?? '',
-          secret: variable.sensitive,
-        })) || []
-
-      inputVariablesForm.setValue('tf_vars', payload, { shouldDirty: false })
-    }
-  }, [variablesResponse, inputVariablesForm])
-
-  return isLoading ? (
-    <TerraformVariablesSkeleton />
-  ) : (
-    <>
-      {tfVars && tfVars.length > 0 && (
-        <ul>
-          <li className="mb-3 grid grid-cols-[6fr_6fr_83px] gap-x-3">
-            <span className="text-sm font-medium text-neutral-350">Key</span>
-            <span className="text-sm font-medium text-neutral-350">Value</span>
-            <span className="text-sm font-medium text-neutral-350">Secret</span>
-          </li>
-          {tfVars.map((_, index) => (
-            <VarRow key={index} index={index} control={inputVariablesForm.control} remove={tfVarsRemove} />
-          ))}
-        </ul>
-      )}
-
-      <Button
-        className="gap-2 self-end"
-        variant="surface"
-        type="button"
-        size="md"
-        onClick={() =>
-          tfVarsAppend({
-            key: '',
-            value: '',
-            secret: false,
-          })
-        }
-      >
-        Add variable
-        <Icon iconName="plus-circle" iconStyle="regular" />
-      </Button>
-    </>
-  )
-}
-
-const TerraformVariablesSkeleton = () => {
-  return (
-    <Section className="gap-4">
-      <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-3 gap-x-3">
-          <Skeleton className="h-[18px] w-full" />
-          <Skeleton className="h-[18px] w-full" />
-          <Skeleton className="h-[18px] w-full" />
-        </div>
-        <Skeleton className="h-[34px] w-full" />
-        <Skeleton className="h-[34px] w-full" />
-        <Skeleton className="h-[34px] w-full" />
-      </div>
-    </Section>
-  )
-}
+import { twMerge } from '@qovery/shared/util-js'
+import { useTerraformCreateContext } from '../page-terraform-create-feature'
 
 type TerraformVariablesContextType = {
   selectedRows: string[]
   onSelectRow: (key: string) => void
   isRowSelected: (key: string) => boolean
+  paths: string[]
+  setPaths: (paths: string[]) => void
+  vars: {
+    key: string
+    value: string
+    source: string
+    secret: boolean
+  }[]
 }
 
 const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
 
 export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
+  const vars = [
+    {
+      key: 'key',
+      value: 'value',
+      source: 'source',
+      secret: true,
+    },
+    {
+      key: 'key2',
+      value: 'value2',
+      source: 'source2',
+      secret: false,
+    },
+  ]
+  const [paths, setPaths] = useState<string[]>(['variables.tfvars', 'main.tfvars', '*.auto.tfvars'])
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const onSelectRow = (key: string) => {
     if (isRowSelected(key)) {
@@ -213,10 +66,13 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     return selectedRows.includes(key)
   }
 
-  const value = {
+  const value: TerraformVariablesContextType = {
     selectedRows,
     onSelectRow,
     isRowSelected,
+    paths,
+    setPaths,
+    vars,
   }
 
   return <TerraformVariablesContext.Provider value={value}>{children}</TerraformVariablesContext.Provider>
@@ -290,9 +146,8 @@ const TfvarItem = ({
 }
 
 const TfvarsFilesPopover = () => {
-  const [open, setOpen] = useState(false)
   const { control } = useFormContext()
-  const [paths, setPaths] = useState(['variables.tfvars', 'main.tfvars', '*.auto.tfvars'])
+  const { paths, setPaths } = useTerraformVariablesContext()
 
   const onIndexChange = (path: string, newIndex: number) => {
     const currentIndex = paths.indexOf(path)
@@ -306,20 +161,27 @@ const TfvarsFilesPopover = () => {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Indicator
-          align="start"
-          side="left"
-          content={
-            <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
-              {paths.length ?? 0}
-            </span>
-          }
-        >
-          <Button size="md" color="brand" className="gap-1.5" onClick={() => setOpen(!open)} type="button">
+        {paths.length > 0 ? (
+          <Indicator
+            align="start"
+            side="left"
+            content={
+              <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
+                {paths.length ?? 0}
+              </span>
+            }
+          >
+            <Button size="md" variant="outline" className="gap-1.5" type="button">
+              <Icon iconName="file-lines" iconStyle="regular" />
+              .tfvars files
+            </Button>
+          </Indicator>
+        ) : (
+          <Button size="md" variant="solid" className="gap-1.5" type="button">
             <Icon iconName="file-lines" iconStyle="regular" />
             .tfvars files
           </Button>
-        </Indicator>
+        )}
       </Popover.Trigger>
       <Popover.Content className="flex w-[340px] flex-col rounded-lg border border-neutral-200 p-0">
         <div className="flex items-center justify-between px-3 py-2">
@@ -383,21 +245,7 @@ const TerraformVariablesEmptyState = () => {
 
 const TerraformVariablesRows = () => {
   const { onSelectRow, isRowSelected } = useTerraformVariablesContext()
-
-  const vars = [
-    {
-      key: 'key',
-      value: 'value',
-      source: 'source',
-      secret: true,
-    },
-    {
-      key: 'key2',
-      value: 'value2',
-      source: 'source2',
-      secret: false,
-    },
-  ]
+  const { vars } = useTerraformVariablesContext()
 
   return (
     <div className="flex flex-col items-center justify-center border-t border-neutral-200">
