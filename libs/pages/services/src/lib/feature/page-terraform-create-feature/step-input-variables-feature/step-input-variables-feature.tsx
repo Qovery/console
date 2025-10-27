@@ -1,5 +1,12 @@
-import { useEffect } from 'react'
-import { type Control, Controller, FormProvider, type UseFieldArrayRemove, useFieldArray } from 'react-hook-form'
+import { useEffect, useState } from 'react'
+import {
+  type Control,
+  Controller,
+  FormProvider,
+  type UseFieldArrayRemove,
+  useFieldArray,
+  useFormContext,
+} from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useParseTerraformVariablesFromGitRepo } from '@qovery/domains/organizations/feature'
 import { FieldVariableSuggestion } from '@qovery/domains/variables/feature'
@@ -9,14 +16,16 @@ import {
 } from '@qovery/shared/routes'
 import {
   Button,
+  Checkbox,
   FunnelFlowBody,
   Heading,
   Icon,
-  InputText,
   InputTextSmall,
   InputToggle,
+  Popover,
   Section,
   Skeleton,
+  Tooltip,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
@@ -182,6 +191,165 @@ const TerraformVariablesSkeleton = () => {
   )
 }
 
+const TfvarItem = ({
+  path,
+  index,
+  onIndexChange,
+}: {
+  path: string
+  index: number
+  onIndexChange: (path: string, index: number) => void
+}) => {
+  const { control, setValue } = useFormContext()
+  const [currentIndex, setCurrentIndex] = useState<string | undefined>(index.toString())
+
+  useEffect(() => {
+    setCurrentIndex(index.toString())
+  }, [index])
+
+  return (
+    <div className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-200 px-4 py-3 last:border-b-0">
+      <div className="flex items-center gap-4">
+        <Controller
+          name="enabled_paths"
+          control={control}
+          render={({ field }) => (
+            <Checkbox
+              name={field.name}
+              id={path}
+              checked={field.value?.[path]}
+              onCheckedChange={(checked: boolean) => setValue('enabled_paths', { ...field.value, [path]: checked })}
+              className="ml-1"
+            />
+          )}
+        />
+        <label className="flex flex-col gap-0.5 text-sm" htmlFor={path}>
+          <span className="text-neutral-400">{path}</span>
+          <span className="text-xs text-neutral-350">5 variables</span>
+        </label>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <span className="text-md leading-3 text-neutral-350">#</span>
+        <InputTextSmall
+          name="order"
+          value={currentIndex}
+          onChange={(e) => {
+            setCurrentIndex(e.target.value ?? '')
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onIndexChange(path, Number(currentIndex ?? 0))
+            }
+          }}
+          onBlur={() => {
+            onIndexChange(path, Number(currentIndex ?? 0))
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+const TfvarsFilesPopover = () => {
+  const [open, setOpen] = useState(false)
+  const { control } = useFormContext()
+  const [paths, setPaths] = useState(['*.auto.tfvars', 'variables.tfvars', 'main.tfvars'])
+
+  const onIndexChange = (path: string, newIndex: number) => {
+    const currentIndex = paths.indexOf(path)
+    const newPaths = [...paths]
+    const element = newPaths[currentIndex]
+    newPaths.splice(currentIndex, 1)
+    newPaths.splice(newIndex, 0, element)
+    setPaths(newPaths)
+  }
+
+  return (
+    <Popover.Root>
+      <Popover.Trigger>
+        <Button size="md" color="brand" className="gap-1.5" onClick={() => setOpen(!open)}>
+          <Icon iconName="file-lines" iconStyle="regular" />
+          .tfvars files
+        </Button>
+      </Popover.Trigger>
+      <Popover.Content className="flex w-[340px] flex-col rounded-lg border border-neutral-200 p-0">
+        <div className="flex items-center justify-between px-3 py-2">
+          <span className="px-1 py-1 text-sm font-medium text-neutral-400">Add and order .tfvars files</span>
+          <Popover.Close>
+            <button type="button" className="px-1 py-1">
+              <Icon iconName="xmark" className="text-lg font-normal leading-4 text-neutral-350" />
+            </button>
+          </Popover.Close>
+        </div>
+        <div className="border-t border-neutral-200 px-4 py-3">
+          <Controller
+            name="path"
+            control={control}
+            render={({ field }) => (
+              <InputTextSmall
+                name={field.name}
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Path of .tfvar file"
+              />
+            )}
+          />
+        </div>
+        <div className="flex items-center justify-between border-t border-neutral-200 bg-neutral-100 px-4 py-1">
+          <span className="text-xs text-neutral-350">File order defines override priority.</span>
+          <Tooltip
+            classNameContent="max-w-[230px]"
+            content="Files higher in the list override variables from lower ones. Manual values always take highest priority."
+            side="left"
+          >
+            <span className="text-sm text-neutral-350">
+              <Icon iconName="info-circle" iconStyle="regular" />
+            </span>
+          </Tooltip>
+        </div>
+        <div className="flex flex-col border-t border-neutral-200">
+          {paths.map((path, index) => (
+            <TfvarItem key={path} path={path} index={index} onIndexChange={onIndexChange} />
+          ))}
+        </div>
+      </Popover.Content>
+    </Popover.Root>
+  )
+}
+
+const TerraformVariablesEmptyState = () => {
+  return (
+    <div className="flex flex-col items-center gap-2 py-4">
+      <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-300" />
+      <span className="text-center text-sm text-neutral-350">
+        Load a .tfvars file or add variables manually
+        <br />
+        to configure your terraform.
+      </span>
+    </div>
+  )
+}
+
+const TerraformVariablesTable = () => {
+  return (
+    <div className="flex flex-col rounded-lg border border-neutral-200">
+      <div className="flex items-center justify-between px-4 py-3">
+        <span className="text-sm font-medium text-neutral-400">Variable configuration</span>
+        <TfvarsFilesPopover />
+      </div>
+      <div className="flex items-center justify-center border-t border-neutral-200 bg-neutral-100 p-4">
+        <TerraformVariablesEmptyState />
+      </div>
+      <div className="flex items-center justify-end border-t border-neutral-200 px-4 py-3">
+        <Button size="md" variant="surface" className="gap-1.5">
+          Add variable
+          <Icon iconName="plus" iconStyle="regular" />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export const StepInputVariablesFeature = () => {
   useDocumentTitle('General - Terraform configuration')
 
@@ -203,11 +371,15 @@ export const StepInputVariablesFeature = () => {
           <form onSubmit={onSubmit} className="w-full">
             <div className="space-y-10">
               <Section className="space-y-2">
-                <Heading level={1}>Variables</Heading>
-                <p className="text-sm text-neutral-350">Define variables that will be used by the Terraform service.</p>
+                <Heading level={1}>Configure Terrafrom Variables</Heading>
+                <p className="text-sm text-neutral-350">
+                  Select .tfvars files and configure variable values for your Terraform deployment
+                </p>
               </Section>
 
-              <Section className="gap-4">
+              <TerraformVariablesTable />
+
+              {/* <Section className="gap-4">
                 <div className="space-y-1">
                   <Heading level={2}>Manifest variables</Heading>
                   <p className="text-sm text-neutral-350">Auto-populate variables from existing .tfvar file(s).</p>
@@ -242,7 +414,7 @@ export const StepInputVariablesFeature = () => {
                 <div className="flex flex-col gap-4">
                   <TerraformVariables />
                 </div>
-              </Section>
+              </Section> */}
             </div>
 
             <div className="mt-10 flex justify-between">
