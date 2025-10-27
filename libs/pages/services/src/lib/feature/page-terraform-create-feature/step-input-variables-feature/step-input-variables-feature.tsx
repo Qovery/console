@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { type PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
 import {
   type Control,
   Controller,
@@ -20,6 +20,7 @@ import {
   FunnelFlowBody,
   Heading,
   Icon,
+  Indicator,
   InputTextSmall,
   InputToggle,
   Popover,
@@ -28,7 +29,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, twMerge } from '@qovery/shared/util-js'
 import { type TerraformInputVariablesData, useTerraformCreateContext } from '../page-terraform-create-feature'
 
 const VarRow = ({
@@ -191,6 +192,44 @@ const TerraformVariablesSkeleton = () => {
   )
 }
 
+type TerraformVariablesContextType = {
+  selectedRows: string[]
+  onSelectRow: (key: string) => void
+  isRowSelected: (key: string) => boolean
+}
+
+const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
+
+export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
+  const [selectedRows, setSelectedRows] = useState<string[]>([])
+  const onSelectRow = (key: string) => {
+    if (isRowSelected(key)) {
+      setSelectedRows(selectedRows.filter((row) => row !== key))
+    } else {
+      setSelectedRows([...selectedRows, key])
+    }
+  }
+  const isRowSelected = (key: string) => {
+    return selectedRows.includes(key)
+  }
+
+  const value = {
+    selectedRows,
+    onSelectRow,
+    isRowSelected,
+  }
+
+  return <TerraformVariablesContext.Provider value={value}>{children}</TerraformVariablesContext.Provider>
+}
+
+export function useTerraformVariablesContext() {
+  const context = useContext(TerraformVariablesContext)
+  if (context === undefined) {
+    throw new Error('useTerraformVariablesContext must be used within an TerraformVariablesContext')
+  }
+  return context
+}
+
 const TfvarItem = ({
   path,
   index,
@@ -253,7 +292,7 @@ const TfvarItem = ({
 const TfvarsFilesPopover = () => {
   const [open, setOpen] = useState(false)
   const { control } = useFormContext()
-  const [paths, setPaths] = useState(['*.auto.tfvars', 'variables.tfvars', 'main.tfvars'])
+  const [paths, setPaths] = useState(['variables.tfvars', 'main.tfvars', '*.auto.tfvars'])
 
   const onIndexChange = (path: string, newIndex: number) => {
     const currentIndex = paths.indexOf(path)
@@ -267,10 +306,20 @@ const TfvarsFilesPopover = () => {
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Button size="md" color="brand" className="gap-1.5" onClick={() => setOpen(!open)}>
-          <Icon iconName="file-lines" iconStyle="regular" />
-          .tfvars files
-        </Button>
+        <Indicator
+          align="start"
+          side="left"
+          content={
+            <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
+              {paths.length ?? 0}
+            </span>
+          }
+        >
+          <Button size="md" color="brand" className="gap-1.5" onClick={() => setOpen(!open)} type="button">
+            <Icon iconName="file-lines" iconStyle="regular" />
+            .tfvars files
+          </Button>
+        </Indicator>
       </Popover.Trigger>
       <Popover.Content className="flex w-[340px] flex-col rounded-lg border border-neutral-200 p-0">
         <div className="flex items-center justify-between px-3 py-2">
@@ -319,29 +368,116 @@ const TfvarsFilesPopover = () => {
 
 const TerraformVariablesEmptyState = () => {
   return (
-    <div className="flex flex-col items-center gap-2 py-4">
-      <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-300" />
-      <span className="text-center text-sm text-neutral-350">
-        Load a .tfvars file or add variables manually
-        <br />
-        to configure your terraform.
-      </span>
+    <div className="flex items-center justify-center border-t border-neutral-200 bg-neutral-100 p-4">
+      <div className="flex flex-col items-center gap-2 py-4">
+        <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-300" />
+        <span className="text-center text-sm text-neutral-350">
+          Load a .tfvars file or manually add variables
+          <br />
+          to configure your Terraform service.
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const TerraformVariablesRows = () => {
+  const { onSelectRow, isRowSelected } = useTerraformVariablesContext()
+
+  const vars = [
+    {
+      key: 'key',
+      value: 'value',
+      source: 'source',
+      secret: true,
+    },
+    {
+      key: 'key2',
+      value: 'value2',
+      source: 'source2',
+      secret: false,
+    },
+  ]
+
+  return (
+    <div className="flex flex-col items-center justify-center border-t border-neutral-200">
+      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200 bg-neutral-100">
+        <div className="flex h-full items-center justify-center border-r border-neutral-200">
+          <Checkbox disabled />
+        </div>
+        <div className="flex h-full items-center border-r border-neutral-200">
+          <span className="px-4 text-sm text-neutral-400">Variable</span>
+        </div>
+        <div className="flex h-full items-center border-r border-neutral-200">
+          <span className="px-4 text-sm text-neutral-400">Value</span>
+        </div>
+        <div className="flex h-full items-center border-r border-neutral-200">
+          <span className="px-4 text-sm text-neutral-400">Source</span>
+        </div>
+        <span className="text-center text-sm text-neutral-400">
+          <Icon iconName="lock" iconStyle="regular" />
+        </span>
+      </div>
+
+      {vars.map((row) => (
+        <div
+          key={row.key}
+          className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200"
+        >
+          <div className="flex h-full items-center justify-center border-r border-neutral-200">
+            <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} />
+          </div>
+          <div className="flex h-full items-center border-r border-neutral-200">
+            <span className="px-4 text-sm text-neutral-400">{row.key}</span>
+          </div>
+          <div className="flex h-full items-center border-r border-neutral-200">
+            <span className="px-4 text-sm text-neutral-400">{row.value}</span>
+          </div>
+          <div className="flex h-full items-center border-r border-neutral-200">
+            <span className="px-4 text-sm text-neutral-400">{row.source}</span>
+          </div>
+          <span className="flex items-center justify-center text-center text-sm text-neutral-400">
+            <InputToggle
+              value={row.secret}
+              onChange={(value) => {
+                console.log(value)
+              }}
+              forceAlignTop
+              small
+            />
+          </span>
+        </div>
+      ))}
     </div>
   )
 }
 
 const TerraformVariablesTable = () => {
+  const { selectedRows } = useTerraformVariablesContext()
+
   return (
     <div className="flex flex-col rounded-lg border border-neutral-200">
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm font-medium text-neutral-400">Variable configuration</span>
         <TfvarsFilesPopover />
       </div>
-      <div className="flex items-center justify-center border-t border-neutral-200 bg-neutral-100 p-4">
-        <TerraformVariablesEmptyState />
-      </div>
-      <div className="flex items-center justify-end border-t border-neutral-200 px-4 py-3">
-        <Button size="md" variant="surface" className="gap-1.5">
+
+      {/* <TerraformVariablesEmptyState /> */}
+      <TerraformVariablesRows />
+
+      <div
+        className={twMerge(
+          'flex items-center border-t border-neutral-200 px-4 py-3',
+          selectedRows.length > 0 ? 'justify-between' : 'justify-end'
+        )}
+      >
+        {selectedRows.length > 0 && (
+          <Button size="md" variant="solid" color="red" className="gap-1.5" type="button">
+            <Icon iconName="trash-can" iconStyle="regular" />
+            Delete selected
+          </Button>
+        )}
+        <Button size="md" variant="surface" className="gap-1.5" type="button">
           Add variable
           <Icon iconName="plus" iconStyle="regular" />
         </Button>
@@ -367,74 +503,39 @@ export const StepInputVariablesFeature = () => {
   return (
     <FunnelFlowBody>
       <FormProvider {...inputVariablesForm} {...generalForm}>
-        <Section>
-          <form onSubmit={onSubmit} className="w-full">
-            <div className="space-y-10">
-              <Section className="space-y-2">
-                <Heading level={1}>Configure Terrafrom Variables</Heading>
-                <p className="text-sm text-neutral-350">
-                  Select .tfvars files and configure variable values for your Terraform deployment
-                </p>
-              </Section>
-
-              <TerraformVariablesTable />
-
-              {/* <Section className="gap-4">
-                <div className="space-y-1">
-                  <Heading level={2}>Manifest variables</Heading>
-                  <p className="text-sm text-neutral-350">Auto-populate variables from existing .tfvar file(s).</p>
-                </div>
-
-                <Controller
-                  name="tf_var_file_paths"
-                  control={inputVariablesForm.control}
-                  defaultValue={inputVariablesForm.getValues('tf_var_file_paths')}
-                  render={({ field, fieldState: { error } }) => (
-                    <InputText
-                      name={field.name}
-                      type="text"
-                      onChange={(e) => field.onChange(e.target.value.split(',').map((path) => path.trim()))}
-                      value={field.value.join(',')}
-                      label="Path to .tfvar file(s)"
-                      error={error?.message}
-                      hint="Comma separated file paths"
-                    />
-                  )}
-                />
-              </Section>
-
-              <Section className="gap-4">
-                <div className="space-y-1">
-                  <Heading level={2}>Input variables</Heading>
+        <TerraformVariablesProvider>
+          <Section>
+            <form onSubmit={onSubmit} className="w-full">
+              <div className="space-y-10">
+                <Section className="space-y-2">
+                  <Heading level={1}>Configure Terrafrom Variables</Heading>
                   <p className="text-sm text-neutral-350">
-                    Fill any additional environment variables required to execute the Terraform commands.
+                    Select .tfvars files and configure variable values for your Terraform deployment
                   </p>
-                </div>
+                </Section>
 
-                <div className="flex flex-col gap-4">
-                  <TerraformVariables />
-                </div>
-              </Section> */}
-            </div>
-
-            <div className="mt-10 flex justify-between">
-              <Button
-                type="button"
-                size="lg"
-                variant="plain"
-                color="neutral"
-                onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL)}
-              >
-                Back
-              </Button>
-              <div className="flex gap-3">
-                <Button type="submit" size="lg" onClick={onSubmit} disabled={!inputVariablesForm.formState.isValid}>
-                  Continue
-                </Button>
+                <TerraformVariablesTable />
               </div>
-            </div>
-          </form>
-        </Section>
+
+              <div className="mt-10 flex justify-between">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="plain"
+                  color="neutral"
+                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL)}
+                >
+                  Back
+                </Button>
+                <div className="flex gap-3">
+                  <Button type="submit" size="lg" onClick={onSubmit} disabled={!inputVariablesForm.formState.isValid}>
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </Section>
+        </TerraformVariablesProvider>
       </FormProvider>
     </FunnelFlowBody>
   )
