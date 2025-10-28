@@ -55,6 +55,7 @@ export function createFilter<T>(
       menus.push({
         title: (dataHead.filter && dataHead.filter[i].title) || undefined,
         search: (dataHead.filter && dataHead.filter[i].search) || false,
+        sortAlphabetically: (dataHead.filter && dataHead.filter[i].sortAlphabetically) || false,
         items: menu,
       })
     }
