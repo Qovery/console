@@ -28,9 +28,12 @@ type TerraformVariablesContextType = {
   isRowSelected: (key: string) => boolean
   tfVarFiles: TfVarFile[]
   setTfVarFiles: (tfVarFiles: TfVarFile[]) => void
-  variableRows: VariableRow[]
+  variableRows: VariableRowItem[]
   hoveredRow: string | undefined
   setHoveredRow: (hoveredRow: string | undefined) => void
+  customVariables: VariableRowItem[]
+  setCustomVariable: (variable: VariableRowItem) => void
+  resetCustomVariable: (key: string) => void
 }
 
 type TfVarFile = {
@@ -39,16 +42,17 @@ type TfVarFile = {
   enabled: boolean
 }
 
-type VariableRow = {
+type VariableRowItem = {
   key: string
   value: string
-  source: string
-  secret: boolean
+  source?: string
+  secret?: boolean
 }
 
 const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
 
 export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
+  const [customVariables, setCustomVariables] = useState<VariableRowItem[]>([])
   const [tfVarFiles, setTfVarFiles] = useState<TfVarFile[]>([
     {
       source: 'dev.tfvars',
@@ -61,23 +65,19 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
       variables: [{ region: 'eu-west-3' }, { instance_type: 't3.large' }, { key: 'value' }],
     },
   ])
-  const variableRows: VariableRow[] = useMemo(() => {
-    const vars = new Map<string, VariableRow>()
+  const variableRows: VariableRowItem[] = useMemo(() => {
+    const vars = new Map<string, VariableRowItem>()
     const files = [...tfVarFiles.filter((file) => file.enabled)].reverse()
     files.forEach((file) => {
       file.variables.forEach((variable) => {
         const key = Object.keys(variable)[0]
-        const value = Object.values(variable)[0]
-        vars.set(key, {
-          key,
-          value,
-          source: file.source,
-          secret: false, // TODO [QOV-1266] Are we keeping this?
-        })
+        const customVariable = customVariables.find((customVariable) => customVariable.key === key)
+        const value = customVariable?.value ?? Object.values(variable)[0]
+        vars.set(key, { key, value, source: file.source, secret: false }) // TODO [QOV-1266] Are we keeping 'secret' here?
       })
     })
     return [...vars.values()]
-  }, [tfVarFiles])
+  }, [tfVarFiles, customVariables])
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [hoveredRow, setHoveredRow] = useState<string | undefined>(undefined)
   const onSelectRow = (key: string) => {
@@ -90,6 +90,12 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const isRowSelected = (key: string) => {
     return selectedRows.includes(key)
   }
+  const setCustomVariable = (variable: VariableRowItem) => {
+    setCustomVariables([...customVariables.filter((customVariable) => customVariable.key !== variable.key), variable])
+  }
+  const resetCustomVariable = (key: string) => {
+    setCustomVariables(customVariables.filter((customVariable) => customVariable.key !== key))
+  }
 
   const value: TerraformVariablesContextType = {
     selectedRows,
@@ -100,6 +106,9 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     variableRows,
     hoveredRow,
     setHoveredRow,
+    customVariables,
+    setCustomVariable,
+    resetCustomVariable,
   }
 
   return <TerraformVariablesContext.Provider value={value}>{children}</TerraformVariablesContext.Provider>
@@ -279,8 +288,64 @@ const TerraformVariablesEmptyState = () => {
   )
 }
 
+const VariableRow = ({ row }: { row: VariableRowItem }) => {
+  const { onSelectRow, isRowSelected, hoveredRow, customVariables, setCustomVariable, resetCustomVariable } =
+    useTerraformVariablesContext()
+
+  const customVariable = customVariables.find((customVariable) => customVariable.key === row.key)
+
+  return (
+    <div
+      className={twMerge(
+        'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200',
+        hoveredRow === row.source && 'bg-neutral-100'
+      )}
+    >
+      <div className="flex h-full items-center justify-center border-r border-neutral-200">
+        <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} />
+      </div>
+      <div className="flex h-full items-center border-r border-neutral-200">
+        <span className="px-4 text-sm text-neutral-400">{row.key}</span>
+      </div>
+      <div className="flex h-full cursor-text items-center border-r border-neutral-200 hover:bg-neutral-100">
+        <input
+          name="value"
+          value={row.value}
+          onChange={(e) => {
+            setCustomVariable({ ...row, value: e.target.value })
+          }}
+          className="h-full w-full bg-transparent px-4 text-sm"
+        />
+        {customVariable && (
+          <Button
+            size="md"
+            variant="plain"
+            color="neutral"
+            type="button"
+            onClick={() => resetCustomVariable(customVariable.key)}
+          >
+            <Icon iconName="rotate-left" iconStyle="regular" />
+          </Button>
+        )}
+      </div>
+      <div className="flex h-full items-center border-r border-neutral-200">
+        <span className="px-4 text-sm text-neutral-400">{row.source}</span>
+      </div>
+      <span className="flex items-center justify-center text-center text-sm text-neutral-400">
+        <InputToggle
+          value={row.secret}
+          onChange={(value) => {
+            console.log(value)
+          }}
+          forceAlignTop
+          small
+        />
+      </span>
+    </div>
+  )
+}
+
 const TerraformVariablesRows = () => {
-  const { onSelectRow, isRowSelected, hoveredRow } = useTerraformVariablesContext()
   const { variableRows } = useTerraformVariablesContext()
 
   return (
@@ -304,36 +369,7 @@ const TerraformVariablesRows = () => {
       </div>
 
       {variableRows.map((row) => (
-        <div
-          key={row.key}
-          className={twMerge(
-            'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200',
-            hoveredRow === row.source && 'bg-neutral-100'
-          )}
-        >
-          <div className="flex h-full items-center justify-center border-r border-neutral-200">
-            <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} />
-          </div>
-          <div className="flex h-full items-center border-r border-neutral-200">
-            <span className="px-4 text-sm text-neutral-400">{row.key}</span>
-          </div>
-          <div className="flex h-full items-center border-r border-neutral-200">
-            <span className="px-4 text-sm text-neutral-400">{row.value}</span>
-          </div>
-          <div className="flex h-full items-center border-r border-neutral-200">
-            <span className="px-4 text-sm text-neutral-400">{row.source}</span>
-          </div>
-          <span className="flex items-center justify-center text-center text-sm text-neutral-400">
-            <InputToggle
-              value={row.secret}
-              onChange={(value) => {
-                console.log(value)
-              }}
-              forceAlignTop
-              small
-            />
-          </span>
-        </div>
+        <VariableRow key={row.key} row={row} />
       ))}
     </div>
   )
