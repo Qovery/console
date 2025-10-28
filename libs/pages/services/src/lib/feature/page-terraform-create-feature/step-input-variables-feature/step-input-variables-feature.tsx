@@ -1,4 +1,4 @@
-import { type PropsWithChildren, createContext, useContext, useEffect, useState } from 'react'
+import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useFormContext } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -26,35 +26,60 @@ type TerraformVariablesContextType = {
   selectedRows: string[]
   onSelectRow: (key: string) => void
   isRowSelected: (key: string) => boolean
-  paths: string[]
-  setPaths: (paths: string[]) => void
-  vars: {
-    key: string
-    value: string
-    source: string
-    secret: boolean
-  }[]
+  tfVarFiles: TfVarFile[]
+  setTfVarFiles: (tfVarFiles: TfVarFile[]) => void
+  variableRows: VariableRow[]
+  hoveredRow: string | undefined
+  setHoveredRow: (hoveredRow: string | undefined) => void
+}
+
+type TfVarFile = {
+  source: string
+  variables: Record<string, string>[]
+  enabled: boolean
+}
+
+type VariableRow = {
+  key: string
+  value: string
+  source: string
+  secret: boolean
 }
 
 const TerraformVariablesContext = createContext<TerraformVariablesContextType | undefined>(undefined)
 
 export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
-  const vars = [
+  const [tfVarFiles, setTfVarFiles] = useState<TfVarFile[]>([
     {
-      key: 'key',
-      value: 'value',
-      source: 'source',
-      secret: true,
+      source: 'dev.tfvars',
+      enabled: true,
+      variables: [{ region: 'eu-west-3' }, { instance_type: 't3.small' }],
     },
     {
-      key: 'key2',
-      value: 'value2',
-      source: 'source2',
-      secret: false,
+      source: 'prod.tfvars',
+      enabled: true,
+      variables: [{ region: 'eu-west-3' }, { instance_type: 't3.large' }, { key: 'value' }],
     },
-  ]
-  const [paths, setPaths] = useState<string[]>(['variables.tfvars', 'main.tfvars', '*.auto.tfvars'])
+  ])
+  const variableRows: VariableRow[] = useMemo(() => {
+    const vars = new Map<string, VariableRow>()
+    const files = [...tfVarFiles.filter((file) => file.enabled)].reverse()
+    files.forEach((file) => {
+      file.variables.forEach((variable) => {
+        const key = Object.keys(variable)[0]
+        const value = Object.values(variable)[0]
+        vars.set(key, {
+          key,
+          value,
+          source: file.source,
+          secret: false, // TODO [QOV-1266] Are we keeping this?
+        })
+      })
+    })
+    return [...vars.values()]
+  }, [tfVarFiles])
   const [selectedRows, setSelectedRows] = useState<string[]>([])
+  const [hoveredRow, setHoveredRow] = useState<string | undefined>(undefined)
   const onSelectRow = (key: string) => {
     if (isRowSelected(key)) {
       setSelectedRows(selectedRows.filter((row) => row !== key))
@@ -70,9 +95,11 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     selectedRows,
     onSelectRow,
     isRowSelected,
-    paths,
-    setPaths,
-    vars,
+    tfVarFiles,
+    setTfVarFiles,
+    variableRows,
+    hoveredRow,
+    setHoveredRow,
   }
 
   return <TerraformVariablesContext.Provider value={value}>{children}</TerraformVariablesContext.Provider>
@@ -87,40 +114,49 @@ export function useTerraformVariablesContext() {
 }
 
 const TfvarItem = ({
-  path,
+  file,
   index,
   onIndexChange,
 }: {
-  path: string
+  file: TfVarFile
   index: number
-  onIndexChange: (path: string, index: number) => void
+  onIndexChange: (file: TfVarFile, index: number) => void
 }) => {
-  const { control, setValue } = useFormContext()
+  const { tfVarFiles, setHoveredRow, setTfVarFiles } = useTerraformVariablesContext()
   const [currentIndex, setCurrentIndex] = useState<string | undefined>(index.toString())
+
+  const onCheckedChange = useCallback(
+    (checked: boolean) => {
+      setTfVarFiles(
+        tfVarFiles.map((currentFile) =>
+          currentFile.source === file.source ? { ...currentFile, enabled: checked } : currentFile
+        )
+      )
+    },
+    [tfVarFiles, file.source, setTfVarFiles]
+  )
 
   useEffect(() => {
     setCurrentIndex(index.toString())
   }, [index])
 
   return (
-    <div className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-200 px-4 py-3 last:border-b-0">
+    <div
+      className="grid grid-cols-[1fr_40px] items-center justify-between border-b border-neutral-200 px-4 py-3 last:border-b-0"
+      onMouseEnter={() => setHoveredRow(file.source)}
+      onMouseLeave={() => setHoveredRow(undefined)}
+    >
       <div className="flex items-center gap-4">
-        <Controller
-          name="enabled_paths"
-          control={control}
-          render={({ field }) => (
-            <Checkbox
-              name={field.name}
-              id={path}
-              checked={field.value?.[path]}
-              onCheckedChange={(checked: boolean) => setValue('enabled_paths', { ...field.value, [path]: checked })}
-              className="ml-1"
-            />
-          )}
+        <Checkbox
+          name={file.source}
+          id={file.source}
+          checked={file.enabled}
+          onCheckedChange={onCheckedChange}
+          className="ml-1"
         />
-        <label className="flex flex-col gap-0.5 text-sm" htmlFor={path}>
-          <span className="text-neutral-400">{path}</span>
-          <span className="text-xs text-neutral-350">5 variables</span>
+        <label className="flex flex-col gap-0.5 text-sm" htmlFor={file.source}>
+          <span className="text-neutral-400">{file.source}</span>
+          <span className="text-xs text-neutral-350">{file.variables.length} variables</span>
         </label>
       </div>
       <div className="flex items-center gap-1.5">
@@ -133,11 +169,11 @@ const TfvarItem = ({
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              onIndexChange(path, Number(currentIndex ?? 0))
+              onIndexChange(file, Number(currentIndex ?? 0))
             }
           }}
           onBlur={() => {
-            onIndexChange(path, Number(currentIndex ?? 0))
+            onIndexChange(file, Number(currentIndex ?? 0))
           }}
         />
       </div>
@@ -147,27 +183,27 @@ const TfvarItem = ({
 
 const TfvarsFilesPopover = () => {
   const { control } = useFormContext()
-  const { paths, setPaths } = useTerraformVariablesContext()
+  const { tfVarFiles, setTfVarFiles } = useTerraformVariablesContext()
 
-  const onIndexChange = (path: string, newIndex: number) => {
-    const currentIndex = paths.indexOf(path)
-    const newPaths = [...paths]
+  const onIndexChange = (path: TfVarFile, newIndex: number) => {
+    const currentIndex = tfVarFiles.indexOf(path)
+    const newPaths = [...tfVarFiles]
     const element = newPaths[currentIndex]
     newPaths.splice(currentIndex, 1)
     newPaths.splice(newIndex, 0, element)
-    setPaths(newPaths)
+    setTfVarFiles(newPaths)
   }
 
   return (
     <Popover.Root>
       <Popover.Trigger>
-        {paths.length > 0 ? (
+        {tfVarFiles.length > 0 ? (
           <Indicator
             align="start"
             side="left"
             content={
               <span className="relative right-0 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-400 text-sm font-bold leading-[0] text-white">
-                {paths.length ?? 0}
+                {tfVarFiles.length ?? 0}
               </span>
             }
           >
@@ -219,8 +255,8 @@ const TfvarsFilesPopover = () => {
           </Tooltip>
         </div>
         <div className="flex flex-col border-t border-neutral-200">
-          {paths.map((path, index) => (
-            <TfvarItem key={path} path={path} index={index} onIndexChange={onIndexChange} />
+          {tfVarFiles.map((file, index) => (
+            <TfvarItem key={file.source} file={file} index={index} onIndexChange={onIndexChange} />
           ))}
         </div>
       </Popover.Content>
@@ -230,7 +266,7 @@ const TfvarsFilesPopover = () => {
 
 const TerraformVariablesEmptyState = () => {
   return (
-    <div className="flex items-center justify-center border-t border-neutral-200 bg-neutral-100 p-4">
+    <div className="flex items-center justify-center border-b border-t border-neutral-200 bg-neutral-100 p-4">
       <div className="flex flex-col items-center gap-2 py-4">
         <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-300" />
         <span className="text-center text-sm text-neutral-350">
@@ -244,8 +280,8 @@ const TerraformVariablesEmptyState = () => {
 }
 
 const TerraformVariablesRows = () => {
-  const { onSelectRow, isRowSelected } = useTerraformVariablesContext()
-  const { vars } = useTerraformVariablesContext()
+  const { onSelectRow, isRowSelected, hoveredRow } = useTerraformVariablesContext()
+  const { variableRows } = useTerraformVariablesContext()
 
   return (
     <div className="flex flex-col items-center justify-center border-t border-neutral-200">
@@ -267,10 +303,13 @@ const TerraformVariablesRows = () => {
         </span>
       </div>
 
-      {vars.map((row) => (
+      {variableRows.map((row) => (
         <div
           key={row.key}
-          className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200"
+          className={twMerge(
+            'grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_60px] items-center border-b border-neutral-200',
+            hoveredRow === row.source && 'bg-neutral-100'
+          )}
         >
           <div className="flex h-full items-center justify-center border-r border-neutral-200">
             <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} />
@@ -314,10 +353,7 @@ const TerraformVariablesTable = () => {
       <TerraformVariablesRows />
 
       <div
-        className={twMerge(
-          'flex items-center border-t border-neutral-200 px-4 py-3',
-          selectedRows.length > 0 ? 'justify-between' : 'justify-end'
-        )}
+        className={twMerge('flex items-center px-4 py-3', selectedRows.length > 0 ? 'justify-between' : 'justify-end')}
       >
         {selectedRows.length > 0 && (
           <Button size="md" variant="solid" color="red" className="gap-1.5" type="button">
@@ -349,7 +385,7 @@ export const StepInputVariablesFeature = () => {
   })
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody customContentWidth="max-w-[794px]">
       <FormProvider {...inputVariablesForm} {...generalForm}>
         <TerraformVariablesProvider>
           <Section>
