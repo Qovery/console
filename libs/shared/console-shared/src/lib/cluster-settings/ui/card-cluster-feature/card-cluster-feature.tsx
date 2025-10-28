@@ -12,6 +12,7 @@ export interface CardClusterFeatureProps extends PropsWithChildren {
   watch?: UseFormWatch<FieldValues>
   control?: Control<FieldValues>
   tooltip?: ReactNode
+  badge?: ReactNode
 }
 
 export function CardClusterFeature({
@@ -23,6 +24,7 @@ export function CardClusterFeature({
   control,
   children,
   tooltip,
+  badge,
 }: CardClusterFeatureProps) {
   const [currentDisabled, setCurrentDisabled] = useState<boolean>(disabled)
 
@@ -80,24 +82,27 @@ export function CardClusterFeature({
           </Tooltip>
         )}
         <div className="basis-full">
-          <h4 className="mb-1 flex justify-between text-ssm font-medium text-neutral-400">
+          <h4 className="mb-1 flex items-center justify-between text-ssm font-medium text-neutral-400">
             <span>{feature.title}</span>
-            {feature.is_cloud_provider_paying_feature && (
-              <Tooltip content={`Billed by ${cloudProvider}`}>
-                <ExternalLink
-                  as="button"
-                  href={feature.cloud_provider_feature_documentation ?? undefined}
-                  className="gap-1 px-1.5"
-                  color="neutral"
-                  variant="solid"
-                  size="xs"
-                  radius="full"
-                >
-                  <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs text-white" />
-                  <Icon name={cloudProvider} height="16" width="16" pathColor="#FFFFFF" />
-                </ExternalLink>
-              </Tooltip>
-            )}
+            <div className="flex items-center gap-2">
+              {badge}
+              {feature.is_cloud_provider_paying_feature && (
+                <Tooltip content={`Billed by ${cloudProvider}`}>
+                  <ExternalLink
+                    as="button"
+                    href={feature.cloud_provider_feature_documentation ?? undefined}
+                    className="gap-1 px-1.5"
+                    color="neutral"
+                    variant="solid"
+                    size="xs"
+                    radius="full"
+                  >
+                    <Icon iconName="dollar-sign" iconStyle="solid" className="text-xs text-white" />
+                    <Icon name={cloudProvider} height="16" width="16" pathColor="#FFFFFF" />
+                  </ExternalLink>
+                </Tooltip>
+              )}
+            </div>
           </h4>
           <p className="max-w-lg text-xs text-neutral-350">{feature.description}</p>
           {typeof getClusterFeatureValue(feature) === 'string' && (

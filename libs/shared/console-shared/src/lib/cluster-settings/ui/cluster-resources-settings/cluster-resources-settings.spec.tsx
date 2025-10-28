@@ -255,7 +255,6 @@ describe('ClusterResourcesSettings', () => {
                   value: true,
                   is_enabled: true,
                   gateway_type: 'VPC_GW_M',
-                  dhcp_subnet_cidr: '172.16.0.0/24',
                 },
               },
             },

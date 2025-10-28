@@ -1,7 +1,8 @@
 import { type Cluster, type ClusterRoutingTableResultsInner } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { CardClusterFeature, SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, Icon, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
+import { Badge, BlockContent, Button, Icon, InputText, LoaderSpinner, Section, Tooltip } from '@qovery/shared/ui'
+import { getClusterFeatureValue, isClusterFeatureEnabled } from '@qovery/shared/util-js'
 import AWSExistingVPC from './aws-existing-vpc/aws-existing-vpc'
 import GcpExistingVPC from './gcp-existing-vpc/gcp-existing-vpc'
 
@@ -31,6 +32,58 @@ export function PageSettingsNetwork({
     .with({ type: 'AWS_USER_PROVIDED_NETWORK' }, (f) => <AWSExistingVPC feature={f.value} />)
     .with({ type: 'GCP_USER_PROVIDED_NETWORK' }, (f) => <GcpExistingVPC feature={f.value} />)
     .otherwise(() => null)
+
+  // Get SCW Static IP feature details
+  const staticIpFeature = cluster?.features?.find(({ id }) => id === 'STATIC_IP')
+  const isScwStaticIpEnabled =
+    cluster?.cloud_provider === 'SCW' && staticIpFeature && isClusterFeatureEnabled(staticIpFeature)
+
+  const getScwStaticIpConfig = (): { gateway_type?: string } | null => {
+    if (!staticIpFeature?.value_object) {
+      return null
+    }
+    const valueObject = staticIpFeature.value_object as any
+    const value = valueObject.value
+    if (typeof value === 'object' && value !== null && 'type' in value && value.type === 'scaleway') {
+      return {
+        gateway_type: value.gateway_type as string | undefined,
+      }
+    }
+    return null
+  }
+
+  const scwStaticIpConfig = getScwStaticIpConfig()
+
+  // Ensure STATIC_IP feature is always shown for SCW clusters
+  const enhancedFeatures = () => {
+    if (cluster?.cloud_provider !== 'SCW') {
+      return cluster?.features || []
+    }
+
+    const features = cluster?.features || []
+    const hasStaticIp = features.some(({ id }) => id === 'STATIC_IP')
+
+    if (!hasStaticIp) {
+      // Create a default disabled STATIC_IP feature for SCW
+      return [
+        ...features,
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP / Nat Gateways',
+          description:
+            'Your cluster will only be visible from a fixed number of public IP. On SCW, Public Nat Gateway will be setup.',
+          is_cloud_provider_paying_feature: true,
+          cloud_provider_feature_documentation: 'https://www.scaleway.com/en/public-gateway/',
+          value_object: {
+            type: 'BOOLEAN',
+            value: false,
+          },
+        } as any,
+      ]
+    }
+
+    return features
+  }
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -114,15 +167,48 @@ export function PageSettingsNetwork({
                 featureExistingVpcContent
               ) : (
                 <BlockContent title="Configured network features" classNameContent="p-0">
-                  {cluster?.features
-                    ?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
+                  {enhancedFeatures()
+                    ?.filter(
+                      ({ id }) =>
+                        id &&
+                        id !== 'EXISTING_VPC' &&
+                        id !== 'KARPENTER' &&
+                        !id.includes('CONTROL_PLANE') &&
+                        !id.includes('KAPSULE')
+                    )
                     .map((feature) => (
                       <CardClusterFeature
                         key={feature.id}
                         feature={feature}
                         cloudProvider={cluster?.cloud_provider}
                         disabled
-                      />
+                        badge={
+                          feature.id === 'STATIC_IP' && cluster?.cloud_provider === 'SCW' ? (
+                            <Badge color="sky" variant="surface" size="sm">
+                              Coming Soon
+                            </Badge>
+                          ) : undefined
+                        }
+                      >
+                        {feature.id === 'STATIC_IP' && cluster?.cloud_provider === 'SCW' && (
+                          <div className="mt-4 space-y-3">
+                            <InputText
+                              label="NAT Gateway Type"
+                              name="gateway_type"
+                              value={
+                                scwStaticIpConfig?.gateway_type === 'VPC_GW_S'
+                                  ? 'VPC GW S (20 Gbps bandwidth)'
+                                  : scwStaticIpConfig?.gateway_type === 'VPC_GW_M'
+                                    ? 'VPC GW M (200 Gbps bandwidth)'
+                                    : scwStaticIpConfig?.gateway_type === 'VPC_GW_L'
+                                      ? 'VPC GW L (1 Tbps bandwidth)'
+                                      : scwStaticIpConfig?.gateway_type || 'N/A'
+                              }
+                              disabled
+                            />
+                          </div>
+                        )}
+                      </CardClusterFeature>
                     ))}
                 </BlockContent>
               )}

@@ -51,22 +51,30 @@ export function StepFeaturesFeature() {
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (generalData?.cloud_provider === 'AWS' || generalData?.cloud_provider === 'GCP') {
-      if (data.vpc_mode === 'DEFAULT') {
+    if (
+      generalData?.cloud_provider === 'AWS' ||
+      generalData?.cloud_provider === 'GCP' ||
+      (generalData?.cloud_provider as string) === 'SCW'
+    ) {
+      // For SCW, we don't have vpc_mode selector, so always use DEFAULT
+      if ((generalData?.cloud_provider as string) === 'SCW' || data.vpc_mode === 'DEFAULT') {
         let cloneData = {}
 
-        for (let i = 0; i < Object.keys(data.features).length; i++) {
-          const id = Object.keys(data.features)[i]
-          const featureData = features?.find((f) => f.id === id)
-          const currentFeature = data.features[id]
+        if (data.features) {
+          for (let i = 0; i < Object.keys(data.features).length; i++) {
+            const id = Object.keys(data.features)[i]
+            const featureData = features?.find((f) => f.id === id)
+            const currentFeature = data.features[id]
 
-          cloneData = {
-            ...cloneData,
-            [id]: {
-              title: featureData?.title,
-              value: currentFeature?.value || false,
-              extendedValue: currentFeature?.extendedValue || false,
-            },
+            cloneData = {
+              ...cloneData,
+              [id]: {
+                title: featureData?.title,
+                value: currentFeature?.value || false,
+                extendedValue: currentFeature?.extendedValue || false,
+                gateway_type: currentFeature?.gateway_type,
+              },
+            }
           }
         }
 
@@ -91,7 +99,7 @@ export function StepFeaturesFeature() {
             features: {},
           })
         }
-        if (generalData.cloud_provider === 'GCP') {
+        if (generalData?.cloud_provider === 'GCP') {
           const existingVpcData = data.gcp_existing_vpc
 
           setFeaturesData({
@@ -106,6 +114,17 @@ export function StepFeaturesFeature() {
                   additional_ip_range_pods_names: existingVpcData?.additional_ip_range_pods_names,
                 }
               : undefined,
+            features: {},
+          })
+        }
+        if ((generalData?.cloud_provider as string) === 'SCW') {
+          const existingVpcData = data.scw_existing_vpc
+
+          setFeaturesData({
+            vpc_mode: 'EXISTING_VPC',
+            scw_existing_vpc: {
+              vpc_id: existingVpcData?.vpc_id ?? '',
+            },
             features: {},
           })
         }

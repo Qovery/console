@@ -33,20 +33,7 @@ export function StepResourcesFeature() {
         navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
       })
       .with('SCW', () => {
-        navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)
-        if (resourcesData) {
-          setFeaturesData({
-            vpc_mode: 'DEFAULT',
-            features: {
-              [SCW_CONTROL_PLANE_FEATURE_ID]: {
-                id: SCW_CONTROL_PLANE_FEATURE_ID,
-                title: 'Control Plane',
-                value: true,
-                extendedValue: resourcesData.scw_control_plane,
-              },
-            },
-          })
-        }
+        navigate(creationFlowUrl + CLUSTERS_CREATION_FEATURES_URL)
       })
       .otherwise(() => {
         navigate(creationFlowUrl + CLUSTERS_CREATION_SUMMARY_URL)

@@ -59,8 +59,7 @@ export function StepSummary(props: StepSummaryProps) {
   }
 
   const showFeaturesSection = match(props.generalData.cloud_provider)
-    .with('AWS', 'GCP', () => checkIfFeaturesAvailable())
-    .with('SCW', () => false)
+    .with('AWS', 'GCP', 'SCW', () => checkIfFeaturesAvailable())
     .otherwise(() => false)
 
   return (
