@@ -70,6 +70,8 @@ const dataHead: TableHeadProps<OrganizationEventResponse>[] = [
         title: 'Filter by user',
         key: 'triggered_by',
         hideFilterNumber: true,
+        search: true,
+        sortAlphabetically: true,
       },
     ],
   },
