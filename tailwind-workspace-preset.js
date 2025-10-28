@@ -88,7 +88,7 @@ const easingFunctions = {
 
 // tailwind-workspace-preset.js
 module.exports = {
-  darkMode: ['class'],
+  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
       transitionProperty: {
@@ -255,13 +255,13 @@ module.exports = {
         zink: colorsZinc,
         neutral: colorsZinc,
         background: {
-          default: '--background-1',
-          secondary: '--background-2',
-          overlay: '--background-overlay',
+          DEFAULT: 'var(--background-1)',
+          secondary: 'var(--background-2)',
+          overlay: 'var(--background-overlay)',
         },
         surface: {
           neutral: {
-            default: 'var(--neutral-1)',
+            DEFAULT: 'var(--neutral-1)',
             subtle: 'var(--neutral-2)',
             component: 'var(--neutral-3)',
             componentHover: 'var(--neutral-4)',
@@ -299,59 +299,59 @@ module.exports = {
             component: 'var(--accent-3)',
           },
         },
-        text: {
-          neutral: {
-            default: 'var(--neutral-12)',
-            subtle: 'var(--neutral-11)',
-            disabled: 'var(--neutral-10)',
-            contrasted: 'var(--contrast)',
-          },
-          neutralInvert: {
-            contrasted: 'var(--contrast-inverted)',
-            default: 'var(--neutral-1)',
-          },
-          brand: { base: 'var(--brand-11)' },
-          info: { primary: 'var(--info-11)' },
-          positive: { primary: 'var(--positive-11)' },
-          negative: { primary: 'var(--negative-11)' },
-          warning: { primary: 'var(--warning-11)' },
-          accent1: { primary: 'var(--accent-11)' },
+      },
+      textColor: {
+        neutral: {
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          contrasted: 'var(--contrast)',
         },
-        border: {
-          neutral: {
-            default: 'var(--neutral-6)',
-            component: 'var(--neutral-7)',
-            strong: 'var(--neutral-9)',
-          },
-          brand: {
-            strong: 'var(--brand-9)',
-            component: 'var(--brand-a7)',
-            subtle: 'var(--brand-6)',
-          },
-          info: {
-            strong: 'var(--info-9)',
-            component: 'var(--info-a7)',
-            subtle: 'var(--info-6)',
-          },
-          positive: {
-            strong: 'var(--positive-9)',
-            component: 'var(--positive-a7)',
-            subtle: 'var(--positive-6)',
-          },
-          negative: {
-            strong: 'var(--negative-9)',
-            component: 'var(--negative-a7)',
-            subtle: 'var(--negative-6)',
-          },
-          warning: {
-            strong: 'var(--warning-9)',
-            component: 'var(--warning-a7)',
-            subtle: 'var(--warning-6)',
-          },
-          accent1: {
-            strong: 'var(--accent-9)',
-            subtle: 'var(--accent-6)',
-          },
+        neutralInvert: {
+          DEFAULT: 'var(--neutral-1)',
+          contrasted: 'var(--contrast-inverted)',
+        },
+        brand: { DEFAULT: 'var(--brand-11)' },
+        info: { DEFAULT: 'var(--info-11)' },
+        positive: { DEFAULT: 'var(--positive-11)' },
+        negative: { DEFAULT: 'var(--negative-11)' },
+        warning: { DEFAULT: 'var(--warning-11)' },
+        accent1: { DEFAULT: 'var(--accent-11)' },
+      },
+      borderColor: {
+        neutral: {
+          DEFAULT: 'var(--neutral-6)',
+          component: 'var(--neutral-7)',
+          strong: 'var(--neutral-9)',
+        },
+        brand: {
+          strong: 'var(--brand-9)',
+          component: 'var(--brand-a7)',
+          subtle: 'var(--brand-6)',
+        },
+        info: {
+          strong: 'var(--info-9)',
+          component: 'var(--info-a7)',
+          subtle: 'var(--info-6)',
+        },
+        positive: {
+          strong: 'var(--positive-9)',
+          component: 'var(--positive-a7)',
+          subtle: 'var(--positive-6)',
+        },
+        negative: {
+          strong: 'var(--negative-9)',
+          component: 'var(--negative-a7)',
+          subtle: 'var(--negative-6)',
+        },
+        warning: {
+          strong: 'var(--warning-9)',
+          component: 'var(--warning-a7)',
+          subtle: 'var(--warning-6)',
+        },
+        accent1: {
+          strong: 'var(--accent-9)',
+          subtle: 'var(--accent-6)',
         },
       },
       animation: {
