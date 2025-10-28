@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { ChangePlanType } from '@qovery/domains/organizations/data-access'
 import { useChangePlan } from '@qovery/domains/organizations/feature'
-import PlanSelectionModal, {
-  ChangePlanType,
-} from '../../../ui/page-organization-billing-summary/plan-selection-modal/plan-selection-modal'
+import PlanSelectionModal from '../../../ui/page-organization-billing-summary/plan-selection-modal/plan-selection-modal'
 
 export interface PlanSelectionModalFeatureProps {
   organizationId?: string

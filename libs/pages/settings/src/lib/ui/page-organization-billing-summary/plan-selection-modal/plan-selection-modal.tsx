@@ -1,13 +1,8 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { ChangePlanType } from '@qovery/domains/organizations/data-access'
 import { Button, RadioGroup } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-
-// Plan enum for selection (normalized values)
-export enum ChangePlanType {
-  TEAM = 'TEAM',
-  ENTERPRISE = 'ENTERPRISE',
-}
 
 export interface PlanSelectionModalProps {
   onClose: () => void

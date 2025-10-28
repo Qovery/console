@@ -1,4 +1,11 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
+
+// Plan enum for changing organization plan (normalized values for API)
+export enum ChangePlanType {
+  TEAM = 'TEAM',
+  ENTERPRISE = 'ENTERPRISE',
+}
+
 import {
   type ApplicationGitRepositoryRequest,
   BillingApi,
@@ -760,7 +767,7 @@ export const mutations = {
     const response = await membersApi.postAcceptInviteMember(organizationId, inviteId)
     return response.data
   },
-  async changePlan({ organizationId, plan }: { organizationId: string; plan: string }) {
+  async changePlan({ organizationId, plan }: { organizationId: string; plan: ChangePlanType }) {
     const response = await billingApi.changePlan(organizationId, { plan })
     return response.data
   },
