@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useChangePlan } from '@qovery/domains/organizations/feature'
-import PlanSelectionModal, { ChangePlanType } from '../../../ui/page-organization-billing-summary/plan-selection-modal/plan-selection-modal'
+import PlanSelectionModal, {
+  ChangePlanType,
+} from '../../../ui/page-organization-billing-summary/plan-selection-modal/plan-selection-modal'
 
 export interface PlanSelectionModalFeatureProps {
   organizationId?: string
@@ -9,11 +11,7 @@ export interface PlanSelectionModalFeatureProps {
   currentPlan?: string
 }
 
-export function PlanSelectionModalFeature({
-  organizationId,
-  closeModal,
-  currentPlan,
-}: PlanSelectionModalFeatureProps) {
+export function PlanSelectionModalFeature({ organizationId, closeModal, currentPlan }: PlanSelectionModalFeatureProps) {
   // Normalize the current plan to match radio button values (TEAM or ENTERPRISE)
   const normalizedPlan = currentPlan?.toUpperCase().includes('TEAM')
     ? ChangePlanType.TEAM
