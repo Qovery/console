@@ -39,6 +39,7 @@ export interface TableHeadCustomFilterProps<T> {
   itemsCustom?: string[]
   itemContentCustom?: (data: T, currentFilter: string, item?: string) => ReactNode
   hideFilterNumber?: boolean
+  sortAlphabetically?: boolean
 }
 
 /**
