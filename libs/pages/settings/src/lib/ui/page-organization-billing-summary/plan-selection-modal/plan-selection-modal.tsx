@@ -4,6 +4,9 @@ import { PlanEnum, type PlanEnum as PlanEnumType } from '@qovery/domains/organiz
 import { Button, RadioGroup } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
+// Only these plans are selectable
+const SELECTABLE_PLANS = [PlanEnum.TEAM, PlanEnum.ENTERPRISE] as const
+
 export interface PlanSelectionModalProps {
   onClose: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
@@ -35,42 +38,27 @@ export function PlanSelectionModal(props: PlanSelectionModalProps) {
           render={({ field, fieldState: { error } }) => (
             <div className="mb-6">
               <RadioGroup.Root onValueChange={field.onChange} value={field.value} className="flex flex-col gap-3">
-                <label
-                  className={twMerge(
-                    'flex cursor-pointer items-center gap-3 rounded border border-neutral-200 p-4 transition-colors hover:bg-neutral-100',
-                    field.value === PlanEnum.TEAM && 'border-brand-500 bg-brand-50'
-                  )}
-                >
-                  <RadioGroup.Item value={PlanEnum.TEAM} />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-neutral-400">{PlanEnum.TEAM}</span>
-                      {isCurrentPlan(PlanEnum.TEAM) && (
-                        <span className="rounded bg-neutral-150 px-2 py-0.5 text-xs font-medium text-neutral-350">
-                          Current
-                        </span>
-                      )}
+                {SELECTABLE_PLANS.map((plan) => (
+                  <label
+                    key={plan}
+                    className={twMerge(
+                      'flex cursor-pointer items-center gap-3 rounded border border-neutral-200 p-4 transition-colors hover:bg-neutral-100',
+                      field.value === plan && 'border-brand-500 bg-brand-50'
+                    )}
+                  >
+                    <RadioGroup.Item value={plan} />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-neutral-400">{plan}</span>
+                        {isCurrentPlan(plan) && (
+                          <span className="rounded bg-neutral-150 px-2 py-0.5 text-xs font-medium text-neutral-350">
+                            Current
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </label>
-                <label
-                  className={twMerge(
-                    'flex cursor-pointer items-center gap-3 rounded border border-neutral-200 p-4 transition-colors hover:bg-neutral-100',
-                    field.value === PlanEnum.ENTERPRISE && 'border-brand-500 bg-brand-50'
-                  )}
-                >
-                  <RadioGroup.Item value={PlanEnum.ENTERPRISE} />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-neutral-400">{PlanEnum.ENTERPRISE}</span>
-                      {isCurrentPlan(PlanEnum.ENTERPRISE) && (
-                        <span className="rounded bg-neutral-150 px-2 py-0.5 text-xs font-medium text-neutral-350">
-                          Current
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </label>
+                  </label>
+                ))}
               </RadioGroup.Root>
               {error && <p className="mt-2 text-xs text-red-500">{error.message}</p>}
             </div>
