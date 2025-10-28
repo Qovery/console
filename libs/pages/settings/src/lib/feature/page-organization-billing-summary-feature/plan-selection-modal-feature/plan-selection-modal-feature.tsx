@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { ChangePlanType } from '@qovery/domains/organizations/data-access'
+import { PlanEnum } from '@qovery/domains/organizations/data-access'
 import { useChangePlan } from '@qovery/domains/organizations/feature'
 import PlanSelectionModal from '../../../ui/page-organization-billing-summary/plan-selection-modal/plan-selection-modal'
 
@@ -13,9 +13,9 @@ export interface PlanSelectionModalFeatureProps {
 export function PlanSelectionModalFeature({ organizationId, closeModal, currentPlan }: PlanSelectionModalFeatureProps) {
   // Normalize the current plan to match radio button values (TEAM or ENTERPRISE)
   const normalizedPlan = currentPlan?.toUpperCase().includes('TEAM')
-    ? ChangePlanType.TEAM
+    ? PlanEnum.TEAM
     : currentPlan?.toUpperCase().includes('ENTERPRISE')
-      ? ChangePlanType.ENTERPRISE
+      ? PlanEnum.ENTERPRISE
       : ''
 
   const methods = useForm<{ plan: string }>({ defaultValues: { plan: normalizedPlan }, mode: 'all' })

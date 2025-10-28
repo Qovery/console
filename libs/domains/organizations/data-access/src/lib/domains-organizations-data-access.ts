@@ -1,11 +1,4 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-
-// Plan enum for changing organization plan (normalized values for API)
-export enum ChangePlanType {
-  TEAM = 'TEAM',
-  ENTERPRISE = 'ENTERPRISE',
-}
-
 import {
   type ApplicationGitRepositoryRequest,
   BillingApi,
@@ -39,7 +32,11 @@ import {
   type OrganizationRequest,
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
+  PlanEnum,
 } from 'qovery-typescript-axios'
+
+// Re-export PlanEnum for convenience
+export { PlanEnum }
 import { match } from 'ts-pattern'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
 
@@ -767,7 +764,7 @@ export const mutations = {
     const response = await membersApi.postAcceptInviteMember(organizationId, inviteId)
     return response.data
   },
-  async changePlan({ organizationId, plan }: { organizationId: string; plan: ChangePlanType }) {
+  async changePlan({ organizationId, plan }: { organizationId: string; plan: PlanEnum }) {
     const response = await billingApi.changePlan(organizationId, { plan })
     return response.data
   },
