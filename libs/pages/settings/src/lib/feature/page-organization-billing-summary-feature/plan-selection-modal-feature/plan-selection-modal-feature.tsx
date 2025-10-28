@@ -16,9 +16,9 @@ export function PlanSelectionModalFeature({ organizationId, closeModal, currentP
     ? PlanEnum.TEAM
     : currentPlan?.toUpperCase().includes('ENTERPRISE')
       ? PlanEnum.ENTERPRISE
-      : ''
+      : ('' as PlanEnum)
 
-  const methods = useForm<{ plan: string }>({ defaultValues: { plan: normalizedPlan }, mode: 'all' })
+  const methods = useForm<{ plan: PlanEnum }>({ defaultValues: { plan: normalizedPlan }, mode: 'all' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { mutateAsync: changePlan } = useChangePlan()
 
