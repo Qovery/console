@@ -19,6 +19,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import {
   APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
+  APPLICATION_MONITORING_GENERAL_URL,
   APPLICATION_MONITORING_URL,
   APPLICATION_SETTINGS_URL,
   APPLICATION_URL,
@@ -88,10 +89,13 @@ export function Container({ children }: ContainerProps) {
                 </Badge>
               </span>
             ),
-            active:
-              location.pathname ===
-              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_MONITORING_URL,
-            link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_MONITORING_URL,
+            active: location.pathname.includes(
+              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_MONITORING_URL
+            ),
+            link:
+              APPLICATION_URL(organizationId, projectId, environmentId, applicationId) +
+              APPLICATION_MONITORING_URL +
+              APPLICATION_MONITORING_GENERAL_URL,
           },
         ]
       : []),

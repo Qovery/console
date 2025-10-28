@@ -1,7 +1,8 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { ClustersApi } from 'qovery-typescript-axios'
+import { AlertRulesApi, ClustersApi } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
+const alertRulesApi = new AlertRulesApi()
 
 export const observability = createQueryKeys('observability', {
   containerName: ({
@@ -106,6 +107,13 @@ export const observability = createQueryKeys('observability', {
       )
 
       return response.data.metrics && JSON.parse(response.data.metrics)
+    },
+  }),
+  alertRules: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await alertRulesApi.getAlertRules(organizationId)
+      return response.data.results
     },
   }),
 })
