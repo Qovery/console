@@ -1,9 +1,11 @@
 import { type AlertRuleState } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { Badge, Button, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { useService } from '@qovery/domains/services/feature'
+import { Badge, Button, Heading, Icon, Section, TablePrimitives, Tooltip, useModal } from '@qovery/shared/ui'
 import { useAlertRules } from '../../hooks/use-alert-rules/use-alert-rules'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
+import CreateKeyAlertsModal from '../../service-creation-flow/create-key-alerts-modal/create-key-alerts-modal'
 import { SeverityIndicator } from './severity-indicator/severity-indicator'
 
 const { Table } = TablePrimitives
@@ -34,8 +36,10 @@ function getStatusConfig(state: AlertRuleState) {
 
 export function ServiceAlerting() {
   const { environmentId = '', applicationId = '' } = useParams()
+  const { openModal, closeModal } = useModal()
 
   const { data: environment } = useEnvironment({ environmentId })
+  const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: alertRules = [], isFetched: isAlertRulesFetched } = useAlertRules({
     organizationId: environment?.organization.id ?? '',
     serviceId: applicationId,
@@ -43,12 +47,21 @@ export function ServiceAlerting() {
 
   if (!environment || !isAlertRulesFetched) return null
 
+  const createKeyAlertsModal = () => {
+    openModal({
+      content: <CreateKeyAlertsModal onClose={closeModal} service={service} />,
+      options: {
+        width: 488,
+      },
+    })
+  }
+
   return (
     <Section className="w-full px-8 py-6">
       <div className="border-b border-neutral-250">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Alerts</Heading>
-          <Button variant="outline" color="neutral" size="md" className="gap-1.5">
+          <Button variant="outline" color="neutral" size="md" className="gap-1.5" onClick={createKeyAlertsModal}>
             <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
             New alert
           </Button>
@@ -62,7 +75,7 @@ export function ServiceAlerting() {
             Define baseline alerts for key metrics like CPU, memory, latency, <br /> and error rate that will help you
             keep your service under control.
           </p>
-          <Button size="md" className="gap-1.5">
+          <Button size="md" className="gap-1.5" onClick={createKeyAlertsModal}>
             <Icon iconName="plus-large" iconStyle="regular" className="text-xs" />
             Create key alerts
           </Button>
