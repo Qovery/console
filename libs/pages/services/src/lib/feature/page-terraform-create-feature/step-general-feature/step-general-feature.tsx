@@ -7,7 +7,7 @@ import {
   GitPublicRepositorySettings,
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
-import { SourceSetting, TERRAFORM_VERSIONS } from '@qovery/domains/service-terraform/feature'
+import { SourceSetting } from '@qovery/domains/service-terraform/feature'
 import { GeneralSetting } from '@qovery/domains/services/feature'
 import { SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL, SERVICES_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
@@ -78,7 +78,7 @@ export function StepGeneralFeature() {
                   provider: 'TERRAFORM',
                   provider_version: {
                     read_from_terraform_block: false,
-                    explicit_version: TERRAFORM_VERSIONS[0],
+                    explicit_version: '1.13',
                   },
                   job_resources: {
                     cpu_milli: 500,

@@ -6,8 +6,10 @@ import {
 } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
+import { useProjects } from '@qovery/domains/projects/feature'
 import { APPLICATION_URL, APPLICATION_VARIABLES_URL } from '@qovery/shared/routes'
 import { Callout, Heading, Icon, InputSelect, InputText, Link, RadioGroup, Section } from '@qovery/shared/ui'
+import useTerraformAvailableVersions from '../hooks/use-terraform-available-versions/use-terraform-available-versions'
 
 export interface TerraformGeneralData
   extends Omit<TerraformRequest, 'source' | 'ports' | 'values_override' | 'arguments' | 'timeout_sec' | 'provider'> {
@@ -30,38 +32,6 @@ export interface TerraformGeneralData
   }
 }
 
-export const TERRAFORM_VERSIONS = [
-  '1.13.2',
-  '1.12.2',
-  '1.11.4',
-  '1.10.5',
-  '1.9.8',
-  '1.8.5',
-  '1.7.5',
-  '1.6.6',
-  '1.5.7',
-  '1.4.7',
-  '1.3.10',
-  '1.2.9',
-  '1.1.9',
-  '1.0.11',
-  '0.15.5',
-  '0.14.11',
-  '0.13.7',
-  '0.12.31',
-  '0.11.15',
-  '0.10.8',
-  '0.9.11',
-  '0.8.8',
-  '0.7.13',
-  '0.6.16',
-  '0.5.3',
-  '0.4.2',
-  '0.3.7',
-  '0.2.2',
-  '0.1.1',
-]
-
 export const TerraformConfigurationSettings = ({
   methods,
   isSettings,
@@ -70,6 +40,7 @@ export const TerraformConfigurationSettings = ({
   isSettings?: boolean
 }) => {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+  const { data: versions = [], isLoading: isTerraformVersionLoading } = useTerraformAvailableVersions()
 
   return (
     <div className="space-y-10">
@@ -91,7 +62,7 @@ export const TerraformConfigurationSettings = ({
             rules={{
               required: true,
               pattern: {
-                value: /^\d+\.\d+\.\d+$/,
+                value: /^\d+\.\d+(.\d+)?$/,
                 message: 'Please enter a valid version.',
               },
             }}
@@ -115,8 +86,9 @@ export const TerraformConfigurationSettings = ({
               <InputSelect
                 label="Terraform version"
                 value={field.value}
+                isLoading={isTerraformVersionLoading}
                 onChange={field.onChange}
-                options={TERRAFORM_VERSIONS.map((v) => ({ label: v, value: v }))}
+                options={versions.map((v) => ({ label: v.version, value: v.version }))}
                 hint="Select the Terraform version to use for the service"
               />
             )}
