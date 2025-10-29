@@ -40,6 +40,7 @@ import useMasterCredentials from '../hooks/use-master-credentials/use-master-cre
 import { useService } from '../hooks/use-service/use-service'
 import { LastCommitAuthor } from '../last-commit-author/last-commit-author'
 import { LastCommit } from '../last-commit/last-commit'
+import { getDatabaseConnectionProtocol } from '../service-access-modal/service-access-modal'
 import { ServiceDetailsSkeleton } from './service-details-skeleton'
 
 function GitRepository({
@@ -268,7 +269,8 @@ export function ServiceDetails({ className, environmentId, serviceId, ...props }
   const sectionClassName = 'text-neutral-350 gap-4 pl-8 pr-5'
 
   const handleCopyCredentials = (credentials: Credentials) => {
-    const connectionURI = `${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+    const protocol = getDatabaseConnectionProtocol(databaseSource?.type)
+    const connectionURI = `${protocol}${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
     copyToClipboard(connectionURI)
     toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   }

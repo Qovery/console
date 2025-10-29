@@ -1,5 +1,5 @@
 import { type Credentials } from 'qovery-typescript-axios'
-import { match } from 'ts-pattern'
+import { P, match } from 'ts-pattern'
 import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
 import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -31,12 +31,40 @@ export interface ServiceAccessModalProps {
   onClose: () => void
 }
 
+export function getDatabaseConnectionProtocol(type?: string) {
+  const normalizedType = type?.toUpperCase()
+
+  return match(normalizedType)
+    .with('POSTGRESQL', () => 'postgresql://')
+    .with('MYSQL', () => 'mysql://')
+    .with('REDIS', () => 'redis://')
+    .with('MONGODB', () => 'mongodb://')
+    .with(
+      P.when((value) => value?.includes('POSTGRES') ?? false),
+      () => 'postgresql://'
+    )
+    .with(
+      P.when((value) => value?.includes('MYSQL') ?? false),
+      () => 'mysql://'
+    )
+    .with(
+      P.when((value) => value?.includes('REDIS') ?? false),
+      () => 'redis://'
+    )
+    .with(
+      P.when((value) => value?.includes('MONGO') ?? false),
+      () => 'mongodb://'
+    )
+    .otherwise(() => '')
+}
+
 function SectionDatabaseConnectionUri({ service }: { service: Database }) {
   const [, copyToClipboard] = useCopyToClipboard()
   const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: 'DATABASE' })
 
   const handleCopyCredentials = (credentials: Credentials) => {
-    const connectionURI = `${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+    const protocol = getDatabaseConnectionProtocol(service.type)
+    const connectionURI = `${protocol}${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
     copyToClipboard(connectionURI)
     toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   }
