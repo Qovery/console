@@ -7,7 +7,7 @@ import { twMerge } from '@qovery/shared/util-js'
 interface CreateKeyAlertsModalProps {
   onClose: () => void
   service?: AnyService
-  onSubmit?: (data: CreateKeyAlertsFormData) => void
+  onSubmit: (data: CreateKeyAlertsFormData) => void
 }
 
 interface CreateKeyAlertsFormData {
@@ -53,10 +53,7 @@ export function CreateKeyAlertsModal({ onClose, service, onSubmit: onSubmitProp 
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (onSubmitProp) {
-      onSubmitProp(data)
-    }
-    onClose()
+    onSubmitProp(data)
   })
 
   const watchMetricCategories = methods.watch('metricCategories')
