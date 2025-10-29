@@ -1,10 +1,11 @@
-import { type TerraformRequest, type TerraformRequestProviderEnum } from 'qovery-typescript-axios'
+import { type TerraformRequestProviderEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { TerraformConfigurationSettings, type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { Button } from '@qovery/shared/ui'
+import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 export default function PageSettingsTerraformConfigurationFeature() {
   const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
@@ -26,28 +27,15 @@ export default function PageSettingsTerraformConfigurationFeature() {
     if (!service || !data) return
 
     if (service.serviceType === 'TERRAFORM') {
-      const payload: TerraformRequest & { serviceType: 'TERRAFORM' } = {
-        ...service,
+      const payload = {
         ...data,
-        serviceType: 'TERRAFORM',
-        terraform_files_source: {
-          git_repository: {
-            url: service.terraform_files_source?.git?.git_repository?.url ?? '',
-            branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
-            git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
-          },
-        },
         provider: 'TERRAFORM' as TerraformRequestProviderEnum,
-        terraform_variables_source: {
-          tf_vars: [],
-          tf_var_file_paths: [],
-        },
-        timeout_sec: Number(data.timeout_sec),
+        timeout_sec: Number(data.timeout_sec ?? service.timeout_sec),
       }
 
       editService({
         serviceId: service.id,
-        payload,
+        payload: buildEditServicePayload({ service, request: payload }),
       })
     }
   })

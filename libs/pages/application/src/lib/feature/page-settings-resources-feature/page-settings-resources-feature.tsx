@@ -82,18 +82,6 @@ export function SettingsResourcesFeature({ service, environment }: SettingsResou
         buildEditServicePayload({
           service,
           request: {
-            terraform_variables_source: {
-              tf_var_file_paths: service.terraform_variables_source?.tf_var_file_paths ?? [],
-              tf_vars: [],
-            },
-            terraform_files_source: {
-              git_repository: {
-                url: service.terraform_files_source?.git?.git_repository?.url ?? '',
-                branch: service.terraform_files_source?.git?.git_repository?.branch ?? '',
-                git_token_id: service.terraform_files_source?.git?.git_repository?.git_token_id ?? '',
-                root_path: service.terraform_files_source?.git?.git_repository?.root_path ?? '',
-              },
-            },
             job_resources: {
               cpu_milli: Number(data['cpu']),
               ram_mib: Number(data['memory']),

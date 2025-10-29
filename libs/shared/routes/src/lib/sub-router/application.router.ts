@@ -27,3 +27,4 @@ export const APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS = '/deployment-restric
 export const APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL = '/advanced-settings'
 export const APPLICATION_SETTINGS_DANGER_ZONE_URL = '/danger-zone'
 export const APPLICATION_SETTINGS_TERRAFORM_CONFIGURATION_URL = '/terraform-configuration'
+export const APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL = '/terraform-arguments'
