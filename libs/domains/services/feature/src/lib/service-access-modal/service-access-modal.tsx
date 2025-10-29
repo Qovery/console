@@ -37,9 +37,37 @@ export function getDatabaseConnectionProtocol(type?: string) {
   return match(normalizedType)
     .with('POSTGRESQL', () => 'postgresql://')
     .with('MYSQL', () => 'mysql://')
-    .with('REDIS', () => 'redis://')
+    .with('REDIS', () => 'rediss://')
     .with('MONGODB', () => 'mongodb://')
     .otherwise(() => '')
+}
+
+// Some databases need SSL parameters in the connection URI.
+function getDatabaseSslQuery(type?: string, mode?: string) {
+  const normalizedType = type?.toUpperCase()
+  const normalizedMode = mode?.toUpperCase()
+
+  // SSL not available for CONTAINER mode yet
+  if (normalizedType === 'POSTGRESQL' && normalizedMode === 'MANAGED') {
+    return '?sslmode=require'
+  }
+  // available for both MANAGED and CONTAINER modes
+  if (normalizedType === 'MYSQL') {
+    return '?ssl-mode=REQUIRED'
+  }
+  // REDIS TSL is managed in the protocol. Mongodb SSL is not supported for now.
+  return ''
+}
+
+export function getDatabaseConnectionUri(
+  service: Pick<Database, 'type' | 'mode'> | { type?: string; mode?: string },
+  credentials: Credentials
+) {
+  const protocol = getDatabaseConnectionProtocol(service.type)
+  const connectionURI = `${protocol}${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+  const sslQuery = getDatabaseSslQuery(service.type, service.mode)
+
+  return `${connectionURI}${sslQuery}`
 }
 
 function SectionDatabaseConnectionUri({ service }: { service: Database }) {
@@ -47,8 +75,7 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
   const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: 'DATABASE' })
 
   const handleCopyCredentials = (credentials: Credentials) => {
-    const protocol = getDatabaseConnectionProtocol(service.type)
-    const connectionURI = `${protocol}${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+    const connectionURI = getDatabaseConnectionUri(service, credentials)
     copyToClipboard(connectionURI)
     toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   }
