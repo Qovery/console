@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
-import { TERRAFORM_VERSIONS, type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
+import { type TerraformGeneralData } from '@qovery/domains/service-terraform/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_NEW_URL,
@@ -62,7 +62,7 @@ export function PageTerraformCreateFeature() {
       state: 'kubernetes',
       provider_version: {
         read_from_terraform_block: false,
-        explicit_version: TERRAFORM_VERSIONS[0],
+        explicit_version: '1.13',
       },
       job_resources: {
         cpu_milli: 500,

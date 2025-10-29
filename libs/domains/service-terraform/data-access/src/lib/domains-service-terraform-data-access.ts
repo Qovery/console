@@ -1,16 +1,14 @@
-import { type TerraformRequest, TerraformsApi } from 'qovery-typescript-axios'
+import { createQueryKeys } from '@lukemorales/query-key-factory'
+import { TerraformMainCallsApi } from 'qovery-typescript-axios'
 
-const terraformsApi = new TerraformsApi()
+const terraformApi = new TerraformMainCallsApi()
 
-export const mutations = {
-  async createTerraformService({
-    environmentId,
-    terraformRequest,
-  }: {
-    environmentId: string
-    terraformRequest: TerraformRequest
-  }) {
-    const response = await terraformsApi.createTerraform(environmentId, terraformRequest)
-    return response.data
-  },
-}
+export const serviceTerraform = createQueryKeys('serviceTerraform', {
+  listAvailableVersions: () => ({
+    queryKey: ['listAvailableTerraformVersions'],
+    async queryFn() {
+      const response = await terraformApi.listTerraformVersions()
+      return response.data.results
+    },
+  }),
+})
