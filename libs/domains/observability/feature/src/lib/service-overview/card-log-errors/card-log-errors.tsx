@@ -1,5 +1,3 @@
-import { ClustersApi } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { pluralize } from '@qovery/shared/util-js'
@@ -7,12 +5,10 @@ import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-m
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
-const clusterApi = new ClustersApi()
-
-const query_to_prometheus = (serviceId: string, timeRange: string) =>
+const queryToPrometheus = (serviceId: string, timeRange: string) =>
   `sum(increase(promtail_custom_q_log_errors_total{qovery_com_service_id="${serviceId}"}[${timeRange}]) or vector(0))`
 
-const query_to_loki = (serviceId: string, timeRange: string) =>
+const queryToLoki = (serviceId: string, timeRange: string) =>
   `sum(count_over_time({qovery_com_service_id="${serviceId}", level="error"} [${timeRange}]))`
 
 export function CardLogErrors({
@@ -32,66 +28,43 @@ export function CardLogErrors({
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const { queryTimeRange, startTimestamp, endTimestamp } = useServiceOverviewContext()
-  const [lokiValue, setLokiValue] = useState<number | null>(null)
-  const [isLoadingLoki, setIsLoadingLoki] = useState(false)
 
   const timeRangeInHours = (parseInt(endTimestamp, 10) - parseInt(startTimestamp, 10)) / 3600
-  const usePrometheus = timeRangeInHours > 48 // call loki to count real error number for time rage less than 2d (for precision vs query performance)
+  // Call Loki to count real error number for time rage less than 2d (for precision vs query performance)
+  const usePrometheus = timeRangeInHours > 48
 
-  const { data: metrics, isLoading: isLoadingMetrics } = useInstantMetrics({
+  const { data: metricsPrometheus, isLoading: isLoadingMetricsPrometheus } = useInstantMetrics({
     clusterId,
-    query: query_to_prometheus(serviceId, queryTimeRange),
+    query: queryToPrometheus(serviceId, queryTimeRange),
     startTimestamp,
     endTimestamp,
     boardShortName: 'service_overview',
     metricShortName: 'card_log_error_number',
+    enabled: usePrometheus,
   })
 
-  useEffect(() => {
-    if (!usePrometheus) {
-      setIsLoadingLoki(true)
-      clusterApi
-        .getClusterLogs(
-          clusterId,
-          '/loki/api/v1/query',
-          query_to_loki(serviceId, queryTimeRange),
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          endTimestamp
-        )
-        .then((response) => {
-          if (response.data?.response) {
-            const parsedResponse =
-              typeof response.data.response === 'string' ? JSON.parse(response.data.response) : response.data.response
-            const value = Math.ceil(parsedResponse?.data?.result?.[0]?.value?.[1] || 0)
-            setLokiValue(value)
-          } else {
-            setLokiValue(0)
-          }
-        })
-        .catch(() => {
-          setLokiValue(0)
-        })
-        .finally(() => {
-          setIsLoadingLoki(false)
-        })
-    }
-  }, [usePrometheus, clusterId, serviceId, queryTimeRange])
+  const { data: metricsLoki, isLoading: isLoadingMetricsLoki } = useInstantMetrics({
+    clusterId,
+    query: queryToLoki(serviceId, queryTimeRange),
+    endpoint: 'loki',
+    startTimestamp,
+    endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_log_error_number',
+    enabled: !usePrometheus,
+  })
+
+  const valueLoki = Math.ceil(metricsLoki?.data?.result?.[0]?.value?.[1]) || 0
 
   const startDate = new Date(parseInt(startTimestamp, 10) * 1000).toISOString()
   const endDate = new Date(parseInt(endTimestamp, 10) * 1000).toISOString()
 
-  const value = usePrometheus ? Math.ceil(metrics?.data?.result?.[0]?.value?.[1]) || 0 : lokiValue ?? 0
+  const value = usePrometheus ? Math.ceil(metricsPrometheus?.data?.result?.[0]?.value?.[1]) || 0 : valueLoki
 
   const title = `${value} log ${pluralize(value, 'error', 'errors')}`
   const description = 'total log errors detected in the selected time range'
 
-  const isLoading = usePrometheus ? isLoadingMetrics : isLoadingLoki
+  const isLoading = usePrometheus ? isLoadingMetricsPrometheus : isLoadingMetricsLoki
 
   return (
     <CardMetric

@@ -56,6 +56,7 @@ export const observability = createQueryKeys('observability', {
   }),
   metrics: ({
     clusterId,
+    endpoint = 'prometheus',
     query,
     queryRange,
     startTimestamp,
@@ -71,6 +72,7 @@ export const observability = createQueryKeys('observability', {
     alignedRange,
   }: {
     clusterId: string
+    endpoint?: 'loki' | 'prometheus'
     query: string
     maxSourceResolution: string
     boardShortName: string
@@ -84,11 +86,12 @@ export const observability = createQueryKeys('observability', {
     queryRange?: 'query' | 'query_range'
     timeRange?: string
   }) => ({
-    queryKey: [query, timeRange, startTimestamp, endTimestamp, step],
+    queryKey: [endpoint, query, timeRange, startTimestamp, endTimestamp, step],
     async queryFn() {
+      const url = endpoint === 'loki' ? `/loki/api/v1/${queryRange}` : `api/v1/${queryRange}`
       const response = await clusterApi.getClusterMetrics(
         clusterId,
-        `api/v1/${queryRange}`,
+        url,
         query,
         startTimestamp,
         endTimestamp,

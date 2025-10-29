@@ -13,8 +13,10 @@ interface UseInstantMetricsProps {
   endTimestamp: string
   boardShortName: 'service_overview'
   metricShortName: string
+  endpoint?: 'loki' | 'prometheus'
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
+  enabled?: boolean
 }
 
 // Helper hook to safely get live update setting from context
@@ -34,6 +36,7 @@ function useLiveUpdateSetting(): boolean {
 // 'startTimestamp' and 'endTimestamp' are only needed to calculate the range, but are otherwise unused here.
 export function useInstantMetrics({
   clusterId,
+  endpoint = 'prometheus',
   query,
   startTimestamp,
   endTimestamp,
@@ -41,10 +44,12 @@ export function useInstantMetrics({
   isLiveUpdateEnabled: overrideLiveUpdate,
   boardShortName,
   metricShortName,
+  enabled = true,
 }: UseInstantMetricsProps) {
   // Get live update setting from context, but allow override
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
+  const context = useServiceOverviewContext()
 
   const alignedStart = alignStartSec(startTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
@@ -61,6 +66,7 @@ export function useInstantMetrics({
     ...observability.metrics({
       clusterId,
       query,
+      endpoint,
       queryRange: 'query',
       startTimestamp: undefined,
       endTimestamp: undefined,
@@ -70,7 +76,7 @@ export function useInstantMetrics({
       // These params are used to generate charts in Grafana
       boardShortName,
       metricShortName,
-      traceId: '',
+      traceId: context.traceId,
       alignedRange,
     }),
     keepPreviousData: true,
@@ -78,6 +84,7 @@ export function useInstantMetrics({
     refetchIntervalInBackground: finalLiveUpdateEnabled,
     refetchOnWindowFocus: false,
     retry: 3,
+    enabled,
   })
 
   // Custom isLoading: true on first load and when timeRange changes, false on live refetch
