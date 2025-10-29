@@ -1,5 +1,5 @@
 import { type Credentials } from 'qovery-typescript-axios'
-import { P, match } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
 import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
@@ -39,22 +39,6 @@ export function getDatabaseConnectionProtocol(type?: string) {
     .with('MYSQL', () => 'mysql://')
     .with('REDIS', () => 'redis://')
     .with('MONGODB', () => 'mongodb://')
-    .with(
-      P.when((value) => value?.includes('POSTGRES') ?? false),
-      () => 'postgresql://'
-    )
-    .with(
-      P.when((value) => value?.includes('MYSQL') ?? false),
-      () => 'mysql://'
-    )
-    .with(
-      P.when((value) => value?.includes('REDIS') ?? false),
-      () => 'redis://'
-    )
-    .with(
-      P.when((value) => value?.includes('MONGO') ?? false),
-      () => 'mongodb://'
-    )
     .otherwise(() => '')
 }
 
