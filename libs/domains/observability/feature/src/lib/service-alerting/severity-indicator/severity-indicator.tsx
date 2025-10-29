@@ -1,4 +1,5 @@
-import { AlertSeverity } from 'qovery-typescript-axios'
+import { type AlertSeverity } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { twMerge } from '@qovery/shared/util-js'
 
 export interface SeverityIndicatorProps {
@@ -15,32 +16,28 @@ interface SeverityConfig {
 }
 
 function getSeverityConfig(severity: AlertSeverity): SeverityConfig {
-  switch (severity) {
-    case AlertSeverity.WARNING:
-      return {
-        label: 'Medium',
-        bars: 3,
-        textColor: 'text-yellow-600',
-        barColor: 'bg-yellow-500',
-        emptyBarColor: 'bg-neutral-200',
-      }
-    case AlertSeverity.CRITICAL:
-      return {
-        label: 'Critical',
-        bars: 5,
-        textColor: 'text-red-600',
-        barColor: 'bg-red-600',
-        emptyBarColor: 'bg-neutral-200',
-      }
-    default:
-      return {
-        label: 'Unknown',
-        bars: 0,
-        textColor: 'text-neutral-350',
-        barColor: 'bg-neutral-350',
-        emptyBarColor: 'bg-neutral-300',
-      }
-  }
+  return match(severity)
+    .with('WARNING', () => ({
+      label: 'Medium',
+      bars: 3,
+      textColor: 'text-yellow-600',
+      barColor: 'bg-yellow-500',
+      emptyBarColor: 'bg-neutral-200',
+    }))
+    .with('CRITICAL', () => ({
+      label: 'Critical',
+      bars: 5,
+      textColor: 'text-red-600',
+      barColor: 'bg-red-600',
+      emptyBarColor: 'bg-neutral-200',
+    }))
+    .otherwise(() => ({
+      label: 'Unknown',
+      bars: 0,
+      textColor: 'text-neutral-350',
+      barColor: 'bg-neutral-350',
+      emptyBarColor: 'bg-neutral-300',
+    }))
 }
 
 export function SeverityIndicator({ severity, className = '' }: SeverityIndicatorProps) {

@@ -1,5 +1,6 @@
-import { AlertRuleState } from 'qovery-typescript-axios'
+import { type AlertRuleState } from 'qovery-typescript-axios'
 import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { Badge, Button, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { useAlertRules } from '../hooks/use-alert-rules/use-alert-rules'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
@@ -8,34 +9,27 @@ import { SeverityIndicator } from './severity-indicator/severity-indicator'
 const { Table } = TablePrimitives
 
 function getStatusConfig(state: AlertRuleState) {
-  switch (state) {
-    case AlertRuleState.TRIGGERED:
-    case AlertRuleState.PENDING_NOTIFICATION:
-    case AlertRuleState.NOTIFIED:
-      return {
-        label: 'Firing',
-        color: 'red' as const,
-        icon: 'fire' as const,
-      }
-    case AlertRuleState.SUPPRESSED:
-      return {
-        label: 'Suppressed',
-        color: 'yellow' as const,
-        icon: 'bell-slash' as const,
-      }
-    case AlertRuleState.UNROUTED:
-      return {
-        label: 'Unrouted',
-        color: 'neutral' as const,
-        icon: 'triangle-exclamation' as const,
-      }
-    default:
-      return {
-        label: 'Monitoring',
-        color: 'green' as const,
-        icon: 'light-emergency' as const,
-      }
-  }
+  return match(state)
+    .with('TRIGGERED', 'PENDING_NOTIFICATION', 'NOTIFIED', () => ({
+      label: 'Firing',
+      color: 'red' as const,
+      icon: 'fire' as const,
+    }))
+    .with('SUPPRESSED', () => ({
+      label: 'Suppressed',
+      color: 'yellow' as const,
+      icon: 'bell-slash' as const,
+    }))
+    .with('UNROUTED', () => ({
+      label: 'Unrouted',
+      color: 'neutral' as const,
+      icon: 'triangle-exclamation' as const,
+    }))
+    .otherwise(() => ({
+      label: 'Monitoring',
+      color: 'green' as const,
+      icon: 'light-emergency' as const,
+    }))
 }
 
 export function ServiceAlerting() {
