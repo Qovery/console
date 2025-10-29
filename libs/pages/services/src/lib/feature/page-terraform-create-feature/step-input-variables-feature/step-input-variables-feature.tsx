@@ -6,6 +6,7 @@ import {
   SERVICES_TERRAFORM_CREATION_SUMMARY_URL,
 } from '@qovery/shared/routes'
 import {
+  Badge,
   Button,
   Checkbox,
   FunnelFlowBody,
@@ -228,7 +229,7 @@ const TfvarsFilesPopover = () => {
           </Button>
         )}
       </Popover.Trigger>
-      <Popover.Content className="flex w-[340px] flex-col rounded-lg border border-neutral-200 p-0">
+      <Popover.Content side="right" className="flex w-[340px] flex-col rounded-lg border border-neutral-200 p-0">
         <div className="flex items-center justify-between px-3 py-2">
           <span className="px-1 py-1 text-sm font-medium text-neutral-400">Add and order .tfvars files</span>
           <Popover.Close>
@@ -288,6 +289,14 @@ const TerraformVariablesEmptyState = () => {
   )
 }
 
+const getSourceBadgeColor = (row: VariableRowItem, customVariable: VariableRowItem | undefined) => {
+  if (customVariable) {
+    return 'yellow'
+  }
+  // TODO [QOV-1266] Manage colors for most common sources
+  return 'sky'
+}
+
 const VariableRow = ({ row }: { row: VariableRowItem }) => {
   const { onSelectRow, isRowSelected, hoveredRow, customVariables, setCustomVariable, resetCustomVariable } =
     useTerraformVariablesContext()
@@ -328,8 +337,11 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
           </Button>
         )}
       </div>
-      <div className="flex h-full items-center border-r border-neutral-200">
-        <span className="px-4 text-sm text-neutral-400">{row.source}</span>
+      <div className="flex h-full items-center border-r border-neutral-200 px-4">
+        <Badge variant="surface" color={getSourceBadgeColor(row, customVariable)} className="text-sm">
+          {customVariable ? 'Override from file' : ''}
+          {row.source}
+        </Badge>
       </div>
       <span className="flex items-center justify-center text-center text-sm text-neutral-400">
         <InputToggle
