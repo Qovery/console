@@ -1,4 +1,5 @@
 export * from './lib/service-overview/service-overview'
+export * from './lib/rds-managed-db/rds-managed-db-overview'
 export * from './lib/enable-observability-modal/enable-observability-modal'
 export * from './lib/activation-toast/activation-toast'
 export * from './lib/service-alerting/service-alerting'
