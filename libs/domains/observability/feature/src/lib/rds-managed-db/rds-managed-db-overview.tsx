@@ -1,10 +1,15 @@
 import clsx from 'clsx'
 import { useParams } from 'react-router-dom'
+import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { CardAvgCpuUtilization } from '../rds-cards/card-avg-cpu-utilization/card-avg-cpu-utilization'
+import { CardAvgDbConnections } from '../rds-cards/card-avg-db-connections/card-avg-db-connections'
+import { CardUnvacuumedTransactions } from '../rds-cards/card-unvacuumed-transactions/card-unvacuumed-transactions'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { RdsManagedDbProvider, useRdsManagedDbContext } from './util-filter/rds-managed-db-context'
+import { generateDbInstance } from './util/generate-db-instance'
 
 function RdsManagedDbOverviewContent() {
   const { environmentId = '', databaseId = '' } = useParams()
@@ -30,6 +35,9 @@ function RdsManagedDbOverviewContent() {
         <Chart.Loader />
       </div>
     )
+
+  // Generate the RDS database instance identifier
+  const dbInstance = generateDbInstance(service as Database)
 
   return (
     <div className="isolate">
@@ -100,19 +108,11 @@ function RdsManagedDbOverviewContent() {
       </div>
       <div className="space-y-10 px-8 py-10">
         <Section className="gap-4">
-          <Heading weight="medium">Database health check</Heading>
-          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <Callout.Root color="sky" className="h-full">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>RDS Metrics Coming Soon</Callout.TextHeading>
-                <Callout.TextDescription>
-                  Database status, connections, and performance metrics will be displayed here.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
+          <Heading weight="medium">Overview</Heading>
+          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-3')}>
+            <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <CardAvgCpuUtilization clusterId={environment.cluster_id} dbInstance={dbInstance} />
           </div>
         </Section>
 
