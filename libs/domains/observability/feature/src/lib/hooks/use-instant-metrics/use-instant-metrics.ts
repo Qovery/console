@@ -15,6 +15,7 @@ interface UseInstantMetricsProps {
   metricShortName: string
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
+  enabled?: boolean
 }
 
 // Helper hook to safely get live update setting from context
@@ -41,10 +42,12 @@ export function useInstantMetrics({
   isLiveUpdateEnabled: overrideLiveUpdate,
   boardShortName,
   metricShortName,
+  enabled = true,
 }: UseInstantMetricsProps) {
   // Get live update setting from context, but allow override
   const contextLiveUpdate = useLiveUpdateSetting()
   const finalLiveUpdateEnabled = overrideLiveUpdate ?? contextLiveUpdate
+  const context = useServiceOverviewContext()
 
   const alignedStart = alignStartSec(startTimestamp)
   const alignedEnd = alignEndSec(endTimestamp)
@@ -70,7 +73,7 @@ export function useInstantMetrics({
       // These params are used to generate charts in Grafana
       boardShortName,
       metricShortName,
-      traceId: '',
+      traceId: context.traceId,
       alignedRange,
     }),
     keepPreviousData: true,
@@ -78,6 +81,7 @@ export function useInstantMetrics({
     refetchIntervalInBackground: finalLiveUpdateEnabled,
     refetchOnWindowFocus: false,
     retry: 3,
+    enabled,
   })
 
   // Custom isLoading: true on first load and when timeRange changes, false on live refetch

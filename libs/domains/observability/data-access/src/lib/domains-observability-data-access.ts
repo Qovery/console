@@ -109,6 +109,25 @@ export const observability = createQueryKeys('observability', {
       return response.data.metrics && JSON.parse(response.data.metrics)
     },
   }),
+  lokiMetrics: ({ clusterId, query, endTimestamp }: { clusterId: string; query: string; endTimestamp: string }) => ({
+    queryKey: [clusterId, query, endTimestamp],
+    async queryFn() {
+      const response = await clusterApi.getClusterLogs(
+        clusterId,
+        '/loki/api/v1/query',
+        query,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        endTimestamp
+      )
+      return typeof response.data.response === 'string' ? JSON.parse(response.data.response) : response.data.response
+    },
+  }),
   alertRules: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {
