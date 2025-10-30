@@ -56,7 +56,7 @@ export function ClusterRunningStatusBadge({ cluster, clusterDeploymentStatus }: 
     )
   }
 
-  if (isLoading && !runningStatus) {
+  if (isLoading && !runningStatus && !isTimeout) {
     return <Skeleton width={80} height={24} />
   }
 
