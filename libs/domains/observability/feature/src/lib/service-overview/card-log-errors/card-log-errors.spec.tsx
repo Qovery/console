@@ -1,5 +1,6 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useInstantMetricsImport from '../../hooks/use-instant-metrics/use-instant-metrics'
+import * as useLokiMetricsImport from '../../hooks/use-loki-metrics/use-loki-metrics'
 import { ServiceOverviewProvider } from '../util-filter/service-overview-context'
 import { CardLogErrors } from './card-log-errors'
 
@@ -11,8 +12,14 @@ jest.mock('react-router-dom', () => ({
 }))
 
 jest.mock('../../hooks/use-instant-metrics/use-instant-metrics')
+jest.mock('../../hooks/use-loki-metrics/use-loki-metrics')
+
 const useInstantMetrics = useInstantMetricsImport.useInstantMetrics as jest.MockedFunction<
   typeof useInstantMetricsImport.useInstantMetrics
+>
+
+const useLokiMetrics = useLokiMetricsImport.useLokiMetrics as jest.MockedFunction<
+  typeof useLokiMetricsImport.useLokiMetrics
 >
 
 const createMockUseInstantMetricsReturn = (
@@ -28,6 +35,19 @@ const createMockUseInstantMetricsReturn = (
     isLoading,
   }) as unknown as ReturnType<typeof useInstantMetricsImport.useInstantMetrics>
 
+const createMockUseLokiMetricsReturn = (
+  data?: {
+    data?: {
+      result?: Array<unknown>
+    }
+  },
+  isLoading = false
+) =>
+  ({
+    data,
+    isLoading,
+  }) as unknown as ReturnType<typeof useLokiMetricsImport.useLokiMetrics>
+
 describe('CardLogErrors', () => {
   const defaultProps = {
     organizationId: 'test-org-id',
@@ -41,10 +61,12 @@ describe('CardLogErrors', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedNavigate.mockClear()
+    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn(undefined, false))
+    useLokiMetrics.mockReturnValue(createMockUseLokiMetricsReturn(undefined, false))
   })
 
   it('should render successfully with loading state', () => {
-    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn(undefined, true))
+    useLokiMetrics.mockReturnValue(createMockUseLokiMetricsReturn(undefined, true))
 
     const { baseElement } = renderWithProviders(
       <ServiceOverviewProvider>
@@ -56,8 +78,8 @@ describe('CardLogErrors', () => {
   })
 
   it('should render with no log errors (GREEN status)', () => {
-    useInstantMetrics.mockReturnValue(
-      createMockUseInstantMetricsReturn({
+    useLokiMetrics.mockReturnValue(
+      createMockUseLokiMetricsReturn({
         data: {
           result: [],
         },
@@ -75,8 +97,8 @@ describe('CardLogErrors', () => {
   })
 
   it('should render with log errors (RED status)', () => {
-    useInstantMetrics.mockReturnValue(
-      createMockUseInstantMetricsReturn({
+    useLokiMetrics.mockReturnValue(
+      createMockUseLokiMetricsReturn({
         data: {
           result: [{ value: [null, 2] }],
         },
@@ -94,8 +116,8 @@ describe('CardLogErrors', () => {
   })
 
   it('should handle empty metrics data', () => {
-    useInstantMetrics.mockReturnValue(
-      createMockUseInstantMetricsReturn({
+    useLokiMetrics.mockReturnValue(
+      createMockUseLokiMetricsReturn({
         data: {
           result: [],
         },
@@ -113,7 +135,7 @@ describe('CardLogErrors', () => {
   })
 
   it('should handle undefined metrics data', () => {
-    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn())
+    useLokiMetrics.mockReturnValue(createMockUseLokiMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -126,8 +148,8 @@ describe('CardLogErrors', () => {
   })
 
   it('should navigate to logs when clicked', async () => {
-    useInstantMetrics.mockReturnValue(
-      createMockUseInstantMetricsReturn({
+    useLokiMetrics.mockReturnValue(
+      createMockUseLokiMetricsReturn({
         data: {
           result: [{ value: [null, 1] }],
         },
@@ -157,8 +179,8 @@ describe('CardLogErrors', () => {
     expect(navigateUrl).toMatch(/endDate=[\d-]+T[\d:.%A-Z]+/)
   })
 
-  it('should call useInstantMetrics with correct parameters', () => {
-    useInstantMetrics.mockReturnValue(createMockUseInstantMetricsReturn())
+  it('should call useLokiMetrics with correct parameters for short time ranges', () => {
+    useLokiMetrics.mockReturnValue(createMockUseLokiMetricsReturn())
 
     renderWithProviders(
       <ServiceOverviewProvider>
@@ -166,14 +188,11 @@ describe('CardLogErrors', () => {
       </ServiceOverviewProvider>
     )
 
-    expect(useInstantMetrics).toHaveBeenCalledWith({
+    expect(useLokiMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
-      query:
-        'sum(increase(promtail_custom_q_log_errors_total{qovery_com_service_id="test-service-id"}[1h]) or vector(0))',
-      startTimestamp: expect.any(String),
+      query: 'sum(count_over_time({qovery_com_service_id="test-service-id", level="error"} [1h]))',
       endTimestamp: expect.any(String),
-      boardShortName: 'service_overview',
-      metricShortName: 'card_log_error_number',
+      enabled: true,
     })
   })
 })

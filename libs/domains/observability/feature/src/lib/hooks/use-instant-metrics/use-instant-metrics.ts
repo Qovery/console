@@ -13,7 +13,6 @@ interface UseInstantMetricsProps {
   endTimestamp: string
   boardShortName: 'service_overview'
   metricShortName: string
-  endpoint?: 'loki' | 'prometheus'
   timeRange?: TimeRangeOption
   isLiveUpdateEnabled?: boolean
   enabled?: boolean
@@ -36,7 +35,6 @@ function useLiveUpdateSetting(): boolean {
 // 'startTimestamp' and 'endTimestamp' are only needed to calculate the range, but are otherwise unused here.
 export function useInstantMetrics({
   clusterId,
-  endpoint = 'prometheus',
   query,
   startTimestamp,
   endTimestamp,
@@ -66,7 +64,6 @@ export function useInstantMetrics({
     ...observability.metrics({
       clusterId,
       query,
-      endpoint,
       queryRange: 'query',
       startTimestamp: undefined,
       endTimestamp: undefined,

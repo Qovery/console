@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { pluralize } from '@qovery/shared/util-js'
 import { useInstantMetrics } from '../../hooks/use-instant-metrics/use-instant-metrics'
+import { useLokiMetrics } from '../../hooks/use-loki-metrics/use-loki-metrics'
 import { CardMetric } from '../card-metric/card-metric'
 import { useServiceOverviewContext } from '../util-filter/service-overview-context'
 
@@ -43,14 +44,10 @@ export function CardLogErrors({
     enabled: usePrometheus,
   })
 
-  const { data: metricsLoki, isLoading: isLoadingMetricsLoki } = useInstantMetrics({
+  const { data: metricsLoki, isLoading: isLoadingMetricsLoki } = useLokiMetrics({
     clusterId,
     query: queryToLoki(serviceId, queryTimeRange),
-    endpoint: 'loki',
-    startTimestamp,
     endTimestamp,
-    boardShortName: 'service_overview',
-    metricShortName: 'card_log_error_number',
     enabled: !usePrometheus,
   })
 
