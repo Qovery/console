@@ -1,4 +1,5 @@
-:root[data-theme='light'] {
+:root[data-theme='light'],
+:root.light {
   /* Background */
   --background-1: hsla(0, 0%, 100%, 1);
   --background-2: hsla(270, 20%, 98%, 1);
@@ -99,7 +100,8 @@
   --accent-11: hsla(336, 75%, 45%, 1);
 }
 
-:root[data-theme='dark'] {
+:root[data-theme='dark'],
+:root.dark {
   /* Background */
   --background-1: hsla(270, 6%, 3%, 1);
   --background-2: hsla(270, 6%, 7%, 1);
