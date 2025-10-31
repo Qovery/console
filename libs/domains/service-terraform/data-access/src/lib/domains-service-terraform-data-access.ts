@@ -5,7 +5,7 @@ const terraformApi = new TerraformMainCallsApi()
 
 export const serviceTerraform = createQueryKeys('serviceTerraform', {
   listAvailableVersions: () => ({
-    queryKey: ['listAvailableTerraformVersions'],
+    queryKey: ['listTerraformAvailableVersion'],
     async queryFn() {
       const response = await terraformApi.listTerraformVersions()
       return response.data.results
