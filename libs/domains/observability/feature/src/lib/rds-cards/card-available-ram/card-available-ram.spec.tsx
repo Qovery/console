@@ -1,5 +1,5 @@
 import { render, screen } from '@qovery/shared/util-tests'
-import { CardAvgDbConnections } from './card-avg-db-connections'
+import { CardAvailableRam } from './card-available-ram'
 
 const mockUseRdsManagedDbContext = jest.fn()
 const mockUseRdsInstantMetrics = jest.fn()
@@ -13,15 +13,16 @@ jest.mock('../../rds-managed-db/hooks/use-rds-instant-metrics/use-rds-instant-me
 }))
 
 jest.mock('../card-rds-metric/card-rds-metric', () => ({
-  CardRdsMetric: ({ title, description }: { title: string; description: string }) => (
+  CardRdsMetric: ({ title, description, unit }: { title: string; description: string; unit?: string }) => (
     <div>
       <h3>{title}</h3>
       <p>{description}</p>
+      {unit && <span>{unit}</span>}
     </div>
   ),
 }))
 
-describe('CardAvgDbConnections', () => {
+describe('CardAvailableRam', () => {
   beforeEach(() => {
     mockUseRdsManagedDbContext.mockReturnValue({
       startTimestamp: '1698834400',
@@ -36,17 +37,22 @@ describe('CardAvgDbConnections', () => {
   })
 
   it('should render successfully', () => {
-    const { container } = render(<CardAvgDbConnections clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />)
+    const { container } = render(<CardAvailableRam clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />)
     expect(container).toBeTruthy()
   })
 
   it('should render title', () => {
-    render(<CardAvgDbConnections clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />)
-    expect(screen.getByText('avg Database Connections')).toBeInTheDocument()
+    render(<CardAvailableRam clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />)
+    expect(screen.getByText('Available RAM on Instances')).toBeInTheDocument()
   })
 
   it('should render description', () => {
-    render(<CardAvgDbConnections clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />)
-    expect(screen.getByText('average active connections')).toBeInTheDocument()
+    render(<CardAvailableRam clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />)
+    expect(screen.getByText('free memory available')).toBeInTheDocument()
+  })
+
+  it('should render unit', () => {
+    render(<CardAvailableRam clusterId="cluster-1" dbInstance="zb4b3b048-postgresql" />)
+    expect(screen.getByText('GB')).toBeInTheDocument()
   })
 })

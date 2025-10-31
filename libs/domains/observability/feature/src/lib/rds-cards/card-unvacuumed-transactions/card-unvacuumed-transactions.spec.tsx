@@ -44,12 +44,14 @@ describe('CardUnvacuumedTransactions', () => {
 
   it('should render title', () => {
     render(<CardUnvacuumedTransactions clusterId="cluster-1" dbInstance="my-db-instance" />)
-    expect(screen.getByText('Unvacuumed Transactions')).toBeInTheDocument()
+    expect(screen.getByText('Unvacuumed Transactions (highest avg)')).toBeInTheDocument()
   })
 
   it('should render description', () => {
     render(<CardUnvacuumedTransactions clusterId="cluster-1" dbInstance="my-db-instance" />)
-    expect(screen.getByText('pending vacuum operations')).toBeInTheDocument()
+    expect(
+      screen.getByText('Backlog of database transactions needing cleanup. PostgreSQL can handle max 2 billion')
+    ).toBeInTheDocument()
   })
 
   it('should show placeholder when no data', () => {
@@ -72,6 +74,6 @@ describe('CardUnvacuumedTransactions', () => {
     })
 
     render(<CardUnvacuumedTransactions clusterId="cluster-1" dbInstance="my-db-instance" />)
-    expect(screen.getByText('500,000,000')).toBeInTheDocument()
+    expect(screen.getByText('500.0M')).toBeInTheDocument()
   })
 })
