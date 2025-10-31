@@ -33,6 +33,7 @@ import {
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
   PlanEnum,
+  type TfVarsDiscoveryMode,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { refactoOrganizationCustomRolePayload, refactoOrganizationPayload } from '@qovery/shared/util-js'
@@ -405,6 +406,24 @@ export const organizations = createQueryKeys('organizations', {
         git_repository: repository,
       })
       return response.data
+    },
+  }),
+  listTfVarsFilesFromGitRepo: ({
+    organizationId,
+    repository,
+    mode,
+  }: {
+    organizationId: string
+    repository: ApplicationGitRepositoryRequest
+    mode: TfVarsDiscoveryMode
+  }) => ({
+    queryKey: [organizationId, repository, mode],
+    async queryFn() {
+      const response = await organizationApi.listTfVarsFilesFromGitRepo(organizationId, {
+        git_repository: repository,
+        mode,
+      })
+      return response.data.results
     },
   }),
 })
