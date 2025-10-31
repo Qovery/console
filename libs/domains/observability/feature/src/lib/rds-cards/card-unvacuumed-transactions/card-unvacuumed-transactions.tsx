@@ -1,5 +1,6 @@
 import { useRdsInstantMetrics } from '../../rds-managed-db/hooks/use-rds-instant-metrics/use-rds-instant-metrics'
 import { useRdsManagedDbContext } from '../../rds-managed-db/util-filter/rds-managed-db-context'
+import { formatNumberShort } from '../../rds-managed-db/util/format-number-short'
 import { CardRdsMetric } from '../card-rds-metric/card-rds-metric'
 
 interface CardUnvacuumedTransactionsProps {
@@ -7,10 +8,10 @@ interface CardUnvacuumedTransactionsProps {
   dbInstance: string
 }
 
-const queryUnvacuumedTransactions = (dbInstance: string) => `
-  max by (dimension_DBInstanceIdentifier) (
-    aws_rds_maximum_used_transaction_ids_average{dimension_DBInstanceIdentifier="${dbInstance}"}
-  )
+const queryUnvacuumedTransactions = (timeRange: string, dbInstance: string) => `
+ max_over_time(
+  aws_rds_maximum_used_transaction_ids_average{dimension_DBInstanceIdentifier="${dbInstance}"}[${timeRange}]
+)
 `
 
 export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacuumedTransactionsProps) {
@@ -18,7 +19,7 @@ export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacu
 
   const { data: metrics, isLoading } = useRdsInstantMetrics({
     clusterId,
-    query: queryUnvacuumedTransactions(dbInstance),
+    query: queryUnvacuumedTransactions(timeRange, dbInstance),
     startTimestamp,
     endTimestamp,
     timeRange,
@@ -28,9 +29,7 @@ export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacu
 
   // Extract the value from metrics response
   const value = metrics?.data?.result?.[0]?.value?.[1]
-  const formattedValue = value ? Math.round(parseFloat(value)).toLocaleString() : '--'
-
-  console.log('PGPGP ', metrics)
+  const formattedValue = value ? formatNumberShort(Math.round(parseFloat(value))) : '--'
 
   // Determine status based on value (example thresholds)
   let status: 'GREEN' | 'YELLOW' | 'RED' | undefined
@@ -47,12 +46,12 @@ export function CardUnvacuumedTransactions({ clusterId, dbInstance }: CardUnvacu
 
   return (
     <CardRdsMetric
-      title="Unvacuumed Transactions"
+      title="Unvacuumed Transactions (highest avg)"
       value={formattedValue}
-      description="pending vacuum operations"
+      description="Backlog of database transactions needing cleanup. PostgreSQL can handle max 2 billion"
       status={status}
       isLoading={isLoading}
-      icon="database"
+      icon="database" // TODO PG: don't know why
     />
   )
 }
