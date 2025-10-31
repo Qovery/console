@@ -27,7 +27,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
           Add Variable
           <i
             aria-hidden="true"
-            class="fa-solid fa-plus-circle "
+            class="fa-regular fa-plus-circle "
           />
         </button>
       </div>
@@ -51,7 +51,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
         See default values.yaml 
         <i
           aria-hidden="true"
-          class="fa-solid fa-arrow-up-right-from-square ml-2 text-xs"
+          class="fa-regular fa-arrow-up-right-from-square ml-2 text-xs"
         />
       </button>
       <form
@@ -168,7 +168,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wand-magic-sparkles text-sm"
+                    class="fa-regular fa-wand-magic-sparkles text-sm"
                   />
                 </button>
               </div>
@@ -178,7 +178,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash text-neutral-400"
+                  class="fa-regular fa-trash text-neutral-400"
                 />
               </button>
             </div>
@@ -246,7 +246,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 Close json
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-angle-down text-neutral-400"
+                  class="fa-regular fa-angle-down text-neutral-400"
                 />
               </button>
               <button
@@ -255,7 +255,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash text-neutral-400"
+                  class="fa-regular fa-trash text-neutral-400"
                 />
               </button>
             </div>
@@ -287,7 +287,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-wand-magic-sparkles text-sm"
+                  class="fa-regular fa-wand-magic-sparkles text-sm"
                 />
               </button>
             </div>
@@ -382,7 +382,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wand-magic-sparkles text-sm"
+                    class="fa-regular fa-wand-magic-sparkles text-sm"
                   />
                 </button>
               </div>
@@ -392,7 +392,7 @@ exports[`ValuesOverrideArgumentsSetting should match snapshot 1`] = `
               >
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-trash text-neutral-400"
+                  class="fa-regular fa-trash text-neutral-400"
                 />
               </button>
             </div>

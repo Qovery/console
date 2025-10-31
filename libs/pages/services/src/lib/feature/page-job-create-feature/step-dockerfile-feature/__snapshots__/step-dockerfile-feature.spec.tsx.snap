@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`DockerfileSettings should match snapshot 1`] = `
 <body>
@@ -160,7 +160,7 @@ exports[`DockerfileSettings should match snapshot 1`] = `
                     >
                       <i
                         aria-hidden="true"
-                        class="fa-solid fa-pen "
+                        class="fa-regular fa-pen "
                       />
                     </button>
                   </div>

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceList should match snapshot 1`] = `
 <div>
@@ -45,7 +45,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 Service
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down "
+                  class="fa-regular fa-chevron-down "
                 />
               </button>
             </div>
@@ -68,7 +68,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 Service status
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-chevron-down "
+                  class="fa-regular fa-chevron-down "
                 />
               </button>
             </div>
@@ -126,7 +126,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -258,7 +258,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         />
                         <i
                           aria-hidden="true"
-                          class="fa-solid fa-angle-down "
+                          class="fa-regular fa-angle-down "
                         />
                       </div>
                     </button>
@@ -469,7 +469,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -588,7 +588,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-arrows-rotate text-neutral-300"
+                      class="fa-regular fa-arrows-rotate text-neutral-300"
                     />
                   </span>
                   <div>
@@ -610,7 +610,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         />
                         <i
                           aria-hidden="true"
-                          class="fa-solid fa-angle-down "
+                          class="fa-regular fa-angle-down "
                         />
                       </div>
                     </button>
@@ -817,7 +817,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -1238,7 +1238,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-arrows-rotate text-neutral-300"
+                      class="fa-regular fa-arrows-rotate text-neutral-300"
                     />
                   </span>
                   <div>
@@ -1260,7 +1260,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         />
                         <i
                           aria-hidden="true"
-                          class="fa-solid fa-angle-down "
+                          class="fa-regular fa-angle-down "
                         />
                       </div>
                     </button>
@@ -1471,7 +1471,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400"
               >
                 <span
-                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral-200"
+                  class="flex items-center justify-center h-8 w-8 min-h-8 min-w-8 rounded-full border border-neutral"
                 >
                   <span
                     class="flex items-center justify-center rounded-full h-6 w-6"
@@ -1685,7 +1685,7 @@ exports[`ServiceList should match snapshot 1`] = `
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-arrows-rotate text-neutral-300"
+                      class="fa-regular fa-arrows-rotate text-neutral-300"
                     />
                   </span>
                   <div>
@@ -1707,7 +1707,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         />
                         <i
                           aria-hidden="true"
-                          class="fa-solid fa-angle-down "
+                          class="fa-regular fa-angle-down "
                         />
                       </div>
                     </button>
@@ -1923,7 +1923,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 Deploy selected 
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-play "
+                  class="fa-regular fa-play "
                 />
               </button>
               <button
@@ -1937,7 +1937,7 @@ exports[`ServiceList should match snapshot 1`] = `
                 More 
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-angle-down "
+                  class="fa-regular fa-angle-down "
                 />
               </button>
             </div>

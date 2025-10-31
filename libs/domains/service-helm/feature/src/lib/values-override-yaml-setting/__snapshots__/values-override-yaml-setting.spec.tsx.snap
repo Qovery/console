@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
 <body>
@@ -24,7 +24,7 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
         >
           <i
             aria-hidden="true"
-            class="fa-solid fa-wave-pulse text-neutral-350"
+            class="fa-regular fa-wave-pulse text-neutral-350"
           />
           <p
             class="mb-3 mt-1 text-xs font-medium text-neutral-350"
@@ -38,7 +38,7 @@ exports[`ValuesOverrideAsYamlSetting should match snapshot 1`] = `
             Create override 
             <i
               aria-hidden="true"
-              class="fa-solid fa-pen ml-2"
+              class="fa-regular fa-pen ml-2"
             />
           </button>
         </div>
