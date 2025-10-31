@@ -9,7 +9,7 @@ export function LayoutOrganization({ children }: PropsWithChildren) {
       {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
       <main className="!h-full">
         <div className="sticky top-0 border-b border-neutral bg-background-secondary px-4">
-          <Navbar.Root activeId="overview" className="container relative top-[1px] -mt-[1px]">
+          <Navbar.Root activeId="overview" className="container relative top-[1px] mx-auto -mt-[1px]">
             <Navbar.Item id="overview" href="/">
               <Icon iconName="table-layout" />
               Overview

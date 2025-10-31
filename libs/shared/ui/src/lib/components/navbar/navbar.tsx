@@ -29,14 +29,13 @@ const navbarItemVariants = cva(
     'no-underline',
     'transition-colors',
     'duration-200',
-    'outline-none',
-    'focus-visible:ring-2',
-    'focus-visible:ring-brand-11',
-    'focus-visible:ring-offset-2',
+    'focus:outline-none',
+    'focus-visible:outline',
+    'focus-visible:outline-2',
+    'focus-visible:outline-offset-2',
+    'focus-visible:outline-brand-11',
     'font-medium',
     'rounded-md',
-    'first:pl-0',
-    'last:pr-0',
     '[&_i]:relative',
     '[&_i]:top-[1px]',
   ],
@@ -204,7 +203,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
         className={twMerge('flex flex-row items-center justify-between', className)}
         aria-label={ariaLabel}
       >
-        <div className="relative flex touch-pan-x flex-row items-center justify-start overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="relative -my-1 -ml-3 -mr-1 flex touch-pan-x flex-row items-center justify-start overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div
             ref={listRef}
             className="relative flex h-11 items-center [&>*]:shrink-0"

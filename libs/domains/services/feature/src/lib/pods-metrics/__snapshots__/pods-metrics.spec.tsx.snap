@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`PodsMetrics should match snapshot with data 1`] = `
 <div>
@@ -20,7 +20,7 @@ exports[`PodsMetrics should match snapshot with data 1`] = `
               Instance (1)
               <i
                 aria-hidden="true"
-                class="fa-solid fa-arrow-down text-xs"
+                class="fa-regular fa-arrow-down text-xs"
               />
             </button>
           </th>

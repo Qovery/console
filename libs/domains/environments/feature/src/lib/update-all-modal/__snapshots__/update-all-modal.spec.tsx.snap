@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
 <body>
@@ -64,7 +64,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
                 />
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-check absolute text-2xs text-white left-1"
+                  class="fa-regular fa-check absolute text-2xs text-white left-1"
                 />
               </div>
               Amy Maxwell
@@ -115,7 +115,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               </div>
               <i
                 aria-hidden="true"
-                class="fa-solid fa-arrow-left mx-2 -scale-100 text-neutral-400"
+                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-400"
               />
               <div
                 class="flex items-center "
@@ -225,7 +225,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               </div>
               <i
                 aria-hidden="true"
-                class="fa-solid fa-arrow-left mx-2 -scale-100 text-neutral-400"
+                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-400"
               />
               <div
                 class="flex items-center opacity-50"
@@ -335,7 +335,7 @@ exports[`UpdateAllModal should reduce opacity of commit blocks 1`] = `
               </div>
               <i
                 aria-hidden="true"
-                class="fa-solid fa-arrow-left mx-2 -scale-100 text-neutral-400"
+                class="fa-regular fa-arrow-left mx-2 -scale-100 text-neutral-400"
               />
               <div
                 class="flex items-center opacity-50"
