@@ -1,4 +1,4 @@
-import { type Credentials } from 'qovery-typescript-axios'
+import type { Credentials, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
@@ -31,41 +31,33 @@ export interface ServiceAccessModalProps {
   onClose: () => void
 }
 
-export function getDatabaseConnectionProtocol(type?: string) {
-  const normalizedType = type?.toUpperCase()
-
-  return match(normalizedType)
+function getDatabaseConnectionProtocol(type: DatabaseTypeEnum): string {
+  return match(type)
     .with('POSTGRESQL', () => 'postgresql://')
     .with('MYSQL', () => 'mysql://')
     .with('REDIS', () => 'rediss://')
     .with('MONGODB', () => 'mongodb://')
-    .otherwise(() => '')
+    .exhaustive()
 }
 
 // Some databases need SSL parameters in the connection URI.
-function getDatabaseSslQuery(type?: string, mode?: string) {
-  const normalizedType = type?.toUpperCase()
-  const normalizedMode = mode?.toUpperCase()
-
+function getDatabaseSslQuery(type: DatabaseTypeEnum, mode: DatabaseModeEnum) {
   // SSL not available for CONTAINER mode yet
-  if (normalizedType === 'POSTGRESQL' && normalizedMode === 'MANAGED') {
+  if (type === 'POSTGRESQL' && mode === 'MANAGED') {
     return '?sslmode=require'
   }
   // available for both MANAGED and CONTAINER modes
-  if (normalizedType === 'MYSQL') {
+  if (type === 'MYSQL') {
     return '?ssl-mode=REQUIRED'
   }
   // REDIS TSL is managed in the protocol. Mongodb SSL is not supported for now.
-  return ''
+  return undefined
 }
 
-export function getDatabaseConnectionUri(
-  service: Pick<Database, 'type' | 'mode'> | { type?: string; mode?: string },
-  credentials: Credentials
-) {
+export function getDatabaseConnectionUri(service: Pick<Database, 'type' | 'mode'>, credentials: Credentials) {
   const protocol = getDatabaseConnectionProtocol(service.type)
   const connectionURI = `${protocol}${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
-  const sslQuery = getDatabaseSslQuery(service.type, service.mode)
+  const sslQuery = getDatabaseSslQuery(service.type, service.mode) ?? ''
 
   return `${connectionURI}${sslQuery}`
 }
