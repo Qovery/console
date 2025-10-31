@@ -4,9 +4,13 @@ import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { CardAvailableRam } from '../rds-cards/card-available-ram/card-available-ram'
 import { CardAvgCpuUtilization } from '../rds-cards/card-avg-cpu-utilization/card-avg-cpu-utilization'
 import { CardAvgDbConnections } from '../rds-cards/card-avg-db-connections/card-avg-db-connections'
 import { CardUnvacuumedTransactions } from '../rds-cards/card-unvacuumed-transactions/card-unvacuumed-transactions'
+import { RdsCpuChart } from '../rds-charts/rds-cpu-chart/rds-cpu-chart'
+import { RdsDiskQueueDepthChart } from '../rds-charts/rds-disk-queue-depth-chart/rds-disk-queue-depth-chart'
+import { RdsRamChart } from '../rds-charts/rds-ram-chart/rds-ram-chart'
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { RdsManagedDbProvider, useRdsManagedDbContext } from './util-filter/rds-managed-db-context'
 import { generateDbInstance } from './util/generate-db-instance'
@@ -109,27 +113,26 @@ function RdsManagedDbOverviewContent() {
       <div className="space-y-10 px-8 py-10">
         <Section className="gap-4">
           <Heading weight="medium">Overview</Heading>
-          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-3')}>
+          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-4')}>
             <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgCpuUtilization clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <CardAvailableRam clusterId={environment.cluster_id} dbInstance={dbInstance} />
           </div>
         </Section>
 
         <Section className="gap-4">
           <Heading weight="medium">Resources</Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 lg:grid-cols-2')}>
-            <Callout.Root color="sky">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>CPU & Memory Charts</Callout.TextHeading>
-                <Callout.TextDescription>
-                  CPU utilization, memory usage, and disk metrics will be available here.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsCpuChart clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsRamChart clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
+            <div className="overflow-hidden rounded border border-neutral-250">
+              <RdsDiskQueueDepthChart clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            </div>
           </div>
         </Section>
 
