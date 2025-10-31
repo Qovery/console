@@ -1,4 +1,4 @@
-import { type Credentials } from 'qovery-typescript-axios'
+import type { Credentials, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
@@ -31,12 +31,43 @@ export interface ServiceAccessModalProps {
   onClose: () => void
 }
 
+function getDatabaseConnectionProtocol(type: DatabaseTypeEnum): string {
+  return match(type)
+    .with('POSTGRESQL', () => 'postgresql://')
+    .with('MYSQL', () => 'mysql://')
+    .with('REDIS', () => 'rediss://')
+    .with('MONGODB', () => 'mongodb://')
+    .exhaustive()
+}
+
+// Some databases need SSL parameters in the connection URI.
+function getDatabaseSslQuery(type: DatabaseTypeEnum, mode: DatabaseModeEnum) {
+  // SSL not available for CONTAINER mode yet
+  if (type === 'POSTGRESQL' && mode === 'MANAGED') {
+    return '?sslmode=require'
+  }
+  // available for both MANAGED and CONTAINER modes
+  if (type === 'MYSQL') {
+    return '?ssl-mode=REQUIRED'
+  }
+  // REDIS TSL is managed in the protocol. Mongodb SSL is not supported for now.
+  return undefined
+}
+
+export function getDatabaseConnectionUri(service: Pick<Database, 'type' | 'mode'>, credentials: Credentials) {
+  const protocol = getDatabaseConnectionProtocol(service.type)
+  const connectionURI = `${protocol}${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+  const sslQuery = getDatabaseSslQuery(service.type, service.mode) ?? ''
+
+  return `${connectionURI}${sslQuery}`
+}
+
 function SectionDatabaseConnectionUri({ service }: { service: Database }) {
   const [, copyToClipboard] = useCopyToClipboard()
   const { data: masterCredentials } = useMasterCredentials({ serviceId: service.id, serviceType: 'DATABASE' })
 
   const handleCopyCredentials = (credentials: Credentials) => {
-    const connectionURI = `${credentials?.login}:${credentials?.password}@${credentials?.host}:${credentials?.port}`
+    const connectionURI = getDatabaseConnectionUri(service, credentials)
     copyToClipboard(connectionURI)
     toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
   }
