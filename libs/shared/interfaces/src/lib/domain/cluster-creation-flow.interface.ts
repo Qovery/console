@@ -81,12 +81,16 @@ export type ClusterFeaturesData = {
     additional_ip_range_pods_names?: string
     subnetwork_name?: string
   }
+  scw_existing_vpc?: {
+    vpc_id: string
+  }
   features: {
     [id: string]: {
       id: string
       title: string
       value: boolean
       extendedValue?: string
+      gateway_type?: string
     }
   }
 }
