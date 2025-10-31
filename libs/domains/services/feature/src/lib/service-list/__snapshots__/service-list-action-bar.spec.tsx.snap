@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ServiceListActionBar should match snapshot 1`] = `
 <body>
@@ -35,7 +35,7 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
                 Deploy selected 
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-play "
+                  class="fa-regular fa-play "
                 />
               </button>
               <button
@@ -49,7 +49,7 @@ exports[`ServiceListActionBar should match snapshot 1`] = `
                 More 
                 <i
                   aria-hidden="true"
-                  class="fa-solid fa-angle-down "
+                  class="fa-regular fa-angle-down "
                 />
               </button>
             </div>

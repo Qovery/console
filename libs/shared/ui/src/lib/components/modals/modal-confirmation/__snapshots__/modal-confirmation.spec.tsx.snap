@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ModalConfirmation should match confirm mode with description 1`] = `
 <div>
@@ -23,7 +23,7 @@ exports[`ModalConfirmation should match confirm mode with description 1`] = `
          
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>
@@ -93,7 +93,7 @@ exports[`ModalConfirmation should match delete mode with description 1`] = `
          
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>
@@ -162,7 +162,7 @@ exports[`ModalConfirmation should match delete mode without description 1`] = `
          
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy "
+          class="fa-regular fa-copy "
         />
       </span>
     </div>
