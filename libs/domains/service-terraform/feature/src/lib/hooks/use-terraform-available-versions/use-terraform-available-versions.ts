@@ -7,7 +7,7 @@ export function useTerraformAvailableVersion() {
     ...queries.serviceTerraform.listAvailableVersions(),
     select(versions) {
       // We only support Terraform engine for now
-      return verisons?.filter(({ engine }) => engine === TerraformVersionResponseEngineEnum.TERRAFORM)
+      return versions?.filter(({ engine }) => engine === TerraformVersionResponseEngineEnum.TERRAFORM)
     },
   })
 }
