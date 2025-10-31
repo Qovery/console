@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`OutputVariables should match snapshot 1`] = `
 <body>
@@ -26,7 +26,7 @@ exports[`OutputVariables should match snapshot 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-circle-info text-neutral-350"
+                    class="fa-regular fa-circle-info text-neutral-350"
                   />
                 </span>
               </button>

@@ -32,16 +32,33 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement
 
-    root.setAttribute('data-theme', theme)
+    // Create stylesheet to disable transitions during theme switch
+    // Inspired by https://paco.me/writing/disable-theme-transitions
+    const css = document.createElement('style')
+    css.appendChild(
+      document.createTextNode(
+        `* {
+          -webkit-transition: none !important;
+          -moz-transition: none !important;
+          -o-transition: none !important;
+          -ms-transition: none !important;
+          transition: none !important;
+        }`
+      )
+    )
+    document.head.appendChild(css)
 
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-
       root.setAttribute('data-theme', systemTheme)
-      return
+    } else {
+      root.setAttribute('data-theme', theme)
     }
 
-    root.setAttribute('data-theme', theme)
+    // Force browser repaint
+    void window.getComputedStyle(css).opacity
+    // Remove the stylesheet to re-enable transitions
+    document.head.removeChild(css)
   }, [theme])
 
   const value = {

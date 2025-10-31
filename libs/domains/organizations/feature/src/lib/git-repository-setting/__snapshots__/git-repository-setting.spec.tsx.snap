@@ -120,7 +120,7 @@ exports[`GitRepositorySetting should match snapshot 1`] = `
         Go to repository
         <i
           aria-hidden="true"
-          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+          class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
         />
       </a>
     </div>
