@@ -1,4 +1,5 @@
 import { type Cluster } from 'qovery-typescript-axios'
+import { MetricsConfigurationManagedByQoveryKindEnum } from 'qovery-typescript-axios/api'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
@@ -34,11 +35,18 @@ export function SettingsGeneralFeature({ cluster, organizationId }: { cluster: C
           cloneCluster.metrics_parameters = {
             enabled: data.metrics_parameters?.enabled ?? false,
             configuration: {
-              kind: 'MANAGED_BY_QOVERY',
+              kind: MetricsConfigurationManagedByQoveryKindEnum.MANAGED_BY_QOVERY,
+              resource_profile: cloneCluster.metrics_parameters?.configuration?.resource_profile,
+              cloud_watch_export_config: cloneCluster.metrics_parameters?.configuration?.cloud_watch_export_config,
+              high_availability: cloneCluster.metrics_parameters?.configuration?.high_availability,
+              internal_network_monitoring: cloneCluster.metrics_parameters?.configuration?.internal_network_monitoring,
+              alerting: cloneCluster.metrics_parameters?.configuration?.alerting,
             },
           }
         } else {
-          cloneCluster.metrics_parameters = undefined
+          cloneCluster.metrics_parameters = {
+            enabled: false,
+          }
         }
       }
 
