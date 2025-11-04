@@ -21,7 +21,7 @@ import {
   TablePrimitives,
   Tooltip,
 } from '@qovery/shared/ui'
-import { objectFlattener, twMerge } from '@qovery/shared/util-js'
+import { generateAdvancedSettingDocUrl, objectFlattener, twMerge } from '@qovery/shared/util-js'
 import { useEditAdvancedSettings } from '../hooks/use-edit-advanced-settings/use-edit-advanced-settings'
 
 const { Table } = TablePrimitives
@@ -160,7 +160,14 @@ export function AdvancedSettings({
 
           return (
             <Tooltip classNameTrigger="px-4 truncate font-medium" content={name}>
-              <div>{name}</div>
+              <a
+                href={generateAdvancedSettingDocUrl(name, 'service')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block truncate hover:underline"
+              >
+                {name}
+              </a>
             </Tooltip>
           )
         },
