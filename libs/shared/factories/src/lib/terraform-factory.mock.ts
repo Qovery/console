@@ -16,6 +16,7 @@ export const terraformFactoryMock = (howMany: number): Terraform[] =>
     description: chance.sentence(),
     auto_approve: false,
     auto_deploy: false,
+    engine: 'TERRAFORM',
     backend: {
       kubernetes: {},
     },

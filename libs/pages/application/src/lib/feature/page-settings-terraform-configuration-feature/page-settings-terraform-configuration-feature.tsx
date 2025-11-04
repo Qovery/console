@@ -1,4 +1,3 @@
-import { type TerraformRequestProviderEnum } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
@@ -29,7 +28,6 @@ export default function PageSettingsTerraformConfigurationFeature() {
     if (service.serviceType === 'TERRAFORM') {
       const payload = {
         ...data,
-        provider: 'TERRAFORM' as TerraformRequestProviderEnum,
         timeout_sec: Number(data.timeout_sec ?? service.timeout_sec),
       }
 

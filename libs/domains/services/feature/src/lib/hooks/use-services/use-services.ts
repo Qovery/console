@@ -1,5 +1,4 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
-import { TerraformStatusDto } from 'qovery-ws-typescript-axios'
 import { useMemo } from 'react'
 import { P, match } from 'ts-pattern'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'

@@ -3,6 +3,7 @@ import { type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { terraformEngines } from '@qovery/domains/service-terraform/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import {
   SERVICES_CREATION_GENERAL_URL,
@@ -48,7 +49,7 @@ export function StepSummaryFeature() {
       icon_uri: generalData.icon_uri,
       timeout_sec: Number(generalData.timeout_sec),
       auto_deploy: generalData.auto_deploy ?? false,
-      provider: 'TERRAFORM',
+      engine: generalData.engine,
       backend: {
         kubernetes: {},
       },
@@ -172,7 +173,8 @@ export function StepSummaryFeature() {
               </div>
               <ul className="list-none space-y-2 text-sm text-neutral-400">
                 <li>
-                  <span className="font-medium">Terraform version:</span>{' '}
+                  <span className="font-medium">Terraform engine:</span>{' '}
+                  {terraformEngines.find((v) => v.value === generalData.engine)?.name} v
                   {generalData.provider_version.explicit_version}
                 </li>
                 <li>

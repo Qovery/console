@@ -39,6 +39,7 @@ import LifecycleJobStrokeIcon from './icons/lifecycle-job-stroke-icon'
 import MicrosoftIcon from './icons/microsoft'
 import MongoDBIcon from './icons/mongodb'
 import MysqlIcon from './icons/mysql'
+import OpenTofuIcon from './icons/opentofu'
 import OracleCloudIcon from './icons/oracle-cloud'
 import OvhCloudIcon from './icons/ovh-cloud'
 import PostgresqlIcon from './icons/postgresql'
@@ -143,6 +144,8 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
       return <DopplerIcon {...formattedProps} />
     case IconEnum.TERRAFORM:
       return <TerraformIcon {...formattedProps} />
+    case IconEnum.OPEN_TOFU:
+      return <OpenTofuIcon {...formattedProps} />
     case IconEnum.SERVICES:
       return <ServicesIcon {...formattedProps} />
     case IconEnum.GENERIC_REGISTRY:
