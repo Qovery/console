@@ -86,14 +86,21 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
   const variableRows: TerraformVariablesContextType['variableRows'] = useMemo(() => {
     const vars = new Map<string, VariableRowItem>()
     const files = [...tfVarFiles.filter((file) => file.enabled)].reverse()
+    // Add variables from .tfvars files
     files.forEach((file) => {
-      Object.entries(file.variables).forEach(([fileKey, fileValue]) => {
-        const customVariable = customVariables.find((customVariable) => customVariable.key === fileKey)
-        const value = customVariable?.value ?? fileValue
-        vars.set(fileKey, { key: fileKey, value, source: file.source, secret: false }) // TODO [QOV-1266] Are we keeping 'secret' here?
+      Object.entries(file.variables).forEach(([key, value]) => {
+        const customVar = customVariables.find((customVariable) => customVariable.key === key)
+        vars.set(key, {
+          key,
+          value: customVar?.value ?? value, // If an override is set, use the override value
+          source: file.source,
+          secret: false, // TODO [QOV-1266] Are we keeping 'secret' here?
+        })
       })
     })
-    return [...vars.values(), ...customVariables]
+    // Add custom variables
+    customVariables.forEach((v) => !vars.has(v.key) && vars.set(v.key, v))
+    return [...vars.values()]
   }, [tfVarFiles, customVariables])
 
   const [selectedRows, setSelectedRows] = useState<TerraformVariablesContextType['selectedRows']>([])
@@ -109,9 +116,13 @@ export const TerraformVariablesProvider = ({ children }: PropsWithChildren) => {
     return selectedRows.includes(key)
   }
   const setCustomVariable = (key: string, variable: VariableRowItem) => {
-    setCustomVariables(
-      customVariables.map((customVariable) => (customVariable.key === key ? variable : customVariable))
-    )
+    if (customVariables.find((customVariable) => customVariable.key === key)) {
+      setCustomVariables(
+        customVariables.map((customVariable) => (customVariable.key === key ? variable : customVariable))
+      )
+    } else {
+      setCustomVariables([...customVariables, variable])
+    }
   }
   const resetCustomVariable = (key: string) => {
     setCustomVariables(customVariables.filter((customVariable) => customVariable.key !== key))
@@ -346,7 +357,12 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
   const { onSelectRow, isRowSelected, hoveredRow, customVariables, setCustomVariable, resetCustomVariable } =
     useTerraformVariablesContext()
 
-  const customVariable = customVariables.find((customVariable) => customVariable.key === row.key)
+  const customVariable = useMemo(
+    () => customVariables.find((customVar) => customVar.key === row.key),
+    [customVariables, row.key]
+  )
+  const isCustom = useMemo(() => !!customVariable && !customVariable.source, [customVariable])
+  const isOverride = useMemo(() => !!customVariable && !!customVariable.source, [customVariable])
 
   return (
     <div
@@ -356,10 +372,10 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
       )}
     >
       <div className="flex h-full items-center justify-center border-r border-neutral-200">
-        <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} />
+        <Checkbox checked={isRowSelected(row.key)} onCheckedChange={() => onSelectRow(row.key)} disabled={!isCustom} />
       </div>
       <div className="flex h-full items-center border-r border-neutral-200">
-        {customVariable && !customVariable.source ? (
+        {isCustom ? (
           <input
             name="key"
             value={row.key}
@@ -383,7 +399,7 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
           className="h-full w-full bg-transparent px-4 text-sm"
           placeholder="Variable value"
         />
-        {customVariable && customVariable.source && (
+        {customVariable && isOverride && (
           <button type="button" onClick={() => resetCustomVariable(customVariable.key)} className="pl-0 pr-4">
             <Icon iconName="rotate-left" iconStyle="regular" />
           </button>
@@ -391,8 +407,8 @@ const VariableRow = ({ row }: { row: VariableRowItem }) => {
       </div>
       <div className="flex h-full items-center border-r border-neutral-200 px-4">
         <Badge variant="surface" color={getSourceBadgeColor(row, customVariable)} className="text-sm">
-          {customVariable && customVariable.source ? 'Override from ' : ''}
-          {row.source || 'Custom'}
+          {isOverride ? 'Override from ' : ''}
+          {row.source?.split('/').pop() || 'Custom'}
         </Badge>
       </div>
       <span className="flex items-center justify-center text-center text-sm text-neutral-400">
